@@ -15,7 +15,10 @@
     "@astrojs/mdx": "^0.17.2",
     "@astrojs/prefetch": "^0.1.2",
     "@astrojs/sitemap": "^1.1.0",
+    "@netlify/functions": "^1.4.0",
     "astro": "^2.0.15",
+    "install": "^0.13.0",
+    "npm": "^9.5.1",
     "sharp": "^0.31.3"
   }
 }

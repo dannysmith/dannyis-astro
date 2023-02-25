@@ -1,0 +1,29 @@
+[build]
+  command = "astro build"
+  functions = "netlify/functions"
+  publish = "dist"
+
+[[redirects]]
+  from = "/toolbox"
+  to = "https://www.notion.so/dannysmith/The-Toolbox-d50a0bf1af6242ddab71dd1d84683f0b"
+  status = 301
+
+[[redirects]]
+  from = "/using"
+  to = "https://dannysmith.notion.site/Danny-is-Using-72544bdecd144ca5ab3864d92dcd119b"
+  status = 301
+
+[[redirects]]
+  from = "/singing"
+  to = "http://youtube.com/dannysmithblues"
+  status = 301
+
+[[redirects]]
+  from = "/youtube"
+  to = "https://www.youtube.com/channel/UCp0vO-4tetByUhsVijyt2jA"
+  status = 301
+
+[[redirects]]
+  from = "/meeting"
+  to = "https://dannysmith.notion.site/Book-a-Meeting-with-Danny-e39fc8def5514b67b559b2e5a51934ae"
+  status = 301

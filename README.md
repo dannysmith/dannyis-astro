@@ -45,6 +45,10 @@ This is an evolution on my personal site. The [previous version](https://github.
 
 Astro looks for `.astro`, `.md` or `.mdx` files in the `src/pages/` directory. Each page is exposed as a route based on its file name. There's nothing special about the other directories in `src`, but we follow the conventions in the Astro docs for structure.
 
+## Netlify Functions
+
+Netlify functions live in `netlify/functions` and can be ran localy with `netlify functions:serve`.
+
 ## Astro Components
 
 The following hand-rolled "base" components are available for use in other pages/articles etc (not an exhaustive list)...
