@@ -1,19 +1,34 @@
 /* Global Styles */
 
 /* ------------- Variables ------------- */
-
 :root {
 
   /* Colours */
   --color-background: #f6f3ea;
   --color-foreground: #1a1a1a;
+  --color-highlight: rgb(255, 30, 28);
+
+  --color-red-trans50: rgb(255, 30, 28, 0.5);
+
+  --color-link-menu-hover: var(--color-highlight);
+  --color-link-menu-bottomborder: var(--color-highlight);
+  --color-strikethrough: rgba(0, 0, 0, 0.4);
+  --color-text-highlight: #ffde59;
+
+  --color-link-underline: rgba(111, 131, 222, 0.5);
+  --color-link-text:  #35448f;
+  --color-visited-link-underline: rgba(188, 127, 219, 0.5);
+  --color-visited-link-text: #78428c;
+  --color-active-link-underline: var(--color-highlight);
+  --color-active-link-text: var(--color-highlight);
+
 
   /*  Fonts */
   --font-ui: 'Jost Variable', 'Jost', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-essay: 'Literata Variable', 'Literata', Georgia, 'Times New Roman', serif;
+  --font-prose: 'Literata Variable', 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-  }
+}
 
 /* ------------- Resets ------------- */
 
@@ -41,17 +56,27 @@ select {
   font: inherit;
 }
 
+/* Remove all animations and transitions for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ------------- Base Styles ------------- */
 
 html {
-    /* Ensure Common ligs are always on */
-    font-variant-ligatures: common-ligatures;
+  /* Ensure Common ligs are always on */
+  font-variant-ligatures: common-ligatures;
 
-    /* Smooth Scrolling */
-    scroll-behavior: smooth;
+  /* Smooth Scrolling */
+  scroll-behavior: smooth;
 
-    /* Let the browser decide the best base font size, but make it a little smaller */
-    font-size: 98%;
+  /* Let the browser decide the best base font size, but make it a little smaller */
+  font-size: 98%;
 }
 
 /* Body default styles */
@@ -77,7 +102,21 @@ body {
   font-size: 1rem;
 }
 
+/* ------------- Link Defaults ------------- */
 a {
   transition: all 0.25s;
   color: inherit;
+}
+
+
+/* ------------ Highlighting & Selection ------------- */
+
+::-moz-selection {
+  background-color: var(--color-text-highlight);
+  text-shadow: none;
+}
+
+::selection {
+  background-color: var(--color-text-highlight);
+  text-shadow: none;
 }

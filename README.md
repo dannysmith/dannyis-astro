@@ -64,8 +64,7 @@ Default to Astro components wherever possible, except for long-form writing. Thi
 
 #### CSS
 
-- Keep global styles to a minimum.
-- Components should always use Astro's scoped styles (ie not `is:global`). The exception is when setting CSS Custom Properties on `:root` from inside a component.
+- Keep global styles to a minimum. Components should always use Astro's scoped styles.
 - Use CSS Custm Properties on `:root` for global colours and other design tokens.
 - Components should never affect things outside of them – no margins etc.
 - Default CSS Grid for layout and spacing. Fall back to flexbox where it makes for significantly less code.

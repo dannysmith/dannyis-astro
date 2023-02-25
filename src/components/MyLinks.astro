@@ -1,4 +1,9 @@
 ---
+// Link Component for my social links and the side navigation.
+export interface Props {
+  class: string
+}
+
 const { class: className } = Astro.props
 ---
 
@@ -64,7 +69,7 @@ const { class: className } = Astro.props
     letter-spacing: 0.1ch;
     list-style-type: none;
     padding: 0;
-    border-bottom: 5px solid red;
+    border-bottom: 5px solid var(--color-link-menu-hover);
     line-height: 1.65;
   }
   strong {
@@ -74,6 +79,6 @@ const { class: className } = Astro.props
     text-decoration: none;
   }
   a:hover {
-    color: red;
+    color: var(--color-link-menu-bottomborder);
   }
 </style>
