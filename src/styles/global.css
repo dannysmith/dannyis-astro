@@ -1,0 +1,75 @@
+/* Global Styles */
+
+/* ------------- Variables ------------- */
+
+:root {
+
+  /* Colours */
+  --color-background: #f6f3ea;
+  --color-foreground: #1a1a1a;
+
+  /*  Fonts */
+  --font-ui: 'Jost Variable', 'Jost', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-essay: 'Literata Variable', 'Literata', Georgia, 'Times New Roman', serif;
+  --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
+
+  }
+
+/* ------------- Resets ------------- */
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Make images easier to work with */
+img {
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* ------------- Base Styles ------------- */
+
+html {
+    /* Ensure Common ligs are always on */
+    font-variant-ligatures: common-ligatures;
+
+    /* Smooth Scrolling */
+    scroll-behavior: smooth;
+
+    /* Let the browser decide the best base font size, but make it a little smaller */
+    font-size: 98%;
+}
+
+/* Body default styles */
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+
+  /* Turn on single-storey `a` characters on Jost */
+  font-feature-settings: 'ss01' on;
+
+  /* Use the body as the positioning parent for absolutely positioned elements. */
+  position: relative;
+
+  /* Always fill the whole page */
+  min-height: 100vh;
+
+  /* Set the font-size in rems so it's inherited by all elements. */
+  font-size: 1rem;
+}
