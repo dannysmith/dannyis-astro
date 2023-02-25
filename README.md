@@ -27,7 +27,7 @@ This is an evolution on my personal site. The [previous version](https://github.
 │   └── pages/
 │   |   ├── index.astro
 │   |   ├── about.astro
-│   |   └── articles/
+│   |   └── writing/
 |   |       ├── my-article.mdx
 |   |       ├── my-other-article.md
 |   |       └── my-fancy-custom-magazine-article.astro
