@@ -6,6 +6,25 @@ import MyLinks from '@components/MyLinks.astro'
 <BaseLayout title="Danny Smith">
   <main>
     <h1>Danny Smith</h1>
-    <MyLinks />
+    <MyLinks class="links" />
   </main>
 </BaseLayout>
+
+<style>
+  main {
+    display: grid;
+    grid-template-columns: 1rem auto 1fr;
+  }
+
+  h1 {
+    grid-column: 1 / -1;
+    font-size: 16.8vw;
+    margin-top: -0.08em;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .links {
+    grid-column: 2 / 3;
+  }
+</style>

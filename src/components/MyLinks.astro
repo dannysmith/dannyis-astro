@@ -1,7 +1,8 @@
 ---
+const { class: className } = Astro.props
 ---
 
-<ul>
+<ul class={className}>
   <li>
     <a href="/writing"><strong>writing</strong></a>
   </li>
@@ -53,3 +54,26 @@
     <a href="mailto:hi@danny.is"><strong>email</strong></a>
   </li>
 </ul>
+
+<style>
+  ul {
+    padding: 0;
+  }
+  li {
+    text-transform: uppercase;
+    letter-spacing: 0.1ch;
+    list-style-type: none;
+    padding: 0;
+    border-bottom: 5px solid red;
+    line-height: 1.65;
+  }
+  strong {
+    letter-spacing: 0.125ch;
+  }
+  a {
+    text-decoration: none;
+  }
+  a:hover {
+    color: red;
+  }
+</style>
