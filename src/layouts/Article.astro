@@ -26,7 +26,7 @@ const url = Astro.url.pathname
 <style is:global>
   article {
     --line-height: 1.5; /* Line height for the article. */
-    --side-space: 1rem; /* Space on the left and right of the article on small screens. */
+    --side-space: 2rem; /* Space on the left and right of the article on small screens. */
 
     display: grid;
     grid-template-columns:
@@ -228,10 +228,10 @@ const url = Astro.url.pathname
     padding-left: 0.4em;
   }
 
-  ol::marker {
+  ol ::marker {
     font-size: 1.4ex;
     font-variation-settings: 'opsz' 10;
-    font-weight: 610;
+    font-weight: 500;
   }
 
   /* ----------- Task Lists ------------ */
@@ -263,6 +263,7 @@ const url = Astro.url.pathname
 
   .task-list-item input:checked {
     color: var(--color-highlight);
+    background: transparent;
   }
 
   .task-list-item input:checked:before {
