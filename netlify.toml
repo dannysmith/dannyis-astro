@@ -27,3 +27,23 @@
   from = "/meeting"
   to = "https://dannysmith.notion.site/Book-a-Meeting-with-Danny-e39fc8def5514b67b559b2e5a51934ae"
   status = 301
+
+[[redirects]]
+  from = "/linkedin"
+  to = "https://www.linkedin.com/in/dannyasmith/"
+  status = 301
+
+[[redirects]]
+  from = "/remote"
+  to = "https://dannysmith.notion.site/Remote-Working-Tips-821f025d73cb4d93a661abc93822fb14"
+  status = 301
+
+[[redirects]]
+  from = "/cv"
+  to = "/cv.pdf"
+  status = 301
+
+[[redirects]]
+  from = "/cv-rafac"
+  to = "/cv-rafac.pdf"
+  status = 301
