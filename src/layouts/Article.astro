@@ -2,6 +2,7 @@
 // Use this layout for articles, essays etc.
 
 import BaseLayout from './BaseLayout.astro'
+import endmark from '@images/end-mark.svg'
 
 export interface Props {
   title: string
@@ -127,6 +128,42 @@ const url = Astro.url.pathname
       -webkit-hyphens: none;
       hyphens: none;
     }
+  }
+  article > p:first-of-type {
+    margin-top: 3em;
+  }
+  /* First line of first para*/
+  article > p:not(.callout):first-of-type::first-line {
+    text-transform: lowercase;
+    -webkit-hyphens: none;
+    hyphens: none;
+    font-variant-caps: small-caps;
+    font-weight: 525;
+  }
+
+  /* End Mark */
+  article > p:not(.callout):last-of-type:after {
+    display: inline-block;
+    content: ' ';
+    -webkit-mask: url('/end-mark.svg');
+    mask: url('/end-mark.svg');
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    background-color: currentColor;
+    height: 0.65em;
+    width: 1em;
+    line-height: 0.5;
+    margin-left: 0.1em;
+  }
+
+  /* Drop Cap */
+
+  article > p:not(.callout):first-of-type::first-letter {
+    text-transform: uppercase;
+    float: left;
+    font-size: 4em;
+    line-height: 1;
+    padding-right: 0.4ch;
   }
 
   /* ----------- Links ----------- */
