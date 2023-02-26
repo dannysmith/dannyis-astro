@@ -1,30 +1,23 @@
 ---
-// Use this layout for articles, essays etc.
-
-import BaseLayout from './BaseLayout.astro'
-import endmark from '@images/end-mark.svg'
+// Use this to wrap an article
 
 export interface Props {
   title: string
+  url: string
 }
 
-const { title } = Astro.props.frontmatter || Astro.props
-const url = Astro.url.pathname
+const { title, url } = Astro.props
 ---
 
-<BaseLayout title={title}>
-  <main class="content" aria-label="Content">
-    <article>
-      <h1 role="heading" aria-level="1">
-        <a href={url}>{title}</a>
-      </h1>
-      <slot />
-    </article>
-  </main>
-</BaseLayout>
+<article class="prose">
+  <h1 role="heading" aria-level="1">
+    <a href={url}>{title}</a>
+  </h1>
+  <slot />
+</article>
 
 <style is:global>
-  article {
+  .prose {
     --line-height: 1.5; /* Line height for the article. */
     --side-space: 2rem; /* Space on the left and right of the article on small screens. */
 
@@ -47,27 +40,22 @@ const url = Astro.url.pathname
   }
 
   /* Layout grid items in the centre column */
-  article > * {
+  .prose > * {
     grid-column: 2 / 3;
   }
 
   /* Add scroll padding to the top of all elements with an ID. */
-  [id] {
+  prose [id] {
     scroll-margin-top: 2ex;
   }
 
   /* ----------- Headings ----------- */
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  .prose :is(h1, h2, h3, h4, h5, h6) {
     font-variant-ligatures: common-ligatures discretionary-ligatures;
   }
 
-  h1 {
+  .prose h1 {
     font-size: 2.4em;
     font-weight: 500;
     font-variation-settings: 'opsz' 50;
@@ -75,20 +63,20 @@ const url = Astro.url.pathname
     margin-top: 1.5em;
   }
 
-  h2 {
+  .prose h2 {
     font-size: 1.93em;
     font-weight: 600;
     margin-top: 1em;
   }
 
-  h3 {
+  .prose h3 {
     font-size: 1.56em;
     font-weight: 600;
     margin-top: 1em;
     margin-bottom: -0.5em;
   }
 
-  h4 {
+  .prose h4 {
     font-size: 1.25em;
     font-weight: 600;
     text-transform: lowercase;
@@ -98,8 +86,7 @@ const url = Astro.url.pathname
     margin-bottom: -0.5em;
   }
 
-  h5,
-  h6 {
+  .prose :is(h5, h6) {
     font-size: 1em;
     font-weight: normal;
     font-style: italic;
@@ -108,13 +95,13 @@ const url = Astro.url.pathname
   }
 
   /* Remove top margin from headings that are immediatly preceeded by another heading or an HR */
-  :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
+  .prose :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
     margin-top: 0;
   }
 
   /* ----------- Paragraphs ----------- */
 
-  p {
+  .prose p {
     font-variant-numeric: oldstyle-nums diagonal-fractions;
     hanging-punctuation: first; /* Safari only */
 
@@ -124,16 +111,16 @@ const url = Astro.url.pathname
 
   /* Use hyphens only on small viewports. */
   @media (min-width: 42em) {
-    p {
+    .prose p {
       -webkit-hyphens: none;
       hyphens: none;
     }
   }
-  article > p:first-of-type {
+  .prose > p:first-of-type {
     margin-top: 3em;
   }
   /* First line of first para*/
-  article > p:not(.callout):first-of-type::first-line {
+  .prose > p:not(.callout):first-of-type::first-line {
     text-transform: lowercase;
     -webkit-hyphens: none;
     hyphens: none;
@@ -142,7 +129,7 @@ const url = Astro.url.pathname
   }
 
   /* End Mark */
-  article > p:not(.callout):last-of-type:after {
+  .prose > p:not(.callout):last-of-type:after {
     display: inline-block;
     content: ' ';
     -webkit-mask: url('/end-mark.svg');
@@ -158,7 +145,7 @@ const url = Astro.url.pathname
 
   /* Drop Cap */
 
-  article > p:not(.callout):first-of-type::first-letter {
+  .prose > p:not(.callout):first-of-type::first-letter {
     text-transform: uppercase;
     float: left;
     font-size: 4em;
@@ -168,67 +155,65 @@ const url = Astro.url.pathname
 
   /* ----------- Links ----------- */
 
-  a {
+  .prose a {
     color: inherit;
     text-decoration-color: var(--color-link-underline);
     text-decoration-thickness: 0.5px;
   }
 
-  a:visited {
+  .prose a:visited {
     text-decoration-color: var(--color-visited-link-underline);
   }
 
-  a:hover,
-  a:active {
+  .prose :is(a:hover, a:active) {
     text-decoration-color: var(--color-active-link-underline);
     color: var(--color-active-link-text);
   }
 
-  a:focus-visible {
+  .prose a:focus-visible {
     outline: 3px solid var(--color-red-trans50);
   }
 
   @media (pointer: coarse) {
-    a {
+    .prose a {
       text-decoration: none;
       color: var(--color-link-text);
     }
 
-    a:visited {
+    .prose a:visited {
       color: var(--color-visited-link-text);
     }
   }
 
-  h1 a {
+  .prose h1 a {
     text-decoration: none;
     color: inherit;
   }
 
   /* ----------- Lists ----------- */
 
-  li {
+  .prose li {
     padding-left: 1em;
     margin-top: 0.5em;
   }
-  li:first-of-type {
+  .prose li:first-of-type {
     margin-top: 0;
   }
 
-  ul,
-  ol {
+  .prose :is(ul, ol) {
     font-variant-numeric: oldstyle-nums diagonal-fractions;
   }
 
-  ul {
+  .prose ul {
     padding-left: 0.4em;
     list-style-type: '•';
   }
 
-  ol {
+  .prose ol {
     padding-left: 0.4em;
   }
 
-  ol ::marker {
+  .prose ol ::marker {
     font-size: 1.4ex;
     font-variation-settings: 'opsz' 10;
     font-weight: 500;
@@ -236,16 +221,16 @@ const url = Astro.url.pathname
 
   /* ----------- Task Lists ------------ */
 
-  .contains-task-list {
+  .prose .contains-task-list {
     list-style-type: none;
     padding-left: 0;
   }
 
-  .task-list-item {
+  .prose .task-list-item {
     padding-left: 0;
   }
 
-  .task-list-item input {
+  .prose .task-list-item input {
     position: relative;
     height: 0.7em;
     width: 0.7em;
@@ -261,12 +246,12 @@ const url = Astro.url.pathname
     border: 1px solid rgba(0, 0, 0, 0.4);
   }
 
-  .task-list-item input:checked {
+  .prose .task-list-item input:checked {
     color: var(--color-highlight);
     background: transparent;
   }
 
-  .task-list-item input:checked:before {
+  .prose .task-list-item input:checked:before {
     content: '\2713';
     position: absolute;
     top: -0.25em;
@@ -275,28 +260,27 @@ const url = Astro.url.pathname
     font-weight: 600;
   }
 
-  .task-list-item checinput[disabled] {
+  .prose .prose .task-list-item checinput[disabled] {
     opacity: 1;
   }
 
   /* ----------- Text Styles ----------- */
 
-  strong {
+  .prose strong {
     font-weight: 650;
   }
 
-  mark {
+  .prose mark {
     background: var(--color-text-highlight);
   }
 
-  del,
-  s {
+  .prose :is(del, s) {
     text-decoration-color: var(--color-highlight);
     font-weight: 300;
   }
 
   /* ----------- HR ----------- */
-  hr {
+  .prose hr {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -308,7 +292,7 @@ const url = Astro.url.pathname
     border: 1px solid rgba(0, 0, 0, 0.1);
   }
 
-  hr:before {
+  .prose hr:before {
     content: '§';
     transform: translateY(-0.15em);
     background: var(--color-background);
@@ -316,7 +300,7 @@ const url = Astro.url.pathname
   }
 
   /* ----------- Blockquotes ----------- */
-  blockquote {
+  .prose blockquote {
     font-variant-numeric: oldstyle-nums diagonal-fractions;
     border-left: 2px solid rgba(0, 0, 0, 0.2);
     padding-left: calc((1em * var(--line-height)) - 2px);
@@ -326,7 +310,7 @@ const url = Astro.url.pathname
 
   /* ----------- Abrr ----------- */
 
-  abbr {
+  .prose abbr {
     text-transform: lowercase;
     font-variant: small-caps;
 
@@ -338,13 +322,13 @@ const url = Astro.url.pathname
     text-underline-position: under;
   }
 
-  abbr[title] {
+  .prose abbr[title] {
     cursor: help;
   }
 
   /* ----------- Code ----------- */
 
-  code {
+  .prose code {
     font-size: 0.85em;
     padding: 0 0.5ch;
     background-color: rgba(0, 0, 0, 0.05);
@@ -354,14 +338,14 @@ const url = Astro.url.pathname
     font-variant-numeric: initial;
   }
 
-  pre {
+  .prose pre {
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     padding: calc((1em * var(--line-height)) - 2px);
     overflow-x: scroll;
   }
 
-  pre code {
+  .prose pre code {
     padding: 0;
     background-color: transparent;
     border: none;
@@ -369,7 +353,7 @@ const url = Astro.url.pathname
 
   /* ----------- Footnotes ----------- */
 
-  [data-footnote-ref] {
+  .prose [data-footnote-ref] {
     display: inline-block;
     padding-left: 0.5ch;
     padding-right: 0.5ch;
@@ -383,18 +367,18 @@ const url = Astro.url.pathname
 
   /* ----------- Bleeding out of the layout ----------- */
 
-  article > .bleed-left {
+  .prose > .bleed-left {
     grid-column: 1 / 3;
   }
-  article > .bleed-right {
+  .prose > .bleed-right {
     grid-column: 2 / 4;
   }
-  article > .bleed-full {
+  .prose > .bleed-full {
     grid-column: 1 / 4;
   }
 
   /* ----------- Images ----------- */
-  article > .border {
+  .prose > .border {
     border: 2px solid rgba(0, 0, 0, 0.5);
     padding: 1em;
   }
