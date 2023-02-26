@@ -1,17 +1,21 @@
 ---
 // Use this to wrap an article
 
+// Import Frontmatter type from astro
+
 export interface Props {
-  title: string
   url: string
+  frontmatter: {
+    title: string
+  }
 }
 
-const { title, url } = Astro.props
+const { frontmatter, url } = Astro.props
 ---
 
 <article class="prose">
   <h1 role="heading" aria-level="1">
-    <a href={url}>{title}</a>
+    <a href={url}>{frontmatter.title}</a>
   </h1>
   <slot />
 </article>

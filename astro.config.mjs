@@ -5,7 +5,6 @@ import image from "@astrojs/image";
 import prefetch from "@astrojs/prefetch";
 import sitemap from "@astrojs/sitemap";
 import rehypeSlug from "rehype-slug";
-import rehypeTOC from "rehype-toc";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 
@@ -24,7 +23,6 @@ export default defineConfig({
     rehypePlugins: [
       rehypeSlug,
       [rehypeAutolinkHeadings, { behavior: 'append' }],
-      // [rehypeTOC, { headings: ['h1', 'h2', 'h3'] }],
     ],
   },
 

@@ -2,19 +2,22 @@
 // Use this layout for articles, essays etc.
 
 import BaseLayout from './BaseLayout.astro'
-import {Article} from '@components/article'
+import {Article} from '@components/components'
 
 export interface Props {
   title: string
+  frontmatter: {
+    title: string
+  }
 }
 
-const { title } = Astro.props.frontmatter || Astro.props
+const { frontmatter } = Astro.props
 const url = Astro.url.pathname
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={frontmatter.title}>
   <main class="content" aria-label="Content">
-    <Article title={title} url={url}>
+    <Article frontmatter={frontmatter} url={url}>
       <slot />
     </Article>
   </main>
