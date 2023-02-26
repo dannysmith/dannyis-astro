@@ -1,0 +1,68 @@
+---
+export interface Props {
+  href: string
+}
+
+import { unfurl } from 'unfurl.js'
+
+const href = Astro.props.href
+const inline = Astro.props.inline || false
+
+const result = await unfurl(href)
+const {title, favicon, description} = result
+const originalCoverURL = result.open_graph.images[0].url
+
+// Check icon exists
+const iconTest = await fetch(favicon)
+let iconURL = favicon
+
+if (iconTest.status != 200) {
+  iconURL = '/notion-icon.svg'
+}
+
+// Check cover exists
+const coverTest = await fetch(originalCoverURL)
+let coverURL = originalCoverURL
+let cover = true
+
+if (coverTest.status != 200) {
+  coverURL = ''
+  cover == false
+}
+---
+
+<a class="notion-block" href={href}>
+  <div class="notion-block-cover">
+    <img class="cover-image" src={coverURL} />
+  </div>
+  <div class="notion-block-content">
+    <img class="icon-image" src={iconURL} />
+    <h3 class="notion-block-title">{title}</h3>
+    <p class="notion-block-description">{description}</p>
+  </div>
+</a>
+
+<style is:global>
+  :root {
+
+  }
+</style>
+
+<style>
+  .notion-block {
+    display: grid;
+    gap: 1rem;
+    background-color: teal;
+    border: 1px solud green;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .notion-block-content {
+    display: flex;
+  }
+
+  .icon-image {
+    height: 2rem;
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro'
+import { Notion, NotionBlock } from '@components/components'
 ---
 
 <BaseLayout title="Danny Smith">
@@ -11,5 +12,22 @@ import BaseLayout from '@layouts/BaseLayout.astro'
       eveniet ullam provident sunt ad deserunt distinctio illo repellat, porro
       corporis.
     </p>
+    <p>
+      <Notion href="https://oysterhr.notion.site/Welcome-to-The-Reef-Oyster-s-Open-Source-Employee-Guide-fc482e3f107c4afd8c85ed217f1d0c1d" />
+    </p>
+
+    <NotionBlock href="https://dannysmith.notion.site/Loom-4a6ebae015494adbbec07bf3f7912b03" />
+
   </main>
 </BaseLayout>
+
+<style>
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  p {
+    margin-bottom: 2em;
+  }
+</style>
