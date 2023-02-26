@@ -6,35 +6,91 @@ export interface Props {
 import { unfurl } from 'unfurl.js'
 
 const href = Astro.props.href
+const inline = Astro.props.inline || false
 
 const result = await unfurl(href)
-const {title, favicon} = result
+const {title, favicon, description} = result
+const coverImageURL = result.open_graph.images[0].url
 
-const imageTest = await fetch(favicon)
-let imageURL = favicon
+const iconTest = await fetch(favicon)
+let iconURL = favicon
 
-if (imageTest.status != 200) {
-  imageURL = '/notion-icon.png'
+if (iconTest.status != 200) {
+  iconURL = '/notion-icon.svg'
 }
+
+// Notion's Mention HTML/CSS
+// -------------------------
+// <a style="" contenteditable="false" class="notion-page-mention-token notion-text-mention-token notion-enable-hover" data-token-index="1" href="/A-Working-With-Me-Page-97b3df9b195341d9a67badd455cf9754">
+//     <span style="display:inline-block;margin-left:0.1em;margin-right:0.5em;width:1.2em;white-space:nowrap;position:relative">
+//       <span role="img" aria-label="🤝" style="font-family:&quot;Apple Color Emoji&quot;,&quot;Segoe UI Emoji&quot;,NotoColorEmoji,&quot;Noto Color Emoji&quot;,&quot;Segoe UI Symbol&quot;,&quot;Android Emoji&quot;,EmojiSymbols;line-height:1em;white-space:nowrap;font-size:1.2em">🤝</span>
+//       <svg viewBox="0 0 13 13" style="width:0.7em;height:0.7em;display:block;fill:rgba(55, 53, 47, 1);flex-shrink:0;-webkit-backface-visibility:hidden;position:absolute;right:-0.2em;bottom:0;stroke:white;stroke-width:1.5" class="pageLinkIndicator">
+//         <path d="M6.30826 4.43292L1.76184 8.98454C1.76176 8.98462 1.76169 8.9847 1.76161 8.98477C1.76158 8.9848 1.76156 8.98482 1.76154 8.98484C1.46068 9.28584 1.25 9.6914 1.25 10.1565C1.25 10.6117 1.45865 11.0119 1.73417 11.2886C2.01014 11.5658 2.41107 11.7773 2.87078 11.7773C3.34169 11.7773 3.73758 11.5617 4.03477 11.2733L4.03482 11.2734L4.04244 11.2657L8.58864 6.72474V8.667C8.58864 9.51956 9.22729 10.2935 10.1521 10.2935C11.0528 10.2935 11.75 9.54534 11.75 8.66127V2.92671C11.75 2.48722 11.5981 2.06381 11.2838 1.74808C10.9689 1.43182 10.5446 1.27728 10.1006 1.27728H4.36028C3.46161 1.27728 2.72804 1.97749 2.72804 2.86942C2.72804 3.79734 3.51104 4.43292 4.35455 4.43292H6.30826Z" fill="#3E3C38" stroke="white" stroke-width="1.5"></path>
+//       </svg>
+//     </span>
+//   <span style="border-bottom:0.05em solid rgba(55,53,47,0.25);font-weight:500" class="notion-page-mention-token__title">A Working With Me Page</span>
+// </a>
 ---
 
-<span class="notion-link">
-  <img class="icon" src={imageURL} />
-  <a class="title" href={href}>{title}</a>
-</span>
+<a class="notion-link" href={href}>
+  <span class="notion-icon">
+    <img class="icon-image" src={iconURL} />
+    <svg class="icon-arrow" viewBox="0 0 13 13">
+      <path d="M6.30826 4.43292L1.76184 8.98454C1.76176 8.98462 1.76169 8.9847 1.76161 8.98477C1.76158 8.9848 1.76156 8.98482 1.76154 8.98484C1.46068 9.28584 1.25 9.6914 1.25 10.1565C1.25 10.6117 1.45865 11.0119 1.73417 11.2886C2.01014 11.5658 2.41107 11.7773 2.87078 11.7773C3.34169 11.7773 3.73758 11.5617 4.03477 11.2733L4.03482 11.2734L4.04244 11.2657L8.58864 6.72474V8.667C8.58864 9.51956 9.22729 10.2935 10.1521 10.2935C11.0528 10.2935 11.75 9.54534 11.75 8.66127V2.92671C11.75 2.48722 11.5981 2.06381 11.2838 1.74808C10.9689 1.43182 10.5446 1.27728 10.1006 1.27728H4.36028C3.46161 1.27728 2.72804 1.97749 2.72804 2.86942C2.72804 3.79734 3.51104 4.43292 4.35455 4.43292H6.30826Z" fill="#3E3C38" stroke="white" stroke-width="1.5"></path>
+    </svg>
+  </span>
+  <span class="title">{title}</span>
+</a>
+
+<style is:global>
+  :root {
+    --notion-arrow-color: rgba(55, 53, 47, 1);
+    --notion-underline-color: rgba(55, 53, 47, 0.25);
+  }
+</style>
 
 <style>
   .notion-link {
     display: inline-block;
-    font-weight: 700;
-    padding: 0 0.25em;
+    vertical-align:top;
+    cursor: pointer;
+    color: inherit;
+    text-decoration: inherit;
+    transition: all 100ms ease-in;
+    margin-right: 0.2em;
+    margin-left: 0.2em;
   }
 
-  .icon {
-    display: inline;
-    width: 1.2em;
-    height: 1.2em;
-    margin-right: 0.2ch;
-    transform: translateY(0.25em);
+  .notion-icon {
+    display: inline-block;
+    margin-right: 0.3em;
+    width: 1.1em;
+    white-space:nowrap;
+    position:relative
+  }
+
+  .icon-image {
+    display: inline-block;
+    aspect-ratio: 1/1;
+    transform: translateY(0.2em);
+  }
+
+  .icon-arrow {
+    width:0.7em;
+    height:0.7em;
+    display:block;
+    fill: var(--notion-arrow-color);
+    flex-shrink:0;
+    -webkit-backface-visibility:hidden;
+    position:absolute;
+    right:-0.2em;
+    bottom:0;
+    stroke:white;
+    stroke-width:1.5
+  }
+
+  .title {
+    border-bottom:0.05em solid var(--notion-underline-color);
+    font-weight:500
   }
 </style>
