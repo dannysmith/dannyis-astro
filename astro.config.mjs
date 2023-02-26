@@ -4,6 +4,10 @@ import mdx from "@astrojs/mdx";
 import image from "@astrojs/image";
 import prefetch from "@astrojs/prefetch";
 import sitemap from "@astrojs/sitemap";
+import rehypeSlug from "rehype-slug";
+import rehypeTOC from "rehype-toc";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,4 +20,12 @@ export default defineConfig({
     prefetch(),
     sitemap()
   ],
+  markdown: {
+    rehypePlugins: [
+      rehypeSlug,
+      [rehypeAutolinkHeadings, { behavior: 'append' }],
+      // [rehypeTOC, { headings: ['h1', 'h2', 'h3'] }],
+    ],
+  },
+
 });

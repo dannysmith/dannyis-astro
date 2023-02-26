@@ -19,6 +19,9 @@
     "astro": "^2.0.15",
     "install": "^0.13.0",
     "npm": "^9.5.1",
+    "rehype-autolink-headings": "^6.1.1",
+    "rehype-slug": "^5.1.0",
+    "rehype-toc": "^3.0.2",
     "sharp": "^0.31.3",
     "unfurl.js": "^6.2.0"
   }
