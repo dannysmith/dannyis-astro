@@ -30,7 +30,7 @@ This is an evolution on my personal site. The [previous version](https://github.
 │   |   └── writing/
 |   |       ├── my-article.mdx
 |   |       ├── my-other-article.md
-|   |       └── my-fancy-custom-magazine-article.astro
+|   |       └── my-fancy-custom-magazine-essay.astro
 │   ├── components/
 │   │   └── Card.astro
 │   ├── layouts/
