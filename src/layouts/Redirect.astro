@@ -1,0 +1,35 @@
+---
+// Use this to redirect to exiernal articles.
+
+import '../styles/global.css'
+
+import Spinner from '@components/Spinner.astro'
+
+const { redirect_to, title } = Astro.props.frontmatter
+const url = '2;url=' + redirect_to
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta http-equiv="refresh" content={url} />
+
+    <title>{title}</title>
+  </head>
+  <body>
+    <Spinner size="5rem" />
+  </body>
+</html>
+
+<style>
+  body {
+    min-height: 100vh;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+  }
+</style>
