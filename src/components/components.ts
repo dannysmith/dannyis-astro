@@ -2,5 +2,6 @@
 
 import Article from './Article.astro';
 import Notion from './Notion.astro';
+import MyLinks from './MyLinks.astro';
 
-export {Article, Notion};
+export {Article, Notion, MyLinks};
