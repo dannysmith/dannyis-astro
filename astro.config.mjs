@@ -8,7 +8,12 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
   site: "https://danny.is",
-  integrations: [mdx(), image({
-    serviceEntryPoint: '@astrojs/image/sharp'
-  }), prefetch(), sitemap()]
+  integrations: [
+    mdx(),
+    image({
+      serviceEntryPoint: '@astrojs/image/sharp'
+    }),
+    prefetch(),
+    sitemap()
+  ],
 });
