@@ -3,12 +3,20 @@ title: Website Redesign Part XI - Code Blocks and Section Rules
 layout: '@layouts/Article.astro'
 ---
 
+import { Image } from '@astrojs/image/components'
+
+import image1 from '@uploads/2020-06-28-ligatures.png'
+import image2 from '@uploads/2020-06-28-typographics.png'
+import image3 from '@uploads/2020-06-28-stylistic-sets.png'
+import image4 from '@uploads/2020-06-28-codeblocks-screenshot.png'
+import image5 from '@uploads/2020-06-28-hr.png'
+
 I spent a long time deciding on a typeface for these essays and I don't want to spend nearly as long on code snippets. Although this series involves a lot of code snippets, I generally write about code a lot less than I used to, so it doesn't make sense to spend ages on this. I use the wonderful [Operator Mono](https://www.typography.com/blog/introducing-operator) in my text editor and I briefly considered paying for a web license so I could use it here too. But while _I_ love it, it's quite unusual and is definitely not suited to everyone's taste. Both the typeface itself and the act of buying a web license are the opposite of simple, one of my stated values for this site. So instead, I'll stick with the same requirements I used before: open source, ideally with variable and static versions, with nice ligatures and a range of weights.
 
 The first thing that came to mind was Fira Code, an extension of Mozilla's Fira Mono which was designed specifically for legibility. Fira Code adds a bunch of ligatures for character combinations commonly used in programming, as well as making a few adjustments to make code more readable.
 
-![Fira Code Ligature Sample](/uploads/2020-06-28-ligatures.png)
-![Fira Code Typography Sample](/uploads/2020-06-28-typographics.png)
+<Image src={image1} alt="Fira Code Ligature Sample" />
+<Image src={image2} alt="Fira Code Typography Sample" />
 
 ## The CSS
 
@@ -37,7 +45,7 @@ code {
 
 Fira code has a bunch of other features like this
 
-![Fira Code Stylistic Settings](/uploads/2020-06-28-stylistic-sets.png)
+<Image src={image3} alt="Fira Code Stylistic Settings" />
 
 ### Styling inline code
 
@@ -73,7 +81,7 @@ pre {
 }
 ```
 
-![Screenshot of code block](/uploads/2020-06-28-codeblocks-screenshot.png)
+<Image src={image4} alt="Screenshot of code block" />
 
 The final thing to do is add syntax highlighting. Since we're using Jekyll, any fenced code blocks that have a language defined on them will use [Rouge](http://rouge.jneen.net/) to apply syntax-highlighing classes in the same way [Pygments](https://pygments.org/) does. This means we can take an existing theme stylesheet and include it in our bundle. I used [this one](https://github.com/jwarby/jekyll-pygments-themes/blob/master/colorful.css) and tweaked a few of the colours slightly. I'll come back to this once I have a colour palette for the site.
 
@@ -83,7 +91,7 @@ The final thing to do is add syntax highlighting. Since we're using Jekyll, any 
 
 I've always liked the section mark (§) and thought it might be nice to superimpose this on horizontal rules. The code for this is pretty simple – we'll add a psuedo-element containing the mark and use flexbox to position the hr and psuedo element on top of each other. A bit of padding and a background on the psuedo element creates a gap in the line, and a little nudging with `translateY` vertically centres the mark.
 
-![Horizontal Rule](/uploads/2020-06-28-hr.png)
+<Image src={image5} alt="Horizontal Rule" />
 
 ```scss
 .essay hr {

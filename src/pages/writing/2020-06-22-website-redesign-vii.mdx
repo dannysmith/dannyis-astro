@@ -3,6 +3,12 @@ title: Website Redesign Part VII - Responsive Typography
 layout: '@layouts/Article.astro'
 ---
 
+import { Image } from '@astrojs/image/components'
+import image1 from '@uploads/2020-06-21-baseline1.png'
+import image2 from '@uploads/2020-06-21-baseline2.png'
+import image3 from '@uploads/2020-06-21-baseline-margins.png'
+import image4 from '@uploads/2020-06-22-heading-type.png'
+
 Having settled on a typeface for my essays, it's time to set up some basic typography. In the past, I've spent a lot of time building maths-based ype systems with myriad variables and functions and it's so tempting to go down that route this time and try to create a system that caters to every eventuality. But that would be at odds with my **simplicity** value, so for the time being I'll stick to the basics. We're going to set up a base font size and line height and scale that as the viewport grows. We'll also add just enough whitespace to create a nice vertical rhythm and create some visual hierachy by styling the headings. Everything else can wait.
 
 ## Base font-size
@@ -62,14 +68,14 @@ $breakpoint-m: 42em;
 
 The main purpose of a baseline grid is, unsusprisingly, **aligning the baselines of text**. This makes a huge difference when we have multiple columns of text with differing fonts, sizes and the like.
 
-![Example 1: aligning text to a baseline ](/uploads/2020-06-21-baseline1.png)
-![Example 2: aligning text to a baseline ](/uploads/2020-06-21-baseline2.png)
+<Image src={image1} alt="Example 1: aligning text to a baseline" />
+<Image src={image2} alt="Example 2: aligning text to a baseline" />
 
 While this makes a huge difference to the feel of a page, the fluid nature of web pages (and the way line-height works) makes this quite hard to do consistently. We can avoid this problem entirely by only having one column.
 
 But baseline grids can also provide a sense of vertical rhythm – something we can do on the web without too much effort. We just need to work out how high each of our lines is and use multiples of that measurement to space things out vertically. (It can also make a good measurement for horizontal spacing.)
 
-![Example: spacing with a baseline grid](/uploads/2020-06-21-baseline-margins.png)
+<Image src={image3} alt="Example: spacing with a baseline grid" />
 
 For the time being, we'll keep our vertical rhythm super simple. First, we'll remove all top and bottom margins - I've chosen to do this in my base stylesheet rather than just for the essays. Then we'll set up a custom property to hold our base line-height and use that to set the line-height for all the elements in the essay container.
 
@@ -117,7 +123,7 @@ Looking through my articles I dont't tend to use H1s very often at all, apart fr
 
 With this in mind, it makes sense to keep things super-simple. Here's what I initially settled on...
 
-![Screenshot of headings](/uploads/2020-06-22-heading-type.png)
+<Image src={image4} alt="Screenshot of headings" />
 
 Aside from H1s, all are set at the same size as the body copy. Five and Six are styled identically in italic with the same weight and margins as paragraphs. Four is set in small-caps with a semibold weight, again with the same margin as paragraphs. Three and Two are both set in bold with a bigger top margin, two being differentiated by being uppercase.
 

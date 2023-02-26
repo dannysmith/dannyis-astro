@@ -3,6 +3,11 @@ title: Website Redesign Part I - The Tech
 layout: '@layouts/Article.astro'
 ---
 
+import { Image } from '@astrojs/image/components'
+
+import image1 from '@uploads/2020-03-17-airtable1.png'
+import image2 from '@uploads/2020-03-17-airtable2.png'
+
 Over the years, this website has taken many forms. Initially, it was a Wordpress blog. Then is was a hand-rolled Sinatra app that rendered markdown pages. More recently I've blogged on Medium and at the time of writing, my website is a much simpler Sinatra app.
 
 A few months ago I had an ongoing problem with medium which lasted about three months. I got a new Monzo card and medium couldn't charge it. Although none of my articles were behind the paywall, it did mean that I couldn't read other people's paywalled articles. And even though I was happy to pay, I **couldn't**. Eventually, after many many emails between me, Monzo and Medium, I involved Medium's payment processor Stipe. Turns out that the problem was some bad data on their end. We resolved it, but only because I knew about stripe.
@@ -66,8 +71,8 @@ But I definitely want to retain the likes from Pocket and Medium. I don't want t
 
 Enter Airtable. I can have IFTTT create a record in Airtable whenever I clap for a medium article or archive a pocket item.
 
-![Airtable Screenshot](/uploads/2020-03-17-airtable1.png)
-![Airtable Screenshot](/uploads/2020-03-17-airtable2.png)
+<Image src={image1} alt="Airtable screenshot" />
+<Image src={image2} alt="Airtable screenshot" />
 
 Although this means I'm dependant on Airtable for this part of my website, I'm okay with that because it's not a core part of my site: if airtable goes down or kill my account then 🤷‍♂️. The advantages well outweigh the overhead of managing my own server and database. Also...
 

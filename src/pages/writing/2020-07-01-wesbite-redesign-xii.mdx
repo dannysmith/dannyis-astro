@@ -3,13 +3,16 @@ title: Website Redesign Part XII - Responsive Images
 layout: '@layouts/Article.astro'
 ---
 
+import { Image } from '@astrojs/image/components'
+import image from '@uploads/2020-07-02-hot-air-baloon.jpg'
+
 The last time I built a content-heavy website, responsive images weren't really a thing. In fact they were a definite problem for most developers. We could control the visual size of an image with percentage widths and media queries, but we had no easy way of controlling the actual image used by the browser. The easiest thing to do was just supply a very big high-res image that would look good on wide viewports and accept that smaller viewport devices would end up downloading a file with more detail than they could use.
 
 The last time I gave any real attention to this problem I was working on a site with a lot of high-res background images. I dealt with it in three ways. Firstly, I used a jpeg that was too big for even the largest viewport, but with JPEG compression turned all the way up. This was then scaled down with CSS. This actually _reduced_ the file size, and generally looked pretty good – even on new-fangled retina screens[^1].
 
 Secondly, I spent ages blurring parts of the image in photoshop. The idea was that the fewer individual colours there were in the JPEG, the smaller the filesize. Take a look at this photo:
 
-![Hot air ballon in the sky](/uploads/2020-07-02-hot-air-baloon.jpg)
+<Image src={image} alt="Hot air ballon in the sky" />
 
 There are probably hundreds of different shades of blue and grey in the sky, each one taking up bytes in the JPEG. By blurring the sky as much as possible, we end up with far fewer shades of blue and so reduce the filesize. Doing this was a pain in the arse.
 
@@ -162,11 +165,11 @@ For now, this feels like an acceptable trade-off, but if I find myself adding mo
 
 While we're on the subject of images, I've also added a few utility classes to make my images a little more interesting. Normal images are constrained to the width of the element they appear in, like this:
 
-![Hot air ballon in the sky](/uploads/2020-07-02-hot-air-baloon.jpg)
+<Image src={image} alt="Hot air ballon in the sky" />
 
 But sometimes I want full-bleed images that extend out to the edges of the viewport, like this:
 
-![Hot air ballon in the sky](/uploads/2020-07-02-hot-air-baloon.jpg)
+<Image src={image} alt="Hot air ballon in the sky" class="bleed-full" />
 
 We can do this with a utility class and some `calc()` magic.
 
@@ -225,13 +228,13 @@ As well as full bleed, I've also added classes for left and right bleed
 
 Donec feugiat sagittis velit non molestie. Nullam mattis erat eget elit faucibus, ac tincidunt ligula bibendum. Suspendisse potenti. Nunc et aliquet nunc.
 
-![Hot air ballon in the sky](/uploads/2020-07-02-hot-air-baloon.jpg)
+<Image src={image} alt="Hot air ballon in the sky" class="bleed-left" />
 
 ### An image at right-bleed
 
 Donec feugiat sagittis velit non molestie. Nullam mattis erat eget elit faucibus, ac tincidunt ligula bibendum. Suspendisse potenti. Nunc et aliquet nunc.
 
-![Hot air ballon in the sky](/uploads/2020-07-02-hot-air-baloon.jpg)
+<Image src={image} alt="Hot air ballon in the sky" class="bleed-right" />
 
 ## Summing up
 
