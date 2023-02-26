@@ -1,4 +1,7 @@
 ---
+
+import { Image } from '@astrojs/image/components'
+
 export interface Props {
   href: string
 }
@@ -33,10 +36,10 @@ if (coverTest.status != 200) {
 
 <a class="notion-block" href={href}>
   <div class="notion-block-cover">
-    <img class="cover-image" src={coverURL} />
+    <Image class="cover-image" src={coverURL} width="1000" aspectRatio="16:9"/>
   </div>
   <div class="notion-block-content">
-    <img class="icon-image" src={iconURL} />
+    <Image class="icon-image" src={iconURL} width="100" height="100"/>
     <h3 class="notion-block-title">{title}</h3>
     <p class="notion-block-description">{description}</p>
   </div>
