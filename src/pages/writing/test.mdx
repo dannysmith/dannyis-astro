@@ -1,0 +1,21 @@
+---
+title: Test
+layout: '@layouts/Article.astro'
+---
+
+import { Image } from '@astrojs/image/components'
+import MyLinks from '@components/MyLinks.astro'
+
+import image1 from '@uploads/2020-08-13-headers1.png'
+import image2 from '@uploads/2020-08-13-headers2.png'
+import image3 from '@uploads/2020-08-13-headers3.png'
+import image4 from '@uploads/2020-08-13-headers4.png'
+import image5 from '@uploads/2020-08-13-footers1.png'
+import image6 from '@uploads/2020-08-13-footers-final.png'
+
+### The Article Header
+
+Here are a few ideas I played around with for the header.
+
+<Image src={image1} alt="alt" />
+<MyLinks />
