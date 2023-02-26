@@ -1,16 +1,15 @@
 ---
-
 import { Image } from '@astrojs/image/components'
+import { unfurl } from 'unfurl.js'
 
 export interface Props {
   href: string
 }
 
-import { unfurl } from 'unfurl.js'
-
 const href = Astro.props.href
 const inline = Astro.props.inline || false
 
+// Umnfurl link
 const result = await unfurl(href)
 const {title, favicon, description} = result
 const originalCoverURL = result.open_graph.images[0].url
@@ -30,7 +29,7 @@ let cover = true
 
 if (coverTest.status != 200) {
   coverURL = ''
-  cover == false
+  cover = false
 }
 ---
 
