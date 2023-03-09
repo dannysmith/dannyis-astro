@@ -1,0 +1,23 @@
+---
+export interface Props {
+  columns?: number
+  rows?: number
+  gap?: string
+}
+const columns = Astro.props.columns || 2
+const rows = Astro.props.rows || 1
+const gap = Astro.props.gap || '1rem'
+---
+
+<div class="wrapper">
+  <slot />
+</div>
+
+<style define:vars={{ columns, rows, gap }}>
+  .wrapper {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+    grid-gap: var(--gap);
+  }
+</style>
