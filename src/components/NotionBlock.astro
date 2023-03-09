@@ -41,12 +41,7 @@ if (faviconExists) {
     {
       coverExists && (
         <div class="cover">
-          <img
-            class="cover-image"
-            src={coverURL}
-            width="1000"
-            aspectRatio="16:9"
-          />
+          <img class="cover-image" src={coverURL} width="1000" />
         </div>
       )
     }
@@ -84,6 +79,11 @@ if (faviconExists) {
   .link:hover {
     cursor: pointer;
     color: inherit !important; /* TODO */
+  }
+
+  .cover img {
+    aspect-ratio: 16 / 7;
+    object-fit: cover;
   }
 
   .content {
