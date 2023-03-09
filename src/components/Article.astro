@@ -55,11 +55,11 @@ const { frontmatter, url } = Astro.props
 
   /* ----------- Headings ----------- */
 
-  .prose :is(h1, h2, h3, h4, h5, h6) {
+  .prose > :is(h1, h2, h3, h4, h5, h6) {
     font-variant-ligatures: common-ligatures discretionary-ligatures;
   }
 
-  .prose h1 {
+  .prose > h1 {
     font-size: 2.4em;
     font-weight: 500;
     font-variation-settings: 'opsz' 50;
@@ -67,20 +67,20 @@ const { frontmatter, url } = Astro.props
     margin-top: 1.5em;
   }
 
-  .prose h2 {
+  .prose > h2 {
     font-size: 1.93em;
     font-weight: 600;
     margin-top: 1em;
   }
 
-  .prose h3 {
+  .prose > h3 {
     font-size: 1.56em;
     font-weight: 600;
     margin-top: 1em;
     margin-bottom: -0.5em;
   }
 
-  .prose h4 {
+  .prose > h4 {
     font-size: 1.25em;
     font-weight: 600;
     text-transform: lowercase;
@@ -90,7 +90,7 @@ const { frontmatter, url } = Astro.props
     margin-bottom: -0.5em;
   }
 
-  .prose :is(h5, h6) {
+  .prose > :is(h5, h6) {
     font-size: 1em;
     font-weight: normal;
     font-style: italic;
@@ -99,13 +99,13 @@ const { frontmatter, url } = Astro.props
   }
 
   /* Remove top margin from headings that are immediatly preceeded by another heading or an HR */
-  .prose :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
+  .prose > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
     margin-top: 0;
   }
 
   /* ----------- Paragraphs ----------- */
 
-  .prose p {
+  .prose > p {
     font-variant-numeric: oldstyle-nums diagonal-fractions;
     hanging-punctuation: first; /* Safari only */
 
@@ -115,7 +115,7 @@ const { frontmatter, url } = Astro.props
 
   /* Use hyphens only on small viewports. */
   @media (min-width: 42em) {
-    .prose p {
+    .prose > p {
       -webkit-hyphens: none;
       hyphens: none;
     }
@@ -163,19 +163,22 @@ const { frontmatter, url } = Astro.props
     color: inherit;
     text-decoration-color: var(--color-link-underline);
     text-decoration-thickness: 0.5px;
+    border-radius: 0.1em;
   }
 
   .prose a:visited {
     text-decoration-color: var(--color-visited-link-underline);
   }
 
-  .prose :is(a:hover, a:active) {
+  .prose a:hover,
+  .prose a:active {
     text-decoration-color: var(--color-active-link-underline);
     color: var(--color-active-link-text);
   }
 
   .prose a:focus-visible {
     outline: 3px solid var(--color-red-trans50);
+    text-decoration: none;
   }
 
   @media (pointer: coarse) {

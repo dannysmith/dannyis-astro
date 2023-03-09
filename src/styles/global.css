@@ -22,6 +22,8 @@
   --color-active-link-underline: var(--color-highlight);
   --color-active-link-text: var(--color-highlight);
 
+  --color-card-border: rgba(0, 0, 0, 0.1);
+  --color-card-background: white;
 
   /*  Fonts */
   --font-ui: 'Jost Variable', 'Jost', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -104,8 +106,9 @@ body {
 
 /* ------------- Link Defaults ------------- */
 a {
-  transition: all 0.25s;
-  color: inherit;
+  transition-property: color;
+  transition-duration: .3s;
+  transition-timing-function: ease-in-out;
 }
 
 
