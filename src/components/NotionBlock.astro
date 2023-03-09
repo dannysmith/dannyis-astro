@@ -1,5 +1,4 @@
 ---
-import { Image } from '@astrojs/image/components'
 import { unfurl } from 'unfurl.js'
 
 export interface Props {
@@ -7,66 +6,121 @@ export interface Props {
 }
 
 const href = Astro.props.href
-const inline = Astro.props.inline || false
 
-// Umnfurl link
 const result = await unfurl(href)
-const {title, favicon, description} = result
-const originalCoverURL = result.open_graph.images[0].url
+const { title, favicon, description } = result
+let faviconExists = false
+let coverExists = false
+let faviconURL: string
 
-// Check icon exists
-const iconTest = await fetch(favicon)
-let iconURL = favicon
+const coverURL = result.open_graph.images?.[0]?.url
 
-if (iconTest.status != 200) {
-  iconURL = '/notion-icon.svg'
+if (coverURL) {
+  const coverResponse = await fetch(coverURL)
+  if (coverResponse?.status == 200) {
+    coverExists = true
+  }
 }
 
-// Check cover exists
-const coverTest = await fetch(originalCoverURL)
-let coverURL = originalCoverURL
-let cover = true
+if (favicon) {
+  const faviconResponse = await fetch(favicon)
+  if (faviconResponse?.status == 200) {
+    faviconExists = true
+  }
+}
 
-if (coverTest.status != 200) {
-  coverURL = ''
-  cover = false
+if (faviconExists) {
+  faviconURL = favicon
+} else {
+  faviconURL = '/notion-icon.svg'
 }
 ---
 
-<a class="notion-block" href={href}>
-  <div class="notion-block-cover">
-    {/*<Image class="cover-image" src={coverURL} width="1000" aspectRatio="16:9"/>*/}
-    <img class="cover-image" src={coverURL} width="1000" aspectRatio="16:9"/>
-  </div>
-  <div class="notion-block-content">
-    {/*<Image class="icon-image" src={iconURL} width="100" height="100"/>*/}
-    <img class="icon-image" src={iconURL} width="100" height="100"/>
-    <h3 class="notion-block-title">{title}</h3>
-    <p class="notion-block-description">{description}</p>
-  </div>
-</a>
-
-<style is:global>
-  :root {
-
-  }
-</style>
+<div class="wrapper">
+  <a class="link" href={href}>
+    {
+      coverExists && (
+        <div class="cover">
+          <img
+            class="cover-image"
+            src={coverURL}
+            width="1000"
+            aspectRatio="16:9"
+          />
+        </div>
+      )
+    }
+    <div class="content">
+      <div class="title">
+        <img class="icon-image" src={faviconURL} width="100" height="100" />
+        <h3>{title}</h3>
+      </div>
+      <p>{description}</p>
+    </div>
+  </a>
+</div>
 
 <style>
-  .notion-block {
-    display: grid;
-    gap: 1rem;
-    background-color: teal;
-    border: 1px solud green;
+  .wrapper {
+    container-type: inline-size; /* Only care about width */
+    background-color: var(--color-card-background);
+    border: 1px solid var(--color-card-border);
     border-radius: 5px;
     overflow: hidden;
+    transition: box-shadow 0.2s ease-in-out;
   }
 
-  .notion-block-content {
-    display: flex;
+  .wrapper:hover {
+    box-shadow: 0 0 5px 1px var(--color-card-border);
+  }
+
+  .link {
+    --gap: 1rem;
+
+    all: initial;
+    font-family: var(--font-ui);
+  }
+
+  .link:hover {
+    cursor: pointer;
+    color: inherit !important; /* TODO */
+  }
+
+  .content {
+    display: grid;
+    gap: var(--gap);
+    padding: var(--gap);
+  }
+
+  .title {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr;
+    gap: var(--gap);
+    align-items: top;
+    font-size: 1rem;
+    padding-bottom: var(--gap);
+    border-bottom: 1px solid var(--color-card-border);
   }
 
   .icon-image {
-    height: 2rem;
+    padding-top: 0.1em;
+  }
+
+  @container (min-width: 30rem) {
+    .link {
+      --gap: 2rem;
+    }
+    .title {
+      grid-template-columns: 2rem 1fr;
+      font-size: 1.3rem;
+    }
+  }
+
+  h3 {
+    /* Truncate after two lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 </style>

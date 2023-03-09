@@ -3,5 +3,6 @@
 import Article from './Article.astro';
 import Notion from './Notion.astro';
 import NotionBlock from './NotionBlock.astro';
+import Grid from './Grid.astro';
 
-export {Article, Notion, NotionBlock};
+export {Article, Notion, NotionBlock, Grid};
