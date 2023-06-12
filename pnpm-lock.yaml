@@ -31,6 +31,9 @@ dependencies:
   rehype-slug:
     specifier: ^5.1.0
     version: 5.1.0
+  rollup:
+    specifier: ^3.0.0
+    version: 3.25.1
   sharp:
     specifier: ^0.31.3
     version: 0.31.3
