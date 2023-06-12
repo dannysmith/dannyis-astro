@@ -386,7 +386,11 @@ const { frontmatter, url } = Astro.props
 
   /* ----------- Images ----------- */
   .prose > .border {
-    border: 2px solid rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--color-card-background);
     padding: 1em;
+    background-color: var(--color-card-background);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1);
   }
 </style>

@@ -25,5 +25,10 @@ export default defineConfig({
       [rehypeAutolinkHeadings, { behavior: 'append' }],
     ],
   },
-
+  experimental: {
+      redirects: true,
+    },
+  redirects: {
+    '/meeting': 'https://dannysmith.notion.site/Book-a-Meeting-with-Danny-e39fc8def5514b67b559b2e5a51934ae?pvs=4'
+  }
 });

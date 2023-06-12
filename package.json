@@ -16,7 +16,7 @@
     "@astrojs/prefetch": "^0.1.2",
     "@astrojs/sitemap": "^1.1.0",
     "@netlify/functions": "^1.4.0",
-    "astro": "^2.0.15",
+    "astro": "^2.6.3",
     "install": "^0.13.0",
     "npm": "^9.5.1",
     "rehype-autolink-headings": "^6.1.1",
