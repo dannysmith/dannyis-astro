@@ -133,7 +133,7 @@ We need to add a dark mode to the site, controllable via CSS variables. The foot
 - [ ] Review all UI type & colours for consistency and colour
 - [ ] Change Blog Posts to be called Article everywhere
 - [ ] Reorganise components into folders:
-  - Atomic UI (pill, spinner, FormattedDate etc)
+  - UI Atoms (pill, spinner, FormattedDate etc)
   - For use in MDX and prose (Embed, Grid, Loom, Notion, Callout etc)
   - UI Modules (NoteCard, NavLink, MainNavigation, LightBox, Footer, BaseHead etc)
 - [ ] Check all metadata, titles & descriptions work properly for SEO and OG embedding
@@ -144,7 +144,7 @@ We need to add a dark mode to the site, controllable via CSS variables. The foot
 - [ ] Check sitemap generates properly
 - [ ] Add [Simply Analytics](https://www.simpleanalytics.com/)
 - [ ] Add to Google Tag Manager
-- [ ] Manually test all pageson multiple devices and browsers
+- [ ] Manually test all pages on multiple devices and browsers
   - [ ] Chrome/Arc macOS
   - [ ] Firefox macOS
   - [ ] Safari macOS
