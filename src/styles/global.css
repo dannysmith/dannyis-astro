@@ -17,6 +17,7 @@
 
 /* CSS Custom Properties - these need to be outside layers as they're declarations */
 :root {
+  /* Palette: base color tokens, never used directly in components */
   --color-black: #191919;
   --color-true-black: #000000;
 
@@ -147,6 +148,30 @@
   --prose-link-color: var(--color-red-500);
   --prose-link-visited-color: var(--color-purple-600);
   --prose-link-hover-color: var(--color-red-600);
+
+  /* --- SEMANTIC VARIABLES --- */
+  /* Use these in all components/layouts. Only these are overridden for dark mode. */
+  --color-bg-primary: var(--c-beige-bg);
+  --color-bg-secondary: var(--color-bg-light-200);
+  --color-bg-tertiary: var(--color-bg-light-300);
+  --color-text-primary: var(--color-grey-800);
+  --color-text-secondary: var(--color-grey-700);
+  --color-text-inverse: var(--c-white);
+  --color-border: var(--color-grey-300);
+  --color-link: var(--color-red-500);
+  --color-link-visited: var(--color-purple-600);
+  --color-link-hover: var(--color-red-600);
+  --color-accent: var(--c-primary);
+  --color-code-bg: var(--code-background-color);
+  --color-code-border: var(--code-border-color);
+  --color-table-border: var(--table-border-color);
+  /* Prose/typography */
+  --prose-link-color: var(--color-link);
+  --prose-link-visited-color: var(--color-link-visited);
+  --prose-link-hover-color: var(--color-link-hover);
+  --prose-blockquote-border-color: var(--color-accent);
+  --prose-heading-underline-color: var(--color-accent);
+  /* ... add more as needed ... */
 }
 
 /* Reset Layer */
@@ -494,3 +519,35 @@
   content: '#';
   display: block;
 }
+
+/* --- DARK MODE OVERRIDES --- */
+[data-theme='dark'] {
+  /* Only override semantic variables here */
+  --color-bg-primary: var(--color-bg-dark-100);
+  --color-bg-secondary: var(--color-bg-dark-200);
+  --color-bg-tertiary: var(--color-bg-dark-300);
+  --color-text-primary: var(--color-grey-300);
+  --color-text-secondary: var(--color-grey-500);
+  --color-text-inverse: var(--color-black);
+  --color-border: var(--color-grey-700);
+  --color-link: var(--color-yellow-500);
+  --color-link-visited: var(--color-purple-400);
+  --color-link-hover: var(--color-yellow-600);
+  --color-accent: var(--color-yellow-500);
+  --color-code-bg: rgba(255, 255, 255, 0.05);
+  --color-code-border: rgba(255, 255, 255, 0.1);
+  --color-table-border: rgba(255, 255, 255, 0.05);
+  /* Prose/typography */
+  --prose-link-color: var(--color-link);
+  --prose-link-visited-color: var(--color-link-visited);
+  --prose-link-hover-color: var(--color-link-hover);
+  --prose-blockquote-border-color: var(--color-accent);
+  --prose-heading-underline-color: var(--color-accent);
+  /* ... add more as needed ... */
+}
+
+/* --- DOCUMENTATION --- */
+/*
+Palette variables: raw color values, never used directly in UI. Only used to define semantic variables.
+Semantic variables: mapped to palette, used everywhere in UI. Only these are overridden for dark mode.
+*/
