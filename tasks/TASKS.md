@@ -4,7 +4,7 @@
 
 We need to add a dark mode to the site, controllable via CSS variables. The footer and main Navigation are already "dark" so don't need changing. The other pages and components need updating to use decent dark mode colours though. We need to keep this as simple as possible and make it very easy to include both light and dark colours when developing new pages and components.
 
-## Requirements
+## Notes on Requirements
 
 - Identify the colours which will need to be changed for dark mode, both in `global.css` and in layouts and components.
 - Ensure all colours are set using CSS variables set on `:root` and are appropriatly named after their function (ie we're not _directly_ using the actual colour variables).
@@ -116,7 +116,9 @@ Let's also use this as a chance to double-check our font sizes, weights and padd
 
 ## Task 2: Run some audits & tidy up
 
+- [ ] Set up Claude Code in project
 - [ ] Change Blog Posts to be called Article everywhere
+- [ ] Ensure all external links are `target="_blank"`
 - [ ] Reorganise components into folders:
   - UI Atoms (pill, Spinner, FormattedDate etc)
   - For use in MDX and prose (Embed, Grid, Loom, Notion, Callout etc)
