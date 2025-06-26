@@ -77,3 +77,86 @@ if (image) {
   href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap"
   rel="stylesheet"
 />
+
+<!-- Theme Management Script (must be inline to prevent flash) -->
+<script is:inline>
+(function() {
+  // Theme management API
+  const themes = ['auto', 'light', 'dark'];
+  
+  function getSystemTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  
+  function getStoredTheme() {
+    try {
+      return localStorage.getItem('theme');
+    } catch {
+      return null;
+    }
+  }
+  
+  function setStoredTheme(theme) {
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      // Silently fail if localStorage is not available
+    }
+  }
+  
+  function getResolvedTheme(theme = getCurrentTheme()) {
+    return theme === 'auto' ? getSystemTheme() : theme;
+  }
+  
+  function getCurrentTheme() {
+    return getStoredTheme() || 'auto';
+  }
+  
+  function applyTheme(resolvedTheme) {
+    document.documentElement.setAttribute('data-theme', resolvedTheme);
+    document.documentElement.style.colorScheme = resolvedTheme;
+  }
+  
+  function setTheme(newTheme) {
+    if (!themes.includes(newTheme)) return;
+    
+    setStoredTheme(newTheme);
+    const resolvedTheme = getResolvedTheme(newTheme);
+    applyTheme(resolvedTheme);
+    
+    // Dispatch custom event for components to listen to
+    document.dispatchEvent(new CustomEvent('theme-changed', {
+      detail: { theme: newTheme, resolvedTheme }
+    }));
+  }
+  
+  // Initialize theme on page load
+  function initTheme() {
+    const currentTheme = getCurrentTheme();
+    const resolvedTheme = getResolvedTheme(currentTheme);
+    applyTheme(resolvedTheme);
+  }
+  
+  // Global API
+  window.theme = {
+    get current() { return getCurrentTheme(); },
+    get resolved() { return getResolvedTheme(); },
+    get system() { return getSystemTheme(); },
+    set: setTheme,
+    themes
+  };
+  
+  // Initialize immediately
+  initTheme();
+  
+  // Handle system theme changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (getCurrentTheme() === 'auto') {
+      applyTheme(getSystemTheme());
+    }
+  });
+  
+  // Handle ViewTransitions
+  document.addEventListener('astro:after-swap', initTheme);
+})();
+</script>

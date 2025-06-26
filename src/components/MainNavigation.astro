@@ -1,5 +1,6 @@
 ---
 import NavLink from '@components/NavLink.astro';
+import ThemeToggle from '@components/ThemeToggle.astro';
 import HamburgerMenu from '@astropub/icons/HamburgerMenu';
 const isDev = import.meta.env.MODE === 'development';
 ---
@@ -27,6 +28,9 @@ const isDev = import.meta.env.MODE === 'development';
       }
     </ul>
   </section>
+  <theme-toggle>
+    <ThemeToggle />
+  </theme-toggle>
 </nav>
 
 <style>

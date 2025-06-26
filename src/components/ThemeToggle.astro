@@ -1,0 +1,217 @@
+---
+// ThemeToggle component for switching between auto, light, and dark themes
+---
+
+<div class="theme-toggle" role="radiogroup" aria-label="Choose color theme">
+  <button 
+    type="button" 
+    class="theme-option" 
+    data-theme="auto" 
+    aria-label="Auto theme (follows system)"
+    title="Auto theme (follows system)"
+  >
+    <span class="theme-icon" aria-hidden="true">◐</span>
+    <span class="theme-label">Auto</span>
+  </button>
+  
+  <button 
+    type="button" 
+    class="theme-option" 
+    data-theme="light" 
+    aria-label="Light theme"
+    title="Light theme"
+  >
+    <span class="theme-icon" aria-hidden="true">☀</span>
+    <span class="theme-label">Light</span>
+  </button>
+  
+  <button 
+    type="button" 
+    class="theme-option" 
+    data-theme="dark" 
+    aria-label="Dark theme"
+    title="Dark theme"
+  >
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Dark</span>
+  </button>
+</div>
+
+<style>
+  .theme-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-nav-border);
+  }
+
+  .theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0.5rem;
+    background: transparent;
+    border: 1px solid var(--color-nav-border);
+    border-radius: 6px;
+    color: var(--color-nav-text);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05ch;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-height: 4rem;
+    position: relative;
+    opacity: 0.6;
+  }
+
+  .theme-option:hover {
+    border-color: var(--color-nav-link-hover);
+    background: rgba(255, 115, 105, 0.1);
+    opacity: 0.8;
+  }
+
+  .theme-option:focus-visible {
+    outline: 2px solid var(--color-nav-link-hover);
+    outline-offset: 2px;
+  }
+
+  .theme-option.active {
+    border-color: var(--color-nav-link-hover);
+    background: var(--color-nav-link-hover);
+    color: var(--color-brand-white);
+    opacity: 1;
+    box-shadow: 0 2px 8px rgba(255, 115, 105, 0.3);
+  }
+
+  .theme-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    display: block;
+  }
+
+  .theme-label {
+    font-size: 0.7rem;
+    line-height: 1;
+    margin: 0;
+  }
+
+  /* Animation for theme changes */
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      transition: color-scheme 0.3s ease;
+    }
+    
+    .theme-option {
+      transition: all 0.15s ease;
+    }
+  }
+</style>
+
+<script>
+  class ThemeToggle extends HTMLElement {
+    private buttons: NodeListOf<HTMLButtonElement> | null = null;
+
+    connectedCallback() {
+      this.buttons = this.querySelectorAll('.theme-option') as NodeListOf<HTMLButtonElement>;
+      if (!this.buttons) return;
+
+      // Set initial active state
+      this.updateActiveState();
+
+      // Handle button clicks
+      this.buttons.forEach(button => {
+        button.addEventListener('click', this.handleThemeChange.bind(this));
+      });
+
+      // Listen for theme changes from other sources
+      document.addEventListener('theme-changed', this.updateActiveState.bind(this));
+
+      // Handle ViewTransitions
+      document.addEventListener('astro:after-swap', () => {
+        setTimeout(() => this.reattachListeners(), 0);
+      });
+    }
+
+    private updateActiveState() {
+      if (!this.buttons || !window.theme) return;
+      
+      const currentTheme = window.theme.current;
+      this.buttons.forEach(button => {
+        const buttonTheme = button.getAttribute('data-theme');
+        if (buttonTheme === currentTheme) {
+          button.classList.add('active');
+          button.setAttribute('aria-pressed', 'true');
+        } else {
+          button.classList.remove('active');
+          button.setAttribute('aria-pressed', 'false');
+        }
+      });
+    }
+
+    private handleThemeChange(event: Event) {
+      const target = event.target as HTMLButtonElement;
+      const button = target.closest('.theme-option') as HTMLButtonElement;
+      if (!button) return;
+      
+      const theme = button.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
+      if (window.theme && theme) {
+        window.theme.set(theme);
+      }
+    }
+
+    private reattachListeners() {
+      this.connectedCallback();
+    }
+  }
+
+  // Register the custom element
+  if (typeof customElements !== 'undefined' && !customElements.get('theme-toggle')) {
+    customElements.define('theme-toggle', ThemeToggle);
+  }
+
+  // Fallback for immediate initialization
+  document.addEventListener('DOMContentLoaded', () => {
+    const themeButtons = document.querySelectorAll('.theme-option') as NodeListOf<HTMLButtonElement>;
+    if (!themeButtons.length) return;
+
+    // Set initial active state
+    function updateActiveState() {
+      if (!window.theme) return;
+      const currentTheme = window.theme.current;
+      themeButtons.forEach(button => {
+        const buttonTheme = button.getAttribute('data-theme');
+        if (buttonTheme === currentTheme) {
+          button.classList.add('active');
+          button.setAttribute('aria-pressed', 'true');
+        } else {
+          button.classList.remove('active');
+          button.setAttribute('aria-pressed', 'false');
+        }
+      });
+    }
+
+    updateActiveState();
+
+    // Handle button clicks
+    themeButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        const target = event.target as HTMLButtonElement;
+        const clickedButton = target.closest('.theme-option') as HTMLButtonElement;
+        if (!clickedButton) return;
+        
+        const theme = clickedButton.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
+        if (window.theme && theme) {
+          window.theme.set(theme);
+        }
+      });
+    });
+
+    // Listen for theme changes
+    document.addEventListener('theme-changed', updateActiveState);
+  });
+</script>

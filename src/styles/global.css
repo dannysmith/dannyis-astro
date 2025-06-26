@@ -129,51 +129,8 @@
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-  /* --- SEMANTIC VARIABLES --- */
-  /* Use these in all components/layouts. Can be overridden for dark mode. */
-  
-  /* Background colors */
-  --color-bg-primary: var(--color-brand-beige);
-  --color-bg-secondary: var(--color-bg-light-200);
-  --color-bg-tertiary: var(--color-bg-light-300);
-  --color-bg-surface: var(--color-bg-light-100);
-  
-  /* Text colors */
-  --color-text-primary: var(--color-grey-800);
-  --color-text-secondary: var(--color-grey-700);
-  --color-text-muted: var(--color-grey-500);
-  --color-text-inverse: var(--color-brand-white);
-  
-  /* Interactive colors */
-  --color-link: var(--color-red-500);
-  --color-link-visited: var(--color-purple-600);
-  --color-link-hover: var(--color-red-600);
-  --color-accent: var(--color-brand-primary);
-  
-  /* Border and divider colors */
-  --color-border: var(--color-grey-300);
-  --color-border-subtle: rgba(0, 0, 0, 0.05);
-  --color-divider: rgba(0, 0, 0, 0.1);
-  
-  /* Overlay and shadow colors (for dark mode adaptation) */
-  --color-overlay-light: rgba(255, 255, 255, 0.6);
-  --color-overlay-dark: rgba(0, 0, 0, 0.8);
-  --color-shadow-light: rgba(0, 0, 0, 0.1);
-  --color-shadow-dark: rgba(0, 0, 0, 0.25);
-  
-  /* Code and syntax highlighting */
-  --color-code-bg: rgba(0, 0, 0, 0.05);
-  --color-code-border: rgba(0, 0, 0, 0.1);
-  --color-code-text: var(--color-text-primary);
-  
-  /* Special content */
-  --color-mark-bg: var(--color-yellow-500);
-  --color-strikethrough: rgba(0, 0, 0, 0.5);
-  --color-abbr-underline: rgba(0, 0, 0, 0.15);
-  
-  /* Table colors */
-  --color-table-border: rgba(0, 0, 0, 0.05);
-  --color-table-header-bg: rgba(255, 255, 255, 0.1);
+  /* --- COMPONENT-SPECIFIC VARIABLES --- */
+  /* These don't change between themes, only semantic variables do */
   
   /* Callout colors */
   --color-callout-default-bg: var(--color-grey-300);
@@ -184,7 +141,7 @@
   --color-callout-yellow-bg: var(--color-yellow-300);
   --color-callout-purple-bg: var(--color-purple-300);
   
-  /* Navigation colors */
+  /* Navigation colors (stay dark in both themes) */
   --color-nav-bg: var(--color-bg-dark-200);
   --color-nav-text: var(--color-brand-white);
   --color-nav-link-hover: var(--color-brand-primary);
@@ -192,32 +149,31 @@
   --color-nav-active-bg: var(--color-overlay-light);
   --color-nav-active-text: var(--color-brand-primary);
   
-  /* Footer colors */
+  /* Footer colors (stay dark in both themes) */
   --color-footer-bg: var(--color-bg-dark-200);
   --color-footer-text: var(--color-brand-white);
   --color-footer-link-hover: var(--color-brand-primary);
   --color-footer-border: var(--color-brand-primary);
   --color-footer-social-hover: var(--color-shadow-dark);
   
-  /* Note/card colors */
-  --color-note-bg: var(--color-brand-white);
+  /* Note/card colors (will use semantic variables) */
+  --color-note-bg: var(--color-bg-surface);
   --color-note-border: var(--color-bg-dark-200);
   --color-note-dot-grid: var(--color-red-400);
-  --color-note-date: var(--color-grey-700);
-  --color-note-title-underline: var(--color-red-500);
+  --color-note-date: var(--color-text-secondary);
+  --color-note-title-underline: var(--color-accent);
   
   /* Lightbox colors */
   --color-lightbox-bg: var(--color-overlay-dark);
   --color-lightbox-close: var(--color-brand-white);
   
-  /* Prose/typography semantic variables */
+  /* Prose/typography semantic references */
   --prose-link-color: var(--color-link);
   --prose-link-visited-color: var(--color-link-visited);
   --prose-link-hover-color: var(--color-link-hover);
   --prose-blockquote-border-color: var(--color-accent);
   --prose-heading-underline-color: var(--color-accent);
   --prose-list-marker-color: var(--color-red-700);
-  --prose-heading-border-color: rgba(0, 0, 0, 0.05);
   
   /* Legacy aliases (for compatibility - will be removed after refactoring) */
   --c-primary: var(--color-brand-primary);
@@ -547,12 +503,160 @@
     }
   }
 
-  /* Dark mode styles will go here */
+  /* Light Theme (default) */
+  :root,
+  :root[data-theme='light'] {
+    color-scheme: light;
+    
+    /* Background colors */
+    --color-bg-primary: var(--color-brand-beige);
+    --color-bg-secondary: var(--color-bg-light-200);
+    --color-bg-tertiary: var(--color-bg-light-300);
+    --color-bg-surface: var(--color-bg-light-100);
+    
+    /* Text colors */
+    --color-text-primary: var(--color-grey-800);
+    --color-text-secondary: var(--color-grey-700);
+    --color-text-muted: var(--color-grey-500);
+    --color-text-inverse: var(--color-brand-white);
+    
+    /* Interactive colors */
+    --color-link: var(--color-red-500);
+    --color-link-visited: var(--color-purple-600);
+    --color-link-hover: var(--color-red-600);
+    --color-accent: var(--color-brand-primary);
+    
+    /* Border and divider colors */
+    --color-border: var(--color-grey-300);
+    --color-border-subtle: rgba(0, 0, 0, 0.05);
+    --color-divider: rgba(0, 0, 0, 0.1);
+    
+    /* Overlay and shadow colors */
+    --color-overlay-light: rgba(255, 255, 255, 0.6);
+    --color-overlay-dark: rgba(0, 0, 0, 0.8);
+    --color-shadow-light: rgba(0, 0, 0, 0.1);
+    --color-shadow-dark: rgba(0, 0, 0, 0.25);
+    
+    /* Code and syntax highlighting */
+    --color-code-bg: rgba(0, 0, 0, 0.05);
+    --color-code-border: rgba(0, 0, 0, 0.1);
+    --color-code-text: var(--color-text-primary);
+    
+    /* Special content */
+    --color-mark-bg: var(--color-yellow-500);
+    --color-strikethrough: rgba(0, 0, 0, 0.5);
+    --color-abbr-underline: rgba(0, 0, 0, 0.15);
+    
+    /* Table colors */
+    --color-table-border: rgba(0, 0, 0, 0.05);
+    --color-table-header-bg: rgba(255, 255, 255, 0.1);
+    
+    /* Prose/typography colors */
+    --prose-heading-border-color: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Dark Theme */
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
-      /* Add dark mode color overrides here */
+      
+      /* Background colors - using dark palette */
+      --color-bg-primary: var(--color-bg-dark-100);
+      --color-bg-secondary: var(--color-bg-dark-200);
+      --color-bg-tertiary: var(--color-bg-dark-300);
+      --color-bg-surface: var(--color-bg-dark-200);
+      
+      /* Text colors - inverted hierarchy */
+      --color-text-primary: var(--color-bg-dark-700);
+      --color-text-secondary: var(--color-bg-dark-600);
+      --color-text-muted: var(--color-bg-dark-500);
+      --color-text-inverse: var(--color-bg-dark-100);
+      
+      /* Interactive colors - will be refined in step 4 */
+      --color-link: var(--color-yellow-500);
+      --color-link-visited: var(--color-purple-400);
+      --color-link-hover: var(--color-yellow-400);
+      --color-accent: var(--color-yellow-500);
+      
+      /* Border and divider colors - inverted */
+      --color-border: var(--color-bg-dark-400);
+      --color-border-subtle: rgba(255, 255, 255, 0.05);
+      --color-divider: rgba(255, 255, 255, 0.1);
+      
+      /* Overlay and shadow colors - inverted */
+      --color-overlay-light: rgba(0, 0, 0, 0.6);
+      --color-overlay-dark: rgba(0, 0, 0, 0.9);
+      --color-shadow-light: rgba(0, 0, 0, 0.3);
+      --color-shadow-dark: rgba(0, 0, 0, 0.5);
+      
+      /* Code and syntax highlighting */
+      --color-code-bg: rgba(255, 255, 255, 0.05);
+      --color-code-border: rgba(255, 255, 255, 0.1);
+      --color-code-text: var(--color-text-primary);
+      
+      /* Special content */
+      --color-mark-bg: var(--color-yellow-600);
+      --color-strikethrough: rgba(255, 255, 255, 0.5);
+      --color-abbr-underline: rgba(255, 255, 255, 0.15);
+      
+      /* Table colors */
+      --color-table-border: rgba(255, 255, 255, 0.05);
+      --color-table-header-bg: rgba(0, 0, 0, 0.1);
+      
+      /* Prose/typography colors */
+      --prose-heading-border-color: rgba(255, 255, 255, 0.05);
     }
+  }
+
+  /* Explicit dark theme (overrides media query) */
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    
+    /* Background colors - using dark palette */
+    --color-bg-primary: var(--color-bg-dark-100);
+    --color-bg-secondary: var(--color-bg-dark-200);
+    --color-bg-tertiary: var(--color-bg-dark-300);
+    --color-bg-surface: var(--color-bg-dark-200);
+    
+    /* Text colors - inverted hierarchy */
+    --color-text-primary: var(--color-bg-dark-700);
+    --color-text-secondary: var(--color-bg-dark-600);
+    --color-text-muted: var(--color-bg-dark-500);
+    --color-text-inverse: var(--color-bg-dark-100);
+    
+    /* Interactive colors - will be refined in step 4 */
+    --color-link: var(--color-yellow-500);
+    --color-link-visited: var(--color-purple-400);
+    --color-link-hover: var(--color-yellow-400);
+    --color-accent: var(--color-yellow-500);
+    
+    /* Border and divider colors - inverted */
+    --color-border: var(--color-bg-dark-400);
+    --color-border-subtle: rgba(255, 255, 255, 0.05);
+    --color-divider: rgba(255, 255, 255, 0.1);
+    
+    /* Overlay and shadow colors - inverted */
+    --color-overlay-light: rgba(0, 0, 0, 0.6);
+    --color-overlay-dark: rgba(0, 0, 0, 0.9);
+    --color-shadow-light: rgba(0, 0, 0, 0.3);
+    --color-shadow-dark: rgba(0, 0, 0, 0.5);
+    
+    /* Code and syntax highlighting */
+    --color-code-bg: rgba(255, 255, 255, 0.05);
+    --color-code-border: rgba(255, 255, 255, 0.1);
+    --color-code-text: var(--color-text-primary);
+    
+    /* Special content */
+    --color-mark-bg: var(--color-yellow-600);
+    --color-strikethrough: rgba(255, 255, 255, 0.5);
+    --color-abbr-underline: rgba(255, 255, 255, 0.15);
+    
+    /* Table colors */
+    --color-table-border: rgba(255, 255, 255, 0.05);
+    --color-table-header-bg: rgba(0, 0, 0, 0.1);
+    
+    /* Prose/typography colors */
+    --prose-heading-border-color: rgba(255, 255, 255, 0.05);
   }
 }
 
