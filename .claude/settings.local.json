@@ -7,7 +7,9 @@
       "Bash(npm run build:*)",
       "WebFetch(domain:astro-tips.dev)",
       "WebFetch(domain:jklakus.co.uk)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(find:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }

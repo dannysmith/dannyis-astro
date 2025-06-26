@@ -162,10 +162,39 @@
   --color-note-dot-grid: var(--color-red-400);
   --color-note-date: var(--color-text-secondary);
   --color-note-title-underline: var(--color-accent);
+  --color-note-page-bg: var(--color-brand-white); /* Note pages have white bg vs beige site bg */
   
   /* Lightbox colors */
   --color-lightbox-bg: var(--color-overlay-dark);
   --color-lightbox-close: var(--color-brand-white);
+  
+  /* Article/blog specific colors */
+  --color-article-accent: #b84848; /* Darker red for book-like feel - was rgb(184, 72, 72) */
+  --color-horizontal-rule: var(--color-border);
+  --color-footnote-bg: var(--color-bg-secondary);  
+  --color-tasklist-border: var(--color-border);
+  
+  /* Styleguide specific colors */
+  --color-styleguide-demo-bg: var(--color-bg-tertiary);
+  --color-styleguide-demo-border: var(--color-border);
+  --color-styleguide-section-bg: var(--color-bg-secondary);
+  --color-styleguide-section-border: var(--color-border);
+  --color-styleguide-heading-border: var(--color-border);
+  
+  /* Homepage specific colors */
+  --color-homepage-link-border: var(--color-accent);
+  --color-homepage-link-hover: var(--color-accent);
+  
+  /* Note list page colors */
+  --color-notelist-title-hover: var(--color-accent);
+  --color-notelist-date: var(--color-text-secondary);
+  --color-notelist-border: var(--color-accent);
+  
+  /* Writing list page colors */
+  --color-writinglist-title-hover: var(--color-accent);
+  --color-writinglist-date: var(--color-text-secondary);
+  --color-writinglist-border: var(--color-accent);
+  --color-writinglist-platform: var(--color-green-600);
   
   /* Prose/typography semantic references */
   --prose-link-color: var(--color-link);
@@ -553,6 +582,9 @@
     
     /* Prose/typography colors */
     --prose-heading-border-color: rgba(0, 0, 0, 0.05);
+    
+    /* Note page specific background */
+    --color-note-page-bg: var(--color-brand-white);
   }
 
   /* Dark Theme */
@@ -605,6 +637,9 @@
       
       /* Prose/typography colors */
       --prose-heading-border-color: rgba(255, 255, 255, 0.05);
+      
+      /* Note page specific background - darker in dark mode */
+      --color-note-page-bg: var(--color-bg-dark-200);
     }
   }
 
@@ -657,6 +692,9 @@
     
     /* Prose/typography colors */
     --prose-heading-border-color: rgba(255, 255, 255, 0.05);
+    
+    /* Note page specific background - darker in dark mode */
+    --color-note-page-bg: var(--color-bg-dark-200);
   }
 }
 

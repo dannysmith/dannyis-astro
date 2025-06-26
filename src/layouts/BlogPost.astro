@@ -74,41 +74,22 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     <Footer />
     <Lightbox />
     <style>
-      :root {
-        --background-color: var(--c-beige-bg);
-        --text-color: var(--color-grey-800);
-        --spinner-overlay-color: var(--c-white);
-        --typography-detail-red-color: var(--color-red-700);
-
-        /* Primary color used throughout */
-        --article-primary-color: var(--c-primary);
-
-        /* Link colors */
-        --link-underline-visited: var(--color-purple-500);
-        --mobile-link: var(--color-red-600);
-        --mobile-link-visited: var(--color-purple-600);
-
-        /* UI element colors */
-        --tasklist-checkbox-border: rgba(0, 0, 0, 0.4);
-        --horizontal-rule-color: rgba(0, 0, 0, 0.1);
-        --inline-footnote-background-color: rgba(0, 0, 0, 0.05);
-      }
 
       body {
-        background: var(--background-color);
-        color: var(--text-color);
+        background: var(--color-bg-primary);
+        color: var(--color-text-primary);
       }
       .spinner-overlay {
         min-height: 100vh;
         display: grid;
         justify-content: center;
         align-content: center;
-        background: var(--spinner-overlay-color);
+        background: var(--color-bg-surface);
       }
 
       .metadata {
         font-size: 0.7em;
-        color: var(--article-primary-color);
+        color: var(--color-article-accent);
         font-family: var(--font-code);
         margin-top: 1rem;
       }
@@ -124,8 +105,8 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       }
 
       .draft-notice {
-        border: 2px solid var(--article-primary-color);
-        color: var(--article-primary-color);
+        border: 2px solid var(--color-article-accent);
+        color: var(--color-article-accent);
         font-family: var(--font-ui);
         padding: 8px 16px;
         border-radius: 4px;
@@ -166,7 +147,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         .blog-article > :is(h1, h2, h3, h4, h5, h6) {
           font-variant-ligatures: common-ligatures discretionary-ligatures;
           hanging-punctuation: first allow-end last;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* subtle underline */
+          border-bottom: 1px solid var(--color-border-subtle); /* subtle underline */
           padding-bottom: 0.6em;
         }
 
@@ -241,7 +222,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 
         /* End Mark */
         .blog-article > p:last-of-type:after {
-          color: var(--article-primary-color);
+          color: var(--color-article-accent);
           display: inline-block;
           content: ' ';
           -webkit-mask: url('/end-mark.svg');
@@ -268,7 +249,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         .blog-article a {
           color: inherit;
           text-decoration: underline;
-          text-decoration-color: var(--article-primary-color);
+          text-decoration-color: var(--color-article-accent);
           text-decoration-thickness: 1px;
           text-underline-offset: 0.3em;
           text-decoration-skip-ink: none;
@@ -276,28 +257,28 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         }
 
         .blog-article a:visited {
-          text-decoration-color: var(--link-underline-visited);
+          text-decoration-color: var(--color-link-visited);
         }
 
         .blog-article a:hover,
         .blog-article a:active {
-          text-decoration-color: var(--article-primary-color);
-          color: var(--article-primary-color);
+          text-decoration-color: var(--color-article-accent);
+          color: var(--color-article-accent);
         }
 
         .blog-article a:focus-visible {
-          outline: 2px solid var(--article-primary-color);
+          outline: 2px solid var(--color-article-accent);
           text-decoration: none;
         }
 
         @media (pointer: coarse) {
           .blog-article a {
             text-decoration: none;
-            color: var(--mobile-link);
+            color: var(--color-link-hover);
           }
 
           .blog-article a:visited {
-            color: var(--mobile-link-visited);
+            color: var(--color-link-visited);
           }
         }
 
@@ -313,7 +294,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           margin-top: 0.5em;
           /* Ensure marker color for all lists */
           &::marker {
-            color: var(--typography-detail-red-color);
+            color: var(--color-article-accent);
           }
         }
         .blog-article li:first-of-type {
@@ -338,7 +319,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           font-size: 1.4ex;
           font-variation-settings: 'opsz' 10;
           font-weight: 500;
-          color: var(--typography-detail-red-color);
+          color: var(--color-article-accent);
         }
 
         /* ----------- Task Lists ------------ */
@@ -360,12 +341,13 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           appearance: none;
           outline: none;
           border-radius: 2px;
-          border: 1px solid var(--tasklist-checkbox-border);
+          border: 1px solid var(--color-tasklist-border);
         }
 
         .blog-article .task-list-item input:checked {
-          color: var(--typography-detail-red-color);
+          color: var(--color-article-accent);
           background: transparent;
+          border-color: var(--color-article-accent);
         }
 
         .blog-article .task-list-item input:checked:before {
@@ -375,6 +357,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           left: 0.05em;
           font-size: 0.6em;
           font-weight: 600;
+          color: var(--color-article-accent);
         }
 
         .blog-article .task-list-item input[disabled] {
@@ -410,13 +393,13 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           overflow: visible;
           margin: 4rem 0;
 
-          border: 1px solid var(--horizontal-rule-color);
+          border: 1px solid var(--color-horizontal-rule);
         }
 
         .blog-article hr:before {
           content: '§';
           transform: translateY(-0.15em);
-          background: var(--background-color);
+          background: var(--color-bg-primary);
           padding: 0 0.5em;
         }
 
@@ -424,7 +407,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         .blog-article blockquote {
           font-variant-numeric: oldstyle-nums diagonal-fractions;
           hanging-punctuation: first allow-end last;
-          border-left: 2px solid var(--article-primary-color);
+          border-left: 2px solid var(--color-article-accent);
           padding-left: calc((1em * var(--line-height)) - 2px);
           font-style: italic;
           margin-left: 0;
@@ -441,14 +424,14 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           font-variant: small-caps;
           letter-spacing: 0.05ch;
           text-decoration: none;
-          color: var(--article-primary-color);
+          color: var(--color-article-accent);
         }
 
         .inline-footnote-container {
           font-size: 0.8em;
           padding: 1em;
-          border-left: 2px solid var(--article-primary-color);
-          background: var(--inline-footnote-background-color);
+          border-left: 2px solid var(--color-article-accent);
+          background: var(--color-footnote-bg);
 
           .data-footnote-backref {
             display: none;
@@ -456,14 +439,14 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         }
 
         .blog-article .footnotes {
-          border-top: 1px solid var(--article-primary-color);
+          border-top: 1px solid var(--color-article-accent);
           margin-top: 2em;
           padding-top: 1em;
           font-size: 0.8em;
 
           .data-footnote-backref {
             text-decoration: none;
-            color: var(--article-primary-color);
+            color: var(--color-article-accent);
           }
         }
 

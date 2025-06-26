@@ -36,7 +36,7 @@ const posts = (
                     {post.data.title}
                     {post.data.draft && <span class="draft-marker"> 🚧</span>}
                     {post.data.platform && (
-                      <Pill text={post.data.platform} color="var(--platform-marker-color)" />
+                      <Pill text={post.data.platform} color="var(--color-writinglist-platform)" />
                     )}
                   </h4>
                 </a>
@@ -48,18 +48,11 @@ const posts = (
     </main>
     <Footer />
     <style>
-      :root {
-        --background-color: var(--c-beige-bg);
-        --postlist-title-hover-color: var(--c-primary);
-        --postlist-date-color: var(--color-grey-700);
-        --postlist-bottom-border-color: var(--c-primary);
-        --platform-marker-color: var(--color-green-600);
-      }
-
+      
       body {
         display: grid;
         grid-template-rows: auto min-content;
-        background-color: var(--background-color);
+        background-color: var(--color-bg-primary);
       }
 
       section {
@@ -89,12 +82,12 @@ const posts = (
       }
 
       a:hover .post-title {
-        color: var(--postlist-title-hover-color);
+        color: var(--color-writinglist-title-hover);
       }
 
       .date {
         font-size: 0.7rem;
-        color: var(--postlist-date-color);
+        color: var(--color-writinglist-date);
         text-transform: uppercase;
         letter-spacing: 0.1ch;
       }
@@ -104,7 +97,7 @@ const posts = (
         line-height: 1.2;
         font-weight: 500;
         padding-bottom: 0.2rem;
-        border-bottom: 5px var(--postlist-bottom-border-color) solid;
+        border-bottom: 5px var(--color-writinglist-border) solid;
         transition: all 0.15s;
       }
 

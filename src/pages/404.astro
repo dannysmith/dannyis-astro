@@ -25,7 +25,7 @@ import MainNavigation from '@components/MainNavigation.astro';
     </main>
     <style>
       body {
-        background-color: var(--background-color);
+        background-color: var(--color-bg-primary);
         max-width: 100%;
         overflow-x: hidden;
       }
@@ -35,7 +35,7 @@ import MainNavigation from '@components/MainNavigation.astro';
         min-width: 100%;
         transform-origin: top center;
         transform: rotate(-45deg) translateY(10vh) translateX(-10vh);
-        color: var(--color-black);
+        color: var(--color-text-primary);
 
         h1 {
           font-size: 40vw;
@@ -44,7 +44,7 @@ import MainNavigation from '@components/MainNavigation.astro';
         h1::after {
           display: block;
           content: ' ';
-          background: var(--c-primary);
+          background: var(--color-accent);
           height: 4vw;
           margin-top: -9.2vw;
           width: 200%;

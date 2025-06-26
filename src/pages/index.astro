@@ -73,13 +73,9 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
       />
 
       <style>
-        :root {
-          --homepage-linklist-border-color: var(--c-primary);
-          --homepage-linklist-hover-color: var(--c-primary);
-        }
-
+        
         body {
-          background: var(--background-color);
+          background: var(--color-bg-primary);
         }
 
         main {
@@ -106,7 +102,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
           letter-spacing: 0.05ch;
           list-style-type: none;
           padding: 0;
-          border-bottom: 5px solid var(--homepage-linklist-border-color);
+          border-bottom: 5px solid var(--color-homepage-link-border);
           line-height: 1.65;
         }
 
@@ -120,7 +116,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
         }
 
         .link-list a:hover {
-          color: var(--homepage-linklist-hover-color);
+          color: var(--color-homepage-link-hover);
         }
 
         .avatar {

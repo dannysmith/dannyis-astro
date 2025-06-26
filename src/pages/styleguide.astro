@@ -58,12 +58,12 @@ import FormattedDate from '../components/FormattedDate.astro';
         <div class="test-section">
           <h2>Grid Component</h2>
           <Grid columns={3} rows={2} gap="1rem">
-            <div style="background:#eee; padding:1rem;">Item 1</div>
-            <div style="background:#eee; padding:1rem;">Item 2</div>
-            <div style="background:#eee; padding:1rem;">Item 3</div>
-            <div style="background:#eee; padding:1rem;">Item 4</div>
-            <div style="background:#eee; padding:1rem;">Item 5</div>
-            <div style="background:#eee; padding:1rem;">Item 6</div>
+            <div style="background:var(--color-styleguide-demo-bg); padding:1rem;">Item 1</div>
+            <div style="background:var(--color-styleguide-demo-bg); padding:1rem;">Item 2</div>
+            <div style="background:var(--color-styleguide-demo-bg); padding:1rem;">Item 3</div>
+            <div style="background:var(--color-styleguide-demo-bg); padding:1rem;">Item 4</div>
+            <div style="background:var(--color-styleguide-demo-bg); padding:1rem;">Item 5</div>
+            <div style="background:var(--color-styleguide-demo-bg); padding:1rem;">Item 6</div>
           </Grid>
         </div>
 
@@ -146,7 +146,7 @@ import FormattedDate from '../components/FormattedDate.astro';
           </Callout>
 
           <h3>Responsive Test</h3>
-          <div style="width: 100%; max-width: 300px; border: 1px dashed #ccc; padding: 1rem;">
+          <div style="width: 100%; max-width: 300px; border: 1px dashed var(--color-styleguide-demo-border); padding: 1rem;">
             <p><strong>Narrow Container (300px):</strong></p>
             <Callout icon="📱" type="purple" title="Mobile View">
               This callout is in a narrow container to test responsive behavior. The icon should be
@@ -223,11 +223,8 @@ import FormattedDate from '../components/FormattedDate.astro';
     </main>
     <Footer />
     <style>
-      :root {
-        --background-color: var(--c-beige-bg);
-      }
       body {
-        background: var(--background-color);
+        background: var(--color-bg-primary);
         display: grid;
         grid-template-rows: auto min-content;
       }
@@ -251,8 +248,8 @@ import FormattedDate from '../components/FormattedDate.astro';
       }
 
       .intro-section {
-        background: #f8f8f8;
-        border: 1px solid #eee;
+        background: var(--color-styleguide-section-bg);
+        border: 1px solid var(--color-styleguide-section-border);
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 2rem;
@@ -261,15 +258,15 @@ import FormattedDate from '../components/FormattedDate.astro';
       .test-section {
         margin: 2rem 0;
         padding: 1rem;
-        border: 1px dashed #ccc;
+        border: 1px dashed var(--color-styleguide-demo-border);
         border-radius: 8px;
       }
 
       .test-section h2 {
         margin-top: 0;
         font-size: 1.5rem;
-        color: #333;
-        border-bottom: 2px solid #eee;
+        color: var(--color-text-primary);
+        border-bottom: 2px solid var(--color-styleguide-heading-border);
         padding-bottom: 0.5rem;
       }
 
@@ -277,7 +274,7 @@ import FormattedDate from '../components/FormattedDate.astro';
         margin-top: 2rem;
         margin-bottom: 1rem;
         font-size: 1.2rem;
-        color: #666;
+        color: var(--color-text-secondary);
       }
     </style>
   </body>
