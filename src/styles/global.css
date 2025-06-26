@@ -103,7 +103,7 @@
   --color-bg-dark-700: #d5d5d5;
   --color-bg-dark-800: #ffffff;
 
-  /* Brand colours */
+  /* Named Brand colours */
   --c-primary: var(--color-red-500);
   --c-brand-grey: var(--color-bg-light-700);
   --c-brand-dark-grey: var(--color-bg-light-800);
@@ -129,28 +129,8 @@
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-  /* Colours for global stylesheet */
-  --accent-color: var(--c-primary);
-  --foreground-color: var(--c-black);
-  --background-color: var(--c-beige-bg);
-
-  --abbr-underline-color: rgba(0, 0, 0, 0.15);
-  --code-background-color: rgba(0, 0, 0, 0.05);
-  --code-border-color: rgba(0, 0, 0, 0.1);
-  --pre-border-color: rgba(0, 0, 0, 0.1);
-
-  --table-border-color: rgba(0, 0, 0, 0.05);
-  --strikethrough-color: rgba(0, 0, 0, 0.5);
-  --mark-background-color: var(--color-yellow-500);
-
-  --prose-blockquote-border-color: var(--color-red-500);
-  --prose-heading-underline-color: var(--color-red-500);
-  --prose-link-color: var(--color-red-500);
-  --prose-link-visited-color: var(--color-purple-600);
-  --prose-link-hover-color: var(--color-red-600);
-
   /* --- SEMANTIC VARIABLES --- */
-  /* Use these in all components/layouts. Only these are overridden for dark mode. */
+  /* Use these in all components/layouts. Can be overridden for dark mode. */
   --color-bg-primary: var(--c-beige-bg);
   --color-bg-secondary: var(--color-bg-light-200);
   --color-bg-tertiary: var(--color-bg-light-300);
@@ -171,6 +151,25 @@
   --prose-link-hover-color: var(--color-link-hover);
   --prose-blockquote-border-color: var(--color-accent);
   --prose-heading-underline-color: var(--color-accent);
+
+  --accent-color: var(--c-primary);
+  --foreground-color: var(--c-black);
+  --background-color: var(--c-beige-bg);
+
+  --abbr-underline-color: rgba(0, 0, 0, 0.15);
+  --code-background-color: rgba(0, 0, 0, 0.05);
+  --code-border-color: rgba(0, 0, 0, 0.1);
+  --pre-border-color: rgba(0, 0, 0, 0.1);
+
+  --table-border-color: rgba(0, 0, 0, 0.05);
+  --strikethrough-color: rgba(0, 0, 0, 0.5);
+  --mark-background-color: var(--color-yellow-500);
+
+  --prose-blockquote-border-color: var(--color-red-500);
+  --prose-heading-underline-color: var(--color-red-500);
+  --prose-link-color: var(--color-red-500);
+  --prose-link-visited-color: var(--color-purple-600);
+  --prose-link-hover-color: var(--color-red-600);
   /* ... add more as needed ... */
 }
 
@@ -523,31 +522,4 @@
 /* --- DARK MODE OVERRIDES --- */
 [data-theme='dark'] {
   /* Only override semantic variables here */
-  --color-bg-primary: var(--color-bg-dark-100);
-  --color-bg-secondary: var(--color-bg-dark-200);
-  --color-bg-tertiary: var(--color-bg-dark-300);
-  --color-text-primary: var(--color-grey-300);
-  --color-text-secondary: var(--color-grey-500);
-  --color-text-inverse: var(--color-black);
-  --color-border: var(--color-grey-700);
-  --color-link: var(--color-yellow-500);
-  --color-link-visited: var(--color-purple-400);
-  --color-link-hover: var(--color-yellow-600);
-  --color-accent: var(--color-yellow-500);
-  --color-code-bg: rgba(255, 255, 255, 0.05);
-  --color-code-border: rgba(255, 255, 255, 0.1);
-  --color-table-border: rgba(255, 255, 255, 0.05);
-  /* Prose/typography */
-  --prose-link-color: var(--color-link);
-  --prose-link-visited-color: var(--color-link-visited);
-  --prose-link-hover-color: var(--color-link-hover);
-  --prose-blockquote-border-color: var(--color-accent);
-  --prose-heading-underline-color: var(--color-accent);
-  /* ... add more as needed ... */
 }
-
-/* --- DOCUMENTATION --- */
-/*
-Palette variables: raw color values, never used directly in UI. Only used to define semantic variables.
-Semantic variables: mapped to palette, used everywhere in UI. Only these are overridden for dark mode.
-*/

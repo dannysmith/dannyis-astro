@@ -1,8 +1,6 @@
 ---
 import NavLink from '@components/NavLink.astro';
 import HamburgerMenu from '@astropub/icons/HamburgerMenu';
-import ThemeToggle from '@components/ThemeToggle.astro';
-// Add isDev flag for development mode
 const isDev = import.meta.env.MODE === 'development';
 ---
 
@@ -28,9 +26,6 @@ const isDev = import.meta.env.MODE === 'development';
         )
       }
     </ul>
-    <div class="theme-toggle-nav-wrapper">
-      <ThemeToggle />
-    </div>
   </section>
 </nav>
 
@@ -140,12 +135,6 @@ const isDev = import.meta.env.MODE === 'development';
     font-size: 1em;
     color: var(--mainnav-closebutton);
     cursor: pointer;
-  }
-
-  .theme-toggle-nav-wrapper {
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: flex-start;
   }
 </style>
 
