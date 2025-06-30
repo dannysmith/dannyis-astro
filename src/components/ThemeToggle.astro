@@ -3,32 +3,32 @@
 ---
 
 <div class="theme-toggle" role="radiogroup" aria-label="Choose color theme">
-  <button 
-    type="button" 
-    class="theme-option" 
-    data-theme="auto" 
+  <button
+    type="button"
+    class="theme-option"
+    data-theme="auto"
     aria-label="Auto theme (follows system)"
     title="Auto theme (follows system)"
   >
     <span class="theme-icon" aria-hidden="true">◐</span>
     <span class="theme-label">Auto</span>
   </button>
-  
-  <button 
-    type="button" 
-    class="theme-option" 
-    data-theme="light" 
+
+  <button
+    type="button"
+    class="theme-option"
+    data-theme="light"
     aria-label="Light theme"
     title="Light theme"
   >
     <span class="theme-icon" aria-hidden="true">☀</span>
     <span class="theme-label">Light</span>
   </button>
-  
-  <button 
-    type="button" 
-    class="theme-option" 
-    data-theme="dark" 
+
+  <button
+    type="button"
+    class="theme-option"
+    data-theme="dark"
     aria-label="Dark theme"
     title="Dark theme"
   >
@@ -105,7 +105,7 @@
     :root {
       transition: color-scheme 0.3s ease;
     }
-    
+
     .theme-option {
       transition: all 0.15s ease;
     }
@@ -114,22 +114,24 @@
 
 <script>
   class ThemeToggle extends HTMLElement {
-    private buttons: NodeListOf<HTMLButtonElement> | null = null;
+    private buttons: any = null;
+    private themeChangedHandler: (() => void) | null = null;
 
     connectedCallback() {
-      this.buttons = this.querySelectorAll('.theme-option') as NodeListOf<HTMLButtonElement>;
+      this.buttons = this.querySelectorAll('.theme-option');
       if (!this.buttons) return;
 
       // Set initial active state
       this.updateActiveState();
 
       // Handle button clicks
-      this.buttons.forEach(button => {
+      this.buttons.forEach((button: HTMLButtonElement) => {
         button.addEventListener('click', this.handleThemeChange.bind(this));
       });
 
       // Listen for theme changes from other sources
-      document.addEventListener('theme-changed', this.updateActiveState.bind(this));
+      this.themeChangedHandler = this.updateActiveState.bind(this);
+      document.addEventListener('theme-changed', this.themeChangedHandler);
 
       // Handle ViewTransitions
       document.addEventListener('astro:after-swap', () => {
@@ -137,11 +139,18 @@
       });
     }
 
+    disconnectedCallback() {
+      // Clean up event listeners when element is removed
+      if (this.themeChangedHandler) {
+        document.removeEventListener('theme-changed', this.themeChangedHandler);
+      }
+    }
+
     private updateActiveState() {
       if (!this.buttons || !window.theme) return;
-      
+
       const currentTheme = window.theme.current;
-      this.buttons.forEach(button => {
+      this.buttons.forEach((button: HTMLButtonElement) => {
         const buttonTheme = button.getAttribute('data-theme');
         if (buttonTheme === currentTheme) {
           button.classList.add('active');
@@ -157,7 +166,7 @@
       const target = event.target as HTMLButtonElement;
       const button = target.closest('.theme-option') as HTMLButtonElement;
       if (!button) return;
-      
+
       const theme = button.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
       if (window.theme && theme) {
         window.theme.set(theme);
@@ -174,9 +183,14 @@
     customElements.define('theme-toggle', ThemeToggle);
   }
 
-  // Fallback for immediate initialization
+  // Fallback for immediate initialization - only run if custom elements aren't supported
   document.addEventListener('DOMContentLoaded', () => {
-    const themeButtons = document.querySelectorAll('.theme-option') as NodeListOf<HTMLButtonElement>;
+    // Check if custom elements are supported and if the theme toggle is already handled
+    if (typeof customElements !== 'undefined' && customElements.get('theme-toggle')) {
+      return; // Custom element will handle everything
+    }
+
+    const themeButtons = document.querySelectorAll('.theme-option');
     if (!themeButtons.length) return;
 
     // Set initial active state
@@ -198,12 +212,12 @@
     updateActiveState();
 
     // Handle button clicks
-    themeButtons.forEach(button => {
-      button.addEventListener('click', (event) => {
+    themeButtons.forEach((button: any) => {
+      button.addEventListener('click', (event: Event) => {
         const target = event.target as HTMLButtonElement;
         const clickedButton = target.closest('.theme-option') as HTMLButtonElement;
         if (!clickedButton) return;
-        
+
         const theme = clickedButton.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
         if (window.theme && theme) {
           window.theme.set(theme);
