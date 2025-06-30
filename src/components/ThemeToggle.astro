@@ -113,119 +113,49 @@
 </style>
 
 <script>
-  class ThemeToggle extends HTMLElement {
-    private buttons: any = null;
-    private themeChangedHandler: (() => void) | null = null;
+  function updateActiveState() {
+    if (!window.theme) return;
 
-    connectedCallback() {
-      this.buttons = this.querySelectorAll('.theme-option');
-      if (!this.buttons) return;
-
-      // Set initial active state
-      this.updateActiveState();
-
-      // Handle button clicks
-      this.buttons.forEach((button: HTMLButtonElement) => {
-        button.addEventListener('click', this.handleThemeChange.bind(this));
-      });
-
-      // Listen for theme changes from other sources
-      this.themeChangedHandler = this.updateActiveState.bind(this);
-      document.addEventListener('theme-changed', this.themeChangedHandler);
-
-      // Handle ViewTransitions
-      document.addEventListener('astro:after-swap', () => {
-        setTimeout(() => this.reattachListeners(), 0);
-      });
-    }
-
-    disconnectedCallback() {
-      // Clean up event listeners when element is removed
-      if (this.themeChangedHandler) {
-        document.removeEventListener('theme-changed', this.themeChangedHandler);
+    const currentTheme = window.theme.current;
+    document.querySelectorAll('.theme-option').forEach(button => {
+      const buttonTheme = button.getAttribute('data-theme');
+      if (buttonTheme === currentTheme) {
+        button.classList.add('active');
+        button.setAttribute('aria-pressed', 'true');
+      } else {
+        button.classList.remove('active');
+        button.setAttribute('aria-pressed', 'false');
       }
-    }
+    });
+  }
 
-    private updateActiveState() {
-      if (!this.buttons || !window.theme) return;
+  function handleThemeChange(event: Event) {
+    const target = event.target as HTMLElement;
+    const button = target?.closest('.theme-option');
+    if (!button) return;
 
-      const currentTheme = window.theme.current;
-      this.buttons.forEach((button: HTMLButtonElement) => {
-        const buttonTheme = button.getAttribute('data-theme');
-        if (buttonTheme === currentTheme) {
-          button.classList.add('active');
-          button.setAttribute('aria-pressed', 'true');
-        } else {
-          button.classList.remove('active');
-          button.setAttribute('aria-pressed', 'false');
-        }
-      });
-    }
-
-    private handleThemeChange(event: Event) {
-      const target = event.target as HTMLButtonElement;
-      const button = target.closest('.theme-option') as HTMLButtonElement;
-      if (!button) return;
-
-      const theme = button.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
-      if (window.theme && theme) {
-        window.theme.set(theme);
-      }
-    }
-
-    private reattachListeners() {
-      this.connectedCallback();
+    const theme = button.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
+    if (window.theme && theme) {
+      window.theme.set(theme);
     }
   }
 
-  // Register the custom element
-  if (typeof customElements !== 'undefined' && !customElements.get('theme-toggle')) {
-    customElements.define('theme-toggle', ThemeToggle);
-  }
-
-  // Fallback for immediate initialization - only run if custom elements aren't supported
+  // Initialize when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
-    // Check if custom elements are supported and if the theme toggle is already handled
-    if (typeof customElements !== 'undefined' && customElements.get('theme-toggle')) {
-      return; // Custom element will handle everything
-    }
-
-    const themeButtons = document.querySelectorAll('.theme-option');
-    if (!themeButtons.length) return;
-
-    // Set initial active state
-    function updateActiveState() {
-      if (!window.theme) return;
-      const currentTheme = window.theme.current;
-      themeButtons.forEach(button => {
-        const buttonTheme = button.getAttribute('data-theme');
-        if (buttonTheme === currentTheme) {
-          button.classList.add('active');
-          button.setAttribute('aria-pressed', 'true');
-        } else {
-          button.classList.remove('active');
-          button.setAttribute('aria-pressed', 'false');
-        }
-      });
-    }
-
+    // Set initial state
     updateActiveState();
 
-    // Handle button clicks
-    themeButtons.forEach((button: any) => {
-      button.addEventListener('click', (event: Event) => {
-        const target = event.target as HTMLButtonElement;
-        const clickedButton = target.closest('.theme-option') as HTMLButtonElement;
-        if (!clickedButton) return;
-
-        const theme = clickedButton.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
-        if (window.theme && theme) {
-          window.theme.set(theme);
-        }
-      });
+    // Add click handlers
+    document.querySelectorAll('.theme-option').forEach(button => {
+      button.addEventListener('click', handleThemeChange);
     });
 
     // Listen for theme changes
     document.addEventListener('theme-changed', updateActiveState);
+  });
+
+  // Handle ViewTransitions
+  document.addEventListener('astro:after-swap', () => {
+    setTimeout(updateActiveState, 0);
   });
 </script>
