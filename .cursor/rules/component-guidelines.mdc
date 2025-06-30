@@ -3,7 +3,6 @@ description: Define guidelines for developing and maintaining components in the 
 globs: ['**/*']
 alwaysApply: true
 ---
-
 # Component Development
 
 ## Purpose
@@ -28,6 +27,7 @@ Define guidelines for developing and maintaining components in the personal webs
 3. **Utility**
    - `FormattedDate.astro` - Date formatting component
    - `Spinner.astro` - Loading spinner component
+   - `ThemeToggle.astro` - Theme switching component (auto/light/dark)
 
 ### Feature Components
 
@@ -45,6 +45,41 @@ Define guidelines for developing and maintaining components in the personal webs
    - Used throughout the site for consistent iconography
 
 ## Component Documentation
+
+### ThemeToggle.astro
+
+- **Purpose:**
+
+  - Interactive theme switching component with three options: auto, light, and dark.
+  - Uses a custom element with TypeScript for robust client-side functionality.
+  - Integrates with the global theme system via `window.theme` API.
+  - Supports ViewTransitions and handles theme changes from other sources.
+
+- **Props:**
+
+  - No props required - component is self-contained.
+
+- **Design & Usage:**
+
+  - Renders three buttons in a horizontal layout with icons and labels.
+  - Auto theme (◐) follows system preference, Light (☀) and Dark (🌙) are explicit.
+  - Active state shows with brand color background and white text.
+  - Hover states use subtle background tint and opacity changes.
+  - Fully accessible with proper ARIA attributes and keyboard navigation.
+  - Uses CSS variables for consistent theming across light/dark modes.
+
+- **Technical Implementation:**
+
+  - Custom element class with TypeScript for type safety.
+  - Handles ViewTransitions via `astro:after-swap` event.
+  - Listens for `theme-changed` events from global theme system.
+  - Fallback initialization for immediate DOM access.
+  - Graceful degradation if theme system isn't available.
+
+- **Example:**
+  ```astro
+  <ThemeToggle />
+  ```
 
 ### Embed.astro
 
@@ -317,28 +352,43 @@ Define guidelines for developing and maintaining components in the personal webs
 
 ### Styling
 
-1. **CSS Variables**
+1. **CSS Variables and Theming**
 
-   - Define component-specific variables in `:root`
-   - Use semantic variable names
-   - Reference global theme variables
-   - Support dark mode with media queries
-   - Example:
+   - **Global Theme Variables**: All semantic color variables are defined in `global.css` under the `@layer theme` section
+   - **Component Variables**: Define component-specific variables in component `:root` when needed
+   - **Theme Integration**: Components should use semantic variables from global.css rather than hardcoded colors
+   - **No Media Queries in Components**: Theme switching is handled globally via `data-theme` attributes
 
-     ```css
-     :root {
-       --component-background: var(--color-bg-dark-200);
-       --component-foreground: var(--c-white);
-       --component-hover-opacity: 0.8;
-     }
+   **Example of proper theming:**
+   ```css
+   /* In global.css - semantic variables */
+   :root[data-theme='light'] {
+     --color-nav-bg: var(--color-bg-dark-200);
+     --color-nav-text: var(--color-brand-white);
+   }
 
-     @media (prefers-color-scheme: dark) {
-       :root {
-         --component-background: var(--color-bg-light-200);
-         --component-foreground: var(--c-black);
-       }
-     }
-     ```
+   :root[data-theme='dark'] {
+     --color-nav-bg: var(--color-bg-light-200);
+     --color-nav-text: var(--color-brand-black);
+   }
+
+   /* In component - use semantic variables */
+   .component {
+     background: var(--color-nav-bg);
+     color: var(--color-nav-text);
+   }
+   ```
+
+   **When to add new semantic variables:**
+   - When a component needs different colors in light/dark modes
+   - When the color has semantic meaning (e.g., `--color-nav-bg`, `--color-notecard-border`)
+   - When the color is used across multiple components
+   - Add them to the appropriate section in `global.css` under `@layer theme`
+
+   **Variable naming convention:**
+   - Use semantic names: `--color-{component}-{property}`
+   - Examples: `--color-nav-bg`, `--color-notecard-border`, `--color-footer-text`
+   - Group related variables together in `global.css`
 
 2. **Modern CSS**
 
