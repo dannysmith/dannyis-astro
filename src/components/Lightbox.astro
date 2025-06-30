@@ -46,11 +46,12 @@
     const closeBtn = document.getElementById('close') as HTMLSpanElement;
 
     document.querySelectorAll('img[alt]').forEach(img => {
-      img.addEventListener('click', function () {
+      img.addEventListener('click', function (event) {
+        const clickedImg = event.target as HTMLImageElement;
         lightbox.style.display = 'flex';
 
         const image = new Image();
-        image.src = (this as HTMLImageElement).src;
+        image.src = clickedImg.src;
         image.onload = function () {
           lightboxCanvas.width = image.width;
           lightboxCanvas.height = image.height;
