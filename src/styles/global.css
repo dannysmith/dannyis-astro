@@ -497,26 +497,26 @@
     font-weight: 500;
     font-variation-settings: 'opsz' 50;
     line-height: 1.25;
-    margin-top: 2em;
+    margin-top: 2.5em;
   }
 
   .blog-article > h1 {
     font-size: 1.93em;
     font-weight: 600;
-    margin-top: 1em;
+    margin-top: 1.5em;
   }
 
   .blog-article > h2 {
     font-size: 1.56em;
     font-weight: 600;
-    margin-top: 1em;
+    margin-top: 1.7em;
     margin-bottom: -0.5em;
   }
 
   .blog-article > h3 {
     font-size: 1.25em;
     font-weight: 600;
-    margin-top: 1em;
+    margin-top: 1.5em;
     margin-bottom: -0.5em;
   }
 
@@ -524,7 +524,7 @@
     font-size: 1em;
     font-weight: normal;
     font-style: italic;
-    margin-top: 1em;
+    margin-top: 1.5em;
     margin-bottom: -1em;
   }
 
