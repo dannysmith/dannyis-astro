@@ -9,7 +9,6 @@ import Pill from '../components/Pill.astro';
 import Grid from '../components/Grid.astro';
 import Notion from '../components/Notion.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-// import Lightbox from '../components/Lightbox.astro'; // Uncomment if available
 ---
 
 <!doctype html>
@@ -47,6 +46,28 @@ import FormattedDate from '../components/FormattedDate.astro';
           </p>
         </section>
 
+        <div class="content intro-section">
+          <h2>Default text styles</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+          <h2>Heading 2</h2>
+          <h3>Heading 3</h3>
+          <h4>Heading 4</h4>
+          <h5>Heading 5</h5>
+          <h6>Heading 6</h6>
+          <p>Paragraph with <a href="#">link</a></p>
+          <p>
+            <del>Strikethrough</del>,
+            <sup>Superscript</sup>,
+            <strong>Bold</strong>,
+            <em>Italic</em>,
+            <code>Inline code</code>,
+            <mark>Highlighted text</mark>,
+            <kbd>Ctrl</kbd>+<kbd>C</kbd>
+            <abbr title="Abbreviation">Abbr</abbr>
+            <abbr>Abbr</abbr>
+          </p>
+        </div>
+
         <div class="test-section">
           <h2>Pill Component</h2>
           <Pill text="Default" />
@@ -80,13 +101,6 @@ import FormattedDate from '../components/FormattedDate.astro';
           <h2>FormattedDate Component</h2>
           <FormattedDate date={new Date()} />
         </div>
-
-        <!-- Uncomment if Lightbox is available
-        <div class="test-section">
-          <h2>Lightbox Component</h2>
-          <Lightbox images={[{ src: '/images/example.jpg', alt: 'Example' }]} />
-        </div>
-        -->
 
         <!-- Existing Callout, BookmarkCard, and Embed tests below -->
         <div class="test-section">
