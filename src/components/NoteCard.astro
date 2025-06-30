@@ -23,7 +23,7 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
       tags.length > 0 && (
         <div class="tags">
           {tags.map(tag => (
-            <Pill text={tag} color="var(--color-grey-300)" textColor="var(--color-grey-700)" />
+            <Pill text={tag} />
           ))}
         </div>
       )
@@ -42,25 +42,15 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
 </article>
 
 <style>
-  :root {
-    --note-border-color: var(--color-bg-dark-200);
-    --note-background: var(--c-white);
-    --dotgrid-color: var(--color-red-400);
-    --date-color: var(--color-grey-700);
-    --title-underline-color: var(--color-red-500);
-    --tag-bg: var(--color-grey-300);
-    --tag-color: var(--color-grey-700);
-  }
-
   .note {
     --line-height: calc(1.8 * 1rem);
     width: 100%;
-    background: var(--note-background);
+    background: var(--color-note-bg);
     padding: var(--line-height);
-    background-image: radial-gradient(var(--dotgrid-color) 0.5px, transparent 0);
+    background-image: radial-gradient(var(--color-note-dot-grid) 0.5px, transparent 0);
     background-size: 1rem 1rem;
     filter: var(--shadow-medium);
-    border-top: 1rem solid var(--note-border-color);
+    border-top: 1rem solid var(--color-note-border);
     border-radius: 0.2rem;
   }
 
@@ -72,7 +62,7 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
 
   .date {
     font-size: 0.7rem;
-    color: var(--date-color);
+    color: var(--color-note-date);
     text-transform: uppercase;
     letter-spacing: 0.1ch;
   }
@@ -83,7 +73,7 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
     font-weight: 600;
     margin: 0;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--title-underline-color);
+    border-bottom: 2px solid var(--color-note-title-underline);
   }
 
   .tags {

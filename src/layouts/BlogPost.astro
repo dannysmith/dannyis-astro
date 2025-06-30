@@ -75,7 +75,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     <Lightbox />
     <style>
       body {
-        background-color: var(--color-bg-primary);
+        background-color: var(--color-article-bg);
         color: var(--color-text-primary);
       }
       .spinner-overlay {
@@ -83,7 +83,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         display: grid;
         justify-content: center;
         align-content: center;
-        background: var(--color-overlay);
+        background: var(--color-article-bg);
       }
 
       .metadata {
@@ -146,7 +146,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         .blog-article > :is(h1, h2, h3, h4, h5, h6) {
           font-variant-ligatures: common-ligatures discretionary-ligatures;
           hanging-punctuation: first allow-end last;
-          border-bottom: 1px solid var(--color-border-subtle); /* subtle underline */
+          border-bottom: 1px solid var(--color-border);
           padding-bottom: 0.6em;
         }
 
@@ -340,7 +340,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           appearance: none;
           outline: none;
           border-radius: 2px;
-          border: 1px solid var(--color-tasklist-border);
+          border: 1px solid var(--color-article-tasklist-border);
         }
 
         .blog-article .task-list-item input:checked {
@@ -392,13 +392,13 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           overflow: visible;
           margin: 4rem 0;
 
-          border: 1px solid var(--color-horizontal-rule);
+          border: 1px solid var(--color-article-horizontal-rule);
         }
 
         .blog-article hr:before {
           content: '§';
           transform: translateY(-0.15em);
-          background: var(--color-bg-primary);
+          background: var(--color-article-bg);
           padding: 0 0.5em;
         }
 

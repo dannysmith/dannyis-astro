@@ -72,7 +72,7 @@ import FormattedDate from '../components/FormattedDate.astro';
           <h2>Pill Component</h2>
           <Pill text="Default" />
           <Pill text="Green" color="var(--color-green-600)" />
-          <Pill text="Yellow" color="var(--color-yellow-500)" textColor="var(--c-black)" />
+          <Pill text="Yellow" color="var(--color-yellow-500)" textColor="var(--color-black)" />
           <Pill text="Custom" color="#ff69b4" textColor="#fff" />
         </div>
 
@@ -264,8 +264,8 @@ import FormattedDate from '../components/FormattedDate.astro';
       }
 
       .intro-section {
-        background: var(--color-styleguide-intro-bg);
-        border: 1px solid var(--color-styleguide-section-border);
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 2rem;
@@ -274,15 +274,15 @@ import FormattedDate from '../components/FormattedDate.astro';
       .test-section {
         margin: 2rem 0;
         padding: 1rem;
-        border: 1px dashed var(--color-styleguide-demo-border);
+        border: 1px dashed var(--color-border);
         border-radius: 8px;
       }
 
       .test-section h2 {
         margin-top: 0;
         font-size: 1.5rem;
-        color: var(--color-text-primary);
-        border-bottom: 2px solid var(--color-styleguide-heading-border);
+        color: var(--color-accent);
+        border-bottom: 2px solid var(--color-border);
         padding-bottom: 0.5rem;
       }
 
@@ -290,7 +290,7 @@ import FormattedDate from '../components/FormattedDate.astro';
         margin-top: 2rem;
         margin-bottom: 1rem;
         font-size: 1.2rem;
-        color: var(--color-text-secondary);
+        color: var(--color-text-primary);
       }
     </style>
   </body>

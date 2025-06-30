@@ -36,7 +36,11 @@ const posts = (
                     {post.data.title}
                     {post.data.draft && <span class="draft-marker"> 🚧</span>}
                     {post.data.platform && (
-                      <Pill text={post.data.platform} color="var(--color-writinglist-platform)" />
+                      <Pill
+                        text={post.data.platform}
+                        color="var(--color-writinglist-platform-label)"
+                        textColor="var(--color-brand-white)"
+                      />
                     )}
                   </h4>
                 </a>
@@ -48,7 +52,6 @@ const posts = (
     </main>
     <Footer />
     <style>
-      
       body {
         display: grid;
         grid-template-rows: auto min-content;
