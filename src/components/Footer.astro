@@ -41,18 +41,10 @@ const today = new Date();
 </footer>
 <style>
   footer {
-    --footer-background: var(--color-bg-dark-200);
-    --footer-foreground: var(--c-white);
-    --footer-border: var(--c-primary);
-    --footer-dot: var(--c-primary);
-    --footer-link-hover: var(--c-primary);
-    --footer-social-link: var(--c-primary);
-    --footer-social-link-hover: rgba(0, 0, 0, 0.8);
-
     position: relative;
-    background-color: var(--footer-background);
-    color: var(--footer-foreground);
-    border-top: 1rem solid var(--c-primary);
+    background-color: var(--color-footer-bg);
+    color: var(--color-footer-text);
+    border-top: 1rem solid var(--color-footer-border);
     padding: 1rem;
     font-size: clamp(0.8rem, calc(0.6rem + 1vw), 1rem);
   }
@@ -75,7 +67,7 @@ const today = new Date();
   .circle {
     width: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
     height: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
-    background-color: var(--footer-dot);
+    background-color: var(--color-footer-border);
     border-radius: 50%;
   }
   .name {
@@ -103,13 +95,13 @@ const today = new Date();
     a:visited {
       padding: 0.5rem;
       text-decoration: none;
-      color: var(--footer-foreground);
+      color: var(--color-footer-text);
     }
 
     a:hover,
     a:active,
     a:focus {
-      color: var(--footer-link-hover);
+      color: var(--color-footer-link-hover);
     }
   }
 
@@ -137,8 +129,8 @@ const today = new Date();
     a:hover,
     a:active,
     a:focus {
-      background-color: var(--footer-social-link-hover);
-      color: var(--footer-social-link);
+      background-color: var(--color-footer-social-hover);
+      color: var(--color-footer-link-hover);
     }
 
     svg {

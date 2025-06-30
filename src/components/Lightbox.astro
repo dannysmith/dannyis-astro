@@ -7,7 +7,7 @@
 <style>
   :root {
     --lightbox-background: rgba(0, 0, 0, 0.8);
-    --lightbox-close-link: var(--c-white);
+    --lightbox-close-link: var(--color-brand-white);
   }
 
   /* Lightbox Styles */
@@ -40,44 +40,37 @@
 <script>
   // Lightbox Script
   document.addEventListener('DOMContentLoaded', function () {
-    const lightbox = document.getElementById('lightbox') as HTMLDivElement
-    const lightboxCanvas = document.getElementById(
-      'lightboxCanvas'
-    ) as HTMLCanvasElement
-    const ctx = lightboxCanvas.getContext('2d')
-    const closeBtn = document.getElementById('close') as HTMLSpanElement
+    const lightbox = document.getElementById('lightbox') as HTMLDivElement;
+    const lightboxCanvas = document.getElementById('lightboxCanvas') as HTMLCanvasElement;
+    const ctx = lightboxCanvas.getContext('2d');
+    const closeBtn = document.getElementById('close') as HTMLSpanElement;
 
-    document.querySelectorAll('img[alt]').forEach((img) => {
-      img.addEventListener('click', function () {
-        lightbox.style.display = 'flex'
+    document.querySelectorAll('img[alt]').forEach(img => {
+      img.addEventListener('click', function (event) {
+        const clickedImg = event.target as HTMLImageElement;
+        lightbox.style.display = 'flex';
 
-        const image = new Image()
-        image.src = (this as HTMLImageElement).src
+        const image = new Image();
+        image.src = clickedImg.src;
         image.onload = function () {
-          lightboxCanvas.width = image.width
-          lightboxCanvas.height = image.height
+          lightboxCanvas.width = image.width;
+          lightboxCanvas.height = image.height;
           if (ctx) {
-            ctx.clearRect(0, 0, lightboxCanvas.width, lightboxCanvas.height)
-            ctx.drawImage(
-              image,
-              0,
-              0,
-              lightboxCanvas.width,
-              lightboxCanvas.height
-            )
+            ctx.clearRect(0, 0, lightboxCanvas.width, lightboxCanvas.height);
+            ctx.drawImage(image, 0, 0, lightboxCanvas.width, lightboxCanvas.height);
           }
-        }
-      })
-    })
+        };
+      });
+    });
 
     closeBtn.addEventListener('click', function () {
-      lightbox.style.display = 'none'
-    })
+      lightbox.style.display = 'none';
+    });
 
     lightbox.addEventListener('click', function (event) {
       if (event.target !== lightboxCanvas && event.target !== closeBtn) {
-        lightbox.style.display = 'none'
+        lightbox.style.display = 'none';
       }
-    })
-  })
+    });
+  });
 </script>

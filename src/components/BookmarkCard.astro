@@ -23,8 +23,8 @@ const { url, className = '' } = Astro.props;
   .bookmark-card :global(.link-preview) {
     width: 100%;
     display: block;
-    background: var(--color-bg-light-100);
-    border: 1px solid var(--color-bg-light-300);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
     border-radius: 0.2rem;
     overflow: hidden;
     box-shadow:
@@ -36,7 +36,7 @@ const { url, className = '' } = Astro.props;
   }
 
   .bookmark-card :global(.link-preview:hover) {
-    border-color: var(--c-primary);
+    border-color: var(--color-accent);
     box-shadow:
       0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -48,7 +48,7 @@ const { url, className = '' } = Astro.props;
 
   .bookmark-card :global(.link-preview__domain) {
     font-family: var(--font-code);
-    color: var(--color-grey-700);
+    color: var(--color-text-secondary);
     font-size: 0.8rem;
     font-weight: 400;
     margin-bottom: 6px;
@@ -56,7 +56,7 @@ const { url, className = '' } = Astro.props;
   }
 
   .bookmark-card :global(.link-preview__title) {
-    color: var(--c-primary);
+    color: var(--color-accent);
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.4;
@@ -71,7 +71,7 @@ const { url, className = '' } = Astro.props;
   }
 
   .bookmark-card :global(.link-preview__description) {
-    color: var(--color-grey-700);
+    color: var(--color-text-secondary);
     font-size: 0.875rem;
     line-height: 1.5;
     overflow: hidden;
@@ -90,7 +90,7 @@ const { url, className = '' } = Astro.props;
   }
 
   .bookmark-card :global(.link-preview:focus-visible) {
-    outline: 2px solid var(--c-primary);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 

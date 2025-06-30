@@ -39,17 +39,11 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
     </main>
     <Footer />
     <style>
-      :root {
-        --background-color: var(--c-beige-bg);
-        --notelist-title-hover-color: var(--c-primary);
-        --notelist-date-color: var(--color-grey-700);
-        --notelist-bottom-border-color: var(--c-primary);
-      }
-
+      
       body {
         display: grid;
         grid-template-rows: auto min-content;
-        background-color: var(--background-color);
+        background-color: var(--color-bg-primary);
       }
 
       section {
@@ -79,12 +73,12 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
       }
 
       a:hover .note-title {
-        color: var(--notelist-title-hover-color);
+        color: var(--color-notelist-title-hover);
       }
 
       .date {
         font-size: 0.7rem;
-        color: var(--notelist-date-color);
+        color: var(--color-notelist-date);
         text-transform: uppercase;
         letter-spacing: 0.1ch;
       }
@@ -94,7 +88,7 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
         line-height: 1.2;
         font-weight: 500;
         padding-bottom: 0.2rem;
-        border-bottom: 5px var(--notelist-bottom-border-color) solid;
+        border-bottom: 5px var(--color-notelist-border) solid;
         transition: all 0.15s;
       }
 

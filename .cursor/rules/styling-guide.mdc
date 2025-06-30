@@ -99,15 +99,91 @@ Use container queries for component-level responsiveness (vs media queries for p
 </style>
 ```
 
-## CSS Variables
+## Theme System and CSS Variables
 
+### Theme Architecture
+
+The site uses a comprehensive theme system with three modes:
+- **Auto**: Follows system preference (`prefers-color-scheme`)
+- **Light**: Explicit light theme
+- **Dark**: Explicit dark theme
+
+Theme switching is handled via `data-theme` attributes on the `:root` element, managed by the global theme system.
+
+### CSS Variable Structure
+
+#### 1. Base Color Palette
 ```css
 :root {
-  --color-primary: #007bff;
-  --spacing-unit: 1rem;
+  /* Base color tokens - never used directly in components */
+  --color-red-500: #ff7369;
+  --color-blue-500: #529cca;
+  /* ... other base colors */
 }
 ```
 
-- Global variables in `global.css`
-- Component-specific variables in component
-- Theme variables on `:root` for browser updates
+#### 2. Semantic Variables
+```css
+/* In global.css under @layer theme */
+:root[data-theme='light'] {
+  --color-nav-bg: var(--color-bg-dark-200);
+  --color-nav-text: var(--color-brand-white);
+  --color-notecard-bg: var(--color-brand-white);
+  /* ... other semantic variables */
+}
+
+:root[data-theme='dark'] {
+  --color-nav-bg: var(--color-bg-light-200);
+  --color-nav-text: var(--color-brand-black);
+  --color-notecard-bg: var(--color-bg-secondary);
+  /* ... other semantic variables */
+}
+```
+
+#### 3. Component Variables
+```css
+/* In component styles */
+:root {
+  --component-specific-var: var(--color-nav-bg);
+}
+```
+
+### Variable Organization in global.css
+
+1. **Base Colors** (outside layers): Raw color tokens
+2. **Semantic Variables** (`@layer theme`): Component-specific variables that change between themes
+3. **Component Variables** (in components): Component-specific overrides when needed
+
+### Adding New Theme Variables
+
+When a component needs different colors in light/dark modes:
+
+1. **Add semantic variables to global.css:**
+   ```css
+   /* In @layer theme section */
+   :root[data-theme='light'] {
+     --color-your-component-bg: var(--color-bg-light-200);
+     --color-your-component-text: var(--color-text-primary);
+   }
+
+   :root[data-theme='dark'] {
+     --color-your-component-bg: var(--color-bg-dark-200);
+     --color-your-component-text: var(--color-text-primary);
+   }
+   ```
+
+2. **Use in component:**
+   ```css
+   .your-component {
+     background: var(--color-your-component-bg);
+     color: var(--color-your-component-text);
+   }
+   ```
+
+### Best Practices
+
+- **Never use base colors directly** in components - always use semantic variables
+- **Group related variables** together in global.css (e.g., all nav variables together)
+- **Use descriptive names** that indicate the component and property
+- **Test both themes** when adding new variables
+- **Follow the naming convention**: `--color-{component}-{property}`

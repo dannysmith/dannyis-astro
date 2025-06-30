@@ -5,27 +5,37 @@ export interface Props {
   textColor?: string;
 }
 
-const { text, color = 'var(--color-grey-700)', textColor = 'white' } = Astro.props;
+const { text, color, textColor } = Astro.props;
+
+// Only create style object if props are provided
+const style =
+  color || textColor
+    ? {
+        ...(color && { '--local-pill-bg': color }),
+        ...(textColor && { '--local-pill-fg': textColor }),
+      }
+    : undefined;
 ---
 
-<span class="pill" style={`--pill-color: ${color}; --pill-text-color: ${textColor}`}>
+<span class="pill" style={style}>
   {text}
 </span>
 
 <style>
   .pill {
+    font-family: var(--font-ui);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.4em 0.7em 0.15em 0.7em;
+    padding: 0.4em 0.7em 0.1em 0.7em;
     border-radius: 0.18rem;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     line-height: 1;
-    background: var(--pill-color);
-    color: var(--pill-text-color);
-    border: 1px solid var(--pill-color);
+    background-color: var(--local-pill-bg, var(--color-pill-bg));
+    color: var(--local-pill-fg, var(--color-pill-fg));
+    border: 1px solid var(--local-pill-bg, var(--color-pill-bg));
   }
 </style>

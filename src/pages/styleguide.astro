@@ -9,7 +9,6 @@ import Pill from '../components/Pill.astro';
 import Grid from '../components/Grid.astro';
 import Notion from '../components/Notion.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-// import Lightbox from '../components/Lightbox.astro'; // Uncomment if available
 ---
 
 <!doctype html>
@@ -47,23 +46,45 @@ import FormattedDate from '../components/FormattedDate.astro';
           </p>
         </section>
 
+        <div class="content intro-section">
+          <h2>Default text styles</h2>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+          <h2>Heading 2</h2>
+          <h3>Heading 3</h3>
+          <h4>Heading 4</h4>
+          <h5>Heading 5</h5>
+          <h6>Heading 6</h6>
+          <p>Paragraph with <a href="#">link</a></p>
+          <p>
+            <del>Strikethrough</del>,
+            <sup>Superscript</sup>,
+            <strong>Bold</strong>,
+            <em>Italic</em>,
+            <code>Inline code</code>,
+            <mark>Highlighted text</mark>,
+            <kbd>Ctrl</kbd>+<kbd>C</kbd>
+            <abbr title="Abbreviation">Abbr</abbr>
+            <abbr>Abbr</abbr>
+          </p>
+        </div>
+
         <div class="test-section">
           <h2>Pill Component</h2>
           <Pill text="Default" />
           <Pill text="Green" color="var(--color-green-600)" />
-          <Pill text="Yellow" color="var(--color-yellow-500)" textColor="var(--c-black)" />
+          <Pill text="Yellow" color="var(--color-yellow-500)" textColor="var(--color-black)" />
           <Pill text="Custom" color="#ff69b4" textColor="#fff" />
         </div>
 
         <div class="test-section">
           <h2>Grid Component</h2>
           <Grid columns={3} rows={2} gap="1rem">
-            <div style="background:#eee; padding:1rem;">Item 1</div>
-            <div style="background:#eee; padding:1rem;">Item 2</div>
-            <div style="background:#eee; padding:1rem;">Item 3</div>
-            <div style="background:#eee; padding:1rem;">Item 4</div>
-            <div style="background:#eee; padding:1rem;">Item 5</div>
-            <div style="background:#eee; padding:1rem;">Item 6</div>
+            <div style="background:var(--color-grey-300); padding:1rem;">Item 1</div>
+            <div style="background:var(--color-grey-300); padding:1rem;">Item 2</div>
+            <div style="background:var(--color-grey-300); padding:1rem;">Item 3</div>
+            <div style="background:var(--color-grey-300); padding:1rem;">Item 4</div>
+            <div style="background:var(--color-grey-300); padding:1rem;">Item 5</div>
+            <div style="background:var(--color-grey-300); padding:1rem;">Item 6</div>
           </Grid>
         </div>
 
@@ -80,13 +101,6 @@ import FormattedDate from '../components/FormattedDate.astro';
           <h2>FormattedDate Component</h2>
           <FormattedDate date={new Date()} />
         </div>
-
-        <!-- Uncomment if Lightbox is available
-        <div class="test-section">
-          <h2>Lightbox Component</h2>
-          <Lightbox images={[{ src: '/images/example.jpg', alt: 'Example' }]} />
-        </div>
-        -->
 
         <!-- Existing Callout, BookmarkCard, and Embed tests below -->
         <div class="test-section">
@@ -146,7 +160,9 @@ import FormattedDate from '../components/FormattedDate.astro';
           </Callout>
 
           <h3>Responsive Test</h3>
-          <div style="width: 100%; max-width: 300px; border: 1px dashed #ccc; padding: 1rem;">
+          <div
+            style="width: 100%; max-width: 300px; border: 1px dashed var(--color-grey-400); padding: 1rem;"
+          >
             <p><strong>Narrow Container (300px):</strong></p>
             <Callout icon="📱" type="purple" title="Mobile View">
               This callout is in a narrow container to test responsive behavior. The icon should be
@@ -223,11 +239,8 @@ import FormattedDate from '../components/FormattedDate.astro';
     </main>
     <Footer />
     <style>
-      :root {
-        --background-color: var(--c-beige-bg);
-      }
       body {
-        background: var(--background-color);
+        background-color: var(--color-bg-primary);
         display: grid;
         grid-template-rows: auto min-content;
       }
@@ -251,8 +264,8 @@ import FormattedDate from '../components/FormattedDate.astro';
       }
 
       .intro-section {
-        background: #f8f8f8;
-        border: 1px solid #eee;
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border);
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 2rem;
@@ -261,15 +274,15 @@ import FormattedDate from '../components/FormattedDate.astro';
       .test-section {
         margin: 2rem 0;
         padding: 1rem;
-        border: 1px dashed #ccc;
+        border: 1px dashed var(--color-border);
         border-radius: 8px;
       }
 
       .test-section h2 {
         margin-top: 0;
         font-size: 1.5rem;
-        color: #333;
-        border-bottom: 2px solid #eee;
+        color: var(--color-accent);
+        border-bottom: 2px solid var(--color-border);
         padding-bottom: 0.5rem;
       }
 
@@ -277,7 +290,7 @@ import FormattedDate from '../components/FormattedDate.astro';
         margin-top: 2rem;
         margin-bottom: 1rem;
         font-size: 1.2rem;
-        color: #666;
+        color: var(--color-text-primary);
       }
     </style>
   </body>

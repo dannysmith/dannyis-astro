@@ -17,6 +17,7 @@
 
 /* CSS Custom Properties - these need to be outside layers as they're declarations */
 :root {
+  /* Palette: base color tokens, never used directly in components */
   --color-black: #191919;
   --color-true-black: #000000;
 
@@ -102,13 +103,13 @@
   --color-bg-dark-700: #d5d5d5;
   --color-bg-dark-800: #ffffff;
 
-  /* Brand colours */
-  --c-primary: var(--color-red-500);
-  --c-brand-grey: var(--color-bg-light-700);
-  --c-brand-dark-grey: var(--color-bg-light-800);
-  --c-white: #ffffff;
-  --c-black: var(--color-black);
-  --c-beige-bg: rgb(246, 243, 234);
+  /* Named Brand colours */
+  --color-brand-primary: var(--color-red-500);
+  --color-brand-grey: var(--color-bg-light-700);
+  --color-brand-dark-grey: var(--color-bg-light-800);
+  --color-brand-white: #ffffff;
+  --color-brand-black: var(--color-black);
+  --color-brand-beige: #f6f3ea;
 
   /* Shadows - should be used like filter:var(--shadow-xsmall)*/
 
@@ -127,26 +128,6 @@
   --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
-
-  /* Colours for global stylesheet */
-  --accent-color: var(--c-primary);
-  --foreground-color: var(--c-black);
-  --background-color: var(--c-beige-bg);
-
-  --abbr-underline-color: rgba(0, 0, 0, 0.15);
-  --code-background-color: rgba(0, 0, 0, 0.05);
-  --code-border-color: rgba(0, 0, 0, 0.1);
-  --pre-border-color: rgba(0, 0, 0, 0.1);
-
-  --table-border-color: rgba(0, 0, 0, 0.05);
-  --strikethrough-color: rgba(0, 0, 0, 0.5);
-  --mark-background-color: var(--color-yellow-500);
-
-  --prose-blockquote-border-color: var(--color-red-500);
-  --prose-heading-underline-color: var(--color-red-500);
-  --prose-link-color: var(--color-red-500);
-  --prose-link-visited-color: var(--color-purple-600);
-  --prose-link-hover-color: var(--color-red-600);
 }
 
 /* Reset Layer */
@@ -233,8 +214,8 @@
 
     /* Set color scheme */
     color-scheme: light;
-    accent-color: var(--accent-color);
-    color: var(--foreground-color);
+    accent-color: var(--color-accent);
+    color: var(--color-text-primary);
 
     /* Set the typeface */
     font-family: var(--font-ui);
@@ -243,7 +224,6 @@
 
   /* Code blocks */
   pre {
-    background: var(--code-background-color);
     padding: 1em;
     border-radius: 0.3em;
     overflow-x: auto;
@@ -298,13 +278,13 @@
     &,
     &:visited {
       text-decoration: none;
-      color: var(--foreground-color);
+      color: var(--color-text-primary);
     }
 
     &:hover,
     &:focus,
     &:active {
-      color: var(--accent-color);
+      color: var(--color-accent);
     }
   }
 
@@ -326,8 +306,22 @@
   /* Superscript and subscript */
   sup,
   sub {
-    font-size: 0.6em;
+    font-size: 0.7em;
     line-height: 1;
+  }
+
+  /* Strikethrough */
+  del {
+    text-decoration: line-through;
+    text-decoration-color: var(--color-strikethrough);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Highlight */
+  mark {
+    background-color: var(--color-mark-bg);
+    border-radius: 0.05em;
   }
 
   /* Simple, attractive global table styles */
@@ -336,11 +330,12 @@
     width: 100%;
     margin: 2em 0;
     font-size: 1em;
+    background-color: var(--color-table-bg);
   }
 
   th,
   td {
-    border: 1px solid var(--table-border-color, rgba(0, 0, 0, 0.05));
+    border: 1px solid var(--color-table-border);
     padding: 0.2em 0.5em;
     text-align: left;
   }
@@ -348,7 +343,8 @@
   th {
     font-weight: 600;
     text-transform: uppercase;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--color-table-header-bg);
+    border-bottom-width: 2px;
   }
 }
 
@@ -357,7 +353,8 @@
   .prose {
     font-family: var(--font-prose);
     font-size: 1rem;
-    line-height: 1.7;
+    font-weight: var(--font-weight-prose);
+    line-height: var(--line-height-prose);
 
     /* Consistent spacing between elements */
     > * + * {
@@ -381,7 +378,7 @@
       margin-bottom: 1em;
       line-height: 1.2;
       font-weight: 600;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid var(--prose-heading-border-color);
       padding-bottom: 0.3em;
     }
 
@@ -398,7 +395,7 @@
     }
 
     li::marker {
-      color: var(--color-red-700);
+      color: var(--prose-list-marker-color);
     }
 
     li {
@@ -432,12 +429,20 @@
       font-weight: 550;
     }
 
-    code {
+    /* Inline Code blocks and kbd*/
+    :not(pre) > code,
+    kbd {
       font-family: var(--font-code);
       font-size: 0.9em;
-      background: var(--code-background-color);
-      padding: 0.2em 0.4em;
+      background-color: var(--color-code-background);
+      border: 1px solid var(--color-border);
+      padding: 0.1em 0.4em;
       border-radius: 0.2em;
+    }
+
+    /* Keyboard keys */
+    kbd {
+      box-shadow: 0 0 0 1.5px var(--color-border);
     }
 
     /* Images */
@@ -446,6 +451,370 @@
       height: auto;
       border-radius: 0.2em;
     }
+  }
+}
+
+/* Article Typography Layer */
+@layer articletypography {
+  .blog-article {
+    --line-height: var(--line-height-article);
+    --side-space: 2rem; /* Space on the left and right of the article on small screens. */
+
+    display: grid;
+    grid-template-columns:
+      1fr
+      min(60ch, calc(100% - calc(var(--side-space) * 2)))
+      1fr;
+    grid-column-gap: var(--side-space);
+    grid-row-gap: calc(var(--line-height) * 1em);
+
+    font-family: var(--font-prose);
+    font-size: clamp(1rem, calc(0.6rem + 1vw), 1.3rem);
+    font-weight: var(--font-weight-article);
+    line-height: var(--line-height);
+    text-rendering: optimizeLegibility;
+  }
+
+  .blog-article > * {
+    grid-column: 2 / 3;
+  }
+
+  .blog-article:last-child {
+    margin-bottom: 5em;
+  }
+
+  /* Headings */
+
+  .blog-article > :is(h1, h2, h3, h4, h5, h6) {
+    font-variant-ligatures: common-ligatures discretionary-ligatures;
+    hanging-punctuation: first allow-end last;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.6em;
+  }
+
+  .blog-article h1.title {
+    font-size: 2.4em;
+    font-weight: 500;
+    font-variation-settings: 'opsz' 50;
+    line-height: 1.25;
+    margin-top: 2.5em;
+  }
+
+  .blog-article > h1 {
+    font-size: 1.93em;
+    font-weight: 600;
+    margin-top: 1.5em;
+  }
+
+  .blog-article > h2 {
+    font-size: 1.56em;
+    font-weight: 600;
+    margin-top: 1.7em;
+    margin-bottom: -0.5em;
+  }
+
+  .blog-article > h3 {
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: -0.5em;
+  }
+
+  .blog-article > :is(h4, h5, h6) {
+    font-size: 1em;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 1.5em;
+    margin-bottom: -1em;
+  }
+
+  /* Remove top margin from headings that are immediatly preceeded by another heading or an HR */
+  .blog-article > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
+    margin-top: 0;
+  }
+
+  /* ----------- Paragraphs ----------- */
+
+  .blog-article > p:first-of-type {
+    margin-top: 3em;
+  }
+
+  .blog-article > p {
+    font-variant-numeric: oldstyle-nums diagonal-fractions;
+    hanging-punctuation: first allow-end last;
+  }
+
+  /* Use hyphens only on small viewports. */
+  @media (max-width: 42em) {
+    .blog-article > p {
+      -webkit-hyphens: auto;
+      hyphens: auto;
+    }
+  }
+
+  /* First line of first para*/
+  .blog-article > p:first-of-type::first-line {
+    text-transform: lowercase;
+    -webkit-hyphens: none;
+    hyphens: none;
+    font-variant-caps: small-caps;
+    font-weight: 525;
+  }
+
+  /* Increase first line weight slightly in dark mode */
+  @media (prefers-color-scheme: dark) {
+    .blog-article > p:first-of-type::first-line {
+      font-weight: 575;
+    }
+  }
+
+  :root[data-theme='dark'] .blog-article > p:first-of-type::first-line {
+    font-weight: 575;
+  }
+
+  /* End Mark */
+  .blog-article > p:last-of-type:after {
+    color: var(--color-article-accent);
+    display: inline-block;
+    content: ' ';
+    -webkit-mask: url('/end-mark.svg');
+    mask: url('/end-mark.svg');
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    background-color: currentColor;
+    height: 0.65em;
+    width: 1em;
+    line-height: 0.5;
+    margin-left: 0.1em;
+  }
+  /*  Drop Cap */
+  .blog-article > p:first-of-type::first-letter {
+    text-transform: uppercase;
+    float: left;
+    font-size: 4em;
+    line-height: 1;
+    padding-right: 0.4ch;
+  }
+
+  /* ----------- Links ----------- */
+
+  .blog-article a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--color-article-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+    text-decoration-skip-ink: none;
+    border-radius: 0.1em;
+  }
+
+  .blog-article a:visited {
+    text-decoration-color: var(--color-link-visited);
+  }
+
+  .blog-article a:hover,
+  .blog-article a:active {
+    text-decoration-color: var(--color-article-accent);
+    color: var(--color-article-accent);
+  }
+
+  .blog-article a:focus-visible {
+    outline: 2px solid var(--color-article-accent);
+    text-decoration: none;
+  }
+
+  @media (pointer: coarse) {
+    .blog-article a {
+      text-decoration: none;
+      color: var(--color-link-hover);
+    }
+
+    .blog-article a:visited {
+      color: var(--color-link-visited);
+    }
+  }
+
+  .blog-article h1 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* ----------- Lists ----------- */
+
+  .blog-article li {
+    padding-left: 1em;
+    margin-top: 0.5em;
+    /* Ensure marker color for all lists */
+    &::marker {
+      color: var(--color-article-accent);
+    }
+  }
+  .blog-article li:first-of-type {
+    margin-top: 0;
+  }
+
+  .blog-article :is(ul, ol) {
+    font-variant-numeric: oldstyle-nums diagonal-fractions;
+  }
+
+  .blog-article ul {
+    padding-left: 0.4em;
+    list-style-type: '•';
+  }
+
+  .blog-article ol {
+    padding-left: 0.4em;
+    list-style-type: decimal;
+  }
+
+  .blog-article ol ::marker {
+    font-size: 1.4ex;
+    font-variation-settings: 'opsz' 10;
+    font-weight: 500;
+    color: var(--color-article-accent);
+  }
+
+  /* ----------- Task Lists ------------ */
+
+  .blog-article .contains-task-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .blog-article .task-list-item {
+    padding-left: 0;
+  }
+
+  .blog-article .task-list-item input {
+    position: relative;
+    height: 0.7em;
+    width: 0.7em;
+    margin-bottom: 0;
+    appearance: none;
+    outline: none;
+    border-radius: 2px;
+    border: 1px solid var(--color-article-tasklist-border);
+  }
+
+  .blog-article .task-list-item input:checked {
+    color: var(--color-article-accent);
+    background: transparent;
+    border-color: var(--color-article-accent);
+  }
+
+  .blog-article .task-list-item input:checked:before {
+    content: '\2713';
+    position: absolute;
+    top: -0.1em;
+    left: 0.05em;
+    font-size: 0.6em;
+    font-weight: 600;
+    color: var(--color-article-accent);
+  }
+
+  .blog-article .task-list-item input[disabled] {
+    opacity: 1;
+  }
+
+  /* ----------- Text Styles ----------- */
+
+  .blog-article strong {
+    font-weight: 650;
+  }
+
+  .blog-article code {
+    font-family: var(--font-code);
+    font-size: 0.9em;
+    background: var(--color-code-background);
+    padding: 0.2em 0.4em;
+    border-radius: 0.2em;
+  }
+  .blog-article pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  /* ----------- HR ----------- */
+  .blog-article hr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 0;
+    overflow: visible;
+    margin: 4rem 0;
+
+    border: 1px solid var(--color-article-horizontal-rule);
+  }
+
+  .blog-article hr:before {
+    content: '§';
+    transform: translateY(-0.15em);
+    background: var(--color-article-bg);
+    padding: 0 0.5em;
+  }
+
+  /* ----------- Blockquotes ----------- */
+  .blog-article blockquote {
+    font-variant-numeric: oldstyle-nums diagonal-fractions;
+    hanging-punctuation: first allow-end last;
+    border-left: 2px solid var(--color-article-accent);
+    padding-left: calc((1em * var(--line-height)) - 2px);
+    font-style: italic;
+    margin-left: 0;
+  }
+
+  /* ----------- Footnotes ----------- */
+
+  .blog-article [data-footnote-ref] {
+    display: inline-block;
+    padding-left: 0.5ch;
+    padding-right: 0.5ch;
+    font-size: 0.7em;
+    font-weight: 600;
+    font-variant: small-caps;
+    letter-spacing: 0.05ch;
+    text-decoration: none;
+    color: var(--color-article-accent);
+  }
+
+  .inline-footnote-container {
+    font-size: 0.8em;
+    padding: 1em;
+    border-left: 2px solid var(--color-article-accent);
+    background: var(--color-article-inline-footnote-bg);
+
+    .data-footnote-backref {
+      display: none;
+    }
+  }
+
+  .blog-article .footnotes {
+    border-top: 1px solid var(--color-article-accent);
+    margin-top: 2em;
+    padding-top: 1em;
+    font-size: 0.8em;
+
+    .data-footnote-backref {
+      text-decoration: none;
+      color: var(--color-article-accent);
+    }
+  }
+
+  /* ----------- Bleeds for images ----------- */
+  .blog-article > .bleed-left {
+    grid-column: 1 / 3;
+  }
+  .blog-article > .bleed-right {
+    grid-column: 2 / 4;
+  }
+  .blog-article > .bleed-full {
+    width: 100%;
+    grid-column: 1 / 4;
+  }
+  .blog-article > .border {
+    filter: var(--shadow-small);
   }
 }
 
@@ -460,11 +829,292 @@
     }
   }
 
-  /* Dark mode styles will go here */
+  /* Light Theme (default) */
+  :root,
+  :root[data-theme='light'] {
+    color-scheme: light;
+
+    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
+    /* Typography adjustments */
+    --font-weight-prose: 400;
+    --line-height-prose: 1.7;
+    --font-weight-article: 350;
+    --line-height-article: 1.7;
+
+    /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
+    /* Background colors */
+    --color-bg-primary: var(--color-brand-beige);
+    --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 40%, white);
+
+    /* Text colors */
+    --color-text-primary: var(--color-brand-grey);
+    --color-text-secondary: var(--color-grey-800);
+    --color-accent: var(--color-brand-primary);
+
+    /* Border and divider colors */
+    --color-border: rgba(0, 0, 0, 0.1);
+
+    /* Interactive colors */
+    --color-link: var(--color-red-500);
+    --color-link-visited: var(--color-purple-600);
+    --color-link-hover: var(--color-red-600);
+
+    /* Inline elements */
+    --color-mark-bg: var(--color-yellow-500);
+    --color-strikethrough: rgba(0, 0, 0, 0.5);
+    --color-abbr-underline: rgba(0, 0, 0, 0.15);
+
+    /* Table colors */
+    --color-table-border: rgba(0, 0, 0, 0.1);
+    --color-table-bg: var(--color-bg-secondary);
+    --color-table-header-bg: var(--color-bg-secondary);
+
+    /* Code colors */
+    --color-code-background: var(--color-bg-secondary);
+
+    /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
+    /* Prose/typography colors */
+    --prose-heading-border-color: var(--color-border);
+    --prose-link-color: var(--color-link);
+    --prose-link-visited-color: var(--color-link-visited);
+    --prose-link-hover-color: var(--color-link-hover);
+    --prose-blockquote-border-color: var(--color-accent);
+    --prose-list-marker-color: var(--color-accent);
+
+    /* -------------------- COMPONENT COLOURS -------------------- */
+    /* Navigation colors */
+    --color-nav-bg: var(--color-bg-dark-200);
+    --color-nav-text: var(--color-brand-white);
+    --color-nav-link-hover: var(--color-brand-primary);
+    --color-nav-border: var(--color-brand-primary);
+    --color-hamburger-bg: rgba(255, 255, 255, 0.6);
+    --color-hamburger-text: var(--color-brand-primary);
+
+    /* Footer colors */
+    --color-footer-bg: var(--color-bg-dark-200);
+    --color-footer-text: var(--color-brand-white);
+    --color-footer-link-hover: var(--color-brand-primary);
+    --color-footer-border: var(--color-brand-primary);
+    --color-footer-social-hover: rgba(0, 0, 0, 0.25);
+
+    /* NoteCard colors */
+    --color-notecard-bg: var(--color-brand-white);
+    --color-notecard-border: var(--color-bg-dark-200);
+    --color-notecard-dot-grid: var(--color-red-400);
+    --color-notecard-date: var(--color-text-secondary);
+    --color-notecard-title-underline: var(--color-accent);
+
+    /* Pill colors */
+    --color-pill-bg: var(--color-grey-400);
+    --color-pill-fg: var(--color-grey-500);
+
+    /* Lightbox colors */
+    --color-lightbox-bg: rgba(0, 0, 0, 0.9);
+    --color-lightbox-close: var(--color-brand-white);
+
+    /* Callout colors */
+    --color-callout-default-bg: var(--color-grey-300);
+    --color-callout-red-bg: var(--color-red-300);
+    --color-callout-blue-bg: var(--color-blue-300);
+    --color-callout-green-bg: var(--color-green-300);
+    --color-callout-orange-bg: var(--color-orange-300);
+    --color-callout-yellow-bg: var(--color-yellow-300);
+    --color-callout-purple-bg: var(--color-purple-300);
+
+    /* Article/blog specific colors */
+    --color-article-bg: var(--color-bg-primary);
+    --color-article-accent: rgb(184, 72, 72);
+    --color-article-horizontal-rule: var(--color-border);
+    --color-article-inline-footnote-bg: var(--color-bg-secondary);
+    --color-article-tasklist-border: var(--color-border);
+
+    /* Notion colors */
+    --notion-arrow-color: rgba(255, 255, 255, 0.6);
+    --notion-underline-color: rgba(255, 255, 255, 0.25);
+    --notion-arrow-stroke-color: var(--color-brand-white);
+    --notion-hover-opacity: 0.8;
+
+    /* -------------------- PAGE COLOURS -------------------- */
+    /* Homepage specific colors */
+    --color-homepage-link-border: var(--color-accent);
+    --color-homepage-link-hover: var(--color-accent);
+
+    /* Note list page colors */
+    --color-notelist-title-hover: var(--color-accent);
+    --color-notelist-date: var(--color-text-secondary);
+    --color-notelist-border: var(--color-accent);
+
+    /* Writing list page colors */
+    --color-writinglist-title-hover: var(--color-accent);
+    --color-writinglist-date: var(--color-text-secondary);
+    --color-writinglist-border: var(--color-accent);
+    --color-writinglist-platform-label: var(--color-green-700);
+  }
+
+  /* Explicit dark theme (overrides media query) */
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+
+    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
+    /* Slightly increased for better readability in dark mode */
+    --font-weight-prose: 350;
+    --line-height-prose: 1.8;
+    --font-weight-article: 250;
+    --line-height-article: 1.6;
+
+    /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
+    /* Background colors */
+    --color-bg-primary: var(--color-bg-dark-200);
+    --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
+
+    /* Text colors */
+    --color-text-primary: var(--color-brand-beige);
+    --color-text-secondary: var(--color-grey-500);
+
+    /* Border and divider colors */
+    --color-border: rgba(255, 255, 255, 0.1);
+
+    /* Interactive colors */
+    --color-link: var(--color-red-400);
+    --color-link-visited: var(--color-purple-500);
+    --color-link-hover: var(--color-red-500);
+
+    /* Inline elements */
+    --color-mark-bg: var(--color-yellow-600);
+    --color-strikethrough: rgba(255, 255, 255, 1);
+    --color-abbr-underline: rgba(255, 255, 255, 0.1);
+
+    /* Table colors */
+    --color-table-border: rgba(255, 255, 255, 0.1);
+    --color-table-bg: var(--color-bg-secondary);
+    --color-table-header-bg: var(--color-bg-secondary);
+
+    /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
+    /* Prose/typography colors */
+    --prose-link-color: var(--color-link);
+    --prose-link-visited-color: var(--color-link-visited);
+    --prose-link-hover-color: var(--color-link-hover);
+
+    /* -------------------- COMPONENT COLOURS -------------------- */
+    /* Navigation colors */
+    --color-hamburger-bg: rgba(0, 0, 0, 0.8);
+    --color-hamburger-text: var(--color-brand-primary);
+
+    /* Footer colors */
+    --color-footer-social-hover: rgba(0, 0, 0, 0.25);
+
+    /* NoteCard colors */
+    --color-notecard-bg: var(--color-bg-secondary);
+    --color-notecard-border: var(--color-accent);
+    --color-notecard-dot-grid: transparent;
+    --color-notecard-date: var(--color-text-secondary);
+    --color-notecard-title-underline: var(--color-accent);
+
+    /* Pill colors */
+    --color-pill-bg: var(--color-grey-800);
+    --color-pill-fg: var(--color-grey-400);
+
+    /* Callout colors */
+    --color-callout-default-bg: var(--color-grey-800);
+    --color-callout-red-bg: var(--color-red-800);
+    --color-callout-blue-bg: var(--color-blue-800);
+    --color-callout-green-bg: var(--color-green-800);
+    --color-callout-orange-bg: var(--color-orange-800);
+    --color-callout-yellow-bg: var(--color-yellow-800);
+    --color-callout-purple-bg: var(--color-purple-800);
+
+    /* Article/blog specific colors */
+    --color-article-accent: var(--color-accent);
+
+    /* Notion colors */
+    --notion-underline-color: rgba(0, 0, 0, 0.25);
+
+    /* -------------------- PAGE COLOURS -------------------- */
+    /* Writing list page colors */
+    --color-writinglist-platform-label: var(--color-green-500);
+  }
+
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
-      /* Add dark mode color overrides here */
+
+      /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
+      /* Slightly increased for better readability in dark mode */
+      --font-weight-prose: 350;
+      --line-height-prose: 1.8;
+      --font-weight-article: 250;
+      --line-height-article: 1.6;
+
+      /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
+      /* Background colors */
+      --color-bg-primary: var(--color-bg-dark-200);
+      --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
+
+      /* Text colors */
+      --color-text-primary: var(--color-brand-beige);
+      --color-text-secondary: var(--color-grey-500);
+
+      /* Border and divider colors */
+      --color-border: rgba(255, 255, 255, 0.1);
+
+      /* Interactive colors */
+      --color-link: var(--color-red-400);
+      --color-link-visited: var(--color-purple-500);
+      --color-link-hover: var(--color-red-500);
+
+      /* Inline elements */
+      --color-mark-bg: var(--color-yellow-600);
+      --color-strikethrough: rgba(255, 255, 255, 1);
+      --color-abbr-underline: rgba(255, 255, 255, 0.1);
+
+      /* Table colors */
+      --color-table-border: rgba(255, 255, 255, 0.1);
+      --color-table-bg: var(--color-bg-secondary);
+      --color-table-header-bg: var(--color-bg-secondary);
+
+      /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
+      /* Prose/typography colors */
+      --prose-link-color: var(--color-link);
+      --prose-link-visited-color: var(--color-link-visited);
+      --prose-link-hover-color: var(--color-link-hover);
+
+      /* -------------------- COMPONENT COLOURS -------------------- */
+      /* Navigation colors */
+      --color-hamburger-bg: rgba(0, 0, 0, 0.8);
+      --color-hamburger-text: var(--color-brand-primary);
+
+      /* Footer colors */
+      --color-footer-social-hover: rgba(0, 0, 0, 0.25);
+
+      /* NoteCard colors */
+      --color-notecard-bg: var(--color-bg-secondary);
+      --color-notecard-border: var(--color-accent);
+      --color-notecard-dot-grid: transparent;
+      --color-notecard-date: var(--color-text-secondary);
+      --color-notecard-title-underline: var(--color-accent);
+
+      /* Pill colors */
+      --color-pill-bg: var(--color-grey-800);
+      --color-pill-fg: var(--color-grey-400);
+
+      /* Callout colors */
+      --color-callout-default-bg: var(--color-grey-800);
+      --color-callout-red-bg: var(--color-red-800);
+      --color-callout-blue-bg: var(--color-blue-800);
+      --color-callout-green-bg: var(--color-green-800);
+      --color-callout-orange-bg: var(--color-orange-800);
+      --color-callout-yellow-bg: var(--color-yellow-800);
+      --color-callout-purple-bg: var(--color-purple-800);
+
+      /* Article/blog specific colors */
+      --color-article-accent: var(--color-accent);
+
+      /* Notion colors */
+      --notion-underline-color: rgba(0, 0, 0, 0.25);
+
+      /* -------------------- PAGE COLOURS -------------------- */
+      /* Writing list page colors */
+      --color-writinglist-platform-label: var(--color-green-500);
     }
   }
 }

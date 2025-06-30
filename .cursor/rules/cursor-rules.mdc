@@ -33,7 +33,7 @@ This document serves as an index for all cursor rules and guidelines for the per
   - Component types and organization
   - Development guidelines
   - Props interface
-  - Styling patterns
+  - Styling patterns and theme integration
   - Accessibility
   - Best practices
 
@@ -44,11 +44,11 @@ This document serves as an index for all cursor rules and guidelines for the per
 - **File**: `styling-guide.mdc`
 - **Description**: Guidelines for visual styling and CSS architecture
 - **Key Topics**:
-  - Color system
-  - CSS organization
-  - Component styling
-  - CSS variables
-  - Best practices
+  - Theme system and CSS variables
+  - Color system and semantic variables
+  - CSS organization and layers
+  - Component styling patterns
+  - Best practices for theming
 
 ### Design and Brand Guidelines
 

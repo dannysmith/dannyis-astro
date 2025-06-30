@@ -29,14 +29,11 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
     <Footer />
 
     <style>
-      :root {
-        --notepage-background: var(--c-beige-bg);
-      }
       body {
         display: grid;
         grid-template-rows: auto min-content;
         grid-template-columns: 100%;
-        background-color: var(--notepage-background);
+        background-color: var(--color-bg-primary);
       }
 
       main {

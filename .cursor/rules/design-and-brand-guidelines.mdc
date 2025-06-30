@@ -78,28 +78,30 @@ Typography is **central** — large, expressive, and layout-defining.
 
 ## Color System
 
+### Theme System
+
+The site implements a comprehensive theme system with three modes:
+- **Auto**: Follows user's system preference
+- **Light**: Explicit light theme with warm, beige backgrounds
+- **Dark**: Explicit dark theme with deep, rich backgrounds
+
+Theme switching is handled via the `ThemeToggle` component and managed globally through CSS custom properties and `data-theme` attributes.
+
 ### Primary Palette
 
 Based on the established personal brand palette, the site uses a **reduced, focused selection**:
 
 #### Core Colors
-- **Base Background**: Warm off-white / paper tone (`--c-beige-bg`)
-- **Primary Text**: Black or near-black (`--color-grey-800`)
-- **Primary Accent**: Red/coral (`--c-primary` = `--color-red-500`)
+
 
 #### Extended Palette
 See [global.css](mdc:src/styles/global.css)
 
 #### Link Colors
-- **Default Links**: Primary accent color
-- **Visited Links**: Purple variants
-- **Mobile Links**: Stronger red for touch interfaces
+
 
 ### Color Usage Principles
-- **Monochrome base** with **strategic accent color**
-- **Easy global changes** via CSS variables
-- **Dark mode consideration** for future implementation
-- **Consistent brand expression** across all elements
+
 
 ## Layout Principles
 
@@ -135,6 +137,7 @@ See [global.css](mdc:src/styles/global.css)
 - **Visual hierarchy** distinguishes content types clearly
 
 ### Interactive Elements
+- **Theme toggle** with auto/light/dark options
 - **Lightbox functionality** for images
 - **Smooth, intentional animations**
 - **Touch-friendly** interface elements

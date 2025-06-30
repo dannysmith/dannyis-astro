@@ -1,7 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(npm run check:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:astro-tips.dev)",
+      "WebFetch(domain:jklakus.co.uk)",
+      "Bash(npm run dev:*)",
+      "Bash(find:*)",
+      "Bash(rg:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_console_messages",
+      "Bash(node:*)",
+      "mcp__playwright__browser_press_key"
     ],
     "deny": []
   }

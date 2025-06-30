@@ -1,20 +1,19 @@
 ---
 export interface Props {
-  size: string
+  size: string;
 }
-const size = Astro.props.size || '5rem'
+const size = Astro.props.size || '5rem';
 ---
 
 <div class="spinner">
   <svg class="spinnersvg" viewBox="0 0 50 50">
-    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"
-    ></circle>
+    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
   </svg>
 </div>
 
 <style define:vars={{ size }}>
   :root {
-    --spinner-color: var(--c-primary);
+    --spinner-color: var(--color-brand-primary);
   }
 
   .spinnersvg {

@@ -74,14 +74,7 @@ try {
   <span class="title">{title}</span>
 </a>
 
-<style is:global>
-  :root {
-    --notion-arrow-color: rgba(55, 53, 47, 0.6);
-    --notion-underline-color: rgba(55, 53, 47, 0.25);
-    --notion-arrow-stroke-color: var(--c-white);
-    --notion-hover-opacity: 0.8;
-  }
-</style>
+<style is:global></style>
 
 <style>
   .notion-link {
@@ -143,13 +136,5 @@ try {
   .title {
     border-bottom: 1px solid var(--notion-underline-color);
     line-height: 1.2;
-  }
-
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --notion-arrow-color: rgba(255, 255, 255, 0.6);
-      --notion-underline-color: rgba(255, 255, 255, 0.25);
-    }
   }
 </style>

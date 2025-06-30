@@ -74,41 +74,21 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     <Footer />
     <Lightbox />
     <style>
-      :root {
-        --background-color: var(--c-beige-bg);
-        --text-color: var(--color-grey-800);
-        --spinner-overlay-color: var(--c-white);
-        --typography-detail-red-color: var(--color-red-700);
-
-        /* Primary color used throughout */
-        --article-primary-color: var(--c-primary);
-
-        /* Link colors */
-        --link-underline-visited: var(--color-purple-500);
-        --mobile-link: var(--color-red-600);
-        --mobile-link-visited: var(--color-purple-600);
-
-        /* UI element colors */
-        --tasklist-checkbox-border: rgba(0, 0, 0, 0.4);
-        --horizontal-rule-color: rgba(0, 0, 0, 0.1);
-        --inline-footnote-background-color: rgba(0, 0, 0, 0.05);
-      }
-
       body {
-        background: var(--background-color);
-        color: var(--text-color);
+        background-color: var(--color-article-bg);
+        color: var(--color-text-primary);
       }
       .spinner-overlay {
         min-height: 100vh;
         display: grid;
         justify-content: center;
         align-content: center;
-        background: var(--spinner-overlay-color);
+        background: var(--color-article-bg);
       }
 
       .metadata {
         font-size: 0.7em;
-        color: var(--article-primary-color);
+        color: var(--color-article-accent);
         font-family: var(--font-code);
         margin-top: 1rem;
       }
@@ -123,9 +103,19 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         aspect-ratio: 5 / 1;
       }
 
+      @media (prefers-color-scheme: dark) {
+        .hero-image img {
+          filter: grayscale(70%);
+        }
+      }
+
+      :root[data-theme='dark'] .hero-image img {
+        filter: grayscale(70%);
+      }
+
       .draft-notice {
-        border: 2px solid var(--article-primary-color);
-        color: var(--article-primary-color);
+        border: 2px solid var(--color-article-accent);
+        color: var(--color-article-accent);
         font-family: var(--font-ui);
         padding: 8px 16px;
         border-radius: 4px;
@@ -133,356 +123,6 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       }
     </style>
 
-    <style is:global>
-      @layer articletypography {
-        .blog-article {
-          --line-height: 1.5; /* Line height for the article. */
-          --side-space: 2rem; /* Space on the left and right of the article on small screens. */
-
-          display: grid;
-          grid-template-columns:
-            1fr
-            min(60ch, calc(100% - calc(var(--side-space) * 2)))
-            1fr;
-          grid-column-gap: var(--side-space);
-          grid-row-gap: calc(var(--line-height) * 1em);
-
-          font-family: var(--font-prose);
-          font-size: clamp(1rem, calc(0.6rem + 1vw), 1.3rem);
-          line-height: var(--line-height);
-          text-rendering: optimizeLegibility;
-        }
-
-        .blog-article > * {
-          grid-column: 2 / 3;
-        }
-
-        .blog-article:last-child {
-          margin-bottom: 5em;
-        }
-
-        /* Headings */
-
-        .blog-article > :is(h1, h2, h3, h4, h5, h6) {
-          font-variant-ligatures: common-ligatures discretionary-ligatures;
-          hanging-punctuation: first allow-end last;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* subtle underline */
-          padding-bottom: 0.6em;
-        }
-
-        .blog-article h1.title {
-          font-size: 2.4em;
-          font-weight: 500;
-          font-variation-settings: 'opsz' 50;
-          line-height: 1.25;
-          margin-top: 1.5em;
-        }
-
-        .blog-article > h1 {
-          font-size: 1.93em;
-          font-weight: 600;
-          margin-top: 1em;
-        }
-
-        .blog-article > h2 {
-          font-size: 1.56em;
-          font-weight: 600;
-          margin-top: 1em;
-          margin-bottom: -0.5em;
-        }
-
-        .blog-article > h3 {
-          font-size: 1.25em;
-          font-weight: 600;
-          margin-top: 1em;
-          margin-bottom: -0.5em;
-        }
-
-        .blog-article > :is(h4, h5, h6) {
-          font-size: 1em;
-          font-weight: normal;
-          font-style: italic;
-          margin-top: 1em;
-          margin-bottom: -1em;
-        }
-
-        /* Remove top margin from headings that are immediatly preceeded by another heading or an HR */
-        .blog-article > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
-          margin-top: 0;
-        }
-
-        /* ----------- Paragraphs ----------- */
-
-        .blog-article > p:first-of-type {
-          margin-top: 3em;
-        }
-
-        .blog-article > p {
-          font-variant-numeric: oldstyle-nums diagonal-fractions;
-          hanging-punctuation: first allow-end last;
-        }
-
-        /* Use hyphens only on small viewports. */
-        @media (max-width: 42em) {
-          .blog-article > p {
-            -webkit-hyphens: auto;
-            hyphens: auto;
-          }
-        }
-
-        /* First line of first para*/
-        .blog-article > p:first-of-type::first-line {
-          text-transform: lowercase;
-          -webkit-hyphens: none;
-          hyphens: none;
-          font-variant-caps: small-caps;
-          font-weight: 525;
-        }
-
-        /* End Mark */
-        .blog-article > p:last-of-type:after {
-          color: var(--article-primary-color);
-          display: inline-block;
-          content: ' ';
-          -webkit-mask: url('/end-mark.svg');
-          mask: url('/end-mark.svg');
-          -webkit-mask-size: cover;
-          mask-size: cover;
-          background-color: currentColor;
-          height: 0.65em;
-          width: 1em;
-          line-height: 0.5;
-          margin-left: 0.1em;
-        }
-        /*  Drop Cap */
-        .blog-article > p:first-of-type::first-letter {
-          text-transform: uppercase;
-          float: left;
-          font-size: 4em;
-          line-height: 1;
-          padding-right: 0.4ch;
-        }
-
-        /* ----------- Links ----------- */
-
-        .blog-article a {
-          color: inherit;
-          text-decoration: underline;
-          text-decoration-color: var(--article-primary-color);
-          text-decoration-thickness: 1px;
-          text-underline-offset: 0.3em;
-          text-decoration-skip-ink: none;
-          border-radius: 0.1em;
-        }
-
-        .blog-article a:visited {
-          text-decoration-color: var(--link-underline-visited);
-        }
-
-        .blog-article a:hover,
-        .blog-article a:active {
-          text-decoration-color: var(--article-primary-color);
-          color: var(--article-primary-color);
-        }
-
-        .blog-article a:focus-visible {
-          outline: 2px solid var(--article-primary-color);
-          text-decoration: none;
-        }
-
-        @media (pointer: coarse) {
-          .blog-article a {
-            text-decoration: none;
-            color: var(--mobile-link);
-          }
-
-          .blog-article a:visited {
-            color: var(--mobile-link-visited);
-          }
-        }
-
-        .blog-article h1 a {
-          text-decoration: none;
-          color: inherit;
-        }
-
-        /* ----------- Lists ----------- */
-
-        .blog-article li {
-          padding-left: 1em;
-          margin-top: 0.5em;
-          /* Ensure marker color for all lists */
-          &::marker {
-            color: var(--typography-detail-red-color);
-          }
-        }
-        .blog-article li:first-of-type {
-          margin-top: 0;
-        }
-
-        .blog-article :is(ul, ol) {
-          font-variant-numeric: oldstyle-nums diagonal-fractions;
-        }
-
-        .blog-article ul {
-          padding-left: 0.4em;
-          list-style-type: '•';
-        }
-
-        .blog-article ol {
-          padding-left: 0.4em;
-          list-style-type: decimal;
-        }
-
-        .blog-article ol ::marker {
-          font-size: 1.4ex;
-          font-variation-settings: 'opsz' 10;
-          font-weight: 500;
-          color: var(--typography-detail-red-color);
-        }
-
-        /* ----------- Task Lists ------------ */
-
-        .blog-article .contains-task-list {
-          list-style-type: none;
-          padding-left: 0;
-        }
-
-        .blog-article .task-list-item {
-          padding-left: 0;
-        }
-
-        .blog-article .task-list-item input {
-          position: relative;
-          height: 0.7em;
-          width: 0.7em;
-          margin-bottom: 0;
-          appearance: none;
-          outline: none;
-          border-radius: 2px;
-          border: 1px solid var(--tasklist-checkbox-border);
-        }
-
-        .blog-article .task-list-item input:checked {
-          color: var(--typography-detail-red-color);
-          background: transparent;
-        }
-
-        .blog-article .task-list-item input:checked:before {
-          content: '\2713';
-          position: absolute;
-          top: -0.1em;
-          left: 0.05em;
-          font-size: 0.6em;
-          font-weight: 600;
-        }
-
-        .blog-article .task-list-item input[disabled] {
-          opacity: 1;
-        }
-
-        /* ----------- Text Styles ----------- */
-
-        .blog-article strong {
-          font-weight: 650;
-        }
-
-        .blog-article code {
-          font-family: var(--font-code);
-          font-size: 0.9em;
-          background: var(--code-background-color);
-          padding: 0.2em 0.4em;
-          border-radius: 0.2em;
-        }
-        .blog-article pre code {
-          background: none;
-          padding: 0;
-          border-radius: 0;
-        }
-
-        /* ----------- HR ----------- */
-        .blog-article hr {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 0;
-          overflow: visible;
-          margin: 4rem 0;
-
-          border: 1px solid var(--horizontal-rule-color);
-        }
-
-        .blog-article hr:before {
-          content: '§';
-          transform: translateY(-0.15em);
-          background: var(--background-color);
-          padding: 0 0.5em;
-        }
-
-        /* ----------- Blockquotes ----------- */
-        .blog-article blockquote {
-          font-variant-numeric: oldstyle-nums diagonal-fractions;
-          hanging-punctuation: first allow-end last;
-          border-left: 2px solid var(--article-primary-color);
-          padding-left: calc((1em * var(--line-height)) - 2px);
-          font-style: italic;
-          margin-left: 0;
-        }
-
-        /* ----------- Footnotes ----------- */
-
-        .blog-article [data-footnote-ref] {
-          display: inline-block;
-          padding-left: 0.5ch;
-          padding-right: 0.5ch;
-          font-size: 0.7em;
-          font-weight: 600;
-          font-variant: small-caps;
-          letter-spacing: 0.05ch;
-          text-decoration: none;
-          color: var(--article-primary-color);
-        }
-
-        .inline-footnote-container {
-          font-size: 0.8em;
-          padding: 1em;
-          border-left: 2px solid var(--article-primary-color);
-          background: var(--inline-footnote-background-color);
-
-          .data-footnote-backref {
-            display: none;
-          }
-        }
-
-        .blog-article .footnotes {
-          border-top: 1px solid var(--article-primary-color);
-          margin-top: 2em;
-          padding-top: 1em;
-          font-size: 0.8em;
-
-          .data-footnote-backref {
-            text-decoration: none;
-            color: var(--article-primary-color);
-          }
-        }
-
-        /* ----------- Bleeds for images ----------- */
-        .blog-article > .bleed-left {
-          grid-column: 1 / 3;
-        }
-        .blog-article > .bleed-right {
-          grid-column: 2 / 4;
-        }
-        .blog-article > .bleed-full {
-          width: 100%;
-          grid-column: 1 / 4;
-        }
-        .blog-article > .border {
-          filter: var(--shadow-small);
-        }
-      }
-    </style>
     <script>
       document.querySelectorAll('a[data-footnote-ref]').forEach(el => {
         const elm = el as HTMLAnchorElement;
