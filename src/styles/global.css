@@ -669,6 +669,90 @@
     /* Writing list page colors */
     --color-writinglist-platform-label: var(--color-green-500);
   }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+
+      /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
+      /* Slightly increased for better readability in dark mode */
+      --font-weight-prose: 350;
+      --line-height-prose: 1.8;
+      --font-weight-article: 250;
+      --line-height-article: 1.6;
+
+      /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
+      /* Background colors */
+      --color-bg-primary: var(--color-bg-dark-200);
+      --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
+
+      /* Text colors */
+      --color-text-primary: var(--color-brand-beige);
+      --color-text-secondary: var(--color-grey-500);
+
+      /* Border and divider colors */
+      --color-border: rgba(255, 255, 255, 0.1);
+
+      /* Interactive colors */
+      --color-link: var(--color-red-400);
+      --color-link-visited: var(--color-purple-500);
+      --color-link-hover: var(--color-red-500);
+
+      /* Inline elements */
+      --color-mark-bg: var(--color-yellow-600);
+      --color-strikethrough: rgba(255, 255, 255, 1);
+      --color-abbr-underline: rgba(255, 255, 255, 0.1);
+
+      /* Table colors */
+      --color-table-border: rgba(255, 255, 255, 0.1);
+      --color-table-bg: var(--color-bg-secondary);
+      --color-table-header-bg: var(--color-bg-secondary);
+
+      /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
+      /* Prose/typography colors */
+      --prose-link-color: var(--color-link);
+      --prose-link-visited-color: var(--color-link-visited);
+      --prose-link-hover-color: var(--color-link-hover);
+
+      /* -------------------- COMPONENT COLOURS -------------------- */
+      /* Navigation colors */
+      --color-hamburger-bg: rgba(0, 0, 0, 0.8);
+      --color-hamburger-text: var(--color-brand-primary);
+
+      /* Footer colors */
+      --color-footer-social-hover: rgba(0, 0, 0, 0.25);
+
+      /* NoteCard colors */
+      --color-notecard-bg: var(--color-bg-secondary);
+      --color-notecard-border: var(--color-accent);
+      --color-notecard-dot-grid: transparent;
+      --color-notecard-date: var(--color-text-secondary);
+      --color-notecard-title-underline: var(--color-accent);
+
+      /* Pill colors */
+      --color-pill-bg: var(--color-grey-800);
+      --color-pill-fg: var(--color-grey-400);
+
+      /* Callout colors */
+      --color-callout-default-bg: var(--color-grey-800);
+      --color-callout-red-bg: var(--color-red-800);
+      --color-callout-blue-bg: var(--color-blue-800);
+      --color-callout-green-bg: var(--color-green-800);
+      --color-callout-orange-bg: var(--color-orange-800);
+      --color-callout-yellow-bg: var(--color-yellow-800);
+      --color-callout-purple-bg: var(--color-purple-800);
+
+      /* Article/blog specific colors */
+      --color-article-accent: var(--color-accent);
+
+      /* Notion colors */
+      --notion-underline-color: rgba(0, 0, 0, 0.25);
+
+      /* -------------------- PAGE COLOURS -------------------- */
+      /* Writing list page colors */
+      --color-writinglist-platform-label: var(--color-green-500);
+    }
+  }
 }
 
 /* Utility classes that need to be outside layers */
