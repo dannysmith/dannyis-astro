@@ -14,6 +14,7 @@ See `./add-dark-mode.md`
   - UI Atoms (pill, Spinner, FormattedDate etc)
   - For use in MDX and prose (Embed, Grid, Loom, Notion, Callout etc)
   - UI Modules (NoteCard, NavLink, MainNavigation, LightBox, Footer, BaseHead etc)
+- [ ] Upgrade to latest Astro version
 - [ ] Check all metadata, titles & descriptions are optimised properly for SEO, OG embedding etc.
 - [ ] RSS Feeds
   - [ ] Add seperate RSS feeds for Articles and Notes
