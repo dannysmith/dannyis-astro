@@ -353,7 +353,8 @@
   .prose {
     font-family: var(--font-prose);
     font-size: 1rem;
-    line-height: 1.7;
+    font-weight: var(--font-weight-prose);
+    line-height: var(--line-height-prose);
 
     /* Consistent spacing between elements */
     > * + * {
@@ -469,13 +470,20 @@
   :root[data-theme='light'] {
     color-scheme: light;
 
+    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
+    /* Typography adjustments */
+    --font-weight-prose: 400;
+    --line-height-prose: 1.7;
+    --font-weight-article: 350;
+    --line-height-article: 1.7;
+
     /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
     /* Background colors */
     --color-bg-primary: var(--color-brand-beige);
     --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 40%, white);
 
     /* Text colors */
-    --color-text-primary: var(--color-brand-black);
+    --color-text-primary: var(--color-brand-grey);
     --color-text-secondary: var(--color-grey-800);
     --color-accent: var(--color-brand-primary);
 
@@ -579,16 +587,16 @@
     --color-writinglist-platform-label: var(--color-green-700);
   }
 
-  /* Dark Theme */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-    }
-  }
-
   /* Explicit dark theme (overrides media query) */
   :root[data-theme='dark'] {
     color-scheme: dark;
+
+    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
+    /* Slightly increased for better readability in dark mode */
+    --font-weight-prose: 350;
+    --line-height-prose: 1.8;
+    --font-weight-article: 250;
+    --line-height-article: 1.6;
 
     /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
     /* Background colors */
@@ -596,7 +604,7 @@
     --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
 
     /* Text colors */
-    --color-text-primary: var(--color-brand-white);
+    --color-text-primary: var(--color-brand-beige);
     --color-text-secondary: var(--color-grey-500);
 
     /* Border and divider colors */

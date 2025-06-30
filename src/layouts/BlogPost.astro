@@ -116,7 +116,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     <style is:global>
       @layer articletypography {
         .blog-article {
-          --line-height: 1.5; /* Line height for the article. */
+          --line-height: var(--line-height-article);
           --side-space: 2rem; /* Space on the left and right of the article on small screens. */
 
           display: grid;
@@ -129,6 +129,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 
           font-family: var(--font-prose);
           font-size: clamp(1rem, calc(0.6rem + 1vw), 1.3rem);
+          font-weight: var(--font-weight-article);
           line-height: var(--line-height);
           text-rendering: optimizeLegibility;
         }
@@ -217,6 +218,17 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           hyphens: none;
           font-variant-caps: small-caps;
           font-weight: 525;
+        }
+
+        /* Increase first line weight slightly in dark mode */
+        @media (prefers-color-scheme: dark) {
+          .blog-article > p:first-of-type::first-line {
+            font-weight: 575;
+          }
+        }
+
+        :root[data-theme='dark'] .blog-article > p:first-of-type::first-line {
+          font-weight: 575;
         }
 
         /* End Mark */
