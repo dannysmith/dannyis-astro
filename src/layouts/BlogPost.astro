@@ -103,6 +103,16 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         aspect-ratio: 5 / 1;
       }
 
+      @media (prefers-color-scheme: dark) {
+        .hero-image img {
+          filter: grayscale(70%);
+        }
+      }
+
+      :root[data-theme='dark'] .hero-image img {
+        filter: grayscale(70%);
+      }
+
       .draft-notice {
         border: 2px solid var(--color-article-accent);
         color: var(--color-article-accent);
