@@ -74,9 +74,8 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     <Footer />
     <Lightbox />
     <style>
-
       body {
-        background: var(--color-bg-primary);
+        background-color: var(--color-bg-primary);
         color: var(--color-text-primary);
       }
       .spinner-overlay {
@@ -84,7 +83,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         display: grid;
         justify-content: center;
         align-content: center;
-        background: var(--color-bg-surface);
+        background: var(--color-overlay);
       }
 
       .metadata {
@@ -431,7 +430,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           font-size: 0.8em;
           padding: 1em;
           border-left: 2px solid var(--color-article-accent);
-          background: var(--color-footnote-bg);
+          background: var(--color-inline-footnote-bg);
 
           .data-footnote-backref {
             display: none;
