@@ -524,11 +524,11 @@
     --color-footer-social-hover: rgba(0, 0, 0, 0.25);
 
     /* NoteCard colors */
-    --color-note-bg: var(--color-brand-white);
-    --color-note-border: var(--color-bg-dark-200);
-    --color-note-dot-grid: var(--color-red-400);
-    --color-note-date: var(--color-text-secondary);
-    --color-note-title-underline: var(--color-accent);
+    --color-notecard-bg: var(--color-brand-white);
+    --color-notecard-border: var(--color-bg-dark-200);
+    --color-notecard-dot-grid: var(--color-red-400);
+    --color-notecard-date: var(--color-text-secondary);
+    --color-notecard-title-underline: var(--color-accent);
 
     /* Pill colors */
     --color-pill-bg: var(--color-grey-400);

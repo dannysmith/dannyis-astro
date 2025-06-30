@@ -45,12 +45,12 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
   .note {
     --line-height: calc(1.8 * 1rem);
     width: 100%;
-    background: var(--color-note-bg);
+    background: var(--color-notecard-bg);
     padding: var(--line-height);
-    background-image: radial-gradient(var(--color-note-dot-grid) 0.5px, transparent 0);
+    background-image: radial-gradient(var(--color-notecard-dot-grid) 0.5px, transparent 0);
     background-size: 1rem 1rem;
     filter: var(--shadow-medium);
-    border-top: 1rem solid var(--color-note-border);
+    border-top: 1rem solid var(--color-notecard-border);
     border-radius: 0.2rem;
   }
 
@@ -62,7 +62,7 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
 
   .date {
     font-size: 0.7rem;
-    color: var(--color-note-date);
+    color: var(--color-notecard-date);
     text-transform: uppercase;
     letter-spacing: 0.1ch;
   }
@@ -73,7 +73,7 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
     font-weight: 600;
     margin: 0;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-note-title-underline);
+    border-bottom: 2px solid var(--color-notecard-title-underline);
   }
 
   .tags {
