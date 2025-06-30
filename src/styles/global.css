@@ -592,7 +592,6 @@
     /* Text colors */
     --color-text-primary: var(--color-brand-white);
     --color-text-secondary: var(--color-grey-500);
-    --color-accent: var(--color-brand-primary);
 
     /* Border and divider colors */
     --color-border: rgba(255, 255, 255, 0.1);
@@ -614,27 +613,16 @@
 
     /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
     /* Prose/typography colors */
-    --prose-heading-border-color: var(--color-border);
     --prose-link-color: var(--color-link);
     --prose-link-visited-color: var(--color-link-visited);
     --prose-link-hover-color: var(--color-link-hover);
-    --prose-blockquote-border-color: var(--color-accent);
-    --prose-list-marker-color: var(--color-accent);
 
     /* -------------------- COMPONENT COLOURS -------------------- */
     /* Navigation colors */
-    --color-nav-bg: var(--color-bg-dark-200);
-    --color-nav-text: var(--color-brand-white);
-    --color-nav-link-hover: var(--color-brand-primary);
-    --color-nav-border: var(--color-brand-primary);
     --color-hamburger-bg: rgba(0, 0, 0, 0.8);
     --color-hamburger-text: var(--color-brand-primary);
 
     /* Footer colors */
-    --color-footer-bg: var(--color-bg-dark-200);
-    --color-footer-text: var(--color-brand-white);
-    --color-footer-link-hover: var(--color-brand-primary);
-    --color-footer-border: var(--color-brand-primary);
     --color-footer-social-hover: rgba(0, 0, 0, 0.25);
 
     /* NoteCard colors */
@@ -648,10 +636,6 @@
     --color-pill-bg: var(--color-grey-800);
     --color-pill-fg: var(--color-grey-400);
 
-    /* Lightbox colors */
-    --color-lightbox-bg: rgba(0, 0, 0, 0.9);
-    --color-lightbox-close: var(--color-brand-white);
-
     /* Callout colors */
     --color-callout-default-bg: var(--color-grey-800);
     --color-callout-red-bg: var(--color-red-800);
@@ -662,26 +646,10 @@
     --color-callout-purple-bg: var(--color-purple-800);
 
     /* Article/blog specific colors */
-    --color-article-bg: var(--color-bg-primary);
     --color-article-accent: var(--color-accent);
-    --color-article-horizontal-rule: var(--color-border);
-    --color-article-inline-footnote-bg: var(--color-bg-secondary);
-    --color-article-tasklist-border: var(--color-border);
 
     /* -------------------- PAGE COLOURS -------------------- */
-    /* Homepage specific colors */
-    --color-homepage-link-border: var(--color-accent);
-    --color-homepage-link-hover: var(--color-accent);
-
-    /* Note list page colors */
-    --color-notelist-title-hover: var(--color-accent);
-    --color-notelist-date: var(--color-text-secondary);
-    --color-notelist-border: var(--color-accent);
-
     /* Writing list page colors */
-    --color-writinglist-title-hover: var(--color-accent);
-    --color-writinglist-date: var(--color-text-secondary);
-    --color-writinglist-border: var(--color-accent);
     --color-writinglist-platform-label: var(--color-green-500);
   }
 }
