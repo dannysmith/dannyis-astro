@@ -14,27 +14,50 @@ function getYouTubeId(url: string) {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
   return match ? match[1] : null;
 }
+
 function getTweetId(url: string) {
   const match = url.match(/twitter\.com\/[\w]+\/status\/([0-9]+)/);
   return match ? match[1] : null;
 }
+
 function getVimeoId(url: string) {
   const match = url.match(/vimeo\.com\/([0-9]+)/);
   return match ? match[1] : null;
 }
+
 function getLoomId(url: string) {
   const match = url.match(/loom\.com\/(?:share|embed)\/([a-f0-9]+)/);
   return match ? match[1] : null;
 }
 
-const youtubeId = getYouTubeId(url);
-const tweetId = getTweetId(url);
-const vimeoId = getVimeoId(url);
-const loomId = getLoomId(url);
+type EmbedType =
+  | { type: 'youtube'; id: string }
+  | { type: 'tweet'; id: string }
+  | { type: 'vimeo'; id: string }
+  | { type: 'loom'; id: string }
+  | { type: 'bookmark'; url: string };
+
+function resolveEmbedType(url: string): EmbedType {
+  const youtubeId = getYouTubeId(url);
+  if (youtubeId) return { type: 'youtube', id: youtubeId };
+
+  const tweetId = getTweetId(url);
+  if (tweetId) return { type: 'tweet', id: tweetId };
+
+  const vimeoId = getVimeoId(url);
+  if (vimeoId) return { type: 'vimeo', id: vimeoId };
+
+  const loomId = getLoomId(url);
+  if (loomId) return { type: 'loom', id: loomId };
+
+  return { type: 'bookmark', url };
+}
+
+const embed = resolveEmbedType(url);
 ---
 
-{youtubeId && <YouTube id={youtubeId} />}
-{!youtubeId && tweetId && <Tweet id={tweetId} />}
-{!youtubeId && !tweetId && vimeoId && <Vimeo id={vimeoId} />}
-{!youtubeId && !tweetId && !vimeoId && loomId && <Loom id={loomId} />}
-{!youtubeId && !tweetId && !vimeoId && !loomId && <BookmarkCard url={url} className={className} />}
+{embed.type === 'youtube' && <YouTube id={embed.id} />}
+{embed.type === 'tweet' && <Tweet id={embed.id} />}
+{embed.type === 'vimeo' && <Vimeo id={embed.id} />}
+{embed.type === 'loom' && <Loom id={embed.id} />}
+{embed.type === 'bookmark' && <BookmarkCard url={embed.url} className={className} />}
