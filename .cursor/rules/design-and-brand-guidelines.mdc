@@ -83,23 +83,16 @@ Typography is **central** — large, expressive, and layout-defining.
 Based on the established personal brand palette, the site uses a **reduced, focused selection**:
 
 #### Core Colors
-- **Base Background**: Warm off-white / paper tone (`--c-beige-bg`)
-- **Primary Text**: Black or near-black (`--color-grey-800`)
-- **Primary Accent**: Red/coral (`--c-primary` = `--color-red-500`)
+
 
 #### Extended Palette
 See [global.css](mdc:src/styles/global.css)
 
 #### Link Colors
-- **Default Links**: Primary accent color
-- **Visited Links**: Purple variants
-- **Mobile Links**: Stronger red for touch interfaces
+
 
 ### Color Usage Principles
-- **Monochrome base** with **strategic accent color**
-- **Easy global changes** via CSS variables
-- **Dark mode consideration** for future implementation
-- **Consistent brand expression** across all elements
+
 
 ## Layout Principles
 
