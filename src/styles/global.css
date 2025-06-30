@@ -128,81 +128,6 @@
   --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
-
-  /* --- COMPONENT-SPECIFIC VARIABLES --- */
-  /* These don't change between themes, only semantic variables do */
-
-  /* Callout colors */
-  --color-callout-default-bg: var(--color-grey-300);
-  --color-callout-red-bg: var(--color-red-300);
-  --color-callout-blue-bg: var(--color-blue-300);
-  --color-callout-green-bg: var(--color-green-300);
-  --color-callout-orange-bg: var(--color-orange-300);
-  --color-callout-yellow-bg: var(--color-yellow-300);
-  --color-callout-purple-bg: var(--color-purple-300);
-
-  /* Navigation colors (stay dark in both themes) */
-  --color-nav-bg: var(--color-bg-dark-200);
-  --color-nav-text: var(--color-brand-white);
-  --color-nav-link-hover: var(--color-brand-primary);
-  --color-nav-border: var(--color-brand-primary);
-  --color-nav-active-bg: var(--color-overlay-light);
-  --color-nav-active-text: var(--color-brand-primary);
-
-  /* Footer colors (stay dark in both themes) */
-  --color-footer-bg: var(--color-bg-dark-200);
-  --color-footer-text: var(--color-brand-white);
-  --color-footer-link-hover: var(--color-brand-primary);
-  --color-footer-border: var(--color-brand-primary);
-  --color-footer-social-hover: var(--color-shadow-dark);
-
-  /* Note/card colors (will use semantic variables) */
-  --color-note-bg: var(--color-brand-white);
-  --color-note-border: var(--color-bg-dark-200);
-  --color-note-dot-grid: var(--color-red-400);
-  --color-note-date: var(--color-text-secondary);
-  --color-note-title-underline: var(--color-accent);
-  --color-note-page-bg: var(--color-brand-white);
-
-  /* Lightbox colors */
-  --color-lightbox-bg: var(--color-overlay-dark);
-  --color-lightbox-close: var(--color-brand-white);
-
-  /* Article/blog specific colors */
-  --color-article-accent: rgb(184, 72, 72);
-  --color-horizontal-rule: var(--color-border);
-  --color-inline-footnote-bg: var(--color-bg-secondary);
-  --color-tasklist-border: var(--color-border);
-
-  /* Styleguide specific colors */
-  --color-styleguide-demo-bg: var(--color-blue-300);
-  --color-styleguide-demo-border: var(--color-border);
-  --color-styleguide-intro-bg: var(--color-bg-secondary);
-  --color-styleguide-section-border: var(--color-border);
-  --color-styleguide-heading-border: var(--color-border);
-
-  /* Homepage specific colors */
-  --color-homepage-link-border: var(--color-accent);
-  --color-homepage-link-hover: var(--color-accent);
-
-  /* Note list page colors */
-  --color-notelist-title-hover: var(--color-accent);
-  --color-notelist-date: var(--color-text-secondary);
-  --color-notelist-border: var(--color-accent);
-
-  /* Writing list page colors */
-  --color-writinglist-title-hover: var(--color-accent);
-  --color-writinglist-date: var(--color-text-secondary);
-  --color-writinglist-border: var(--color-accent);
-  --color-writinglist-platform: var(--color-green-600);
-
-  /* Prose/typography semantic references */
-  --prose-link-color: var(--color-link);
-  --prose-link-visited-color: var(--color-link-visited);
-  --prose-link-hover-color: var(--color-link-hover);
-  --prose-blockquote-border-color: var(--color-accent);
-  --prose-heading-underline-color: var(--color-accent);
-  --prose-list-marker-color: var(--color-red-700);
 }
 
 /* Reset Layer */
@@ -521,6 +446,7 @@
   :root[data-theme='light'] {
     color-scheme: light;
 
+    /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
     /* Background colors */
     --color-bg-primary: var(--color-brand-beige);
     --color-bg-secondary: var(--color-bg-light-200);
@@ -529,12 +455,17 @@
     /* Text colors */
     --color-text-primary: var(--color-black);
     --color-text-secondary: var(--color-grey-800);
+    --color-accent: var(--color-brand-primary);
 
     /* Interactive colors */
     --color-link: var(--color-red-500);
     --color-link-visited: var(--color-purple-600);
     --color-link-hover: var(--color-red-600);
-    --color-accent: var(--color-brand-primary);
+
+    /* Inline elements */
+    --color-mark-bg: var(--color-yellow-500);
+    --color-strikethrough: rgba(0, 0, 0, 0.5);
+    --color-abbr-underline: rgba(0, 0, 0, 0.15);
 
     /* Border and divider colors */
     --color-border: var(--color-grey-300);
@@ -551,17 +482,85 @@
     --color-code-border: rgba(0, 0, 0, 0.1);
     --color-code-text: var(--color-text-primary);
 
-    /* Special content */
-    --color-mark-bg: var(--color-yellow-500);
-    --color-strikethrough: rgba(0, 0, 0, 0.5);
-    --color-abbr-underline: rgba(0, 0, 0, 0.15);
-
     /* Table colors */
     --color-table-border: rgba(0, 0, 0, 0.05);
     --color-table-header-bg: rgba(255, 255, 255, 0.1);
 
+    /* -------------------- PROSE/TYPOGRAPHY COLOURS -------------------- */
     /* Prose/typography colors */
     --prose-heading-border-color: rgba(0, 0, 0, 0.05);
+    --prose-link-color: var(--color-link);
+    --prose-link-visited-color: var(--color-link-visited);
+    --prose-link-hover-color: var(--color-link-hover);
+    --prose-blockquote-border-color: var(--color-accent);
+    --prose-heading-underline-color: var(--color-accent);
+    --prose-list-marker-color: var(--color-red-700);
+
+    /* -------------------- COMPONENT COLOURS -------------------- */
+    /* Navigation colors (stay dark in both themes) */
+    --color-nav-bg: var(--color-bg-dark-200);
+    --color-nav-text: var(--color-brand-white);
+    --color-nav-link-hover: var(--color-brand-primary);
+    --color-nav-border: var(--color-brand-primary);
+    --color-nav-active-bg: var(--color-overlay-light);
+    --color-nav-active-text: var(--color-brand-primary);
+
+    /* Footer colors (stay dark in both themes) */
+    --color-footer-bg: var(--color-bg-dark-200);
+    --color-footer-text: var(--color-brand-white);
+    --color-footer-link-hover: var(--color-brand-primary);
+    --color-footer-border: var(--color-brand-primary);
+    --color-footer-social-hover: var(--color-shadow-dark);
+
+    /* Note/card colors (will use semantic variables) */
+    --color-note-bg: var(--color-brand-white);
+    --color-note-border: var(--color-bg-dark-200);
+    --color-note-dot-grid: var(--color-red-400);
+    --color-note-date: var(--color-text-secondary);
+    --color-note-title-underline: var(--color-accent);
+    --color-note-page-bg: var(--color-brand-white);
+
+    /* Lightbox colors */
+    --color-lightbox-bg: var(--color-overlay-dark);
+    --color-lightbox-close: var(--color-brand-white);
+
+    /* Callout colors */
+    --color-callout-default-bg: var(--color-grey-300);
+    --color-callout-red-bg: var(--color-red-300);
+    --color-callout-blue-bg: var(--color-blue-300);
+    --color-callout-green-bg: var(--color-green-300);
+    --color-callout-orange-bg: var(--color-orange-300);
+    --color-callout-yellow-bg: var(--color-yellow-300);
+    --color-callout-purple-bg: var(--color-purple-300);
+
+    /* Article/blog specific colors */
+    --color-article-accent: rgb(184, 72, 72);
+    --color-horizontal-rule: var(--color-border);
+    --color-inline-footnote-bg: var(--color-bg-secondary);
+    --color-tasklist-border: var(--color-border);
+
+    /* Styleguide specific colors */
+    --color-styleguide-demo-bg: var(--color-blue-300);
+    --color-styleguide-demo-border: var(--color-border);
+    --color-styleguide-intro-bg: var(--color-bg-secondary);
+    --color-styleguide-section-border: var(--color-border);
+    --color-styleguide-heading-border: var(--color-border);
+
+    /* -------------------- PAGE COLOURS -------------------- */
+    /* Homepage specific colors */
+    --color-homepage-link-border: var(--color-accent);
+    --color-homepage-link-hover: var(--color-accent);
+
+    /* Note list page colors */
+    --color-notelist-title-hover: var(--color-accent);
+    --color-notelist-date: var(--color-text-secondary);
+    --color-notelist-border: var(--color-accent);
+
+    /* Writing list page colors */
+    --color-writinglist-title-hover: var(--color-accent);
+    --color-writinglist-date: var(--color-text-secondary);
+    --color-writinglist-border: var(--color-accent);
+    --color-writinglist-platform: var(--color-green-600);
 
     /* Note page specific background */
     --color-note-page-bg: var(--color-brand-white);
@@ -571,102 +570,12 @@
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
-
-      /* Background colors - refined dark palette */
-      --color-bg-primary: var(--color-bg-dark-100);
-      --color-bg-secondary: var(--color-bg-dark-200);
-      --color-bg-overlay: var(--color-bg-dark-200);
-
-      /* Text colors - better contrast hierarchy */
-      --color-text-primary: #e5e5e5;
-      --color-text-secondary: #b8b8b8;
-
-      /* Interactive colors - yellow/gold theme as specified */
-      --color-link: #ffd700;
-      --color-link-visited: #daa520;
-      --color-link-hover: #ffed4e;
-      --color-accent: #ffd700;
-
-      /* Border and divider colors - more visible */
-      --color-border: var(--color-bg-dark-400);
-      --color-border-subtle: rgba(255, 255, 255, 0.08);
-
-      /* Overlay and shadow colors */
-      --color-overlay-light: rgba(0, 0, 0, 0.6);
-      --color-overlay-dark: rgba(0, 0, 0, 0.85);
-      --color-shadow-light: rgba(0, 0, 0, 0.4);
-      --color-shadow-dark: rgba(0, 0, 0, 0.6);
-
-      /* Code and syntax highlighting - better visibility */
-      --color-code-bg: rgba(255, 255, 255, 0.08);
-      --color-code-border: rgba(255, 255, 255, 0.12);
-      --color-code-text: #e5e5e5;
-
-      /* Special content */
-      --color-mark-bg: #b8860b;
-      --color-strikethrough: rgba(255, 255, 255, 0.5);
-      --color-abbr-underline: rgba(255, 255, 255, 0.2);
-
-      /* Table colors */
-      --color-table-border: rgba(255, 255, 255, 0.08);
-      --color-table-header-bg: rgba(255, 255, 255, 0.05);
-
-      /* Prose/typography colors */
-      --prose-heading-border-color: rgba(255, 255, 255, 0.08);
-
-      /* Note page specific background */
-      --color-note-page-bg: var(--color-bg-dark-200);
     }
   }
 
   /* Explicit dark theme (overrides media query) */
   :root[data-theme='dark'] {
     color-scheme: dark;
-
-    /* Background colors - refined dark palette */
-    --color-bg-primary: var(--color-bg-dark-100);
-    --color-bg-secondary: var(--color-bg-dark-200);
-    --color-bg-overlay: var(--color-bg-dark-200);
-
-    /* Text colors - better contrast hierarchy */
-    --color-text-primary: #e5e5e5;
-    --color-text-secondary: #b8b8b8;
-
-    /* Interactive colors - yellow/gold theme as specified */
-    --color-link: #ffd700;
-    --color-link-visited: #daa520;
-    --color-link-hover: #ffed4e;
-    --color-accent: #ffd700;
-
-    /* Border and divider colors - more visible */
-    --color-border: var(--color-bg-dark-400);
-    --color-border-subtle: rgba(255, 255, 255, 0.08);
-
-    /* Overlay and shadow colors */
-    --color-overlay-light: rgba(0, 0, 0, 0.6);
-    --color-overlay-dark: rgba(0, 0, 0, 0.85);
-    --color-shadow-light: rgba(0, 0, 0, 0.4);
-    --color-shadow-dark: rgba(0, 0, 0, 0.6);
-
-    /* Code and syntax highlighting - better visibility */
-    --color-code-bg: rgba(255, 255, 255, 0.08);
-    --color-code-border: rgba(255, 255, 255, 0.12);
-    --color-code-text: #e5e5e5;
-
-    /* Special content */
-    --color-mark-bg: #b8860b;
-    --color-strikethrough: rgba(255, 255, 255, 0.5);
-    --color-abbr-underline: rgba(255, 255, 255, 0.2);
-
-    /* Table colors */
-    --color-table-border: rgba(255, 255, 255, 0.08);
-    --color-table-header-bg: rgba(255, 255, 255, 0.05);
-
-    /* Prose/typography colors */
-    --prose-heading-border-color: rgba(255, 255, 255, 0.08);
-
-    /* Note page specific background */
-    --color-note-page-bg: var(--color-bg-dark-200);
   }
 }
 
