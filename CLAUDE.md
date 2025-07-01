@@ -27,11 +27,11 @@ Before completing tasks, always run:
 ### Content-First Static Site
 This is Danny Smith's personal website built with **Astro 5.8** following a content-first, zero-JavaScript-by-default approach. The site serves two main content types:
 
-1. **Articles** (`/writing/`) - Long-form blog posts in `src/content/blog/`
+1. **Articles** (`/writing/`) - Long-form articles in `src/content/articles/`
 2. **Notes** (`/notes/`) - Shorter thoughts and links in `src/content/notes/`
 
 ### Content Collections
-- **Blog Collection**: Articles with frontmatter including `title`, `pubDate`, `draft`, optional `cover`, `description`, `tags`
+- **Articles Collection**: Articles with frontmatter including `title`, `pubDate`, `draft`, optional `cover`, `description`, `tags`
 - **Notes Collection**: Shorter content with `title`, `pubDate`, optional `sourceURL`, `tags`
 - Both collections support MDX with custom components
 
@@ -43,7 +43,7 @@ This is Danny Smith's personal website built with **Astro 5.8** following a cont
 - **Image optimization** - Uses Astro's built-in Image component with responsive layouts
 
 ### URL Structure
-- `/writing/[slug]/` - Blog articles
+- `/writing/[slug]/` - Articles
 - `/notes/[slug]/` - Notes
 - `/styleguide` - Component documentation
 - `/now` - Current status page
@@ -98,6 +98,6 @@ This project has comprehensive guidelines in `.cursor/rules/` that Claude Code s
 **Styleguide Maintenance**: When adding components or features, update the relevant styleguide pages:
 - `/styleguide` - Main component demos
 - `src/content/notes/note-styleguide.mdx` - Note context examples  
-- `src/content/blog/article-styleguide.mdx` - Article context examples
+- `src/content/articles/article-styleguide.mdx` - Article context examples
 
 **Performance & Architecture**: Maintain the zero-JavaScript-by-default approach, static generation focus, and content-first philosophy outlined in the design guidelines.

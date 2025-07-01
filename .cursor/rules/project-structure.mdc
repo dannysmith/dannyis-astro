@@ -17,10 +17,10 @@ src/
 ├── components/        # Reusable Astro components
 │   ├── icons/         # Icons as SVGs
 ├── content/           # Content collections
-│   ├── blog/          # Long-form articles as MDX and md files
+│   ├── articles/      # Long-form articles as MDX and md files
 │   └── notes/         # Short-form content as MDX and md files
 ├── layouts/           # Page layouts
-│   ├── BlogPost.astro  # Article page layout
+│   ├── Article.astro   # Article page layout
 │   └── Note.astro     # Note page layout
 ├── pages/             # Astro pages (routes)
 ├── styles/            # Global styles and CSS
@@ -46,7 +46,7 @@ docs/                # All Documentation & Notes
 
 Longer-form articles.
 
-- Stored in `src/content/blog/`
+- Stored in `src/content/articles/`
 - Use `.mdx` or `.md` extension
 - Required frontmatter:
   ```yaml

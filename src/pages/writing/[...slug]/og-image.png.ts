@@ -5,7 +5,7 @@ import { generateOGImage } from '../../../utils/og-image-generator.js';
 const SITE_URL = 'https://danny.is';
 
 export async function getStaticPaths() {
-  const articles = await getCollection('blog', ({ data }) => {
+  const articles = await getCollection('articles', ({ data }) => {
     return !data.draft;
   });
 

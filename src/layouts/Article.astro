@@ -8,7 +8,7 @@ import FormattedDate from '@components/FormattedDate.astro';
 import Lightbox from '@components/Lightbox.astro';
 import MainNavigation from '@components/MainNavigation.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & { readingTime: string };
+type Props = CollectionEntry<'articles'>['data'] & { readingTime: string };
 const {
   title,
   description,
@@ -43,7 +43,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       )
     }
     <main>
-      <article class="blog-article cq h-entry" itemscope itemtype="https://schema.org/Article">
+      <article class="article cq h-entry" itemscope itemtype="https://schema.org/Article">
         {
           cover && coverAlt && (
             <div class="hero-image">

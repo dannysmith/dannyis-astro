@@ -8,7 +8,7 @@ See `./add-dark-mode.md`
 
 - [x] Set up Claude Code in project
 - [x] Consider suggestions in `./clean-up-tasks.md`
-- [ ] Change Blog Posts to be called Article everywhere. The word blog should never be used.
+- [x] Change Blog Posts to be called Article everywhere. The word blog should never be used.
 - [ ] Ensure all external links are `target="_blank"`. Make this automatic for md/mdxx in Articles and notes.
 - [ ] Reorganise components into folders:
   - UI Atoms (pill, Spinner, FormattedDate etc)

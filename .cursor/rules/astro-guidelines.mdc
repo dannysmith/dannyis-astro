@@ -76,7 +76,7 @@ alwaysApply: true
 
 1. **Articles**
 
-   - Use `src/content/blog/`
+   - Use `src/content/articles/`
    - Required frontmatter:
      ```yaml
      title: string

@@ -1,15 +1,15 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content'
-import BlogPost from '@layouts/BlogPost.astro'
+import Article from '@layouts/Article.astro'
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog')
+  const posts = await getCollection('articles')
   return posts.map((post) => ({
     params: { slug: post.id },
     props: post,
   }))
 }
-type Props = CollectionEntry<'blog'>
+type Props = CollectionEntry<'articles'>
 
 const post = Astro.props
 const { Content, remarkPluginFrontmatter } = await render(post)
@@ -17,6 +17,6 @@ const readingTime = remarkPluginFrontmatter.minutesRead
 const postData = { ...post.data, readingTime }
 ---
 
-<BlogPost {...postData}>
+<Article {...postData}>
   <Content />
-</BlogPost>
+</Article>
