@@ -11,7 +11,7 @@ See `./add-dark-mode.md`
 - [x] Change Blog Posts to be called Article everywhere. The word blog should never be used.
 - [x] Ensure all external links are `target="_blank"`. Make this automatic for md/mdxx in Articles and notes.
 - [x] Reorganise components into folders:
-- [ ] Check all metadata, titles & descriptions are optimised properly for SEO, OG embedding etc.
+- [x] Check all metadata, titles & descriptions are optimised properly for SEO, OG embedding etc.
 - [ ] Upgrade to latest Astro version
 - [ ] RSS Feeds
   - [ ] Add seperate RSS feeds for Articles and Notes

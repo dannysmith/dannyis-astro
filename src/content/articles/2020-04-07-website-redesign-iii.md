@@ -2,6 +2,7 @@
 title: Website Redesign Part III - A Base to Start From
 slug: website-redesign-iii
 pubDate: 2020-04-07
+description: Building a solid foundation for a personal website redesign. Technical setup, tooling choices, and development workflow for modern web projects.
 ---
 
 I'm trying to keep the CSS as minimal as possible here, but I do want a decent blank slate to work from. So I've normalised browser styles with [normalize.css](https://necolas.github.io/normalize.css/) and set up some of my own base styles.

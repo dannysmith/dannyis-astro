@@ -1,9 +1,10 @@
 ---
 slug: we-need-more-calm-companies
 draft: true
-title: We Need More Calm Companies
+title: Why Remote Companies Must Be Calm Companies
 pubDate: 2024-04-08
 sourceURL: https://justinjackson.ca/calm-company
+description: Discover why calm companies outperform frenzied ones in remote work. Essential insights on sustainable growth and team well-being from organizational health expert Danny Smith.
 ---
 
 ## Calm Companies
