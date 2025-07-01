@@ -112,14 +112,14 @@ cover:
 coverAlt:
 ---
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/components';
+import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
 #### Examples
 
 **Prompt:** "new article"
 **Today's Date:** 2025-06-15
-**Expected Output:** New file in `src/content/blog` named `2025-06-15-new-article.mdx` with this content:
+**Expected Output:** New file in `src/content/articles` named `2025-06-15-new-article.mdx` with this content:
 
 ```markdown
 ---
@@ -133,12 +133,12 @@ coverAlt:
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/components';
+import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
 **Prompt:** "new article about using LLMs to draw ducks"
 **Today's Date:** 2025-06-15
-**Expected Output:** New file in `src/content/blog` named `2025-06-15-drawing-ducks-with-llms.mdx` with this content:
+**Expected Output:** New file in `src/content/articles` named `2025-06-15-drawing-ducks-with-llms.mdx` with this content:
 
 ```markdown
 ---
@@ -152,7 +152,7 @@ coverAlt:
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/components';
+import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
 ### Command: Create Multiple Templates

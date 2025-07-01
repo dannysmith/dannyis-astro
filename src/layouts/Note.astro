@@ -1,13 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '@components/BaseHead.astro';
-import Footer from '@components/Footer.astro';
-import NoteCard from '@components/NoteCard.astro';
-import MainNavigation from '@components/MainNavigation.astro';
+import BaseHead from '@components/layout/BaseHead.astro';
+import Footer from '@components/layout/Footer.astro';
+import NoteCard from '@components/layout/NoteCard.astro';
+import MainNavigation from '@components/layout/MainNavigation.astro';
 
 type Props = CollectionEntry<'notes'>['data'];
 
-const { title, pubDate, sourceURL, tags } = Astro.props;
+const { title, pubDate, description, sourceURL, tags } = Astro.props;
 
 // Build OG image path for this note
 const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
@@ -16,7 +16,7 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} type="article" image={ogImage} />
+    <BaseHead title={title} description={description} type="article" pageType="note" image={ogImage} />
   </head>
 
   <body>

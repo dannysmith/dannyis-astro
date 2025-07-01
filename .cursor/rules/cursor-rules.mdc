@@ -177,7 +177,7 @@ The project includes three styleguide/test pages to ensure visual consistency an
     - Use realistic, long-form content and context.
 
 - **Article Styleguide:**
-  - **Location:** `/src/content/blog/article-styleguide.mdx`
+  - **Location:** `/src/content/articles/article-styleguide.mdx`
   - **Purpose:** Representative test of all markdown, MDX, and prose features in an "article" context.
   - **Usage:**
     - If you add a component or markdown feature likely to be used in articles, add an example here.

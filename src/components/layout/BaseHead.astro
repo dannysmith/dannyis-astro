@@ -2,31 +2,44 @@
 // Import the fonts and global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import '@fontsource-variable/fira-code';
-import '../styles/global.css';
+import '../../styles/global.css';
+
+// Import our new SEO utilities and configuration
+import {
+  generatePageTitle,
+  generateMetaDescription,
+  generateJSONLD,
+  generateArticleMeta,
+  generateOGImageUrl,
+  validateSEOData,
+  getSiteConfig,
+} from '@utils/seo';
+import { OG_CONFIG, TWITTER_CONFIG } from '@config/seo';
 
 interface Props {
   title: string;
   description?: string;
   image?: string; // If provided, use as OG image. Otherwise, use default static image.
-  type?: string; // 'website' (default) or 'article'
+  type?: 'website' | 'article'; // 'website' (default) or 'article'
+  pageType?: 'article' | 'note' | 'page'; // For title template differentiation
+  // Optional props that may be passed by article/note layouts
+  pubDate?: Date;
+  updatedDate?: Date;
+  tags?: string[];
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, image, type = 'website' } = Astro.props;
+// Validate and extract props
+const seoData = validateSEOData(Astro.props);
+const siteConfig = getSiteConfig();
 
-let description = Astro.props.description;
-if (description) {
-  description = description + ' | Danny Smith';
-}
-
-// Build the OG image URL
-let ogImageUrl: string;
-if (image) {
-  ogImageUrl = new URL(image, Astro.url).toString();
-} else {
-  ogImageUrl = new URL('/og-default.png', Astro.url).toString();
-}
+// Generate all SEO values using utilities
+const pageTitle = generatePageTitle(seoData.title, seoData.pageType);
+const metaDescription = generateMetaDescription(seoData.description);
+const ogImageUrl = generateOGImageUrl(seoData.image, Astro.url.toString());
+const jsonLD = generateJSONLD(seoData, canonicalURL.toString(), ogImageUrl);
+const articleMeta = generateArticleMeta(seoData);
 ---
 
 <!-- Global Metadata -->
@@ -50,25 +63,32 @@ if (image) {
 <link rel="canonical" href={canonicalURL} />
 
 <!-- Primary Meta Tags -->
-<title>{title}</title>
-<meta name="title" content={title} />
-<meta name="description" content={description} />
-<meta name="author" content="Danny Smith" />
+<title>{pageTitle}</title>
+<meta name="title" content={pageTitle} />
+<meta name="description" content={metaDescription} />
+<meta name="author" content={siteConfig.author} />
+<meta name="robots" content={siteConfig.robotsDirective} />
+<meta name="theme-color" content={siteConfig.themeColor} />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content={type} />
-<meta property="og:site_name" content="danny.is" />
-<meta property="og:locale" content="en_GB" />
+<meta property="og:type" content={seoData.type} />
+<meta property="og:site_name" content={OG_CONFIG.siteName} />
+<meta property="og:locale" content={OG_CONFIG.locale} />
 <meta property="og:url" content={Astro.url} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={metaDescription} />
 <meta property="og:image" content={ogImageUrl} />
 
+<!-- Article-specific OpenGraph meta tags -->
+{articleMeta.map(meta => (
+  <meta property={meta.property} content={meta.content} />
+))}
+
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:card" content={TWITTER_CONFIG.card} />
 <meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
+<meta property="twitter:title" content={pageTitle} />
+<meta property="twitter:description" content={metaDescription} />
 <meta property="twitter:image" content={ogImageUrl} />
 
 <!-- Google Fonts -->
@@ -78,6 +98,9 @@ if (image) {
   href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap"
   rel="stylesheet"
 />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLD)} />
 
 <!-- Theme Management Script (must be inline to prevent flash) -->
 <script is:inline>

@@ -16,7 +16,13 @@
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_console_messages",
       "Bash(node:*)",
-      "mcp__playwright__browser_press_key"
+      "mcp__playwright__browser_press_key",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(mv:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

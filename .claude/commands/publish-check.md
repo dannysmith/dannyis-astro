@@ -3,21 +3,25 @@
 Runs comprehensive pre-publishing validation for articles or notes.
 
 ## Usage
+
 ```
 /publish-check <article|note> [filename]
 ```
 
 ## Examples
+
 ```
 /publish-check article
 /publish-check note 2024-06-22-my-latest-note.md
-/publish-check article src/content/blog/2024-06-22-ai-coding.mdx
+/publish-check article src/content/articles/2024-06-22-ai-coding.mdx
 ```
 
 ## Implementation
 
 ### For Articles
+
 1. Run "check article" validation:
+
    - First paragraph length (drop-cap compatibility)
    - Heading hierarchy (no skipped levels)
    - Markdown formatting
@@ -28,6 +32,7 @@ Runs comprehensive pre-publishing validation for articles or notes.
    - Code blocks have language defined
 
 2. SEO review:
+
    - Title optimization
    - Description under 160 characters
    - Keyword inclusion
@@ -42,8 +47,9 @@ Runs comprehensive pre-publishing validation for articles or notes.
    - External links have proper attributes
 
 ### For Notes
+
 1. Basic validation:
-   - Markdown formatting 
+   - Markdown formatting
    - Component formatting
    - Spelling and grammar
    - Image paths and imports
@@ -54,6 +60,7 @@ Runs comprehensive pre-publishing validation for articles or notes.
    - External link attributes
 
 ## Output
+
 - ✅/❌ Checklist with specific issues found
 - Suggested improvements
 - Ready/not ready for publication status

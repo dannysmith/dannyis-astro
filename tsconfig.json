@@ -8,8 +8,14 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
+      "@components/layout/*": ["src/components/layout/*"],
+      "@components/navigation/*": ["src/components/navigation/*"],
+      "@components/mdx/*": ["src/components/mdx/*"],
+      "@components/ui/*": ["src/components/ui/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@config/*": ["src/config/*"],
+      "@utils/*": ["src/utils/*"]
     }
   }
 }

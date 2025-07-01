@@ -8,14 +8,11 @@ See `./add-dark-mode.md`
 
 - [x] Set up Claude Code in project
 - [x] Consider suggestions in `./clean-up-tasks.md`
-- [ ] Change Blog Posts to be called Article everywhere. The word blog should never be used.
-- [ ] Ensure all external links are `target="_blank"`. Make this automatic for md/mdxx in Articles and notes.
-- [ ] Reorganise components into folders:
-  - UI Atoms (pill, Spinner, FormattedDate etc)
-  - For use in MDX and prose (Embed, Grid, Loom, Notion, Callout etc)
-  - UI Modules (NoteCard, NavLink, MainNavigation, LightBox, Footer, BaseHead etc)
-- [ ] Upgrade to latest Astro version
+- [x] Change Blog Posts to be called Article everywhere. The word blog should never be used.
+- [x] Ensure all external links are `target="_blank"`. Make this automatic for md/mdxx in Articles and notes.
+- [x] Reorganise components into folders:
 - [ ] Check all metadata, titles & descriptions are optimised properly for SEO, OG embedding etc.
+- [ ] Upgrade to latest Astro version
 - [ ] RSS Feeds
   - [ ] Add seperate RSS feeds for Articles and Notes
   - [ ] Add links to all three RSS feeds to Footer

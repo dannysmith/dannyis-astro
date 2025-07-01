@@ -456,7 +456,7 @@
 
 /* Article Typography Layer */
 @layer articletypography {
-  .blog-article {
+  .article {
     --line-height: var(--line-height-article);
     --side-space: 2rem; /* Space on the left and right of the article on small screens. */
 
@@ -475,24 +475,24 @@
     text-rendering: optimizeLegibility;
   }
 
-  .blog-article > * {
+  .article > * {
     grid-column: 2 / 3;
   }
 
-  .blog-article:last-child {
+  .article:last-child {
     margin-bottom: 5em;
   }
 
   /* Headings */
 
-  .blog-article > :is(h1, h2, h3, h4, h5, h6) {
+  .article > :is(h1, h2, h3, h4, h5, h6) {
     font-variant-ligatures: common-ligatures discretionary-ligatures;
     hanging-punctuation: first allow-end last;
     border-bottom: 1px solid var(--color-border);
     padding-bottom: 0.6em;
   }
 
-  .blog-article h1.title {
+  .article h1.title {
     font-size: 2.4em;
     font-weight: 500;
     font-variation-settings: 'opsz' 50;
@@ -500,27 +500,27 @@
     margin-top: 2.5em;
   }
 
-  .blog-article > h1 {
+  .article > h1 {
     font-size: 1.93em;
     font-weight: 600;
     margin-top: 1.5em;
   }
 
-  .blog-article > h2 {
+  .article > h2 {
     font-size: 1.56em;
     font-weight: 600;
     margin-top: 1.7em;
     margin-bottom: -0.5em;
   }
 
-  .blog-article > h3 {
+  .article > h3 {
     font-size: 1.25em;
     font-weight: 600;
     margin-top: 1.5em;
     margin-bottom: -0.5em;
   }
 
-  .blog-article > :is(h4, h5, h6) {
+  .article > :is(h4, h5, h6) {
     font-size: 1em;
     font-weight: normal;
     font-style: italic;
@@ -529,31 +529,31 @@
   }
 
   /* Remove top margin from headings that are immediatly preceeded by another heading or an HR */
-  .blog-article > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
+  .article > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
     margin-top: 0;
   }
 
   /* ----------- Paragraphs ----------- */
 
-  .blog-article > p:first-of-type {
+  .article > p:first-of-type {
     margin-top: 3em;
   }
 
-  .blog-article > p {
+  .article > p {
     font-variant-numeric: oldstyle-nums diagonal-fractions;
     hanging-punctuation: first allow-end last;
   }
 
   /* Use hyphens only on small viewports. */
   @media (max-width: 42em) {
-    .blog-article > p {
+    .article > p {
       -webkit-hyphens: auto;
       hyphens: auto;
     }
   }
 
   /* First line of first para*/
-  .blog-article > p:first-of-type::first-line {
+  .article > p:first-of-type::first-line {
     text-transform: lowercase;
     -webkit-hyphens: none;
     hyphens: none;
@@ -563,17 +563,17 @@
 
   /* Increase first line weight slightly in dark mode */
   @media (prefers-color-scheme: dark) {
-    .blog-article > p:first-of-type::first-line {
+    .article > p:first-of-type::first-line {
       font-weight: 575;
     }
   }
 
-  :root[data-theme='dark'] .blog-article > p:first-of-type::first-line {
+  :root[data-theme='dark'] .article > p:first-of-type::first-line {
     font-weight: 575;
   }
 
   /* End Mark */
-  .blog-article > p:last-of-type:after {
+  .article > p:last-of-type:after {
     color: var(--color-article-accent);
     display: inline-block;
     content: ' ';
@@ -588,7 +588,7 @@
     margin-left: 0.1em;
   }
   /*  Drop Cap */
-  .blog-article > p:first-of-type::first-letter {
+  .article > p:first-of-type::first-letter {
     text-transform: uppercase;
     float: left;
     font-size: 4em;
@@ -598,7 +598,7 @@
 
   /* ----------- Links ----------- */
 
-  .blog-article a {
+  .article a {
     color: inherit;
     text-decoration: underline;
     text-decoration-color: var(--color-article-accent);
@@ -608,40 +608,40 @@
     border-radius: 0.1em;
   }
 
-  .blog-article a:visited {
+  .article a:visited {
     text-decoration-color: var(--color-link-visited);
   }
 
-  .blog-article a:hover,
-  .blog-article a:active {
+  .article a:hover,
+  .article a:active {
     text-decoration-color: var(--color-article-accent);
     color: var(--color-article-accent);
   }
 
-  .blog-article a:focus-visible {
+  .article a:focus-visible {
     outline: 2px solid var(--color-article-accent);
     text-decoration: none;
   }
 
   @media (pointer: coarse) {
-    .blog-article a {
+    .article a {
       text-decoration: none;
       color: var(--color-link-hover);
     }
 
-    .blog-article a:visited {
+    .article a:visited {
       color: var(--color-link-visited);
     }
   }
 
-  .blog-article h1 a {
+  .article h1 a {
     text-decoration: none;
     color: inherit;
   }
 
   /* ----------- Lists ----------- */
 
-  .blog-article li {
+  .article li {
     padding-left: 1em;
     margin-top: 0.5em;
     /* Ensure marker color for all lists */
@@ -649,25 +649,25 @@
       color: var(--color-article-accent);
     }
   }
-  .blog-article li:first-of-type {
+  .article li:first-of-type {
     margin-top: 0;
   }
 
-  .blog-article :is(ul, ol) {
+  .article :is(ul, ol) {
     font-variant-numeric: oldstyle-nums diagonal-fractions;
   }
 
-  .blog-article ul {
+  .article ul {
     padding-left: 0.4em;
     list-style-type: '•';
   }
 
-  .blog-article ol {
+  .article ol {
     padding-left: 0.4em;
     list-style-type: decimal;
   }
 
-  .blog-article ol ::marker {
+  .article ol ::marker {
     font-size: 1.4ex;
     font-variation-settings: 'opsz' 10;
     font-weight: 500;
@@ -676,16 +676,16 @@
 
   /* ----------- Task Lists ------------ */
 
-  .blog-article .contains-task-list {
+  .article .contains-task-list {
     list-style-type: none;
     padding-left: 0;
   }
 
-  .blog-article .task-list-item {
+  .article .task-list-item {
     padding-left: 0;
   }
 
-  .blog-article .task-list-item input {
+  .article .task-list-item input {
     position: relative;
     height: 0.7em;
     width: 0.7em;
@@ -696,13 +696,13 @@
     border: 1px solid var(--color-article-tasklist-border);
   }
 
-  .blog-article .task-list-item input:checked {
+  .article .task-list-item input:checked {
     color: var(--color-article-accent);
     background: transparent;
     border-color: var(--color-article-accent);
   }
 
-  .blog-article .task-list-item input:checked:before {
+  .article .task-list-item input:checked:before {
     content: '\2713';
     position: absolute;
     top: -0.1em;
@@ -712,31 +712,31 @@
     color: var(--color-article-accent);
   }
 
-  .blog-article .task-list-item input[disabled] {
+  .article .task-list-item input[disabled] {
     opacity: 1;
   }
 
   /* ----------- Text Styles ----------- */
 
-  .blog-article strong {
+  .article strong {
     font-weight: 650;
   }
 
-  .blog-article code {
+  .article code {
     font-family: var(--font-code);
     font-size: 0.9em;
     background: var(--color-code-background);
     padding: 0.2em 0.4em;
     border-radius: 0.2em;
   }
-  .blog-article pre code {
+  .article pre code {
     background: none;
     padding: 0;
     border-radius: 0;
   }
 
   /* ----------- HR ----------- */
-  .blog-article hr {
+  .article hr {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -748,7 +748,7 @@
     border: 1px solid var(--color-article-horizontal-rule);
   }
 
-  .blog-article hr:before {
+  .article hr:before {
     content: '§';
     transform: translateY(-0.15em);
     background: var(--color-article-bg);
@@ -756,7 +756,7 @@
   }
 
   /* ----------- Blockquotes ----------- */
-  .blog-article blockquote {
+  .article blockquote {
     font-variant-numeric: oldstyle-nums diagonal-fractions;
     hanging-punctuation: first allow-end last;
     border-left: 2px solid var(--color-article-accent);
@@ -767,7 +767,7 @@
 
   /* ----------- Footnotes ----------- */
 
-  .blog-article [data-footnote-ref] {
+  .article [data-footnote-ref] {
     display: inline-block;
     padding-left: 0.5ch;
     padding-right: 0.5ch;
@@ -790,7 +790,7 @@
     }
   }
 
-  .blog-article .footnotes {
+  .article .footnotes {
     border-top: 1px solid var(--color-article-accent);
     margin-top: 2em;
     padding-top: 1em;
@@ -803,17 +803,17 @@
   }
 
   /* ----------- Bleeds for images ----------- */
-  .blog-article > .bleed-left {
+  .article > .bleed-left {
     grid-column: 1 / 3;
   }
-  .blog-article > .bleed-right {
+  .article > .bleed-right {
     grid-column: 2 / 4;
   }
-  .blog-article > .bleed-full {
+  .article > .bleed-full {
     width: 100%;
     grid-column: 1 / 4;
   }
-  .blog-article > .border {
+  .article > .border {
     filter: var(--shadow-small);
   }
 }
@@ -921,7 +921,7 @@
     --color-callout-yellow-bg: var(--color-yellow-300);
     --color-callout-purple-bg: var(--color-purple-300);
 
-    /* Article/blog specific colors */
+    /* Article specific colors */
     --color-article-bg: var(--color-bg-primary);
     --color-article-accent: rgb(184, 72, 72);
     --color-article-horizontal-rule: var(--color-border);
@@ -1023,7 +1023,7 @@
     --color-callout-yellow-bg: var(--color-yellow-800);
     --color-callout-purple-bg: var(--color-purple-800);
 
-    /* Article/blog specific colors */
+    /* Article specific colors */
     --color-article-accent: var(--color-accent);
 
     /* Notion colors */
@@ -1106,7 +1106,7 @@
       --color-callout-yellow-bg: var(--color-yellow-800);
       --color-callout-purple-bg: var(--color-purple-800);
 
-      /* Article/blog specific colors */
+      /* Article specific colors */
       --color-article-accent: var(--color-accent);
 
       /* Notion colors */

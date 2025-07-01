@@ -1,14 +1,13 @@
 ---
-import BaseHead from '@components/BaseHead.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import BaseHead from '@components/layout/BaseHead.astro';
 import { getCollection } from 'astro:content';
-import FormattedDate from '@components/FormattedDate.astro';
-import Footer from '@components/Footer.astro';
-import MainNavigation from '@components/MainNavigation.astro';
-import Pill from '@components/Pill.astro';
+import FormattedDate from '@components/ui/FormattedDate.astro';
+import Footer from '@components/layout/Footer.astro';
+import MainNavigation from '@components/layout/MainNavigation.astro';
+import Pill from '@components/ui/Pill.astro';
 
 const posts = (
-  await getCollection('blog', ({ data }) => {
+  await getCollection('articles', ({ data }) => {
     return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
   })
 ).sort((b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
@@ -17,7 +16,11 @@ const posts = (
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <BaseHead
+      title="Articles"
+      description="In-depth articles on remote work, organizational health, leadership, and business operations by consultant Danny Smith"
+      pageType="page"
+    />
   </head>
   <body>
     <MainNavigation />

@@ -27,23 +27,32 @@ Before completing tasks, always run:
 ### Content-First Static Site
 This is Danny Smith's personal website built with **Astro 5.8** following a content-first, zero-JavaScript-by-default approach. The site serves two main content types:
 
-1. **Articles** (`/writing/`) - Long-form blog posts in `src/content/blog/`
+1. **Articles** (`/writing/`) - Long-form articles in `src/content/articles/`
 2. **Notes** (`/notes/`) - Shorter thoughts and links in `src/content/notes/`
 
 ### Content Collections
-- **Blog Collection**: Articles with frontmatter including `title`, `pubDate`, `draft`, optional `cover`, `description`, `tags`
+- **Articles Collection**: Articles with frontmatter including `title`, `pubDate`, `draft`, optional `cover`, `description`, `tags`
 - **Notes Collection**: Shorter content with `title`, `pubDate`, optional `sourceURL`, `tags`
 - Both collections support MDX with custom components
 
-### Key Components
+### Component Architecture
+Components are organized into logical categories in `src/components/`:
+
+- **Layout Components** (`layout/`) - BaseHead, Footer, MainNavigation, NoteCard, Lightbox
+- **Navigation Components** (`navigation/`) - NavLink, ThemeToggle  
+- **UI Utilities** (`ui/`) - FormattedDate, Pill, Spinner
+- **MDX Components** (`mdx/`) - Embed, BookmarkCard, Callout, Notion, Grid, Loom
+- **Icons** (`icons/`) - SVG icon components
+
+**Key Components:**
 - **Universal Embed** (`<Embed>`) - Handles YouTube, Twitter, Vimeo, Loom embeds; falls back to BookmarkCard
-- **BookmarkCard** - Rich URL previews using Open Graph data
+- **BookmarkCard** - Rich URL previews using Open Graph data  
 - **Callout** - Highlighted information boxes with color variants
 - **Notion** - Notion page references with automatic title fetching
 - **Image optimization** - Uses Astro's built-in Image component with responsive layouts
 
 ### URL Structure
-- `/writing/[slug]/` - Blog articles
+- `/writing/[slug]/` - Articles
 - `/notes/[slug]/` - Notes
 - `/styleguide` - Component documentation
 - `/now` - Current status page
@@ -56,6 +65,7 @@ This is Danny Smith's personal website built with **Astro 5.8** following a cont
 - **OpenGraph images** auto-generated for all content
 - **Reading time** calculation for articles
 - **Markdown enhancements** with rehype/remark plugins
+- **External link security** - All external links automatically include `target="_blank" rel="noopener noreferrer"` via `rehype-external-links`
 
 ### Content Workflow
 The `.cursor/rules/content.mdc` file defines specific commands for:
@@ -93,11 +103,13 @@ This project has comprehensive guidelines in `.cursor/rules/` that Claude Code s
 
 **Quality Standards**: All changes must meet the DoD criteria including successful linting, type checking, Vercel preview builds, and styleguide updates.
 
-**Component Development**: Follow the established patterns for props interfaces, error handling, accessibility, and CSS variable usage as defined in component-guidelines.mdc.
+**Component Development**: Follow the established patterns for props interfaces, error handling, accessibility, and CSS variable usage as defined in component-guidelines.mdc. Components are organized into categories (layout/, navigation/, ui/, mdx/, icons/) with barrel exports for clean imports.
 
 **Styleguide Maintenance**: When adding components or features, update the relevant styleguide pages:
 - `/styleguide` - Main component demos
 - `src/content/notes/note-styleguide.mdx` - Note context examples  
-- `src/content/blog/article-styleguide.mdx` - Article context examples
+- `src/content/articles/article-styleguide.mdx` - Article context examples
 
 **Performance & Architecture**: Maintain the zero-JavaScript-by-default approach, static generation focus, and content-first philosophy outlined in the design guidelines.
+
+**External Link Security**: All external links must include `target="_blank" rel="noopener noreferrer"` for security and user experience. This is handled automatically for markdown content via the `rehype-external-links` plugin, but manual HTML links in components must include these attributes explicitly.

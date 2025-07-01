@@ -14,30 +14,59 @@ Define the organization and architecture of the personal website built with Astr
 
 ```
 src/
-├── components/        # Reusable Astro components
-│   ├── icons/         # Icons as SVGs
-├── content/           # Content collections
-│   ├── blog/          # Long-form articles as MDX and md files
-│   └── notes/         # Short-form content as MDX and md files
-├── layouts/           # Page layouts
-│   ├── BlogPost.astro  # Article page layout
-│   └── Note.astro     # Note page layout
-├── pages/             # Astro pages (routes)
-├── styles/            # Global styles and CSS
-│   └── global.css     # Global styles
-└── utils/             # Utility functions and helpers
+├── components/        # Reusable Astro components (organized by category)
+│   ├── layout/        # Layout and structural components
+│   │   ├── BaseHead.astro      # HTML head meta tags and global CSS
+│   │   ├── Footer.astro        # Site footer
+│   │   ├── MainNavigation.astro # Primary site navigation
+│   │   ├── NoteCard.astro      # Note layout wrapper
+│   │   ├── Lightbox.astro      # Article image lightbox
+│   │   └── index.ts            # Barrel exports
+│   ├── navigation/    # Navigation-specific components
+│   │   ├── NavLink.astro       # Individual navigation links
+│   │   ├── ThemeToggle.astro   # Theme switching component
+│   │   └── index.ts            # Barrel exports
+│   ├── ui/           # Small, reusable UI utilities
+│   │   ├── FormattedDate.astro # Date formatting component
+│   │   ├── Pill.astro          # Tag/label component
+│   │   ├── Spinner.astro       # Loading spinner
+│   │   └── index.ts            # Barrel exports
+│   ├── mdx/          # Components available in MDX content
+│   │   ├── BookmarkCard.astro  # URL preview cards
+│   │   ├── Callout.astro       # Information callouts
+│   │   ├── Embed.astro         # Universal embed component
+│   │   ├── Grid.astro          # CSS Grid layout
+│   │   ├── Loom.astro          # Loom video embeds
+│   │   ├── Notion.astro        # Notion page links
+│   │   └── index.ts            # Barrel exports (used in MDX files)
+│   ├── icons/        # Icon components
+│   │   ├── InstagramIcon.astro
+│   │   ├── LinkedInIcon.astro
+│   │   ├── NotionIcon.astro
+│   │   ├── RSSIcon.astro
+│   │   └── YouTubeIcon.astro
+│   └── index.ts      # Main component barrel export
+├── content/          # Content collections
+│   ├── articles/     # Long-form articles as MDX and md files
+│   └── notes/        # Short-form content as MDX and md files
+├── layouts/          # Page layouts
+│   ├── Article.astro  # Article page layout
+│   └── Note.astro    # Note page layout
+├── pages/            # Astro pages (routes)
+├── styles/           # Global styles and CSS
+│   └── global.css    # Global styles
+└── utils/            # Utility functions and helpers
 
-public/              # Static assets
-├── images/          # Image assets
-└── fonts/           # Font files
+public/               # Static assets
+├── images/           # Image assets
+└── fonts/            # Font files
 
-.cursor/             # Cursor configuration
-└── rules/           # Project rules and guidelines
+.cursor/              # Cursor configuration
+└── rules/            # Project rules and guidelines
 
-tasks/               # Task tracking when working with Cursor AI
-└── TASKS.md         # Main task list
+tasks/                # Task tracking when working with Cursor AI
 
-docs/                # All Documentation & Notes
+docs/                 # All Documentation & Notes
 ```
 
 ## Content Organization
@@ -46,7 +75,7 @@ docs/                # All Documentation & Notes
 
 Longer-form articles.
 
-- Stored in `src/content/blog/`
+- Stored in `src/content/articles/`
 - Use `.mdx` or `.md` extension
 - Required frontmatter:
   ```yaml
@@ -85,6 +114,75 @@ Short notes, often commenting on something elsewhere on the internet (`url` in t
 See [content.md](mdc:.cursor/rules/content.md) for how I write new content.
 
 ## Component Organization
+
+### Component Categories
+
+Components are organized into logical categories based on their purpose and usage patterns:
+
+#### Layout Components (`src/components/layout/`)
+Structural components that define the overall page layout and architecture:
+- **BaseHead.astro** - HTML head with meta tags, fonts, and global CSS
+- **Footer.astro** - Site footer with social links and navigation
+- **MainNavigation.astro** - Primary site navigation with mobile menu
+- **NoteCard.astro** - Wrapper component for note layout and metadata
+- **Lightbox.astro** - Image lightbox functionality for articles
+
+#### Navigation Components (`src/components/navigation/`)
+Components specifically for navigation functionality:
+- **NavLink.astro** - Individual navigation links with active state
+- **ThemeToggle.astro** - Theme switching component (auto/light/dark)
+
+#### UI Utilities (`src/components/ui/`)
+Small, reusable utility components:
+- **FormattedDate.astro** - Date formatting with semantic markup
+- **Pill.astro** - Tag/badge component for labels and categories
+- **Spinner.astro** - Loading spinner for async operations
+
+#### MDX Components (`src/components/mdx/`)
+Components available for use in MDX content files:
+- **BookmarkCard.astro** - Rich URL preview cards using Open Graph data
+- **Callout.astro** - Information callouts with color variants and icons
+- **Embed.astro** - Universal embed component for YouTube, Twitter, Vimeo, Loom
+- **Grid.astro** - CSS Grid layout component with responsive options
+- **Loom.astro** - Dedicated Loom video embed component
+- **Notion.astro** - Notion page links with automatic title fetching
+
+#### Icon Components (`src/components/icons/`)
+SVG icon components for consistent iconography across the site.
+
+### Import Patterns
+
+#### Path Aliases
+The project uses TypeScript path aliases for clean imports:
+```typescript
+// Category-specific imports
+import { BaseHead, Footer } from '@components/layout';
+import { FormattedDate, Pill } from '@components/ui';
+import { NavLink, ThemeToggle } from '@components/navigation';
+
+// Direct category imports
+import BaseHead from '@components/layout/BaseHead.astro';
+import Callout from '@components/mdx/Callout.astro';
+
+// MDX component imports (used in content files)
+import { Callout, Embed, BookmarkCard } from '@components/mdx';
+```
+
+#### Barrel Exports
+Each category includes an `index.ts` file for convenient importing:
+- `@components/layout/index.ts` - Layout component exports
+- `@components/navigation/index.ts` - Navigation component exports  
+- `@components/ui/index.ts` - UI utility component exports
+- `@components/mdx/index.ts` - MDX component exports (replaces old components.ts)
+- `@components/index.ts` - Main barrel export for all components
+
+### Component Guidelines
+
+1. **Categorization**: Place components in the appropriate category based on their primary purpose
+2. **Naming**: Use PascalCase for component files and descriptive names
+3. **Dependencies**: Components within a category can import from other categories, but avoid circular dependencies
+4. **MDX Components**: Only components in the `mdx/` directory should be used in content files
+5. **Barrel Exports**: Update the appropriate `index.ts` file when adding new components
 
 ## Technical Implementation
 

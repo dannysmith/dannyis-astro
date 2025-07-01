@@ -7,7 +7,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 export async function GET(context) {
   const posts = (
-    await getCollection('blog', ({ data }) => {
+    await getCollection('articles', ({ data }) => {
       return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
     })
   ).map(post => ({ ...post, type: 'post' }));
