@@ -20,10 +20,11 @@ export default defineConfig({
     // Used for all Markdown images; not configurable per-image
     // Used for all `<Image />` and `<Picture />` components unless overridden with a prop
     layout: 'constrained',
+    responsiveStyles: true,
   },
   experimental: {
     headingIdCompat: true,
-    responsiveImages: true,
+    csp: true,
   },
   integrations: [mdx(), sitemap()],
   markdown: {
