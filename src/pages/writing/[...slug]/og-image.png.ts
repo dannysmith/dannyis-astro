@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { generateOGImage } from '../../../utils/og-image-generator.js';
 
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 }
 
 export const GET: APIRoute = async ({ props }) => {
-  const { article } = props as { article: any };
+  const { article } = props as { article: CollectionEntry<'articles'> };
 
   // Build canonical URL using article.id for the slug
   const url = `${SITE_URL}/writing/${article.id}`;
@@ -28,8 +28,6 @@ export const GET: APIRoute = async ({ props }) => {
         description: article.data.description,
         site: 'danny.is',
         type: 'article',
-        profileImage: `${SITE_URL}/avatar-circle.png`,
-        authorName: 'Danny Smith',
         url,
       },
       {
