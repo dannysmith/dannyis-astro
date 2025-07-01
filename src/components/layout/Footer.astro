@@ -25,16 +25,37 @@ const today = new Date();
   </section>
   <section class="footer-social-links">
     <ul>
-      <li><a href="/rss.xml" title="RSS Feed"><RSSIcon /></a></li>
       <li>
         <a href="/linkedin" title="LinkedIn Profile"><LinkedInIcon /></a>
       </li>
       <li><a href="/youtube" title="Youtube Channel"><YouTubeIcon /></a></li>
       <li>
-        <a href="https://instagram.com/dannysmith" title="Instagram Profile" target="_blank" rel="noopener noreferrer"><InstagramIcon /></a>
+        <a
+          href="https://instagram.com/dannysmith"
+          title="Instagram Profile"
+          target="_blank"
+          rel="noopener noreferrer"><InstagramIcon /></a
+        >
       </li>
     </ul>
   </section>
+  <div class="rss-subscription">
+    <h3>Subscribe via RSS</h3>
+    <div class="rss-links">
+      <a href="/rss.xml" class="rss-link">
+        <RSSIcon />
+        <span>All Content</span>
+      </a>
+      <a href="/rss/articles.xml" class="rss-link">
+        <RSSIcon />
+        <span>Articles Only</span>
+      </a>
+      <a href="/rss/notes.xml" class="rss-link">
+        <RSSIcon />
+        <span>Notes Only</span>
+      </a>
+    </div>
+  </div>
   <div class="copyright">
     &copy; {today.getFullYear()} Danny Smith
   </div>
@@ -145,5 +166,48 @@ const today = new Date();
     right: 1rem;
     top: 1rem;
     writing-mode: vertical-rl;
+  }
+
+  .rss-subscription {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .rss-subscription h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-secondary);
+  }
+
+  .rss-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .rss-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    text-decoration: none;
+    color: var(--color-text);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+
+  .rss-link:hover {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+  }
+
+  .rss-link svg {
+    width: 1rem;
+    height: 1rem;
   }
 </style>

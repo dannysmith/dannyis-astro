@@ -53,8 +53,25 @@ const articleMeta = generateArticleMeta(seoData);
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/icon.jpg" />
 
-<!-- RSS -->
-<link rel="alternate" type="application/rss+xml" href="/rss.xml" />
+<!-- RSS Auto-Discovery -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title="Danny Smith - Articles & Notes"
+  href="/rss.xml"
+/>
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title="Danny Smith - Articles"
+  href="/rss/articles.xml"
+/>
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title="Danny Smith - Notes"
+  href="/rss/notes.xml"
+/>
 
 <!-- Identity etc -->
 <link rel="pgpkey" href="/key.txt" />
@@ -80,9 +97,7 @@ const articleMeta = generateArticleMeta(seoData);
 <meta property="og:image" content={ogImageUrl} />
 
 <!-- Article-specific OpenGraph meta tags -->
-{articleMeta.map(meta => (
-  <meta property={meta.property} content={meta.content} />
-))}
+{articleMeta.map(meta => <meta property={meta.property} content={meta.content} />)}
 
 <!-- Twitter -->
 <meta property="twitter:card" content={TWITTER_CONFIG.card} />
