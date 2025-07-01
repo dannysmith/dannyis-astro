@@ -17,9 +17,14 @@ pnpm-debug.log*
 .env
 .env.production
 
+# Local files
+*.local.json
+*.local.md
+*.local.txt
+
 # macOS-specific files
 .DS_Store
 
-# claude-monitor
+# Claude and claude-monitor
 usage_tracking2.json
 uploads/

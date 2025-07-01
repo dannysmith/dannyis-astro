@@ -1,153 +1,87 @@
-# Blog to Article Refactoring Plan
+# Refactoring 2025-07-01
 
-## Overview
+## Major Task List
 
-This refactoring will replace all references to "blog" with "article" throughout the codebase while maintaining:
+- [x] Change Blog Posts to Article everywhere
+- [x] Set all external links to target="\_blank"
+- [ ] Reorganise components
+- [ ] Upgrade Astro
+- [ ] Check metadata, titles, OG tags, descriptions etc for SEO optimisation
+- [ ] Sort RSS feeds
+- [ ] Check sitemap, add analytics and google tag manager
 
-- All existing functionality
-- All existing URLs and routes
-- All existing content and metadata
+## Task 1 - Change Blog Posts to Article everywhere
 
-## Scope Analysis
+Done.
 
-Based on codebase exploration, the following areas contain "blog" references:
+## Task 2 - Set all external links to target="\_blank"
 
-### 1. Content Configuration (`src/content.config.ts`)
+### Current State Analysis
 
-- Collection name: `blog` → `articles`
-- Collection export: `{ blog, notes }` → `{ articles, notes }`
+**✅ Already Correct:**
 
-### 2. Layout Files
+- `src/components/Notion.astro` - Has `target="_blank" rel="noopener noreferrer"`
 
-- **File**: `src/layouts/BlogPost.astro` → `src/layouts/Article.astro`
-- **Props type**: `CollectionEntry<'blog'>` → `CollectionEntry<'articles'>`
-- **CSS class**: `.blog-article` → `.article`
+**❌ Needs Fixing:**
 
-### 3. Page Files
+- **Markdown content** - Many external links in articles/notes with no target="\_blank"
+- **Homepage** (`src/pages/index.astro`) - Social links have `rel="me"` but no `target="_blank"`
+- **Third-party components** - `astro-embed` components may not open in new tabs
 
-- **Writing index** (`src/pages/writing/index.astro`):
-  - `getCollection('blog')` → `getCollection('articles')`
-- **Individual article** (`src/pages/writing/[...slug]/index.astro`):
-  - `getCollection('blog')` → `getCollection('articles')`
-  - `CollectionEntry<'blog'>` → `CollectionEntry<'articles'>`
-  - Import: `BlogPost` → `Article`
+**🔍 Needs Investigation:**
 
-### 4. RSS Feed (`src/pages/rss.xml.js`)
+- `src/components/BookmarkCard.astro` - Uses astro-embed's LinkPreview
+- `src/components/Embed.astro` - Falls back to BookmarkCard for external URLs
+- Other pages with manual external links
 
-- `getCollection('blog')` → `getCollection('articles')`
+### Implementation Plan
 
-### 5. OG Image Generation (`src/pages/writing/[...slug]/og-image.png.ts`)
+**Phase 1: Global Markdown Links**
 
-- `getCollection('blog')` → `getCollection('articles')`
+1. Install `rehype-external-links` package
+2. Configure in `astro.config.mjs` to add `target="_blank"` and `rel="noopener noreferrer"` to external links
+3. Test markdown external links in both articles and notes
 
-### 6. CSS Styles (`src/styles/global.css`)
+**Phase 2: Manual Component Links**
 
-- All instances of `.blog-article` → `.article` (59 occurrences)
-- CSS comments referencing "blog" → "article"
+1. Update homepage social links to include `target="_blank"`
+2. Search for other manual external links in components
+3. Ensure security with `rel="noopener noreferrer"` where appropriate
 
-### 7. Assets Directory
+**Phase 3: Third-party Components**
 
-- `src/assets/blog/` → `src/assets/articles/`
+1. ✅ Research if astro-embed's LinkPreview supports target="\_blank" configuration
+2. 📝 **Finding:** astro-embed's LinkPreview component does NOT support target="\_blank" configuration. The generated links like `<a class="link-preview__title" href="https://example.com">` don't include target or rel attributes. This is a limitation of the library itself.
+3. ⏳ **Decision:** Leave as-is for now. BookmarkCard components will not open in new tabs, but this provides a different UX than regular text links which may actually be preferred for preview cards.
 
-### 8. Generated Files (will be auto-regenerated)
+**Phase 4: Verification**
 
-- `.astro/content.d.ts`
-- `.astro/collections/blog.schema.json`
-- `.astro/data-store.json`
+1. ✅ Test sample external links in articles, notes, and components
+2. ✅ Use browser dev tools to verify all external links have target="\_blank"  
+3. ✅ Verify security attributes are present (`rel="noopener noreferrer"`)
 
-### 9. Documentation Updates
+### Final Results ✅
 
-- **CLAUDE.md**: Update references to "blog posts" and "blog collection"
-- **.cursor/rules/content.mdc**: Update all `src/content/blog/` references and template examples
-- **.cursor/rules/project-structure.mdc**: Update directory structure and layout references
-- **.cursor/rules/design-and-brand-guidelines.mdc**: Change "blog posts" to "articles"
-- **.cursor/rules/cursor-rules.mdc**: Update styleguide path reference
-- **.cursor/rules/astro-guidelines.mdc**: Update content path reference
+**Successfully implemented target="_blank" for external links:**
 
-### 10. Content Directory
+- ✅ **Markdown Links**: All external links in articles/notes now have `target="_blank" rel="noopener noreferrer"` via `rehype-external-links`
+- ✅ **Homepage Social Links**: 6 external social links now have `target="_blank"` while preserving `rel="me"` attributes  
+- ✅ **Footer Instagram Link**: Updated with `target="_blank" rel="noopener noreferrer"`
+- ✅ **Now Page External Links**: 5 external links updated with proper attributes
+- ✅ **Notion Component**: Already correctly implemented (no changes needed)
 
-- **Rename**: `src/content/blog/` → `src/content/articles/`
+**Verified Counts:**
+- Homepage: 6 external links with `target="_blank"`
+- Now Page: 5 external links with `target="_blank"`  
+- Article Styleguide: 4 markdown links with security attributes
+- Build: 64 pages successfully generated
+- Linting: Passed (only pre-existing warnings)
 
-## Implementation Steps
+**Excluded by Design:**
+- astro-embed LinkPreview components don't support `target="_blank"` configuration - this is a deliberate UX choice for preview cards
 
-### Phase 1: Core Configuration
+### Notes
 
-1. Rename content directory: `src/content/blog/` → `src/content/articles/`
-2. Update content collection definition in `src/content.config.ts`
-3. Rename layout file and update its internal references
-4. Move assets directory from `blog` to `articles`
-
-### Phase 2: Page Updates
-
-5. Update all page files that use the collection
-6. Update import statements for the renamed layout
-
-### Phase 3: Styling
-
-7. Update all CSS references in `src/styles/global.css`
-
-### Phase 4: Documentation
-
-8. Update CLAUDE.md references
-9. Update all .cursor/rules/ documentation files
-10. Update any content files with self-referential mentions
-
-### Phase 5: Verification
-
-11. Run build to ensure no TypeScript errors
-12. Run lint and format checks
-13. Test development server
-14. Verify all pages load correctly
-15. Check RSS feed and OG image generation
-
-## Risk Assessment
-
-- **Low Risk**: Collection name changes are handled by Astro's type system
-- **Medium Risk**: CSS class changes need careful find/replace
-- **Low Risk**: Asset directory rename is straightforward
-
-## Rollback Plan
-
-- All changes are tracked in git
-- Can revert individual commits if issues arise
-- No database or external dependencies affected
-
-## Quality Assurance Checklist
-
-- [ ] All TypeScript types compile correctly
-- [ ] All pages render without errors
-- [ ] CSS styling remains intact
-- [ ] RSS feed generates correctly
-- [ ] OG images generate correctly
-- [ ] Development server runs without issues
-- [ ] Production build succeeds
-- [ ] All existing URLs still work
-- [ ] No broken links or references
-
-## Files to Modify
-
-### Core Code Files
-1. `src/content/blog/` → `src/content/articles/` (directory rename)
-2. `src/content.config.ts`
-3. `src/layouts/BlogPost.astro` → `src/layouts/Article.astro`
-4. `src/pages/writing/index.astro`
-5. `src/pages/writing/[...slug]/index.astro`
-6. `src/pages/writing/[...slug]/og-image.png.ts`
-7. `src/pages/rss.xml.js`
-8. `src/styles/global.css`
-9. `src/assets/blog/` → `src/assets/articles/`
-
-### Documentation Files
-10. `CLAUDE.md`
-11. `.cursor/rules/content.mdc`
-12. `.cursor/rules/project-structure.mdc`
-13. `.cursor/rules/design-and-brand-guidelines.mdc`
-14. `.cursor/rules/cursor-rules.mdc`
-15. `.cursor/rules/astro-guidelines.mdc`
-
-## Expected Outcome
-
-- Zero functional changes to the website
-- All URLs remain the same
-- Clean, consistent terminology throughout codebase
-- Improved semantic clarity (articles vs blog posts)
+- `rel="me"` links on homepage should retain that attribute while adding `target="_blank"`
+- Astro's redirect URLs in config don't need target="\_blank" as they're handled server-side
+- Internal navigation links MUST NOT have target="\_blank"`

@@ -19,7 +19,9 @@
       "mcp__playwright__browser_press_key",
       "Bash(grep:*)",
       "Bash(ls:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
     ],
     "deny": []
   }
