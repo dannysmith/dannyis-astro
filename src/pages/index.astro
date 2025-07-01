@@ -10,7 +10,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
   </head>
   <body itemtype="https://schema.org/ProfilePage" itemscope>
     <main class="vcard h-card" itemtype="http://schema.org/Person" itemprop="mainEntity" itemscope>
-      <a rel="me" href={Astro.site?.href} class="u-url u-uid" style="display:none;">Danny Smith</a>
+      <a rel="me" href={Astro.site?.href} class="u-url u-uid hidden-microformat">Danny Smith</a>
       <h1 class="fn p-name" itemprop="name">
         <span itemprop="givenName">Danny</span>
         <span itemprop="familyName">Smith</span>
@@ -45,10 +45,14 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
           </a>
         </li>
         <li>
-          <a href="https://medium.com/@dannysmith" rel="me" target="_blank"><strong>medium</strong>/dannysmith</a>
+          <a href="https://medium.com/@dannysmith" rel="me" target="_blank"
+            ><strong>medium</strong>/dannysmith</a
+          >
         </li>
         <li>
-          <a href="https://github.com/dannysmith" rel="me" target="_blank"><strong>github</strong>/dannysmith</a>
+          <a href="https://github.com/dannysmith" rel="me" target="_blank"
+            ><strong>github</strong>/dannysmith</a
+          >
         </li>
         <li>
           <a href="https://instagram.com/dannysmith" rel="me" target="_blank"
@@ -56,7 +60,9 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
           >
         </li>
         <li>
-          <a href="https://monzo.me/dannyasmith" rel="me" target="_blank"><strong>monzo</strong>.me</a>
+          <a href="https://monzo.me/dannyasmith" rel="me" target="_blank"
+            ><strong>monzo</strong>.me</a
+          >
         </li>
         <li>
           <a class="u-email p-email" href="mailto:hi@danny.is" rel="me" itemprop="email"
