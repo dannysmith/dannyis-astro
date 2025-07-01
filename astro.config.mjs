@@ -24,7 +24,13 @@ export default defineConfig({
   },
   experimental: {
     headingIdCompat: true,
-    csp: true,
+    csp: {
+      mode: 'hash',
+      directives: {
+        'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        'font-src': ["'self'", 'https://fonts.gstatic.com'],
+      },
+    },
   },
   integrations: [mdx(), sitemap()],
   markdown: {
