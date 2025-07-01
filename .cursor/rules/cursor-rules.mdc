@@ -79,6 +79,7 @@ This document serves as an index for all cursor rules and guidelines for the per
   - Centralized SEO system and utilities
   - Theme management
   - Error handling
+  - RSS feed implementation with Container API
 
 ### Task Management
 
@@ -184,7 +185,7 @@ The project includes three styleguide/test pages to ensure visual consistency an
     - Use realistic, long-form content and context.
 
 **Exclusion from Indexes:**
-All styleguide files use `styleguide: true` in their frontmatter. Content collection queries and RSS feeds are configured to exclude these files from public indexes.
+All styleguide files use `styleguide: true` in their frontmatter. Content collection queries and RSS feeds are configured to exclude these files from public indexes. The RSS feeds use Astro's Container API to render full MDX content while filtering out styleguide and draft content.
 
 **Best Practices:**
 

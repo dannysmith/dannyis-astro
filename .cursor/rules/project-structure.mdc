@@ -229,6 +229,16 @@ The project is built with:
 - **`src/components/`**: Organized component library with barrel exports
 - **`src/content/`**: Type-safe content collections for articles and notes
 - **`src/layouts/`**: Page layout templates with integrated SEO
+- **`src/pages/rss/`**: RSS feed endpoints using Astro's Container API for full MDX rendering
+
+### RSS Feed Architecture
+
+- **Container API Implementation**: Uses Astro's experimental Container API to render MDX components to HTML
+- **Three Feed Types**: Combined (`/rss.xml`), articles-only (`/rss/articles.xml`), notes-only (`/rss/notes.xml`)
+- **Content Filtering**: Excludes styleguide content and draft content in production
+- **Full MDX Rendering**: Custom components (`<Callout>`, `<BookmarkCard>`, `<Embed>`, etc.) render as proper HTML
+- **Error Handling**: Graceful degradation with skipped problematic items
+- **Performance**: Minimal build time impact (~44s vs ~45s baseline)
 
 ### SEO Architecture
 

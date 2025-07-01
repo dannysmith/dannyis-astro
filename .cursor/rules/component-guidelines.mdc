@@ -51,7 +51,7 @@ SVG icon components for consistent iconography across the site:
 1. **InstagramIcon.astro**
 2. **LinkedInIcon.astro**
 3. **NotionIcon.astro**
-4. **RSSIcon.astro**
+4. **RSSIcon.astro** - Monochrome, scalable RSS icon for feed links and auto-discovery
 5. **YouTubeIcon.astro**
 
 ## Component Documentation
@@ -248,6 +248,48 @@ SVG icon components for consistent iconography across the site:
   <Callout icon="❌" type="red" title="Error">
     Something went wrong.
   </Callout>
+  ```
+
+### RSSIcon.astro
+
+- **Purpose:**
+
+  - Monochrome, scalable RSS icon for feed links and auto-discovery.
+  - Used in footer and sidebar for RSS feed subscription links.
+  - Designed to inherit color from parent element for theme consistency.
+  - Optimized for small sizes while maintaining readability.
+
+- **Props:**
+
+  - No props required - component is self-contained.
+
+- **Design & Usage:**
+
+  - Clean, minimal RSS feed icon design.
+  - Uses `currentColor` to inherit text color from parent.
+  - Scalable SVG that maintains quality at any size.
+  - Designed to work with existing footer link styles.
+  - Accessible with proper ARIA attributes when used in links.
+
+- **Technical Implementation:**
+
+  - Pure SVG component with no external dependencies.
+  - Uses `fill="currentColor"` for theme integration.
+  - Optimized viewBox for consistent scaling.
+  - Minimal markup for performance.
+
+- **RSS Feed Integration:**
+
+  - Used in footer links to all three RSS feeds (combined, articles, notes).
+  - Supports RSS auto-discovery via `<link>` tags in BaseHead.astro.
+  - Icons scale appropriately in different contexts.
+  - Consistent with site's monochrome icon design system.
+
+- **Example:**
+  ```astro
+  <a href="/rss.xml" aria-label="RSS Feed">
+    <RSSIcon />
+  </a>
   ```
 
 ### BaseHead.astro
