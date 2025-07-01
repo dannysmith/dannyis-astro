@@ -1,12 +1,12 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import Spinner from '@components/Spinner.astro';
-import BaseHead from '@components/BaseHead.astro';
-import Footer from '@components/Footer.astro';
-import FormattedDate from '@components/FormattedDate.astro';
-import Lightbox from '@components/Lightbox.astro';
-import MainNavigation from '@components/MainNavigation.astro';
+import Spinner from '@components/ui/Spinner.astro';
+import BaseHead from '@components/layout/BaseHead.astro';
+import Footer from '@components/layout/Footer.astro';
+import FormattedDate from '@components/ui/FormattedDate.astro';
+import Lightbox from '@components/layout/Lightbox.astro';
+import MainNavigation from '@components/layout/MainNavigation.astro';
 
 type Props = CollectionEntry<'articles'>['data'] & { readingTime: string };
 const {

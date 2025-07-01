@@ -35,9 +35,18 @@ This is Danny Smith's personal website built with **Astro 5.8** following a cont
 - **Notes Collection**: Shorter content with `title`, `pubDate`, optional `sourceURL`, `tags`
 - Both collections support MDX with custom components
 
-### Key Components
+### Component Architecture
+Components are organized into logical categories in `src/components/`:
+
+- **Layout Components** (`layout/`) - BaseHead, Footer, MainNavigation, NoteCard, Lightbox
+- **Navigation Components** (`navigation/`) - NavLink, ThemeToggle  
+- **UI Utilities** (`ui/`) - FormattedDate, Pill, Spinner
+- **MDX Components** (`mdx/`) - Embed, BookmarkCard, Callout, Notion, Grid, Loom
+- **Icons** (`icons/`) - SVG icon components
+
+**Key Components:**
 - **Universal Embed** (`<Embed>`) - Handles YouTube, Twitter, Vimeo, Loom embeds; falls back to BookmarkCard
-- **BookmarkCard** - Rich URL previews using Open Graph data
+- **BookmarkCard** - Rich URL previews using Open Graph data  
 - **Callout** - Highlighted information boxes with color variants
 - **Notion** - Notion page references with automatic title fetching
 - **Image optimization** - Uses Astro's built-in Image component with responsive layouts
@@ -94,7 +103,7 @@ This project has comprehensive guidelines in `.cursor/rules/` that Claude Code s
 
 **Quality Standards**: All changes must meet the DoD criteria including successful linting, type checking, Vercel preview builds, and styleguide updates.
 
-**Component Development**: Follow the established patterns for props interfaces, error handling, accessibility, and CSS variable usage as defined in component-guidelines.mdc.
+**Component Development**: Follow the established patterns for props interfaces, error handling, accessibility, and CSS variable usage as defined in component-guidelines.mdc. Components are organized into categories (layout/, navigation/, ui/, mdx/, icons/) with barrel exports for clean imports.
 
 **Styleguide Maintenance**: When adding components or features, update the relevant styleguide pages:
 - `/styleguide` - Main component demos

@@ -112,7 +112,7 @@ cover:
 coverAlt:
 ---
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/components';
+import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
 #### Examples
@@ -133,7 +133,7 @@ coverAlt:
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/components';
+import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
 **Prompt:** "new article about using LLMs to draw ducks"
@@ -152,7 +152,7 @@ coverAlt:
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/components';
+import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
 ### Command: Create Multiple Templates

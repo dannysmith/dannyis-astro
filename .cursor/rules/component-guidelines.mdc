@@ -9,40 +9,50 @@ alwaysApply: true
 
 Define guidelines for developing and maintaining components in the personal website, ensuring consistency, reusability, and performance.
 
-## Component Types
+## Component Organization
 
-### Common Components
+Components are organized into logical categories in `src/components/`:
 
-1. **Navigation**
+### Layout Components (`layout/`)
+Structural components that define the overall page layout and architecture:
 
-   - `MainNavigation.astro` - Main site navigation
-   - `NavLink.astro` - Individual navigation link component
-   - `Footer.astro` - Site footer with links and info
+1. **BaseHead.astro** - HTML head component for SEO and meta tags
+2. **Footer.astro** - Site footer with social links and navigation
+3. **MainNavigation.astro** - Primary site navigation with mobile menu
+4. **NoteCard.astro** - Note layout wrapper with metadata display
+5. **Lightbox.astro** - Image lightbox functionality for articles
 
-2. **Layout**
+### Navigation Components (`navigation/`)
+Components specifically for navigation functionality:
 
-   - `Grid.astro` - Layout grid component
-   - `BaseHead.astro` - Base head component for SEO and meta tags
+1. **NavLink.astro** - Individual navigation links with active state
+2. **ThemeToggle.astro** - Theme switching component (auto/light/dark)
 
-3. **Utility**
-   - `FormattedDate.astro` - Date formatting component
-   - `Spinner.astro` - Loading spinner component
-   - `ThemeToggle.astro` - Theme switching component (auto/light/dark)
+### UI Utility Components (`ui/`)
+Small, reusable utility components:
 
-### Feature Components
+1. **FormattedDate.astro** - Date formatting with semantic markup
+2. **Pill.astro** - Tag/badge component for labels and categories
+3. **Spinner.astro** - Loading spinner for async operations
 
-1. **Content Display**
+### MDX Components (`mdx/`)
+Components available for use in MDX content files:
 
-   - `NoteCard.astro` - Card component for displaying notes
-   - `BookmarkCard.astro` - Card component for displaying URL previews
-   - `Notion.astro` - Component for Notion page references with error handling and optional title override
-   - `Callout.astro` - Component for highlighting important information
-   - `Lightbox.astro` - Image lightbox component
-   - `Pill.astro` - Small label/badge component for tags, categories, etc.
+1. **BookmarkCard.astro** - Rich URL preview cards using Open Graph data
+2. **Callout.astro** - Information callouts with color variants and icons
+3. **Embed.astro** - Universal embed component for YouTube, Twitter, Vimeo, Loom
+4. **Grid.astro** - CSS Grid layout component with responsive options
+5. **Loom.astro** - Dedicated Loom video embed component
+6. **Notion.astro** - Notion page links with automatic title fetching
 
-2. **Icons**
-   - Located in `icons/` directory
-   - Used throughout the site for consistent iconography
+### Icon Components (`icons/`)
+SVG icon components for consistent iconography across the site:
+
+1. **InstagramIcon.astro**
+2. **LinkedInIcon.astro**
+3. **NotionIcon.astro**
+4. **RSSIcon.astro**
+5. **YouTubeIcon.astro**
 
 ## Component Documentation
 
@@ -248,9 +258,37 @@ Define guidelines for developing and maintaining components in the personal webs
 
    ```astro
    components/
-   ├── ComponentName.astro
-   └── icons/
-       └── IconName.astro
+   ├── layout/           # Layout and structural components
+   │   ├── BaseHead.astro
+   │   ├── Footer.astro
+   │   ├── MainNavigation.astro
+   │   ├── NoteCard.astro
+   │   ├── Lightbox.astro
+   │   └── index.ts      # Barrel exports
+   ├── navigation/       # Navigation-specific components
+   │   ├── NavLink.astro
+   │   ├── ThemeToggle.astro
+   │   └── index.ts      # Barrel exports
+   ├── ui/              # Small, reusable UI utilities
+   │   ├── FormattedDate.astro
+   │   ├── Pill.astro
+   │   ├── Spinner.astro
+   │   └── index.ts      # Barrel exports
+   ├── mdx/             # Components for MDX content
+   │   ├── BookmarkCard.astro
+   │   ├── Callout.astro
+   │   ├── Embed.astro
+   │   ├── Grid.astro
+   │   ├── Loom.astro
+   │   ├── Notion.astro
+   │   └── index.ts      # Barrel exports
+   ├── icons/           # Icon components
+   │   ├── InstagramIcon.astro
+   │   ├── LinkedInIcon.astro
+   │   ├── NotionIcon.astro
+   │   ├── RSSIcon.astro
+   │   └── YouTubeIcon.astro
+   └── index.ts         # Main component barrel
    ```
 
 2. **Code Structure**
@@ -296,6 +334,39 @@ Define guidelines for developing and maintaining components in the personal webs
      /* Component styles */
    </style>
    ```
+
+3. **Import Patterns**
+
+   Use TypeScript path aliases for clean component imports:
+
+   ```typescript
+   // Category-specific barrel imports (recommended)
+   import { BaseHead, Footer } from '@components/layout';
+   import { FormattedDate, Pill } from '@components/ui';
+   import { NavLink, ThemeToggle } from '@components/navigation';
+
+   // Direct component imports
+   import BaseHead from '@components/layout/BaseHead.astro';
+   import Callout from '@components/mdx/Callout.astro';
+
+   // MDX content imports (used in content files)
+   import { Callout, Embed, BookmarkCard } from '@components/mdx';
+
+   // Icon imports
+   import RSSIcon from '@components/icons/RSSIcon.astro';
+   ```
+
+4. **Component Placement Guidelines**
+
+   When creating new components, choose the appropriate category:
+
+   - **Layout**: Components that define page structure or major sections
+   - **Navigation**: Components specifically for site navigation
+   - **UI**: Small, reusable utility components
+   - **MDX**: Components intended for use in content files
+   - **Icons**: SVG icon components
+
+   After adding a component, update the relevant `index.ts` barrel export file.
 
 ### Error Handling
 
