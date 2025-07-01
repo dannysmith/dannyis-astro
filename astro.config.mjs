@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeExternalLinks from 'rehype-external-links';
 import { remarkReadingTime } from './remark-reading-time.mjs';
 
 // https://astro.build/config
@@ -26,7 +27,11 @@ export default defineConfig({
   },
   integrations: [mdx(), sitemap()],
   markdown: {
-    rehypePlugins: [[rehypeHeadingIds, { headingIdCompat: true }], rehypeAutolinkHeadings],
+    rehypePlugins: [
+      [rehypeHeadingIds, { headingIdCompat: true }], 
+      rehypeAutolinkHeadings,
+      [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]
+    ],
     remarkPlugins: [remarkReadingTime],
   },
   // Avoid using a trailing slash in redirect URLs
