@@ -29,16 +29,16 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
   markdown: {
     rehypePlugins: [
-      [rehypeHeadingIds, { headingIdCompat: true }], 
+      [rehypeHeadingIds, { headingIdCompat: true }],
       rehypeAutolinkHeadings,
-      [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]
+      [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
     ],
     remarkPlugins: [remarkReadingTime],
   },
   // Avoid using a trailing slash in redirect URLs
   redirects: {
     '/meeting': 'https://cal.com/dannysmith',
-    '/tools': 'https://betterat.work/toolbox',
+    '/toolbox': 'https://betterat.work/toolbox',
     '/linkedin': 'https://www.linkedin.com/in/dannyasmith',
     '/cv': '/cv-danny-smith.pdf',
     '/working': 'https://betterat.work',
