@@ -209,3 +209,139 @@ alwaysApply: true
    - Design for error states
    - Provide helpful error messages
    - Implement proper fallbacks
+
+## RSS Feed Implementation
+
+### Overview
+
+The site generates three RSS feeds using Astro's experimental Container API for full MDX component rendering:
+
+- **Combined Feed**: `/rss.xml` - All articles and notes
+- **Articles Only**: `/rss/articles.xml` - Long-form articles only
+- **Notes Only**: `/rss/notes.xml` - Short-form notes only
+
+### Technical Approach
+
+**Container API for Full MDX Rendering**
+
+The RSS feeds use Astro's experimental Container API (introduced in v4.9) to render MDX components to HTML at build time. This approach:
+
+- Renders all custom MDX components (`<Callout>`, `<BookmarkCard>`, `<Embed>`, `<Notion>`, etc.) as proper HTML
+- Eliminates raw import statements from RSS output
+- Provides rich, formatted content in RSS readers
+- Maintains consistency between website and RSS content
+
+**Implementation Pattern**
+
+```javascript
+import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+import { getContainerRenderer as getMDXRenderer } from '@astrojs/mdx';
+import { loadRenderers } from 'astro:container';
+import { getCollection, render } from 'astro:content';
+import rss from '@astrojs/rss';
+
+export async function GET(context) {
+  // Initialize Container API for MDX rendering
+  const renderers = await loadRenderers([getMDXRenderer()]);
+  const container = await AstroContainer.create({ renderers });
+
+  // Get content with filtering
+  const articles = await getCollection('articles', ({ data }) => {
+    return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
+  });
+
+  // Process items with full MDX rendering
+  const items = [];
+  for (const article of articles) {
+    try {
+      const { Content } = await render(article);
+      const content = await container.renderToString(Content);
+
+      items.push({
+        ...article.data,
+        link: `/writing/${article.id}/`,
+        content,
+      });
+    } catch (error) {
+      console.warn(`Failed to render content for ${article.id}:`, error);
+      // Skip problematic items
+      continue;
+    }
+  }
+
+  return rss({
+    title: `${SITE_TITLE} - Articles`,
+    description: `Articles from ${SITE_DESCRIPTION}`,
+    site: context.site,
+    items,
+  });
+}
+```
+
+### Content Filtering
+
+**Styleguide Exclusion**
+- All feeds filter out content with `styleguide: true` in frontmatter
+- Prevents styleguide content from appearing in public RSS feeds
+
+**Draft Content Filtering**
+- Production builds filter out content with `draft: true`
+- Development builds include draft content for testing
+
+**Content Sorting**
+- All feeds sort by publication date (newest first)
+- Ensures consistent ordering across all RSS feeds
+
+### Error Handling
+
+**Graceful Degradation**
+- Failed component renders are logged and skipped
+- Build continues even if individual items fail to render
+- Prevents complete build failures from problematic content
+
+**Fallback Strategy**
+- Option 1: Skip problematic items (current implementation)
+- Option 2: Use basic markdown fallback (if markdown-it is kept)
+
+### Performance Considerations
+
+**Build Time Impact**
+- Container API rendering is more resource-intensive than markdown-it
+- Current implementation: ~44s build time (vs ~45s baseline)
+- Monitor build performance on Vercel deployments
+
+**Optimization Strategies**
+- Consider caching rendered content if build times increase significantly
+- Monitor memory usage during build process
+- Profile build performance if issues arise
+
+### RSS Reader Compatibility
+
+**Component Rendering**
+- Custom components render as HTML with scoped styles
+- RSS readers may strip CSS or not support all styling
+- Test in various RSS readers (Feedly, NetNewsWire, Inoreader, etc.)
+
+**Content Quality**
+- No raw import statements in RSS output
+- Proper HTML structure with semantic markup
+- External links include `target="_blank" rel="noopener noreferrer"`
+- Heading IDs and anchor links preserved
+
+### Future Considerations
+
+**Experimental Feature**
+- Container API is experimental and may change
+- Monitor Astro releases for breaking changes
+- Consider pinning Astro version if stability becomes critical
+
+**Alternative Approaches**
+- If Container API becomes unstable, consider reverting to markdown-it
+- Evaluate RSS feed styling options for better reader compatibility
+- Plan for potential Container API breaking changes
+
+### Resources
+
+- [Astro Container API Documentation](https://astro.build/blog/astro-490/#react-19-support)
+- [Astro RSS Integration Guide](https://docs.astro.build/en/guides/rss/)
+- [MDX Rendering Best Practices](https://docs.astro.build/en/guides/markdown-content/#mdx-components)
