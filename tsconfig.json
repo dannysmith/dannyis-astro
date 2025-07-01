@@ -13,7 +13,9 @@
       "@components/mdx/*": ["src/components/mdx/*"],
       "@components/ui/*": ["src/components/ui/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@config/*": ["src/config/*"],
+      "@utils/*": ["src/utils/*"]
     }
   }
 }

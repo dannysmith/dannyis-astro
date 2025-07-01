@@ -1,6 +1,5 @@
 ---
 import BaseHead from '@components/layout/BaseHead.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import Footer from '@components/layout/Footer.astro';
@@ -14,7 +13,11 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <BaseHead
+      title="Notes"
+      description="Short-form thoughts and observations on remote work, technology, and business operations"
+      pageType="page"
+    />
   </head>
   <body>
     <MainNavigation />
@@ -39,7 +42,6 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
     </main>
     <Footer />
     <style>
-      
       body {
         display: grid;
         grid-template-rows: auto min-content;

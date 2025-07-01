@@ -57,278 +57,295 @@ Done.
    - Missing focus keywords for different content categories
    - Opportunity to better leverage Danny's expertise areas
 
-### SEO Optimization Plan
+### SEO Refactoring Plan: Clean Architecture for Maintainability
 
-#### Phase 1: Content Audit & Strategy (Week 1)
+**Status: ✅ Initial implementation complete - now refactoring for maintainability**
 
-**1.1 Content Meta Data Audit**
+#### Current Implementation Analysis
 
-- [ ] Audit all articles for missing/poor meta descriptions
-- [ ] Identify articles lacking proper title optimization
-- [ ] Review notes for missing titles and descriptions
-- [ ] Create spreadsheet of content gaps and opportunities
+**✅ Completed Features:**
+- Note.astro description bug fixed
+- Comprehensive JSON-LD structured data added
+- Page-specific title templates implemented
+- Meta robots tags and OpenGraph enhancements
+- Content collection schema improvements
+- Main page SEO optimizations
 
-**1.2 Keyword Research & Brand Strategy**
+**⚠️ Maintainability Issues Identified:**
+- 47 hardcoded strings scattered across BaseHead.astro
+- Complex conditional logic mixed with presentation
+- 93-line JSON-LD structure embedded in component
+- No centralized SEO configuration
+- Difficult to change author info, job titles, or descriptions
 
-- [ ] Research Danny's core expertise keywords:
-  - "Remote work consultant"
-  - "Organizational health expert"
-  - "Leadership coaching"
-  - "Remote team operations"
-  - "Business process optimization"
-- [ ] Identify long-tail opportunities based on existing content
-- [ ] Map keywords to content categories (articles vs notes)
-- [ ] Define Danny's unique value propositions for SEO
+#### Phase 1: SEO Architecture Refactoring (Priority: High)
 
-**1.3 Competitor Analysis**
+**1.1 Create Centralized SEO Configuration**
+- [ ] Create `/src/config/seo.ts` with all SEO constants:
+  - Personal info (name, job titles, descriptions)
+  - Social media URLs and profiles
+  - Site metadata (locale, theme color, robots directives)
+  - Title templates for different page types
+  - OpenGraph and Twitter card defaults
+- [ ] Create TypeScript interfaces for type safety
+- [ ] Follow existing `/src/consts.ts` pattern but with structured organization
 
-- [ ] Analyze similar personal brands in Danny's space
-- [ ] Review meta title/description patterns that work
-- [ ] Identify content gaps and opportunities
+**1.2 Extract SEO Utilities**
+- [ ] Create `/src/utils/seo.ts` with focused functions:
+  - `generatePageTitle(title, pageType)` - Clean title template logic
+  - `generateJSONLD(pageData, pageType)` - Modular structured data
+  - `generateMetaDescription(description)` - Description processing
+  - `generateArticleMeta(articleData)` - Article-specific metadata
+- [ ] Follow existing utility patterns from `/src/utils/og-*` files
+- [ ] Implement proper error handling and fallbacks
 
-#### Phase 2: Technical SEO Enhancements (Week 2)
+**1.3 Simplify BaseHead.astro**
+- [ ] Remove hardcoded strings - import from config
+- [ ] Replace complex logic with utility function calls
+- [ ] Maintain existing props interface for backward compatibility
+- [ ] Focus on templating and rendering, not business logic
+- [ ] Target: Reduce BaseHead.astro from ~250 lines to ~100 lines
 
-**2.1 Enhanced Schema Markup**
+#### Phase 2: Enhanced Maintainability Features (Priority: Medium)
 
-- [ ] Add comprehensive JSON-LD structured data:
-  - Person schema for Danny's profile
-  - Article schema with author, publisher, dateModified
-  - Organization schema for consulting work
-  - Breadcrumb navigation schema
-- [ ] Implement recipe for "How-to" articles
-- [ ] Add FAQ schema for relevant content
+**2.1 Configuration-Driven SEO**
+- [ ] Add SEO config validation at build time
+- [ ] Create development-time SEO debugging utilities
+- [ ] Add configuration for different deployment environments
+- [ ] Create templates for common SEO patterns
 
-**2.2 Meta Tag Optimization**
+**2.2 Advanced SEO Components**
+- [ ] Create dedicated `<JSONLDScript>` component for structured data
+- [ ] Create `<ArticleMeta>` component for article-specific tags
+- [ ] Create `<SocialMeta>` component for OpenGraph/Twitter
+- [ ] Enable easy customization per page type
 
-- [ ] Create template system for different content types:
-  - Articles: "[Title] | Danny Smith - [Category] Expert"
-  - Notes: "[Title] | Quick Take by Danny Smith"
-  - Pages: "[Page] | Danny Smith - Remote Work Consultant"
-- [ ] Implement dynamic meta descriptions based on content excerpts
-- [ ] Add meta robots tags for content management
-- [ ] Optimize Open Graph titles to be social-media friendly
+#### Phase 3: Developer Experience Improvements (Priority: Low)
 
-**2.3 URL and Navigation Improvements**
+**3.1 SEO Development Tools**
+- [ ] Add SEO preview component for development
+- [ ] Create SEO validation utilities
+- [ ] Add TypeScript interfaces for all SEO data types
+- [ ] Generate SEO documentation from config
 
-- [ ] Review URL structure for SEO-friendliness
-- [ ] Ensure proper internal linking between related content
-- [ ] Add "Related Articles" functionality for better content discovery
-- [ ] Implement breadcrumb navigation
+**3.2 Performance Optimizations**
+- [ ] Lazy-load non-critical SEO metadata
+- [ ] Optimize JSON-LD generation performance
+- [ ] Add caching for computed SEO values
 
-#### Phase 3: Content Optimization (Week 3)
+### New Architecture Overview
 
-**3.1 Site-Wide Pages**
+```
+/src/config/
+  └── seo.ts              # All SEO constants and templates
 
-- [ ] Homepage: Optimize for "Danny Smith" + "remote work consultant"
+/src/utils/
+  └── seo.ts              # SEO logic functions
 
-  - Title: "Danny Smith | Remote Work Consultant & Organizational Health Expert"
-  - Description: "Expert consultant helping companies build healthy remote teams and optimize operations. Leadership coaching, process optimization, and organizational development."
-
-- [ ] Writing Index: Target "remote work articles" + "leadership insights"
-
-  - Title: "Leadership & Remote Work Articles | Danny Smith"
-  - Description: "In-depth articles on remote work, organizational health, leadership, and business operations by consultant Danny Smith."
-
-- [ ] Notes Index: Target "quick insights" + "business observations"
-
-  - Title: "Business Insights & Quick Takes | Danny Smith"
-  - Description: "Short-form thoughts and observations on remote work, technology, and business operations."
-
-- [ ] Now Page: Optimize for "what Danny Smith is doing now"
-  - Title: "What I'm Doing Now | Danny Smith"
-  - Description: "Current projects and focus areas for remote work consultant Danny Smith. Updated regularly with latest activities and interests."
-
-**3.2 Article Optimization**
-
-- [ ] Organizational Health article - optimize for "organizational health consultant"
-- [ ] Remote work articles - target "remote work best practices"
-- [ ] Leadership articles - focus on "leadership coaching" keywords
-- [ ] Technical articles - leverage "CTO consultant" angle
-
-**3.3 Meta Description Templates**
-Create templates for consistent, compelling descriptions:
-
-- Articles: "Learn [main benefit] in this guide by remote work consultant Danny Smith. [Key takeaway] plus actionable insights for [target audience]."
-- Notes: "Quick insight from Danny Smith on [topic]. [Main point] based on [years] of consulting experience."
-
-#### Phase 4: Advanced SEO Features (Week 4)
-
-**4.1 Rich Snippets Optimization**
-
-- [ ] Add estimated reading time to article schema
-- [ ] Implement article rating/review schema where appropriate
-- [ ] Add author bio schema with social profiles
-- [ ] Create "How-to" schema for instructional content
-
-**4.2 Social Media Optimization**
-
-- [ ] Optimize Open Graph images for better social sharing
-- [ ] Create Twitter Card templates for different content types
-- [ ] Add LinkedIn-specific optimizations
-- [ ] Implement social media meta tag testing
-
-**4.3 Performance & Technical**
-
-- [ ] Audit and optimize meta tag loading order
-- [ ] Implement dynamic meta tag generation for better performance
-- [ ] Add meta tag validation and testing tools
-- [ ] Set up Search Console monitoring for rich snippets
-
-#### Phase 5: Content Strategy & Ongoing Optimization
-
-**5.1 Content Gap Analysis**
-
-- [ ] Identify high-value keywords Danny could target with new content
-- [ ] Plan content calendar based on SEO opportunities
-- [ ] Create cornerstone content strategy around Danny's expertise
-
-**5.2 Monitoring & Maintenance**
-
-- [ ] Set up Google Search Console monitoring
-- [ ] Implement monthly SEO audits
-- [ ] Track key metrics: organic traffic, click-through rates, rankings
-- [ ] Create process for ongoing meta tag optimization
+/src/components/
+  └── layout/
+      ├── BaseHead.astro  # Simplified, config-driven template
+      └── seo/            # Optional: Dedicated SEO components
+          ├── JSONLDScript.astro
+          ├── ArticleMeta.astro
+          └── SocialMeta.astro
+```
 
 ### Success Metrics
 
-**Primary KPIs:**
+**Maintainability Goals:**
+- ✅ Single file to change all author info, job titles, descriptions
+- ✅ Easy to add new page types with different SEO patterns  
+- ✅ Reduce BaseHead.astro complexity by 60%
+- ✅ Type-safe SEO configuration with full IDE support
+- ✅ Zero hardcoded strings in components
 
-- Organic search traffic increase (target: +40% in 6 months)
-- Click-through rate improvement from search results (target: +25%)
-- Ranking improvements for target keywords
-- Rich snippet appearances in search results
+**Developer Experience Goals:**
+- ✅ Clear separation between configuration, logic, and templates
+- ✅ Follows existing codebase patterns and conventions
+- ✅ Maintains backward compatibility with current BaseHead usage
+- ✅ Easy to test and validate SEO metadata
+- ✅ Self-documenting configuration structure
 
-**Secondary KPIs:**
+### Implementation Notes
 
-- Social media engagement from improved sharing cards
-- Time on site and bounce rate improvements
-- Internal link click-through rates
-- Brand search volume increase
+This refactoring maintains all current SEO functionality while dramatically improving maintainability. The new architecture follows the established patterns in the codebase (similar to how OG image generation is organized) and makes it trivial to update personal branding, add new page types, or modify SEO strategies.
 
-### Implementation Priority
+### Phase 1 Implementation Details
 
-**High Priority (Complete First):**
+#### 1.1 SEO Configuration Structure (`/src/config/seo.ts`)
 
-1. Fix missing meta descriptions on key articles
-2. Optimize homepage and main page titles/descriptions
-3. Implement proper schema markup for articles
-4. Add comprehensive meta robots tags
+```typescript
+// Personal & Business Information
+export const AUTHOR = {
+  name: 'Danny Smith',
+  givenName: 'Danny', 
+  familyName: 'Smith',
+  jobTitle: 'Remote Work Consultant',
+  email: 'hi@danny.is',
+  website: 'https://danny.is',
+  image: 'https://danny.is/danny-smith.jpg',
+  description: 'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.'
+} as const;
 
-**Medium Priority:**
+// Business Information  
+export const ORGANIZATION = {
+  name: 'Danny Smith Consulting',
+  url: 'https://danny.is',
+  logo: 'https://danny.is/icon.jpg',
+  description: 'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.'
+} as const;
 
-1. Create content-specific meta tag templates
-2. Enhance Open Graph optimizations
-3. Implement breadcrumb navigation and schema
-4. Optimize URL structure where needed
+// Social Media Profiles
+export const SOCIAL_PROFILES = [
+  'https://linkedin.com/in/danny-smith-uk',
+  'https://github.com/dannysmith', 
+  'https://twitter.com/dannyfsmith'
+] as const;
 
-**Lower Priority (Nice to Have):**
+// Site Configuration
+export const SITE_CONFIG = {
+  name: 'danny.is',
+  locale: 'en_GB',
+  themeColor: '#1a1a1a',
+  robotsDirective: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+} as const;
 
-1. Advanced rich snippets (FAQ, How-to)
-2. Social media-specific optimizations
-3. Performance optimizations for meta tags
-4. Automated SEO testing and monitoring
+// Title Templates
+export const TITLE_TEMPLATES = {
+  article: (title: string) => `${title} | Danny Smith - Operations & Leadership Expert`,
+  note: (title: string) => `${title} | Quick Take by Danny Smith`,
+  page: (title: string) => `${title} | Danny Smith - Operations & Leadership Expert`,
+  default: (title: string) => `${title} | Danny Smith`
+} as const;
 
-### Estimated Timeline: 4-6 weeks
+// Article-Specific Configuration
+export const ARTICLE_CONFIG = {
+  author: AUTHOR.name,
+  section: 'Remote Work & Leadership'
+} as const;
+```
 
-This plan balances technical SEO best practices with content strategy that leverages Danny's expertise in remote work, organizational health, and leadership consulting. The focus is on making the site more discoverable for people searching for these services while maintaining the personal, authentic voice of the brand.
+#### 1.2 SEO Utilities Structure (`/src/utils/seo.ts`)
 
-## Task 5 - Sort RSS feeds
+```typescript
+import { TITLE_TEMPLATES, AUTHOR, ORGANIZATION, SOCIAL_PROFILES, SITE_CONFIG } from '@config/seo';
 
-## Task 6 - Upgrade Astro
+export type PageType = 'article' | 'note' | 'page';
 
-## Task 7 - Check sitemap, add analytics and google tag manager
+export interface PageSEOData {
+  title: string;
+  description?: string;
+  pubDate?: Date;
+  updatedDate?: Date; 
+  tags?: string[];
+  pageType?: PageType;
+}
 
-### Implementation Breakdown: What Cursor Can Do vs What Needs Danny's Input
+export function generatePageTitle(title: string, pageType?: PageType): string {
+  if (!pageType || title === AUTHOR.name) return title;
+  
+  const template = TITLE_TEMPLATES[pageType] || TITLE_TEMPLATES.default;
+  return template(title);
+}
 
-#### 🤖 What Cursor Can Implement Directly
+export function generateMetaDescription(description?: string): string | undefined {
+  return description ? `${description} | ${AUTHOR.name}` : undefined;
+}
 
-**Technical SEO Implementation:**
+export function generateJSONLD(pageData: PageSEOData, canonicalUrl: string, ogImageUrl: string) {
+  const baseGraph = [
+    // Person Schema
+    {
+      '@type': 'Person',
+      '@id': `${AUTHOR.website}/#person`,
+      name: AUTHOR.name,
+      // ... rest of person schema
+    },
+    // Organization Schema
+    {
+      '@type': 'Organization', 
+      '@id': `${AUTHOR.website}/#organization`,
+      // ... rest of organization schema
+    },
+    // Website Schema
+    {
+      '@type': 'WebSite',
+      '@id': `${AUTHOR.website}/#website`,
+      // ... rest of website schema
+    }
+  ];
 
-- [ ] Add comprehensive JSON-LD structured data to BaseHead.astro
-- [ ] Create meta tag templates for different content types in layouts
-- [ ] Implement breadcrumb navigation component and schema
-- [ ] Add meta robots tags for content management
-- [ ] Enhance OpenGraph and Twitter Card implementations
-- [ ] Add estimated reading time to article schema markup
-- [ ] Implement author bio schema with social profiles
-- [ ] Create FAQ and How-to schema templates for future use
-- [ ] Optimize meta tag loading order and performance
-- [ ] Add meta tag validation utilities
+  // Add article schema if it's an article
+  if (pageData.pageType === 'article' || pageData.pageType === 'note') {
+    baseGraph.push({
+      '@type': 'BlogPosting',
+      headline: pageData.title,
+      // ... rest of article schema
+    });
+  }
 
-**Content Auditing & Analysis:**
+  return {
+    '@context': 'https://schema.org',
+    '@graph': baseGraph
+  };
+}
+```
 
-- [ ] Scan all articles for missing meta descriptions
-- [ ] Identify content with missing/generic titles
-- [ ] Analyze current URL structure for SEO-friendliness
-- [ ] Audit internal linking patterns
-- [ ] Generate reports on content optimization opportunities
-- [ ] Create spreadsheet of current meta tag status
+#### 1.3 Simplified BaseHead.astro
 
-**Code Enhancements:**
+```astro
+---
+import { generatePageTitle, generateMetaDescription, generateJSONLD } from '@utils/seo';
+import { SITE_CONFIG, ARTICLE_CONFIG } from '@config/seo';
 
-- [ ] Build dynamic meta description generation from content excerpts
-- [ ] Create "Related Articles" component for better internal linking
-- [ ] Implement social media meta tag testing utilities
-- [ ] Add Search Console monitoring setup code
-- [ ] Create automated SEO audit tooling
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+  pageType?: 'article' | 'note' | 'page';
+  pubDate?: Date;
+  updatedDate?: Date;
+  tags?: string[];
+}
 
-**Template & Component Creation:**
+const { title, description, image, type = 'website', pageType, pubDate, updatedDate, tags } = Astro.props;
 
-- [ ] Build reusable schema markup components
-- [ ] Create meta tag testing and preview components
-- [ ] Implement breadcrumb navigation system
-- [ ] Build social sharing optimization components
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const pageTitle = generatePageTitle(title, pageType);
+const metaDescription = generateMetaDescription(description);
+const jsonLD = generateJSONLD({ title, description, pubDate, updatedDate, tags, pageType }, canonicalURL.toString(), ogImageUrl);
 
-#### 🧠 What Needs Danny's Strategic Input
+// ... OG image logic stays the same
+---
 
-**Brand & Keyword Strategy:**
+<!-- All the meta tags using the generated values -->
+<title>{pageTitle}</title>
+<meta name="description" content={metaDescription} />
+<!-- ... etc -->
 
-- [ ] Define primary keyword targets for your expertise areas
-- [ ] Decide on brand positioning: "Remote Work Consultant" vs "Organizational Health Expert" vs other focus
-- [ ] Choose which content categories to prioritize for SEO
-- [ ] Define your unique value propositions for search
+<!-- JSON-LD from utility -->
+<script type="application/ld+json" set:html={JSON.stringify(jsonLD)} />
+```
 
-**Content Strategy Decisions:**
+### Benefits of This Approach
 
-- [ ] Review and approve suggested meta descriptions for key articles
-- [ ] Decide which articles to optimize first (business priority)
-- [ ] Choose target keywords for each major piece of content
-- [ ] Define your ideal search personas and what they're looking for
+**For Danny (Content Creator):**
+- Change job title in one place (`AUTHOR.jobTitle`) - updates everywhere
+- Update social links in one array - affects all structured data
+- Modify title templates easily without touching components
+- All personal branding centralized in config file
 
-**Business Goals & Priorities:**
+**For Developers:**
+- Clean separation of concerns
+- Easy to test SEO utilities independently  
+- Type-safe configuration with autocomplete
+- Follows existing codebase patterns
+- Backward compatible with current BaseHead usage
 
-- [ ] Set SEO success metrics that align with your business goals
-- [ ] Decide on content calendar and new article topics
-- [ ] Choose which services/expertise to emphasize in SEO
-- [ ] Define geographic targeting (UK focus? Global?)
-
-**Editorial Review:**
-
-- [ ] Review and refine meta titles and descriptions I draft
-- [ ] Approve schema markup data about yourself/your business
-- [ ] Choose which social profiles to include in structured data
-- [ ] Decide on breadcrumb navigation structure
-
-#### 🚀 Suggested Immediate Action Plan
-
-**Phase 1: Cursor Does Technical Setup (1-2 days)**
-
-1. Implement comprehensive schema markup
-2. Create meta tag templates and dynamic generation
-3. Add breadcrumb navigation
-4. Audit current content and generate reports
-5. Build related articles system
-
-**Phase 2: Danny's Strategic Input (30-60 minutes)**
-
-1. Review content audit results
-2. Define 5-10 primary keywords to target
-3. Choose brand positioning focus
-4. Approve/edit suggested meta descriptions for top 10 articles
-
-**Phase 3: Cursor Implements Strategy (1 day)**
-
-1. Apply approved meta descriptions
-2. Optimize titles based on keyword strategy
-3. Implement internal linking improvements
-4. Set up monitoring and testing tools
+**For Maintenance:**
+- Reduces BaseHead.astro from ~250 lines to ~100 lines
+- Zero hardcoded strings in components
+- Easy to add new page types or SEO patterns
+- Self-documenting configuration structure

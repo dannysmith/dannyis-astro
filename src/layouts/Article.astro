@@ -29,7 +29,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} type="article" image={ogImage} />
+    <BaseHead title={title} description={description} type="article" pageType="article" image={ogImage} />
     {platform && redirectURL && <meta http-equiv="refresh" content={'0;url=' + redirectURL} />}
   </head>
 
