@@ -3,7 +3,6 @@ description: Project structure and file organization guidelines
 globs: ['**/*']
 alwaysApply: true
 ---
-
 # Project Structure
 
 ## Purpose
@@ -16,7 +15,7 @@ Define the organization and architecture of the personal website built with Astr
 src/
 ├── components/        # Reusable Astro components (organized by category)
 │   ├── layout/        # Layout and structural components
-│   │   ├── BaseHead.astro      # HTML head meta tags and global CSS
+│   │   ├── BaseHead.astro      # HTML head with centralized SEO utilities, theme management, and comprehensive meta tag generation
 │   │   ├── Footer.astro        # Site footer
 │   │   ├── MainNavigation.astro # Primary site navigation
 │   │   ├── NoteCard.astro      # Note layout wrapper
@@ -46,6 +45,8 @@ src/
 │   │   ├── RSSIcon.astro
 │   │   └── YouTubeIcon.astro
 │   └── index.ts      # Main component barrel export
+├── config/           # Configuration files
+│   └── seo.ts        # Centralized SEO configuration and constants
 ├── content/          # Content collections
 │   ├── articles/     # Long-form articles as MDX and md files
 │   └── notes/        # Short-form content as MDX and md files
@@ -56,6 +57,7 @@ src/
 ├── styles/           # Global styles and CSS
 │   └── global.css    # Global styles
 └── utils/            # Utility functions and helpers
+    └── seo.ts        # SEO utility functions for metadata generation
 
 public/               # Static assets
 ├── images/           # Image assets
@@ -121,8 +123,8 @@ Components are organized into logical categories based on their purpose and usag
 
 #### Layout Components (`src/components/layout/`)
 Structural components that define the overall page layout and architecture:
-- **BaseHead.astro** - HTML head with meta tags, fonts, and global CSS
-- **Footer.astro** - Site footer with social links and navigation
+- **BaseHead.astro** - HTML head with centralized SEO utilities, theme management, and comprehensive meta tag generation
+- **Footer.astro** - Site footer with social links and nagivation
 - **MainNavigation.astro** - Primary site navigation with mobile menu
 - **NoteCard.astro** - Wrapper component for note layout and metadata
 - **Lightbox.astro** - Image lightbox functionality for articles
@@ -134,7 +136,7 @@ Components specifically for navigation functionality:
 
 #### UI Utilities (`src/components/ui/`)
 Small, reusable utility components:
-- **FormattedDate.astro** - Date formatting with semantic markup
+- **FormattedDate.astro** - Date formatting component
 - **Pill.astro** - Tag/badge component for labels and categories
 - **Spinner.astro** - Loading spinner for async operations
 
@@ -155,23 +157,47 @@ SVG icon components for consistent iconography across the site.
 #### Path Aliases
 The project uses TypeScript path aliases for clean imports:
 ```typescript
-// Category-specific imports
+// Category-specific component imports (recommended)
 import { BaseHead, Footer } from '@components/layout';
 import { FormattedDate, Pill } from '@components/ui';
 import { NavLink, ThemeToggle } from '@components/navigation';
 
-// Direct category imports
+// Direct component imports
 import BaseHead from '@components/layout/BaseHead.astro';
 import Callout from '@components/mdx/Callout.astro';
 
 // MDX component imports (used in content files)
 import { Callout, Embed, BookmarkCard } from '@components/mdx';
+
+// Configuration and utility imports
+import { AUTHOR, TITLE_TEMPLATES } from '@config/seo';
+import { generatePageTitle, validateSEOData } from '@utils/seo';
+
+// Icon imports
+import RSSIcon from '@components/icons/RSSIcon.astro';
+```
+
+#### TypeScript Path Configuration
+```json
+{
+  "paths": {
+    "@components/*": ["src/components/*"],
+    "@components/layout/*": ["src/components/layout/*"],
+    "@components/navigation/*": ["src/components/navigation/*"],
+    "@components/mdx/*": ["src/components/mdx/*"],
+    "@components/ui/*": ["src/components/ui/*"],
+    "@config/*": ["src/config/*"],
+    "@utils/*": ["src/utils/*"],
+    "@layouts/*": ["src/layouts/*"],
+    "@assets/*": ["src/assets/*"]
+  }
+}
 ```
 
 #### Barrel Exports
 Each category includes an `index.ts` file for convenient importing:
 - `@components/layout/index.ts` - Layout component exports
-- `@components/navigation/index.ts` - Navigation component exports  
+- `@components/navigation/index.ts` - Navigation component exports
 - `@components/ui/index.ts` - UI utility component exports
 - `@components/mdx/index.ts` - MDX component exports (replaces old components.ts)
 - `@components/index.ts` - Main barrel export for all components
@@ -193,6 +219,24 @@ The project is built with:
 - **MDX**: For enhanced markdown content
 - **CSS**: For styling (no CSS frameworks)
 - **Vercel**: For deployment
+
+### Key Directories
+
+- **`src/config/`**: Centralized configuration files
+  - `seo.ts` - All SEO constants, templates, and structured data configuration
+- **`src/utils/`**: Utility functions and helpers
+  - `seo.ts` - Pure functions for SEO metadata generation and validation
+- **`src/components/`**: Organized component library with barrel exports
+- **`src/content/`**: Type-safe content collections for articles and notes
+- **`src/layouts/`**: Page layout templates with integrated SEO
+
+### SEO Architecture
+
+- **Centralized Configuration**: All SEO settings in `src/config/seo.ts`
+- **Utility Functions**: Clean, testable SEO generation in `src/utils/seo.ts`
+- **BaseHead Integration**: Automatic SEO optimization for all pages
+- **Structured Data**: Comprehensive Schema.org JSON-LD for better search indexing
+- **Theme Management**: Global `window.theme` API with automatic system detection
 
 ## Best Practices
 

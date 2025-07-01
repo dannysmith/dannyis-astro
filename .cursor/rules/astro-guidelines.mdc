@@ -141,24 +141,57 @@ alwaysApply: true
 
 ## SEO Guidelines
 
-1. **Meta Tags**
+1. **Centralized SEO Configuration**
 
-   - Use Astro's built-in SEO components
-   - Implement proper meta descriptions
-   - Use semantic HTML
+   - All SEO configuration is centralized in `src/config/seo.ts`
+   - Personal branding, job titles, and site information configured once
+   - Title templates for different page types (article, note, page)
+   - Schema.org structured data configuration
+   - OpenGraph and Twitter card configuration
 
-2. **Sitemap**
-   - Leverage `@astrojs/sitemap` integration
-   - Keep URLs clean and descriptive
-   - Implement proper redirects
+2. **SEO Utility Functions**
 
-3. **OpenGraph Image Generation**
-   - OpenGraph images are automatically generated for articles and notes at build time.
-   - Images use article/note frontmatter (title etc.) for best results.
-   - No manual image upload is required for OpenGraph previews.
-   - To customize, edit the OpenGraph image generation logic in the codebase.
+   - Use utilities from `src/utils/seo.ts` for consistent SEO metadata generation
+   - `generatePageTitle()` - Uses configured templates for consistent titles
+   - `generateMetaDescription()` - Adds consistent branding to descriptions
+   - `generateJSONLD()` - Creates comprehensive Schema.org structured data
+   - `generateArticleMeta()` - Generates article-specific OpenGraph meta tags
+   - `generateOGImageUrl()` - Handles image URL generation with fallbacks
+   - `validateSEOData()` - Validates and sanitizes SEO data
 
-4. **External Link Security**
+3. **BaseHead Component Usage**
+
+   ```astro
+   <BaseHead
+     title="Page Title"
+     description="Page description"
+     type="article"        // 'website' (default) or 'article'
+     pageType="article"    // 'article', 'note', or 'page' (for title templates)
+     image="/custom-og.png" // Optional: custom OG image
+     pubDate={new Date()}   // Optional: for articles/notes
+     updatedDate={new Date()} // Optional: for articles/notes
+     tags={['tag1', 'tag2']} // Optional: for articles/notes
+   />
+   ```
+
+4. **SEO Best Practices**
+
+   - Update site-wide SEO settings in `src/config/seo.ts`
+   - Use appropriate `pageType` for consistent title formatting
+   - Provide meaningful descriptions for better search results
+   - Use `type="article"` for content pages (articles/notes)
+   - Leverage automatic OpenGraph image generation
+   - All pages automatically include comprehensive structured data
+
+5. **Theme Management**
+
+   - Global `window.theme` API provides theme management
+   - Supports auto/light/dark themes with system preference detection
+   - Automatically handles ViewTransitions and theme persistence
+   - Components can listen for `theme-changed` events
+   - Theme switching handled by `ThemeToggle` component
+
+6. **External Link Security**
    - All external links in markdown content automatically include `target="_blank" rel="noopener noreferrer"`
    - This is handled by the `rehype-external-links` plugin configured in `astro.config.mjs`
    - The plugin automatically detects external URLs (http/https) and adds security attributes

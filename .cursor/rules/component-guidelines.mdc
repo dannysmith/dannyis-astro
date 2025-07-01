@@ -16,7 +16,7 @@ Components are organized into logical categories in `src/components/`:
 ### Layout Components (`layout/`)
 Structural components that define the overall page layout and architecture:
 
-1. **BaseHead.astro** - HTML head component for SEO and meta tags
+1. **BaseHead.astro** - HTML head component with centralized SEO utilities and theme management
 2. **Footer.astro** - Site footer with social links and navigation
 3. **MainNavigation.astro** - Primary site navigation with mobile menu
 4. **NoteCard.astro** - Note layout wrapper with metadata display
@@ -250,6 +250,68 @@ SVG icon components for consistent iconography across the site:
   </Callout>
   ```
 
+### BaseHead.astro
+
+- **Purpose:**
+
+  - Centralized HTML head management with SEO optimization and theme management
+  - Uses utilities from `@utils/seo` and configuration from `@config/seo`
+  - Generates comprehensive meta tags, structured data, and OpenGraph properties
+  - Includes global theme management system with auto/light/dark support
+
+- **Props:**
+
+  ```typescript
+  interface Props {
+    title: string;                    // Page title (required)
+    description?: string;             // Meta description
+    image?: string;                   // Custom OG image URL
+    type?: 'website' | 'article';    // OpenGraph type (default: 'website')
+    pageType?: 'article' | 'note' | 'page'; // For title template selection
+    pubDate?: Date;                   // Publication date (for articles/notes)
+    updatedDate?: Date;               // Last modified date (for articles/notes)
+    tags?: string[];                  // Tags/keywords (for articles/notes)
+  }
+  ```
+
+- **SEO Features:**
+
+  - **Centralized Configuration**: All SEO settings managed in `src/config/seo.ts`
+  - **Title Templates**: Automatic title formatting based on `pageType`
+  - **Meta Description**: Consistent branding applied to descriptions
+  - **Structured Data**: Comprehensive Schema.org JSON-LD generation
+  - **OpenGraph**: Complete Facebook/social media optimization
+  - **Twitter Cards**: Optimized Twitter sharing metadata
+  - **Article Meta**: Specialized meta tags for article/note content
+
+- **Theme Management:**
+
+  - **Global API**: Provides `window.theme` for theme control
+  - **Auto Detection**: Respects system preference in auto mode
+  - **Persistence**: Saves theme choice to localStorage
+  - **ViewTransitions**: Handles theme during page navigation
+  - **Events**: Dispatches `theme-changed` events for components
+
+- **Technical Implementation:**
+
+  - Uses utility functions for clean, testable SEO generation
+  - Validates and sanitizes all input data
+  - Handles fallbacks for missing or invalid data
+  - Inline theme script prevents flash of unstyled content
+  - Supports both manual and automatic theme switching
+
+- **Example:**
+  ```astro
+  <BaseHead
+    title="My Article"
+    description="An insightful article about..."
+    type="article"
+    pageType="article"
+    pubDate={new Date('2024-01-01')}
+    tags={['productivity', 'remote-work']}
+  />
+  ```
+
 ## Development Guidelines
 
 ### Component Structure
@@ -352,6 +414,10 @@ SVG icon components for consistent iconography across the site:
    // MDX content imports (used in content files)
    import { Callout, Embed, BookmarkCard } from '@components/mdx';
 
+   // Configuration and utility imports
+   import { AUTHOR, TITLE_TEMPLATES } from '@config/seo';
+   import { generatePageTitle, validateSEOData } from '@utils/seo';
+
    // Icon imports
    import RSSIcon from '@components/icons/RSSIcon.astro';
    ```
@@ -424,19 +490,19 @@ SVG icon components for consistent iconography across the site:
    ```astro
    <!-- ✅ Correct: Manual HTML external links -->
    <a href="https://example.com" target="_blank" rel="noopener noreferrer">External Link</a>
-   
+
    <!-- ✅ Correct: Preserve rel="me" with target="_blank" for identity links -->
    <a href="https://social.example/@user" rel="me" target="_blank">Social Profile</a>
-   
+
    <!-- ✅ Automatic: Markdown links are handled by rehype-external-links -->
-   [External Link](https://example.com) 
-   
+   [External Link](https://example.com)
+
    <!-- ❌ Incorrect: Missing security attributes -->
    <a href="https://example.com" target="_blank">External Link</a>
    ```
 
 3. **Accessibility**
-   - Add `aria-hidden="true"` to decorative icons  
+   - Add `aria-hidden="true"` to decorative icons
    - Ensure proper focus management
    - Use semantic HTML elements
 
@@ -569,3 +635,47 @@ SVG icon components for consistent iconography across the site:
    - Examples and demos
    - Accessibility notes
    - Error handling behavior
+
+### SEO Development Guidelines
+
+1. **Centralized Configuration**
+
+   - All SEO constants live in `src/config/seo.ts`
+   - Update personal branding, job titles, and descriptions in one place
+   - Title templates ensure consistent formatting across page types
+   - Schema.org structured data configured centrally
+
+2. **Utility Functions**
+
+   - Use functions from `src/utils/seo.ts` for all SEO metadata generation
+   - Functions are pure, testable, and handle edge cases
+   - Consistent branding applied automatically
+   - Proper validation and sanitization of input data
+
+3. **SEO Best Practices**
+
+   ```typescript
+   // ✅ Good: Use centralized configuration
+   import { generatePageTitle, validateSEOData } from '@utils/seo';
+   const seoData = validateSEOData(Astro.props);
+   const title = generatePageTitle(seoData.title, seoData.pageType);
+
+   // ❌ Bad: Manual SEO generation
+   const title = `${props.title} | Danny Smith`;
+   ```
+
+4. **Page Type Guidelines**
+
+   - Use `pageType="article"` for long-form content
+   - Use `pageType="note"` for short-form content
+   - Use `pageType="page"` for static pages
+   - Omit `pageType` for homepage or custom titles
+
+5. **Content-Specific SEO**
+
+   - Articles and notes automatically get article-specific meta tags
+   - Publication and modification dates included when provided
+   - Tags become keywords for better search indexing
+   - Custom OG images supported with automatic fallbacks
+
+## Development Guidelines
