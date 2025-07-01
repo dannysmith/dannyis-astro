@@ -158,6 +158,13 @@ alwaysApply: true
    - No manual image upload is required for OpenGraph previews.
    - To customize, edit the OpenGraph image generation logic in the codebase.
 
+4. **External Link Security**
+   - All external links in markdown content automatically include `target="_blank" rel="noopener noreferrer"`
+   - This is handled by the `rehype-external-links` plugin configured in `astro.config.mjs`
+   - The plugin automatically detects external URLs (http/https) and adds security attributes
+   - Manual HTML links in components must include these attributes explicitly
+   - This improves both security (prevents `window.opener` vulnerabilities) and UX (opens in new tabs)
+
 ## Error Handling
 
 1. **404 Pages**

@@ -80,6 +80,11 @@ Done.
 **Excluded by Design:**
 - astro-embed LinkPreview components don't support `target="_blank"` configuration - this is a deliberate UX choice for preview cards
 
+**Documentation Added:**
+- ✅ Updated `CLAUDE.md` with external link security requirements and rehype-external-links explanation
+- ✅ Enhanced `.cursor/rules/component-guidelines.mdc` with comprehensive external link implementation examples
+- ✅ Added external link security section to `.cursor/rules/astro-guidelines.mdc` explaining the rehype plugin
+
 ### Notes
 
 - `rel="me"` links on homepage should retain that attribute while adding `target="_blank"`

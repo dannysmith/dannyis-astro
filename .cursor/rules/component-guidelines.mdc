@@ -340,13 +340,32 @@ Define guidelines for developing and maintaining components in the personal webs
 
 ### External Links
 
-1. **Security**
+1. **Security & UX Requirements**
 
-   - Always use `target="_blank"` and `rel="noopener noreferrer"` for external links
+   - **Always use `target="_blank" rel="noopener noreferrer"` for external links** in manual HTML
+   - Markdown external links are handled automatically via the `rehype-external-links` plugin
+   - The `rel="noopener noreferrer"` prevents potential security vulnerabilities and performance issues
+   - The `target="_blank"` ensures external links open in new tabs for better UX
    - Validate URLs when possible
 
-2. **Accessibility**
-   - Add `aria-hidden="true"` to decorative icons
+2. **Implementation**
+
+   ```astro
+   <!-- ✅ Correct: Manual HTML external links -->
+   <a href="https://example.com" target="_blank" rel="noopener noreferrer">External Link</a>
+   
+   <!-- ✅ Correct: Preserve rel="me" with target="_blank" for identity links -->
+   <a href="https://social.example/@user" rel="me" target="_blank">Social Profile</a>
+   
+   <!-- ✅ Automatic: Markdown links are handled by rehype-external-links -->
+   [External Link](https://example.com) 
+   
+   <!-- ❌ Incorrect: Missing security attributes -->
+   <a href="https://example.com" target="_blank">External Link</a>
+   ```
+
+3. **Accessibility**
+   - Add `aria-hidden="true"` to decorative icons  
    - Ensure proper focus management
    - Use semantic HTML elements
 

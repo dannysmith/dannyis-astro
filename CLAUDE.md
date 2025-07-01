@@ -56,6 +56,7 @@ This is Danny Smith's personal website built with **Astro 5.8** following a cont
 - **OpenGraph images** auto-generated for all content
 - **Reading time** calculation for articles
 - **Markdown enhancements** with rehype/remark plugins
+- **External link security** - All external links automatically include `target="_blank" rel="noopener noreferrer"` via `rehype-external-links`
 
 ### Content Workflow
 The `.cursor/rules/content.mdc` file defines specific commands for:
@@ -101,3 +102,5 @@ This project has comprehensive guidelines in `.cursor/rules/` that Claude Code s
 - `src/content/articles/article-styleguide.mdx` - Article context examples
 
 **Performance & Architecture**: Maintain the zero-JavaScript-by-default approach, static generation focus, and content-first philosophy outlined in the design guidelines.
+
+**External Link Security**: All external links must include `target="_blank" rel="noopener noreferrer"` for security and user experience. This is handled automatically for markdown content via the `rehype-external-links` plugin, but manual HTML links in components must include these attributes explicitly.
