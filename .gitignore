@@ -28,3 +28,4 @@ pnpm-debug.log*
 # Claude and claude-monitor
 usage_tracking2.json
 uploads/
+.claude/settings.local.json
