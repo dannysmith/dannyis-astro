@@ -22,7 +22,9 @@
       "Bash(mv:*)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__get-library-docs",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "WebFetch(domain:astro.build)",
+      "WebFetch(domain:astro.build)"
     ],
     "deny": []
   }
