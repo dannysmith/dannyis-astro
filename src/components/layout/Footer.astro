@@ -185,4 +185,18 @@ const today = new Date();
     color: var(--color-accent);
     transform: translateY(0.1em);
   }
+
+  @media (max-width: 600px) {
+    .footer-nav-links a {
+      display: flex;
+      align-items: center;
+      min-height: 34px;
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+    .footer-social-links a {
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
 </style>

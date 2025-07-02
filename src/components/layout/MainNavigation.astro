@@ -130,6 +130,16 @@ const isDev = import.meta.env.MODE === 'development';
     color: var(--color-nav-text);
     cursor: pointer;
   }
+
+  @media (max-width: 600px) {
+    .nav-nav-links a {
+      display: flex;
+      align-items: center;
+      min-height: 34px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+  }
 </style>
 
 <script>
