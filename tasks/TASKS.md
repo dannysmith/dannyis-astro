@@ -10,9 +10,9 @@
 - [x] RSS Feeds
 - [x] Check sitemap generates properly in prod
 - [x] Add [Simply Analytics](https://www.simpleanalytics.com/)
-- [ ] Fix Console Error loading LEage Spartan fonr from Google
+- [x] Fix Console Error loading LEage Spartan fonr from Google
   - "Refused to load the stylesheet 'https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap' because it violates the following Content Security Policy directive: "style-src 'self'"
-- [ ] Run CSS audit for unused or duplicated styles
+- [x] Run CSS audit for unused or duplicated styles
 - [ ] Run SEO Audit Tool in prod
 - [ ] Check Lighthouse Score in prod
 - [ ] Update & simplify cursor rules, Claude rules and other docs to reflect ALL current design patterns etc.
