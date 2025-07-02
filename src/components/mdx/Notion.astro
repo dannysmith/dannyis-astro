@@ -59,7 +59,15 @@ try {
     {!hasFavicon && <NotionIcon />}
     {
       hasFavicon && faviconImageURL && (
-        <img class="icon-image" src={faviconImageURL} width="16" height="16" alt="" />
+        <img
+          class="icon-image"
+          src={faviconImageURL}
+          width="16"
+          height="16"
+          alt="Notion page icon"
+          loading="lazy"
+          decoding="async"
+        />
       )
     }
     {hasFavicon && emoji && <span class="icon-emoji">{emoji}</span>}

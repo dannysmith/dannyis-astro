@@ -1,5 +1,6 @@
 ---
 import BaseHead from '@components/layout/BaseHead.astro';
+import { Image } from 'astro:assets';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
@@ -70,11 +71,15 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
           >
         </li>
       </ul>
-      <img
+      <Image
         src="/icon.jpg"
         alt="Danny Smith Profile Image"
         class="avatar u-photo"
         loading="lazy"
+        width={200}
+        height={200}
+        format="webp"
+        quality={85}
         itemprop="image"
       />
 
