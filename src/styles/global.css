@@ -125,7 +125,7 @@
   --shadow-xxlarge: drop-shadow(0px 25px 50px rgba(16, 24, 40, 0.25));
 
   /*  Fonts */
-  --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 }
@@ -1125,7 +1125,8 @@
 }
 
 /* Hidden utility for screen readers and microformats */
-.sr-only, .hidden-microformat {
+.sr-only,
+.hidden-microformat {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
