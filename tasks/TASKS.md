@@ -13,9 +13,9 @@
 - [x] Fix Console Error loading LEage Spartan fonr from Google
   - "Refused to load the stylesheet 'https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap' because it violates the following Content Security Policy directive: "style-src 'self'"
 - [x] Run CSS audit for unused or duplicated styles
-- [ ] Run SEO Audit Tool in prod
-- [ ] Check Lighthouse Score in prod
-- [ ] Update & simplify cursor rules, Claude rules and other docs to reflect ALL current design patterns etc.
+- [x] Run SEO Audit Tool in prod
+- [x] Check Lighthouse Score in prod
+- [x] Update & simplify cursor rules, Claude rules and other docs to reflect ALL current design patterns etc.
 - [ ] Manually test all pages on multiple devices and browsers
   - [ ] Chrome/Arc macOS
   - [ ] Firefox macOS

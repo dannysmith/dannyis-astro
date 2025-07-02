@@ -16,25 +16,24 @@ This document serves as an index for all cursor rules and guidelines for the per
 - **File**: `project-structure.mdc`
 - **Description**: Defines the organization and architecture of the personal website built with Astro
 - **Key Topics**:
-  - Directory structure
-  - Content organization
-  - Component organization
-  - Technical implementation
-  - Best practices
+  - Directory structure and file organization
+  - Component organization and import patterns
+  - Technical implementation overview
+  - RSS feed and SEO architecture
+  - Best practices and conventions
 
 ### Component Guidelines
 
 [component-guidelines.mdc](mdc:.cursor/rules/component-guidelines.mdc)
 
-- **File**: `component-guidelines.md`
+- **File**: `component-guidelines.mdc`
 - **Description**: Guidelines for developing and maintaining Astro components
 - **Key Topics**:
-  - Component types and organization
-  - Development guidelines
-  - Props interface
-  - Styling patterns and theme integration
-  - Accessibility
-  - Best practices
+  - Component organization and categorization
+  - Development guidelines and best practices
+  - Props interface and TypeScript patterns
+  - Error handling and accessibility
+  - Import patterns and barrel exports
 
 ### Styling Guide
 
@@ -69,16 +68,14 @@ This document serves as an index for all cursor rules and guidelines for the per
 [astro-guidelines.mdc](mdc:.cursor/rules/astro-guidelines.mdc)
 
 - **File**: `astro-guidelines.mdc`
-- **Description**: Specific guidelines for working with Astro features
+- **Description**: Core Astro principles, performance guidelines, and SEO implementation
 - **Key Topics**:
-  - Core principles
-  - Component guidelines
-  - Content collections
-  - Image handling
-  - Performance guidelines
+  - Core principles (zero-JS, content-first, performance-first)
+  - Performance guidelines and Core Web Vitals targets
+  - Component structure and MDX usage
+  - Image handling and optimization
   - Centralized SEO system and utilities
-  - Theme management
-  - Error handling
+  - Theme management and external link security
   - RSS feed implementation with Container API
 
 ### Task Management
@@ -86,12 +83,12 @@ This document serves as an index for all cursor rules and guidelines for the per
 [task-list.mdc](mdc:.cursor/rules/task-list.mdc)
 
 - **File**: `task-list.mdc`
-- **Description**: Guidelines for creating and managing task lists
+- **Description**: Guidelines for creating and managing task lists in markdown files
 - **Key Topics**:
-  - Task list creation
-  - Task maintenance
-  - AI instructions
-  - Best practices
+  - Task list creation and structure
+  - Task maintenance and progress tracking
+  - AI instructions for task management
+  - Best practices and examples
 
 ### Commit Messages
 

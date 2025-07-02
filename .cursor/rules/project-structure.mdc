@@ -73,84 +73,27 @@ docs/                 # All Documentation & Notes
 
 ## Content Organization
 
+For detailed content creation guidelines and frontmatter schemas, see [content.mdc](mdc:.cursor/rules/content.mdc).
+
 ### Articles
 
-Longer-form articles.
-
-- Stored in `src/content/articles/`
-- Use `.mdx` or `.md` extension
-- Required frontmatter:
-  ```yaml
-  title: String
-  pubDate: Date
-  draft: Boolean (default: false)
-  ```
-- Optional frontmatter:
-  ```yaml
-  updatedDate: Date
-  cover: Image
-  coverAlt: String
-  description: String
-  tags: String[]
-  platform: "medium" | "external"
-  redirectUrl: String
-  ```
+Longer-form articles stored in `src/content/articles/` with `.mdx` or `.md` extension.
 
 ### Notes
 
-Short notes, often commenting on something elsewhere on the internet (`url` in the frontmatter).
-
-- Stored in `src/content/notes/`
-- Use `.md` or `.mdx` extension
-- Required frontmatter:
-  ```yaml
-  pubDate: Date
-  ```
-- Optional frontmatter:
-  ```yaml
-  title: String
-  url: String
-  tags: String[]
-  ```
-
-See [content.md](mdc:.cursor/rules/content.md) for how I write new content.
+Short notes stored in `src/content/notes/` with `.md` or `.mdx` extension, often commenting on external content.
 
 ## Component Organization
 
-### Component Categories
+For detailed component development guidelines, see [component-guidelines.mdc](mdc:.cursor/rules/component-guidelines.mdc).
 
-Components are organized into logical categories based on their purpose and usage patterns:
+Components are organized into logical categories in `src/components/`:
 
-#### Layout Components (`src/components/layout/`)
-Structural components that define the overall page layout and architecture:
-- **BaseHead.astro** - HTML head with centralized SEO utilities, theme management, and comprehensive meta tag generation
-- **Footer.astro** - Site footer with social links and nagivation
-- **MainNavigation.astro** - Primary site navigation with mobile menu
-- **NoteCard.astro** - Wrapper component for note layout and metadata
-- **Lightbox.astro** - Image lightbox functionality for articles
-
-#### Navigation Components (`src/components/navigation/`)
-Components specifically for navigation functionality:
-- **NavLink.astro** - Individual navigation links with active state
-- **ThemeToggle.astro** - Theme switching component (auto/light/dark)
-
-#### UI Utilities (`src/components/ui/`)
-Small, reusable utility components:
-- **FormattedDate.astro** - Date formatting component
-- **Pill.astro** - Tag/badge component for labels and categories
-- **Spinner.astro** - Loading spinner for async operations
-
-#### MDX Components (`src/components/mdx/`)
-Components available for use in MDX content files:
-- **BookmarkCard.astro** - Rich URL preview cards using Open Graph data
-- **Callout.astro** - Information callouts with color variants and icons
-- **Embed.astro** - Universal embed component for YouTube, Twitter, Vimeo, Loom
-- **Grid.astro** - CSS Grid layout component with responsive options
-- **Loom.astro** - Dedicated Loom video embed component
-- **Notion.astro** - Notion page links with automatic title fetching
-
-#### Icon Components (`src/components/icons/`)
-SVG icon components for consistent iconography across the site.
+- **Layout Components** (`layout/`) - Structural components for page layout and architecture
+- **Navigation Components** (`navigation/`) - Navigation-specific functionality
+- **UI Utilities** (`ui/`) - Small, reusable utility components
+- **MDX Components** (`mdx/`) - Components available in MDX content files
+- **Icon Components** (`icons/`) - SVG icon components for consistent iconography
 
 ### Import Patterns
 

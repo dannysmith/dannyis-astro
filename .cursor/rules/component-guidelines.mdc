@@ -56,303 +56,122 @@ SVG icon components for consistent iconography across the site:
 
 ## Component Documentation
 
-### ThemeToggle.astro
+For detailed documentation of individual components, refer to the component files themselves and the styleguide pages:
+
+- **Main Styleguide**: `/src/pages/styleguide.astro` - Exhaustive visual testbed for all components
+- **Note Styleguide**: `/src/content/notes/note-styleguide.mdx` - MDX features in note context
+- **Article Styleguide**: `/src/content/articles/article-styleguide.mdx` - MDX features in article context
+
+### Key Components
+
+#### ThemeToggle.astro
+- **Purpose**: Interactive theme switching (auto/light/dark)
+- **Props**: None (self-contained)
+- **Usage**: `<ThemeToggle />`
+- **When to use**: Navigation areas, headers
+
+#### Embed.astro
+- **Purpose**: Universal embed component for YouTube, Twitter, Vimeo, Loom
+- **Props**: `url` (required), `className?` (optional)
+- **Usage**: `<Embed url="https://youtu.be/..." />`
+- **When to use**: Any external media or link that needs rich preview
+
+#### BookmarkCard.astro
+- **Purpose**: Rich URL preview cards using Open Graph data
+- **Props**: `url` (required), `className?` (optional)
+- **Usage**: `<BookmarkCard url="https://example.com" />`
+- **When to use**: Blogrolls, bookmarks, external link previews
+
+#### Callout.astro
+- **Purpose**: Information callouts with color variants and icons
+- **Props**: `type?` (color variant), `title?`, `icon?`
+- **Usage**: `<Callout type="blue" title="Tip">Content</Callout>`
+- **When to use**: Highlighting important information, tips, warnings
+
+#### Pill.astro
+- **Purpose**: Tag/badge component for labels and categories
+- **Props**: `text` (required), `color?`, `textColor?`
+- **Usage**: `<Pill text="Draft" color="var(--color-yellow-500)" />`
+- **When to use**: Tags, status indicators, categories
+
+#### RSSIcon.astro
+- **Purpose**: Monochrome, scalable RSS icon for feed links
+- **Props**: None (self-contained)
+- **Usage**: `<a href="/rss.xml"><RSSIcon /></a>`
+- **When to use**: RSS feed links, feed discovery
+
+#### BaseHead.astro
+- **Purpose**: Centralized HTML head management with SEO optimization and theme management
+- **Props**: `title` (required), `description?`, `image?`, `type?`, `pageType?`, `pubDate?`, `updatedDate?`, `tags?`
+- **Usage**: `<BaseHead title="Page Title" description="..." />`
+- **When to use**: Every page layout, for SEO and theme management
+
+#### FormattedDate.astro
+- **Purpose**: Date formatting with semantic markup
+- **Props**: `date` (required), `format?` (optional)
+- **Usage**: `<FormattedDate date={new Date()} />`
+- **When to use**: Displaying dates in articles, notes, metadata
+
+#### Grid.astro
+- **Purpose**: CSS Grid layout component with responsive options
+- **Props**: `columns?` (default: 2), `gap?` (default: 1rem)
+- **Usage**: `<Grid columns={3}><div>Item 1</div><div>Item 2</div></Grid>`
+- **When to use**: Layout content in grid format, photo galleries
+
+#### Notion.astro
+- **Purpose**: Notion page links with automatic title fetching
+- **Props**: `url` (required), `title?` (optional override)
+- **Usage**: `<Notion url="https://notion.so/page" />`
+- **When to use**: Linking to Notion pages with rich previews
+
+#### Loom.astro
+- **Purpose**: Dedicated Loom video embed component
+- **Props**: `id` (required), `className?` (optional)
+- **Usage**: `<Loom id="video-id" />`
+- **When to use**: Direct Loom video embeds (also used by Embed.astro)
+
+#### Footer.astro
+- **Purpose**: Site footer with social links and navigation
+- **Props**: None (self-contained)
+- **Usage**: `<Footer />`
+- **When to use**: Site-wide footer layout
+
+#### MainNavigation.astro
+- **Purpose**: Primary site navigation with mobile menu
+- **Props**: None (self-contained)
+- **Usage**: `<MainNavigation />`
+- **When to use**: Site-wide navigation header
+
+#### Lightbox.astro
+- **Purpose**: Image lightbox functionality for articles
+- **Props**: None (self-contained, works with article images)
+- **Usage**: Automatically enabled for article images
+- **When to use**: Article image viewing (automatic)
+
+#### NoteCard.astro
+- **Purpose**: Note layout wrapper with metadata display
+- **Props**: Note data (used in note layouts)
+- **Usage**: Used in note page layouts
+- **When to use**: Note page structure and metadata
+
+#### NavLink.astro
+- **Purpose**: Individual navigation links with active state
+- **Props**: `href`, `children`, `className?`
+- **Usage**: `<NavLink href="/about">About</NavLink>`
+- **When to use**: Navigation menu items
+
+#### Spinner.astro
+- **Purpose**: Loading spinner for async operations
+- **Props**: `size?` (optional)
+- **Usage**: `<Spinner />` or `<Spinner size="large" />`
+- **When to use**: Loading states, async operations
+
+#### Social Icons (InstagramIcon, LinkedInIcon, NotionIcon, YouTubeIcon)
+- **Purpose**: Social media icons for consistent branding
+- **Props**: None (self-contained)
+- **Usage**: `<InstagramIcon />`, `<LinkedInIcon />`, etc.
+- **When to use**: Social media links, footer, contact pages
 
-- **Purpose:**
-
-  - Interactive theme switching component with three options: auto, light, and dark.
-  - Uses a custom element with TypeScript for robust client-side functionality.
-  - Integrates with the global theme system via `window.theme` API.
-  - Supports ViewTransitions and handles theme changes from other sources.
-
-- **Props:**
-
-  - No props required - component is self-contained.
-
-- **Design & Usage:**
-
-  - Renders three buttons in a horizontal layout with icons and labels.
-  - Auto theme (◐) follows system preference, Light (☀) and Dark (🌙) are explicit.
-  - Active state shows with brand color background and white text.
-  - Hover states use subtle background tint and opacity changes.
-  - Fully accessible with proper ARIA attributes and keyboard navigation.
-  - Uses CSS variables for consistent theming across light/dark modes.
-
-- **Technical Implementation:**
-
-  - Custom element class with TypeScript for type safety.
-  - Handles ViewTransitions via `astro:after-swap` event.
-  - Listens for `theme-changed` events from global theme system.
-  - Fallback initialization for immediate DOM access.
-  - Graceful degradation if theme system isn't available.
-
-- **Example:**
-  ```astro
-  <ThemeToggle />
-  ```
-
-### Embed.astro
-
-- **Purpose:**
-
-  - Universal embed component for rich media and link previews.
-  - Automatically detects and renders YouTube, Tweet, Vimeo, and Loom embeds.
-  - Falls back to `BookmarkCard` for all other URLs, ensuring consistent design.
-
-- **Props:**
-
-  - `url: string` (required) — The URL to embed or preview.
-  - `className?: string` (optional) — Additional classes for custom styling.
-
-- **Design & Usage:**
-
-  - Use `<Embed url="..." />` anywhere you want to embed a link or media.
-  - No client JS required; all logic is server-side.
-  - If the URL is a YouTube, Tweet, Vimeo, or Loom link, renders the appropriate embed.
-  - For all other URLs, renders a `BookmarkCard` with your custom styling.
-  - Responsive and accessible by default.
-
-- **Example:**
-  ```astro
-  <Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
-  <Embed url="https://twitter.com/astro_build/status/1552351234567890123" />
-  <Embed url="https://vimeo.com/76979871" />
-  <Embed url="https://www.loom.com/share/e738280dc4464402927315e1fda6b036" />
-  <Embed url="https://astro.build" /> <!-- Falls back to BookmarkCard -->
-  ```
-
-### Loom.astro
-
-- **Purpose:**
-
-  - Standalone component for embedding Loom videos.
-  - Provides responsive iframe embedding with proper aspect ratio.
-  - Used internally by `Embed.astro` but can also be used directly.
-
-- **Props:**
-
-  - `id: string` (required) — The Loom video ID (extracted from URL).
-  - `className?: string` (optional) — Additional classes for custom styling.
-
-- **Design & Usage:**
-
-  - Use `<Loom id="..." />` when you have the video ID directly.
-  - Responsive 16:9 aspect ratio container.
-  - No client JS required; server-side rendered iframe.
-  - Supports fullscreen playback.
-
-- **Example:**
-  ```astro
-  <Loom id="e738280dc4464402927315e1fda6b036" />
-  ```
-
-### BookmarkCard.astro
-
-- **Purpose:**
-
-  - Displays a rich preview of a URL/bookmark using Open Graph and metadata.
-  - Used for blogrolls, bookmarks, and as a fallback for universal embeds.
-
-- **Props:**
-
-  - `url: string` (required) — The URL to preview.
-  - `className?: string` (optional) — Additional classes for custom styling.
-
-- **Design & Usage:**
-
-  - Uses `@astro-community/astro-embed-link-preview` under the hood.
-  - Responsive: horizontal layout with image on the right for wide containers, stacked for narrow.
-  - Title uses the primary accent color (`var(--c-primary)`).
-  - Domain is rendered in monospace font (`var(--font-code)`).
-  - All colors and fonts use global CSS variables.
-  - Subtle border radius and box-shadow for modern card look.
-  - Accessible: focus states and semantic markup.
-  - Minimal, DRY CSS with container queries for layout.
-
-- **Example:**
-  ```astro
-  <BookmarkCard url="https://astro.build" />
-  ```
-
-### Pill.astro
-
-- **Purpose:**
-
-  - Renders a small, rounded label or badge for tags, categories, or statuses.
-
-- **Props:**
-
-  - `text: string` (required) — The label text.
-  - `color?: string` (optional) — Background color (CSS variable or value). Defaults to `var(--color-grey-700)`.
-  - `textColor?: string` (optional) — Text color. Defaults to `white`.
-
-- **Design & Usage:**
-
-  - Uses CSS variables for background and text color for easy theming.
-  - Uppercase, bold, and slightly condensed for visual punch.
-  - Subtle border and small border-radius for a modern badge look.
-  - Inline-flex for alignment with text or icons.
-
-- **Example:**
-  ```astro
-  <Pill text="Draft" color="var(--color-yellow-500)" textColor="var(--c-black)" />
-  ```
-
-### Callout.astro
-
-- **Purpose:**
-
-  - Simple callout component for highlighting important information.
-  - Uses existing color system from global.css for consistency.
-  - Clean, minimal design that fits with the site's aesthetic.
-
-- **Props:**
-
-  - `title?: string` (optional) — The callout title/heading.
-  - `type?: 'default' | 'red' | 'blue' | 'green' | 'orange' | 'yellow' | 'purple'` (optional) — Color variant. Defaults to 'default'.
-  - `icon?: string` (optional) — Emoji or icon to display.
-
-- **Design & Usage:**
-
-  - Use `<Callout>content</Callout>` for basic callouts.
-  - Add `icon` prop for visual emphasis (emojis work well).
-  - Add `title` prop for structured callouts with headings.
-  - Choose appropriate `type` for semantic meaning.
-  - Uses existing color variables from global.css (--color-{type}-300).
-  - Simple, clean design without excessive styling.
-
-- **Color Variants:**
-
-  - `default` — Gray (--color-grey-300)
-  - `blue` — Blue (--color-blue-300)
-  - `green` — Green (--color-green-300)
-  - `yellow` — Yellow (--color-yellow-300)
-  - `red` — Red (--color-red-300)
-  - `orange` — Orange (--color-orange-300)
-  - `purple` — Purple (--color-purple-300)
-
-- **Examples:**
-
-  ```astro
-  <!-- Basic callout -->
-  <Callout type="blue">
-    This is a simple blue callout.
-  </Callout>
-
-  <!-- Callout with icon and title -->
-  <Callout icon="💡" type="blue" title="Tip">
-    This callout has an icon and title.
-  </Callout>
-
-  <!-- Error callout -->
-  <Callout icon="❌" type="red" title="Error">
-    Something went wrong.
-  </Callout>
-  ```
-
-### RSSIcon.astro
-
-- **Purpose:**
-
-  - Monochrome, scalable RSS icon for feed links and auto-discovery.
-  - Used in footer and sidebar for RSS feed subscription links.
-  - Designed to inherit color from parent element for theme consistency.
-  - Optimized for small sizes while maintaining readability.
-
-- **Props:**
-
-  - No props required - component is self-contained.
-
-- **Design & Usage:**
-
-  - Clean, minimal RSS feed icon design.
-  - Uses `currentColor` to inherit text color from parent.
-  - Scalable SVG that maintains quality at any size.
-  - Designed to work with existing footer link styles.
-  - Accessible with proper ARIA attributes when used in links.
-
-- **Technical Implementation:**
-
-  - Pure SVG component with no external dependencies.
-  - Uses `fill="currentColor"` for theme integration.
-  - Optimized viewBox for consistent scaling.
-  - Minimal markup for performance.
-
-- **RSS Feed Integration:**
-
-  - Used in footer links to all three RSS feeds (combined, articles, notes).
-  - Supports RSS auto-discovery via `<link>` tags in BaseHead.astro.
-  - Icons scale appropriately in different contexts.
-  - Consistent with site's monochrome icon design system.
-
-- **Example:**
-  ```astro
-  <a href="/rss.xml" aria-label="RSS Feed">
-    <RSSIcon />
-  </a>
-  ```
-
-### BaseHead.astro
-
-- **Purpose:**
-
-  - Centralized HTML head management with SEO optimization and theme management
-  - Uses utilities from `@utils/seo` and configuration from `@config/seo`
-  - Generates comprehensive meta tags, structured data, and OpenGraph properties
-  - Includes global theme management system with auto/light/dark support
-
-- **Props:**
-
-  ```typescript
-  interface Props {
-    title: string;                    // Page title (required)
-    description?: string;             // Meta description
-    image?: string;                   // Custom OG image URL
-    type?: 'website' | 'article';    // OpenGraph type (default: 'website')
-    pageType?: 'article' | 'note' | 'page'; // For title template selection
-    pubDate?: Date;                   // Publication date (for articles/notes)
-    updatedDate?: Date;               // Last modified date (for articles/notes)
-    tags?: string[];                  // Tags/keywords (for articles/notes)
-  }
-  ```
-
-- **SEO Features:**
-
-  - **Centralized Configuration**: All SEO settings managed in `src/config/seo.ts`
-  - **Title Templates**: Automatic title formatting based on `pageType`
-  - **Meta Description**: Consistent branding applied to descriptions
-  - **Structured Data**: Comprehensive Schema.org JSON-LD generation
-  - **OpenGraph**: Complete Facebook/social media optimization
-  - **Twitter Cards**: Optimized Twitter sharing metadata
-  - **Article Meta**: Specialized meta tags for article/note content
-
-- **Theme Management:**
-
-  - **Global API**: Provides `window.theme` for theme control
-  - **Auto Detection**: Respects system preference in auto mode
-  - **Persistence**: Saves theme choice to localStorage
-  - **ViewTransitions**: Handles theme during page navigation
-  - **Events**: Dispatches `theme-changed` events for components
-
-- **Technical Implementation:**
-
-  - Uses utility functions for clean, testable SEO generation
-  - Validates and sanitizes all input data
-  - Handles fallbacks for missing or invalid data
-  - Inline theme script prevents flash of unstyled content
-  - Supports both manual and automatic theme switching
-
-- **Example:**
-  ```astro
-  <BaseHead
-    title="My Article"
-    description="An insightful article about..."
-    type="article"
-    pageType="article"
-    pubDate={new Date('2024-01-01')}
-    tags={['productivity', 'remote-work']}
-  />
-  ```
 
 ## Development Guidelines
 
@@ -537,7 +356,7 @@ SVG icon components for consistent iconography across the site:
    <a href="https://social.example/@user" rel="me" target="_blank">Social Profile</a>
 
    <!-- ✅ Automatic: Markdown links are handled by rehype-external-links -->
-   [External Link](https://example.com)
+   [External Link](mdc:https:/example.com)
 
    <!-- ❌ Incorrect: Missing security attributes -->
    <a href="https://example.com" target="_blank">External Link</a>

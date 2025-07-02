@@ -24,6 +24,53 @@ alwaysApply: true
    - Minimize client-side JavaScript
    - Leverage static generation where possible
 
+## Performance Guidelines
+
+### Core Web Vitals Targets
+
+1. **Lighthouse Scores**
+
+   - Performance: 95+
+   - Accessibility: 100
+   - Best Practices: 100
+   - SEO: 100
+
+2. **Core Web Vitals**
+   - LCP: < 1s
+   - FID: < 100ms
+   - CLS: < 0.1
+
+### Build Optimization
+
+- Use static generation by default
+- Minimize client-side JavaScript
+- Optimize images with Astro's built-in tools
+- Implement proper code splitting
+
+### Loading Performance
+
+- Use `loading="lazy"` for below-fold images
+- Implement proper caching strategies
+- Minimize third-party dependencies
+- Load non-critical scripts asynchronously
+- Use proper preload directives
+- Optimize resource loading order
+
+### JavaScript Optimization
+
+1. **Minimize Client-Side JS**
+
+   - Use Astro's zero-JS by default
+   - Only add interactivity when necessary
+   - Use progressive enhancement
+   - Implement proper code splitting
+
+2. **Third-Party Scripts**
+   - Load non-critical scripts asynchronously
+   - Use proper loading strategies
+   - Minimize third-party dependencies
+   - Implement proper error handling
+
 ## Component Guidelines
 
 ### Astro Components
@@ -74,38 +121,41 @@ alwaysApply: true
 
 ## Content Collections
 
-1. **Articles**
+For detailed content creation guidelines, see [content.mdc](mdc:.cursor/rules/content.mdc).
 
-   - Use `src/content/articles/`
-   - Required frontmatter:
-     ```yaml
-     title: string
-     pubDate: date
-     draft: boolean
-     ```
-   - Optional frontmatter:
-     ```yaml
-     updatedDate: date
-     cover: image
-     coverAlt: string
-     description: string
-     tags: string[]
-     platform: "medium" | "external"
-     redirectUrl: string
-     ```
+### Articles
 
-2. **Notes**
-   - Use `src/content/notes/`
-   - Required frontmatter:
-     ```yaml
-     pubDate: date
-     ```
-   - Optional frontmatter:
-     ```yaml
-     title: string
-     url: string
-     tags: string[]
-     ```
+- Use `src/content/articles/`
+- Required frontmatter:
+  ```yaml
+  title: string
+  pubDate: date
+  draft: boolean
+  ```
+- Optional frontmatter:
+  ```yaml
+  updatedDate: date
+  cover: image
+  coverAlt: string
+  description: string
+  tags: string[]
+  platform: "medium" | "external"
+  redirectUrl: string
+  ```
+
+### Notes
+
+- Use `src/content/notes/`
+- Required frontmatter:
+  ```yaml
+  pubDate: date
+  ```
+- Optional frontmatter:
+  ```yaml
+  title: string
+  url: string
+  tags: string[]
+  ```
 
 ## Image Handling
 
@@ -117,6 +167,7 @@ alwaysApply: true
      alt="Description"
      width={800}
      height={600}
+     loading="lazy"
    />
    ```
 
@@ -124,20 +175,8 @@ alwaysApply: true
    - Always provide width and height
    - Use descriptive alt text
    - Leverage Astro's image optimization
-   - Use appropriate image formats
-
-## Performance Guidelines
-
-1. **Build Optimization**
-
-   - Use static generation by default
-   - Minimize client-side JavaScript
-   - Optimize images with Astro's built-in tools
-
-2. **Loading Performance**
-   - Use `loading="lazy"` for below-fold images
-   - Implement proper caching strategies
-   - Minimize third-party dependencies
+   - Use appropriate image formats (WebP, AVIF)
+   - Implement responsive images with srcset
 
 ## SEO Guidelines
 
@@ -342,6 +381,6 @@ export async function GET(context) {
 
 ### Resources
 
-- [Astro Container API Documentation](https://astro.build/blog/astro-490/#react-19-support)
-- [Astro RSS Integration Guide](https://docs.astro.build/en/guides/rss/)
-- [MDX Rendering Best Practices](https://docs.astro.build/en/guides/markdown-content/#mdx-components)
+- [Astro Container API Documentation](mdc:https:/astro.build/blog/astro-490/#react-19-support)
+- [Astro RSS Integration Guide](mdc:https:/docs.astro.build/en/guides/rss)
+- [MDX Rendering Best Practices](mdc:https:/docs.astro.build/en/guides/markdown-content/#mdx-components)
