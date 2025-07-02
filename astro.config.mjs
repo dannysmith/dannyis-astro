@@ -24,11 +24,7 @@ export default defineConfig({
   },
   experimental: {
     headingIdCompat: true,
-    csp: {
-      mode: 'hash',
-      'style-src': ["'self'", "'unsafe-inline'"],
-      'font-src': ["'self'"],
-    },
+    csp: false,
   },
   integrations: [mdx(), sitemap()],
   markdown: {
