@@ -197,6 +197,68 @@ All pass ok
 - Add missing alt text
 - Run new Lighthouse tests to measure improvements
 
+## 8. Results Comparison - Before vs After Optimizations ✅ COMPLETED
+
+### Performance Improvements Summary
+
+**Homepage (Desktop)**
+
+- **Performance**: 0.94 → 0.94 (maintained excellent score)
+- **Accessibility**: 1.00 → 1.00 (perfect maintained)
+- **Best Practices**: 0.96 → 0.96 (excellent maintained)
+- **SEO**: 1.00 → 1.00 (perfect maintained)
+
+**Article Page (Desktop) - DRAMATIC IMPROVEMENT**
+
+- **Performance**: 0.41 → 0.89 (**+117% improvement**)
+- **Accessibility**: 0.72 → 0.86 (**+19% improvement**)
+- **Best Practices**: 0.57 → 0.75 (**+32% improvement**)
+- **SEO**: 1.00 → 1.00 (perfect maintained)
+
+### Key Performance Metrics - Article Page
+
+**Core Web Vitals Improvements:**
+
+- **First Contentful Paint**: 0.19 → 0.62 (**+226% improvement**)
+- **Largest Contentful Paint**: 0.00 → 0.87 (**FIXED - was completely failing**)
+- **Speed Index**: 0.35 → 0.97 (**+177% improvement**)
+- **Total Blocking Time**: 0.34 → 1.00 (**+194% improvement - now perfect**)
+
+### Touch Target Improvements
+
+**Homepage**: Already had perfect touch targets (1.00)
+**Article Page**: Touch targets still need work (0.00) - this is likely due to other interactive elements beyond navigation
+
+### What We Fixed
+
+✅ **Font Loading**: Switched from Google Fonts CDN to self-hosted Fontsource variable font
+✅ **Image Optimization**: All images now use Astro's `<Image>` component with WebP format
+✅ **Responsive Images**: Proper layouts and sizing implemented
+✅ **CSP Security**: Locked down to self-hosted resources only
+✅ **Navigation Touch Targets**: Improved mobile touch targets for navigation links
+✅ **Footer Touch Targets**: Improved mobile touch targets for footer links
+
+### Impact Analysis
+
+**Biggest Wins:**
+
+1. **Article Page Performance**: From failing (0.41) to excellent (0.89)
+2. **Largest Contentful Paint**: From completely failing (0.00) to good (0.87)
+3. **Font Loading**: Eliminated external dependency and render blocking
+4. **Image Optimization**: 308kB → 9-117kB per image (massive file size reduction)
+
+**Remaining Issues:**
+
+- Article page touch targets still need work (likely other interactive elements)
+- Some accessibility improvements still possible
+
+### Next Steps
+
+1. **Address remaining touch targets** on article pages
+2. **Run mobile tests** to verify improvements on mobile devices
+3. **Monitor Core Web Vitals** in Google Search Console
+4. **Consider additional accessibility improvements** if needed
+
 ## Next Steps
 
 1. **Prioritize Phase 1 fixes** - Focus on article page performance and accessibility
