@@ -19,6 +19,7 @@
     "@astrojs/sitemap": "^3.4.1",
     "@astropub/icons": "^0.2.0",
     "@fontsource-variable/fira-code": "^5.2.6",
+    "@fontsource-variable/league-spartan": "^5.2.6",
     "@resvg/resvg-js": "^2.6.2",
     "@vercel/og": "^0.6.8",
     "astro": "^5.10.2",

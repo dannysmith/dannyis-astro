@@ -2,6 +2,7 @@
 // Import the fonts and global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import '@fontsource-variable/fira-code';
+import '@fontsource-variable/league-spartan';
 import '../../styles/global.css';
 
 // Import our new SEO utilities and configuration
@@ -105,14 +106,6 @@ const articleMeta = generateArticleMeta(seoData);
 <meta property="twitter:title" content={pageTitle} />
 <meta property="twitter:description" content={metaDescription} />
 <meta property="twitter:image" content={ogImageUrl} />
-
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap"
-  rel="stylesheet"
-/>
 
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLD)} />
