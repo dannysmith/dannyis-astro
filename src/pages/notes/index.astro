@@ -1,12 +1,26 @@
 ---
 import BaseHead from '@components/layout/BaseHead.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
+import NoteCard from '@components/layout/NoteCard.astro';
 
 const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Split notes into recent (first 2) and archive (rest)
+const numberOfRecentNotes = 5;
+const recentNotes = notes.slice(0, numberOfRecentNotes);
+const olderNotes = notes.slice(numberOfRecentNotes);
+
+// Render the recent notes content
+const recentNotesWithContent = await Promise.all(
+  recentNotes.map(async note => {
+    const { Content } = await render(note);
+    return { note, Content };
+  })
 );
 ---
 
@@ -23,22 +37,50 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
     <MainNavigation />
     <main>
       <h1 class="title">Notes</h1>
-      <section>
-        <ul>
-          {
-            notes.map(note => (
-              <li>
-                <a href={`/notes/${note.id}/`}>
-                  <p class="date">
-                    <FormattedDate date={note.data.pubDate} />
-                  </p>
-                  <h4 class="note-title">{note.data.title}</h4>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
+
+      <!-- Recent Notes as Cards -->
+      {
+        recentNotesWithContent.length > 0 && (
+          <section class="recent-notes" aria-label="Recent Notes">
+            {recentNotesWithContent.map(({ note, Content }) => (
+              <div class="note-container">
+                <NoteCard
+                  title={note.data.title}
+                  pubDate={note.data.pubDate}
+                  sourceURL={note.data.sourceURL}
+                  tags={note.data.tags}
+                  slug={note.id}
+                >
+                  <Content />
+                </NoteCard>
+              </div>
+            ))}
+          </section>
+        )
+      }
+
+      <!-- Archive List -->
+      {
+        olderNotes.length > 0 && (
+          <section class="archive-section" aria-label="Archive">
+            <div class="archive-content">
+              <h2 class="archive-title">Older Notes</h2>
+              <ul class="archive-list">
+                {olderNotes.map(note => (
+                  <li>
+                    <a href={`/notes/${note.id}/`}>
+                      <p class="date">
+                        <FormattedDate date={note.data.pubDate} />
+                      </p>
+                      <h4 class="note-title">{note.data.title}</h4>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )
+      }
     </main>
     <Footer />
     <style>
@@ -48,8 +90,8 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
         background-color: var(--color-bg-primary);
       }
 
-      section {
-        padding: 1rem;
+      main {
+        min-height: 100vh;
       }
 
       .title {
@@ -58,34 +100,74 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
         transform: translateY(-0.3em);
         text-align: right;
         pointer-events: none;
+        padding: 0 1rem;
       }
 
-      ul {
+      /* Shared content width constraint */
+      .note-container,
+      .archive-content {
+        max-width: 80ch;
+        width: 100%;
+      }
+
+      /* Shared section styles */
+      .recent-notes,
+      .archive-section {
+        padding: 1rem;
+        display: grid;
+        place-items: center;
+      }
+
+      .recent-notes {
+        padding-top: 4rem;
+        gap: 3rem;
+      }
+
+      .archive-section {
+        margin-top: 3rem;
+      }
+
+      .note-container {
+        container-type: inline-size;
+      }
+
+      .archive-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-border);
+        color: var(--color-text-primary);
+      }
+
+      .archive-list {
         list-style: none;
         margin: 0;
         padding: 0;
       }
 
-      li {
+      .archive-list li {
         margin-bottom: 2rem;
       }
 
-      a {
+      .archive-list a {
         text-decoration: none;
+        display: block;
+        width: 100%;
       }
 
-      a:hover .note-title {
+      .archive-list a:hover .note-title {
         color: var(--color-notelist-title-hover);
       }
 
-      .date {
+      .archive-list .date {
         font-size: 0.7rem;
         color: var(--color-notelist-date);
         text-transform: uppercase;
         letter-spacing: 0.1ch;
       }
 
-      .note-title {
+      .archive-list .note-title {
         font-size: 24px;
         line-height: 1.2;
         font-weight: 500;
@@ -95,15 +177,25 @@ const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sor
       }
 
       @media screen and (min-width: 800px) {
-        .date {
-          text-align: right;
-          padding-bottom: calc(0.2rem + 5px);
+        .recent-notes,
+        .archive-section {
+          padding: 2rem;
         }
-        a {
+
+        .recent-notes {
+          padding-top: 4rem;
+        }
+
+        .archive-list a {
           display: grid;
           gap: 1rem;
-          grid-template-columns: 10% 5fr 1fr;
+          grid-template-columns: 120px 1fr;
           align-items: end;
+        }
+
+        .archive-list .date {
+          text-align: right;
+          padding-bottom: calc(0.2rem + 5px);
         }
       }
     </style>

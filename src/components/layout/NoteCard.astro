@@ -8,16 +8,19 @@ export interface Props {
   pubDate: Date;
   sourceURL?: string;
   tags?: string[];
+  slug: string;
 }
 
-const { title, pubDate, sourceURL, tags = [] } = Astro.props;
+const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
 ---
 
 <article class="note h-entry cq">
   <header class="note-header">
-    <time class="date" datetime={pubDate.toISOString()}>
-      <FormattedDate date={pubDate} />
-    </time>
+    <a href={`/notes/${slug}/`} class="date-link">
+      <time class="date" datetime={pubDate.toISOString()}>
+        <FormattedDate date={pubDate} />
+      </time>
+    </a>
     <h1 class="p-name">{title}</h1>
     {
       tags.length > 0 && (
@@ -60,11 +63,20 @@ const { title, pubDate, sourceURL, tags = [] } = Astro.props;
     gap: 0.5rem;
   }
 
+  .date-link {
+    text-decoration: none;
+  }
+
   .date {
     font-size: 0.7rem;
     color: var(--color-notecard-date);
     text-transform: uppercase;
     letter-spacing: 0.1ch;
+    transition: color 0.2s ease;
+  }
+
+  .date-link:hover .date {
+    color: var(--color-text-accent);
   }
 
   h1 {
