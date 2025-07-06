@@ -16,13 +16,25 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} type="article" pageType="note" image={ogImage} />
+    <BaseHead
+      title={title}
+      description={description}
+      type="article"
+      pageType="note"
+      image={ogImage}
+    />
   </head>
 
   <body>
     <MainNavigation />
     <main>
-      <NoteCard title={title} pubDate={pubDate} sourceURL={sourceURL} tags={tags}>
+      <NoteCard
+        title={title}
+        pubDate={pubDate}
+        sourceURL={sourceURL}
+        tags={tags}
+        slug={Astro.params.slug!}
+      >
         <slot />
       </NoteCard>
     </main>
