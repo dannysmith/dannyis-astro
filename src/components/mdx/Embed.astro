@@ -30,11 +30,17 @@ function getLoomId(url: string) {
   return match ? match[1] : null;
 }
 
+function getGistId(url: string) {
+  const match = url.match(/gist\.github\.com\/[\w-]+\/([a-f0-9]+)/);
+  return match ? match[1] : null;
+}
+
 type EmbedType =
   | { type: 'youtube'; id: string }
   | { type: 'tweet'; id: string }
   | { type: 'vimeo'; id: string }
   | { type: 'loom'; id: string }
+  | { type: 'gist'; id: string }
   | { type: 'bookmark'; url: string };
 
 function resolveEmbedType(url: string): EmbedType {
@@ -50,6 +56,9 @@ function resolveEmbedType(url: string): EmbedType {
   const loomId = getLoomId(url);
   if (loomId) return { type: 'loom', id: loomId };
 
+  const gistId = getGistId(url);
+  if (gistId) return { type: 'gist', id: gistId };
+
   return { type: 'bookmark', url };
 }
 
@@ -60,4 +69,5 @@ const embed = resolveEmbedType(url);
 {embed.type === 'tweet' && <Tweet id={embed.id} />}
 {embed.type === 'vimeo' && <Vimeo id={embed.id} />}
 {embed.type === 'loom' && <Loom id={embed.id} />}
+{embed.type === 'gist' && <script src={`https://gist.github.com/${embed.id}.js`}></script>}
 {embed.type === 'bookmark' && <BookmarkCard url={embed.url} className={className} />}
