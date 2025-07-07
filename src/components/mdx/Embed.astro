@@ -31,8 +31,9 @@ function getLoomId(url: string) {
 }
 
 function getGistId(url: string) {
-  const match = url.match(/gist\.github\.com\/([\w-]+)\/([a-f0-9]+)/);
-  return match ? `${match[1]}/${match[2]}` : null;
+  // Match both anonymous gists (gist.github.com/id) and user gists (gist.github.com/username/id)
+  const match = url.match(/gist\.github\.com\/(?:([\w-]+)\/)?([a-zA-Z0-9]+)/);
+  return match ? (match[1] ? `${match[1]}/${match[2]}` : match[2]) : null;
 }
 
 type EmbedType =
