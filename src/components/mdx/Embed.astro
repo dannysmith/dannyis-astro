@@ -31,8 +31,8 @@ function getLoomId(url: string) {
 }
 
 function getGistId(url: string) {
-  const match = url.match(/gist\.github\.com\/[\w-]+\/([a-f0-9]+)/);
-  return match ? match[1] : null;
+  const match = url.match(/gist\.github\.com\/([\w-]+)\/([a-f0-9]+)/);
+  return match ? `${match[1]}/${match[2]}` : null;
 }
 
 type EmbedType =
@@ -69,5 +69,5 @@ const embed = resolveEmbedType(url);
 {embed.type === 'tweet' && <Tweet id={embed.id} />}
 {embed.type === 'vimeo' && <Vimeo id={embed.id} />}
 {embed.type === 'loom' && <Loom id={embed.id} />}
-{embed.type === 'gist' && <script src={`https://gist.github.com/${embed.id}.js`}></script>}
+{embed.type === 'gist' && <script src={`https://gist.github.com/${embed.id}.js`} />}
 {embed.type === 'bookmark' && <BookmarkCard url={embed.url} className={className} />}
