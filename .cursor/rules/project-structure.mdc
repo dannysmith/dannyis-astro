@@ -3,6 +3,7 @@ description: Project structure and file organization guidelines
 globs: ['**/*']
 alwaysApply: true
 ---
+
 # Project Structure
 
 ## Purpose
@@ -12,63 +13,66 @@ Define the organization and architecture of the personal website built with Astr
 ## Directory Structure
 
 ```
-src/
-├── components/        # Reusable Astro components (organized by category)
-│   ├── layout/        # Layout and structural components
-│   │   ├── BaseHead.astro      # HTML head with centralized SEO utilities, theme management, and comprehensive meta tag generation
-│   │   ├── Footer.astro        # Site footer
-│   │   ├── MainNavigation.astro # Primary site navigation
-│   │   ├── NoteCard.astro      # Note layout wrapper
-│   │   ├── Lightbox.astro      # Article image lightbox
-│   │   └── index.ts            # Barrel exports
-│   ├── navigation/    # Navigation-specific components
-│   │   ├── NavLink.astro       # Individual navigation links
-│   │   ├── ThemeToggle.astro   # Theme switching component
-│   │   └── index.ts            # Barrel exports
-│   ├── ui/           # Small, reusable UI utilities
-│   │   ├── FormattedDate.astro # Date formatting component
-│   │   ├── Pill.astro          # Tag/label component
-│   │   ├── Spinner.astro       # Loading spinner
-│   │   └── index.ts            # Barrel exports
-│   ├── mdx/          # Components available in MDX content
-│   │   ├── BookmarkCard.astro  # URL preview cards
-│   │   ├── Callout.astro       # Information callouts
-│   │   ├── Embed.astro         # Universal embed component
-│   │   ├── Grid.astro          # CSS Grid layout
-│   │   ├── Loom.astro          # Loom video embeds
-│   │   ├── Notion.astro        # Notion page links
-│   │   └── index.ts            # Barrel exports (used in MDX files)
-│   ├── icons/        # Icon components
-│   │   ├── InstagramIcon.astro
-│   │   ├── LinkedInIcon.astro
-│   │   ├── NotionIcon.astro
-│   │   ├── RSSIcon.astro
-│   │   └── YouTubeIcon.astro
-│   └── index.ts      # Main component barrel export
-├── config/           # Configuration files
-│   └── seo.ts        # Centralized SEO configuration and constants
-├── content/          # Content collections
-│   ├── articles/     # Long-form articles as MDX and md files
-│   └── notes/        # Short-form content as MDX and md files
-├── layouts/          # Page layouts
-│   ├── Article.astro  # Article page layout
-│   └── Note.astro    # Note page layout
-├── pages/            # Astro pages (routes)
-├── styles/           # Global styles and CSS
-│   └── global.css    # Global styles
-└── utils/            # Utility functions and helpers
-    └── seo.ts        # SEO utility functions for metadata generation
-
-public/               # Static assets
-├── images/           # Image assets
-└── fonts/            # Font files
-
-.cursor/              # Cursor configuration
-└── rules/            # Project rules and guidelines
-
-tasks/                # Task tracking when working with Cursor AI
-
-docs/                 # All Documentation & Notes
+dannyis-astro/
+├── .cursor/              # Cursor configuration
+│   └── rules/            # Project rules and guidelines
+├── .github/              # GitHub configuration
+│   └── workflows/        # GitHub Actions workflows
+│       └── update-toolbox.yml # Daily toolbox data scraping automation
+├── docs/                 # All documentation & notes
+├── public/               # Static assets
+│   ├── images/           # Image assets
+│   └── fonts/            # Font files
+├── scripts/              # Build and automation scripts
+│   └── get-toolbox-json.ts # Puppeteer scraping script for toolbox data
+├── src/
+│   ├── components/       # Reusable Astro components (organized by category)
+│   │   ├── layout/       # Layout and structural components
+│   │   │   ├── BaseHead.astro      # HTML head with centralized SEO utilities
+│   │   │   ├── Footer.astro        # Site footer
+│   │   │   ├── MainNavigation.astro # Primary site navigation
+│   │   │   ├── NoteCard.astro      # Note layout wrapper
+│   │   │   ├── Lightbox.astro      # Article image lightbox
+│   │   │   └── index.ts            # Barrel exports
+│   │   ├── navigation/   # Navigation-specific components
+│   │   │   ├── NavLink.astro       # Individual navigation links
+│   │   │   ├── ThemeToggle.astro   # Theme switching component
+│   │   │   └── index.ts            # Barrel exports
+│   │   ├── ui/           # Small, reusable UI utilities
+│   │   │   ├── FormattedDate.astro # Date formatting component
+│   │   │   ├── Pill.astro          # Tag/label component
+│   │   │   ├── Spinner.astro       # Loading spinner
+│   │   │   └── index.ts            # Barrel exports
+│   │   ├── mdx/          # Components available in MDX content
+│   │   │   ├── BookmarkCard.astro  # URL preview cards
+│   │   │   ├── Callout.astro       # Information callouts
+│   │   │   ├── Embed.astro         # Universal embed component
+│   │   │   ├── Grid.astro          # CSS Grid layout
+│   │   │   ├── Loom.astro          # Loom video embeds
+│   │   │   ├── Notion.astro        # Notion page links
+│   │   │   └── index.ts            # Barrel exports (used in MDX files)
+│   │   ├── icons/        # Icon components
+│   │   │   ├── InstagramIcon.astro
+│   │   │   ├── LinkedInIcon.astro
+│   │   │   ├── NotionIcon.astro
+│   │   │   ├── RSSIcon.astro
+│   │   │   └── YouTubeIcon.astro
+│   │   └── index.ts      # Main component barrel export
+│   ├── config/           # Configuration files
+│   │   └── seo.ts        # Centralized SEO configuration and constants
+│   ├── content/          # Content collections
+│   │   ├── articles/     # Long-form articles as MDX and md files
+│   │   ├── notes/        # Short-form content as MDX and md files
+│   │   └── toolboxPages.json # Scraped toolbox data from betterat.work
+│   ├── layouts/          # Page layouts
+│   │   ├── Article.astro # Article page layout
+│   │   └── Note.astro    # Note page layout
+│   ├── pages/            # Astro pages (routes)
+│   ├── styles/           # Global styles and CSS
+│   │   └── global.css    # Global styles
+│   └── utils/            # Utility functions and helpers
+│       └── seo.ts        # SEO utility functions for metadata generation
+└── tasks/                # Task tracking when working with Cursor AI
 ```
 
 ## Content Organization
@@ -98,7 +102,9 @@ Components are organized into logical categories in `src/components/`:
 ### Import Patterns
 
 #### Path Aliases
+
 The project uses TypeScript path aliases for clean imports:
+
 ```typescript
 // Category-specific component imports (recommended)
 import { BaseHead, Footer } from '@components/layout';
@@ -121,6 +127,7 @@ import RSSIcon from '@components/icons/RSSIcon.astro';
 ```
 
 #### TypeScript Path Configuration
+
 ```json
 {
   "paths": {
@@ -138,7 +145,9 @@ import RSSIcon from '@components/icons/RSSIcon.astro';
 ```
 
 #### Barrel Exports
+
 Each category includes an `index.ts` file for convenient importing:
+
 - `@components/layout/index.ts` - Layout component exports
 - `@components/navigation/index.ts` - Navigation component exports
 - `@components/ui/index.ts` - UI utility component exports
@@ -191,28 +200,34 @@ The project is built with:
 - **Structured Data**: Comprehensive Schema.org JSON-LD for better search indexing
 - **Theme Management**: Global `window.theme` API with automatic system detection
 
+### Toolbox Data Automation
+
+- **Automated Scraping**: Puppeteer script (`scripts/get-toolbox-json.ts`) scrapes toolbox data from `https://betterat.work/tool/`
+- **Daily Updates**: GitHub Action (`.github/workflows/update-toolbox.yml`) runs daily at 2 AM UTC to fetch latest data
+- **Change Detection**: Only commits updates when data actually changes, avoiding unnecessary commits
+- **Failure Handling**: Tracks consecutive failures and auto-creates GitHub issues after 3 failed attempts
+- **Data Storage**: Scraped data saved to `src/content/toolboxPages.json` for use in Astro pages
+- **Manual Trigger**: GitHub Action can be manually triggered via `workflow_dispatch`
+- **Error Recovery**: Automatically resets failure counter on successful runs
+
 ## Best Practices
 
 1. **File Naming**
-
    - Use kebab-case for file names
    - Use PascalCase for component names
    - Use camelCase for utility functions
 
 2. **Component Structure**
-
    - One component per file
    - Co-locate component styles
    - Use TypeScript interfaces for props
 
 3. **Content Management**
-
    - Use content collections for type safety
    - Validate frontmatter
    - Keep content separate from code
 
 4. **Asset Management**
-
    - Use Astro's image optimization
    - Organize assets by type
    - Use descriptive file names
