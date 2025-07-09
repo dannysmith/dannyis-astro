@@ -21,7 +21,27 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
       ],
     });
     const page = await browser.newPage();
-    await page.goto('https://betterat.work/tool/');
+
+    // Navigate and wait for network to be idle
+    await page.goto('https://betterat.work/tool/', {
+      waitUntil: 'networkidle2',
+      timeout: 30000,
+    });
+
+    // Wait for the specific elements to appear with a timeout
+    console.log('Waiting for toolbox cards to load...');
+    await page.waitForSelector('.notion-collection-card__anchor', {
+      timeout: 20000,
+      visible: true,
+    });
+
+    // Wait for a reasonable number of elements to load
+    await page.waitForFunction(
+      () => document.querySelectorAll('.notion-collection-card__anchor').length >= 5,
+      { timeout: 15000 }
+    );
+
+    console.log('Content loaded, starting to scrape...');
 
     const data = await page.evaluate(() =>
       Array.from(document.querySelectorAll('.notion-collection-card__anchor')).map(
@@ -39,6 +59,8 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
     );
 
     await browser.close();
+
+    console.log(`Found ${data.length} toolbox items`);
 
     if (data.length < 5) {
       console.log(
