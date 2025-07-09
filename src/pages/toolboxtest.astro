@@ -1,0 +1,33 @@
+---
+import BaseHead from '@components/layout/BaseHead.astro';
+import { getCollection } from 'astro:content';
+import Footer from '@components/layout/Footer.astro';
+import MainNavigation from '@components/layout/MainNavigation.astro';
+
+const toolboxPages = await getCollection('toolboxPages');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Toolbox Test" pageType="page" />
+  </head>
+  <body>
+    <MainNavigation />
+    <main>
+      <h1 class="title">Toolbox Test</h1>
+      <section>
+        <ul>
+          {
+            toolboxPages.map(toolboxPage => (
+              <li>
+                <a href={toolboxPage.data.url}>{toolboxPage.data.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
