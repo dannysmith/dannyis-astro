@@ -7,18 +7,43 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
 (async () => {
   try {
     console.log('Starting to scrape toolbox pages...');
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu',
+      ],
+    });
     const page = await browser.newPage();
     await page.goto('https://betterat.work/tool/');
 
     const data = await page.evaluate(() =>
-      Array.from(document.querySelectorAll('.notion-collection-card__anchor')).map(
-        (anchor, index) => ({
-          id: index + 1,
-          title: (anchor.textContent ?? '').trim(),
-          url: (anchor as HTMLAnchorElement).href,
-        })
-      )
+      Array.from(document.querySelectorAll('.notion-collection-card__anchor')).map(anchor => {
+        const url = (anchor as HTMLAnchorElement).href;
+        const title = (anchor.textContent ?? '').trim();
+
+        // Generate stable ID from URL slug
+        const urlPath = new URL(url).pathname;
+        const slug = urlPath.split('/').filter(Boolean).pop() || '';
+        const id =
+          slug ||
+          title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+
+        return {
+          id,
+          title,
+          url,
+        };
+      })
     );
 
     await browser.close();
