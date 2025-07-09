@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
-import { writeFile, readFile } from 'fs/promises';
-import { join } from 'path';
+import { writeFile, readFile, mkdir } from 'fs/promises';
+import { join, dirname } from 'path';
 
 const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
 
@@ -44,9 +44,13 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
       // File doesn't exist or is invalid, proceed with write
     }
 
+    // Ensure the directory exists
+    await mkdir(dirname(OUTPUT_PATH), { recursive: true });
+
     await writeFile(OUTPUT_PATH, JSON.stringify(data, null, 2));
     console.log(`Successfully wrote ${data.length} items to toolboxPages.json`);
   } catch (error) {
     console.error('Error:', error);
+    process.exit(1);
   }
 })();
