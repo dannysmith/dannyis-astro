@@ -1,0 +1,158 @@
+name: Update Toolbox Data
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-toolbox:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache Puppeteer
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            puppeteer-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run toolbox scraper
+        id: scrape
+        timeout-minutes: 10
+        run: |
+          if npm run scrape-toolbox; then
+            echo "scrape_success=true" >> $GITHUB_OUTPUT
+          else
+            echo "scrape_success=false" >> $GITHUB_OUTPUT
+            exit 0  # Don't fail the step, handle in conditional steps
+          fi
+
+      - name: Check for changes
+        id: changes
+        if: steps.scrape.outputs.scrape_success == 'true'
+        run: |
+          if git diff --quiet src/content/toolboxPages.json; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in toolboxPages.json"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in toolboxPages.json"
+          fi
+
+      - name: Commit and push changes
+        if: steps.scrape.outputs.scrape_success == 'true' && steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add src/content/toolboxPages.json
+          git commit -m "Bot: Update toolbox data from betterat.work"
+          git push
+
+      - name: Reset failure counter on success
+        if: steps.scrape.outputs.scrape_success == 'true'
+        run: |
+          # Check if failure counter exists in git
+          if git show HEAD:.github/failure-count >/dev/null 2>&1; then
+            echo "Resetting failure counter"
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git rm .github/failure-count
+            if git commit -m "Bot: Reset toolbox scraper failure counter"; then
+              git push
+            else
+              echo "Note: No failure counter to reset"
+            fi
+          else
+            echo "No failure counter found, no reset needed"
+          fi
+
+            - name: Handle scraping failure
+        if: steps.scrape.outputs.scrape_success == 'false'
+        run: |
+          # Get current failure count from git or default to 0
+          FAILURES=$(git show HEAD:.github/failure-count 2>/dev/null || echo "0")
+
+          # Increment failure count
+          FAILURES=$((FAILURES + 1))
+
+          echo "Scraping failed. Failure count: $FAILURES"
+
+          # Create failure count file
+          mkdir -p .github
+          echo $FAILURES > .github/failure-count
+
+          # If 3 consecutive failures, create an issue
+          if [ $FAILURES -ge 3 ]; then
+            echo "SHOULD_CREATE_ISSUE=true" >> $GITHUB_ENV
+            echo "FAILURE_COUNT=$FAILURES" >> $GITHUB_ENV
+          fi
+
+          # Commit the failure count
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .github/failure-count
+          if git commit -m "Bot: Update toolbox scraper failure counter ($FAILURES)"; then
+            git push
+          else
+            echo "Warning: Failed to commit failure count"
+          fi
+
+      - name: Create failure issue
+        if: env.SHOULD_CREATE_ISSUE == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Toolbox Data Scraper Failing';
+            const body = `The toolbox data scraper has failed ${process.env.FAILURE_COUNT} consecutive times.
+
+            This means the data from https://betterat.work/tool/ is not being updated on the site.
+
+            Please check:
+            - Is the website structure changed?
+            - Are there network issues?
+            - Is the scraping script working correctly?
+
+            **Action needed**: Debug and fix the scraping script.
+
+            This issue was automatically created by the GitHub Action.`;
+
+            // Check if issue already exists
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['automated', 'toolbox-scraper']
+            });
+
+            if (existingIssues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['automated', 'toolbox-scraper', 'bug']
+              });
+              console.log('Created issue for scraper failure');
+            } else {
+              console.log('Issue already exists for scraper failure');
+            }
