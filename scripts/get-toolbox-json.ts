@@ -28,18 +28,7 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
         const url = (anchor as HTMLAnchorElement).href;
         const title = (anchor.textContent ?? '').trim();
 
-        // Generate stable ID from URL slug
-        const urlPath = new URL(url).pathname;
-        const slug = urlPath.split('/').filter(Boolean).pop() || '';
-        const id =
-          slug ||
-          title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '');
-
         return {
-          id,
           title,
           url,
         };
