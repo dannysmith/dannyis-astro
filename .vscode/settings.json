@@ -3,5 +3,14 @@
     "/src/content/articles/**/*": "/src/assets/articles/${documentBaseName}/",
     "/src/content/notes/**/*": "/src/assets/notes/${documentBaseName}/",
     "/src/content/**/**/*": "/src/assets/${documentBaseName}/"
+  },
+
+  // Force MDX files to be treated as markdown for extension compatibility
+  "files.associations": {
+    "*.mdx": "markdown"
+  },
+
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
   }
 }
