@@ -1,0 +1,7 @@
+{
+  "markdown.copyFiles.destination": {
+    "/src/content/articles/**/*": "/src/assets/articles/${documentBaseName}/",
+    "/src/content/notes/**/*": "/src/assets/notes/${documentBaseName}/",
+    "/src/content/**/**/*": "/src/assets/${documentBaseName}/"
+  }
+}

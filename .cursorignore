@@ -23,7 +23,6 @@ yarn-error.log*
 .env.*
 
 # Editor directories and files
-.vscode/
 .idea/
 *.swp
 
