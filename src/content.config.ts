@@ -33,6 +33,7 @@ const notes = defineCollection({
 const toolboxPages = defineCollection({
   loader: file('src/content/toolboxPages.json'),
   schema: z.object({
+    id: z.string(),
     title: z.string(),
     url: z.string().url(),
   }),

@@ -24,15 +24,18 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
     await page.goto('https://betterat.work/tool/');
 
     const data = await page.evaluate(() =>
-      Array.from(document.querySelectorAll('.notion-collection-card__anchor')).map(anchor => {
-        const url = (anchor as HTMLAnchorElement).href;
-        const title = (anchor.textContent ?? '').trim();
+      Array.from(document.querySelectorAll('.notion-collection-card__anchor')).map(
+        (anchor, index) => {
+          const url = (anchor as HTMLAnchorElement).href;
+          const title = (anchor.textContent ?? '').trim();
 
-        return {
-          title,
-          url,
-        };
-      })
+          return {
+            id: index.toString(), // Simple string ID from array index
+            title,
+            url,
+          };
+        }
+      )
     );
 
     await browser.close();
