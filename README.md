@@ -43,3 +43,4 @@ All commands are run from the root of the project, from a terminal:
 | `npm run format:check`   | Check if code is properly formatted              |
 | `npm run scrape-toolbox` | Scrape toolbox data from betterat.work           |
 | `npm run astro ...`      | Run CLI commands like `astro add`, `astro check` |
+| `npm run newnote`        | Create a new note                                |

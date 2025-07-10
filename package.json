@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "astro check",
-    "scrape-toolbox": "tsx scripts/get-toolbox-json.ts"
+    "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
+    "newnote": "tsx scripts/create-note.ts"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^6.3.2",
@@ -25,6 +26,7 @@
     "@vercel/og": "^0.6.8",
     "astro": "^5.10.2",
     "astro-embed": "^0.9.0",
+    "inquirer": "^12.7.0",
     "mdast-util-to-string": "^4.0.0",
     "puppeteer": "^24.12.1",
     "reading-time": "^1.5.0",
