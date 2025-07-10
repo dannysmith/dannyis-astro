@@ -44,3 +44,13 @@ All commands are run from the root of the project, from a terminal:
 | `npm run scrape-toolbox` | Scrape toolbox data from betterat.work           |
 | `npm run astro ...`      | Run CLI commands like `astro add`, `astro check` |
 | `npm run newnote`        | Create a new note                                |
+
+## Creating a New Note
+
+You can run `npm newnote` to create a new note in `src/content/notes` with the correct frontmatter and filename. Examples:
+
+```shell
+npm run newnote                          # Asks the user for a title
+npm run newnote "Some Title Here"        # Uses the supplied title
+npm run newnote "https://some-url.com"   # Fetches the og:title or <title> and sets sourceUR to the URL.
+```

@@ -23,72 +23,15 @@ When I'm working with my content files, you have two distinct roles:
 
 When I ask you to create a new note:
 
-- Do it quickly without asking me stuff so I can start writing fast.
-- If I've told you what the note is about, choose a suitable title.
-- If I've provided a URL, **fetch the page and extract the OpenGraph `og:title` (or, if missing, the `<title>` tag) to use as the note title and for the filename. Do not rely on web search or third-party title generators.**
-- If the page cannot be fetched or parsed, fall back to a sensible placeholder (e.g., "New Note") and alert the user.
-- Otherwise just use "New Note".
-- Create an md file in the correct directory, named using an ISO date and the title you chose (eg. `2025-06-15-the-title-of-the-note.md`). Use today's date unless I've specified a date. If the title is very long, intelligently shorten it for the filename.
-- Set the `pubDate` to today and the `title` to whatever you decided on.
-- If I provide a URL, set that as the `sourceURL`.
-- Generate a `slug` based on the title (kebab-case).
-- Leave other properties empty but valid according to the schema.
-- Always start with the template below:
+- If I've given you a title, run `npm run newnote "<title>"`
+- If I've given you a longer sentence or transcription, quickly decide on a suitable title and run the above.
+- If I've given you a URL, run `npm run newnote "<url>"`
+- Otherwise, run `npm run newnote "new-note"`
 
-#### New Note Template
-
-```yaml
----
-title: <your title in title case>
-pubDate: <today's date in ISO form>
-slug: <title-as-kebab-case>
-sourceURL: <url if provided, otherwise omit this field>
-tags: []
----
-```
-
-#### Examples
-
-**Prompt:** "new note"
-**Today's Date:** 2025-06-15
-**Expected Output:** New file in `src/content/notes` named `2025-06-15-new-note.md` with this content:
-
-```markdown
----
-title: New Note
-pubDate: 2025-06-15
-slug: new-note
-tags: []
----
-```
-
-**Prompt:** "new note https://youtu.be/8VY0RnxaZJc?si=H-kxUisLWxNWLb4Y"
-**Title of the URL:** "Cooking Chicken In 3 Levels Of Difficulty"
-**Today's Date:** 2025-06-15
-**Expected Output:** New file in `src/content/notes` named `2025-06-15-cooking-chicken-in-3-levels-of-difficulty.md` with this content:
-
-```markdown
----
-title: Cooking Chicken In 3 Levels Of Difficulty
-pubDate: 2025-06-15
-slug: cooking-chicken-in-3-levels-of-difficulty
-sourceURL: https://youtu.be/8VY0RnxaZJc?si=H-kxUisLWxNWLb4Y
-tags: ['cooking']
----
-```
+#### Example
 
 **Prompt:** "make new note I've been pondering some interesting thoughts re changing my desk set-ups. I've bought a couple of new bits of kit recently and I've got three or four principles that I want to talk about"
-**Today's Date:** 2025-06-20
-**Expected Output:** New file in `src/content/notes` named `2025-06-20-desk-setup-principles.md` with this content:
-
-```markdown
----
-title: Desk Setup Principles
-pubDate: 2025-06-20
-slug: desk-setup-principles
-tags: []
----
-```
+**Command to Run:** `npm run newnote "New Desk Setup Principles"`
 
 ### Command: Create New Article
 
@@ -155,30 +98,6 @@ import { Image, Picture } from 'astro:assets';
 import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
-### Command: Create Multiple Templates
-
-When I ask you to create multiple articles or notes:
-
-- Create the requested number of template files
-- Use sequential numbering or ask me for specific titles
-- Follow the same naming and template conventions as single creation
-- Create them all in parallel for efficiency
-
-**Examples:**
-
-- "create 3 article templates" → Creates 3 numbered article templates
-- "create 5 note templates for my book reviews" → Creates 5 note templates with book review context
-
-### Command: Quick Publish
-
-When I ask you to quickly publish an article or note:
-
-- Run the appropriate pre-publishing checklist
-- Set `draft: false` (or remove draft field)
-- Ensure all required fields are populated
-- Report any issues that need manual attention
-- Confirm the content is ready for publication
-
 ### Command: Insert image
 
 If I ask you to insert an image while working on a note or article...
@@ -220,16 +139,6 @@ When I ask you to suggest tags for content:
 - Use consistent tag naming (lowercase, hyphens for multi-word tags)
 - Consider existing tags used in other content for consistency
 - Focus on broad, searchable categories rather than very specific terms
-
-### Command: Content Migration
-
-When I ask you to migrate or convert content:
-
-- Convert between note and article formats
-- Update frontmatter to match target content type
-- Adjust imports and component usage as needed
-- Preserve all content while adapting structure
-- Create backup mention of original format/location
 
 ### Command: Check article
 
@@ -287,26 +196,6 @@ Before I publish a note I'll ask you to do some checks:
 9. Check that external links open in new tabs with proper rel attributes.
 
 ## Content Templates & Variations
-
-### Article Types
-
-When creating articles, consider these common variations:
-
-- **Technical Tutorial** - Include code examples, step-by-step instructions
-- **Opinion/Analysis** - Focus on clear thesis and supporting arguments
-- **Case Study** - Include background, process, results, and lessons learned
-- **List/Guide** - Use numbered or bulleted structure with clear sections
-- **Review** - Include pros/cons, rating, and clear recommendation
-
-### Note Types
-
-When creating notes, consider these common variations:
-
-- **Link Note** - Commentary on external content (requires sourceURL)
-- **Thought Note** - Personal reflections or ideas
-- **Quote Note** - Highlighted quotes with commentary
-- **Media Note** - Comments on videos, podcasts, etc.
-- **Book Note** - Reading notes and insights
 
 ## Advanced Features
 
