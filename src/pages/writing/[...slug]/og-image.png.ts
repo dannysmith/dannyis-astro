@@ -6,7 +6,7 @@ const SITE_URL = 'https://danny.is';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles', ({ data }) => {
-    return !data.draft;
+    return import.meta.env.PROD ? data.draft !== true : true;
   });
 
   return articles.map(article => ({
