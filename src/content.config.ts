@@ -6,14 +6,16 @@ const articles = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      slug: z.string().optional(),
       draft: z.boolean().default(false),
+      description: z.string().optional(),
       pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
       cover: image().optional(),
       coverAlt: z.string().optional(),
-      description: z.string().optional(),
+      tags: z.array(z.string()).optional(),
       platform: z.enum(['medium', 'external']).optional(),
       redirectURL: z.string().url().optional(),
-      updatedDate: z.coerce.date().optional(),
       styleguide: z.boolean().optional(),
     }),
 });
@@ -22,9 +24,11 @@ const notes = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/notes' }),
   schema: z.object({
     title: z.string(),
-    pubDate: z.coerce.date(),
-    description: z.string().optional(),
     sourceURL: z.string().url().optional(),
+    slug: z.string().optional(),
+    draft: z.boolean().default(false),
+    description: z.string().optional(),
+    pubDate: z.coerce.date(),
     tags: z.array(z.string()).optional(),
     styleguide: z.boolean().optional(),
   }),
