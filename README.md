@@ -55,4 +55,4 @@ npm run newnote "Some Title Here"        # Uses the supplied title
 npm run newnote "https://some-url.com"   # Fetches the og:title or <title> and sets sourceUR to the URL.
 ```
 
-New draft notes can also be created using this Chrome extension https://github.com/dannysmith/dannyischromeextension
+New draft notes can also be created using this Chrome extension https://github.com/dannysmith/dannyischromeextension. Working on a desktop editor at https://github.com/dannysmith/blog-editor
