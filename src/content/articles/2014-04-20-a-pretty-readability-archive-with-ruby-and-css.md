@@ -1,9 +1,9 @@
 ---
 title: 'A Pretty Readability Archive with Ruby and CSS'
-pubDate: 2014-04-20
 slug: a-pretty-readability-archive-with-ruby-and-css
 draft: false
 description: 'Building a visual bookmarks display using the Readability API, Ruby, and CSS 3D transforms'
+pubDate: 2014-04-20
 tags: ['ruby', 'css', 'api', 'readability', 'sinatra', 'design']
 ---
 

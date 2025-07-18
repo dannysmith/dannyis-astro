@@ -1,9 +1,9 @@
 ---
 title: 'From RVM to rbenv'
-pubDate: 2013-10-08
 slug: rvm-to-rbenv
 draft: false
 description: 'Switching from RVM to rbenv for simpler Ruby version and gem management'
+pubDate: 2013-10-08
 tags: ['ruby', 'rbenv', 'rvm', 'development', 'tools']
 ---
 
