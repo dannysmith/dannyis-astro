@@ -1,9 +1,9 @@
 ---
 title: 'Controlling the Rag with Redcarpet'
-pubDate: 2014-05-04
 slug: controlling-the-rag-with-redcarpet
 draft: false
 description: 'Improving web typography by preventing orphans and controlling line breaks with custom Redcarpet renderer'
+pubDate: 2014-05-04
 tags: ['typography', 'ruby', 'redcarpet', 'markdown', 'web design']
 ---
 

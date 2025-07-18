@@ -1,7 +1,7 @@
 ---
 title: 'Johnny.Decimal'
-sourceUrl: 'https://johnnydecimal.com/'
 pubDate: 2025-07-16
+sourceUrl: 'https://johnnydecimal.com/'
 ---
 
 This reminds me so much of the old UK MoD File Reference system (some of which is still in [JSP 441](https://assets.publishing.service.gov.uk/media/5a82b0d240f0b62305b93d65/2017-02121.pdf)!)

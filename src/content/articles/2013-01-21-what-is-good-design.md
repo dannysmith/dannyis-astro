@@ -1,9 +1,9 @@
 ---
 title: 'What is Good Design?'
-pubDate: 2013-01-21
 slug: what-is-good-design
 draft: false
 description: 'Exploring good design principles through the lens of the UK Government Digital Service website'
+pubDate: 2013-01-21
 tags: ['design', 'government', 'typography', 'web']
 ---
 

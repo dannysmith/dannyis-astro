@@ -1,8 +1,8 @@
 ---
 title: The Rise of the AI-Native Employee
-pubDate: 2025-07-08
-slug: the-rise-of-the-ai-native-employee
 sourceURL: https://www.elenaverna.com/p/the-rise-of-the-ai-native-employee
+slug: the-rise-of-the-ai-native-employee
+pubDate: 2025-07-08
 ---
 
 > AI transformation inside existing tech companies is going to be brutal. You can’t just spin up a centralized “AI task force” and expect the rest of the org to suddenly think and operate differently. It doesn’t work. This mindset shift isn’t something you can document or mandate - it has to be seen and experienced. I know, because I had to see it myself.
