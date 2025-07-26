@@ -214,3 +214,23 @@ const articleMeta = generateArticleMeta(seoData);
     referrerpolicy="no-referrer-when-downgrade"
   /></noscript
 >
+
+<!-- Mermaid Initialization -->
+<script>
+  // Initialize Mermaid for client-side rendering
+  if (typeof window !== 'undefined') {
+    import('mermaid').then(({ default: mermaid }) => {
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        themeVariables: {
+          fontFamily: 'var(--font-body)',
+          fontSize: '16px',
+        },
+      });
+      
+      // Run mermaid on any pre.mermaid elements
+      mermaid.run();
+    });
+  }
+</script>

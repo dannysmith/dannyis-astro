@@ -1,0 +1,45 @@
+/* Mermaid diagram styles */
+.mermaid {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  overflow-x: auto;
+}
+
+/* Ensure SVGs are responsive */
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Dark mode support - invert colors */
+[data-theme="dark"] .mermaid {
+  filter: invert(0.85) hue-rotate(180deg);
+}
+
+/* Additional dark mode adjustments */
+[data-theme="dark"] .mermaid text {
+  fill: currentColor;
+}
+
+/* Ensure proper spacing */
+.mermaid + * {
+  margin-top: 2rem;
+}
+
+/* Style the pre elements that contain mermaid diagrams */
+pre.mermaid {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Override any syntax highlighting that might be applied */
+pre.mermaid code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  font-family: inherit;
+}

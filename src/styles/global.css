@@ -1,6 +1,9 @@
 /* Define our layers */
 @layer reset, base, prose, articletypography, theme;
 
+/* Import Mermaid styles */
+@import './mermaid.css';
+
 /* Font faces - these need to be outside layers as they're declarations */
 @font-face {
   font-family: 'Literata';

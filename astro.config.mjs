@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeExternalLinks from 'rehype-external-links';
+import rehypeMermaid from 'rehype-mermaid';
 import { remarkReadingTime } from './remark-reading-time.mjs';
 
 // https://astro.build/config
@@ -28,10 +29,15 @@ export default defineConfig({
   },
   integrations: [mdx(), sitemap()],
   markdown: {
+    syntaxHighlight: {
+      type: 'shiki',
+      excludeLangs: ['mermaid'],
+    },
     rehypePlugins: [
       [rehypeHeadingIds, { headingIdCompat: true }],
       rehypeAutolinkHeadings,
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
+      [rehypeMermaid, { strategy: 'pre-mermaid' }],
     ],
     remarkPlugins: [remarkReadingTime],
   },

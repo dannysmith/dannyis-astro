@@ -3,7 +3,7 @@ title: "It's rude to show AI output to people"
 sourceURL: "https://distantprovince.by/posts/its-rude-to-show-ai-output-to-people/?ref=sidebar"
 draft: true
 pubDate: 2025-07-23
-tags: 
+tags: [] 
 ---
 
 > For the longest time, writing was more expensive than reading. If you encountered a body of written text, you could be sure that at the very least, a human spent some time writing it down. The text used to have an innate proof-of-thought, a basic token of humanity.
