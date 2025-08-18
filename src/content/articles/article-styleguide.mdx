@@ -19,18 +19,22 @@ This Article Styleguide demonstrates how all key Markdown/MDX features, Astro co
 This section demonstrates custom MDX components in context.
 
 ### BookmarkCard
+
 <BookmarkCard url="https://justinjackson.ca/calm-company" />
 <BookmarkCard url="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
 
 ### Notion Links in Context
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f?pvs=4">Meetings link</Notion> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <Notion href="https://dannysmith.notion.site/Meeting-Checkouts-870b7ecca989419b8f0d3047bad89d05?pvs=4">elementum</Notion> Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. <Notion href="https://dannysmith.notion.site/Loom-4a6ebae015494adbbec07bf3f7912b03?pvs=4">consequat</Notion>
 
 ### Callout
+
 <Callout icon="💡" type="blue">
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum hic a dolorem ipsa labore cum.
 </Callout>
 
 ### Grid Example
+
 <Grid columns={2} rows={2} gap="1rem">
   <Image src={image1} alt="Grid Example 1" height="120" width="200" />
   <Image src={image1} alt="Grid Example 2" height="120" width="200" />
@@ -45,21 +49,27 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. <Notion href="https://d
 This section shows different image layouts and treatments.
 
 ### A normal image
+
 <Image src={image1} alt="Example image" />
 
 ### A normal image with height and width set
+
 <Image src={image1} alt="Example image" height="200" width="500" />
 
 ### A normal image with a border
+
 <Image src={image1} alt="Example image" class="border" />
 
 ### An image at left-bleed
+
 <Image src={image1} alt="Example image" class="bleed-left" />
 
 ### An image at right-bleed
+
 <Image src={image1} alt="Example image" class="bleed-right" />
 
 ### An image at full-bleed
+
 <Image src={image1} alt="Example image" class="bleed-full" />
 
 ---
@@ -149,6 +159,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, n
 This section demonstrates code blocks in context.
 
 ### Code Block Example
+
 ```ruby
 def thing
   return "Hello" if @thing === 1 && other >= 5
@@ -162,6 +173,7 @@ end
 This section demonstrates markdown tables.
 
 ### Table Example
+
 | Syntax    | Description |
 | --------- | ----------- |
 | Header    | Title 12345 |

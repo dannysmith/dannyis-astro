@@ -1,6 +1,6 @@
 /**
  * SEO Utility Functions
- * 
+ *
  * Clean, testable functions for generating SEO metadata.
  * All complex logic extracted from components for better maintainability.
  */
@@ -23,7 +23,7 @@ export function generatePageTitle(title: string, pageType?: PageType): string {
   if (!pageType || title === AUTHOR.name) {
     return title;
   }
-  
+
   const template = TITLE_TEMPLATES[pageType] || TITLE_TEMPLATES.default;
   return template(title);
 }
@@ -142,7 +142,9 @@ function generateArticleSchema(
 /**
  * Generate article meta tags for OpenGraph
  */
-export function generateArticleMeta(pageData: SEOData): Array<{ property: string; content: string }> {
+export function generateArticleMeta(
+  pageData: SEOData
+): Array<{ property: string; content: string }> {
   if (pageData.type !== 'article') return [];
 
   const metaTags: Array<{ property: string; content: string }> = [

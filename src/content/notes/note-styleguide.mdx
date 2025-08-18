@@ -4,11 +4,10 @@ pubDate: 2024-03-19
 tags: ['components', 'typography', 'design', 'testing', 'css']
 styleguide: true
 ---
+
 import { BookmarkCard, Callout, Embed } from '@components/mdx';
 
-
 This styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in a Note context. Use it to check typography, component appearance, and real-world content. For a full component reference, see the [main styleguide](/styleguide/).
-
 
 ## URL Cards & Embeds
 
@@ -17,41 +16,37 @@ This styleguide demonstrates how all key Markdown/MDX features, Astro components
 
 <Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
 
-
 ## Callout Examples
 
 <Callout icon="💡" type="blue" title="Information">
-  This is a blue callout with an information icon. Perfect for tips and helpful information with **bold text** and [links](https://example.com).
+  This is a blue callout with an information icon. Perfect for tips and helpful information with
+  **bold text** and [links](https://example.com).
 </Callout>
 
 <Callout icon="⚠️" type="yellow" title="Warning">
-  This is a yellow warning callout. Use this to highlight important warnings or cautions. It can contain:
-  - Bullet points
-  - **Bold text**
-  - `inline code`
-  - [External links](https://example.com)
+  This is a yellow warning callout. Use this to highlight important warnings or cautions. It can
+  contain: - Bullet points - **Bold text** - `inline code` - [External links](https://example.com)
 </Callout>
 
 <Callout icon="❌" type="red" title="Error">
-  This is a red error callout. Use this for error messages or critical information.
-  > It can even contain blockquotes with additional context.
+  This is a red error callout. Use this for error messages or critical information. > It can even
+  contain blockquotes with additional context.
 </Callout>
 
 <Callout icon="✅" type="green" title="Success">
   This is a green success callout. Perfect for confirmation messages and positive feedback.
-  ```javascript
-  // It can even contain code blocks!
-  const success = true;
-  console.log('Operation completed successfully');
-  ```
+  ```javascript // It can even contain code blocks! const success = true; console.log('Operation
+  completed successfully'); ```
 </Callout>
 
 <Callout icon="🔥" type="orange" title="Hot Tip">
-  This is an orange callout. Great for highlighting important tips or featured content with _italic emphasis_.
+  This is an orange callout. Great for highlighting important tips or featured content with _italic
+  emphasis_.
 </Callout>
 
 <Callout icon="💭" type="blue">
-  This callout has no title, just an icon and content with **markdown formatting** and [links](https://example.com).
+  This callout has no title, just an icon and content with **markdown formatting** and
+  [links](https://example.com).
 </Callout>
 
 <Callout icon="📚" type="blue" title="Comprehensive Example">
@@ -75,7 +70,6 @@ This styleguide demonstrates how all key Markdown/MDX features, Astro components
   ```
   **Links**: Both [external links](https://example.com) and internal references work seamlessly.
 </Callout>
-
 
 ## Headings
 
@@ -116,6 +110,7 @@ console.log(foo);
 ![Test Image](https://picsum.photos/800/400)
 
 Here's a paragraph with **bold text**, _italic text_, `code`, and a [link](https://example.com). We can also have:
+
 - Lists with **bold text**
 - Lists with _italic text_
 - Lists with `code`
@@ -193,11 +188,11 @@ classDiagram
 
 ## Table Example
 
-| Name      | Role         | Notes           |
-|-----------|--------------|-----------------|
-| Alice     | Designer     | Likes Figma     |
-| Bob       | Developer    | Typescript fan  |
-| Carol     | Writer       | Markdown wizard |
+| Name  | Role      | Notes           |
+| ----- | --------- | --------------- |
+| Alice | Designer  | Likes Figma     |
+| Bob   | Developer | Typescript fan  |
+| Carol | Writer    | Markdown wizard |
 
 ---
 

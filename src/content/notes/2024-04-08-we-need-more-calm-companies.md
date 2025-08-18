@@ -1,9 +1,9 @@
 ---
-title: "Why Remote Companies Must Be Calm Companies"
-sourceURL: "https://justinjackson.ca/calm-company"
+title: 'Why Remote Companies Must Be Calm Companies'
+sourceURL: 'https://justinjackson.ca/calm-company'
 slug: we-need-more-calm-companies
 draft: false
-description: "Discover why calm companies outperform frenzied ones in remote work. Essential insights on sustainable growth and team well-being from organizational health expert Danny Smith."
+description: 'Discover why calm companies outperform frenzied ones in remote work. Essential insights on sustainable growth and team well-being from organizational health expert Danny Smith.'
 pubDate: 2024-04-08
 ---
 

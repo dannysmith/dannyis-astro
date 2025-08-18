@@ -1,6 +1,6 @@
 /**
  * Centralized SEO Configuration
- * 
+ *
  * All SEO-related constants, templates, and configuration in one place.
  * Update personal branding, job titles, and descriptions here to affect the entire site.
  */
@@ -14,7 +14,8 @@ export const AUTHOR = {
   email: 'hi@danny.is',
   website: 'https://danny.is',
   image: 'https://danny.is/danny-smith.jpg',
-  description: 'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.',
+  description:
+    'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.',
 } as const;
 
 // Business Information
@@ -22,7 +23,8 @@ export const ORGANIZATION = {
   name: 'Danny Smith Consulting',
   url: 'https://danny.is',
   logo: 'https://danny.is/icon.jpg',
-  description: 'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
+  description:
+    'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
 } as const;
 
 // Social Media Profiles
@@ -73,7 +75,8 @@ export const TWITTER_CONFIG = {
 
 // Page-specific default descriptions
 export const PAGE_DESCRIPTIONS = {
-  articles: 'In-depth articles on remote work, organizational health, leadership, and business operations by consultant Danny Smith',
+  articles:
+    'In-depth articles on remote work, organizational health, leadership, and business operations by consultant Danny Smith',
   notes: 'Short-form thoughts and observations on remote work, technology, and business operations',
   now: 'Current projects and focus areas for remote work & operations consultant Danny Smith',
 } as const;
@@ -85,7 +88,8 @@ export const SCHEMA_CONFIG = {
     '@id': `${AUTHOR.website}/#website`,
     url: AUTHOR.website,
     name: AUTHOR.name,
-    description: 'Remote work consultant and organizational health expert. Articles and insights on leadership, remote work, and business operations.',
+    description:
+      'Remote work consultant and organizational health expert. Articles and insights on leadership, remote work, and business operations.',
   },
   person: {
     '@type': 'Person' as const,

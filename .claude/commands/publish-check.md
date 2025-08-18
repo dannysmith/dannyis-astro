@@ -21,7 +21,6 @@ Runs comprehensive pre-publishing validation for articles or notes.
 ### For Articles
 
 1. Run "check article" validation:
-
    - First paragraph length (drop-cap compatibility)
    - Heading hierarchy (no skipped levels)
    - Markdown formatting
@@ -32,7 +31,6 @@ Runs comprehensive pre-publishing validation for articles or notes.
    - Code blocks have language defined
 
 2. SEO review:
-
    - Title optimization
    - Description under 160 characters
    - Keyword inclusion

@@ -10,7 +10,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "astro check",
+    "check:types": "tsc --noEmit && astro check",
+    "check": "npm run lint && npm run format:check && npm run check:types && npm run build",
+    "check:all": "npm run check",
     "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
     "newnote": "tsx scripts/create-note.ts"
   },

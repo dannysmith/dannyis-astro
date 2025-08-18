@@ -15,12 +15,12 @@
 }
 
 /* Dark mode support - invert colors */
-[data-theme="dark"] .mermaid {
+[data-theme='dark'] .mermaid {
   filter: invert(0.85) hue-rotate(180deg);
 }
 
 /* Additional dark mode adjustments */
-[data-theme="dark"] .mermaid text {
+[data-theme='dark'] .mermaid text {
   fill: currentColor;
 }
 
