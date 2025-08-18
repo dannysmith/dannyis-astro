@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ props }) => {
       }
     );
 
-    return new Response(ogImageBuffer, {
+    return new Response(ogImageBuffer as unknown as BodyInit, {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=31536000, immutable',
