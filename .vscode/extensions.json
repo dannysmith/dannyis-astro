@@ -5,7 +5,9 @@
     "esbenp.prettier-vscode",
     "yzhang.markdown-all-in-one",
     "unifiedjs.vscode-mdx",
-    "jebbs.markdown-extended"
+    "jebbs.markdown-extended",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-typescript-tslint-plugin"
   ],
   "unwantedRecommendations": []
 }
