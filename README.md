@@ -1,4 +1,6 @@
 # danny.is
+[![Built with Astro](https://astro.badg.es/v2/built-with-astro/tiny.svg)](https://astro.build)
+
 
 Danny Smith's personal website – http://danny.is
 
