@@ -17,7 +17,11 @@ export async function GET(context) {
     })
   ).map(post => ({ ...post, type: 'article' }));
 
-  const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).map(note => ({
+  const notes = (
+    await getCollection('notes', ({ data }) => {
+      return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
+    })
+  ).map(note => ({
     ...note,
     type: 'note',
   }));

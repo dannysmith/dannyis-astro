@@ -3,7 +3,9 @@ import { type CollectionEntry, getCollection, render } from 'astro:content'
 import Note from '@layouts/Note.astro'
 
 export async function getStaticPaths() {
-  const notes = await getCollection('notes')
+  const notes = await getCollection('notes', ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
   return notes.map((note) => ({
     params: { slug: note.id },
     props: note,

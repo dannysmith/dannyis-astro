@@ -5,7 +5,9 @@ import { generateOGImage } from '../../../utils/og-image-generator.js';
 const SITE_URL = 'https://danny.is';
 
 export async function getStaticPaths() {
-  const notes = await getCollection('notes');
+  const notes = await getCollection('notes', ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
 
   return notes.map(note => ({
     params: { slug: note.id },

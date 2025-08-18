@@ -6,9 +6,11 @@ import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import NoteCard from '@components/layout/NoteCard.astro';
 
-const notes = (await getCollection('notes', ({ data }) => !data.styleguide)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const notes = (
+  await getCollection('notes', ({ data }) => {
+    return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
+  })
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Split notes into recent (first 2) and archive (rest)
 const numberOfRecentNotes = 5;
