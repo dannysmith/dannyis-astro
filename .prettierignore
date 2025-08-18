@@ -4,3 +4,5 @@ target
 .git
 *.lock
 *.log
+*.yml
+*.yaml
