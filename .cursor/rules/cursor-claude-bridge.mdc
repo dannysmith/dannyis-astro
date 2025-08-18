@@ -1,24 +1,28 @@
+---
+alwaysApply: true
+---
+
 # Cursor Configuration
 
-This project is primarily documented for Claude Code. All comprehensive documentation lives in dedicated files.
+This project is primarily documented for Claude Code.
 
 ## Documentation References
 
-- **Architecture & Components**: See @docs/developer/architecture.md
-- **Design System**: See @docs/developer/design-system.md  
-- **Content Management**: See @docs/developer/content-system.md
-- **Code Patterns**: See @docs/developer/implementation-patterns.md
-- **AI Configuration**: See @CLAUDE.md
+- **Architecture**: @docs/developer/architecture.md
+- **Design System**: @docs/developer/design-system.md
+- **Content System**: @docs/developer/content-system.md
+- **Patterns**: @docs/developer/implementation-patterns.md
+- **Claude Config**: @CLAUDE.md
 
-## Key Development Rules
+## Key Rules
 
-1. **Zero-JavaScript by default** - No client JS unless absolutely necessary
-2. **TypeScript everywhere** - Use proper interfaces and types
-3. **Update styleguide** - When adding new components
-4. **Quality checks** - Run `npm run check` before completing tasks
-5. **Follow patterns** - Reference existing code for consistency
+1. **Zero-JavaScript by default**
+2. **TypeScript everywhere**
+3. **Update styleguide when adding components**
+4. **Run `npm run check` before completing**
+5. **Follow existing patterns**
 
-## Quick Commands
+## Commands
 
 ```bash
 npm run dev          # Development server
@@ -27,12 +31,33 @@ npm run check        # All quality checks
 npm run newnote      # Create new note
 ```
 
-## Content Creation
+See @CLAUDE.md for comprehensive guidance.# Cursor Configuration
 
-For content-related tasks, see @.cursor/rules/content.mdc which contains specialized commands for creating and managing articles and notes.
+This project is primarily documented for Claude Code.
 
-## Getting Help
+## Documentation References
 
-- Check the developer docs first
-- Reference CLAUDE.md for AI-specific guidance
-- Look at existing implementations for patterns
+- **Architecture**: @docs/developer/architecture.md
+- **Design System**: @docs/developer/design-system.md
+- **Content System**: @docs/developer/content-system.md
+- **Patterns**: @docs/developer/implementation-patterns.md
+- **Claude Config**: @CLAUDE.md
+
+## Key Rules
+
+1. **Zero-JavaScript by default**
+2. **TypeScript everywhere**
+3. **Update styleguide when adding components**
+4. **Run `npm run check` before completing**
+5. **Follow existing patterns**
+
+## Commands
+
+```bash
+npm run dev          # Development server
+npm run build        # Production build
+npm run check        # All quality checks
+npm run newnote      # Create new note
+```
+
+See @CLAUDE.md for comprehensive guidance.

@@ -2,14 +2,6 @@
 
 Danny Smith's personal website – http://danny.is
 
-## 🛠️ Tech Stack
-
-- **Astro** - Core framework
-- **TypeScript** - Type safety
-- **MDX** - Enhanced markdown for content
-- **CSS** - Modern styling with CSS variables and layers
-- **Vercel** - Deployment and hosting
-
 ## 🗂️ Project Structure
 
 ```
@@ -55,4 +47,4 @@ npm run newnote "Some Title Here"        # Uses the supplied title
 npm run newnote "https://some-url.com"   # Fetches the og:title or <title> and sets sourceUR to the URL.
 ```
 
-New draft notes can also be created using this Chrome extension https://github.com/dannysmith/dannyischromeextension. Working on a desktop editor at https://github.com/dannysmith/blog-editor
+New draft notes can also be created using this Chrome extension https://github.com/dannysmith/dannyischromeextension. Working on a desktop editor at https://github.com/dannysmith/astro-editor

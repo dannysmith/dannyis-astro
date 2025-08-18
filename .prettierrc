@@ -6,6 +6,7 @@
   "printWidth": 100,
   "bracketSpacing": true,
   "arrowParens": "avoid",
+  "useTabs": false,
   "endOfLine": "lf",
   "ignorePatterns": ["*.yml", "*.yaml"]
 }

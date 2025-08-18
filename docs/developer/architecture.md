@@ -188,50 +188,6 @@ Each category includes an `index.ts` file for convenient importing:
 - `@components/mdx/index.ts` - MDX component exports
 - `@components/index.ts` - Main barrel export for all components
 
-## Content Collections
-
-### Articles Collection
-
-Location: `src/content/articles/`
-
-**Required Frontmatter:**
-
-```yaml
-title: string
-pubDate: date
-draft: boolean
-```
-
-**Optional Frontmatter:**
-
-```yaml
-updatedDate: date
-cover: image
-coverAlt: string
-description: string
-tags: string[]
-platform: "medium" | "external"
-redirectUrl: string
-```
-
-### Notes Collection
-
-Location: `src/content/notes/`
-
-**Required Frontmatter:**
-
-```yaml
-pubDate: date
-```
-
-**Optional Frontmatter:**
-
-```yaml
-title: string
-url: string
-tags: string[]
-```
-
 ## Build Pipeline and Deployment
 
 ### Build Features
@@ -272,115 +228,35 @@ Before deployment, the following checks must pass:
 - **Build Filtering**: Production builds filter draft content
 - **Redirects**: Comprehensive redirects configured in `astro.config.mjs`
 
-## RSS Feed Architecture
+## RSS Feed System
 
-### Overview
+### Feed Generation
 
-The site generates three RSS feeds using Astro's experimental Container API for full MDX component rendering:
+The site generates three RSS feeds:
 
 - **Combined Feed**: `/rss.xml` - All articles and notes
 - **Articles Only**: `/rss/articles.xml` - Long-form articles only
 - **Notes Only**: `/rss/notes.xml` - Short-form notes only
 
-### Technical Implementation
+### Technical Approach
 
-**Container API for Full MDX Rendering**
+- Uses Astro's experimental Container API for full MDX component rendering
+- Filters draft and styleguide content in production
+- Implements graceful error handling for failed renders
+- Build performance: ~44s (minimal impact on baseline build time)
 
-The RSS feeds use Astro's experimental Container API to render MDX components to HTML at build time:
+For detailed RSS implementation and configuration, see the [content system documentation](./content-system.md#rss-feed-system).
 
-```javascript
-import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import { getContainerRenderer as getMDXRenderer } from '@astrojs/mdx';
-import { loadRenderers } from 'astro:container';
-import { getCollection, render } from 'astro:content';
-import rss from '@astrojs/rss';
+## SEO Implementation
 
-export async function GET(context) {
-  // Initialize Container API for MDX rendering
-  const renderers = await loadRenderers([getMDXRenderer()]);
-  const container = await AstroContainer.create({ renderers });
+### Architecture Overview
 
-  // Get content with filtering
-  const articles = await getCollection('articles', ({ data }) => {
-    return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
-  });
+- **Centralized Configuration**: All SEO settings in `src/config/seo.ts`
+- **Utility Functions**: SEO helpers located in `src/utils/seo.ts`
+- **BaseHead Component**: Unified HTML head management with SEO integration
+- **Auto-Generated OpenGraph Images**: Build-time image generation for social sharing
 
-  // Process items with full MDX rendering
-  const items = [];
-  for (const article of articles) {
-    try {
-      const { Content } = await render(article);
-      const content = await container.renderToString(Content);
-
-      items.push({
-        ...article.data,
-        link: `/writing/${article.id}/`,
-        content,
-      });
-    } catch (error) {
-      console.warn(`Failed to render content for ${article.id}:`, error);
-      continue; // Skip problematic items
-    }
-  }
-
-  return rss({
-    title: `${SITE_TITLE} - Articles`,
-    description: `Articles from ${SITE_DESCRIPTION}`,
-    site: context.site,
-    items,
-  });
-}
-```
-
-### Content Filtering
-
-- **Styleguide Exclusion**: All feeds filter out content with `styleguide: true`
-- **Draft Content**: Production builds filter out content with `draft: true`
-- **Content Sorting**: All feeds sort by publication date (newest first)
-
-### Error Handling
-
-- **Graceful Degradation**: Failed component renders are logged and skipped
-- **Build Continuity**: Build continues even if individual items fail to render
-- **Performance**: Current implementation: ~44s build time (vs ~45s baseline)
-
-## SEO Architecture
-
-### Centralized Configuration
-
-All SEO settings centralized in `src/config/seo.ts`:
-
-- Personal branding and job titles
-- Site information and metadata
-- Title templates for different page types
-- Schema.org structured data configuration
-- OpenGraph and Twitter card configuration
-
-### SEO Utility Functions
-
-Located in `src/utils/seo.ts`:
-
-- `generatePageTitle()` - Uses configured templates for consistent titles
-- `generateMetaDescription()` - Adds consistent branding to descriptions
-- `generateJSONLD()` - Creates comprehensive Schema.org structured data
-- `generateArticleMeta()` - Generates article-specific OpenGraph meta tags
-- `generateOGImageUrl()` - Handles image URL generation with fallbacks
-- `validateSEOData()` - Validates and sanitizes SEO data
-
-### BaseHead Component Integration
-
-```astro
-<BaseHead
-  title="Page Title"
-  description="Page description"
-  type="article"        // 'website' (default) or 'article'
-  pageType="article"    // 'article', 'note', or 'page' (for title templates)
-  image="/custom-og.png" // Optional: custom OG image
-  pubDate={new Date()}   // Optional: for articles/notes
-  updatedDate={new Date()} // Optional: for articles/notes
-  tags={['tag1', 'tag2']} // Optional: for articles/notes
-/>
-```
+For detailed SEO schemas, component usage, and implementation patterns, see the [content system documentation](./content-system.md#seo-implementation).
 
 ### Theme Management
 
@@ -392,9 +268,11 @@ Located in `src/utils/seo.ts`:
 
 ### External Link Security
 
-- All external links in markdown content automatically include `target="_blank" rel="noopener noreferrer"`
-- Handled by the `rehype-external-links` plugin configured in `astro.config.mjs`
-- Manual HTML links in components must include these attributes explicitly
+- All external links automatically include `target="_blank" rel="noopener noreferrer"`
+- Implemented via `rehype-external-links` plugin
+- Manual HTML links require explicit security attributes
+
+For detailed implementation patterns, see the [content system documentation](./content-system.md#external-link-security).
 
 ## Toolbox Data Automation
 
@@ -414,78 +292,17 @@ Located in `.github/workflows/update-toolbox.yml`:
 - **Manual Trigger**: Can be manually triggered via `workflow_dispatch`
 - **Error Recovery**: Automatically resets failure counter on successful runs
 
-## Component Development Patterns
+## Component Development Standards
 
-### Astro Component Structure
+### Development Approach
 
-```astro
----
-// 1. Imports
-import { Image } from 'astro:assets';
-import type { Props } from './types';
+- Components follow consistent structure patterns with TypeScript interfaces
+- Props use clear naming conventions with optional defaults
+- Error handling implemented for external API calls
+- Accessibility attributes included in template markup
+- CSS variables used for theme-aware styling
 
-// 2. Props Interface
-export interface Props {
-  required: string;
-  optional?: number;
-  withDefault?: boolean;
-}
-
-// 3. Props destructuring with defaults
-const { prop1, prop2, withDefault = true } = Astro.props;
-
-// 4. Data fetching with error handling (if needed)
-try {
-  const data = await fetchData();
-} catch (error) {
-  console.warn('Failed to fetch data:', error);
-  // Implement fallback behavior
-}
----
-
-<!-- 5. Template with accessibility attributes -->
-<div class="component">
-  <!-- Content -->
-</div>
-
-<!-- 6. Styles -->
-<style>
-  :root {
-    --component-background: var(--color-bg-dark-200);
-    --component-foreground: var(--c-white);
-    /* Other CSS variables */
-  }
-
-  /* Component styles */
-</style>
-```
-
-### Error Handling Patterns
-
-**Network Requests:**
-
-```typescript
-try {
-  const result = await externalAPI(url);
-  data = result.data;
-} catch (error) {
-  console.warn(`Failed to fetch data from ${url}:`, error);
-  data = fallbackData;
-}
-```
-
-### External Link Implementation
-
-```astro
-<!-- ✅ Correct: Manual HTML external links -->
-<a href="https://example.com" target="_blank" rel="noopener noreferrer">External Link</a>
-
-<!-- ✅ Correct: Preserve rel="me" with target="_blank" for identity links -->
-<a href="https://social.example/@user" rel="me" target="_blank">Social Profile</a>
-
-<!-- ✅ Automatic: Markdown links handled by rehype-external-links -->
-[External Link](https://example.com)
-```
+For detailed component structure patterns, TypeScript interfaces, and implementation examples, see the [implementation patterns documentation](./implementation-patterns.md).
 
 ## Performance Guidelines
 

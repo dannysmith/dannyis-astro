@@ -10,9 +10,9 @@ To do this we'll need to review the entire codebase and the various structures t
 - [x] Cut down Cursor Rules a lot (move good stuff into docs or Claude.md etc)
 - [x] Set up proper Claude commands and agents to help with Astro, and especially with design/CSS etc. See dannysmith/tauri-template and dannysmith/astro-editor for some inspiration
 - [x] Set up same task system as in other projects
-- [ ] Add unit tests, end-to-end browser smoke tests, better linter, prettier and ts rules etc
+- [ ] Add unit tests, end-to-end browser smoke tests, better linter, prettier and ts rules etc (FUTURE)
 - [x] Add `npm run check` command which runs all linters, tests and checks.
-- [ ] Check integration with GitHub Issues for task tracking etc
+- [ ] Check integration with GitHub Issues for task tracking etc (FUTURE)
 - [x] Improve CLAUDE.md
 
 ## Analysis Complete

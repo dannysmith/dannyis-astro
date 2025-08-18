@@ -24,7 +24,9 @@ This is Danny Smith's personal website - a content-first creative playground for
 
 - `@.claude/agents/design-system-expert.md` - Typography, CSS, visual design help
 - `@.claude/agents/astro-specialist.md` - Framework, performance, technical help
-- `@.cursor/rules/content.mdc` - Content creation commands and workflows
+- `@.claude/commands/new-content.md` - Create notes and articles
+- `@.claude/commands/content-checks.md` - Publishing checklists and validation
+- `@.claude/commands/content-enhancements.md` - Images, descriptions, tags
 
 ## Key Commands
 
@@ -61,7 +63,7 @@ This runs: ESLint → Prettier check → TypeScript → Astro check → Build te
 
 - **Articles**: Long-form in `src/content/articles/` with full frontmatter
 - **Notes**: Short-form in `src/content/notes/` with minimal frontmatter
-- Use content commands in `@.cursor/rules/content.mdc` for assistance
+- Use commands: `new-content`, `content-checks`, `content-enhancements`
 - Always run pre-publishing checklist before going live
 
 ### Design Updates
@@ -85,6 +87,7 @@ This runs: ESLint → Prettier check → TypeScript → Astro check → Build te
 3. **Update styleguide** - Add examples when creating components
 4. **Test production builds** - Ensure everything works statically
 5. **Maintain character** - Bold, experimental, personal feel
+6. **No unnecessary docs** - Don't create summary/plan markdown files unless explicitly requested
 
 ## Project Philosophy
 
@@ -98,15 +101,8 @@ This site embraces:
 
 ## Working with Agents
 
-### Design System Expert
-
-Use for: Typography refinement, CSS architecture, visual design, layout experiments
-
-### Astro Specialist
-
-Use for: Build issues, performance optimization, content schemas, framework features
-
-Both agents have deep knowledge of the project and will help maintain consistency.
+- **Design System Expert**: Typography, CSS, visual design, layouts
+- **Astro Specialist**: Build issues, performance, content schemas, framework
 
 ## File Organization
 

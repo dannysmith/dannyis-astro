@@ -309,24 +309,11 @@ The site generates three RSS feeds using Astro's Container API:
 2. **Articles Only** (`/rss/articles.xml`) - Long-form content only
 3. **Notes Only** (`/rss/notes.xml`) - Short-form content only
 
-### Container API Implementation
+### Implementation Details
 
-Uses experimental Container API for full MDX component rendering:
-
-```javascript
-import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import { getContainerRenderer as getMDXRenderer } from '@astrojs/mdx';
-import { loadRenderers } from 'astro:container';
-
-export async function GET(context) {
-  const renderers = await loadRenderers([getMDXRenderer()]);
-  const container = await AstroContainer.create({ renderers });
-
-  // Process content with full component rendering
-  const { Content } = await render(entry);
-  const content = await container.renderToString(Content);
-}
-```
+- Uses Astro's experimental Container API for full MDX component rendering
+- Enables rich content in RSS feeds with proper component rendering
+- All MDX components work correctly in RSS output
 
 ### Content Filtering Rules
 
@@ -346,80 +333,35 @@ export async function GET(context) {
 - All feeds sorted by publication date (newest first)
 - Consistent ordering across RSS feeds
 
-### RSS Features
+### Key Features
 
-**Rich Content Rendering:**
-
-- Full MDX component rendering in RSS
-- No raw import statements in output
-- Proper HTML structure with semantic markup
-- External links include security attributes
-
-**Error Handling:**
-
-- Graceful degradation for failed renders
-- Problematic items logged and skipped
-- Build continues despite individual failures
+- **Rich Content**: Full MDX component rendering in RSS feeds
+- **Error Resilience**: Graceful handling of failed renders
+- **Security**: Automatic external link attributes
 
 ## Publishing Workflow
 
-### Content Creation Process
+### Content Creation
 
-1. **File Creation:**
-   - Use proper naming conventions
-   - Start with appropriate template
-   - Set `draft: true` initially
-
-2. **Content Development:**
-   - Write content using MDX components
-   - Add images using Astro Image component
-   - Apply consistent formatting and structure
-
-3. **Pre-Publishing Validation:**
-   - Run quality checks
-   - Validate frontmatter
-   - Ensure SEO optimization
-   - Test component rendering
-
-4. **Publication:**
-   - Set `draft: false` (or remove draft field)
-   - Verify build success
-   - Confirm RSS feed inclusion
-
-### Quality Gates
-
-**Technical Validation:**
-
-```bash
-npm run lint      # ESLint validation
-npm run check     # Astro/TypeScript checking
-npm run build     # Production build test
-```
-
-**Content Validation:**
-
-- First paragraph length (for drop-cap rendering)
-- No links in first sentences of articles
-- Proper heading hierarchy (no skipped levels)
-- Acronyms wrapped in `<abbr>` tags
-- External links with security attributes
+1. Create file with proper naming conventions
+2. Set `draft: true` initially
+3. Write content using MDX components
+4. Validate with quality checks (`npm run lint`, `npm run check`, `npm run build`)
+5. Set `draft: false` to publish
 
 ### Content Standards
 
-**Article Requirements:**
+**Articles:**
 
-- Long enough first paragraph for drop-cap
-- Proper heading structure (H1 → H2 → H3)
-- No links in opening sentences
 - Compelling description under 160 characters
-- Appropriate cover image and alt text
+- Proper heading hierarchy (H1 → H2 → H3)
+- Appropriate cover image with alt text
 
-**Note Requirements:**
+**Notes:**
 
 - Clear, concise title
-- Proper sourceURL for link posts
-- Relevant tags (3-5 maximum)
-- External link security attributes
+- Include sourceURL for link posts
+- Use relevant tags (3-5 maximum)
 
 ## External Link Security
 
@@ -452,13 +394,6 @@ For HTML links in components:
 - Component-level code splitting
 - Minimal client-side JavaScript
 
-### RSS Performance
-
-- Container API rendering is resource-intensive
-- Monitor build times on deployment platform
-- Consider caching for large content collections
-- Profile memory usage during builds
-
 ### Content Loading
 
 - Lazy loading for below-fold images
@@ -468,53 +403,25 @@ For HTML links in components:
 
 ## Error Handling
 
-### Content Validation
-
 - Schema validation prevents invalid frontmatter
-- Build-time content validation
-- Graceful handling of missing assets
-
-### Component Error Boundaries
-
-- Fallback rendering for failed components
+- Graceful handling of missing assets and failed component renders
 - Meaningful error messages in development
-- Production graceful degradation
-
-### 404 Handling
-
 - Custom 404 page for missing content
-- Proper error boundaries implementation
-- Helpful navigation for lost users
 
-## Development Workflow
-
-### Local Development
+## Development Commands
 
 ```bash
+# Development
 npm run dev          # Start development server at localhost:4321
-```
-
-### Content Commands
-
-Available npm scripts for content creation:
-
-- `npm run newnote "<title>"` - Create new note template
-- `npm run newnote "<url>"` - Create note with source URL
-
-### Build Process
-
-```bash
 npm run build        # Production build with optimizations
 npm run preview      # Preview production build locally
+
+# Content creation
+npm run newnote "<title>"    # Create new note template
+npm run newnote "<url>"      # Create note with source URL
+
+# Quality assurance
+npm run lint         # ESLint validation
+npm run check        # Astro/TypeScript checking
+npm run build        # Production build test
 ```
-
-### Quality Assurance
-
-Always run before deployment:
-
-1. Lint validation (`npm run lint`)
-2. Type checking (`npm run check`)
-3. Production build test (`npm run build`)
-4. Manual Vercel preview verification
-
-This documentation covers the complete technical architecture of the content system. For implementation details of specific components, refer to the component documentation in `.cursor/rules/component-guidelines.mdc`.
