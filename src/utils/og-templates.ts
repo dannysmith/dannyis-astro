@@ -34,7 +34,6 @@ export const templates = {
               width: '20px',
               height: '100%',
               background: '#ff7369',
-              zIndex: 10,
             },
           },
         },
@@ -47,7 +46,6 @@ export const templates = {
               alignItems: 'center',
               justifyContent: 'flex-start',
               padding: '40px 56px 0 56px',
-              zIndex: 2,
               position: 'relative',
             },
             children: [
@@ -102,7 +100,6 @@ export const templates = {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 2,
               position: 'relative',
               padding: '0 56px',
             },
@@ -177,7 +174,6 @@ export const templates = {
               width: '20px',
               height: '100%',
               background: '#ff7369',
-              zIndex: 10,
             },
           },
         },
@@ -190,7 +186,6 @@ export const templates = {
               alignItems: 'center',
               justifyContent: 'flex-start',
               padding: '40px 56px 0 56px',
-              zIndex: 2,
               position: 'relative',
             },
             children: [
@@ -265,7 +260,6 @@ export const templates = {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 2,
               position: 'relative',
               padding: '0 56px',
             },
@@ -341,8 +335,7 @@ export const templates = {
                 width: '20px',
                 height: '100%',
                 background: '#ff7369',
-                zIndex: 10,
-              },
+                },
             },
           },
           // Top bar (profile image + name)
@@ -354,8 +347,7 @@ export const templates = {
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 padding: '40px 56px 0 56px',
-                zIndex: 2,
-                position: 'relative',
+                  position: 'relative',
               },
               children: [
                 // Profile image + name
@@ -409,8 +401,7 @@ export const templates = {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                zIndex: 2,
-                position: 'relative',
+                  position: 'relative',
                 padding: '0 56px',
               },
               children: [
