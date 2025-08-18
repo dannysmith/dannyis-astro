@@ -3,7 +3,6 @@ title: Codewashing
 sourceURL: 'https://adactio.com/journal/21886'
 draft: false
 pubDate: 2025-07-21
-tags: []
 ---
 
 > I have little understanding for people using large language models to generate slop; words and images that nobody asked for.
