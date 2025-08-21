@@ -38,7 +38,7 @@
     "astro-icon": "^1.1.5",
     "inquirer": "^12.7.0",
     "mdast-util-to-string": "^4.0.0",
-    "mermaid": "^11.9.0",
+    "mermaid": "^11.10.0",
     "puppeteer": "^24.12.1",
     "reading-time": "^1.5.0",
     "rehype-autolink-headings": "^7.1.0",
