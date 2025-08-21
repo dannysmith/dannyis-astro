@@ -6,3 +6,4 @@ target
 *.log
 *.yml
 *.yaml
+test-results/
