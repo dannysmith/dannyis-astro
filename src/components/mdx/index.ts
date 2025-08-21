@@ -1,5 +1,6 @@
 // Use this file to import and export all components which are likely to be used in MDX files
 
+import Accordion from './Accordion.astro';
 import Notion from './Notion.astro';
 import Grid from './Grid.astro';
 import Callout from './Callout.astro';
@@ -13,6 +14,7 @@ import Spacer from './Spacer.astro';
 import IntroParagraph from './IntroParagraph.astro';
 
 export {
+  Accordion,
   Notion,
   Grid,
   BookmarkCard,

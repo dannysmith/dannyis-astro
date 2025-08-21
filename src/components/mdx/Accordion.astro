@@ -1,0 +1,98 @@
+---
+export interface Props {
+  header: string;
+}
+
+const { header } = Astro.props;
+---
+
+<div class="accordion-container">
+  <button class="accordion-button" aria-expanded="false">
+    <span class="accordion-header">{header}</span>
+    <span class="accordion-toggle" aria-hidden="true">+</span>
+  </button>
+  <div class="accordion-panel">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .accordion-container {
+    margin: 1.5rem 0;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .accordion-button {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: var(--color-bg-secondary);
+    border: none;
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .accordion-button:hover {
+    background: var(--color-callout-default-bg);
+  }
+
+  .accordion-button[aria-expanded="true"] {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .accordion-header {
+    text-align: left;
+    font-weight: 500;
+  }
+
+  .accordion-toggle {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--color-accent);
+    transition: transform 0.2s ease;
+  }
+
+  .accordion-button[aria-expanded="true"] .accordion-toggle {
+    transform: rotate(45deg);
+  }
+
+  .accordion-panel {
+    display: none;
+    padding: 1.25rem;
+    background: var(--color-bg-primary);
+    font-family: var(--font-prose);
+  }
+
+  .accordion-panel.open {
+    display: block;
+  }
+
+  .accordion-panel :global(> *:first-child) {
+    margin-top: 0;
+  }
+
+  .accordion-panel :global(> *:last-child) {
+    margin-bottom: 0;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.accordion-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const panel = button.nextElementSibling as HTMLElement;
+      const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+      // Toggle state
+      button.setAttribute('aria-expanded', (!isExpanded).toString());
+      panel.classList.toggle('open', !isExpanded);
+    });
+  });
+</script>
