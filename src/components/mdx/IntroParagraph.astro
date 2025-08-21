@@ -1,0 +1,64 @@
+<div class="intro-paragraph">
+  <slot />
+</div>
+
+<style>
+  .intro-paragraph {
+    text-indent: 0;
+  }
+
+  /* First line of intro para*/
+  .intro-paragraph::first-line {
+    text-transform: lowercase;
+    -webkit-hyphens: none;
+    hyphens: none;
+    font-variant-caps: small-caps;
+    font-weight: 525;
+  }
+
+  /* Increase first line weight slightly in dark mode */
+  @media (prefers-color-scheme: dark) {
+    .intro-paragraph::first-line {
+      font-weight: 575;
+    }
+  }
+
+  :root[data-theme='dark'] .intro-paragraph::first-line {
+    font-weight: 575;
+  }
+
+  /*  Drop Cap */
+  .intro-paragraph:first-letter {
+    text-transform: uppercase;
+    float: left;
+    font-size: 4em;
+    line-height: 1;
+    font-weight: bold;
+    padding-right: 0.4ch;
+  }
+</style>
+<script>
+  function normalizeContent(element: HTMLElement) {
+    // Process text nodes while preserving spaces around tags
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+
+    let node;
+    let isFirstNode = true;
+    while ((node = walker.nextNode())) {
+      if (node.textContent) {
+        // Only trim the start of the first text node and end of the last text node
+        const text = node.textContent.replace(/\s+/g, ' '); // normalize multiple spaces to single space
+
+        if (isFirstNode) {
+          node.textContent = text.trimStart();
+          isFirstNode = false;
+        } else {
+          node.textContent = text;
+        }
+      }
+    }
+  }
+
+  const introParagraphs = document.querySelectorAll<HTMLElement>('.intro-paragraph');
+  introParagraphs.forEach(normalizeContent);
+</script>

@@ -563,26 +563,6 @@
     }
   }
 
-  /* First line of first para*/
-  .article > p:first-of-type::first-line {
-    text-transform: lowercase;
-    -webkit-hyphens: none;
-    hyphens: none;
-    font-variant-caps: small-caps;
-    font-weight: 525;
-  }
-
-  /* Increase first line weight slightly in dark mode */
-  @media (prefers-color-scheme: dark) {
-    .article > p:first-of-type::first-line {
-      font-weight: 575;
-    }
-  }
-
-  :root[data-theme='dark'] .article > p:first-of-type::first-line {
-    font-weight: 575;
-  }
-
   /* End Mark */
   .article > p:last-of-type:after {
     color: var(--color-article-accent);
@@ -597,14 +577,6 @@
     width: 1em;
     line-height: 0.5;
     margin-left: 0.1em;
-  }
-  /*  Drop Cap */
-  .article > p:first-of-type::first-letter {
-    text-transform: uppercase;
-    float: left;
-    font-size: 4em;
-    line-height: 1;
-    padding-right: 0.4ch;
   }
 
   /* ----------- Links ----------- */

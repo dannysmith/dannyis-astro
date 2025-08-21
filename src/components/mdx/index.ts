@@ -10,6 +10,7 @@ import BasicImage from './BasicImage.astro';
 import BlockQuoteCitation from './BlockQuoteCitation.astro';
 import ButtonLink from './ButtonLink.astro';
 import Spacer from './Spacer.astro';
+import IntroParagraph from './IntroParagraph.astro';
 
 export {
   Notion,
@@ -22,4 +23,5 @@ export {
   BlockQuoteCitation,
   ButtonLink,
   Spacer,
+  IntroParagraph,
 };
