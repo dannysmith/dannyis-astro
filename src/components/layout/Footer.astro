@@ -1,8 +1,5 @@
 ---
-import RSSIcon from '@components/icons/RSSIcon.astro';
-import LinkedInIcon from '@components/icons/LinkedInIcon.astro';
-import YouTubeIcon from '@components/icons/YouTubeIcon.astro';
-import InstagramIcon from '@components/icons/InstagramIcon.astro';
+import { Icon } from 'astro-icon/components';
 const today = new Date();
 ---
 
@@ -26,22 +23,22 @@ const today = new Date();
   <section class="footer-social-links">
     <ul>
       <li>
-        <a href="/linkedin" title="LinkedIn Profile"><LinkedInIcon /></a>
+        <a href="/linkedin" title="LinkedIn Profile"><Icon name="social/linkedin" /></a>
       </li>
-      <li><a href="/youtube" title="Youtube Channel"><YouTubeIcon /></a></li>
+      <li><a href="/youtube" title="Youtube Channel"><Icon name="social/youtube" /></a></li>
       <li>
         <a
           href="https://instagram.com/dannysmith"
           title="Instagram Profile"
           target="_blank"
-          rel="noopener noreferrer"><InstagramIcon /></a
+          rel="noopener noreferrer"><Icon name="social/instagram" /></a
         >
       </li>
     </ul>
   </section>
   <section class="footer-rss-inline">
     <span class="footer-rss-icon-wrapper">
-      <RSSIcon className="footer-rss-icon" />
+      <Icon name="social/rss" class="footer-rss-icon" />
     </span>
     <a href="/rss.xml">All</a> |
     <a href="/rss/articles.xml">Articles</a> |

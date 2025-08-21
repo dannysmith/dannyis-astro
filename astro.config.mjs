@@ -7,6 +7,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeMermaid from 'rehype-mermaid';
 import { remarkReadingTime } from './remark-reading-time.mjs';
+import icon from 'astro-icon';
 
 // https://astro.build/config
 export default defineConfig({
@@ -27,7 +28,7 @@ export default defineConfig({
     headingIdCompat: true,
     csp: false,
   },
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap(), icon()],
   markdown: {
     syntaxHighlight: {
       type: 'shiki',
