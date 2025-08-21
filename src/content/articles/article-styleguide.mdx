@@ -7,7 +7,7 @@ styleguide: true
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed } from '@components/mdx';
+import { Notion, Grid, BookmarkCard, Callout, Embed, BasicImage } from '@components/mdx';
 import image1 from '@assets/articles/styleguide-image.jpg';
 
 This Article Styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in an Article context. Use it to check typography, component appearance, and real-world content. The first paragraph is intentionally long to show drop cap and first-paragraph styling. This page is a reference for designers, developers, and content authors to see how headings, lists, blockquotes, code, tables, images, embeds, and custom components appear in a real article. For a full component reference, see the [main styleguide](/styleguide/). You'll also find examples of footnotes, abbr, and other advanced markdown features. The goal is to ensure every element looks beautiful, readable, and consistent in the context of long-form writing. Feel free to add new examples as you add new features or components to the site. For more information, see the [main styleguide](/styleguide/).[^intro]
@@ -50,29 +50,42 @@ This section shows different image layouts and treatments.
 
 ### A normal image
 
-<Image src={image1} alt="Example image" />
+<BasicImage src={image1} alt="Example image" />
 
 ### A normal image with height and width set
 
-<Image src={image1} alt="Example image" height="200" width="500" />
+<BasicImage src={image1} alt="Example image" height="200" width="500" />
 
 ### A normal image with a border
 
-<Image src={image1} alt="Example image" class="border" />
+<BasicImage src={image1} alt="Example image" framed="true" />
 
 ### An image at left-bleed
 
-<Image src={image1} alt="Example image" class="bleed-left" />
+<BasicImage src={image1} alt="Example image" bleed="left" />
 
 ### An image at right-bleed
 
-<Image src={image1} alt="Example image" class="bleed-right" />
+<BasicImage src={image1} alt="Example image" bleed="right" />
 
 ### An image at full-bleed
 
-<Image src={image1} alt="Example image" class="bleed-full" />
+<BasicImage src={image1} alt="Example image" bleed="full" />
 
----
+### An image with alt shown
+
+<BasicImage src={image1} alt="Example image" showAlt="true" />
+
+### Framed image with alt and source shown
+
+<BasicImage
+  src={image1}
+  alt="Example image"
+  showAlt="true"
+  sourceTitle="https://google.com"
+  sourceUrl="http://google.com"
+  framed="true"
+/>
 
 ## Typography & Inline Styles
 

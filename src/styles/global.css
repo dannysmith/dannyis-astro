@@ -804,21 +804,6 @@
       color: var(--color-article-accent);
     }
   }
-
-  /* ----------- Bleeds for images ----------- */
-  .article > .bleed-left {
-    grid-column: 1 / 3;
-  }
-  .article > .bleed-right {
-    grid-column: 2 / 4;
-  }
-  .article > .bleed-full {
-    width: 100%;
-    grid-column: 1 / 4;
-  }
-  .article > .border {
-    filter: var(--shadow-small);
-  }
 }
 
 /* Theme Layer */
