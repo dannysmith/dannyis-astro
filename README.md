@@ -16,6 +16,7 @@ src/
 ├── content/          # Content collections
 │   ├── articles/     # Long-form articles
 │   └── notes/        # Short-form notes
+├── icons/            # Custom SVG icons
 ├── config/           # Centralized configuration
 └── utils/            # Utility functions
 ```

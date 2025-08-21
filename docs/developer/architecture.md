@@ -57,12 +57,9 @@ dannyis-astro/
 │   │   │   ├── Loom.astro          # Loom video embeds
 │   │   │   ├── Notion.astro        # Notion page links
 │   │   │   └── index.ts            # Barrel exports (used in MDX files)
-│   │   ├── icons/        # Icon components
-│   │   │   ├── InstagramIcon.astro
-│   │   │   ├── LinkedInIcon.astro
-│   │   │   ├── NotionIcon.astro
-│   │   │   ├── RSSIcon.astro
-│   │   │   └── YouTubeIcon.astro
+│   ├── icons/           # Custom SVG icons
+│   │   ├── social/      # Social media icons
+│   │   └── ui/          # UI icons
 │   │   └── index.ts      # Main component barrel export
 │   ├── config/           # Configuration files
 │   │   └── seo.ts        # Centralized SEO configuration and constants
@@ -123,15 +120,9 @@ Components available for use in MDX content files:
 - **Loom.astro** - Dedicated Loom video embed component
 - **Notion.astro** - Notion page links with automatic title fetching
 
-#### Icon Components (`icons/`)
+### Icons
 
-SVG icon components for consistent iconography:
-
-- **InstagramIcon.astro**
-- **LinkedInIcon.astro**
-- **NotionIcon.astro**
-- **RSSIcon.astro** - Monochrome, scalable RSS icon for feed links
-- **YouTubeIcon.astro**
+The site uses astro-icon with Heroicons for consistent iconography. Custom SVG icons are stored in `src/icons/` and organized by category.
 
 ## Import Patterns and Module System
 
@@ -156,8 +147,8 @@ import { Callout, Embed, BookmarkCard } from '@components/mdx';
 import { AUTHOR, TITLE_TEMPLATES } from '@config/seo';
 import { generatePageTitle, validateSEOData } from '@utils/seo';
 
-// Icon imports
-import RSSIcon from '@components/icons/RSSIcon.astro';
+// Icon imports (using astro-icon)
+import { Icon } from 'astro-icon/components';
 ```
 
 ### TypeScript Path Configuration

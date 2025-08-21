@@ -112,6 +112,7 @@ src/
 ├── content/
 │   ├── articles/    # Long-form writing (YYYY-MM-DD-slug.mdx)
 │   └── notes/       # Short updates (YYYY-MM-DD-slug.md)
+├── icons/           # Custom SVG icons
 ├── layouts/         # Page templates
 ├── pages/           # Routes and dynamic pages
 └── styles/          # Global CSS and theme
