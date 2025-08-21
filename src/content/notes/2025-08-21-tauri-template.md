@@ -1,9 +1,9 @@
 ---
-title: "Tauri Template"
-sourceURL: "https://github.com/dannysmith/tauri-template"
+title: 'Tauri Template'
+sourceURL: 'https://github.com/dannysmith/tauri-template'
 slug: announcing-tauri-template
-pubDate: 2025-08-21
-tags: 
+pubDate: 2025-08-20
+tags:
   - tauri
   - react
 ---
