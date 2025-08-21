@@ -1,6 +1,7 @@
 # Task: Add Minimal Testing Suite for AI Safety
 
 ## Objective
+
 Implement a minimal but effective testing suite to ensure AI coding tools don't break the site. Focus on speed, simplicity, and ease of extension.
 
 ## Critical Analysis & Revised Plan
@@ -8,6 +9,7 @@ Implement a minimal but effective testing suite to ensure AI coding tools don't 
 ### What Actually Needs Testing (Based on Codebase Analysis)
 
 **Critical Business Logic (HIGH PRIORITY)**
+
 1. **SEO Functions** (`src/utils/seo.ts`) - Pure functions with complex template logic
 2. **Content Collection Schemas** - Zod schemas that validate all content
 3. **Content Filtering Logic** - Draft/styleguide filtering (MOST CRITICAL)
@@ -16,11 +18,13 @@ Implement a minimal but effective testing suite to ensure AI coding tools don't 
 
 **Content Filtering Logic (NEW - CRITICAL!)**
 The codebase has complex filtering rules that AI could easily break:
+
 - **Individual pages**: `import.meta.env.PROD ? data.draft !== true : true`
 - **Listing pages**: `&& !data.styleguide` added to draft filter
 - **Environment sensitivity**: Different behavior in dev vs prod
 
 **What DOESN'T Need Testing**
+
 - `og-image-generator.ts` - Has built-in fallbacks, low failure impact
 - `og-templates.ts` - Just JSX templates, no logic
 - `NoteCard.astro` - Pure presentation, no logic beyond props
@@ -32,9 +36,11 @@ The filtering logic appears in 8+ files with slight variations. This is the #1 p
 ## Revised Testing Architecture
 
 ### 1. Unit Tests (Vitest) - ~5 seconds runtime
+
 Focus ONLY on functions with actual business logic.
 
 **Priority Targets:**
+
 ```typescript
 // SEO utility functions
 - generatePageTitle() - Conditional template selection
@@ -49,13 +55,16 @@ Focus ONLY on functions with actual business logic.
 ```
 
 **Skip These (No Logic):**
+
 - getSiteConfig() - Just returns constants
 - generateOGImageUrl() - Simple URL construction
 
 ### 2. Content Validation Tests - ~2 seconds runtime
+
 Test Zod schemas and filtering behavior.
 
 **Priority Targets:**
+
 ```typescript
 - Article schema validation (dates, drafts, required fields)
 - Note schema validation
@@ -64,9 +73,11 @@ Test Zod schemas and filtering behavior.
 ```
 
 ### 3. Route Validation Tests (E2E) - ~15 seconds runtime
+
 Test that content filtering actually works in production.
 
 **Critical Scenarios:**
+
 1. **Homepage Renders** - Basic load test
 2. **Article Routes Work** - Individual articles accessible
 3. **Listing Pages Filter Correctly** - No drafts/styleguide in /writing, /notes
@@ -82,6 +93,7 @@ Test the business logic (filtering) separately from the routes that use it.
 ### Phase 1: Setup Infrastructure (30 minutes)
 
 #### 1.1 Install Dependencies
+
 ```bash
 npm install -D vitest @vitest/ui happy-dom @testing-library/dom
 npm install -D playwright @playwright/test
@@ -89,7 +101,9 @@ npm install -D @astrojs/check typescript
 ```
 
 #### 1.2 Configure Vitest
+
 Create `vitest.config.ts`:
+
 ```typescript
 import { getViteConfig } from 'astro/config';
 
@@ -100,15 +114,17 @@ export default getViteConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', '.astro/', 'dist/']
+      exclude: ['node_modules/', '.astro/', 'dist/'],
     },
     testTimeout: 10000,
-  }
+  },
 });
 ```
 
 #### 1.3 Configure Playwright
+
 Create `playwright.config.ts`:
+
 ```typescript
 import { defineConfig } from '@playwright/test';
 
@@ -135,6 +151,7 @@ export default defineConfig({
 ```
 
 #### 1.4 Update package.json Scripts
+
 ```json
 {
   "scripts": {
@@ -142,7 +159,7 @@ export default defineConfig({
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
     "test:unit": "vitest run tests/unit",
-    "test:component": "vitest run tests/component", 
+    "test:component": "vitest run tests/component",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm run test:unit && npm run test:component && npm run test:e2e",
@@ -154,6 +171,7 @@ export default defineConfig({
 ### Phase 2: Simplified Test Structure
 
 #### 2.1 Updated Directory Structure
+
 ```
 tests/
 ├── unit/
@@ -167,27 +185,27 @@ tests/
 ```
 
 #### 2.2 SEO Utils Test (High Value)
+
 `tests/unit/seo.test.ts`:
+
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { 
-  generatePageTitle, 
+import {
+  generatePageTitle,
   generateMetaDescription,
   validateSEOData,
-  generateJSONLD
+  generateJSONLD,
 } from '@/src/utils/seo';
 
 describe('SEO Utils', () => {
   // Test the complex conditional logic
   describe('generatePageTitle', () => {
     it('adds correct suffix for articles', () => {
-      expect(generatePageTitle('My Article', 'article'))
-        .toBe('My Article | Writing | Danny Smith');
+      expect(generatePageTitle('My Article', 'article')).toBe('My Article | Writing | Danny Smith');
     });
 
     it('adds correct suffix for notes', () => {
-      expect(generatePageTitle('My Note', 'note'))
-        .toBe('My Note | Notes | Danny Smith');
+      expect(generatePageTitle('My Note', 'note')).toBe('My Note | Notes | Danny Smith');
     });
 
     it('preserves homepage title unchanged', () => {
@@ -208,7 +226,7 @@ describe('SEO Utils', () => {
       const input = {
         title: 'Test',
         type: 'article' as const,
-        tags: ['tech']
+        tags: ['tech'],
       };
       const result = validateSEOData(input);
       expect(result).toMatchObject(input);
@@ -224,11 +242,11 @@ describe('SEO Utils', () => {
         type: 'article' as const,
         pageType: 'article' as const,
         pubDate: new Date('2025-01-01'),
-        tags: ['tech', 'web']
+        tags: ['tech', 'web'],
       };
-      
+
       const result = generateJSONLD(data, 'https://danny.is/test', 'https://danny.is/og.png');
-      
+
       expect(result['@context']).toBe('https://schema.org');
       expect(result['@graph']).toBeInstanceOf(Array);
       expect(result['@graph']).toHaveLength(4); // Person, Org, Website, Article
@@ -238,7 +256,9 @@ describe('SEO Utils', () => {
 ```
 
 #### 2.3 Content Schema Test (Catches Breaking Changes)
+
 `tests/unit/schemas.test.ts`:
+
 ```typescript
 import { describe, it, expect } from 'vitest';
 import { collections } from '@/src/content.config';
@@ -251,7 +271,7 @@ describe('Content Schemas', () => {
     it('validates minimal valid article', () => {
       const valid = {
         title: 'Test Article',
-        pubDate: '2025-01-01'
+        pubDate: '2025-01-01',
       };
       expect(() => articleSchema.parse(valid)).not.toThrow();
     });
@@ -265,7 +285,7 @@ describe('Content Schemas', () => {
     it('coerces date strings to Date objects', () => {
       const result = articleSchema.parse({
         title: 'Test',
-        pubDate: '2025-01-01'
+        pubDate: '2025-01-01',
       });
       expect(result.pubDate).toBeInstanceOf(Date);
     });
@@ -275,7 +295,7 @@ describe('Content Schemas', () => {
     it('validates minimal valid note', () => {
       const valid = {
         title: 'Test Note',
-        pubDate: '2025-01-01'
+        pubDate: '2025-01-01',
       };
       expect(() => noteSchema.parse(valid)).not.toThrow();
     });
@@ -284,7 +304,7 @@ describe('Content Schemas', () => {
       const withInvalidURL = {
         title: 'Test',
         pubDate: '2025-01-01',
-        sourceURL: 'not-a-url'
+        sourceURL: 'not-a-url',
       };
       expect(() => noteSchema.parse(withInvalidURL)).toThrow();
     });
@@ -293,7 +313,9 @@ describe('Content Schemas', () => {
 ```
 
 #### 2.4 Content Filtering Test (CRITICAL)
+
 `tests/unit/content-filter.test.ts`:
+
 ```typescript
 import { describe, it, expect, vi } from 'vitest';
 
@@ -316,7 +338,7 @@ describe('Content Filtering Logic', () => {
   describe('Individual Page Filter (drafts only)', () => {
     it('excludes drafts in production', () => {
       const filter = createContentFilter(true);
-      
+
       expect(filter({ data: { draft: true } })).toBe(false);
       expect(filter({ data: { draft: false } })).toBe(true);
       expect(filter({ data: {} })).toBe(true); // no draft field = not draft
@@ -324,7 +346,7 @@ describe('Content Filtering Logic', () => {
 
     it('includes drafts in development', () => {
       const filter = createContentFilter(false);
-      
+
       expect(filter({ data: { draft: true } })).toBe(true);
       expect(filter({ data: { draft: false } })).toBe(true);
       expect(filter({ data: {} })).toBe(true);
@@ -333,7 +355,7 @@ describe('Content Filtering Logic', () => {
     it('allows styleguide pages individually', () => {
       const prodFilter = createContentFilter(true);
       const devFilter = createContentFilter(false);
-      
+
       // Styleguide pages should render individually
       expect(prodFilter({ data: { styleguide: true } })).toBe(true);
       expect(devFilter({ data: { styleguide: true } })).toBe(true);
@@ -343,7 +365,7 @@ describe('Content Filtering Logic', () => {
   describe('Listing Page Filter (drafts + styleguide)', () => {
     it('excludes drafts and styleguide in production', () => {
       const filter = createListingFilter(true);
-      
+
       expect(filter({ data: { draft: true } })).toBe(false);
       expect(filter({ data: { styleguide: true } })).toBe(false);
       expect(filter({ data: { draft: true, styleguide: true } })).toBe(false);
@@ -352,9 +374,9 @@ describe('Content Filtering Logic', () => {
 
     it('excludes styleguide but includes drafts in development', () => {
       const filter = createListingFilter(false);
-      
-      expect(filter({ data: { draft: true } })).toBe(true);  // Draft OK in dev
-      expect(filter({ data: { styleguide: true } })).toBe(false);  // Styleguide never OK in lists
+
+      expect(filter({ data: { draft: true } })).toBe(true); // Draft OK in dev
+      expect(filter({ data: { styleguide: true } })).toBe(false); // Styleguide never OK in lists
       expect(filter({ data: {} })).toBe(true);
     });
   });
@@ -363,7 +385,7 @@ describe('Content Filtering Logic', () => {
     it('handles import.meta.env.PROD correctly', () => {
       // Mock the environment variable behavior
       const mockEnv = (isProd: boolean) => ({
-        PROD: isProd
+        PROD: isProd,
       });
 
       // Simulate the actual filtering logic from the codebase
@@ -381,7 +403,9 @@ describe('Content Filtering Logic', () => {
 ### Phase 3: Enhanced E2E Tests (30 minutes)
 
 #### 3.1 Comprehensive Route & Filter Tests
+
 `tests/e2e/smoke.spec.ts`:
+
 ```typescript
 import { test, expect } from '@playwright/test';
 
@@ -396,11 +420,11 @@ test.describe('Critical Path Tests', () => {
   // Test 2: Content routing works
   test('can navigate to an article', async ({ page }) => {
     await page.goto('/writing');
-    
+
     const firstLink = page.locator('article a').first();
     const href = await firstLink.getAttribute('href');
     await firstLink.click();
-    
+
     await expect(page).toHaveURL(new RegExp(href!));
     await expect(page.locator('article')).toBeVisible();
   });
@@ -408,11 +432,11 @@ test.describe('Critical Path Tests', () => {
   // Test 3: RSS feed generates valid XML
   test('RSS feed returns valid XML', async ({ page }) => {
     const response = await page.goto('/rss.xml');
-    
+
     expect(response?.status()).toBe(200);
     const contentType = response?.headers()['content-type'];
     expect(contentType).toMatch(/xml|rss/);
-    
+
     const content = await response?.text();
     expect(content).toContain('<?xml');
     expect(content).toContain('<rss');
@@ -423,7 +447,7 @@ test.describe('Critical Path Tests', () => {
   test('404 page works correctly', async ({ page }) => {
     const response = await page.goto('/this-does-not-exist');
     expect(response?.status()).toBe(404);
-    
+
     const pageContent = await page.textContent('body');
     expect(pageContent).toMatch(/404|not found/i);
   });
@@ -446,11 +470,11 @@ test.describe('Content Filtering Tests', () => {
   // Test 6: Listing pages exclude styleguide content
   test('writing page excludes styleguide articles', async ({ page }) => {
     await page.goto('/writing');
-    
+
     // Check page content doesn't include styleguide
     const pageContent = await page.textContent('body');
     expect(pageContent).not.toMatch(/styleguide/i);
-    
+
     // Verify there are actual articles shown
     const articles = page.locator('article');
     expect(await articles.count()).toBeGreaterThan(0);
@@ -458,10 +482,10 @@ test.describe('Content Filtering Tests', () => {
 
   test('notes page excludes styleguide notes', async ({ page }) => {
     await page.goto('/notes');
-    
+
     const pageContent = await page.textContent('body');
     expect(pageContent).not.toMatch(/styleguide/i);
-    
+
     const notes = page.locator('article');
     expect(await notes.count()).toBeGreaterThan(0);
   });
@@ -470,10 +494,10 @@ test.describe('Content Filtering Tests', () => {
   test('RSS feeds exclude styleguide content', async ({ page }) => {
     const response = await page.goto('/rss.xml');
     const content = await response?.text();
-    
+
     // Should not contain styleguide content
     expect(content).not.toMatch(/styleguide/i);
-    
+
     // Should contain actual articles and notes
     expect(content).toContain('<item>');
   });
@@ -485,7 +509,7 @@ test.describe('Content Filtering Tests', () => {
       '/writing/ai-and-adhd/',
       '/writing/astro-editor/',
       '/writing/vibe-coding-astro-editor/',
-      '/writing/moving-to-astro/'
+      '/writing/moving-to-astro/',
     ];
 
     // Test one draft article (adjust path based on your actual content)
@@ -511,6 +535,7 @@ test.describe('Build Validation', () => {
 ### Phase 4: Simplified Setup & Scripts
 
 #### 4.1 Updated package.json Scripts
+
 ```json
 {
   "scripts": {
@@ -525,7 +550,9 @@ test.describe('Build Validation', () => {
 ```
 
 #### 4.2 Minimal CI Setup
+
 `.github/workflows/test.yml`:
+
 ```yaml
 name: Test Suite
 
@@ -543,19 +570,19 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - run: npm ci
-      
+
       # Quick checks first (fail fast)
       - run: npm run check:types
       - run: npm run lint
-      
+
       # Unit tests
       - run: npm run test:unit
-      
+
       # Build test (catches most integration issues)
       - run: npm run build
-      
+
       # E2E only if everything else passes
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
@@ -564,20 +591,23 @@ jobs:
 ## Final Success Criteria
 
 ### What We're Actually Testing
+
 - **SEO Functions**: 4 functions with actual business logic (~8 tests)
-- **Content Schemas**: 2 schemas with validation rules (~6 tests)  
+- **Content Schemas**: 2 schemas with validation rules (~6 tests)
 - **Content Filtering Logic**: Draft/styleguide filtering (~12 tests)
 - **Route Validation**: Individual pages, listings, RSS (~8 tests)
 - **E2E Critical Paths**: 4 smoke tests (homepage, article, RSS, 404)
 - **Total Tests**: ~34 focused tests (vs original 40 scattered tests)
 
 ### Updated Metrics
+
 - [ ] Full suite runs in < 25 seconds (Unit: 7s, E2E: 18s)
 - [ ] Tests catch the #1 bug source (content filtering)
 - [ ] Route validation ensures pages actually work
 - [ ] Build validation as final integration test
 
 ### What We're NOT Testing
+
 - **Presentation components** - No logic to test
 - **OG image generation** - Has fallbacks, low impact
 - **Simple getters** - Testing constants is pointless
@@ -586,6 +616,7 @@ jobs:
 ## Implementation Checklist (Revised)
 
 ### Day 1: Core Setup (2 hours)
+
 ```bash
 # 1. Install minimal dependencies
 npm install -D vitest happy-dom playwright @playwright/test
@@ -600,6 +631,7 @@ mkdir -p tests/unit tests/e2e tests/fixtures
 ```
 
 ### What to Skip
+
 - ❌ Component tests with Container API
 - ❌ Multiple E2E test files
 - ❌ Complex test fixtures
@@ -607,6 +639,7 @@ mkdir -p tests/unit tests/e2e tests/fixtures
 - ❌ Visual regression tests
 
 ### Maintenance Philosophy
+
 1. **If it has logic, test it**
 2. **If it's just a template, skip it**
 3. **One E2E test per user journey**
@@ -615,12 +648,14 @@ mkdir -p tests/unit tests/e2e tests/fixtures
 ## Why This Approach Works
 
 ### Original Plan Problems
+
 - **Over-testing**: Testing presentation components with no logic
 - **Missing critical tests**: Content schema validation
 - **Redundant E2E**: Testing notes AND articles separately
 - **Complex setup**: Component tests need Container API setup
 
 ### Revised Plan Benefits
+
 - **Focused on logic**: Only test functions that can break
 - **Catches real issues**: Schema tests prevent content errors
 - **Faster execution**: ~20s total vs 30s target
@@ -661,6 +696,7 @@ export default defineConfig({
 ## Key Decisions & Justifications
 
 ### Why These Tests?
+
 1. **SEO Utils** - Complex conditional logic, affects all pages
 2. **Content Schemas** - Catch Zod validation breaks
 3. **Content Filtering Logic** - THE #1 place AI will break things (8+ files with this logic)
@@ -668,6 +704,7 @@ export default defineConfig({
 5. **E2E Smoke** - Verifies the site works end-to-end
 
 ### Why NOT These Tests?
+
 1. **Component tests** - Astro components here are just templates
 2. **OG Image tests** - Has fallback, non-critical, hard to test
 3. **Multiple E2E files** - One comprehensive file is cleaner
@@ -679,6 +716,7 @@ export default defineConfig({
 **Final plan**: ~34 focused tests, covers the actual failure points
 
 This enhanced approach:
+
 - Tests the business logic that actually breaks (filtering)
 - Validates routes work correctly in dev and prod
 - Catches content schema violations

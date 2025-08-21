@@ -335,7 +335,7 @@ export const templates = {
                 width: '20px',
                 height: '100%',
                 background: '#ff7369',
-                },
+              },
             },
           },
           // Top bar (profile image + name)
@@ -347,7 +347,7 @@ export const templates = {
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 padding: '40px 56px 0 56px',
-                  position: 'relative',
+                position: 'relative',
               },
               children: [
                 // Profile image + name
@@ -401,7 +401,7 @@ export const templates = {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                  position: 'relative',
+                position: 'relative',
                 padding: '0 56px',
               },
               children: [

@@ -18,7 +18,7 @@ describe('Content Filtering Logic', () => {
   describe('Individual Page Filter (drafts only)', () => {
     it('excludes drafts in production', () => {
       const filter = createContentFilter(true);
-      
+
       expect(filter({ data: { draft: true } })).toBe(false);
       expect(filter({ data: { draft: false } })).toBe(true);
       expect(filter({ data: {} })).toBe(true); // no draft field = not draft
@@ -26,7 +26,7 @@ describe('Content Filtering Logic', () => {
 
     it('includes drafts in development', () => {
       const filter = createContentFilter(false);
-      
+
       expect(filter({ data: { draft: true } })).toBe(true);
       expect(filter({ data: { draft: false } })).toBe(true);
       expect(filter({ data: {} })).toBe(true);
@@ -35,7 +35,7 @@ describe('Content Filtering Logic', () => {
     it('allows styleguide pages individually', () => {
       const prodFilter = createContentFilter(true);
       const devFilter = createContentFilter(false);
-      
+
       // Styleguide pages should render individually
       expect(prodFilter({ data: { styleguide: true } })).toBe(true);
       expect(devFilter({ data: { styleguide: true } })).toBe(true);
@@ -45,7 +45,7 @@ describe('Content Filtering Logic', () => {
   describe('Listing Page Filter (drafts + styleguide)', () => {
     it('excludes drafts and styleguide in production', () => {
       const filter = createListingFilter(true);
-      
+
       expect(filter({ data: { draft: true } })).toBe(false);
       expect(filter({ data: { styleguide: true } })).toBe(false);
       expect(filter({ data: { draft: true, styleguide: true } })).toBe(false);
@@ -54,9 +54,9 @@ describe('Content Filtering Logic', () => {
 
     it('excludes styleguide but includes drafts in development', () => {
       const filter = createListingFilter(false);
-      
-      expect(filter({ data: { draft: true } })).toBe(true);  // Draft OK in dev
-      expect(filter({ data: { styleguide: true } })).toBe(false);  // Styleguide never OK in lists
+
+      expect(filter({ data: { draft: true } })).toBe(true); // Draft OK in dev
+      expect(filter({ data: { styleguide: true } })).toBe(false); // Styleguide never OK in lists
       expect(filter({ data: {} })).toBe(true);
     });
 
@@ -65,9 +65,9 @@ describe('Content Filtering Logic', () => {
       const devFilter = createListingFilter(false);
 
       const testContent = { data: { draft: true, styleguide: true } };
-      
+
       expect(prodFilter(testContent)).toBe(false); // Both exclude in prod
-      expect(devFilter(testContent)).toBe(false);  // Styleguide excludes in dev too
+      expect(devFilter(testContent)).toBe(false); // Styleguide excludes in dev too
     });
   });
 
@@ -79,13 +79,13 @@ describe('Content Filtering Logic', () => {
       };
 
       // Production behavior
-      expect(testFilter(true, true)).toBe(false);   // exclude draft
-      expect(testFilter(true, false)).toBe(true);   // include non-draft
+      expect(testFilter(true, true)).toBe(false); // exclude draft
+      expect(testFilter(true, false)).toBe(true); // include non-draft
       expect(testFilter(true, undefined)).toBe(true); // include no draft field
 
-      // Development behavior  
-      expect(testFilter(false, true)).toBe(true);    // include draft
-      expect(testFilter(false, false)).toBe(true);   // include non-draft
+      // Development behavior
+      expect(testFilter(false, true)).toBe(true); // include draft
+      expect(testFilter(false, false)).toBe(true); // include non-draft
       expect(testFilter(false, undefined)).toBe(true); // include no draft field
     });
 
@@ -99,7 +99,7 @@ describe('Content Filtering Logic', () => {
       // Styleguide always excluded from listings
       expect(testListingFilter(true, false, true)).toBe(false);
       expect(testListingFilter(false, true, true)).toBe(false);
-      
+
       // Non-styleguide follows draft rules
       expect(testListingFilter(true, false, false)).toBe(true);
       expect(testListingFilter(false, true, false)).toBe(true);

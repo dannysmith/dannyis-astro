@@ -54,7 +54,7 @@ describe('Content Schema Logic', () => {
         title: 'Test Article',
         pubDate: '2025-01-01',
         draft: true,
-        tags: ['tech', 'web']
+        tags: ['tech', 'web'],
       };
 
       expect(() => articleSchema.parse(validArticle)).not.toThrow();
@@ -75,7 +75,7 @@ describe('Content Schema Logic', () => {
       const validNote = {
         title: 'Test Note',
         pubDate: '2025-01-01',
-        sourceURL: 'https://example.com'
+        sourceURL: 'https://example.com',
       };
 
       expect(() => noteSchema.parse(validNote)).not.toThrow();
