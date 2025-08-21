@@ -81,7 +81,7 @@ const data = await fetch('...').then(r => r.json());
 ### Performance Techniques
 
 - **Prerender Everything**: Use `export const prerender = true`
-- **Optimize Images**: Always use Astro's Image component
+- **Optimize Images**: Use BasicImage component for content, Astro's Image for layouts
 - **Inline Critical CSS**: For above-the-fold content
 - **Lazy Load Below Fold**: Using native loading="lazy"
 - **Minimize Redirects**: Handle at build time when possible
@@ -166,15 +166,14 @@ type Article = CollectionEntry<'articles'>;
 
 ```astro
 ---
-import { Image } from 'astro:assets';
+import { BasicImage } from '@components/mdx';
 import heroImage from '../assets/hero.jpg';
 ---
-<!-- Optimized image with automatic srcset -->
-<Image
+<!-- Optimized image with bleed options -->
+<BasicImage
   src={heroImage}
   alt="Description"
-  widths={[400, 800, 1200]}
-  sizes="(max-width: 800px) 100vw, 800px"
+  bleed="full"
 />
 ```
 

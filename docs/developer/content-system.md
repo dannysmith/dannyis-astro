@@ -219,9 +219,21 @@ Layout component for organizing content:
 
 ## Image Optimization
 
-### Astro Image Component
+### BasicImage Component (Recommended)
 
-All images should use Astro's built-in Image component:
+For content images, use the custom BasicImage component which wraps Astro's Picture component:
+
+```mdx
+import { BasicImage } from '@components/mdx';
+import coverImage from '../assets/articles/cover-image.jpg';
+
+<BasicImage src={coverImage} alt="Descriptive alt text" />
+<BasicImage src={coverImage} alt="Descriptive alt text" bleed="full" />
+```
+
+### Astro Image Component (For Layouts)
+
+For layout-specific images, use Astro's built-in Image component:
 
 ```mdx
 import { Image } from 'astro:assets';

@@ -42,7 +42,7 @@ description:
 cover:
 coverAlt:
 ---
-import { Image, Picture } from 'astro:assets';
+import { BasicImage } from '@components/mdx';
 import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 

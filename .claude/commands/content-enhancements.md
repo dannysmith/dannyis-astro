@@ -13,7 +13,7 @@ When inserting an image:
 
 - Don't resize images unless requested
 - Rename appropriately and place in `src/assets/`
-- Use Astro's `<Image>` component with proper imports
+- Use `<BasicImage>` component for content images with proper imports
 - Provide descriptive alt text
 - If no image provided, offer to find on Unsplash or generate
 - Don't use copyrighted images without permission
@@ -21,9 +21,10 @@ When inserting an image:
 ### Example
 
 ```astro
-import myImage from '../assets/articles/article-name/image.jpg';
+import { BasicImage } from '@components/mdx';
 
-<Image src={myImage} alt="Descriptive alt text" />
+<BasicImage src="/assets/articles/article-name/image.jpg" alt="Descriptive alt text" />
+<BasicImage src="/assets/articles/article-name/image.jpg" alt="Descriptive alt text" bleed="left" />
 ```
 
 ## Add Header Image
