@@ -1,41 +1,26 @@
 ---
 import { Icon } from 'astro-icon/components';
+import NavLink from '@components/navigation/NavLink.astro';
+import PersonalLogo from '@components/ui/PersonalLogo.astro';
+import SocialLinks from '@components/ui/SocialLinks.astro';
 const today = new Date();
 ---
 
 <footer>
-  <section class="footer-name">
-    <div class="circle"></div>
-    <div class="name">Danny Smith</div>
-  </section>
+  <PersonalLogo />
   <section class="footer-nav-links">
     <ul>
       <li>
-        <a href={Astro.site?.href} class="h-card" title="Danny Smith">Home</a>
+        <NavLink href={Astro.site?.href} class="h-card" title="Danny Smith">Home</NavLink>
       </li>
-      <li><a href="/writing">Writing</a></li>
-      <li><a href="/notes">Notes</a></li>
-      <li><a href="/now">Now</a></li>
-      <li><a href="/working">Work</a></li>
-      <li><a href="/toolbox">Toolbox</a></li>
+      <li><NavLink href="/writing">Writing</NavLink></li>
+      <li><NavLink href="/notes">Notes</NavLink></li>
+      <li><NavLink href="/now">Now</NavLink></li>
+      <li><NavLink href="/working">Work</NavLink></li>
+      <li><NavLink href="/toolbox">Toolbox</NavLink></li>
     </ul>
   </section>
-  <section class="footer-social-links">
-    <ul>
-      <li>
-        <a href="/linkedin" title="LinkedIn Profile"><Icon name="social/linkedin" /></a>
-      </li>
-      <li><a href="/youtube" title="Youtube Channel"><Icon name="social/youtube" /></a></li>
-      <li>
-        <a
-          href="https://instagram.com/dannysmith"
-          title="Instagram Profile"
-          target="_blank"
-          rel="noopener noreferrer"><Icon name="social/instagram" /></a
-        >
-      </li>
-    </ul>
-  </section>
+  <SocialLinks />
   <section class="footer-rss-inline">
     <span class="footer-rss-icon-wrapper">
       <Icon name="social/rss" class="footer-rss-icon" />
@@ -67,25 +52,6 @@ const today = new Date();
     list-style-type: none;
   }
 
-  .footer-name {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .circle {
-    width: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
-    height: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
-    background-color: var(--color-footer-border);
-    border-radius: 50%;
-  }
-  .name {
-    text-transform: uppercase;
-    line-height: 1;
-    letter-spacing: 0.05ch;
-    font-weight: 700;
-    text-align: left;
-  }
 
   .footer-nav-links {
     margin-top: 1em;
@@ -114,37 +80,6 @@ const today = new Date();
     }
   }
 
-  .footer-social-links {
-    ul {
-      display: flex;
-      gap: 1rem;
-      justify-content: center; /* Change for wider viewports? */
-    }
-
-    li {
-      width: 2.5rem;
-    }
-
-    a {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      text-align: center;
-      border-radius: 50%;
-      aspect-ratio: 1;
-    }
-
-    a:hover,
-    a:active,
-    a:focus {
-      background-color: var(--color-footer-social-hover);
-      color: var(--color-footer-link-hover);
-    }
-
-    svg {
-    }
-  }
 
   .copyright {
     text-transform: uppercase;

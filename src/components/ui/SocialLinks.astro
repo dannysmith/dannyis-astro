@@ -1,0 +1,62 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<section class="social-links">
+  <ul>
+    <li>
+      <a href="/linkedin" title="LinkedIn Profile"><Icon name="social/linkedin" /></a>
+    </li>
+    <li><a href="/youtube" title="Youtube Channel"><Icon name="social/youtube" /></a></li>
+    <li>
+      <a
+        href="https://instagram.com/dannysmith"
+        title="Instagram Profile"
+        target="_blank"
+        rel="noopener noreferrer"><Icon name="social/instagram" /></a
+      >
+    </li>
+  </ul>
+</section>
+
+<style>
+  .social-links {
+    ul {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      width: 2.5rem;
+      list-style-type: none;
+    }
+
+    a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-radius: 50%;
+      aspect-ratio: 1;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:active,
+    a:focus {
+      background-color: var(--color-footer-social-hover);
+      color: var(--color-footer-link-hover);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .social-links a {
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+</style>

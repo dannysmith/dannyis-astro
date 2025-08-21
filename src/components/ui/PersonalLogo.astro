@@ -1,0 +1,31 @@
+---
+// Personal logo component for site author identification
+---
+
+<section class="personal-logo">
+  <div class="circle"></div>
+  <div class="name">Danny Smith</div>
+</section>
+
+<style>
+  .personal-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .circle {
+    width: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
+    height: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
+    background-color: var(--color-nav-border);
+    border-radius: 50%;
+  }
+
+  .name {
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.05ch;
+    font-weight: 700;
+    text-align: left;
+  }
+</style>

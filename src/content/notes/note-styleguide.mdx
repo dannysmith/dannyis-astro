@@ -5,7 +5,14 @@ tags: ['components', 'typography', 'design', 'testing', 'css']
 styleguide: true
 ---
 
-import { Accordion, BookmarkCard, Callout, Embed, BlockQuoteCitation, ButtonLink } from '@components/mdx';
+import {
+  Accordion,
+  BookmarkCard,
+  Callout,
+  Embed,
+  BlockQuoteCitation,
+  ButtonLink,
+} from '@components/mdx';
 
 This styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in a Note context. Use it to check typography, component appearance, and real-world content. For a full component reference, see the [main styleguide](/styleguide/).
 
@@ -14,12 +21,13 @@ This styleguide demonstrates how all key Markdown/MDX features, Astro components
 <Accordion header="Collapsible Note Section">
   Perfect for organizing supplementary information in notes. This accordion contains:
 
-  - **Quick facts** that don't need to be immediately visible
-  - Reference links and resources
-  - Technical details or implementation notes
-  - Optional reading materials
+- **Quick facts** that don't need to be immediately visible
+- Reference links and resources
+- Technical details or implementation notes
+- Optional reading materials
 
-  Great for keeping notes concise while providing depth when needed.
+Great for keeping notes concise while providing depth when needed.
+
 </Accordion>
 
 <Accordion header="Usage in Notes">
@@ -30,11 +38,10 @@ This styleguide demonstrates how all key Markdown/MDX features, Astro components
   3. Provide expandable examples
   4. Keep the main content focused
 
-  ```mdx
-  <Accordion header="Details">
-    Hidden content here...
-  </Accordion>
-  ```
+```mdx
+<Accordion header="Details">Hidden content here...</Accordion>
+```
+
 </Accordion>
 
 ## URL Cards & Embeds

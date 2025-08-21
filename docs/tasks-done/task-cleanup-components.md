@@ -32,28 +32,36 @@ Both navigation and footer have identical author identification sections:
 ```
 
 **Worth abstracting because:**
+
 - Complex responsive styling (clamp values, gap, alignment)
 - Identical across components
 - Clear semantic purpose (site author identification)
 - Single source of truth for personal branding
 
-#### B. Create `SocialLinks.astro` Component  
+#### B. Create `SocialLinks.astro` Component
 
 Footer's social media links are prime for reuse:
 
 ```html
 <section class="footer-social-links">
   <ul>
-    <li><a href="/linkedin"><Icon name="social/linkedin" /></a></li>
-    <li><a href="/youtube"><Icon name="social/youtube" /></a></li>
-    <li><a href="https://instagram.com/dannysmith" target="_blank" rel="noopener noreferrer">
-      <Icon name="social/instagram" />
-    </a></li>
+    <li>
+      <a href="/linkedin"><Icon name="social/linkedin" /></a>
+    </li>
+    <li>
+      <a href="/youtube"><Icon name="social/youtube" /></a>
+    </li>
+    <li>
+      <a href="https://instagram.com/dannysmith" target="_blank" rel="noopener noreferrer">
+        <Icon name="social/instagram" />
+      </a>
+    </li>
   </ul>
 </section>
 ```
 
 **High reuse potential:**
+
 - Author bio sections
 - About page
 - Contact page
@@ -80,15 +88,16 @@ Footer navigation currently lacks active state indication that NavLink provides.
 
 1. `src/components/layout/MainNavigation.astro` - Icon fix
 2. `src/components/layout/Footer.astro` - Use components, NavLink
-3. `src/components/ui/PersonalLogo.astro` - New component  
+3. `src/components/ui/PersonalLogo.astro` - New component
 4. `src/components/ui/SocialLinks.astro` - New component
 5. `src/components/ui/index.ts` - Export new components
 
 ### Critical Assessment
 
 These abstractions pass the test:
+
 - **PersonalLogo**: Complex styling + clear semantic meaning + guaranteed reuse
-- **SocialLinks**: High reuse potential + self-contained logic + complex link handling  
+- **SocialLinks**: High reuse potential + self-contained logic + complex link handling
 - **NavLink adoption**: Low risk + clear UX benefit + maintains consistency
 
 Skip RSS extraction - it's not complex enough and has no reuse potential.

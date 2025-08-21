@@ -1,19 +1,17 @@
 ---
 import NavLink from '@components/navigation/NavLink.astro';
 import ThemeToggle from '@components/navigation/ThemeToggle.astro';
-import HamburgerMenu from '@astropub/icons/HamburgerMenu';
+import PersonalLogo from '@components/ui/PersonalLogo.astro';
+import { Icon } from 'astro-icon/components';
 const isDev = import.meta.env.MODE === 'development';
 ---
 
 <a class="open-nav-link" href="#">
-  <HamburgerMenu />
+  <Icon name="heroicons:bars-3" />
 </a>
 <nav class="main-navigation">
   <span class="close">&times;</span>
-  <section class="nav-name">
-    <div class="circle"></div>
-    <div class="name">Danny Smith</div>
-  </section>
+  <PersonalLogo />
   <section class="nav-nav-links">
     <ul>
       <li><NavLink href="/">Home</NavLink></li>
@@ -75,25 +73,6 @@ const isDev = import.meta.env.MODE === 'development';
     list-style-type: none;
   }
 
-  .nav-name {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .circle {
-    width: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
-    height: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
-    background-color: var(--color-nav-border);
-    border-radius: 50%;
-  }
-  .name {
-    text-transform: uppercase;
-    line-height: 1;
-    letter-spacing: 0.05ch;
-    font-weight: 700;
-    text-align: left;
-  }
 
   .nav-nav-links {
     margin-top: 1rem;
