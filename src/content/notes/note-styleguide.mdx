@@ -5,7 +5,7 @@ tags: ['components', 'typography', 'design', 'testing', 'css']
 styleguide: true
 ---
 
-import { BookmarkCard, Callout, Embed } from '@components/mdx';
+import { BookmarkCard, Callout, Embed, BlockQuoteCitation } from '@components/mdx';
 
 This styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in a Note context. Use it to check typography, component appearance, and real-world content. For a full component reference, see the [main styleguide](/styleguide/).
 
@@ -82,6 +82,29 @@ This styleguide demonstrates how all key Markdown/MDX features, Astro components
 ##### Level 5 Heading
 
 ---
+
+## Blockquotes with Citations
+
+> This is a basic blockquote without citation styling.
+
+<BlockQuoteCitation author="Steve Jobs">
+  Design is not just what it looks like and feels like. Design is how it works.
+</BlockQuoteCitation>
+
+<BlockQuoteCitation 
+  author="Ernest Hemingway" 
+  title="A Moveable Feast"
+>
+  The best way to find out if you can trust somebody is to trust them.
+</BlockQuoteCitation>
+
+<BlockQuoteCitation 
+  author="Robert Bringhurst" 
+  title="The Elements of Typographic Style" 
+  url="https://en.wikipedia.org/wiki/The_Elements_of_Typographic_Style"
+>
+  Typography is the craft of endowing human language with a durable visual form.
+</BlockQuoteCitation>
 
 ## Text Styles & Lists
 

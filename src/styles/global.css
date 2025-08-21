@@ -922,6 +922,13 @@
     --notion-arrow-stroke-color: var(--color-brand-white);
     --notion-hover-opacity: 0.8;
 
+    /* BlockQuote Citation colors */
+    --color-blockquote-citation-text: var(--color-text-secondary);
+    --color-blockquote-citation-author: var(--color-text-primary);
+    --color-blockquote-citation-source: var(--color-accent);
+    --color-blockquote-citation-source-hover: var(--color-link-hover);
+    --color-blockquote-citation-date: var(--color-text-secondary);
+
     /* -------------------- PAGE COLOURS -------------------- */
     /* Homepage specific colors */
     --color-homepage-link-border: var(--color-accent);

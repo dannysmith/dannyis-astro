@@ -7,7 +7,7 @@ styleguide: true
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, BasicImage } from '@components/mdx';
+import { Notion, Grid, BookmarkCard, Callout, Embed, BasicImage, BlockQuoteCitation } from '@components/mdx';
 import image1 from '@assets/articles/styleguide-image.jpg';
 
 This Article Styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in an Article context. Use it to check typography, component appearance, and real-world content. The first paragraph is intentionally long to show drop cap and first-paragraph styling. This page is a reference for designers, developers, and content authors to see how headings, lists, blockquotes, code, tables, images, embeds, and custom components appear in a real article. For a full component reference, see the [main styleguide](/styleguide/). You'll also find examples of footnotes, abbr, and other advanced markdown features. The goal is to ensure every element looks beautiful, readable, and consistent in the context of long-form writing. Feel free to add new examples as you add new features or components to the site. For more information, see the [main styleguide](/styleguide/).[^intro]
@@ -158,12 +158,33 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, n
 
 ## Blockquotes
 
-This section demonstrates blockquotes in context.
+This section demonstrates blockquotes in context, both with and without citations.
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.
 
 > Proin non pellentesque felis, et sollicitudin ante. In ultricies lorem magna, eget pretium lacus vestibulum ut. Fusce in interdum sapien - _Socrates_, 1AD
 > Donec feugiat sagittis velit non molestie. Nullam mattis erat eget elit faucibus, ac tincidunt ligula bibendum. Suspendisse potenti. Nunc et aliquet nunc. Proin ullamcorper justo id scelerisque efficitur. Proin non pellentesque felis, et sollicitudin ante. In ultricies lorem magna, eget pretium lacus vestibulum ut. Fusce in interdum sapien.
+
+### Blockquotes with Citations
+
+<BlockQuoteCitation author="Steve Jobs">
+  Design is not just what it looks like and feels like. Design is how it works.
+</BlockQuoteCitation>
+
+<BlockQuoteCitation 
+  author="Ernest Hemingway" 
+  title="A Moveable Feast"
+>
+  The best way to find out if you can trust somebody is to trust them.
+</BlockQuoteCitation>
+
+<BlockQuoteCitation 
+  author="Robert Bringhurst" 
+  title="The Elements of Typographic Style" 
+  url="https://en.wikipedia.org/wiki/The_Elements_of_Typographic_Style"
+>
+  Typography is the craft of endowing human language with a durable visual form, and typography shares with librarians the task of designing interfaces between readers and text.
+</BlockQuoteCitation>
 
 ---
 

@@ -1,0 +1,78 @@
+---
+interface Props {
+  author?: string;
+  title?: string;
+  url?: string;
+  small?: boolean;
+}
+
+const { author, title, url, small } = Astro.props;
+---
+
+<figure>
+  <blockquote class:list={['blockquote', { small }]}>
+    <slot />
+    <figcaption>
+      <cite class="cite">
+        — <span>{author}</span>
+        {
+          title && (
+            <>
+              {' - '}
+              <a href={url}>{title}</a>
+            </>
+          )
+        }
+      </cite>
+    </figcaption>
+  </blockquote>
+</figure>
+
+<style>
+  figure {
+    margin: 0;
+  }
+
+  .blockquote {
+    font-variant-numeric: oldstyle-nums diagonal-fractions;
+    hanging-punctuation: first allow-end last;
+    border-left: 2px solid var(--color-article-accent);
+    padding-left: calc((1em * var(--line-height, 1.7)) - 2px);
+    font-style: italic;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+  figcaption {
+    margin-top: 0.25em;
+    text-align: right;
+    padding-left: calc((1em * var(--line-height, 1.7)) - 2px);
+  }
+
+  .cite {
+    font-family: var(--font-ui);
+    font-size: 0.9em;
+    font-style: normal;
+    color: var(--color-blockquote-citation-text);
+  }
+
+  .cite span {
+    font-weight: 600;
+    color: var(--color-blockquote-citation-author);
+  }
+
+  .cite a {
+    color: var(--color-blockquote-citation-source);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .cite a:hover {
+    color: var(--color-blockquote-citation-source-hover);
+    text-decoration: underline;
+  }
+
+  .small {
+    font-size: 0.9em;
+  }
+</style>

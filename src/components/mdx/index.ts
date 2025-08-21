@@ -7,5 +7,6 @@ import BookmarkCard from './BookmarkCard.astro';
 import Embed from './Embed.astro';
 import Loom from './Loom.astro';
 import BasicImage from './BasicImage.astro';
+import BlockQuoteCitation from './BlockQuoteCitation.astro';
 
-export { Notion, Grid, BookmarkCard, Embed, Callout, Loom, BasicImage };
+export { Notion, Grid, BookmarkCard, Embed, Callout, Loom, BasicImage, BlockQuoteCitation };
