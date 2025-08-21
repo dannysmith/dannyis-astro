@@ -1,0 +1,29 @@
+---
+title: 'Building a Daily Brief for AI with GitHub Actions'
+sourceURL: 'https://github.com/dannysmith/morning-briefing-generator'
+slug: daily-brief-for-ai
+description: 'Building a Daily Briefing markdown document for AI with GitHub Actions'
+pubDate: 2025-08-05
+tags:
+  - ai
+---
+
+I've long wanted to start my day by having a _Morning Chat_ with Claude Desktop. For this to be useful I need these conversations to start with two things: a **morning briefing** for me, with the news I care about today, and the AI to be primed with the **current context** on my life. I'm still working on the latter, but the morning briefing seemed pretty simple.
+
+Right now, I want my morning brief to include the weather, times for sunset and sunrise and high/low tides, major news stories from the BBC, new posts from a few RSS feeds I care about and new videos from a few YouTube channels, along with any _significant_ changes to the price of bitcoin.
+
+My first instinct was to have Claude fetch all this with tool calls, which sort of worked but was slow and unreliable. And felt like a bad use-case for AI because it's not hard to get all of this data with old-fashioned-not-AI-programming.
+
+So I vibe coded a little TypeScript script which runs daily in a GitHub Action at 7am. It hits various APIs & scrapes feeds and dumps everything into a formatted markdown file. GitHub Actions runs it at 7am. No AI involvement whatsoever at this stage – just simple deterministic code.
+
+My Claude project simply includes this instruction
+
+```
+Fetch today's briefing from https://raw.githubusercontent.com/dannysmith/morning-briefing-generator/refs/heads/main/dailybriefs/latest.md and print the markdown without changing it.
+```
+
+That's it. The AI gets all that context for free, can summarise it, pull out highlights, or just display it raw. But more importantly, it has that information available when I ask follow-up questions later in the day.
+
+This split makes both parts better. The data fetching is reliable, testable, and runs for free on GitHub's infrastructure. The AI part can focus on what it's actually good at—understanding context, making connections, and having a conversation about the information rather than struggling to fetch it.
+
+I'll probably expand and tweak this in the future to provide more info and context, perhaps with slightly different stuff for different days of the week. The only major limitation at the moment is that I can't include any private information in the brief, because I don't want that available on a public URL.
