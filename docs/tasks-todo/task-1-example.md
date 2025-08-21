@@ -1,407 +1,688 @@
-# Task: Improve AI Documentation and Config
+# Task: Add Minimal Testing Suite for AI Safety
 
-Having worked on a separate project and learnt a lot about using AI tools, I want to rework the AI documentation of this personal website. Developer documents should live in `docs/developer` and be primarily for the reference of AI models.
+## Objective
+Implement a minimal but effective testing suite to ensure AI coding tools don't break the site. Focus on speed, simplicity, and ease of extension.
 
-We currently have some guidance in CLAUDE.md and we have a load of documents in `.cursor/rules`. I would like to consolidate all of the documentation which explains best practices and how things work into sensible files in the developer docs. And then I'd like to extract out rules for how to work with stuff into CLAUDE or potentially some CLAUDE agents.
+## Critical Analysis & Revised Plan
 
-To do this we'll need to review the entire codebase and the various structures that we have in place here. The main goal with this task is to make it so that Claude code can conduct bigger and more complicated tasks without getting confused or breaking patterns.
+### What Actually Needs Testing (Based on Codebase Analysis)
 
-- [x] Generate `docs` directory with suitable docs
-- [x] Cut down Cursor Rules a lot (move good stuff into docs or Claude.md etc)
-- [x] Set up proper Claude commands and agents to help with Astro, and especially with design/CSS etc. See dannysmith/tauri-template and dannysmith/astro-editor for some inspiration
-- [x] Set up same task system as in other projects
-- [ ] Add unit tests, end-to-end browser smoke tests, better linter, prettier and ts rules etc (FUTURE)
-- [x] Add `npm run check` command which runs all linters, tests and checks.
-- [ ] Check integration with GitHub Issues for task tracking etc (FUTURE)
-- [x] Improve CLAUDE.md
+**Critical Business Logic (HIGH PRIORITY)**
+1. **SEO Functions** (`src/utils/seo.ts`) - Pure functions with complex template logic
+2. **Content Collection Schemas** - Zod schemas that validate all content
+3. **Content Filtering Logic** - Draft/styleguide filtering (MOST CRITICAL)
+4. **Route Generation** - Individual pages and listings work correctly
+5. **RSS Feed Generation** - Complex MDX rendering with Container API
 
-## Analysis Complete
+**Content Filtering Logic (NEW - CRITICAL!)**
+The codebase has complex filtering rules that AI could easily break:
+- **Individual pages**: `import.meta.env.PROD ? data.draft !== true : true`
+- **Listing pages**: `&& !data.styleguide` added to draft filter
+- **Environment sensitivity**: Different behavior in dev vs prod
 
-### Current State Assessment
+**What DOESN'T Need Testing**
+- `og-image-generator.ts` - Has built-in fallbacks, low failure impact
+- `og-templates.ts` - Just JSX templates, no logic
+- `NoteCard.astro` - Pure presentation, no logic beyond props
+- `BaseHead.astro` - Just template rendering, tested via E2E
 
-- Analyzed 2,400+ lines across 11 documentation files
-- Identified ~800-1,000 lines of redundant content
-- Found significant overlap in component, architecture, and content documentation
-- Current structure mixes technical reference with AI behavioral instructions
+**Major Discovery**
+The filtering logic appears in 8+ files with slight variations. This is the #1 place AI will break things.
 
-### Research Findings
+## Revised Testing Architecture
 
-- Studied tauri-template and astro-editor for patterns
-- Reviewed official Astro best practices
-- Identified key patterns: agent specialization, command-driven workflow, quality gates
+### 1. Unit Tests (Vitest) - ~5 seconds runtime
+Focus ONLY on functions with actual business logic.
 
-### Implementation Plan Designed
+**Priority Targets:**
+```typescript
+// SEO utility functions
+- generatePageTitle() - Conditional template selection
+- generateMetaDescription() - String manipulation
+- validateSEOData() - Default value logic
+- generateJSONLD() - Complex object construction
 
-Ready to execute the new documentation structure with:
-
-- Consolidated developer docs in `docs/developer/`
-- Streamlined AI rules in `.cursor/rules/`
-- Specialized Claude agents in `.claude/agents/`
-- Comprehensive testing and quality assurance setup
-
-# AI Documentation Improvement Plan
-
-## Executive Summary
-
-This plan outlines the restructuring of AI documentation for the danny.is Astro project to achieve:
-
-- 40-50% reduction in documentation redundancy
-- Clear separation between developer reference and AI behavioral rules
-- Specialized agent architecture for complex tasks
-- Comprehensive testing and quality assurance
-
-## Documentation Architecture
-
-### 1. Developer Documentation (`docs/developer/`)
-
-Technical reference documentation for AI models and human developers.
-
-#### Core Documentation Files
-
-**`architecture.md`** (~300 lines)
-
-- Project structure and organization
-- Directory layout and conventions
-- Import patterns and module system
-- Build pipeline and deployment
-- Performance requirements and targets
-- Static vs dynamic rendering decisions
-
-**`components.md`** (~400 lines)
-
-- Component catalog with examples
-- Props interfaces and TypeScript patterns
-- Composition patterns and best practices
-- MDX component integration
-- Error handling and fallback strategies
-- Accessibility requirements
-
-**`content-system.md`** (~250 lines)
-
-- Content collections architecture
-- Frontmatter schemas and validation
-- Article vs Note distinctions
-- MDX usage and custom components
-- Image optimization patterns
-- Draft workflow and publishing
-
-**`styling-system.md`** (~300 lines)
-
-- CSS architecture and layers
-- Design tokens and CSS variables
-- Container queries and responsiveness
-- Typography system and scales
-- Color system and theming
-- Animation and interaction patterns
-
-**`seo-and-performance.md`** (~200 lines)
-
-- SEO utilities and configuration
-- OpenGraph image generation
-- RSS feed implementation
-- Sitemap configuration
-- Performance metrics and targets
-- Core Web Vitals optimization
-
-**`testing-and-quality.md`** (~150 lines)
-
-- Testing strategy and tools
-- Linting configuration
-- Type checking setup
-- Quality gates and CI/CD
-- Performance monitoring
-- Accessibility testing
-
-### 2. AI Behavioral Rules (`/.cursor/rules/`)
-
-Streamlined behavioral instructions for AI tools.
-
-**`astro.mdc`** (~150 lines)
-
-- Astro-specific commands and patterns
-- Framework best practices
-- Performance considerations
-- Component development rules
-
-**`content.mdc`** (~200 lines)
-
-- Content creation commands
-- Writing assistance roles
-- SEO optimization commands
-- Publishing workflows
-
-**`development.mdc`** (~150 lines)
-
-- Code quality standards
-- Testing requirements
-- Error handling patterns
-- Security considerations
-
-**`workflow.mdc`** (~100 lines)
-
-- Definition of Ready/Done
-- Commit message standards
-- Quality gates
-- Review processes
-
-### 3. Claude Configuration
-
-#### Main Configuration (`CLAUDE.md`) (~300 lines)
-
-```markdown
-# CLAUDE.md
-
-See @docs/tasks.md for task management
-See @docs/developer/ for technical documentation
-
-## Quick Context
-
-- **Project**: Danny Smith's personal website
-- **Framework**: Astro 5.13+ with TypeScript
-- **Architecture**: Content-first, zero-JavaScript-by-default
-- **Content Types**: Articles (/writing/) and Notes (/notes/)
-
-## Development Commands
-
-### Core Commands
-
-- `npm run dev` - Development server (localhost:4321)
-- `npm run build` - Production build
-- `npm run check` - Run all quality checks
-- `npm run newnote` - Create new note
-
-### Quality Assurance
-
-ALWAYS run before marking tasks complete:
-
-1. `npm run lint` - ESLint validation
-2. `npm run check:types` - TypeScript checking
-3. `npm run test` - Unit tests
-4. `npm run test:e2e` - E2E browser tests
-5. `npm run build` - Production build test
-
-## Common Workflows
-
-### Content Creation
-
-- Use @content-specialist agent for writing tasks
-- Use @seo-optimizer agent for SEO improvements
-- Run "pre-publishing checklist" before publishing
-
-### Component Development
-
-- Use @component-expert agent for new components
-- Update styleguide when adding components
-- Follow TypeScript patterns in @docs/developer/components.md
-
-### Performance Optimization
-
-- Use @performance-analyst agent for audits
-- Target Core Web Vitals thresholds
-- Test with production builds
-
-## Critical Rules
-
-- NEVER commit without running quality checks
-- NEVER add JavaScript unless absolutely necessary
-- ALWAYS update styleguide for new components
-- ALWAYS use semantic HTML and ARIA labels
-- ALWAYS handle errors with meaningful fallbacks
+// Content filtering logic (CRITICAL!)
+- createContentFilter() - Helper function for filtering logic
+- Environment-based draft filtering
+- Styleguide exclusion logic
 ```
 
-#### Specialized Agents (`/.claude/agents/`)
+**Skip These (No Logic):**
+- getSiteConfig() - Just returns constants
+- generateOGImageUrl() - Simple URL construction
 
-**`content-specialist.md`** (~150 lines)
+### 2. Content Validation Tests - ~2 seconds runtime
+Test Zod schemas and filtering behavior.
 
-- Expert in content creation and optimization
-- Markdown/MDX formatting
-- SEO optimization
-- Readability analysis
-- Grammar and style checking
+**Priority Targets:**
+```typescript
+- Article schema validation (dates, drafts, required fields)
+- Note schema validation
+- Draft/styleguide filtering logic with different env values
+- Edge cases: invalid dates, missing required fields
+```
 
-**`component-expert.md`** (~150 lines)
+### 3. Route Validation Tests (E2E) - ~15 seconds runtime
+Test that content filtering actually works in production.
 
-- Astro component development
-- TypeScript patterns
-- Accessibility implementation
-- Performance optimization
-- Design system adherence
+**Critical Scenarios:**
+1. **Homepage Renders** - Basic load test
+2. **Article Routes Work** - Individual articles accessible
+3. **Listing Pages Filter Correctly** - No drafts/styleguide in /writing, /notes
+4. **RSS Feeds Filter Correctly** - Same filtering rules applied
+5. **404 Handling** - Returns proper status code
+6. **Styleguide Pages Still Render** - Individual access works but not in lists
 
-**`seo-optimizer.md`** (~100 lines)
+**The Key Insight:**
+Test the business logic (filtering) separately from the routes that use it.
 
-- SEO analysis and improvements
-- OpenGraph optimization
-- Structured data implementation
-- Performance metrics
-- Search visibility
+## Implementation Plan
 
-**`performance-analyst.md`** (~100 lines)
+### Phase 1: Setup Infrastructure (30 minutes)
 
-- Core Web Vitals analysis
-- Bundle size optimization
-- Image optimization
-- Caching strategies
-- Loading performance
-
-**`technical-reviewer.md`** (~100 lines)
-
-- Code review and quality
-- Architecture validation
-- Security analysis
-- Best practices enforcement
-- Documentation review
-
-#### Commands (`/.claude/commands/`)
-
-**`check.md`** (~50 lines)
-
-````markdown
----
-description: Run all quality checks
-allowed-tools: Bash
----
-
-# Check Command
-
-Runs comprehensive quality checks on the codebase.
-
-## Execution
-
+#### 1.1 Install Dependencies
 ```bash
-npm run check
+npm install -D vitest @vitest/ui happy-dom @testing-library/dom
+npm install -D playwright @playwright/test
+npm install -D @astrojs/check typescript
 ```
-````
 
-This runs:
+#### 1.2 Configure Vitest
+Create `vitest.config.ts`:
+```typescript
+import { getViteConfig } from 'astro/config';
 
-1. ESLint (`npm run lint`)
-2. TypeScript checking (`npm run check:types`)
-3. Unit tests (`npm run test`)
-4. E2E tests (`npm run test:e2e`)
-5. Build validation (`npm run build`)
+export default getViteConfig({
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: ['node_modules/', '.astro/', 'dist/']
+    },
+    testTimeout: 10000,
+  }
+});
+```
 
-Report any failures and suggest fixes.
+#### 1.3 Configure Playwright
+Create `playwright.config.ts`:
+```typescript
+import { defineConfig } from '@playwright/test';
 
-````
+export default defineConfig({
+  testDir: './tests/e2e',
+  timeout: 30000,
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'list',
+  use: {
+    baseURL: 'http://localhost:4321',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+  },
+  webServer: {
+    command: 'npm run dev',
+    port: 4321,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000,
+  },
+});
+```
 
-**`new-component.md`** (~75 lines)
-- Creates new component with TypeScript interface
-- Adds to component barrel export
-- Updates styleguide
-- Creates basic tests
-
-**`optimize-performance.md`** (~75 lines)
-- Analyzes current performance
-- Identifies bottlenecks
-- Suggests optimizations
-- Validates improvements
-
-### 4. Testing Infrastructure
-
-#### Package.json Updates
+#### 1.4 Update package.json Scripts
 ```json
 {
   "scripts": {
-    "check": "npm run lint && npm run check:types && npm run test && npm run build",
-    "check:types": "tsc --noEmit && astro check",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest run tests/unit",
+    "test:component": "vitest run tests/component", 
     "test:e2e": "playwright test",
-    "test:watch": "vitest --watch"
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "npm run test:unit && npm run test:component && npm run test:e2e",
+    "check": "npm run check:types && npm run format:check && npm run lint && npm run test:all && npm run build"
   }
 }
-````
+```
 
-#### Test Structure
+### Phase 2: Simplified Test Structure
 
+#### 2.1 Updated Directory Structure
 ```
 tests/
 ├── unit/
-│   ├── components/
-│   ├── utils/
-│   └── content/
+│   ├── seo.test.ts           # SEO utility functions
+│   ├── schemas.test.ts       # Content collection validation
+│   └── content-filter.test.ts # Draft/styleguide filtering logic
 ├── e2e/
-│   ├── smoke.spec.ts
-│   ├── content.spec.ts
-│   └── performance.spec.ts
+│   └── smoke.spec.ts         # All E2E tests including route validation
 └── fixtures/
+    └── test-content.ts       # Sample content for testing
 ```
 
-## Implementation Phases
+#### 2.2 SEO Utils Test (High Value)
+`tests/unit/seo.test.ts`:
+```typescript
+import { describe, it, expect } from 'vitest';
+import { 
+  generatePageTitle, 
+  generateMetaDescription,
+  validateSEOData,
+  generateJSONLD
+} from '@/src/utils/seo';
 
-### Phase 1: Documentation Consolidation (2-3 hours)
+describe('SEO Utils', () => {
+  // Test the complex conditional logic
+  describe('generatePageTitle', () => {
+    it('adds correct suffix for articles', () => {
+      expect(generatePageTitle('My Article', 'article'))
+        .toBe('My Article | Writing | Danny Smith');
+    });
 
-1. Create `docs/developer/` directory structure
-2. Consolidate content from `.cursor/rules/` to developer docs
-3. Remove redundancies and organize by domain
-4. Update cross-references and links
+    it('adds correct suffix for notes', () => {
+      expect(generatePageTitle('My Note', 'note'))
+        .toBe('My Note | Notes | Danny Smith');
+    });
 
-### Phase 2: AI Configuration (1-2 hours)
+    it('preserves homepage title unchanged', () => {
+      expect(generatePageTitle('Danny Smith')).toBe('Danny Smith');
+    });
+  });
 
-1. Streamline `.cursor/rules/` to essential behaviors
-2. Create `.claude/agents/` with specialized agents
-3. Set up `.claude/commands/` with common operations
-4. Update CLAUDE.md with focused configuration
+  // Test default value logic
+  describe('validateSEOData', () => {
+    it('provides sensible defaults for empty input', () => {
+      const result = validateSEOData({});
+      expect(result.title).toBe('Untitled');
+      expect(result.type).toBe('website');
+      expect(result.tags).toEqual([]);
+    });
 
-### Phase 3: Testing Setup (2-3 hours)
+    it('preserves provided values', () => {
+      const input = {
+        title: 'Test',
+        type: 'article' as const,
+        tags: ['tech']
+      };
+      const result = validateSEOData(input);
+      expect(result).toMatchObject(input);
+    });
+  });
 
-1. Install testing dependencies (Vitest, Playwright)
-2. Create test structure and initial tests
-3. Configure linting and type checking
-4. Implement `npm run check` command
+  // Test complex JSON-LD generation
+  describe('generateJSONLD', () => {
+    it('generates valid schema for articles', () => {
+      const data = {
+        title: 'Test Article',
+        description: 'Test description',
+        type: 'article' as const,
+        pageType: 'article' as const,
+        pubDate: new Date('2025-01-01'),
+        tags: ['tech', 'web']
+      };
+      
+      const result = generateJSONLD(data, 'https://danny.is/test', 'https://danny.is/og.png');
+      
+      expect(result['@context']).toBe('https://schema.org');
+      expect(result['@graph']).toBeInstanceOf(Array);
+      expect(result['@graph']).toHaveLength(4); // Person, Org, Website, Article
+    });
+  });
+});
+```
 
-### Phase 4: Quality Assurance (1 hour)
+#### 2.3 Content Schema Test (Catches Breaking Changes)
+`tests/unit/schemas.test.ts`:
+```typescript
+import { describe, it, expect } from 'vitest';
+import { collections } from '@/src/content.config';
 
-1. Run full test suite
-2. Validate documentation accuracy
-3. Test AI commands and agents
-4. Update task tracking
+describe('Content Schemas', () => {
+  const articleSchema = collections.articles.schema({ image: () => ({}) });
+  const noteSchema = collections.notes.schema;
 
-## Success Metrics
+  describe('Article Schema', () => {
+    it('validates minimal valid article', () => {
+      const valid = {
+        title: 'Test Article',
+        pubDate: '2025-01-01'
+      };
+      expect(() => articleSchema.parse(valid)).not.toThrow();
+    });
 
-### Quantitative
+    it('requires title and pubDate', () => {
+      expect(() => articleSchema.parse({})).toThrow();
+      expect(() => articleSchema.parse({ title: 'Test' })).toThrow();
+      expect(() => articleSchema.parse({ pubDate: '2025-01-01' })).toThrow();
+    });
 
-- Documentation reduced from 2,400+ to ~1,500 lines
-- Zero redundant content across files
-- 100% test coverage for critical paths
-- All quality checks passing
+    it('coerces date strings to Date objects', () => {
+      const result = articleSchema.parse({
+        title: 'Test',
+        pubDate: '2025-01-01'
+      });
+      expect(result.pubDate).toBeInstanceOf(Date);
+    });
+  });
 
-### Qualitative
+  describe('Note Schema', () => {
+    it('validates minimal valid note', () => {
+      const valid = {
+        title: 'Test Note',
+        pubDate: '2025-01-01'
+      };
+      expect(() => noteSchema.parse(valid)).not.toThrow();
+    });
 
-- Clear separation of concerns
-- Improved AI task completion accuracy
-- Faster onboarding for new AI sessions
-- Consistent code quality and patterns
+    it('validates sourceURL when provided', () => {
+      const withInvalidURL = {
+        title: 'Test',
+        pubDate: '2025-01-01',
+        sourceURL: 'not-a-url'
+      };
+      expect(() => noteSchema.parse(withInvalidURL)).toThrow();
+    });
+  });
+});
+```
 
-## Risk Mitigation
+#### 2.4 Content Filtering Test (CRITICAL)
+`tests/unit/content-filter.test.ts`:
+```typescript
+import { describe, it, expect, vi } from 'vitest';
 
-### Potential Issues
+// Helper function to test the repeated filtering logic
+function createContentFilter(isProduction: boolean) {
+  return ({ data }: { data: { draft?: boolean; styleguide?: boolean } }) => {
+    const draftFilter = isProduction ? data.draft !== true : true;
+    return draftFilter;
+  };
+}
 
-1. **Breaking existing workflows** - Maintain backward compatibility during transition
-2. **Lost documentation** - Keep backups of original files
-3. **AI confusion** - Test incrementally with real tasks
-4. **Test failures** - Start with smoke tests, expand gradually
+function createListingFilter(isProduction: boolean) {
+  return ({ data }: { data: { draft?: boolean; styleguide?: boolean } }) => {
+    const draftFilter = isProduction ? data.draft !== true : true;
+    return draftFilter && !data.styleguide;
+  };
+}
 
-### Mitigation Strategies
+describe('Content Filtering Logic', () => {
+  describe('Individual Page Filter (drafts only)', () => {
+    it('excludes drafts in production', () => {
+      const filter = createContentFilter(true);
+      
+      expect(filter({ data: { draft: true } })).toBe(false);
+      expect(filter({ data: { draft: false } })).toBe(true);
+      expect(filter({ data: {} })).toBe(true); // no draft field = not draft
+    });
 
-- Create documentation backup before changes
-- Test each phase independently
-- Maintain original files until validation complete
-- Document migration path for existing patterns
+    it('includes drafts in development', () => {
+      const filter = createContentFilter(false);
+      
+      expect(filter({ data: { draft: true } })).toBe(true);
+      expect(filter({ data: { draft: false } })).toBe(true);
+      expect(filter({ data: {} })).toBe(true);
+    });
 
-## Timeline
+    it('allows styleguide pages individually', () => {
+      const prodFilter = createContentFilter(true);
+      const devFilter = createContentFilter(false);
+      
+      // Styleguide pages should render individually
+      expect(prodFilter({ data: { styleguide: true } })).toBe(true);
+      expect(devFilter({ data: { styleguide: true } })).toBe(true);
+    });
+  });
 
-- **Hour 1-3**: Phase 1 - Documentation Consolidation
-- **Hour 4-5**: Phase 2 - AI Configuration
-- **Hour 6-8**: Phase 3 - Testing Setup
-- **Hour 9**: Phase 4 - Quality Assurance
-- **Hour 10**: Buffer for issues and refinement
+  describe('Listing Page Filter (drafts + styleguide)', () => {
+    it('excludes drafts and styleguide in production', () => {
+      const filter = createListingFilter(true);
+      
+      expect(filter({ data: { draft: true } })).toBe(false);
+      expect(filter({ data: { styleguide: true } })).toBe(false);
+      expect(filter({ data: { draft: true, styleguide: true } })).toBe(false);
+      expect(filter({ data: {} })).toBe(true);
+    });
 
-Total estimated time: 8-10 hours of focused work
+    it('excludes styleguide but includes drafts in development', () => {
+      const filter = createListingFilter(false);
+      
+      expect(filter({ data: { draft: true } })).toBe(true);  // Draft OK in dev
+      expect(filter({ data: { styleguide: true } })).toBe(false);  // Styleguide never OK in lists
+      expect(filter({ data: {} })).toBe(true);
+    });
+  });
 
-## Next Steps
+  describe('Environment Detection', () => {
+    it('handles import.meta.env.PROD correctly', () => {
+      // Mock the environment variable behavior
+      const mockEnv = (isProd: boolean) => ({
+        PROD: isProd
+      });
 
-1. Review and approve this plan
-2. Create backup of current documentation
-3. Begin Phase 1 implementation
-4. Validate each phase before proceeding
-5. Document lessons learned
+      // Simulate the actual filtering logic from the codebase
+      const testFilter = (env: any, data: any) => {
+        return env.PROD ? data.draft !== true : true;
+      };
+
+      expect(testFilter(mockEnv(true), { draft: true })).toBe(false);
+      expect(testFilter(mockEnv(false), { draft: true })).toBe(true);
+    });
+  });
+});
+```
+
+### Phase 3: Enhanced E2E Tests (30 minutes)
+
+#### 3.1 Comprehensive Route & Filter Tests
+`tests/e2e/smoke.spec.ts`:
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('Critical Path Tests', () => {
+  // Test 1: Site loads without errors
+  test('homepage loads successfully', async ({ page }) => {
+    const response = await page.goto('/');
+    expect(response?.status()).toBeLessThan(400);
+    await expect(page).toHaveTitle(/Danny Smith/);
+  });
+
+  // Test 2: Content routing works
+  test('can navigate to an article', async ({ page }) => {
+    await page.goto('/writing');
+    
+    const firstLink = page.locator('article a').first();
+    const href = await firstLink.getAttribute('href');
+    await firstLink.click();
+    
+    await expect(page).toHaveURL(new RegExp(href!));
+    await expect(page.locator('article')).toBeVisible();
+  });
+
+  // Test 3: RSS feed generates valid XML
+  test('RSS feed returns valid XML', async ({ page }) => {
+    const response = await page.goto('/rss.xml');
+    
+    expect(response?.status()).toBe(200);
+    const contentType = response?.headers()['content-type'];
+    expect(contentType).toMatch(/xml|rss/);
+    
+    const content = await response?.text();
+    expect(content).toContain('<?xml');
+    expect(content).toContain('<rss');
+    expect(content).toContain('</rss>');
+  });
+
+  // Test 4: 404 handling
+  test('404 page works correctly', async ({ page }) => {
+    const response = await page.goto('/this-does-not-exist');
+    expect(response?.status()).toBe(404);
+    
+    const pageContent = await page.textContent('body');
+    expect(pageContent).toMatch(/404|not found/i);
+  });
+});
+
+test.describe('Content Filtering Tests', () => {
+  // Test 5: Styleguide pages render individually but not in lists
+  test('styleguide article renders individually', async ({ page }) => {
+    const response = await page.goto('/writing/article-styleguide/');
+    expect(response?.status()).toBe(200);
+    await expect(page.locator('h1')).toBeVisible();
+  });
+
+  test('styleguide note renders individually', async ({ page }) => {
+    const response = await page.goto('/notes/note-styleguide/');
+    expect(response?.status()).toBe(200);
+    await expect(page.locator('h1')).toBeVisible();
+  });
+
+  // Test 6: Listing pages exclude styleguide content
+  test('writing page excludes styleguide articles', async ({ page }) => {
+    await page.goto('/writing');
+    
+    // Check page content doesn't include styleguide
+    const pageContent = await page.textContent('body');
+    expect(pageContent).not.toMatch(/styleguide/i);
+    
+    // Verify there are actual articles shown
+    const articles = page.locator('article');
+    expect(await articles.count()).toBeGreaterThan(0);
+  });
+
+  test('notes page excludes styleguide notes', async ({ page }) => {
+    await page.goto('/notes');
+    
+    const pageContent = await page.textContent('body');
+    expect(pageContent).not.toMatch(/styleguide/i);
+    
+    const notes = page.locator('article');
+    expect(await notes.count()).toBeGreaterThan(0);
+  });
+
+  // Test 7: RSS feeds exclude styleguide content
+  test('RSS feeds exclude styleguide content', async ({ page }) => {
+    const response = await page.goto('/rss.xml');
+    const content = await response?.text();
+    
+    // Should not contain styleguide content
+    expect(content).not.toMatch(/styleguide/i);
+    
+    // Should contain actual articles and notes
+    expect(content).toContain('<item>');
+  });
+
+  // Test 8: Individual draft pages still accessible (this test runs in dev mode)
+  test('draft articles accessible in development', async ({ page }) => {
+    // This test assumes we're running in dev mode where drafts are shown
+    const knownDraftPaths = [
+      '/writing/ai-and-adhd/',
+      '/writing/astro-editor/',
+      '/writing/vibe-coding-astro-editor/',
+      '/writing/moving-to-astro/'
+    ];
+
+    // Test one draft article (adjust path based on your actual content)
+    for (const path of knownDraftPaths) {
+      const response = await page.goto(path);
+      if (response?.status() === 200) {
+        // Found a working draft page
+        await expect(page.locator('h1')).toBeVisible();
+        break;
+      }
+    }
+  });
+});
+
+test.describe('Build Validation', () => {
+  test('production build completes successfully', async () => {
+    // This test would be run via npm script, not Playwright
+    // Actual implementation: npm run build && echo "Build successful"
+  });
+});
+```
+
+### Phase 4: Simplified Setup & Scripts
+
+#### 4.1 Updated package.json Scripts
+```json
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:unit": "vitest run tests/unit",
+    "test:e2e": "playwright test",
+    "test:all": "npm run test:unit && npm run build && npm run test:e2e",
+    "check": "npm run check:types && npm run format:check && npm run lint && npm run test:all"
+  }
+}
+```
+
+#### 4.2 Minimal CI Setup
+`.github/workflows/test.yml`:
+```yaml
+name: Test Suite
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - run: npm ci
+      
+      # Quick checks first (fail fast)
+      - run: npm run check:types
+      - run: npm run lint
+      
+      # Unit tests
+      - run: npm run test:unit
+      
+      # Build test (catches most integration issues)
+      - run: npm run build
+      
+      # E2E only if everything else passes
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+```
+
+## Final Success Criteria
+
+### What We're Actually Testing
+- **SEO Functions**: 4 functions with actual business logic (~8 tests)
+- **Content Schemas**: 2 schemas with validation rules (~6 tests)  
+- **Content Filtering Logic**: Draft/styleguide filtering (~12 tests)
+- **Route Validation**: Individual pages, listings, RSS (~8 tests)
+- **E2E Critical Paths**: 4 smoke tests (homepage, article, RSS, 404)
+- **Total Tests**: ~34 focused tests (vs original 40 scattered tests)
+
+### Updated Metrics
+- [ ] Full suite runs in < 25 seconds (Unit: 7s, E2E: 18s)
+- [ ] Tests catch the #1 bug source (content filtering)
+- [ ] Route validation ensures pages actually work
+- [ ] Build validation as final integration test
+
+### What We're NOT Testing
+- **Presentation components** - No logic to test
+- **OG image generation** - Has fallbacks, low impact
+- **Simple getters** - Testing constants is pointless
+- **Complex E2E interactions** - Keep it simple
+
+## Implementation Checklist (Revised)
+
+### Day 1: Core Setup (2 hours)
+```bash
+# 1. Install minimal dependencies
+npm install -D vitest happy-dom playwright @playwright/test
+
+# 2. Create simple structure
+mkdir -p tests/unit tests/e2e tests/fixtures
+
+# 3. Write SEO tests (highest value)
+# 4. Write schema validation tests
+# 5. Write E2E smoke tests
+# 6. Verify everything runs
+```
+
+### What to Skip
+- ❌ Component tests with Container API
+- ❌ Multiple E2E test files
+- ❌ Complex test fixtures
+- ❌ Coverage reporting (for now)
+- ❌ Visual regression tests
+
+### Maintenance Philosophy
+1. **If it has logic, test it**
+2. **If it's just a template, skip it**
+3. **One E2E test per user journey**
+4. **Build test catches everything else**
+
+## Why This Approach Works
+
+### Original Plan Problems
+- **Over-testing**: Testing presentation components with no logic
+- **Missing critical tests**: Content schema validation
+- **Redundant E2E**: Testing notes AND articles separately
+- **Complex setup**: Component tests need Container API setup
+
+### Revised Plan Benefits
+- **Focused on logic**: Only test functions that can break
+- **Catches real issues**: Schema tests prevent content errors
+- **Faster execution**: ~20s total vs 30s target
+- **Easier to maintain**: Less code, clearer purpose
+
+## The Real Implementation Steps
+
+```bash
+# Step 1: Just the essentials
+npm install -D vitest happy-dom playwright
+
+# Step 2: Create vitest.config.ts
+echo "import { getViteConfig } from 'astro/config';
+export default getViteConfig({
+  test: {
+    globals: true,
+    environment: 'happy-dom'
+  }
+});" > vitest.config.ts
+
+# Step 3: Create playwright.config.ts (minimal)
+echo "import { defineConfig } from '@playwright/test';
+export default defineConfig({
+  testDir: './tests/e2e',
+  use: { baseURL: 'http://localhost:4321' },
+  webServer: {
+    command: 'npm run dev',
+    port: 4321,
+    reuseExistingServer: true
+  }
+});" > playwright.config.ts
+
+# Step 4: Write the actual tests (copy from examples above)
+# Step 5: Update package.json scripts
+# Step 6: Run and validate
+```
+
+## Key Decisions & Justifications
+
+### Why These Tests?
+1. **SEO Utils** - Complex conditional logic, affects all pages
+2. **Content Schemas** - Catch Zod validation breaks
+3. **Content Filtering Logic** - THE #1 place AI will break things (8+ files with this logic)
+4. **Route Validation** - Ensure pages actually render and filter correctly
+5. **E2E Smoke** - Verifies the site works end-to-end
+
+### Why NOT These Tests?
+1. **Component tests** - Astro components here are just templates
+2. **OG Image tests** - Has fallback, non-critical, hard to test
+3. **Multiple E2E files** - One comprehensive file is cleaner
+4. **Complex UI interactions** - Build errors catch most component issues
+
+## Summary
+
+**Original plan**: 30-40 tests, missed the critical filtering logic
+**Final plan**: ~34 focused tests, covers the actual failure points
+
+This enhanced approach:
+- Tests the business logic that actually breaks (filtering)
+- Validates routes work correctly in dev and prod
+- Catches content schema violations
+- Runs in ~25 seconds (still very fast)
+- Takes 2-3 hours to implement properly
+
+The key insight: **Content filtering logic is everywhere and complex**. This is where AI tools will cause real problems. Test it thoroughly.
