@@ -49,7 +49,7 @@ export const SITE_CONFIG = {
 // Title Templates
 export const TITLE_TEMPLATES = {
   article: (title: string) => `${title} | Danny Smith - Operations & Leadership Expert`,
-  note: (title: string) => `${title} | Quick Take by Danny Smith`,
+  note: (title: string) => `${title} | Quick Note by Danny Smith`,
   page: (title: string) => `${title} | Danny Smith - Operations & Leadership Expert`,
   default: (title: string) => `${title} | Danny Smith`,
 } as const;
