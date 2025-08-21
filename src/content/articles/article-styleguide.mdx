@@ -7,7 +7,16 @@ styleguide: true
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Notion, Grid, BookmarkCard, Callout, Embed, BasicImage, BlockQuoteCitation } from '@components/mdx';
+import {
+  Notion,
+  Grid,
+  BookmarkCard,
+  Callout,
+  Embed,
+  BasicImage,
+  BlockQuoteCitation,
+  ButtonLink,
+} from '@components/mdx';
 import image1 from '@assets/articles/styleguide-image.jpg';
 
 This Article Styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in an Article context. Use it to check typography, component appearance, and real-world content. The first paragraph is intentionally long to show drop cap and first-paragraph styling. This page is a reference for designers, developers, and content authors to see how headings, lists, blockquotes, code, tables, images, embeds, and custom components appear in a real article. For a full component reference, see the [main styleguide](/styleguide/). You'll also find examples of footnotes, abbr, and other advanced markdown features. The goal is to ensure every element looks beautiful, readable, and consistent in the context of long-form writing. Feel free to add new examples as you add new features or components to the site. For more information, see the [main styleguide](/styleguide/).[^intro]
@@ -26,6 +35,14 @@ This section demonstrates custom MDX components in context.
 ### Notion Links in Context
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f?pvs=4">Meetings link</Notion> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <Notion href="https://dannysmith.notion.site/Meeting-Checkouts-870b7ecca989419b8f0d3047bad89d05?pvs=4">elementum</Notion> Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. <Notion href="https://dannysmith.notion.site/Loom-4a6ebae015494adbbec07bf3f7912b03?pvs=4">consequat</Notion>
+
+### ButtonLink
+
+<ButtonLink href="https://example.com">Primary Button Link</ButtonLink>
+
+<ButtonLink href="https://example.com" variant="secondary">
+  Secondary Button Link
+</ButtonLink>
 
 ### Callout
 
@@ -171,19 +188,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, n
   Design is not just what it looks like and feels like. Design is how it works.
 </BlockQuoteCitation>
 
-<BlockQuoteCitation 
-  author="Ernest Hemingway" 
-  title="A Moveable Feast"
->
+<BlockQuoteCitation author="Ernest Hemingway" title="A Moveable Feast">
   The best way to find out if you can trust somebody is to trust them.
 </BlockQuoteCitation>
 
-<BlockQuoteCitation 
-  author="Robert Bringhurst" 
-  title="The Elements of Typographic Style" 
+<BlockQuoteCitation
+  author="Robert Bringhurst"
+  title="The Elements of Typographic Style"
   url="https://en.wikipedia.org/wiki/The_Elements_of_Typographic_Style"
 >
-  Typography is the craft of endowing human language with a durable visual form, and typography shares with librarians the task of designing interfaces between readers and text.
+  Typography is the craft of endowing human language with a durable visual form, and typography
+  shares with librarians the task of designing interfaces between readers and text.
 </BlockQuoteCitation>
 
 ---

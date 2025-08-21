@@ -1,0 +1,45 @@
+---
+interface Props {
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  height?: string;
+}
+
+const { size = 'md', height } = Astro.props;
+---
+
+<div 
+  class:list={['spacer', size]} 
+  style={height ? `height: ${height};` : undefined}
+>
+</div>
+
+<style>
+  .spacer {
+    width: 100%;
+    display: block;
+  }
+
+  .spacer.xs {
+    height: var(--spacer-xs);
+  }
+
+  .spacer.sm {
+    height: var(--spacer-sm);
+  }
+
+  .spacer.md {
+    height: var(--spacer-md);
+  }
+
+  .spacer.lg {
+    height: var(--spacer-lg);
+  }
+
+  .spacer.xl {
+    height: var(--spacer-xl);
+  }
+
+  .spacer.xxl {
+    height: var(--spacer-xxl);
+  }
+</style>

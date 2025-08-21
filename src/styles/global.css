@@ -131,6 +131,14 @@
   --font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
+
+  /* Spacer sizes */
+  --spacer-xs: 0.5rem;
+  --spacer-sm: 1rem;
+  --spacer-md: 2rem;
+  --spacer-lg: 3rem;
+  --spacer-xl: 4rem;
+  --spacer-xxl: 6rem;
 }
 
 /* Reset Layer */
@@ -928,6 +936,18 @@
     --color-blockquote-citation-source: var(--color-accent);
     --color-blockquote-citation-source-hover: var(--color-link-hover);
     --color-blockquote-citation-date: var(--color-text-secondary);
+
+    /* Button colors */
+    --color-button-primary-bg: var(--color-accent);
+    --color-button-primary-text: var(--color-brand-white);
+    --color-button-primary-hover-bg: var(--color-link-hover);
+    --color-button-primary-hover-text: var(--color-brand-white);
+    --color-button-secondary-bg: transparent;
+    --color-button-secondary-text: var(--color-accent);
+    --color-button-secondary-border: var(--color-accent);
+    --color-button-secondary-hover-bg: var(--color-accent);
+    --color-button-secondary-hover-text: var(--color-brand-white);
+    --color-button-secondary-hover-border: var(--color-accent);
 
     /* -------------------- PAGE COLOURS -------------------- */
     /* Homepage specific colors */

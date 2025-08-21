@@ -8,5 +8,18 @@ import Embed from './Embed.astro';
 import Loom from './Loom.astro';
 import BasicImage from './BasicImage.astro';
 import BlockQuoteCitation from './BlockQuoteCitation.astro';
+import ButtonLink from './ButtonLink.astro';
+import Spacer from './Spacer.astro';
 
-export { Notion, Grid, BookmarkCard, Embed, Callout, Loom, BasicImage, BlockQuoteCitation };
+export {
+  Notion,
+  Grid,
+  BookmarkCard,
+  Embed,
+  Callout,
+  Loom,
+  BasicImage,
+  BlockQuoteCitation,
+  ButtonLink,
+  Spacer,
+};
