@@ -9,6 +9,28 @@ import Pill from '@components/ui/Pill.astro';
 import Grid from '@components/mdx/Grid.astro';
 import Notion from '@components/mdx/Notion.astro';
 import FormattedDate from '@components/ui/FormattedDate.astro';
+import ContentCard from '@components/ui/ContentCard.astro';
+import { getCollection } from 'astro:content';
+
+// Get sample content for ContentCard examples
+const allArticles = await getCollection('articles', ({ data }) => {
+  return !data.draft;
+});
+
+// Ensure article styleguide is included for cover image testing
+const articleStyleguide = allArticles.find(article => 
+  article.id.includes('article-styleguide')
+);
+
+const sampleArticles = articleStyleguide 
+  ? [articleStyleguide, ...allArticles.filter(a => a !== articleStyleguide)].slice(0, 2)
+  : allArticles.slice(0, 2);
+
+const sampleNotes = (
+  await getCollection('notes', ({ data }) => {
+    return !data.draft && !data.styleguide;
+  })
+).slice(0, 2);
 ---
 
 <!doctype html>
@@ -100,6 +122,99 @@ import FormattedDate from '@components/ui/FormattedDate.astro';
         <div class="test-section">
           <h2>FormattedDate Component</h2>
           <FormattedDate date={new Date()} />
+        </div>
+
+        <div class="test-section">
+          <h2>ContentCard Component Tests</h2>
+
+          <h3>Standard Variant</h3>
+          <p>Full card with summary, meta info, and responsive image support.</p>
+          <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1rem 0;"
+          >
+            {
+              sampleArticles.map(article => (
+                <ContentCard
+                  content={article}
+                  variant="standard"
+                  showSummary={true}
+                  summaryLength={150}
+                />
+              ))
+            }
+            {
+              sampleNotes.map(note => (
+                <ContentCard
+                  content={note}
+                  variant="standard"
+                  showSummary={true}
+                  summaryLength={120}
+                />
+              ))
+            }
+          </div>
+
+          <h3>Compact Variant</h3>
+          <p>Minimal card with just title and type indicator.</p>
+          <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1rem 0;"
+          >
+            {
+              sampleArticles.map(article => (
+                <ContentCard content={article} variant="compact" showSummary={false} />
+              ))
+            }
+            {
+              sampleNotes.map(note => (
+                <ContentCard content={note} variant="compact" showSummary={false} />
+              ))
+            }
+          </div>
+
+          <h3>Responsive Testing</h3>
+          <p>Test cards in different container widths to verify responsive behavior.</p>
+
+          <h4>Narrow Container (300px)</h4>
+          <div style="width: 300px; border: 1px dashed var(--color-border); padding: 1rem;">
+            {
+              sampleArticles[0] && (
+                <ContentCard
+                  content={sampleArticles[0]}
+                  variant="standard"
+                  showSummary={true}
+                  summaryLength={100}
+                />
+              )
+            }
+          </div>
+
+          <h4>Medium Container (500px)</h4>
+          <div style="width: 500px; border: 1px dashed var(--color-border); padding: 1rem;">
+            {
+              sampleNotes[0] && (
+                <ContentCard
+                  content={sampleNotes[0]}
+                  variant="standard"
+                  showSummary={true}
+                  summaryLength={150}
+                />
+              )
+            }
+          </div>
+
+          <h4>Wide Container (700px)</h4>
+          <div style="width: 700px; border: 1px dashed var(--color-border); padding: 1rem;">
+            {
+              sampleArticles[0] && (
+                <ContentCard
+                  content={sampleArticles[0]}
+                  variant="standard"
+                  showSummary={true}
+                  summaryLength={200}
+                />
+              )
+            }
+          </div>
         </div>
 
         <!-- Existing Callout, BookmarkCard, and Embed tests below -->

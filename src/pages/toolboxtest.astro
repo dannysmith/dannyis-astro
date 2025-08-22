@@ -3,6 +3,7 @@ import BaseHead from '@components/layout/BaseHead.astro';
 import { getCollection } from 'astro:content';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
+import ContentCard from '@components/ui/ContentCard.astro';
 
 const toolboxPages = await getCollection('toolboxPages');
 ---
@@ -15,19 +16,40 @@ const toolboxPages = await getCollection('toolboxPages');
   <body>
     <MainNavigation />
     <main>
-      <h1 class="title">Toolbox Test</h1>
-      <section>
-        <ul>
-          {
-            toolboxPages.map(toolboxPage => (
-              <li>
-                <a href={toolboxPage.data.url}>{toolboxPage.data.title}</a>
-              </li>
-            ))
-          }
-        </ul>
+      <h1 class="title">Remote Working Toolbox</h1>
+      <section class="toolbox-grid">
+        {
+          toolboxPages.map(toolboxPage => (
+            <ContentCard 
+              content={toolboxPage} 
+              variant="compact" 
+              showSummary={false}
+            />
+          ))
+        }
       </section>
     </main>
+    
+    <style>
+      main {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      .title {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 3rem;
+        text-transform: uppercase;
+      }
+      
+      .toolbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+    </style>
     <Footer />
   </body>
 </html>

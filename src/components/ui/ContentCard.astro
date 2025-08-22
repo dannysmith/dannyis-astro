@@ -1,0 +1,242 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+import { generateSummary } from '@utils/content-summary';
+
+export interface Props {
+  content: CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'toolboxPages'>;
+  variant?: 'compact' | 'standard';
+  showSummary?: boolean;
+  summaryLength?: number;
+}
+
+const { 
+  content, 
+  variant = 'standard', 
+  showSummary = true, 
+  summaryLength = 200 
+} = Astro.props;
+
+const { data, id, collection } = content;
+
+// Handle different content types
+let title: string;
+let pubDate: Date | undefined;
+let cover: any = undefined;
+let coverAlt: string | undefined = undefined;
+let contentUrl: string;
+let summary: string | null = null;
+let contentType: string;
+let typeLabel: string;
+let typeIcon: string;
+
+if (collection === 'toolboxPages') {
+  title = data.title;
+  contentUrl = data.url;
+  contentType = 'toolbox';
+  typeLabel = 'Tool';
+  typeIcon = '🔧';
+} else {
+  // Articles and notes
+  title = data.title;
+  pubDate = data.pubDate;
+  cover = 'cover' in data ? data.cover : undefined;
+  coverAlt = 'coverAlt' in data ? data.coverAlt : undefined;
+  
+  const slug = data.slug || id.replace(/\.(md|mdx)$/, '');
+  contentUrl = collection === 'articles' ? `/writing/${slug}/` : `/notes/${slug}/`;
+  
+  summary = showSummary ? generateSummary(content as any, summaryLength) : null;
+  contentType = collection === 'articles' ? 'article' : 'note';
+  typeLabel = collection === 'articles' ? 'Article' : 'Note';
+  typeIcon = collection === 'articles' ? '📖' : '📝';
+}
+---
+
+<article class={`content-card cq ${variant}`} data-type={contentType}>
+  <a href={contentUrl} class="card-link">
+    {cover && variant !== 'compact' && (
+      <div class="card-image">
+        <Image 
+          src={cover} 
+          alt={coverAlt || `Cover for ${title}`}
+          width={400}
+          height={200}
+          loading="lazy"
+        />
+      </div>
+    )}
+
+    <div class="card-content">
+      <header class="card-header">
+        <div class="card-meta">
+          <span class="content-type">
+            <span class="type-icon" aria-hidden="true">{typeIcon}</span>
+            <span class="type-label">{typeLabel}</span>
+          </span>
+          {pubDate && (
+            <time class="date" datetime={pubDate.toISOString()}>
+              <FormattedDate date={pubDate} />
+            </time>
+          )}
+        </div>
+        <h2 class="card-title">{title}</h2>
+      </header>
+
+      {summary && (
+        <div class="card-summary">
+          <p>{summary}</p>
+        </div>
+      )}
+    </div>
+  </a>
+</article>
+
+<style>
+  .content-card {
+    container-type: inline-size;
+    background: var(--color-contentcard-bg);
+    border: none;
+    border-radius: 0;
+    border-left: 3px solid var(--color-contentcard-article-accent);
+    transition: all 0.15s ease;
+    overflow: hidden;
+  }
+
+  .content-card[data-type="note"] {
+    border-left-color: var(--color-contentcard-note-accent);
+  }
+
+  .content-card[data-type="toolbox"] {
+    border-left-color: var(--color-contentcard-toolbox-accent);
+  }
+
+  .content-card:hover {
+    border-left-width: 6px;
+    background: var(--color-bg-secondary);
+  }
+
+  .card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .card-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+
+  .content-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+  }
+
+  .type-icon {
+    display: none;
+  }
+
+  .type-label {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+  }
+
+  .date {
+    font-size: 0.65rem;
+    font-weight: 400;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    color: var(--color-text-primary);
+  }
+
+  .card-summary {
+    margin-bottom: 0.75rem;
+  }
+
+  .card-summary p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    font-size: 0.85rem;
+  }
+
+
+
+  /* Compact variant */
+  .content-card.compact .card-summary {
+    display: none;
+  }
+
+  .content-card.compact .card-content {
+    padding: 0.75rem;
+  }
+
+  .content-card.compact .card-title {
+    font-size: 1rem;
+  }
+
+  /* Container queries for responsive behavior */
+  @container (width < 300px) {
+    .card-summary {
+      display: none;
+    }
+    
+    .card-image {
+      display: none;
+    }
+    
+    .card-content {
+      padding: 0.75rem;
+    }
+    
+    .card-title {
+      font-size: 0.95rem;
+    }
+  }
+
+
+  /* Focus and accessibility */
+  .card-link:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .card-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>
