@@ -626,3 +626,443 @@ Your current architecture is well-designed for your needs. The proposed changes 
 3. **Skip the major architectural changes** (not worth the complexity)
 
 This maintains your philosophy of simplicity while capturing the main benefits of the more complex approach.
+
+---
+
+# PHASED IMPLEMENTATION PLAN - TYPOGRAPHY WRAPPER COMPONENTS
+
+This document serves as a detailed execution plan for implementing typography wrapper components while maintaining the sophisticated CSS layer system. Each phase includes specific implementation steps, testing requirements, and rollback procedures.
+
+# PHASE 1: PREPARATION AND COMPONENT CREATION
+
+## Objective
+Create typography wrapper components using existing CSS classes, test thoroughly, then proceed with systematic improvements.
+
+## Phase 1A: Audit and Preparation
+
+### 1.1 Current Usage Audit
+**Task**: Search codebase for all `.prose` and `.article` class usage
+```bash
+# Commands to run:
+grep -r "prose" src/ docs/ --include="*.astro" --include="*.md" --include="*.css"
+grep -r "article" src/ docs/ --include="*.astro" --include="*.md" --include="*.css"
+```
+
+**Expected Locations**:
+- `src/styles/global.css` (CSS definitions)
+- `src/components/layout/NoteCard.astro` (`.prose` usage)
+- `src/layouts/Article.astro` (`.article` usage)
+- `src/pages/now.astro`, `src/pages/styleguide.astro` (`.prose` usage)
+
+**Deliverable**: Complete list of files using these classes
+
+### 1.2 Create Test Checklist
+**Visual Elements to Verify**:
+- [ ] Article typography (fonts, spacing, grid layout)
+- [ ] Note typography (fonts, spacing)
+- [ ] Responsive behavior on mobile/desktop
+- [ ] Container queries functionality
+- [ ] Footnote positioning and styling
+- [ ] Link styling and hover states
+- [ ] List markers and spacing
+- [ ] Code block styling
+- [ ] Blockquote styling
+- [ ] End marks on articles
+- [ ] Dark mode theme switching
+
+### 1.3 Backup Current State
+```bash
+git checkout -b feature/typography-wrappers
+git add . && git commit -m "Backup before typography wrapper implementation"
+```
+
+## Phase 1B: Create Typography Components
+
+### 1.4 Create SimpleProseTypography.astro
+**File**: `src/components/layout/SimpleProseTypography.astro`
+```astro
+---
+export interface Props {
+  class?: string;
+  [key: string]: any;
+}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<div class={`prose ${className || ''}`} {...props}>
+  <slot />
+</div>
+```
+
+### 1.5 Create LongFormProseTypography.astro
+**File**: `src/components/layout/LongFormProseTypography.astro`
+```astro
+---
+export interface Props {
+  class?: string;
+  [key: string]: any;
+}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<div class={`article cq ${className || ''}`} {...props}>
+  <slot />
+</div>
+```
+
+### 1.6 Update Barrel Exports
+**File**: `src/components/layout/index.ts`
+```typescript
+// Add to existing exports:
+export { default as SimpleProseTypography } from './SimpleProseTypography.astro';
+export { default as LongFormProseTypography } from './LongFormProseTypography.astro';
+```
+
+### 1.7 Test Component Creation
+```bash
+npm run check
+npm run build
+```
+**Expected**: No errors, components available for import
+
+---
+
+# PHASE 2: IMPLEMENT COMPONENTS IN LAYOUTS
+
+## Objective
+Replace direct CSS class usage with typography components, test each change individually.
+
+## Phase 2A: Update NoteCard (Lower Risk)
+
+### 2.1 Update NoteCard.astro
+**File**: `src/components/layout/NoteCard.astro`
+
+**Current**:
+```astro
+<div class="note-content prose p-content">
+  <slot />
+</div>
+```
+
+**New**:
+```astro
+---
+import SimpleProseTypography from './SimpleProseTypography.astro';
+---
+
+<SimpleProseTypography class="note-content p-content">
+  <slot />
+</SimpleProseTypography>
+```
+
+### 2.2 Test NoteCard Changes
+**Manual Testing**:
+- [ ] Visit `/notes/` page
+- [ ] Open individual note pages
+- [ ] Check typography styling matches exactly
+- [ ] Test responsive behavior
+- [ ] Verify microformat classes still present
+
+**Automated Testing**:
+```bash
+npm run test:unit
+npm run test:e2e
+npm run build
+```
+
+**Rollback Plan**: Revert NoteCard.astro if any issues
+
+## Phase 2B: Update Article Layout (Higher Risk)
+
+### 2.3 Update Article.astro
+**File**: `src/layouts/Article.astro`
+
+**Current Structure**:
+```astro
+<article class="article cq h-entry" itemscope itemtype="https://schema.org/Article">
+  <!-- content -->
+</article>
+```
+
+**New Structure**:
+```astro
+---
+import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
+---
+
+<article class="h-entry" itemscope itemtype="https://schema.org/Article">
+  <!-- Article metadata header (title, date, etc.) -->
+  
+  <LongFormProseTypography>
+    <Content />
+  </LongFormProseTypography>
+</article>
+```
+
+### 2.4 Critical Testing for Article Layout
+**Visual Regression Check**:
+- [ ] Grid layout identical (3-column layout preserved)
+- [ ] Typography styling unchanged
+- [ ] Footnotes position correctly
+- [ ] End marks appear
+- [ ] Container queries work
+- [ ] Mobile responsive behavior
+- [ ] Dark mode switching
+- [ ] Schema.org markup intact
+
+**Test Articles**:
+- Article styleguide (`/writing/article-styleguide`)
+- Recent published articles
+- Draft articles with complex formatting
+
+**Performance Check**:
+```bash
+npm run build
+# Check build output for any errors
+```
+
+### 2.5 Update Other Simple Pages
+**Files to Update**:
+- `src/pages/now.astro`
+- `src/pages/styleguide.astro`
+
+**Replace**: Direct `.prose` usage with `<SimpleProseTypography>`
+
+---
+
+# PHASE 3: CSS CLASS RENAMING
+
+## Objective
+Rename CSS classes for consistency while maintaining all functionality.
+
+## Phase 3A: Rename CSS Classes
+
+### 3.1 Update global.css
+**File**: `src/styles/global.css`
+
+**Changes**:
+```css
+/* Change this: */
+@layer prose {
+  .prose {
+    /* styles */
+  }
+}
+
+@layer articletypography {
+  .article {
+    /* styles */
+  }
+}
+
+/* To this: */
+@layer prose {
+  .simple-prose {
+    /* styles */
+  }
+}
+
+@layer articletypography {
+  .longform-prose {
+    /* styles */
+  }
+}
+```
+
+**Systematic Approach**:
+1. Use find/replace for `.prose` → `.simple-prose`
+2. Use find/replace for `.article` → `.longform-prose`
+3. **Carefully check each replacement** - avoid false positives
+
+### 3.2 Update Typography Components
+**SimpleProseTypography.astro**:
+```astro
+<div class={`simple-prose ${className || ''}`} {...props}>
+```
+
+**LongFormProseTypography.astro**:
+```astro
+<div class={`longform-prose cq ${className || ''}`} {...props}>
+```
+
+### 3.3 Comprehensive Testing
+**Visual Regression Testing**:
+- [ ] All articles render identically
+- [ ] All notes render identically
+- [ ] Simple pages render identically
+- [ ] Responsive behavior unchanged
+- [ ] Dark mode works correctly
+
+**Technical Testing**:
+```bash
+npm run check
+npm run test:unit
+npm run test:e2e
+npm run build
+```
+
+---
+
+# PHASE 4: CSS LAYER OPTIMIZATION (OPTIONAL)
+
+## Objective
+Consider renaming CSS layers to match class names for consistency.
+
+## Phase 4A: Evaluate Layer Rename
+
+### 4.1 Current State
+```css
+@layer reset, base, prose, articletypography, theme;
+```
+
+### 4.2 Proposed State
+```css
+@layer reset, base, simple-prose, longform-prose, theme;
+```
+
+### 4.3 Impact Assessment
+**Considerations**:
+- Layer order affects CSS specificity
+- May require testing of edge cases
+- Purely cosmetic change
+- Risk vs. benefit analysis
+
+**Decision Point**: Evaluate if this change is worth the risk
+
+---
+
+# PHASE 5: COMPONENT PROP DRILLING
+
+## Objective
+Implement component prop drilling for standard HTML elements.
+
+## Phase 5A: Create Smart Components
+
+### 5.1 Create SmartLink Component (if needed)
+**File**: `src/components/mdx/SmartLink.astro`
+```astro
+---
+export interface Props {
+  href: string;
+  [key: string]: any;
+}
+
+const { href, ...props } = Astro.props;
+const isExternal = href.startsWith('http');
+const isInternal = href.startsWith('/');
+---
+
+<a 
+  href={href} 
+  target={isExternal ? '_blank' : undefined}
+  rel={isExternal ? 'noopener noreferrer' : undefined}
+  {...props}
+>
+  <slot />
+</a>
+```
+
+### 5.2 Update Route Files
+**Files**: 
+- `src/pages/writing/[...slug]/index.astro`
+- `src/pages/notes/[...slug]/index.astro`
+
+**Add Component Props**:
+```astro
+---
+// ... existing imports and logic
+
+const components = {
+  // Standard HTML element overrides
+  a: SmartLink,        // Internal/external link detection
+  img: BasicImage,     // Responsive images (if available)
+  blockquote: Callout, // Enhanced blockquotes (if desired)
+};
+---
+
+<Layout {...postData}>
+  <Content components={components} />
+</Layout>
+```
+
+### 5.3 Test Component Prop Drilling
+**Testing**:
+- [ ] Links work correctly (internal vs external)
+- [ ] Images render properly
+- [ ] Blockquotes styled correctly
+- [ ] Custom MDX component imports still work
+- [ ] No conflicts between prop drilling and imports
+
+---
+
+# SUCCESS CRITERIA & ROLLBACK
+
+## Must-Have Success Criteria
+- [ ] **Zero visual regressions** in any content
+- [ ] **Grid layout preserved** for articles
+- [ ] **Typography features intact** (ligatures, spacing, etc.)
+- [ ] **Container queries working**
+- [ ] **Microformats preserved**
+- [ ] **Performance unchanged**
+- [ ] **Build process successful**
+
+## Rollback Procedures
+
+### Phase 1 Rollback
+```bash
+git reset --hard HEAD~1  # If components cause issues
+```
+
+### Phase 2 Rollback
+Revert individual component files to previous state
+
+### Phase 3 Rollback
+Revert global.css changes:
+```css
+.simple-prose → .prose
+.longform-prose → .article
+```
+
+### Emergency Rollback
+```bash
+git checkout main
+# Restart from clean state
+```
+
+## Testing Commands
+
+### After Each Phase
+```bash
+# Type checking
+npm run check:types
+
+# Linting
+npm run lint
+
+# Formatting check
+npm run format:check
+
+# Unit tests
+npm run test:unit
+
+# E2E tests
+npm run test:e2e
+
+# Build test
+npm run build
+
+# Full check
+npm run check
+```
+
+## Documentation Updates
+
+### After Completion
+- [ ] Update component documentation
+- [ ] Update styleguide examples
+- [ ] Document new component usage patterns
+- [ ] Update development guidelines
+
+This phased approach ensures each change is tested and stable before proceeding to the next phase, minimizing risk while achieving the goal of componentized typography.
