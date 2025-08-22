@@ -877,6 +877,7 @@
     --color-contentcard-border: var(--color-border);
     --color-contentcard-article-accent: var(--color-red-500);
     --color-contentcard-note-accent: var(--color-blue-500);
+    --color-contentcard-toolbox-accent: var(--color-green-500);
     --color-contentcard-meta: var(--color-text-secondary);
     --color-contentcard-summary: var(--color-text-primary);
 
@@ -1010,6 +1011,7 @@
     --color-contentcard-border: var(--color-border);
     --color-contentcard-article-accent: var(--color-red-500);
     --color-contentcard-note-accent: var(--color-blue-400);
+    --color-contentcard-toolbox-accent: var(--color-green-400);
     --color-contentcard-meta: var(--color-text-secondary);
     --color-contentcard-summary: var(--color-text-primary);
 
@@ -1100,6 +1102,7 @@
       --color-contentcard-bg: var(--color-bg-secondary);
       --color-contentcard-article-accent: var(--color-red-500);
       --color-contentcard-note-accent: var(--color-blue-400);
+      --color-contentcard-toolbox-accent: var(--color-green-400);
 
       /* Pill colors */
       --color-pill-bg: var(--color-grey-800);

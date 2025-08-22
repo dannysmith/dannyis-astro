@@ -5,7 +5,7 @@ import FormattedDate from './FormattedDate.astro';
 import { generateSummary } from '@utils/content-summary';
 
 export interface Props {
-  content: CollectionEntry<'articles'> | CollectionEntry<'notes'>;
+  content: CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'toolboxPages'>;
   variant?: 'compact' | 'standard';
   showSummary?: boolean;
   summaryLength?: number;
@@ -19,23 +19,41 @@ const {
 } = Astro.props;
 
 const { data, id, collection } = content;
-const { title, pubDate, tags = [] } = data;
 
-// Extract cover and coverAlt for articles only
-const cover = 'cover' in data ? data.cover : undefined;
-const coverAlt = 'coverAlt' in data ? data.coverAlt : undefined;
+// Handle different content types
+let title: string;
+let pubDate: Date | undefined;
+let tags: string[] = [];
+let cover: any = undefined;
+let coverAlt: string | undefined = undefined;
+let contentUrl: string;
+let summary: string | null = null;
+let contentType: string;
+let typeLabel: string;
+let typeIcon: string;
 
-// Generate content URL based on collection  
-const slug = data.slug || id.replace(/\.(md|mdx)$/, '');
-const contentUrl = collection === 'articles' ? `/writing/${slug}/` : `/notes/${slug}/`;
-
-// Generate summary if requested
-const summary = showSummary ? generateSummary(content, summaryLength) : null;
-
-// Determine content type for styling
-const contentType = collection === 'articles' ? 'article' : 'note';
-const typeLabel = collection === 'articles' ? 'Article' : 'Note';
-const typeIcon = collection === 'articles' ? '📖' : '📝';
+if (collection === 'toolboxPages') {
+  title = data.title;
+  contentUrl = data.url;
+  contentType = 'toolbox';
+  typeLabel = 'Tool';
+  typeIcon = '🔧';
+} else {
+  // Articles and notes
+  title = data.title;
+  pubDate = data.pubDate;
+  tags = data.tags || [];
+  cover = 'cover' in data ? data.cover : undefined;
+  coverAlt = 'coverAlt' in data ? data.coverAlt : undefined;
+  
+  const slug = data.slug || id.replace(/\.(md|mdx)$/, '');
+  contentUrl = collection === 'articles' ? `/writing/${slug}/` : `/notes/${slug}/`;
+  
+  summary = showSummary ? generateSummary(content as any, summaryLength) : null;
+  contentType = collection === 'articles' ? 'article' : 'note';
+  typeLabel = collection === 'articles' ? 'Article' : 'Note';
+  typeIcon = collection === 'articles' ? '📖' : '📝';
+}
 ---
 
 <article class={`content-card cq ${variant}`} data-type={contentType}>
@@ -59,9 +77,11 @@ const typeIcon = collection === 'articles' ? '📖' : '📝';
             <span class="type-icon" aria-hidden="true">{typeIcon}</span>
             <span class="type-label">{typeLabel}</span>
           </span>
-          <time class="date" datetime={pubDate.toISOString()}>
-            <FormattedDate date={pubDate} />
-          </time>
+          {pubDate && (
+            <time class="date" datetime={pubDate.toISOString()}>
+              <FormattedDate date={pubDate} />
+            </time>
+          )}
         </div>
         <h2 class="card-title">{title}</h2>
       </header>
@@ -88,6 +108,10 @@ const typeIcon = collection === 'articles' ? '📖' : '📝';
 
   .content-card[data-type="note"] {
     border-left-color: var(--color-contentcard-note-accent);
+  }
+
+  .content-card[data-type="toolbox"] {
+    border-left-color: var(--color-contentcard-toolbox-accent);
   }
 
   .content-card:hover {
