@@ -36,6 +36,11 @@ const imageSrc =
     : src;
 
 const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif');
+
+// For remote images without dimensions, provide reasonable defaults to prevent build errors
+const isRemoteImage = typeof src === 'string' && (src.startsWith('http') || src.startsWith('/uploads'));
+const defaultWidth = width || (isRemoteImage ? 800 : undefined);
+const defaultHeight = height || (isRemoteImage ? 400 : undefined);
 ---
 
 <figure
@@ -53,8 +58,8 @@ const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif');
         <img
           src={typeof imageSrc === 'string' ? src : imageSrc.src}
           alt={alt}
-          height={height}
-          width={width}
+          height={defaultHeight}
+          width={defaultWidth}
           class="styled-image"
           loading="eager"
         />
@@ -63,8 +68,8 @@ const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif');
           src={imageSrc as ImageMetadata}
           alt={alt}
           formats={['avif', 'webp', 'jpg']}
-          height={height}
-          width={width}
+          height={defaultHeight}
+          width={defaultWidth}
           class="styled-image"
           loading="eager"
           decoding="async"

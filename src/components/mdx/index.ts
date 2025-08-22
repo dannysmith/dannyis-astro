@@ -12,6 +12,7 @@ import BlockQuoteCitation from './BlockQuoteCitation.astro';
 import ButtonLink from './ButtonLink.astro';
 import Spacer from './Spacer.astro';
 import IntroParagraph from './IntroParagraph.astro';
+import SmartLink from './SmartLink.astro';
 
 export {
   Accordion,
@@ -26,4 +27,5 @@ export {
   ButtonLink,
   Spacer,
   IntroParagraph,
+  SmartLink,
 };

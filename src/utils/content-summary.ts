@@ -69,7 +69,7 @@ export function stripMDXElements(content: string): string {
       .replace(/`[^`]+`/g, '')
 
       // Remove HTML comments
-      .replaceAllHtmlComments()
+      .replace(/<!--[\s\S]*?-->/g, '')
 
       // Remove markdown links but keep text
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')

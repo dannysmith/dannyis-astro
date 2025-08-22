@@ -1,6 +1,8 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Article from '@layouts/Article.astro';
+import SmartLink from '@components/mdx/SmartLink.astro';
+import BasicImage from '@components/mdx/BasicImage.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('articles', ({ data }) => {
@@ -17,8 +19,14 @@ const post = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const readingTime = remarkPluginFrontmatter.minutesRead;
 const postData = { ...post.data, readingTime };
+
+// Component prop drilling for automatic enhancements
+const components = {
+  a: SmartLink,    // Automatic internal/external link handling
+  img: BasicImage, // Automatic responsive images with loading states
+};
 ---
 
 <Article {...postData}>
-  <Content />
+  <Content components={components} />
 </Article>

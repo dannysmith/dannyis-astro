@@ -1,0 +1,341 @@
+---
+export interface Props {
+  class?: string;
+  [key: string]: any;
+}
+
+const { class: className, ...props } = Astro.props;
+---
+
+<div class={`longform-prose cq ${className || ''}`} {...props}>
+  <slot />
+</div>
+
+<style is:global>
+  @layer longform-prose {
+    .longform-prose {
+      --line-height: var(--line-height-article);
+      --side-space: 2rem; /* Space on the left and right of the article on small screens. */
+
+      display: grid;
+      grid-template-columns:
+        1fr
+        min(60ch, calc(100% - calc(var(--side-space) * 2)))
+        1fr;
+      grid-column-gap: var(--side-space);
+      grid-row-gap: calc(var(--line-height) * 1em);
+
+      font-family: var(--font-prose);
+      font-size: clamp(1rem, calc(0.6rem + 1vw), 1.3rem);
+      font-weight: var(--font-weight-article);
+      line-height: var(--line-height);
+      text-rendering: optimizeLegibility;
+    }
+
+    .longform-prose > * {
+      grid-column: 2 / 3;
+    }
+
+    .longform-prose:last-child {
+      margin-bottom: 5em;
+    }
+
+    /* Headings */
+
+    .longform-prose > :is(h1, h2, h3, h4, h5, h6) {
+      font-variant-ligatures: common-ligatures discretionary-ligatures;
+      hanging-punctuation: first allow-end last;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.6em;
+    }
+
+    .longform-prose h1.title {
+      font-size: 2.4em;
+      font-weight: 500;
+      font-variation-settings: 'opsz' 50;
+      line-height: 1.25;
+      margin-top: 2.5em;
+    }
+
+    .longform-prose > h1 {
+      font-size: 1.93em;
+      font-weight: 600;
+      margin-top: 1.5em;
+    }
+
+    .longform-prose > h2 {
+      font-size: 1.56em;
+      font-weight: 600;
+      margin-top: 1.7em;
+      margin-bottom: -0.5em;
+    }
+
+    .longform-prose > h3 {
+      font-size: 1.25em;
+      font-weight: 600;
+      margin-top: 1.5em;
+      margin-bottom: -0.5em;
+    }
+
+    .longform-prose > :is(h4, h5, h6) {
+      font-size: 1em;
+      font-weight: normal;
+      font-style: italic;
+      margin-top: 1.5em;
+      margin-bottom: -1em;
+    }
+
+    /* Remove top margin from headings that are immediatly preceeded by another heading or an HR */
+    .longform-prose > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
+      margin-top: 0;
+    }
+
+    /* ----------- Paragraphs ----------- */
+
+    .longform-prose > p:first-of-type {
+      margin-top: 3em;
+    }
+
+    .longform-prose > p {
+      font-variant-numeric: oldstyle-nums diagonal-fractions;
+      hanging-punctuation: first allow-end last;
+    }
+
+    /* Use hyphens only on small viewports. */
+    @media (max-width: 42em) {
+      .longform-prose > p {
+        -webkit-hyphens: auto;
+        hyphens: auto;
+      }
+    }
+
+    /* End Mark */
+    .longform-prose > p:last-of-type:after {
+      color: var(--color-article-accent);
+      display: inline-block;
+      content: ' ';
+      -webkit-mask: url('/end-mark.svg');
+      mask: url('/end-mark.svg');
+      -webkit-mask-size: cover;
+      mask-size: cover;
+      background-color: currentColor;
+      height: 0.65em;
+      width: 1em;
+      line-height: 0.5;
+      margin-left: 0.1em;
+    }
+
+    /* ----------- Links ----------- */
+
+    .longform-prose a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: var(--color-article-accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.3em;
+      text-decoration-skip-ink: none;
+      border-radius: 0.1em;
+    }
+
+    .longform-prose a:visited {
+      text-decoration-color: var(--color-link-visited);
+    }
+
+    .longform-prose a:hover,
+    .longform-prose a:active {
+      text-decoration-color: var(--color-article-accent);
+      color: var(--color-article-accent);
+    }
+
+    .longform-prose a:focus-visible {
+      outline: 2px solid var(--color-article-accent);
+      text-decoration: none;
+    }
+
+    @media (pointer: coarse) {
+      .longform-prose a {
+        text-decoration: none;
+        color: var(--color-link-hover);
+      }
+
+      .longform-prose a:visited {
+        color: var(--color-link-visited);
+      }
+    }
+
+    .longform-prose h1 a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ----------- Lists ----------- */
+
+    .longform-prose li {
+      padding-left: 1em;
+      margin-top: 0.5em;
+      /* Ensure marker color for all lists */
+      &::marker {
+        color: var(--color-article-accent);
+      }
+    }
+    .longform-prose li:first-of-type {
+      margin-top: 0;
+    }
+
+    .longform-prose :is(ul, ol) {
+      font-variant-numeric: oldstyle-nums diagonal-fractions;
+    }
+
+    .longform-prose ul {
+      padding-left: 0.4em;
+      list-style-type: '•';
+    }
+
+    .longform-prose ol {
+      padding-left: 0.4em;
+      list-style-type: decimal;
+    }
+
+    .longform-prose ol ::marker {
+      font-size: 1.4ex;
+      font-variation-settings: 'opsz' 10;
+      font-weight: 500;
+      color: var(--color-article-accent);
+    }
+
+    /* ----------- Task Lists ------------ */
+
+    .longform-prose .contains-task-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .longform-prose .task-list-item {
+      padding-left: 0;
+    }
+
+    .longform-prose .task-list-item input {
+      position: relative;
+      height: 0.7em;
+      width: 0.7em;
+      margin-bottom: 0;
+      appearance: none;
+      outline: none;
+      border-radius: 2px;
+      border: 1px solid var(--color-article-tasklist-border);
+    }
+
+    .longform-prose .task-list-item input:checked {
+      color: var(--color-article-accent);
+      background: transparent;
+      border-color: var(--color-article-accent);
+    }
+
+    .longform-prose .task-list-item input:checked:before {
+      content: '\2713';
+      position: absolute;
+      top: -0.1em;
+      left: 0.05em;
+      font-size: 0.6em;
+      font-weight: 600;
+      color: var(--color-article-accent);
+    }
+
+    .longform-prose .task-list-item input[disabled] {
+      opacity: 1;
+    }
+
+    /* ----------- Text Styles ----------- */
+
+    .longform-prose strong {
+      font-weight: 650;
+    }
+
+    .longform-prose code {
+      font-family: var(--font-code);
+      font-size: 0.9em;
+      background: var(--color-code-background);
+      padding: 0.2em 0.4em;
+      border-radius: 0.2em;
+    }
+    .longform-prose pre code {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+    }
+
+    /* ----------- HR ----------- */
+    .longform-prose hr {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 0;
+      overflow: visible;
+      margin: 4rem 0;
+
+      border: 1px solid var(--color-article-horizontal-rule);
+    }
+
+    .longform-prose hr:before {
+      content: '§';
+      transform: translateY(-0.15em);
+      background: var(--color-article-bg);
+      padding: 0 0.5em;
+    }
+
+    /* ----------- Blockquotes ----------- */
+    .longform-prose blockquote {
+      font-variant-numeric: oldstyle-nums diagonal-fractions;
+      hanging-punctuation: first allow-end last;
+      border-left: 2px solid var(--color-article-accent);
+      padding-left: calc((1em * var(--line-height)) - 2px);
+      font-style: italic;
+      margin-left: 0;
+    }
+
+    /* ----------- Footnotes ----------- */
+
+    .longform-prose [data-footnote-ref] {
+      display: inline-block;
+      padding-left: 0.5ch;
+      padding-right: 0.5ch;
+      font-size: 0.7em;
+      font-weight: 600;
+      font-variant: small-caps;
+      letter-spacing: 0.05ch;
+      text-decoration: none;
+      color: var(--color-article-accent);
+    }
+
+    .inline-footnote-container {
+      font-size: 0.8em;
+      padding: 1em;
+      border-left: 2px solid var(--color-article-accent);
+      background: var(--color-article-inline-footnote-bg);
+
+      .data-footnote-backref {
+        display: none;
+      }
+    }
+
+    .longform-prose .footnotes {
+      border-top: 1px solid var(--color-article-accent);
+      margin-top: 2em;
+      padding-top: 1em;
+      font-size: 0.8em;
+
+      .data-footnote-backref {
+        text-decoration: none;
+        color: var(--color-article-accent);
+      }
+    }
+
+    /* Mobile optimization */
+    @media (max-width: 700px) {
+      .longform-prose .metadata {
+        padding-top: 3.5rem;
+      }
+    }
+  }
+</style>
