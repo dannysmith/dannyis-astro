@@ -54,8 +54,9 @@ export function stripMDXElements(content: string): string {
       // Remove frontmatter (everything between --- lines)
       .replace(/^---[\s\S]*?---\n?/m, '')
 
-      // Remove import statements
-      .replace(/^import\s+.*?from\s+.*?;?\s*$/gm, '')
+      // Remove import statements (including multiline)
+      .replace(/^import\s+[\s\S]*?from\s+.*?;?\s*$/gm, '')
+      .replace(/^import\s*\{[\s\S]*?\}\s*from\s+.*?;?\s*$/gm, '')
 
       // Remove MDX component usage (simple heuristic)
       .replace(/<[A-Z][^>]*>[\s\S]*?<\/[A-Z][^>]*>/g, '')
