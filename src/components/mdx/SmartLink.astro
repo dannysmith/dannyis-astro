@@ -7,24 +7,24 @@ export interface Props {
 const { href, ...props } = Astro.props;
 
 // Determine link type
-const isExternal = href?.startsWith('http') && !href.includes('dannysmith.com');
+const isExternal = href?.startsWith('http') && !href.includes('danny.is');
 const isInternal = href?.startsWith('/') || href?.startsWith('#');
 const isEmail = href?.startsWith('mailto:');
 const isTel = href?.startsWith('tel:');
 ---
 
-<a 
+<a
   href={href}
   target={isExternal ? '_blank' : undefined}
   rel={isExternal ? 'noopener noreferrer' : undefined}
   class:list={[
     'smart-link',
-    { 
+    {
       external: isExternal,
       internal: isInternal,
       email: isEmail,
-      tel: isTel
-    }
+      tel: isTel,
+    },
   ]}
   {...props}
 >
@@ -38,13 +38,13 @@ const isTel = href?.startsWith('tel:');
     margin-left: 0.2em;
     opacity: 0.7;
   }
-  
+
   .smart-link.email::before {
     content: '✉ ';
     font-size: 0.8em;
     opacity: 0.7;
   }
-  
+
   .smart-link.tel::before {
     content: '☎ ';
     font-size: 0.8em;

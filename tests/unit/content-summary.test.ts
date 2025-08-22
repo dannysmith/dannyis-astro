@@ -9,6 +9,7 @@ import {
 } from '../../src/utils/content-summary';
 
 // Mock content entry for testing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createMockEntry = (data: any, body: string = '') => ({
   data,
   body,
@@ -223,8 +224,8 @@ describe('validateSummary', () => {
     expect(validateSummary('Short')).toBe(false);
     expect(validateSummary('...')).toBe(false);
     expect(validateSummary('Title...')).toBe(false);
-    expect(validateSummary(null as any)).toBe(false);
-    expect(validateSummary(undefined as any)).toBe(false);
+    expect(validateSummary(null as unknown as string)).toBe(false);
+    expect(validateSummary(undefined as unknown as string)).toBe(false);
   });
 });
 
