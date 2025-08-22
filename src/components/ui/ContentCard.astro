@@ -23,7 +23,6 @@ const { data, id, collection } = content;
 // Handle different content types
 let title: string;
 let pubDate: Date | undefined;
-let tags: string[] = [];
 let cover: any = undefined;
 let coverAlt: string | undefined = undefined;
 let contentUrl: string;
@@ -42,7 +41,6 @@ if (collection === 'toolboxPages') {
   // Articles and notes
   title = data.title;
   pubDate = data.pubDate;
-  tags = data.tags || [];
   cover = 'cover' in data ? data.cover : undefined;
   coverAlt = 'coverAlt' in data ? data.coverAlt : undefined;
   
