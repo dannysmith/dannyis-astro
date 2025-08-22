@@ -182,6 +182,7 @@ Highlighted information boxes:
 
 ```mdx
 <!-- Using emojis -->
+
 <Callout type="blue" emoji="💡" title="Pro Tip">
   Important information here
 </Callout>
@@ -191,6 +192,7 @@ Highlighted information boxes:
 </Callout>
 
 <!-- Using astro-icons -->
+
 <Callout type="green" icon="heroicons:check-circle" title="Success">
   Task completed successfully
 </Callout>
@@ -203,6 +205,7 @@ Highlighted information boxes:
 **Available Types:** `default`, `red`, `blue`, `green`, `orange`, `yellow`, `purple`
 
 **Icon Options:**
+
 - `emoji` - Plain text emoji (e.g., `emoji="💡"`)
 - `icon` - Astro-icon name (e.g., `icon="heroicons:check-circle"`)
 - Priority: astro-icon > emoji

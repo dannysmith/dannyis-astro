@@ -1,6 +1,8 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content'
 import Note from '@layouts/Note.astro'
+import SmartLink from '@components/mdx/SmartLink.astro'
+import BasicImage from '@components/mdx/BasicImage.astro'
 
 export async function getStaticPaths() {
   const notes = await getCollection('notes', ({ data }) => {
@@ -15,8 +17,14 @@ type Props = CollectionEntry<'notes'>
 
 const note = Astro.props
 const { Content } = await render(note)
+
+// Component prop drilling for automatic enhancements
+const components = {
+  a: SmartLink,    // Automatic internal/external link handling
+  img: BasicImage, // Automatic responsive images with loading states
+}
 ---
 
 <Note {...note.data}>
-  <Content />
+  <Content components={components} />
 </Note>

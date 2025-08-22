@@ -426,6 +426,7 @@ After conducting a comprehensive analysis of the current codebase architecture a
 ## Current Architecture Assessment
 
 ### What We Have Now
+
 1. **Two separate layout files**: `Article.astro` and `Note.astro`, each containing full HTML boilerplate
 2. **Two separate route handlers**: `/writing/[...slug]/index.astro` and `/notes/[...slug]/index.astro`
 3. **Shared BaseHead component**: Used consistently across layouts for `<head>` content
@@ -434,6 +435,7 @@ After conducting a comprehensive analysis of the current codebase architecture a
 6. **Excellent component organization**: Clear directory structure with barrel exports
 
 ### Strengths of Current Approach
+
 - **Explicit and transparent**: Each layout file shows exactly what's happening
 - **Easy to debug**: Clear separation between articles and notes
 - **Flexible per-content-type**: Each layout can evolve independently
@@ -443,37 +445,44 @@ After conducting a comprehensive analysis of the current codebase architecture a
 ## Analysis Against Proposed Changes
 
 ### 1. Nested Layout System
+
 **Maggie's Approach**: Base Layout → Content-Type Layout → CSS Wrapper → Content
 **Your Current**: Individual layouts with shared BaseHead component
 
 **Recommendation**: **SKIP THIS CHANGE**
+
 - Your current approach is actually cleaner for a two-content-type site
 - The nested layout system adds complexity without significant benefit at your scale
 - Your layouts are already DRY where it matters (BaseHead component)
 
 ### 2. Single Catch-All Route
+
 **Maggie's Approach**: One `[...slug].astro` file handling all content types
 **Your Current**: Separate route files for `/writing/` and `/notes/`
 
 **Recommendation**: **SKIP THIS CHANGE**
+
 - Your URL structure intentionally differentiates content types (`/writing/` vs `/notes/`)
 - A single catch-all would require URL parsing logic to determine content type
 - Current approach aligns with your clear content type distinction
 - Maintenance overhead is minimal with only two content types
 
 ### 3. Component Prop Drilling to MDX
+
 **Maggie's Approach**: Pass components via `<Content components={...} />`
 **Your Current**: Direct imports in MDX files
 
 **Recommendation**: **CONSIDER IMPLEMENTING** (Medium Priority)
 
 **Benefits**:
+
 - Ensures consistent component usage across all content
 - Easier to swap/update components globally
 - Cleaner MDX files focused on content
 - Prevents inconsistent import patterns
 
 **Implementation**:
+
 ```typescript
 // In both route files, add:
 const components = {
@@ -481,7 +490,7 @@ const components = {
   a: SmartLink,      // For external/internal link detection
   img: BasicImage,   // For responsive images
   blockquote: Callout, // Enhanced blockquotes
-  
+
   // Keep custom components as explicit imports
   // This hybrid approach gives flexibility while ensuring consistency
 };
@@ -490,18 +499,21 @@ const components = {
 ```
 
 ### 4. CSS Wrapper Components (ProseWrapper)
+
 **Maggie's Approach**: Dedicated CSS wrapper components
 **Your Current**: Styles embedded in layouts
 
 **Recommendation**: **IMPLEMENT THIS** (High Priority)
 
 This is the most valuable change for your site. Benefits:
+
 - **Reusable prose styling**: Create a consistent reading experience
 - **Container queries**: Already using these well, a wrapper would enhance this
 - **Typography focus**: Aligns with your typography-first philosophy
 - **Easy to test and iterate**: Isolated typography component
 
 **Implementation**:
+
 ```astro
 <!-- src/components/layout/ProseWrapper.astro -->
 ---
@@ -522,11 +534,11 @@ const { maxWidth = '72ch', contentType = 'article' } = Astro.props;
     max-width: var(--prose-max-width, 72ch);
     margin: 0 auto;
     padding: var(--prose-padding, 2rem);
-    
+
     /* Your excellent typography rules here */
     container-type: inline-size;
   }
-  
+
   /* Different styling for notes vs articles */
   .prose-wrapper[data-content-type="note"] {
     /* Note-specific prose styles */
@@ -535,6 +547,7 @@ const { maxWidth = '72ch', contentType = 'article' } = Astro.props;
 ```
 
 ### 5. Shared Content Renderer Component
+
 **Recommendation**: **IMPLEMENT MINIMAL VERSION** (Low Priority)
 
 Only if you implement component prop drilling:
@@ -567,6 +580,7 @@ const components = {
 ## What NOT to Change
 
 ### Keep Your Current Strengths
+
 1. **Individual layout files**: They're clear, debuggable, and flexible
 2. **URL structure**: `/writing/` and `/notes/` clearly differentiate content
 3. **Content collections**: Already excellent with proper schemas
@@ -574,6 +588,7 @@ const components = {
 5. **BaseHead pattern**: Simple and effective
 
 ### Avoid These Complexities
+
 1. **Full nested layout hierarchy**: Adds complexity without benefit at your scale
 2. **Single catch-all route**: Would require URL parsing and lose type safety
 3. **Complete prop drilling**: Hybrid approach is better for your use case
@@ -581,16 +596,19 @@ const components = {
 ## Recommended Implementation Order
 
 ### Phase 1: High-Value, Low-Risk Changes
+
 1. **Create ProseWrapper component** - Biggest bang for buck
 2. **Update both layouts to use ProseWrapper**
 3. **Test across different content types and screen sizes**
 
 ### Phase 2: Optional Enhancements (If Desired)
+
 1. **Implement selective component prop drilling** for standard HTML elements
 2. **Create ContentRenderer component** if you want to reduce route file duplication
 3. **Gradually migrate custom components** to use prop drilling pattern
 
 ### Phase 3: Future Considerations
+
 - **If you add more content types**: Then consider the single route approach
 - **If layouts become complex**: Then consider nested layout hierarchy
 - **If MDX becomes unwieldy**: Then increase component prop drilling
@@ -598,6 +616,7 @@ const components = {
 ## Alignment with Site Philosophy
 
 This approach maintains your core principles:
+
 - **Simplicity**: Minimal changes with maximum benefit
 - **Typography-first**: ProseWrapper enhances your typography focus
 - **Maintainable**: Clear separation of concerns without over-abstraction
@@ -606,13 +625,16 @@ This approach maintains your core principles:
 ## Risk Assessment
 
 **Low Risk**:
+
 - ProseWrapper component (purely additive)
 - Component prop drilling for HTML elements
 
 **Medium Risk**:
+
 - ContentRenderer component (changes route files)
 
 **High Risk** (NOT recommended):
+
 - Single catch-all route (major architectural change)
 - Full nested layout system (over-engineering for current scale)
 
@@ -621,6 +643,7 @@ This approach maintains your core principles:
 Your current architecture is well-designed for your needs. The proposed changes from Maggie's site work well for a more complex content management scenario, but your simpler approach is actually better for a personal site with two clear content types.
 
 **Recommended changes**:
+
 1. **Implement ProseWrapper** (high value, low risk)
 2. **Consider component prop drilling** for HTML elements (optional, medium value)
 3. **Skip the major architectural changes** (not worth the complexity)
@@ -636,12 +659,15 @@ This document serves as a detailed execution plan for implementing typography wr
 # PHASE 1: PREPARATION AND COMPONENT CREATION
 
 ## Objective
+
 Create typography wrapper components using existing CSS classes, test thoroughly, then proceed with systematic improvements.
 
 ## Phase 1A: Audit and Preparation
 
 ### 1.1 Current Usage Audit
+
 **Task**: Search codebase for all `.prose` and `.article` class usage
+
 ```bash
 # Commands to run:
 grep -r "prose" src/ docs/ --include="*.astro" --include="*.md" --include="*.css"
@@ -649,6 +675,7 @@ grep -r "article" src/ docs/ --include="*.astro" --include="*.md" --include="*.c
 ```
 
 **Expected Locations**:
+
 - `src/styles/global.css` (CSS definitions)
 - `src/components/layout/NoteCard.astro` (`.prose` usage)
 - `src/layouts/Article.astro` (`.article` usage)
@@ -657,7 +684,9 @@ grep -r "article" src/ docs/ --include="*.astro" --include="*.md" --include="*.c
 **Deliverable**: Complete list of files using these classes
 
 ### 1.2 Create Test Checklist
+
 **Visual Elements to Verify**:
+
 - [ ] Article typography (fonts, spacing, grid layout)
 - [ ] Note typography (fonts, spacing)
 - [ ] Responsive behavior on mobile/desktop
@@ -671,6 +700,7 @@ grep -r "article" src/ docs/ --include="*.astro" --include="*.md" --include="*.c
 - [ ] Dark mode theme switching
 
 ### 1.3 Backup Current State
+
 ```bash
 git checkout -b feature/typography-wrappers
 git add . && git commit -m "Backup before typography wrapper implementation"
@@ -679,7 +709,9 @@ git add . && git commit -m "Backup before typography wrapper implementation"
 ## Phase 1B: Create Typography Components
 
 ### 1.4 Create SimpleProseTypography.astro
+
 **File**: `src/components/layout/SimpleProseTypography.astro`
+
 ```astro
 ---
 export interface Props {
@@ -696,7 +728,9 @@ const { class: className, ...props } = Astro.props;
 ```
 
 ### 1.5 Create LongFormProseTypography.astro
+
 **File**: `src/components/layout/LongFormProseTypography.astro`
+
 ```astro
 ---
 export interface Props {
@@ -713,7 +747,9 @@ const { class: className, ...props } = Astro.props;
 ```
 
 ### 1.6 Update Barrel Exports
+
 **File**: `src/components/layout/index.ts`
+
 ```typescript
 // Add to existing exports:
 export { default as SimpleProseTypography } from './SimpleProseTypography.astro';
@@ -721,10 +757,12 @@ export { default as LongFormProseTypography } from './LongFormProseTypography.as
 ```
 
 ### 1.7 Test Component Creation
+
 ```bash
 npm run check
 npm run build
 ```
+
 **Expected**: No errors, components available for import
 
 ---
@@ -732,14 +770,17 @@ npm run build
 # PHASE 2: IMPLEMENT COMPONENTS IN LAYOUTS
 
 ## Objective
+
 Replace direct CSS class usage with typography components, test each change individually.
 
 ## Phase 2A: Update NoteCard (Lower Risk)
 
 ### 2.1 Update NoteCard.astro
+
 **File**: `src/components/layout/NoteCard.astro`
 
 **Current**:
+
 ```astro
 <div class="note-content prose p-content">
   <slot />
@@ -747,6 +788,7 @@ Replace direct CSS class usage with typography components, test each change indi
 ```
 
 **New**:
+
 ```astro
 ---
 import SimpleProseTypography from './SimpleProseTypography.astro';
@@ -758,7 +800,9 @@ import SimpleProseTypography from './SimpleProseTypography.astro';
 ```
 
 ### 2.2 Test NoteCard Changes
+
 **Manual Testing**:
+
 - [ ] Visit `/notes/` page
 - [ ] Open individual note pages
 - [ ] Check typography styling matches exactly
@@ -766,6 +810,7 @@ import SimpleProseTypography from './SimpleProseTypography.astro';
 - [ ] Verify microformat classes still present
 
 **Automated Testing**:
+
 ```bash
 npm run test:unit
 npm run test:e2e
@@ -777,9 +822,11 @@ npm run build
 ## Phase 2B: Update Article Layout (Higher Risk)
 
 ### 2.3 Update Article.astro
+
 **File**: `src/layouts/Article.astro`
 
 **Current Structure**:
+
 ```astro
 <article class="article cq h-entry" itemscope itemtype="https://schema.org/Article">
   <!-- content -->
@@ -787,6 +834,7 @@ npm run build
 ```
 
 **New Structure**:
+
 ```astro
 ---
 import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
@@ -794,7 +842,7 @@ import LongFormProseTypography from '@components/layout/LongFormProseTypography.
 
 <article class="h-entry" itemscope itemtype="https://schema.org/Article">
   <!-- Article metadata header (title, date, etc.) -->
-  
+
   <LongFormProseTypography>
     <Content />
   </LongFormProseTypography>
@@ -802,7 +850,9 @@ import LongFormProseTypography from '@components/layout/LongFormProseTypography.
 ```
 
 ### 2.4 Critical Testing for Article Layout
+
 **Visual Regression Check**:
+
 - [ ] Grid layout identical (3-column layout preserved)
 - [ ] Typography styling unchanged
 - [ ] Footnotes position correctly
@@ -813,18 +863,22 @@ import LongFormProseTypography from '@components/layout/LongFormProseTypography.
 - [ ] Schema.org markup intact
 
 **Test Articles**:
+
 - Article styleguide (`/writing/article-styleguide`)
 - Recent published articles
 - Draft articles with complex formatting
 
 **Performance Check**:
+
 ```bash
 npm run build
 # Check build output for any errors
 ```
 
 ### 2.5 Update Other Simple Pages
+
 **Files to Update**:
+
 - `src/pages/now.astro`
 - `src/pages/styleguide.astro`
 
@@ -835,14 +889,17 @@ npm run build
 # PHASE 3: CSS CLASS RENAMING
 
 ## Objective
+
 Rename CSS classes for consistency while maintaining all functionality.
 
 ## Phase 3A: Rename CSS Classes
 
 ### 3.1 Update global.css
+
 **File**: `src/styles/global.css`
 
 **Changes**:
+
 ```css
 /* Change this: */
 @layer prose {
@@ -872,23 +929,29 @@ Rename CSS classes for consistency while maintaining all functionality.
 ```
 
 **Systematic Approach**:
+
 1. Use find/replace for `.prose` → `.simple-prose`
 2. Use find/replace for `.article` → `.longform-prose`
 3. **Carefully check each replacement** - avoid false positives
 
 ### 3.2 Update Typography Components
+
 **SimpleProseTypography.astro**:
+
 ```astro
 <div class={`simple-prose ${className || ''}`} {...props}>
 ```
 
 **LongFormProseTypography.astro**:
+
 ```astro
 <div class={`longform-prose cq ${className || ''}`} {...props}>
 ```
 
 ### 3.3 Comprehensive Testing
+
 **Visual Regression Testing**:
+
 - [ ] All articles render identically
 - [ ] All notes render identically
 - [ ] Simple pages render identically
@@ -896,6 +959,7 @@ Rename CSS classes for consistency while maintaining all functionality.
 - [ ] Dark mode works correctly
 
 **Technical Testing**:
+
 ```bash
 npm run check
 npm run test:unit
@@ -908,22 +972,27 @@ npm run build
 # PHASE 4: CSS LAYER OPTIMIZATION (OPTIONAL)
 
 ## Objective
+
 Consider renaming CSS layers to match class names for consistency.
 
 ## Phase 4A: Evaluate Layer Rename
 
 ### 4.1 Current State
+
 ```css
 @layer reset, base, prose, articletypography, theme;
 ```
 
 ### 4.2 Proposed State
+
 ```css
 @layer reset, base, simple-prose, longform-prose, theme;
 ```
 
 ### 4.3 Impact Assessment
+
 **Considerations**:
+
 - Layer order affects CSS specificity
 - May require testing of edge cases
 - Purely cosmetic change
@@ -936,12 +1005,15 @@ Consider renaming CSS layers to match class names for consistency.
 # PHASE 5: COMPONENT PROP DRILLING
 
 ## Objective
+
 Implement component prop drilling for standard HTML elements.
 
 ## Phase 5A: Create Smart Components
 
 ### 5.1 Create SmartLink Component (if needed)
+
 **File**: `src/components/mdx/SmartLink.astro`
+
 ```astro
 ---
 export interface Props {
@@ -954,8 +1026,8 @@ const isExternal = href.startsWith('http');
 const isInternal = href.startsWith('/');
 ---
 
-<a 
-  href={href} 
+<a
+  href={href}
   target={isExternal ? '_blank' : undefined}
   rel={isExternal ? 'noopener noreferrer' : undefined}
   {...props}
@@ -965,11 +1037,14 @@ const isInternal = href.startsWith('/');
 ```
 
 ### 5.2 Update Route Files
-**Files**: 
+
+**Files**:
+
 - `src/pages/writing/[...slug]/index.astro`
 - `src/pages/notes/[...slug]/index.astro`
 
 **Add Component Props**:
+
 ```astro
 ---
 // ... existing imports and logic
@@ -988,7 +1063,9 @@ const components = {
 ```
 
 ### 5.3 Test Component Prop Drilling
+
 **Testing**:
+
 - [ ] Links work correctly (internal vs external)
 - [ ] Images render properly
 - [ ] Blockquotes styled correctly
@@ -1000,6 +1077,7 @@ const components = {
 # SUCCESS CRITERIA & ROLLBACK
 
 ## Must-Have Success Criteria
+
 - [ ] **Zero visual regressions** in any content
 - [ ] **Grid layout preserved** for articles
 - [ ] **Typography features intact** (ligatures, spacing, etc.)
@@ -1011,21 +1089,26 @@ const components = {
 ## Rollback Procedures
 
 ### Phase 1 Rollback
+
 ```bash
 git reset --hard HEAD~1  # If components cause issues
 ```
 
 ### Phase 2 Rollback
+
 Revert individual component files to previous state
 
 ### Phase 3 Rollback
+
 Revert global.css changes:
+
 ```css
 .simple-prose → .prose
 .longform-prose → .article
 ```
 
 ### Emergency Rollback
+
 ```bash
 git checkout main
 # Restart from clean state
@@ -1034,6 +1117,7 @@ git checkout main
 ## Testing Commands
 
 ### After Each Phase
+
 ```bash
 # Type checking
 npm run check:types
@@ -1060,6 +1144,7 @@ npm run check
 ## Documentation Updates
 
 ### After Completion
+
 - [ ] Update component documentation
 - [ ] Update styleguide examples
 - [ ] Document new component usage patterns
