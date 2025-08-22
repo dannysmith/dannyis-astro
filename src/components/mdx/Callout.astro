@@ -1,18 +1,27 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 export interface Props {
   title?: string;
   type?: 'default' | 'red' | 'blue' | 'green' | 'orange' | 'yellow' | 'purple';
   icon?: string;
+  emoji?: string;
 }
 
-const { title, icon, type = 'default' } = Astro.props;
+const { title, icon, emoji, type = 'default' } = Astro.props;
+
+if (icon && emoji) {
+  throw new Error('Callout: Cannot use both icon and emoji props. Use either icon (for astro-icons) or emoji (for text emojis).');
+}
 ---
 
 <aside aria-label={title} class="callout" data-callout-color={type}>
   {
-    icon && (
+    (icon || emoji) && (
       <div class="icon-wrapper">
-        <div class="icon">{icon}</div>
+        <div class="icon">
+          {icon ? <Icon name={icon} /> : emoji}
+        </div>
       </div>
     )
   }

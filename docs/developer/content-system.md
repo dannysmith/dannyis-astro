@@ -181,16 +181,31 @@ Rich URL previews using Open Graph data:
 Highlighted information boxes:
 
 ```mdx
-<Callout type="blue" icon="💡" title="Pro Tip">
+<!-- Using emojis -->
+<Callout type="blue" emoji="💡" title="Pro Tip">
   Important information here
 </Callout>
 
-<Callout type="red" icon="⚠️" title="Warning">
+<Callout type="red" emoji="⚠️" title="Warning">
   Cautionary information
+</Callout>
+
+<!-- Using astro-icons -->
+<Callout type="green" icon="heroicons:check-circle" title="Success">
+  Task completed successfully
+</Callout>
+
+<Callout type="orange" icon="heroicons:exclamation-triangle" title="Caution">
+  Proceed with caution
 </Callout>
 ```
 
-**Available Types:** `blue`, `red`, `green`, `yellow`, `gray`
+**Available Types:** `default`, `red`, `blue`, `green`, `orange`, `yellow`, `purple`
+
+**Icon Options:**
+- `emoji` - Plain text emoji (e.g., `emoji="💡"`)
+- `icon` - Astro-icon name (e.g., `icon="heroicons:check-circle"`)
+- Priority: astro-icon > emoji
 
 #### Notion (`<Notion>`)
 

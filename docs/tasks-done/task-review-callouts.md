@@ -48,3 +48,30 @@ if (!title) {
 	</div>
 </aside>
 ```
+
+## Plan
+
+**Current state analysis:**
+- Callout uses color-based types (`red`, `blue`, etc.) which works well for the use case
+- Icon is just a string (emoji) with no astro-icon support
+- No validation or fallback handling
+
+**Changes needed:**
+
+1. **Keep existing color type system** - No changes to `'default' | 'red' | 'blue' | 'green' | 'orange' | 'yellow' | 'purple'`
+
+2. **Enhance icon support** - Support both emoji and astro-icon:
+   - Add `emoji?: string` prop for plain text emojis 
+   - Keep `icon?: string` prop for astro-icon names
+   - Priority: custom astro-icon > emoji > no icon
+
+3. **Add Icon component** - Import from astro-icon like SocialLinks.astro does
+
+4. **Add validation** - Graceful fallback for invalid astro-icon names
+
+**Implementation approach:**
+- Keep all existing props and behavior
+- Add emoji prop as separate option
+- Use astro-icon's `Icon` component when icon prop is provided
+- Fall back to emoji if icon fails to render
+- Maintain existing CSS and styling unchanged
