@@ -8,6 +8,7 @@ import Embed from '@components/mdx/Embed.astro';
 import Pill from '@components/ui/Pill.astro';
 import Grid from '@components/mdx/Grid.astro';
 import Notion from '@components/mdx/Notion.astro';
+import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import ContentCard from '@components/ui/ContentCard.astro';
 import { getCollection } from 'astro:content';
@@ -45,7 +46,7 @@ const sampleNotes = (
     <MainNavigation />
     <main class="cq">
       <h1>Component & Styleguide</h1>
-      <div class="content prose">
+      <SimpleProseTypography class="content">
         <section class="intro-section">
           <p>
             <strong>Welcome!</strong> This page is a comprehensive styleguide and visual testbed for
@@ -223,43 +224,43 @@ const sampleNotes = (
 
           <h3>Basic Callouts with Icons</h3>
 
-          <Callout icon="💡" type="blue" title="Information">
+          <Callout emoji="💡" type="blue" title="Information">
             This is a blue callout with an information icon. Perfect for tips and helpful
             information.
           </Callout>
 
-          <Callout icon="⚠️" type="yellow" title="Warning">
+          <Callout emoji="⚠️" type="yellow" title="Warning">
             This is a yellow warning callout. Use this to highlight important warnings or cautions.
           </Callout>
 
-          <Callout icon="❌" type="red" title="Error">
+          <Callout emoji="❌" type="red" title="Error">
             This is a red error callout. Use this for error messages or critical information.
           </Callout>
 
-          <Callout icon="✅" type="green" title="Success">
+          <Callout emoji="✅" type="green" title="Success">
             This is a green success callout. Perfect for confirmation messages and positive
             feedback.
           </Callout>
 
-          <Callout icon="🔥" type="orange" title="Hot Tip">
+          <Callout emoji="🔥" type="orange" title="Hot Tip">
             This is an orange callout. Great for highlighting important tips or featured content.
           </Callout>
 
-          <Callout icon="🎉" type="purple" title="New Feature">
+          <Callout emoji="🎉" type="purple" title="New Feature">
             This is a purple callout. Perfect for announcing new features or special content.
           </Callout>
 
-          <Callout icon="📝" type="default" title="Note">
+          <Callout emoji="📝" type="default" title="Note">
             This is a default gray callout. Use this for general notes and neutral information.
           </Callout>
 
           <h3>Callouts without Titles</h3>
 
-          <Callout icon="💭" type="blue">
+          <Callout emoji="💭" type="blue">
             This callout has no title, just an icon and content. Sometimes less is more!
           </Callout>
 
-          <Callout icon="🚀" type="green">
+          <Callout emoji="🚀" type="green">
             Another titleless callout with just content and an emoji icon.
           </Callout>
 
@@ -279,7 +280,7 @@ const sampleNotes = (
             style="width: 100%; max-width: 300px; border: 1px dashed var(--color-grey-400); padding: 1rem;"
           >
             <p><strong>Narrow Container (300px):</strong></p>
-            <Callout icon="📱" type="purple" title="Mobile View">
+            <Callout emoji="📱" type="purple" title="Mobile View">
               This callout is in a narrow container to test responsive behavior. The icon should be
               smaller and spacing adjusted.
             </Callout>
@@ -350,7 +351,7 @@ const sampleNotes = (
             />
           </div>
         </div>
-      </div>
+      </SimpleProseTypography>
     </main>
     <Footer />
     <style>

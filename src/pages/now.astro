@@ -3,6 +3,7 @@ import BaseHead from '@components/layout/BaseHead.astro';
 import Callout from '@components/mdx/Callout.astro';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
+import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
 ---
 
 <!doctype html>
@@ -18,7 +19,7 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
     <MainNavigation />
     <main class="cq">
       <h1>What I'm doing now</h1>
-      <Callout icon="💡">
+      <Callout emoji="💡">
         This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer"
           >Now Page</a
         >. Thanks to Derek Sivers for the <a
@@ -28,7 +29,7 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
         >.
       </Callout>
 
-      <div class="content prose">
+      <SimpleProseTypography class="content">
         <p>Updated: 17 May 2024</p>
 
         <ul>
@@ -47,7 +48,7 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
           <li>Playing at Open Mic nights in my local pub.</li>
           <li>Living in a lovely little mews in Islington, North London.</li>
         </ul>
-      </div>
+      </SimpleProseTypography>
     </main>
     <Footer />
     <style>

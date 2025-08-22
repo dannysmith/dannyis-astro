@@ -2,6 +2,7 @@
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import Embed from '@components/mdx/Embed.astro';
 import Pill from '@components/ui/Pill.astro';
+import SimpleProseTypography from './SimpleProseTypography.astro';
 
 export interface Props {
   title: string;
@@ -39,9 +40,9 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
       </div>
     )
   }
-  <div class="note-content prose p-content">
+  <SimpleProseTypography class="note-content p-content">
     <slot />
-  </div>
+  </SimpleProseTypography>
 </article>
 
 <style>
