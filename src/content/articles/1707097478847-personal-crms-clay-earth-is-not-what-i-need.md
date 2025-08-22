@@ -1,5 +1,5 @@
 ---
-title: "Why Personal CRMs Don't Work for Remote Work Consultants"
+title: "Personal CRMs Aren't What I Need"
 slug: personal-crms-clay-earth-is-not-what-i-need
 draft: false
 description: "A consultant's honest take on why personal CRMs fail for relationship-building. Alternative approaches to managing professional networks by remote work expert Danny Smith."
