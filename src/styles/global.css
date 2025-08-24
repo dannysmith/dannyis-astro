@@ -233,22 +233,6 @@
     font-weight: 300;
   }
 
-  /* Code blocks */
-  pre {
-    padding: 1em;
-    border-radius: 0.3em;
-    overflow-x: auto;
-    font-family: var(--font-code);
-    font-size: 0.9em;
-    line-height: 1.5;
-  }
-
-  pre code {
-    background: none;
-    padding: 0;
-    border-radius: 0;
-  }
-
   body {
     /* Set core body defaults */
     min-height: 100vh;

@@ -9,6 +9,8 @@ import rehypeMermaid from 'rehype-mermaid';
 import { remarkReadingTime } from './remark-reading-time.mjs';
 import icon from 'astro-icon';
 
+import expressiveCode from 'astro-expressive-code';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://danny.is',
@@ -28,7 +30,20 @@ export default defineConfig({
     headingIdCompat: true,
     csp: false,
   },
-  integrations: [mdx(), sitemap(), icon()],
+  integrations: [
+    expressiveCode({
+      themes: ['dracula-soft'],
+      styleOverrides: {
+        borderRadius: '0.2rem',
+        frames: {
+          frameBoxShadowCssValue: 'none',
+        },
+      },
+    }),
+    mdx(),
+    sitemap(),
+    icon(),
+  ],
   markdown: {
     syntaxHighlight: {
       type: 'shiki',
