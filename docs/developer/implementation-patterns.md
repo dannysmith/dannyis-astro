@@ -295,9 +295,9 @@ Always use `target="_blank" rel="noopener noreferrer"` for external links in man
 Before completing any task, always run:
 
 ```bash
-npm run lint      # Check for linting errors
-npm run check     # Validate TypeScript and Astro files
-npm run build     # Ensure production build succeeds
+pnpm run lint      # Check for linting errors
+pnpm run check     # Validate TypeScript and Astro files
+pnpm run build     # Ensure production build succeeds
 ```
 
 ### Definition of Done Requirements

@@ -376,7 +376,7 @@ The site generates three RSS feeds using Astro's Container API:
 1. Create file with proper naming conventions
 2. Set `draft: true` initially
 3. Write content using MDX components
-4. Validate with quality checks (`npm run lint`, `npm run check`, `npm run build`)
+4. Validate with quality checks (`pnpm run lint`, `pnpm run check`, `pnpm run build`)
 5. Set `draft: false` to publish
 
 ### Content Standards
@@ -442,16 +442,16 @@ For HTML links in components:
 
 ```bash
 # Development
-npm run dev          # Start development server at localhost:4321
-npm run build        # Production build with optimizations
-npm run preview      # Preview production build locally
+pnpm run dev          # Start development server at localhost:4321
+pnpm run build        # Production build with optimizations
+pnpm run preview      # Preview production build locally
 
 # Content creation
-npm run newnote "<title>"    # Create new note template
-npm run newnote "<url>"      # Create note with source URL
+pnpm run newnote "<title>"    # Create new note template
+pnpm run newnote "<url>"      # Create note with source URL
 
 # Quality assurance
-npm run lint         # ESLint validation
-npm run check        # Astro/TypeScript checking
-npm run build        # Production build test
+pnpm run lint         # ESLint validation
+pnpm run check        # Astro/TypeScript checking
+pnpm run build        # Production build test
 ```

@@ -19,16 +19,16 @@ This project is primarily documented for Claude Code.
 1. **Zero-JavaScript by default**
 2. **TypeScript everywhere**
 3. **Update styleguide when adding components**
-4. **Run `npm run check` before completing**
+4. **Run `pnpm run check` before completing**
 5. **Follow existing patterns**
 
 ## Commands
 
 ```bash
-npm run dev          # Development server
-npm run build        # Production build
-npm run check        # All quality checks
-npm run newnote      # Create new note
+pnpm run dev          # Development server
+pnpm run build        # Production build
+pnpm run check        # All quality checks
+pnpm run newnote      # Create new note
 ```
 
 See @CLAUDE.md for comprehensive guidance.# Cursor Configuration
@@ -48,16 +48,16 @@ This project is primarily documented for Claude Code.
 1. **Zero-JavaScript by default**
 2. **TypeScript everywhere**
 3. **Update styleguide when adding components**
-4. **Run `npm run check` before completing**
+4. **Run `pnpm run check` before completing**
 5. **Follow existing patterns**
 
 ## Commands
 
 ```bash
-npm run dev          # Development server
-npm run build        # Production build
-npm run check        # All quality checks
-npm run newnote      # Create new note
+pnpm run dev          # Development server
+pnpm run build        # Production build
+pnpm run check        # All quality checks
+pnpm run newnote      # Create new note
 ```
 
 See @CLAUDE.md for comprehensive guidance.

@@ -12,13 +12,13 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:types": "tsc --noEmit && astro check",
-    "check": "npm run check:types && npm run format:check && npm run lint && npm run test:all && npm run build",
-    "check:all": "npm run check",
+    "check": "pnpm run check:types && pnpm run format:check && pnpm run lint && pnpm run test:all && pnpm run build",
+    "check:all": "pnpm run check",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:unit": "vitest run tests/unit",
     "test:e2e": "playwright test",
-    "test:all": "npm run test:unit && npm run test:e2e",
+    "test:all": "pnpm run test:unit && pnpm run test:e2e",
     "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
     "newnote": "tsx scripts/create-note.ts"
   },
@@ -51,9 +51,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@eslint/js": "^9.34.0",
     "@playwright/test": "^1.55.0",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
+    "astro-eslint-parser": "^1.2.2",
     "eslint": "^9.17.0",
     "eslint-plugin-astro": "^1.3.1",
     "happy-dom": "^18.0.1",
@@ -62,6 +64,7 @@
     "prettier-plugin-astro": "^0.14.1",
     "tsx": "^4.20.3",
     "typescript": "^5.7.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "zod": "^4.1.5"
   }
 }

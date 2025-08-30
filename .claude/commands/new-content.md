@@ -11,15 +11,15 @@ Creates new notes and articles with proper structure and frontmatter.
 
 When asked to create a new note:
 
-- If given a title, run `npm run newnote "<title>"`
-- If given a URL, run `npm run newnote "<url>"`
+- If given a title, run `pnpm run newnote "<title>"`
+- If given a URL, run `pnpm run newnote "<url>"`
 - If given a longer sentence, extract a suitable title and run the command
-- Otherwise, run `npm run newnote "new-note"`
+- Otherwise, run `pnpm run newnote "new-note"`
 
 ### Example
 
 **Request:** "make new note about changing my desk setup"
-**Action:** `npm run newnote "New Desk Setup"`
+**Action:** `pnpm run newnote "New Desk Setup"`
 
 ## Create New Article
 

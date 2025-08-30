@@ -33,10 +33,10 @@ This is Danny Smith's personal website - a content-first creative playground for
 ### Development
 
 ```bash
-npm run dev          # Development server at localhost:4321
-npm run build        # Production build to ./dist/
-npm run check        # All quality checks (lint, types, build)
-npm run newnote      # Create new note with proper frontmatter
+pnpm run dev          # Development server at localhost:4321
+pnpm run build        # Production build to ./dist/
+pnpm run check        # All quality checks (lint, types, build)
+pnpm run newnote      # Create new note with proper frontmatter
 ```
 
 ### Quality Gates
@@ -44,7 +44,7 @@ npm run newnote      # Create new note with proper frontmatter
 **ALWAYS run before completing tasks:**
 
 ```bash
-npm run check
+pnpm run check
 ```
 
 This runs: ESLint → Prettier check → TypeScript → Astro check → Build test
@@ -134,6 +134,6 @@ docs/
 1. Check `docs/developer/` for technical documentation
 2. Use specialized agents for complex tasks
 3. Reference existing patterns in the codebase
-4. Run `npm run check` to catch issues early
+4. Run `pnpm run check` to catch issues early
 
 Remember: This is a personal creative space. Be bold with design, careful with code, and always maintain the site's unique character.

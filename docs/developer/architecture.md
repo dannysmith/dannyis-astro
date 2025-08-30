@@ -194,23 +194,23 @@ Each category includes an `index.ts` file for convenient importing:
 ### Development Commands
 
 ```bash
-npm run dev          # Start development server at localhost:4321
-npm run build        # Build production site to ./dist/
-npm run preview      # Preview build locally
-npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint issues automatically
-npm run format       # Format code with Prettier
-npm run format:check # Check Prettier formatting
-npm run check        # Run Astro type checking
+pnpm run dev          # Start development server at localhost:4321
+pnpm run build        # Build production site to ./dist/
+pnpm run preview      # Preview build locally
+pnpm run lint         # Run ESLint
+pnpm run lint:fix     # Fix ESLint issues automatically
+pnpm run format       # Format code with Prettier
+pnpm run format:check # Check Prettier formatting
+pnpm run check        # Run Astro type checking
 ```
 
 ### Quality Assurance Pipeline
 
 Before deployment, the following checks must pass:
 
-- `npm run lint` - Check for linting errors
-- `npm run check` - Validate TypeScript and Astro files
-- `npm run build` - Ensure production build succeeds
+- `pnpm run lint` - Check for linting errors
+- `pnpm run check` - Validate TypeScript and Astro files
+- `pnpm run build` - Ensure production build succeeds
 
 ### Deployment
 
