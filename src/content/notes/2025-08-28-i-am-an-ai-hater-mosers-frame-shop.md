@@ -1,7 +1,8 @@
 ---
-title: 'I Am An AI Hater | moser’s frame shop'
-sourceURL: 'https://anthonymoser.github.io/writing/ai/haterdom/2025/08/26/i-am-an-ai-hater.html'
-draft: true
+title: "I Am An AI Hater"
+sourceURL: "https://anthonymoser.github.io/writing/ai/haterdom/2025/08/26/i-am-an-ai-hater.html"
+slug: ai-hater
+draft: false
 pubDate: 2025-08-28
 ---
 
