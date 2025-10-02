@@ -1,6 +1,6 @@
 ---
-title: "Mass Intelligence?"
-sourceURL: "https://www.oneusefulthing.org/p/mass-intelligence"
+title: 'Mass Intelligence?'
+sourceURL: 'https://www.oneusefulthing.org/p/mass-intelligence'
 draft: false
 pubDate: 2025-09-01
 ---

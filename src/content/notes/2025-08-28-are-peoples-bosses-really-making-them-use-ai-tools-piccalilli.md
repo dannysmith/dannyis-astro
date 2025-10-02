@@ -1,6 +1,6 @@
 ---
-title: "Are people’s bosses really making them use AI tools? - Piccalilli"
-sourceURL: "https://piccalil.li/blog/are-peoples-bosses-really-making-them-use-ai/"
+title: 'Are people’s bosses really making them use AI tools? - Piccalilli'
+sourceURL: 'https://piccalil.li/blog/are-peoples-bosses-really-making-them-use-ai/'
 draft: false
 pubDate: 2025-08-28
 ---
