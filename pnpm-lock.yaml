@@ -75,8 +75,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0(playwright@1.55.1)
       satori:
-        specifier: ^0.16.2
-        version: 0.16.2
+        specifier: ^0.18.3
+        version: 0.18.3
       sharp:
         specifier: ^0.34.4
         version: 0.34.4
@@ -109,8 +109,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1(eslint@9.36.0)
       happy-dom:
-        specifier: ^18.0.1
-        version: 18.0.1
+        specifier: ^19.0.2
+        version: 19.0.2
       playwright:
         specifier: ^1.55.1
         version: 1.55.1
@@ -128,7 +128,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.6.2)(happy-dom@18.0.1)(tsx@4.20.6)(yaml@2.8.1)
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.6.2)(happy-dom@19.0.2)(tsx@4.20.6)(yaml@2.8.1)
       zod:
         specifier: ^4.1.11
         version: 4.1.11
@@ -2442,8 +2442,8 @@ packages:
   hachure-fill@0.5.2:
     resolution: {integrity: sha512-3GKBOn+m2LX9iq+JC1064cSFprJY4jL1jCXTcpnfER5HYE2l/4EfWSGzkPa/ZDBmYI0ZOEj5VHV/eKnPGkHuOg==}
 
-  happy-dom@18.0.1:
-    resolution: {integrity: sha512-qn+rKOW7KWpVTtgIUi6RVmTBZJSe2k0Db0vh1f7CWrWclkkc7/Q+FrOfkZIb2eiErLyqu5AXEzE7XthO9JVxRA==}
+  happy-dom@19.0.2:
+    resolution: {integrity: sha512-831CLbgDyjRbd2lApHZFsBDe56onuFcjsCBPodzWpzedTpeDr8CGZjs7iEIdNW1DVwSFRecfwzLpVyGBPamwGA==}
     engines: {node: '>=20.0.0'}
 
   has-flag@4.0.0:
@@ -3471,8 +3471,8 @@ packages:
     resolution: {integrity: sha512-ZvHN3ygzZ8FuxjSNB+mKBiF/NIoqHzlBGbD0MJiT+MvSsFOvotnWOhdTjxKzhHRT2wPC1QbhLzx2q/Y83VhfYQ==}
     engines: {node: '>=16'}
 
-  satori@0.16.2:
-    resolution: {integrity: sha512-tORnR2UZ1cB9N81WDjx5ZC4ToPmkybnJWyR8N1OC/z+5kWZcG1mcLssJ5WLNBj1lNr2igIFW0bIiugCxRKL/jQ==}
+  satori@0.18.3:
+    resolution: {integrity: sha512-T3DzWNmnrfVmk2gCIlAxLRLbGkfp3K7TyRva+Byyojqu83BNvnMeqVeYRdmUw4TKCsyH4RiQ/KuF/I4yEzgR5A==}
     engines: {node: '>=16'}
 
   sax@1.4.1:
@@ -6839,7 +6839,7 @@ snapshots:
 
   hachure-fill@0.5.2: {}
 
-  happy-dom@18.0.1:
+  happy-dom@19.0.2:
     dependencies:
       '@types/node': 20.19.19
       '@types/whatwg-mimetype': 3.0.2
@@ -8379,7 +8379,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       yoga-layout: 3.2.1
 
-  satori@0.16.2:
+  satori@0.18.3:
     dependencies:
       '@shuding/opentype.js': 1.4.0-beta.0
       css-background-parser: 0.1.0
@@ -8862,7 +8862,7 @@ snapshots:
     optionalDependencies:
       vite: 6.3.6(@types/node@24.6.2)(tsx@4.20.6)(yaml@2.8.1)
 
-  vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.6.2)(happy-dom@18.0.1)(tsx@4.20.6)(yaml@2.8.1):
+  vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.6.2)(happy-dom@19.0.2)(tsx@4.20.6)(yaml@2.8.1):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
@@ -8890,7 +8890,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 24.6.2
-      happy-dom: 18.0.1
+      happy-dom: 19.0.2
     transitivePeerDependencies:
       - jiti
       - less
