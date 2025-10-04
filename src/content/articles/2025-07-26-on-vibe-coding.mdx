@@ -88,3 +88,25 @@ I started by creating an empty repo and dictating my thoughts into a markdown do
 -
 
 ## Don't be scared to do ad-hoc things
+
+# [NOTES]
+
+The belowis from https://simonwillison.net/2025/Sep/29/armin-ronacher-90/ and is relevant here.
+
+Armin Ronacher: 90% (via) The idea of AI writing "90% of the code" to-date has mostly been expressed by people who sell AI tooling.
+
+Over the last few months, I've increasingly seen the same idea come coming much more credible sources.
+
+Armin is the creator of a bewildering array of valuable open source projects - Flask, Jinja, Click, Werkzeug, and many more. When he says something like this it's worth paying attention:
+
+For the infrastructure component I started at my new company, I’m probably north of 90% AI-written code.
+
+For anyone who sees this as a threat to their livelihood as programmers, I encourage you to think more about this section:
+
+It is easy to create systems that appear to behave correctly but have unclear runtime behavior when relying on agents. For instance, the AI doesn’t fully comprehend threading or goroutines. If you don’t keep the bad decisions at bay early it, you won’t be able to operate it in a stable manner later.
+
+Here’s an example: I asked it to build a rate limiter. It “worked” but lacked jitter and used poor storage decisions. Easy to fix if you know rate limiters, dangerous if you don’t.
+
+In order to use these tools at this level you need to know the difference between goroutines and threads. You need to understand why a rate limiter might want to"jitter" and what that actually means. You need to understand what "rate limiting" is and why you might need it!
+
+These tools do not replace programmers. They allow us to apply our expertise at a higher level and amplify the value we can provide to other people.
