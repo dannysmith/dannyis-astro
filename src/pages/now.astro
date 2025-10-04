@@ -3,7 +3,7 @@ import BaseHead from '@components/layout/BaseHead.astro';
 import Callout from '@components/mdx/Callout.astro';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
-import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
+import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
 ---
 
 <!doctype html>
@@ -18,28 +18,37 @@ import SimpleProseTypography from '@components/layout/SimpleProseTypography.astr
   <body>
     <MainNavigation />
     <main class="cq">
-      <h1>What I'm doing now</h1>
-      <Callout emoji="💡">
-        This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer"
-          >Now Page</a
-        >. Thanks to Derek Sivers for the <a
-          href="https://sive.rs/nowff"
-          target="_blank"
-          rel="noopener noreferrer">idea</a
-        >.
-      </Callout>
+      <LongFormProseTypography>
+        <h1>What I'm doing now</h1>
 
-      <SimpleProseTypography class="content">
-        <p>Updated: 17 May 2024</p>
-
+        <Callout emoji="💡">
+          This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer"
+            >Now Page</a
+          >. Thanks to Derek Sivers for the <a
+            href="https://sive.rs/nowff"
+            target="_blank"
+            rel="noopener noreferrer">idea</a
+          >.
+        </Callout>
         <ul>
           <li>
             <a href="https://betterat.work" target="_blank" rel="noopener noreferrer">Consulting</a>
-            on leadership, remote working and operations with a few companies, and acting as fractional
-            COO.
+            on leadership, remote working and operations with a few companies.
           </li>
           <li>
-            Adding to my <a
+            Working on <a
+              href="https://astroeditor.danny.is"
+              target="_blank"
+              rel="noopener noreferrer">Astro Editor</a
+            >, a markdown editor for Astro content collections.
+          </li>
+          <li>
+            Learning a shit ton about how to work with AI to build stuff fast <strong
+              >and well</strong
+            >.
+          </li>
+          <li>
+            Occasionally adding to my <a
               href="https://betterat.work/toolbox"
               target="_blank"
               rel="noopener noreferrer">collection of tools and frameworks</a
@@ -48,33 +57,10 @@ import SimpleProseTypography from '@components/layout/SimpleProseTypography.astr
           <li>Playing at Open Mic nights in my local pub.</li>
           <li>Living in a lovely little mews in Islington, North London.</li>
         </ul>
-      </SimpleProseTypography>
+
+        <p>Updated: 2025-10-04</p>
+      </LongFormProseTypography>
     </main>
     <Footer />
-    <style>
-      body {
-        background-color: var(--color-bg-primary);
-        display: grid;
-        grid-template-rows: auto min-content;
-      }
-
-      main {
-        padding: 1em;
-        width: 100%;
-        max-width: 80ch;
-        margin: 0 auto;
-      }
-
-      h1 {
-        text-transform: uppercase;
-        font-size: 4rem;
-        text-align: center;
-        margin-bottom: 3rem;
-      }
-
-      main > * {
-        margin-top: 3rem;
-      }
-    </style>
   </body>
 </html>
