@@ -705,24 +705,3 @@
   white-space: nowrap !important;
   border: 0 !important;
 }
-
-/* Icon link styles */
-:is(h1, h2, h3, h4, h5, h6):hover,
-.icon-link {
-  position: relative;
-}
-
-.icon-link {
-  position: absolute;
-  top: 0;
-  left: -1.5em;
-  width: 1em;
-  height: 1em;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.icon-link:before {
-  content: '#';
-  display: block;
-}
