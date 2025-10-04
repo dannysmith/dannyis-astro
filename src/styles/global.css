@@ -465,7 +465,7 @@
     /* Notion colors */
     --notion-arrow-color: rgba(255, 255, 255, 0.6);
     --notion-underline-color: rgba(0, 0, 0, 0.15);
-    --notion-arrow-stroke-color: var(--color-brand-white);
+    --notion-arrow-stroke-color: var(--color-bg-primary);
     --notion-hover-opacity: 0.8;
 
     /* BlockQuote Citation colors */
@@ -590,6 +590,7 @@
 
     /* Notion colors */
     --notion-underline-color: rgba(255, 255, 255, 0.25);
+    --notion-arrow-stroke-color: var(--color-bg-primary);
 
     /* -------------------- PAGE COLOURS -------------------- */
     /* Writing list page colors */
@@ -679,6 +680,7 @@
 
       /* Notion colors */
       --notion-underline-color: rgba(255, 255, 255, 0.25);
+      --notion-arrow-stroke-color: var(--color-bg-primary);
 
       /* -------------------- PAGE COLOURS -------------------- */
       /* Writing list page colors */
