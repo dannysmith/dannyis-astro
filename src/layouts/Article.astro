@@ -8,6 +8,7 @@ import FormattedDate from '@components/ui/FormattedDate.astro';
 import Lightbox from '@components/layout/Lightbox.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
+import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
 
 type Props = CollectionEntry<'articles'>['data'] & { readingTime: string };
 const {
@@ -84,6 +85,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
             <h1 class="title p-name" itemprop="headline">{title}</h1>
           </div>
           <slot />
+          <MarkdownContentActions markdownUrl={`${Astro.url.pathname.replace(/\/$/, '')}.md`} />
         </LongFormProseTypography>
       </article>
     </main>
