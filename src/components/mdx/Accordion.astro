@@ -40,11 +40,7 @@ const { header } = Astro.props;
     transition: background-color 0.2s ease;
   }
 
-  .accordion-button:hover {
-    background: var(--color-callout-default-bg);
-  }
-
-  .accordion-button[aria-expanded="true"] {
+  .accordion-button[aria-expanded='true'] {
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -54,14 +50,16 @@ const { header } = Astro.props;
   }
 
   .accordion-toggle {
-    font-size: 1.25rem;
-    font-weight: bold;
+    font-size: 1.5rem;
+    font-weight: normal;
+    line-height: 1;
     color: var(--color-accent);
     transition: transform 0.2s ease;
+    transform: translateY(0.08em);
   }
 
-  .accordion-button[aria-expanded="true"] .accordion-toggle {
-    transform: rotate(45deg);
+  .accordion-button[aria-expanded='true'] .accordion-toggle {
+    transform: translateY(0.08em) rotate(45deg);
   }
 
   .accordion-panel {
