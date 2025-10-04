@@ -7,6 +7,8 @@ const { markdownUrl } = Astro.props;
 ---
 
 <div class="markdown-actions">
+  <a href="#" id="share-post" style="display: none;">share</a>
+  <span id="share-separator" style="display: none;"> this post · </span>
   <a href="#" id="copy-markdown" data-url={markdownUrl}>copy</a>
   <span> / </span>
   <a href={markdownUrl} target="_blank">view</a>
@@ -15,13 +17,14 @@ const { markdownUrl } = Astro.props;
 
 <script>
   const copyLink = document.getElementById('copy-markdown');
+  const shareLink = document.getElementById('share-post');
+  const shareSeparator = document.getElementById('share-separator');
 
   async function copyMarkdown(url: string) {
     try {
       const response = await fetch(url);
       const markdown = await response.text();
       await navigator.clipboard.writeText(markdown);
-
       showFlashNotification('page copied as markdown to clipboard');
     } catch (err) {
       console.error('Failed to copy markdown:', err);
@@ -29,8 +32,20 @@ const { markdownUrl } = Astro.props;
     }
   }
 
+  async function sharePost() {
+    try {
+      await navigator.share({
+        title: document.title,
+        url: window.location.href,
+      });
+    } catch (err) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        console.error('Failed to share:', err);
+      }
+    }
+  }
+
   function showFlashNotification(message: string) {
-    // Create flash notification element
     const notification = document.createElement('div');
     notification.textContent = message;
     notification.style.cssText = `
@@ -47,18 +62,24 @@ const { markdownUrl } = Astro.props;
 
     document.body.appendChild(notification);
 
-    // Remove after 3 seconds
     setTimeout(() => {
       notification.style.animation = 'slideOut 0.3s ease-out forwards';
       setTimeout(() => notification.remove(), 300);
     }, 3000);
   }
 
-  // Handle copy link click
-  if (copyLink) {
-    copyLink.addEventListener('click', function (e) {
+  if (navigator.share && shareLink && shareSeparator) {
+    shareLink.style.display = shareSeparator.style.display = 'inline';
+    shareLink.addEventListener('click', (e) => {
       e.preventDefault();
-      const url = this.getAttribute('data-url');
+      sharePost();
+    });
+  }
+
+  if (copyLink) {
+    copyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const url = copyLink.getAttribute('data-url');
       if (url) copyMarkdown(url);
     });
   }
