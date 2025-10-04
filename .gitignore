@@ -32,3 +32,5 @@ uploads/
 .claude/settings.local.json
 
 test-results/
+
+.playwright-mcp/
