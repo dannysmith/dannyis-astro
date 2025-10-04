@@ -212,6 +212,13 @@
     height: auto;
     display: block;
   }
+
+  /* Basic iframe handling */
+  iframe {
+    border: 0;
+    overflow: hidden;
+    border-radius: 0.2rem;
+  }
 }
 
 /* Base Layer */
