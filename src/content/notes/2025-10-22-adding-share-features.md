@@ -1,0 +1,18 @@
+---
+title: "Adding share features to this site"
+slug: adding-share-features
+draft: false
+pubDate: 2025-10-22
+---
+
+I recently added a little feature to artivles and notes on this site to make things easier to share. At the bottom of every article and note, there are three links:
+
+1. **Share** - uses the browsers [Web Share API](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share) to open a share-sheet.
+2. **Copy as markdown** - copies the content of the article/note as markdown
+3. **View as markdown** - opens the current URL with an `.md` extension which returns the above with `Content-Type: text/markdown;`
+
+![Screenshot of new links on articles and notes](/src/assets/notes/2025-10-22-screenshot-2025-10-22-at-1511.51.png)
+
+Thanks to tools like Claude Code, I'm finding myself working more and more with markdown, so it makes sense for me to make any content I write available in that format too.
+
+You can try these out on this note ↓
