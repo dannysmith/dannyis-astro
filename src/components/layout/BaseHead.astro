@@ -222,13 +222,101 @@ const articleMeta = generateArticleMeta(seoData);
     import('mermaid').then(({ default: mermaid }) => {
       mermaid.initialize({
         startOnLoad: true,
-        theme: 'default',
-        themeVariables: {
-          fontFamily: 'var(--font-body)',
-          fontSize: '16px',
-        },
+        theme: 'base',
+        themeCSS: `
+          /* Use CSS variables from mermaid.css that adapt to light/dark mode */
+
+          /* Node shapes */
+          .node rect,
+          .node circle,
+          .node ellipse,
+          .node polygon,
+          .node path {
+            fill: var(--mermaid-primary) !important;
+            stroke: var(--mermaid-node-border) !important;
+            stroke-width: 1.5px !important;
+          }
+
+          /* Labels */
+          .nodeLabel,
+          .edgeLabel,
+          .label {
+            color: var(--mermaid-text) !important;
+            fill: var(--mermaid-text) !important;
+          }
+
+          /* Edge paths and lines */
+          .edgePath .path,
+          .flowchart-link {
+            stroke: var(--mermaid-line) !important;
+            stroke-width: 1.5px !important;
+          }
+
+          /* Arrowheads */
+          .arrowheadPath,
+          marker path {
+            fill: var(--mermaid-line) !important;
+            stroke: var(--mermaid-line) !important;
+          }
+
+          /* Sequence diagram specific */
+          .actor {
+            fill: var(--mermaid-primary) !important;
+            stroke: var(--mermaid-node-border) !important;
+          }
+
+          .messageLine0,
+          .messageLine1 {
+            stroke: var(--mermaid-line) !important;
+          }
+
+          .loopLine {
+            stroke: var(--mermaid-accent) !important;
+          }
+
+          .note {
+            fill: var(--mermaid-secondary) !important;
+            stroke: var(--mermaid-node-border) !important;
+          }
+
+          /* Gantt chart specific */
+          .grid .tick line {
+            stroke: var(--mermaid-line) !important;
+            opacity: 0.3 !important;
+          }
+
+          .task {
+            fill: var(--mermaid-primary) !important;
+            stroke: var(--mermaid-node-border) !important;
+          }
+
+          .taskText {
+            fill: var(--mermaid-text) !important;
+          }
+
+          .done0, .done1, .done2, .done3 {
+            fill: var(--mermaid-accent) !important;
+          }
+
+          /* Class diagram specific */
+          .classBox {
+            fill: var(--mermaid-primary) !important;
+            stroke: var(--mermaid-node-border) !important;
+          }
+
+          .relation {
+            stroke: var(--mermaid-line) !important;
+          }
+
+          /* Subgraphs and clusters */
+          .cluster rect,
+          .cluster-label {
+            fill: var(--mermaid-tertiary) !important;
+            stroke: var(--mermaid-node-border) !important;
+          }
+        `,
       });
-      
+
       // Run mermaid on any pre.mermaid elements
       mermaid.run();
     });
