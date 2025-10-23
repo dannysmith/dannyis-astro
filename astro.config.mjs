@@ -57,7 +57,7 @@ export default defineConfig({
         rehypeMermaid,
         {
           strategy: 'img-svg',
-          dark: true, // Auto-generates light/dark variants
+          dark: false, // Use single theme for both light and dark modes
           mermaidConfig: {
             theme: 'neutral', // Clean theme that works well in both modes
           },
