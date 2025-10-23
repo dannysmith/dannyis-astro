@@ -36,6 +36,7 @@ const imageSrc =
     : src;
 
 const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif');
+const isSvgDataUri = typeof src === 'string' && src.startsWith('data:image/svg+xml');
 
 // For remote images without dimensions, provide reasonable defaults to prevent build errors
 const isRemoteImage = typeof src === 'string' && (src.startsWith('http') || src.startsWith('/uploads'));
@@ -54,12 +55,12 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
 >
   <div class:list={['image-wrapper']}>
     {
-      isGif ? (
+      isGif || isSvgDataUri ? (
         <img
           src={typeof imageSrc === 'string' ? src : imageSrc.src}
           alt={alt}
-          height={defaultHeight}
-          width={defaultWidth}
+          height={isSvgDataUri ? undefined : defaultHeight}
+          width={isSvgDataUri ? undefined : defaultWidth}
           class="styled-image"
           loading="eager"
         />
