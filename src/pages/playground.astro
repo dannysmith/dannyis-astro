@@ -1,0 +1,116 @@
+---
+import BaseHead from '@components/layout/BaseHead.astro';
+import Footer from '@components/layout/Footer.astro';
+import MainNavigation from '@components/layout/MainNavigation.astro';
+import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
+import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Playground" />
+  </head>
+  <body>
+    <MainNavigation />
+    <main class="cq">
+      <h1>Playground</h1>
+      <div class="plaincontent">
+        <p>
+          This is a playground for testing and experimenting with different features and components.
+        </p>
+        <h3>Lorem Ipsum Dolor Sit Amet</h3>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
+          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+          ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+        <p>
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+          nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+          deserunt mollit anim id est laborum.
+        </p>
+        <ul>
+          <li>Consectetur adipiscing elit</li>
+          <li>Sed do eiusmod tempor incididunt</li>
+        </ul>
+        <p>
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+          laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+          architecto beatae vitae dicta sunt explicabo.
+        </p>
+      </div>
+      <div class="simpleprose">
+        <SimpleProseTypography>
+          <p>
+            This is a playground for testing and experimenting with different features and
+            components.
+          </p>
+          <h3>Lorem Ipsum Dolor Sit Amet</h3>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+          <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+            officia deserunt mollit anim id est laborum.
+          </p>
+          <ul>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor incididunt</li>
+          </ul>
+          <p>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+            architecto beatae vitae dicta sunt explicabo.
+          </p>
+        </SimpleProseTypography>
+        <div class="longformprose">
+          <LongFormProseTypography>
+            <p>
+              This is a playground for testing and experimenting with different features and
+              components.
+            </p>
+            <h3>Lorem Ipsum Dolor Sit Amet</h3>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+            <p>
+              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+              officia deserunt mollit anim id est laborum.
+            </p>
+            <ul>
+              <li>Consectetur adipiscing elit</li>
+              <li>Sed do eiusmod tempor incididunt</li>
+            </ul>
+            <p>
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+              architecto beatae vitae dicta sunt explicabo.
+            </p>
+          </LongFormProseTypography>
+        </div>
+      </div>
+    </main>
+    <Footer />
+    <style>
+      body {
+        /* background-color: var(--color-bg-primary); */
+        /* display: grid; */
+        /* grid-template-rows: auto min-content; */
+      }
+
+      main {
+        /* padding: 1em; */
+        /* width: 100%; */
+        /* max-width: 80ch; */
+        /* margin: 0 auto; */
+      }
+    </style>
+  </body>
+</html>
