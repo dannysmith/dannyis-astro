@@ -1,4 +1,6 @@
-/* Mermaid diagram styles */
+/* Mermaid diagram container styles */
+/* Note: Diagrams are pre-rendered at build time with rehype-mermaid */
+
 .mermaid {
   text-align: center;
   margin: 2rem 0;
@@ -6,153 +8,15 @@
   overflow-x: auto;
 }
 
-/* Ensure SVGs are responsive */
-.mermaid svg {
+/* Ensure images are responsive */
+.mermaid img,
+.mermaid picture {
   max-width: 100%;
   height: auto;
+  display: inline-block;
 }
 
 /* Ensure proper spacing */
 .mermaid + * {
   margin-top: 2rem;
-}
-
-/* Style the pre elements that contain mermaid diagrams */
-pre.mermaid {
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
-/* Override any syntax highlighting that might be applied */
-pre.mermaid code {
-  background: transparent;
-  padding: 0;
-  border: none;
-  font-family: inherit;
-}
-
-/* Mermaid theme variables - Light mode */
-:root,
-:root[data-theme='light'] {
-  --mermaid-bg: var(--color-bg-secondary);
-  --mermaid-text: var(--color-text-primary);
-  --mermaid-primary: var(--color-brand-white);
-  --mermaid-primary-text: var(--color-text-primary);
-  --mermaid-primary-border: var(--color-text-primary);
-  --mermaid-secondary: var(--color-bg-secondary);
-  --mermaid-tertiary: var(--color-brand-beige);
-  --mermaid-accent: var(--color-red-500);
-  --mermaid-line: var(--color-text-primary);
-  --mermaid-node-border: var(--color-text-primary);
-}
-
-/* Mermaid theme variables - Dark mode */
-:root[data-theme='dark'] {
-  --mermaid-bg: var(--color-bg-secondary);
-  --mermaid-text: var(--color-text-primary);
-  --mermaid-primary: var(--color-bg-dark-300);
-  --mermaid-primary-text: var(--color-text-primary);
-  --mermaid-primary-border: var(--color-text-primary);
-  --mermaid-secondary: var(--color-bg-dark-400);
-  --mermaid-tertiary: var(--color-bg-dark-200);
-  --mermaid-accent: var(--color-red-400);
-  --mermaid-line: var(--color-text-primary);
-  --mermaid-node-border: var(--color-text-primary);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --mermaid-bg: var(--color-bg-secondary);
-    --mermaid-text: var(--color-text-primary);
-    --mermaid-primary: var(--color-bg-dark-300);
-    --mermaid-primary-text: var(--color-text-primary);
-    --mermaid-primary-border: var(--color-text-primary);
-    --mermaid-secondary: var(--color-bg-dark-400);
-    --mermaid-tertiary: var(--color-bg-dark-200);
-    --mermaid-accent: var(--color-red-400);
-    --mermaid-line: var(--color-text-primary);
-    --mermaid-node-border: var(--color-text-primary);
-  }
-}
-
-/* Apply Mermaid theme colors */
-.mermaid {
-  /* Flowchart */
-  --mermaid-font-family: var(--font-ui);
-
-  /* Main theme colors */
-  background-color: var(--mermaid-bg);
-  color: var(--mermaid-text);
-}
-
-/* Customize Mermaid SVG elements */
-.mermaid .nodeLabel,
-.mermaid .edgeLabel {
-  color: var(--mermaid-text);
-}
-
-.mermaid .node rect,
-.mermaid .node circle,
-.mermaid .node ellipse,
-.mermaid .node polygon {
-  fill: var(--mermaid-primary);
-  stroke: var(--mermaid-node-border);
-  stroke-width: 1.5px;
-}
-
-.mermaid .edgePath .path {
-  stroke: var(--mermaid-line);
-  stroke-width: 1.5px;
-}
-
-.mermaid .arrowheadPath {
-  fill: var(--mermaid-line);
-}
-
-/* Sequence diagram */
-.mermaid .actor {
-  fill: var(--mermaid-primary);
-  stroke: var(--mermaid-node-border);
-}
-
-.mermaid .messageLine0,
-.mermaid .messageLine1 {
-  stroke: var(--mermaid-line);
-}
-
-.mermaid .loopLine {
-  stroke: var(--mermaid-accent);
-}
-
-/* Gantt chart */
-.mermaid .grid .tick line {
-  stroke: var(--mermaid-line);
-  opacity: 0.3;
-}
-
-.mermaid .task {
-  fill: var(--mermaid-primary);
-  stroke: var(--mermaid-node-border);
-}
-
-.mermaid .taskText {
-  fill: var(--mermaid-text);
-}
-
-.mermaid .done0,
-.mermaid .done1,
-.mermaid .done2,
-.mermaid .done3 {
-  fill: var(--mermaid-accent);
-}
-
-/* Class diagram */
-.mermaid .classBox {
-  fill: var(--mermaid-primary);
-  stroke: var(--mermaid-node-border);
-}
-
-.mermaid .relation {
-  stroke: var(--mermaid-line);
 }

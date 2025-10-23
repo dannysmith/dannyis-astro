@@ -53,7 +53,16 @@ export default defineConfig({
       [rehypeHeadingIds, { headingIdCompat: true }],
       rehypeAutolinkHeadings,
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
-      [rehypeMermaid, { strategy: 'pre-mermaid' }],
+      [
+        rehypeMermaid,
+        {
+          strategy: 'img-svg',
+          dark: true, // Auto-generates light/dark variants
+          mermaidConfig: {
+            theme: 'neutral', // Clean theme that works well in both modes
+          },
+        },
+      ],
     ],
     remarkPlugins: [remarkReadingTime],
   },

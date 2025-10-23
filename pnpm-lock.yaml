@@ -56,9 +56,6 @@ importers:
       mdast-util-to-string:
         specifier: ^4.0.0
         version: 4.0.0
-      mermaid:
-        specifier: ^11.12.0
-        version: 11.12.0
       puppeteer:
         specifier: ^24.23.0
         version: 24.23.0(typescript@5.9.3)
