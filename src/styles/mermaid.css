@@ -1,6 +1,4 @@
-/* Mermaid diagram container styles */
-/* Note: Diagrams are pre-rendered at build time with rehype-mermaid */
-
+/* Mermaid diagrams are pre-rendered at build time with rehype-mermaid */
 .mermaid {
   text-align: center;
   margin: 2rem 0;
