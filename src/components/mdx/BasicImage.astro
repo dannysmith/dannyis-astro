@@ -29,9 +29,11 @@ const {
 // Use glob import to get all images
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*');
 
-// If src is a string and starts with "/assets", try to find it in the glob
+// Handle both "/src/assets" (from content editors) and "/assets" paths
 const imageSrc =
-  typeof src === 'string' && src.startsWith('/assets')
+  typeof src === 'string' && src.startsWith('/src/assets')
+    ? (await images[src]()).default
+    : typeof src === 'string' && src.startsWith('/assets')
     ? (await images['/src' + src]()).default
     : src;
 

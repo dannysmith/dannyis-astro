@@ -5,6 +5,8 @@ import FormattedDate from '@components/ui/FormattedDate.astro';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import NoteCard from '@components/layout/NoteCard.astro';
+import SmartLink from '@components/mdx/SmartLink.astro';
+import BasicImage from '@components/mdx/BasicImage.astro';
 
 const notes = (
   await getCollection('notes', ({ data }) => {
@@ -16,6 +18,12 @@ const notes = (
 const numberOfRecentNotes = 5;
 const recentNotes = notes.slice(0, numberOfRecentNotes);
 const olderNotes = notes.slice(numberOfRecentNotes);
+
+// Component prop drilling for automatic enhancements
+const components = {
+  a: SmartLink,    // Automatic internal/external link handling
+  img: BasicImage, // Automatic responsive images with loading states
+};
 
 // Render the recent notes content
 const recentNotesWithContent = await Promise.all(
@@ -53,7 +61,7 @@ const recentNotesWithContent = await Promise.all(
                   tags={note.data.tags}
                   slug={note.id}
                 >
-                  <Content />
+                  <Content components={components} />
                 </NoteCard>
               </div>
             ))}
