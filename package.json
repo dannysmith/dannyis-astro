@@ -20,7 +20,9 @@
     "test:e2e": "playwright test",
     "test:all": "pnpm run test:unit && pnpm run test:e2e",
     "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
-    "newnote": "tsx scripts/create-note.ts"
+    "newnote": "tsx scripts/create-note.ts",
+    "task:complete": "node scripts/complete-task.js",
+    "task:rename-done": "node scripts/complete-task.js --rename-existing"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^6.3.7",
