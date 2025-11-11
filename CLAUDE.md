@@ -84,6 +84,8 @@ pnpm run check:all     # Types → Format → Lint → Tests (unit + e2e)
 pnpm run check:lint    # ESLint only
 pnpm run check:types   # TypeScript + Astro check only
 pnpm run check:format  # Prettier check only
+pnpm run check:knip    # Check for unused code with Knip
+pnpm run check:dupes   # Check for duplicate code with jscpd
 pnpm run test:unit     # Unit tests only
 pnpm run test:e2e      # E2E tests only
 pnpm run newnote       # Create new note with proper frontmatter

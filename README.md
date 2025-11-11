@@ -33,6 +33,8 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm run preview`        | Preview your build locally, before deploying     |
 | `pnpm run check`          | Run Astro type checking                          |
 | `pnpm run check:lint`     | Run ESLint to check for issues                   |
+| `pnpm run check:knip`     | Check for unused dependencies, exports, and files |
+| `pnpm run check:dupes`    | Check for duplicate code blocks                  |
 | `pnpm run lint:fix`       | Run ESLint and automatically fix issues          |
 | `pnpm run format`         | Format code with Prettier                        |
 | `pnpm run check:format`   | Check if code is properly formatted              |
