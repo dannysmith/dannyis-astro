@@ -74,6 +74,7 @@ Content-first creative playground for writing and design experimentation. Built 
 - `docs/developer/seo.md` - SEO utilities and patterns
 - `docs/developer/code-quality.md` - Quality checks and standards
 - `docs/developer/testing.md` - Testing strategy and patterns
+- `docs/developer/mcp-chrome-devtools.md` - Using Chrome DevTools MCP for visual debugging
 
 ## Commands
 

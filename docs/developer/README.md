@@ -18,3 +18,4 @@ Consult when working on specific features:
 - [seo.md](./seo.md) - SEO utilities and patterns
 - [code-quality.md](./code-quality.md) - Quality checks and standards
 - [testing.md](./testing.md) - Testing strategy and patterns
+- [mcp-chrome-devtools.md](./mcp-chrome-devtools.md) - Using Chrome DevTools MCP for visual debugging
