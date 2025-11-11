@@ -184,6 +184,8 @@ Theme switching via `data-theme` attribute on `:root` element.
 
 ### CSS Layers
 
+**Core architectural pattern** - Controls specificity without relying on selector complexity or `!important`.
+
 Organized by specificity (lowest to highest):
 
 1. **Reset** (@layer reset) - Basic resets, box model
@@ -204,6 +206,8 @@ Organized by specificity (lowest to highest):
   }
 }
 ```
+
+**Documentation:** See [MDN @layer reference](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification details. Layer order is defined in `src/styles/global.css:2`.
 
 ### Modern CSS Features
 

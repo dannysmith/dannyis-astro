@@ -166,6 +166,31 @@ src/
 
 📖 **See [testing.md](./testing.md) for comprehensive testing strategies**
 
+## External Documentation
+
+### Using Context7 for Astro Documentation
+
+**Always check Context7 first** before web searching for Astro-specific questions:
+
+```
+mcp__context7__get-library-docs with context7CompatibleLibraryID: /withastro/docs
+```
+
+This provides access to 2400+ code snippets and comprehensive Astro documentation.
+
+### Key External Resources
+
+**CSS Layers** - Central to our styling architecture:
+
+- See [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification
+- Our layer order: reset → base → simple-prose → longform-prose → theme
+
+### General Principle
+
+1. Check Context7 for framework/library docs (`mcp__context7__resolve-library-id` then `mcp__context7__get-library-docs`)
+2. Use web search if Context7 lacks the specific information
+3. Reference codebase examples when documentation is unclear
+
 ## Quick Start for New Sessions
 
 1. **Read** `docs/TASKS.md` for current work
