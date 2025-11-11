@@ -23,7 +23,7 @@ We have various tools available to help with maintaining code quality:
 5. **Vitest** - Unit tests
 6. **Playwright** - E2E tests
 
-These can be run together wirth `pnpm run check:all`.
+These can be run together with `pnpm run check:all`.
 
 ## Common Quality Issues
 

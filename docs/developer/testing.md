@@ -20,9 +20,9 @@ This project uses a dual testing approach optimized for different types of valid
 
 Focus testing effort on areas where bugs would have the highest impact:
 
-- **Pure utility functions** - Eg. SEO helpers, content summary generation, date formatting
-- **Content filtering logic** - Rg. Draft/styleguide exclusion, collection queries
-- **Critical user paths** - Eg. Main navigation, RSS feed generation, 404 pages
+- **Pure utility functions** - e.g. SEO helpers, content summary generation, date formatting
+- **Content filtering logic** - e.g. Draft/styleguide exclusion, collection queries
+- **Critical user paths** - e.g. Main navigation, RSS feed generation, 404 pages
 - **Business logic** - Any function with complex conditional logic or data transformation
 
 Avoid testing:

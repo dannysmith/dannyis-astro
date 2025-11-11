@@ -260,13 +260,13 @@ All RSS feeds, markdown export endpoints, and page routes use these centralized 
 **Filtering Logic:**
 
 ```typescript
-// Individual pages - shows styleguide in development
+// Individual pages - allows styleguide pages to be accessed directly
 export function filterContentForPage(entries) {
   return entries.filter(entry => {
     if (import.meta.env.PROD) {
-      return entry.data.draft !== true && !entry.data.styleguide;
+      return entry.data.draft !== true;
     }
-    return entry.data.draft !== true;
+    return true; // Show everything in development
   });
 }
 
@@ -283,9 +283,10 @@ export function filterContentForListing(entries) {
 
 **Rules:**
 
-- `draft: true` → hidden in production AND development listings
-- `styleguide: true` → hidden in production, shown in dev for individual pages only
-- Development mode shows non-draft content
+- `draft: true` → hidden in production (both individual pages and listings); visible in development
+- `styleguide: true` → accessible by direct URL in any environment, but never appears in listings or RSS feeds
+- Individual pages (`filterContentForPage`) only filter out drafts in production
+- Listings and RSS (`filterContentForListing`) filter out both drafts (in production) and styleguides (always)
 
 ### External Link Security
 
