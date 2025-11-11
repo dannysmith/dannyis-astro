@@ -1,0 +1,129 @@
+---
+title: How I'm Coding with LLMs in Nov '25
+slug: coding-with-llms-oct-25
+draft: true
+pubDate: 2025-11-01
+---
+
+<IntroParagraph>
+For the last three months or so I've been working on [Astro Editor](http://astroeditor.danny.is/), a Markdown editor for [Astro](https://astro.build/) sites built with [Tauri](https://v2.tauri.app/) and React. What started as an extercise in learnig how to work effectively with AI coding agents at a basic level very quickly turned into an exercise in learning how to use them to build **decent quality** codebases. I've deliberatly tried to hand-write as little code as possible, but I can't really call Astro Editor *vibe-coded* because I've read about 60-70% of the codebase. I'm still learning, but here's where I'm at right now when it comes to setting up for success with AI coding agents.
+</IntroParagraph>
+
+## Basic Toolset
+
+I use Cursor as my primary editor, primarily because the AI tab-completion is still the best out there for the times when I'm hand-coding. I don't make much use of the agentic features at the moment, except occasionally when I'm working on some visual design tasks. I've drastically slimmed down the number of extensions I use thanks to AI tools, but still find ESLint, Prettier, path intellisense and the like helpful.
+
+ChatGPT with GPT-5 thinking is sometimes invaulable for helping me refine task docs before I give them to Claude Code, and is my go-to for things like image generation. I also use it and Claude Desktop for any non-technical "deep research" tasks which require extensive digging about on the internet.
+
+I talk to my computer using [VoiceInk](/notes/voiceink).
+
+### The Main Tool: Claude Code
+
+I use Claude Code running in [Ghostty](/notes/ghostty-terminal) as my main AI Agent. For the most part I'm running a couple of instances of it - one working on a well-defined task and the other working out a plan for the next task.
+
+I've messed about with multiple instances and worktrees but for all the hype about *"running twenty agents in parallel if you wanna be a 10x dev"*, this introducs way too much **cognative debt** for my liking. Even if I properly code-review all the output, I'm never going to develop a sufficiently robust mental model of the codebase unless I spend a significant amount of time looking over Claude's shoulder while it works. There are a few exceptions (small clearly-defined bugfixes etc). I guess my rule is *"if a human was doing this would I rather pair with them or review the PR after?"*
+
+We'll get into more complex stuff later, but some basic Claude Code advice:
+
+- Use the best model available *(at time of writing this is Sonnet 4.5, which is excellent for most coding tasks)*
+- **ALWAYS** use thinking mode. Really.
+- Avoid loading a million MCPs - they eat up tokens. I only have [Context7](https://context7.com/) by default in most projects.
+- Add a [hook which pings you with an OS Notification](https://github.com/dannysmith/dotfiles/blob/5fd5b368bd6980a6aa5736a8d7431064f02a5911/claude/settings.json#L87) when CC finishes a task or needs your input.
+- **Clear your context window regularly, and intentionally**.
+  - Pre-empt CC's Auto-Compact. It never does it at an appropriate time.
+  - Favour `/clear` over `/compact`. If you must compact, do it manually at an appropriate point and give specific guidance on what to keep in context.
+  - Think about the relevance of the current context window. If you've completely finished a feature it makes sense to `/clear` even if you have plenty of space left. But if your next task is writing a test for that feature, CC will do a better job if you *don't* clear first, because it already has a load of relevant info in the context window. Likewise if you want it to write a good commit message for the feature.
+  - That said... if you've been down a load of dead-ends in the current session, the context will include a load of stuff that ended up being *irelevant*. So you might be better off with a clean slate.
+
+
+## Start with a Walking Skeleton (plus tech stack choices)
+
+[Explain WS - see AK course]
+
+React
+Tailwind
+shadcn/ui
+Use idiomatic patterns wherever you can
+
+
+## Guardrails
+
+### Static analysis and tests
+- Typescript
+- ESLint
+- React Compiler
+- Prettier
+- Rust formatter & Clippy
+- Unit Tests
+- AST Grep
+- Knip
+- jscpd
+
+### Developer Documentation
+
+### CodeRabbit
+
+## The Claude Setup
+
+### Global
+
+### Project-Local
+
+  - Agents
+  - Commands
+
+
+## The Development Cycle
+
+1. Plan
+   - Dictate your requirements into a markdown doc
+   - Have AI reserach best approaches
+   - Have AI build a god technical plan
+2. Execute
+   - Have AI work through the plan and stop after each phase.
+   - Ask AI to review its work and ensure conformity with your `architecture.md` doc.
+   - Manually test and work with AI to fix any issues one at a time.
+   - Have it run some `check:all` script which typechecks, lints, formats all code and runs all tests.
+3. Clean up
+   - At the end of each feature, ask AI to clean up any comments, logs etc.
+   - Have AI document any new patterns in the simplest way possible and update CLAUDE.md as needed.
+-
+
+## What's Next?
+
+Claude Skills! The whole progressive disclosure thing should make itmuch easier to provide all the tools, instructions and context  the LLMs need *when theyneed it*, and without bloating the context window. I'm hoping they'll allow me to consolidate & simplify a lot of the stuff I mentioned in this article into something a bit more coherent. I think my favourite thing about Skills is how simple the *human* mental model for them is – even with fairly complex setups, Skills are easy for humans to reason about.
+
+As an example, imagine a **"Looking Stuff Up" Skill** which CC should always use when looking up documentation. It might include:
+
+- A `SKILL.md` with simple instructions and rules for looking stuff up effectively and quickly.
+- Access to multiple documentation MCPs (eg. Context7), with instructions on how to use them *well*.
+- A set of CLI tools or scripts to for doing stuff like fetching full web pages as markdown, again with clear instructions on their use.
+- Detailed instructions for using `WebSearch`, `WebFetch` and research-specific Sub-Agents to conduct deep, detailed research.
+- Detailed instructions for how to conduct various different types of research, including how to make use of historical information in the project (eg. files in `docs/tasks-done`, closed GitHub issues etc)
+
+I'll share fuller thoughts on this once I've spent some time with it. In the meantime, Han Lee wrote a [great deep dive on Claude Skills](https://leehanchung.github.io/blogs/2025/10/26/claude-skills-deep-dive/) that's worth reading.
+
+
+## Don't be scared to do ad-hoc things
+
+# [NOTES]
+
+The belowis from https://simonwillison.net/2025/Sep/29/armin-ronacher-90/ and is relevant here.
+
+Armin Ronacher: 90% (via) The idea of AI writing "90% of the code" to-date has mostly been expressed by people who sell AI tooling.
+
+Over the last few months, I've increasingly seen the same idea come coming much more credible sources.
+
+Armin is the creator of a bewildering array of valuable open source projects - Flask, Jinja, Click, Werkzeug, and many more. When he says something like this it's worth paying attention:
+
+For the infrastructure component I started at my new company, I’m probably north of 90% AI-written code.
+
+For anyone who sees this as a threat to their livelihood as programmers, I encourage you to think more about this section:
+
+It is easy to create systems that appear to behave correctly but have unclear runtime behavior when relying on agents. For instance, the AI doesn’t fully comprehend threading or goroutines. If you don’t keep the bad decisions at bay early it, you won’t be able to operate it in a stable manner later.
+
+Here’s an example: I asked it to build a rate limiter. It “worked” but lacked jitter and used poor storage decisions. Easy to fix if you know rate limiters, dangerous if you don’t.
+
+In order to use these tools at this level you need to know the difference between goroutines and threads. You need to understand why a rate limiter might want to"jitter" and what that actually means. You need to understand what "rate limiting" is and why you might need it!
+
+These tools do not replace programmers. They allow us to apply our expertise at a higher level and amplify the value we can provide to other people.
