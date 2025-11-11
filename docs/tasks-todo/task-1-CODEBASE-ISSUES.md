@@ -237,7 +237,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 - How barrel exports work
 - When to use category imports vs direct imports
 
-**Fixed in new documentation:** `critical-patterns.md` now covers this thoroughly.
+**Fixed in new documentation:** `architecture-guide.md` now covers this thoroughly in the Critical Patterns section.
 
 ---
 

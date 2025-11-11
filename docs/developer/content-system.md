@@ -42,26 +42,13 @@ export const collections = { articles, notes };
 - **Ignored files:** Anything starting with `_` (use for drafts/work-in-progress)
 - **Naming requirement:** `YYYY-MM-DD-descriptive-slug.{md,mdx}` format
 
-See `critical-patterns.md` for file naming details and `content-authoring.md` for schema reference.
+See `content-authoring.md` for file naming conventions and schema reference.
 
 ### Content Filtering
 
-**IMPORTANT:** Filtering logic is duplicated across multiple files (see `critical-patterns.md`).
+Content is filtered based on `draft` and `styleguide` frontmatter flags in production builds. Development mode shows all content.
 
-```typescript
-const isPublishable = entry => {
-  if (import.meta.env.PROD) {
-    return entry.data.draft !== true && !entry.data.styleguide;
-  }
-  return true; // Development shows everything
-};
-```
-
-**Where filtering applies:**
-
-- RSS feed endpoints (`/rss.xml`, `/rss/articles.xml`, `/rss/notes.xml`)
-- Markdown export endpoints (`/writing/[...slug].md.ts`, `/notes/[...slug].md.ts`)
-- Index pages (articles/notes listings)
+**IMPORTANT:** Filtering logic is duplicated across multiple files - see [architecture-guide.md § Content Filtering Rules](./architecture-guide.md#content-filtering-rules) for the complete list of affected files and the gotcha details.
 
 ### Reading Time Injection
 
@@ -93,7 +80,7 @@ Three RSS feeds generated using Astro's experimental Container API:
 
 ### Container API Pattern
 
-See `critical-patterns.md` for complete RSS Container API implementation details.
+See [architecture-guide.md § RSS Container API](./architecture-guide.md#rss-container-api) for complete RSS Container API implementation details.
 
 **Key features:**
 
@@ -127,7 +114,7 @@ Dynamic generation using `@vercel/og` + `satori` + `@resvg/resvg-js`.
 - `src/pages/writing/[...slug]/og-image.png.ts` - Articles
 - `src/pages/notes/[...slug]/og-image.png.ts` - Notes
 
-**Note:** `@resvg/resvg-js` is excluded from Vite optimization in `astro.config.mjs` (see `critical-patterns.md`).
+**Note:** `@resvg/resvg-js` is excluded from Vite optimization in `astro.config.mjs` (see [architecture-guide.md § Dynamic API Endpoints](./architecture-guide.md#dynamic-api-endpoints)).
 
 ### Features
 
@@ -156,7 +143,7 @@ src/pages/writing/[...slug]/og-image.png.ts  → OG images for articles
 src/pages/notes/[...slug]/og-image.png.ts    → OG images for notes
 ```
 
-See `critical-patterns.md` for details on dynamic API endpoints.
+See [architecture-guide.md § Dynamic API Endpoints](./architecture-guide.md#dynamic-api-endpoints) for details.
 
 ## Content Summary Generation
 

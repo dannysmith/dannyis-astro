@@ -261,4 +261,4 @@ Articles are created manually (no CLI command).
 
 External links in markdown automatically get `target="_blank" rel="noopener noreferrer"` via rehype plugin.
 
-For HTML links in components, see `critical-patterns.md` for security requirements.
+For HTML links in components, see [architecture-guide.md § External Link Security](./architecture-guide.md#external-link-security) for security requirements.

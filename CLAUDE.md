@@ -56,22 +56,24 @@ Content-first creative playground for writing and design experimentation. Built 
 
 ### Documentation Structure
 
-**Core Guides** (read for daily development):
+**Tier 1: Orientation**
+
+- `docs/developer/README.md` - Categorized index of all developer documentation
+
+**Tier 2: Core Guides** (daily use - read these first)
 
 - `docs/developer/architecture-guide.md` - Essential patterns and overview (START HERE)
-- `docs/developer/accessability-and-performance.md` - Guidance for writing accessible and performant HTML, CSS, TypeScript and Astro Components
-- `docs/developer/component-patterns.md` - TypeScript patterns, component structure, error handling, and organization for building Astro components.
-- `docs/developer/code-quality.md` - Guidance and rules for keeping code quality high.
-- `docs/developer/content-system.md` - Technical implementation of content collections, RSS feeds and build-time content generation.
-- `docs/developer/design.md` - Visual philosophy, CSS architecture, and design patterns for Danny's personal website.
-- `docs/developer/seo.md` - Guidance and patterns for maintaining good SEO
-- `docs/developer/testing.md` - Guidance on writing tests
+- `docs/developer/component-patterns.md` - Component development patterns
+- `docs/developer/design.md` - Visual philosophy and CSS architecture
 
-**Reference**:
+**Tier 3: Specialized References** (consult when working on specific features)
 
-- `docs/developer/content-authoring.md` - Guide for creating and editing the CONTENT of articles and notes
-
-See `docs/README.md` for the complete categorized list.
+- `docs/developer/accessibility-and-performance.md` - Accessible and performant code
+- `docs/developer/content-system.md` - Content collections, RSS, build-time generation
+- `docs/developer/content-authoring.md` - Creating and editing articles/notes
+- `docs/developer/seo.md` - SEO utilities and patterns
+- `docs/developer/code-quality.md` - Quality checks and standards
+- `docs/developer/testing.md` - Testing strategy and patterns
 
 ## Commands
 

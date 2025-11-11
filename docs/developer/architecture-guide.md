@@ -111,85 +111,25 @@ For HTML in components, **always include** security attributes:
 
 ### RSS Container API
 
-**Unique pattern:** Uses Astro's experimental Container API to render MDX components in RSS feeds.
+**Unique pattern:** Uses Astro's experimental Container API to render MDX components in RSS feeds. This enables all MDX components (Callout, Embed, etc.) to work in RSS output.
 
-```typescript
-import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import { loadRenderers } from 'astro:container';
-import { getContainerRenderer as getMDXRenderer } from '@astrojs/mdx';
-
-export async function GET(context) {
-  // Initialize container with MDX renderer
-  const renderers = await loadRenderers([getMDXRenderer()]);
-  const container = await AstroContainer.create({ renderers });
-
-  // Get and filter entries
-  const entries = await getCollection('articles');
-  const publishable = entries.filter(/* filtering rules */);
-
-  // Render each entry to HTML
-  for (const entry of publishable) {
-    const { Content } = await render(entry);
-    const html = await container.renderToString(Content);
-    // Add to RSS feed
-  }
-}
-```
-
-- Enables full MDX component rendering in RSS feeds
-- All MDX components (Callout, Embed, etc.) work in RSS
-- API is experimental - could change in Astro updates
-- Used identically in all 3 RSS files (`/rss.xml`, `/rss/articles.xml`, `/rss/notes.xml`)
-
-See `content-system.md` for full RSS architecture.
+📖 **See [content-system.md § RSS Feed Implementation](./content-system.md#rss-feed-implementation) for complete implementation details and code examples**
 
 ### Reading Time Injection
 
-Reading time is injected by a remark plugin during markdown parsing.
+Reading time is automatically calculated by a remark plugin (`remark-reading-time.mjs`) and injected into frontmatter as `minutesRead`. Access via `entry.data.minutesRead` - it's **NOT available** through `@utils/seo` functions.
 
-1. `remark-reading-time.mjs` (root directory) calculates reading time
-2. Plugin injects `minutesRead` into `data.astro.frontmatter`
-3. Access via `entry.data.minutesRead`
-4. **NOT available** through `@utils/seo` functions
-
-```astro
----
-import { getEntry } from 'astro:content';
-
-const article = await getEntry('articles', 'my-article');
-const readingTime = article.data.minutesRead; // From remark plugin
----
-
-<p>Reading time: {readingTime} min</p>
-```
+📖 **See [content-system.md § Reading Time Injection](./content-system.md#reading-time-injection) for implementation details**
 
 ### Dynamic API Endpoints
 
-TypeScript files with special extensions generate dynamic content - **not normal page files**.
+TypeScript files with special extensions (`.md.ts`, `.png.ts`) generate dynamic content like markdown exports and OpenGraph images. These are API routes, **not normal page files**.
 
-#### Markdown Export (.md.ts)
-
-```
-src/pages/writing/[...slug].md.ts  → Exports markdown version of articles
-src/pages/notes/[...slug].md.ts    → Exports markdown version of notes
-```
-
-These are API routes that return `.md` files on request.
-
-#### Image Generation (.png.ts)
-
-```
-src/pages/writing/[...slug]/og-image.png.ts  → OpenGraph images for articles
-src/pages/notes/[...slug]/og-image.png.ts    → OpenGraph images for notes
-```
-
-Generate PNG images using `@vercel/og` + `satori` + `@resvg/resvg-js`.
-
-**Gotcha:** `@resvg/resvg-js` is excluded from Vite optimization in `astro.config.mjs`.
+📖 **See [content-system.md § Dynamic API Endpoints](./content-system.md#dynamic-api-endpoints) for file locations and implementation**
 
 ## Performance Essentials
 
-📖 **See [accessability-and-performance.md](./accessability-and-performance.md) for detailed patterns and optimization strategies**
+📖 **See [accessibility-and-performance.md](./accessibility-and-performance.md) for detailed patterns and optimization strategies**
 
 ## Component Organization
 
