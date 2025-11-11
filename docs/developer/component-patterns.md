@@ -203,6 +203,26 @@ components/
 
 Each category includes barrel exports for clean imports.
 
+### Layout Components vs UI Components
+
+Understanding the distinction between `layout/` and `ui/` components:
+
+**NoteCard (in layout/):**
+- Used specifically for notes listings
+- Part of the page layout structure
+- Tightly coupled to notes display patterns
+- Contains rendering logic for MDX content
+
+**ContentCard (in ui/):**
+- Generic reusable card component
+- Can be used for any content type (articles, notes, toolbox)
+- More flexible, accepts arbitrary content
+- Focused on presentation over content-specific logic
+
+Both serve similar visual purposes but have different architectural roles. When creating a new card-like component, ask:
+- Is it tied to a specific content type or page layout? → `layout/`
+- Is it a reusable UI pattern for multiple contexts? → `ui/`
+
 ### Barrel Export Pattern
 
 ```typescript

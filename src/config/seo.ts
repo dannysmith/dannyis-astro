@@ -10,6 +10,20 @@ export const SITE_TITLE = 'Danny Smith';
 export const SITE_DESCRIPTION =
   'Remote work consultant and organizational health expert. Articles and insights on leadership, remote work, and business operations.';
 
+/**
+ * Base site URL - used for canonical URLs, OG images, RSS feeds
+ * Do not include trailing slash
+ */
+export const SITE_URL = 'https://danny.is' as const;
+
+/**
+ * Content type URL prefixes
+ */
+export const CONTENT_PATHS = {
+  articles: '/writing',
+  notes: '/notes',
+} as const;
+
 // Personal & Business Information
 export const AUTHOR = {
   name: 'Danny Smith',

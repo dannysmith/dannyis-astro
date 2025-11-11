@@ -1,109 +1,162 @@
 import { describe, it, expect } from 'vitest';
+import { filterContentForPage, filterContentForListing } from '@utils/content';
 
-// Helper functions to test the filtering logic used throughout the codebase
-function createContentFilter(isProduction: boolean) {
-  return ({ data }: { data: { draft?: boolean; styleguide?: boolean } }) => {
-    return isProduction ? data.draft !== true : true;
+// Mock content entries
+type MockEntry = {
+  id: string;
+  data: {
+    draft?: boolean;
+    styleguide?: boolean;
+    title?: string;
   };
+};
+
+function createMockEntry(id: string, data: MockEntry['data']): MockEntry {
+  return { id, data };
 }
 
-function createListingFilter(isProduction: boolean) {
-  return ({ data }: { data: { draft?: boolean; styleguide?: boolean } }) => {
-    const draftFilter = isProduction ? data.draft !== true : true;
-    return draftFilter && !data.styleguide;
-  };
-}
+describe('Content Filtering Functions', () => {
+  describe('filterContentForPage (Individual Pages)', () => {
+    const entries: MockEntry[] = [
+      createMockEntry('draft', { draft: true, title: 'Draft Article' }),
+      createMockEntry('published', { draft: false, title: 'Published Article' }),
+      createMockEntry('no-draft-field', { title: 'No Draft Field' }),
+      createMockEntry('styleguide', { styleguide: true, title: 'Styleguide' }),
+      createMockEntry('draft-styleguide', { draft: true, styleguide: true, title: 'Draft Styleguide' }),
+    ];
 
-describe('Content Filtering Logic', () => {
-  describe('Individual Page Filter (drafts only)', () => {
-    it('excludes drafts in production', () => {
-      const filter = createContentFilter(true);
+    describe('Production behavior', () => {
+      it('excludes drafts', () => {
+        const filtered = filterContentForPage(entries, true);
+        const ids = filtered.map(e => e.id);
 
-      expect(filter({ data: { draft: true } })).toBe(false);
-      expect(filter({ data: { draft: false } })).toBe(true);
-      expect(filter({ data: {} })).toBe(true); // no draft field = not draft
+        expect(ids).not.toContain('draft');
+        expect(ids).not.toContain('draft-styleguide');
+      });
+
+      it('includes published content', () => {
+        const filtered = filterContentForPage(entries, true);
+        const ids = filtered.map(e => e.id);
+
+        expect(ids).toContain('published');
+        expect(ids).toContain('no-draft-field');
+      });
+
+      it('allows styleguide pages individually', () => {
+        const filtered = filterContentForPage(entries, true);
+        const ids = filtered.map(e => e.id);
+
+        expect(ids).toContain('styleguide');
+      });
     });
 
-    it('includes drafts in development', () => {
-      const filter = createContentFilter(false);
+    describe('Development behavior', () => {
+      it('includes all content including drafts', () => {
+        const filtered = filterContentForPage(entries, false);
+        const ids = filtered.map(e => e.id);
 
-      expect(filter({ data: { draft: true } })).toBe(true);
-      expect(filter({ data: { draft: false } })).toBe(true);
-      expect(filter({ data: {} })).toBe(true);
-    });
+        expect(ids).toContain('draft');
+        expect(ids).toContain('published');
+        expect(ids).toContain('no-draft-field');
+        expect(ids).toContain('styleguide');
+        expect(ids).toContain('draft-styleguide');
+      });
 
-    it('allows styleguide pages individually', () => {
-      const prodFilter = createContentFilter(true);
-      const devFilter = createContentFilter(false);
-
-      // Styleguide pages should render individually
-      expect(prodFilter({ data: { styleguide: true } })).toBe(true);
-      expect(devFilter({ data: { styleguide: true } })).toBe(true);
+      it('returns all entries', () => {
+        const filtered = filterContentForPage(entries, false);
+        expect(filtered).toHaveLength(entries.length);
+      });
     });
   });
 
-  describe('Listing Page Filter (drafts + styleguide)', () => {
-    it('excludes drafts and styleguide in production', () => {
-      const filter = createListingFilter(true);
+  describe('filterContentForListing (Lists and RSS)', () => {
+    const entries: MockEntry[] = [
+      createMockEntry('draft', { draft: true, title: 'Draft Article' }),
+      createMockEntry('published', { draft: false, title: 'Published Article' }),
+      createMockEntry('no-draft-field', { title: 'No Draft Field' }),
+      createMockEntry('styleguide', { styleguide: true, title: 'Styleguide' }),
+      createMockEntry('draft-styleguide', { draft: true, styleguide: true, title: 'Draft Styleguide' }),
+    ];
 
-      expect(filter({ data: { draft: true } })).toBe(false);
-      expect(filter({ data: { styleguide: true } })).toBe(false);
-      expect(filter({ data: { draft: true, styleguide: true } })).toBe(false);
-      expect(filter({ data: {} })).toBe(true);
+    describe('Production behavior', () => {
+      it('excludes drafts', () => {
+        const filtered = filterContentForListing(entries, true);
+        const ids = filtered.map(e => e.id);
+
+        expect(ids).not.toContain('draft');
+        expect(ids).not.toContain('draft-styleguide');
+      });
+
+      it('excludes styleguide pages', () => {
+        const filtered = filterContentForListing(entries, true);
+        const ids = filtered.map(e => e.id);
+
+        expect(ids).not.toContain('styleguide');
+        expect(ids).not.toContain('draft-styleguide');
+      });
+
+      it('includes only published, non-styleguide content', () => {
+        const filtered = filterContentForListing(entries, true);
+        const ids = filtered.map(e => e.id);
+
+        expect(ids).toContain('published');
+        expect(ids).toContain('no-draft-field');
+        expect(filtered).toHaveLength(2);
+      });
     });
 
-    it('excludes styleguide but includes drafts in development', () => {
-      const filter = createListingFilter(false);
+    describe('Development behavior', () => {
+      it('includes drafts', () => {
+        const filtered = filterContentForListing(entries, false);
+        const ids = filtered.map(e => e.id);
 
-      expect(filter({ data: { draft: true } })).toBe(true); // Draft OK in dev
-      expect(filter({ data: { styleguide: true } })).toBe(false); // Styleguide never OK in lists
-      expect(filter({ data: {} })).toBe(true);
+        expect(ids).toContain('draft');
+      });
+
+      it('excludes styleguide pages even in development', () => {
+        const filtered = filterContentForListing(entries, false);
+        const ids = filtered.map(e => e.id);
+
+        expect(ids).not.toContain('styleguide');
+        expect(ids).not.toContain('draft-styleguide');
+      });
+
+      it('includes drafts but excludes styleguide', () => {
+        const filtered = filterContentForListing(entries, false);
+        const ids = filtered.map(e => e.id);
+
+        expect(ids).toContain('draft');
+        expect(ids).toContain('published');
+        expect(ids).toContain('no-draft-field');
+        expect(filtered).toHaveLength(3);
+      });
     });
 
-    it('handles complex combinations', () => {
-      const prodFilter = createListingFilter(true);
-      const devFilter = createListingFilter(false);
+    describe('Edge cases', () => {
+      it('handles empty array', () => {
+        expect(filterContentForPage([], true)).toEqual([]);
+        expect(filterContentForListing([], true)).toEqual([]);
+      });
 
-      const testContent = { data: { draft: true, styleguide: true } };
+      it('handles entries with no draft or styleguide fields', () => {
+        const entries = [createMockEntry('normal', { title: 'Normal Article' })];
 
-      expect(prodFilter(testContent)).toBe(false); // Both exclude in prod
-      expect(devFilter(testContent)).toBe(false); // Styleguide excludes in dev too
-    });
-  });
+        const pageFiltered = filterContentForPage(entries, true);
+        const listFiltered = filterContentForListing(entries, true);
 
-  describe('Environment Logic', () => {
-    it('handles the exact logic from codebase', () => {
-      // Simulate: import.meta.env.PROD ? data.draft !== true : true
-      const testFilter = (isProd: boolean, draft?: boolean) => {
-        return isProd ? draft !== true : true;
-      };
+        expect(pageFiltered).toHaveLength(1);
+        expect(listFiltered).toHaveLength(1);
+      });
 
-      // Production behavior
-      expect(testFilter(true, true)).toBe(false); // exclude draft
-      expect(testFilter(true, false)).toBe(true); // include non-draft
-      expect(testFilter(true, undefined)).toBe(true); // include no draft field
+      it('handles draft: false explicitly', () => {
+        const entries = [createMockEntry('explicit-false', { draft: false, title: 'Explicit False' })];
 
-      // Development behavior
-      expect(testFilter(false, true)).toBe(true); // include draft
-      expect(testFilter(false, false)).toBe(true); // include non-draft
-      expect(testFilter(false, undefined)).toBe(true); // include no draft field
-    });
+        const pageFiltered = filterContentForPage(entries, true);
+        const listFiltered = filterContentForListing(entries, true);
 
-    it('handles styleguide exclusion logic', () => {
-      // Simulate: draftFilter && !data.styleguide
-      const testListingFilter = (isProd: boolean, draft?: boolean, styleguide?: boolean) => {
-        const draftFilter = isProd ? draft !== true : true;
-        return draftFilter && !styleguide;
-      };
-
-      // Styleguide always excluded from listings
-      expect(testListingFilter(true, false, true)).toBe(false);
-      expect(testListingFilter(false, true, true)).toBe(false);
-
-      // Non-styleguide follows draft rules
-      expect(testListingFilter(true, false, false)).toBe(true);
-      expect(testListingFilter(false, true, false)).toBe(true);
-      expect(testListingFilter(true, true, false)).toBe(false);
+        expect(pageFiltered).toHaveLength(1);
+        expect(listFiltered).toHaveLength(1);
+      });
     });
   });
 });

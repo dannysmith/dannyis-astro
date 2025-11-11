@@ -115,7 +115,8 @@ src/
 │   ├── articles/    # Long-form writing
 │   └── notes/       # Short-form writing
 ├── config/          # Centralized config (SEO, constants)
-├── utils/           # Helper functions
+├── lib/             # Build-time plugins and scripts (runs independently)
+├── utils/           # Shared helper functions (imported throughout codebase)
 ├── layouts/         # Page templates (Article, Note)
 ├── pages/           # Routes and API endpoints
 └── styles/          # Global CSS and theme

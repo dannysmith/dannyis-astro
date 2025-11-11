@@ -118,10 +118,19 @@ const components = {
 - Exported with `as const` for type inference
 - Example: `src/config/seo.ts` (AUTHOR, TITLE_TEMPLATES, SCHEMA_CONFIG)
 
-**`src/utils/`** - Pure functions only (no data)
+**`src/lib/`** - Build-time plugins and scripts (runs independently)
+
+- Remark/rehype plugins configured in `astro.config.mjs`
+- Build scripts that run before Astro processes content
+- Not imported by other files - configured externally
+- Example: `src/lib/remark-reading-time.mjs` (remark plugin for reading time)
+
+**`src/utils/`** - Shared helper functions (imported throughout codebase)
 
 - Testable business logic
 - Consume config from `src/config/`
+- Imported by components, pages, and other files
+- Called during Astro's component-to-HTML rendering
 - Example: `src/utils/seo.ts` (generatePageTitle, generateJSONLD)
 
 **`src/components/`** - Organized by category
@@ -131,6 +140,13 @@ const components = {
 - `ui/` - Reusable utilities (ContentCard, FormattedDate, Pill)
 - `mdx/` - Available in MDX content (Callout, Embed, BasicImage)
 - Use barrel exports (`index.ts`) for clean imports
+
+**lib/ vs utils/ distinction:**
+
+- ✅ `lib/` - Build-time plugins configured in astro.config.mjs
+- ✅ `utils/` - Functions imported by components and pages
+- ❌ Don't put importable utilities in `lib/`
+- ❌ Don't put build plugins in `utils/`
 
 **When to extract:**
 
@@ -234,31 +250,42 @@ Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
 
 ### Content Filtering Rules
 
-**GOTCHA:** Content filtering logic is duplicated across multiple files. Change in one place, update everywhere.
+✅ **Content filtering is centralized in `@utils/content`:**
 
-### Filtering Logic
+- `filterContentForPage()` - For individual content pages (includes styleguide in dev)
+- `filterContentForListing()` - For listings and RSS (always excludes styleguide)
+
+All RSS feeds, markdown export endpoints, and page routes use these centralized functions.
+
+**Filtering Logic:**
 
 ```typescript
-const isPublishable = entry => {
-  if (import.meta.env.PROD) {
-    return entry.data.draft !== true && !entry.data.styleguide;
-  }
-  return true; // Development shows everything
-};
-```
+// Individual pages - shows styleguide in development
+export function filterContentForPage(entries) {
+  return entries.filter(entry => {
+    if (import.meta.env.PROD) {
+      return entry.data.draft !== true && !entry.data.styleguide;
+    }
+    return entry.data.draft !== true;
+  });
+}
 
-- `/src/pages/rss.xml.js`
-- `/src/pages/rss/articles.xml.js`
-- `/src/pages/rss/notes.xml.js`
-- `/src/pages/writing/[...slug].md.ts`
-- `/src/pages/notes/[...slug].md.ts`
-- Article/note index pages
+// Listings and RSS - always excludes styleguide
+export function filterContentForListing(entries) {
+  return entries.filter(entry => {
+    if (import.meta.env.PROD) {
+      return entry.data.draft !== true && !entry.data.styleguide;
+    }
+    return entry.data.draft !== true && !entry.data.styleguide;
+  });
+}
+```
 
 **Rules:**
 
-- `draft: true` → hidden in production
-- `styleguide: true` → hidden in production
-- Development mode shows all content
+- `draft: true` → hidden in production AND development listings
+- `styleguide: true` → hidden in production, shown in dev for individual pages only
+- Development mode shows non-draft content
 
 ### External Link Security
 
@@ -310,6 +337,9 @@ src/
 │   ├── navigation/  # Nav-specific
 │   ├── ui/          # Reusable utilities (FormattedDate, Pill, etc.)
 │   └── mdx/         # Available in MDX content (Callout, Embed, etc.)
+├── config/          # Constants and configuration (data only)
+├── lib/             # Build-time plugins and scripts (runs independently)
+├── utils/           # Shared helper functions (imported throughout codebase)
 ```
 
 ## Testing Strategy

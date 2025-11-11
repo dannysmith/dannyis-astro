@@ -1,8 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content'
 import Note from '@layouts/Note.astro'
-import SmartLink from '@components/mdx/SmartLink.astro'
-import BasicImage from '@components/mdx/BasicImage.astro'
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
 import { filterContentForPage } from '@utils/content';
 
 export async function getStaticPaths() {
@@ -16,14 +15,8 @@ type Props = CollectionEntry<'notes'>
 
 const note = Astro.props
 const { Content } = await render(note)
-
-// Component prop drilling for automatic enhancements
-const components = {
-  a: SmartLink,    // Automatic internal/external link handling
-  img: BasicImage, // Automatic responsive images with loading states
-}
 ---
 
 <Note {...note.data}>
-  <Content components={components} />
+  <Content components={MDX_COMPONENT_REMAPPING} />
 </Note>
