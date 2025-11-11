@@ -1,6 +1,6 @@
-# Codebase Issues Found During Documentation Cleanup
+# Outstanding Codebase Issues
 
-Issues discovered during codebase exploration on 2025-11-11. These are not critical bugs but inconsistencies and technical debt that should be addressed.
+Issues requiring attention. These are not critical bugs but inconsistencies and technical debt that should be addressed. Last reviewed: 2025-11-11.
 
 ## Critical Issues
 
@@ -89,119 +89,75 @@ export { default as highlight } from './typography/highlight.astro';
 - `src/pages/notes/[...slug].md.ts`
 - Various index pages
 
-**Current pattern (duplicated):**
+**Current state:**
 
-```javascript
-const publishable = entries.filter(entry => {
-  if (import.meta.env.PROD) {
-    return entry.data.draft !== true && !entry.data.styleguide;
-  }
-  return true;
-});
-```
+- Tests exist in `tests/unit/content-filter.test.ts` documenting the expected behavior
+- No utility function has been created yet - logic is still duplicated across files
 
-**Risk:** Changing filtering rules requires updating 5+ files. Easy to miss one and create inconsistencies.
-
-**Recommended fix:** Create a utility function in `src/utils/content.ts`:
+**Recommended fix:** Create `src/utils/content.ts` with reusable filter functions:
 
 ```typescript
-export function filterPublishableContent<T extends { data: { draft?: boolean; styleguide?: boolean } }>(entries: T[]): T[] {
-  if (import.meta.env.PROD) {
-    return entries.filter(entry => entry.data.draft !== true && !entry.data.styleguide);
-  }
-  return entries;
+export function filterContentForPage<T extends { data: { draft?: boolean; styleguide?: boolean } }>(entries: T[], isProduction: boolean = import.meta.env.PROD): T[] {
+  return isProduction ? entries.filter(entry => entry.data.draft !== true) : entries;
 }
-```
 
-Then use consistently:
-
-```javascript
-import { filterPublishableContent } from '@utils/content';
-const publishable = filterPublishableContent(entries);
+export function filterContentForListing<T extends { data: { draft?: boolean; styleguide?: boolean } }>(entries: T[], isProduction: boolean = import.meta.env.PROD): T[] {
+  const draftFilter = isProduction ? entry => entry.data.draft !== true : () => true;
+  return entries.filter(entry => draftFilter(entry) && !entry.data.styleguide);
+}
 ```
 
 ---
 
 ### 4. SEO Configuration Split Across Two Files
 
-**Problem:** Personal branding info is split between two files.
-
-**Files:**
-
-- `src/config/seo.ts` - Author info, organization, social profiles
-- `src/consts.ts` - Site title, description, URL
-
-**Impact:**
-
-- Updating branding requires changing both files
-- Easy to forget one and create inconsistencies
-- Not a single source of truth
-
-**Recommended fix:**
-
-- **Option A:** Move everything to `src/config/seo.ts` (preferred)
-- **Option B:** Document clearly in both files that they're related
-- **Option C:** Re-export constants from `seo.ts` to centralize
-
----
-
-### 5. Reading Time Implementation is Confusing
-
-**Problem:** Reading time comes from a remark plugin but looks like it should be in SEO utils.
+**Problem:** Site configuration is split between two files.
 
 **Current state:**
 
-- `remark-reading-time.mjs` (root directory, not in src/) injects `minutesRead` into frontmatter
-- `src/utils/seo.ts` has 8 SEO functions but none for reading time
-- Reading time is accessed directly from frontmatter: `entry.data.minutesRead`
-
-**Confusion:** Developers might look for reading time in:
-
-- `@utils/seo` (it's not there)
-- `@utils/content-summary` (it's not there either)
+- `src/config/seo.ts` - Comprehensive SEO config (author, organization, social, titles, schema)
+- `src/consts.ts` - Still has `SITE_TITLE` and `SITE_DESCRIPTION`
 
 **Impact:**
 
-- Not immediately obvious where reading time comes from
-- Remark plugin is in root directory (unusual location)
-- No central documentation of how it works
+- Most branding is centralized in seo.ts (good)
+- But core site title/description still in consts.ts (inconsistent)
+- Risk of divergence between the two sources
 
 **Recommended fix:**
 
-- Document in `remark-reading-time.mjs` that it injects into frontmatter
-- Add JSDoc comment explaining this in content.config.ts
-- Consider moving remark plugin to `src/utils/` or `scripts/` for consistency
+- Move `SITE_TITLE` and `SITE_DESCRIPTION` from `src/consts.ts` to `src/config/seo.ts`
+- Either delete `consts.ts` entirely or clearly document its purpose if other constants are added
+- Update all imports to use `@config/seo`
+
+---
+
+### 5. Reading Time Implementation Lacks Documentation
+
+**Problem:** Reading time implementation is undocumented and in an unusual location.
+
+**Current state:**
+
+- `remark-reading-time.mjs` in root directory injects `minutesRead` into frontmatter
+- No JSDoc comments explaining how it works
+- No documentation in architecture guides
+- Unusual location (most utils in `src/utils/`)
+
+**Confusion for developers:**
+
+- Not obvious where `minutesRead` comes from in frontmatter
+- Might look for reading time logic in `@utils/seo` or `@utils/content-summary`
+- No clear indication it's a build-time injection
+
+**Recommended fix:**
+
+- Add JSDoc comments to `remark-reading-time.mjs` explaining injection
+- Document in `docs/developer/content-system.md` under "Reading Time"
+- Consider moving to `src/lib/` for better organization
 
 ---
 
 ## Low Priority Issues
-
-### 6. Container API Marked as Experimental
-
-**Problem:** RSS feeds use `experimental_AstroContainer` which could change.
-
-**Affected files:**
-
-- `src/pages/rss.xml.js`
-- `src/pages/rss/articles.xml.js`
-- `src/pages/notes.xml.js`
-
-**Current usage:**
-
-```javascript
-import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-```
-
-**Risk:** Astro could change this API in future releases.
-
-**Recommended action:**
-
-- Monitor Astro release notes for Container API changes
-- Watch for when API becomes stable (not experimental)
-- Update to stable API when available
-- Add comment in code noting it's experimental
-
----
 
 ### 7. Inconsistent File Locations
 
@@ -225,60 +181,43 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 
 ---
 
-## Documentation Updates Needed
-
-### 8. TypeScript Path Aliases Not Fully Documented
-
-**Problem:** Some aliases exist but weren't documented in old architecture.md.
-
-**Missing from docs:**
-
-- `@components/icons` (though directory doesn't exist - see issue #1)
-- How barrel exports work
-- When to use category imports vs direct imports
-
-**Fixed in new documentation:** `architecture-guide.md` now covers this thoroughly in the Critical Patterns section.
-
----
-
 ## Summary Statistics
 
-**Total issues found:** 8
+**Total issues remaining:** 7
 
 - Critical: 2 (icon directory, MDX exports)
-- Medium: 3 (filtering duplication, SEO split, reading time confusion)
-- Low: 3 (experimental API, file locations, docs gaps)
+- Medium: 3 (filtering duplication, SEO split, reading time docs)
+- Low: 2 (experimental API, file locations)
+
+**Issues resolved:**
+
+- Issue #8: TypeScript path aliases now documented in architecture-guide.md
 
 **Impact:**
 
 - **Breaking potential:** Low (nothing currently broken)
-- **Maintenance burden:** Medium-High (duplication, confusion)
+- **Maintenance burden:** Medium-High (duplication, split config)
 - **Developer experience:** Medium (confusing patterns, missing exports)
 
 ## Recommended Action Plan
 
-### Phase 1: Quick Wins (1-2 hours)
+### Phase 1: Quick Wins
 
 1. Fix MDX typography component exports (issue #2)
-2. Create content filtering utility (issue #3)
-3. Document reading time source (issue #5)
+2. Create content filtering utilities (issue #3)
+3. Document reading time implementation (issue #5)
 
-### Phase 2: Structural Improvements (2-4 hours)
+### Phase 2: Structural Improvements
 
 4. Resolve icon directory issue (issue #1)
 5. Consolidate SEO configuration (issue #4)
 6. Standardize file locations (issue #7)
 
-### Phase 3: Future Monitoring
-
-7. Watch for Container API stabilization (issue #6)
-8. Keep documentation updated (issue #8)
-
 ---
 
 ## Notes
 
-- All issues found during documentation cleanup on 2025-11-11
-- Codebase exploration was "medium" thoroughness - there may be additional issues
+- Issues originally discovered during documentation cleanup on 2025-11-11
+- Last reviewed and updated: 2025-11-11
 - None of these issues are currently breaking the build
-- Prioritized by potential for causing future bugs
+- Prioritized by potential for causing future bugs and maintenance burden
