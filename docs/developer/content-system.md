@@ -88,7 +88,7 @@ const posts = filterContentForListing(await getCollection('articles'));
 
 Reading time is **NOT from SEO utilities** - it's injected automatically by a remark plugin at build time.
 
-**File:** `remark-reading-time.mjs` (root directory)
+**File:** `src/lib/remark-reading-time.mjs`
 
 **What it does:**
 - Runs during MDX processing at build time
@@ -111,8 +111,8 @@ const readingTime = remarkPluginFrontmatter.minutesRead; // "5 min read"
 **Important notes:**
 - Configured in `astro.config.mjs` under `markdown.remarkPlugins`
 - Injected during markdown parsing, NOT from `@utils/seo` functions
-- Located in root directory (not `src/`) as it's a build-time plugin
-- See JSDoc comments in `remark-reading-time.mjs` for implementation details
+- Located in `src/lib/` with other build-time utilities
+- See JSDoc comments in the file for implementation details
 
 ## RSS Feed Implementation
 
@@ -254,11 +254,11 @@ Custom remark/rehype plugins modify content during build.
 
 ### Reading Time Plugin
 
-**File:** `remark-reading-time.mjs` (root directory, not in src/)
+**File:** `src/lib/remark-reading-time.mjs`
 
 **Purpose:** Automatically calculates and injects reading time into frontmatter during MDX processing.
 
-**Why it's in the root:** Build-time remark/rehype plugins are typically kept separate from runtime source code. This plugin runs during the build process before any component code executes.
+**Location rationale:** Build-time utilities (remark/rehype plugins) are kept in `src/lib/` separate from runtime utilities (`src/utils/`) and one-off scripts (`scripts/`). This plugin runs during the build process before any component code executes.
 
 **Documentation:** See "Reading Time Injection" section above for usage details and JSDoc comments in the file for implementation.
 
