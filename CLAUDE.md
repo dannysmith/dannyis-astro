@@ -1,139 +1,62 @@
-See @docs/tasks.md for task management
+# Danny's Personal Website
 
-# CLAUDE.md
+Content-first creative playground for writing and design experimentation. Built with Astro 5.13+ and TypeScript.
 
-This is Danny Smith's personal website - a content-first creative playground for writing and design experimentation.
+## For AI Agents: Start Here
 
-## Quick Context
+**Read `@docs/developer/README.md` first**, then:
+- Import/config issues? → `@docs/developer/critical-patterns.md`
+- Content/MDX/SEO? → `@docs/developer/content.md`
+- Design/CSS? → `@docs/developer/design.md`
+- Code quality? → `@docs/developer/standards.md`
 
-- **Framework**: Astro 5.13+ with TypeScript
-- **Philosophy**: Zero-JavaScript-by-default, typography-driven design
-- **Content**: Articles (`/writing/`) and Notes (`/notes/`)
-- **Purpose**: Creative expression + technical experimentation
+## Quick Reference
 
-## Documentation Structure
-
-### Technical Reference
-
-- `@docs/developer/architecture.md` - Project structure, components, build pipeline
-- `@docs/developer/design-system.md` - Typography, CSS, visual design patterns
-- `@docs/developer/content-system.md` - Content collections, MDX, SEO
-- `@docs/developer/implementation-patterns.md` - TypeScript, performance, quality
-
-### AI Assistance
-
-- `@.claude/agents/design-system-expert.md` - Typography, CSS, visual design help
-- `@.claude/agents/astro-specialist.md` - Framework, performance, technical help
-- `@.claude/commands/new-content.md` - Create notes and articles
-- `@.claude/commands/content-checks.md` - Publishing checklists and validation
-- `@.claude/commands/content-enhancements.md` - Images, descriptions, tags
-
-## Key Commands
-
-### Development
+### Commands
 
 ```bash
-pnpm run dev          # Development server at localhost:4321
-pnpm run build        # Production build to ./dist/
-pnpm run check        # All quality checks (lint, types, build)
-pnpm run newnote      # Create new note with proper frontmatter
+pnpm run dev          # Dev server (localhost:4321)
+pnpm run build        # Production build
+pnpm run check:all    # Quality gates (REQUIRED before completing work)
+pnpm run newnote      # Create new note
 ```
 
-### Quality Gates
+### Task Management
 
-**ALWAYS run before completing tasks:**
+See `@docs/tasks.md` for task system details.
 
 ```bash
-pnpm run check
+pnpm task:complete TASK_NAME    # Mark task complete
 ```
 
-This runs: ESLint → Prettier check → TypeScript → Astro check → Build test
+### Common Workflows
 
-## Common Workflows
+**Add Component:** Create in `src/components/[category]/` → Add TypeScript interface → Export from `index.ts` → Add to `/styleguide`
 
-### Adding a Component
+**Create Content:** Use `pnpm run newnote` → Set `draft: true` → Write with MDX → Run `pnpm run check:all` → Set `draft: false`
 
-1. Create in appropriate `src/components/` subdirectory
-2. Add TypeScript interface for props
-3. Update barrel export in subdirectory's `index.ts`
-4. Add examples to `/styleguide`
-5. Document in `design-system.md` if significant
-
-### Content Creation
-
-- **Articles**: Long-form in `src/content/articles/` with full frontmatter
-- **Notes**: Short-form in `src/content/notes/` with minimal frontmatter
-- Use commands: `new-content`, `content-checks`, `content-enhancements`
-- Always run pre-publishing checklist before going live
-
-### Design Updates
-
-1. Consult `@design-system-expert` agent for guidance
-2. Maintain CSS variable consistency
-3. Test with container queries for responsive behavior
-4. Preserve experimental, typography-driven character
-
-### Technical Implementation
-
-1. Consult `@astro-specialist` agent for framework questions
-2. Always prefer build-time over runtime solutions
-3. No JavaScript unless absolutely necessary
-4. Update architecture docs for significant changes
+**Design Changes:** Check `design.md` patterns → Use CSS variables → Test both themes → Update styleguide
 
 ## Critical Rules
 
-1. **No JavaScript by default** - Static HTML/CSS only unless required
-2. **Typography first** - Let type drive design decisions
-3. **Update styleguide** - Add examples when creating components
-4. **Test production builds** - Ensure everything works statically
+1. **No JavaScript by default** - Static HTML/CSS unless required
+2. **Typography first** - Let type drive design
+3. **Update styleguide** - Add examples for new components
+4. **Test builds** - Run `pnpm run check:all` before completing work
 5. **Maintain character** - Bold, experimental, personal feel
-6. **No unnecessary docs** - Don't create summary/plan markdown files unless explicitly requested
+6. **No unnecessary docs** - Don't create markdown files unless requested
 
-## Project Philosophy
+## AI Assistance Tools
 
-This site embraces:
+**Agents:**
+- `@design-system-expert` - Typography, CSS, visual design
+- `@astro-specialist` - Framework, performance, technical issues
 
-- **Oversized typography** as the primary design element
-- **Constructivist aesthetics** with asymmetric layouts
-- **Monochrome + red** color scheme
-- **Personal voice** over corporate polish
-- **Experimentation** in both content and code
+**Commands:**
+- `/new-content` - Create notes and articles
+- `/content-checks` - Publishing validation
+- `/content-enhancements` - Images, descriptions, tags
 
-## Working with Agents
+## Philosophy
 
-- **Design System Expert**: Typography, CSS, visual design, layouts
-- **Astro Specialist**: Build issues, performance, content schemas, framework
-
-## File Organization
-
-```
-src/
-├── components/       # Organized by type (layout/, ui/, mdx/, etc.)
-├── content/
-│   ├── articles/    # Long-form writing (YYYY-MM-DD-slug.mdx)
-│   └── notes/       # Short updates (YYYY-MM-DD-slug.md)
-├── icons/           # Custom SVG icons
-├── layouts/         # Page templates
-├── pages/           # Routes and dynamic pages
-└── styles/          # Global CSS and theme
-
-docs/
-├── developer/       # Technical documentation
-└── tasks/           # Task management system
-```
-
-## Performance Targets
-
-- **Lighthouse Score**: 95+ on all metrics
-- **Page Weight**: <200KB for content pages
-- **No JavaScript**: Unless absolutely necessary
-- **Fast Builds**: <30 seconds for full site
-
-## Getting Help
-
-1. Check `docs/developer/` for technical documentation
-2. Use specialized agents for complex tasks
-3. Reference existing patterns in the codebase
-4. Run `pnpm run check` to catch issues early
-
-Remember: This is a personal creative space. Be bold with design, careful with code, and always maintain the site's unique character.
+Embrace experimentation, personal expression, and technical excellence. Be bold with design, careful with code, and always maintain the site's unique character.
