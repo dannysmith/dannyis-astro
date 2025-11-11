@@ -65,31 +65,54 @@ The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
 
 Content is filtered based on `draft` and `styleguide` frontmatter flags in production builds. Development mode shows all content.
 
-**IMPORTANT:** Filtering logic is duplicated across multiple files - see [architecture-guide.md § Content Filtering Rules](./architecture-guide.md#content-filtering-rules) for the complete list of affected files and the gotcha details.
+**Centralized utilities:** `src/utils/content.ts`
+
+```typescript
+import { filterContentForPage, filterContentForListing } from '@utils/content';
+
+// For individual pages (allows styleguide pages)
+const posts = filterContentForPage(await getCollection('articles'));
+
+// For listings and RSS (excludes styleguide pages)
+const posts = filterContentForListing(await getCollection('articles'));
+```
+
+**Filtering rules:**
+- **Individual pages:** Excludes drafts in production, includes styleguide pages
+- **Listings/RSS:** Excludes drafts AND styleguide pages in production
+- **Development:** Includes drafts, always excludes styleguide from listings
+
+**Used in:** RSS feeds, listing pages, individual page routes, OG image generation
 
 ### Reading Time Injection
 
-Reading time is **NOT from SEO utilities** - it's injected by a remark plugin.
+Reading time is **NOT from SEO utilities** - it's injected automatically by a remark plugin at build time.
 
 **File:** `remark-reading-time.mjs` (root directory)
 
-```javascript
-export function remarkReadingTime() {
-  return function (tree, file) {
-    const textOnPage = toString(tree);
-    const readingTime = getReadingTime(textOnPage); // 200 words per minute
+**What it does:**
+- Runs during MDX processing at build time
+- Calculates reading time using the `reading-time` package (200 words per minute)
+- Injects `minutesRead` into frontmatter automatically
 
-    // Inject into frontmatter
-    file.data.astro.frontmatter.minutesRead = readingTime.minutes;
-  };
-}
+**How to access:**
+```typescript
+// Option 1: From collection entries
+const posts = await getCollection('articles');
+const readingTime = posts[0].data.minutesRead; // "5 min read"
+
+// Option 2: From rendered content
+const { Content, remarkPluginFrontmatter } = await render(post);
+const readingTime = remarkPluginFrontmatter.minutesRead; // "5 min read"
 ```
-
-**Access:** Via `entry.data.minutesRead` or `remarkPluginFrontmatter.minutesRead`
 
 **Type:** String (e.g., `"3 min read"`), not a number
 
-**Important:** This is frontmatter data injected during markdown parsing, not from `@utils/seo` functions.
+**Important notes:**
+- Configured in `astro.config.mjs` under `markdown.remarkPlugins`
+- Injected during markdown parsing, NOT from `@utils/seo` functions
+- Located in root directory (not `src/`) as it's a build-time plugin
+- See JSDoc comments in `remark-reading-time.mjs` for implementation details
 
 ## RSS Feed Implementation
 
@@ -233,7 +256,11 @@ Custom remark/rehype plugins modify content during build.
 
 **File:** `remark-reading-time.mjs` (root directory, not in src/)
 
-This is why reading time isn't centralized - it happens during markdown parsing, not via SEO utilities.
+**Purpose:** Automatically calculates and injects reading time into frontmatter during MDX processing.
+
+**Why it's in the root:** Build-time remark/rehype plugins are typically kept separate from runtime source code. This plugin runs during the build process before any component code executes.
+
+**Documentation:** See "Reading Time Injection" section above for usage details and JSDoc comments in the file for implementation.
 
 ## Build Configuration
 
