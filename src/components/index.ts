@@ -4,9 +4,6 @@ export * from './navigation';
 export * from './ui';
 export * from './mdx';
 
-// Icon exports
-export { default as InstagramIcon } from './icons/InstagramIcon.astro';
-export { default as LinkedInIcon } from './icons/LinkedInIcon.astro';
-export { default as NotionIcon } from './icons/NotionIcon.astro';
-export { default as RSSIcon } from './icons/RSSIcon.astro';
-export { default as YouTubeIcon } from './icons/YouTubeIcon.astro';
+// Note: Icons are now handled via astro-icon library
+// See SocialLinks.astro, Footer.astro, and Notion.astro for usage examples
+// Use: import { Icon } from 'astro-icon/components';
