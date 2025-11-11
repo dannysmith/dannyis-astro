@@ -446,8 +446,7 @@ After conducting a comprehensive analysis of the current codebase architecture a
 
 ### 1. Nested Layout System
 
-**Maggie's Approach**: Base Layout → Content-Type Layout → CSS Wrapper → Content
-**Your Current**: Individual layouts with shared BaseHead component
+**Maggie's Approach**: Base Layout → Content-Type Layout → CSS Wrapper → Content **Your Current**: Individual layouts with shared BaseHead component
 
 **Recommendation**: **SKIP THIS CHANGE**
 
@@ -457,8 +456,7 @@ After conducting a comprehensive analysis of the current codebase architecture a
 
 ### 2. Single Catch-All Route
 
-**Maggie's Approach**: One `[...slug].astro` file handling all content types
-**Your Current**: Separate route files for `/writing/` and `/notes/`
+**Maggie's Approach**: One `[...slug].astro` file handling all content types **Your Current**: Separate route files for `/writing/` and `/notes/`
 
 **Recommendation**: **SKIP THIS CHANGE**
 
@@ -469,8 +467,7 @@ After conducting a comprehensive analysis of the current codebase architecture a
 
 ### 3. Component Prop Drilling to MDX
 
-**Maggie's Approach**: Pass components via `<Content components={...} />`
-**Your Current**: Direct imports in MDX files
+**Maggie's Approach**: Pass components via `<Content components={...} />` **Your Current**: Direct imports in MDX files
 
 **Recommendation**: **CONSIDER IMPLEMENTING** (Medium Priority)
 
@@ -500,8 +497,7 @@ const components = {
 
 ### 4. CSS Wrapper Components (ProseWrapper)
 
-**Maggie's Approach**: Dedicated CSS wrapper components
-**Your Current**: Styles embedded in layouts
+**Maggie's Approach**: Dedicated CSS wrapper components **Your Current**: Styles embedded in layouts
 
 **Recommendation**: **IMPLEMENT THIS** (High Priority)
 
