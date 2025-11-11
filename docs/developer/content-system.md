@@ -1,6 +1,6 @@
 # Content System Architecture
 
-Technical implementation of content collections, RSS feeds, SEO, and build-time content generation.
+Technical implementation of content collections, RSS feeds and build-time content generation.
 
 ## Content Collections
 
@@ -110,127 +110,9 @@ See `critical-patterns.md` for complete RSS Container API implementation details
 
 All three use identical pattern with different collection sources.
 
-## SEO System Architecture
+## SEO
 
-Centralized SEO configuration prevents inconsistencies and simplifies updates.
-
-### Configuration Files
-
-**Personal branding and templates:** `src/config/seo.ts`
-
-- `AUTHOR` - Name, job title, email, website, image, description
-- `ORGANIZATION` - Business info
-- `SOCIAL_PROFILES` - Social media URLs
-- `TITLE_TEMPLATES` - Page title formatting by page type
-- `PAGE_DESCRIPTIONS` - Default descriptions
-- Schema.org configuration
-
-**Site constants:** `src/consts.ts`
-
-- `SITE_TITLE`
-- `SITE_DESCRIPTION`
-- `SITE_URL`
-
-**Note:** Personal branding in `seo.ts`, generic strings in `consts.ts`.
-
-### SEO Utility Functions
-
-**File:** `src/utils/seo.ts`
-
-**Title generation:**
-
-```typescript
-import { generatePageTitle } from '@utils/seo';
-
-const title = generatePageTitle('My Article', 'article');
-// Result: "My Article | Danny Smith"
-```
-
-**Meta description:**
-
-```typescript
-import { generateMetaDescription } from '@utils/seo';
-
-const description = generateMetaDescription('Article description');
-// Appends author name for consistent branding
-```
-
-**JSON-LD structured data:**
-
-```typescript
-import { generateJSONLD } from '@utils/seo';
-
-const jsonld = generateJSONLD(pageData, canonicalUrl, ogImageUrl);
-// Returns schema.org Person + Organization + Website + optional BlogPosting
-```
-
-**Article metadata:**
-
-```typescript
-import { generateArticleMeta } from '@utils/seo';
-
-const meta = generateArticleMeta(pageData);
-// Returns OpenGraph article-specific tags (author, section, dates, tags)
-```
-
-**OG image URL:**
-
-```typescript
-import { generateOGImageUrl } from '@utils/seo';
-
-const imageUrl = generateOGImageUrl(customImage, baseUrl);
-// Returns custom image or defaults to /og-default.png
-```
-
-**Data validation:**
-
-```typescript
-import { validateSEOData } from '@utils/seo';
-
-const validated = validateSEOData(rawData);
-// Normalizes and validates SEO data with defaults
-```
-
-### BaseHead Component
-
-Unified HTML head management with SEO integration.
-
-**File:** `src/components/layout/BaseHead.astro`
-
-```astro
-import { BaseHead } from '@components/layout';
-
-<BaseHead
-  title="Page Title"
-  description="Page description under 160 characters"
-  type="article"        // 'website' (default) or 'article'
-  pageType="article"    // 'article', 'note', or 'page' for title templates
-  image="/custom-og.png" // Optional: custom OG image
-  pubDate={new Date()}   // Optional: for articles/notes
-  updatedDate={new Date()} // Optional: for articles/notes
-  tags={['tag1', 'tag2']} // Optional: for articles/notes
-/>
-```
-
-**BaseHead handles:**
-
-- Meta tags (title, description, canonical URL)
-- OpenGraph tags (og:title, og:image, og:type, etc.)
-- Twitter Card tags
-- JSON-LD structured data
-- Theme management (theme color, initial theme)
-- Font imports (@fontsource-variable)
-
-### Schema.org Structured Data
-
-**Automatically included** via BaseHead component:
-
-- Person schema (author information)
-- Organization schema (business/brand)
-- Website schema (site metadata)
-- BlogPosting schema (for articles only)
-
-All schemas pull from `src/config/seo.ts` for consistency.
+See `seo.md`
 
 ## OpenGraph Image Generation
 
@@ -254,7 +136,7 @@ Dynamic generation using `@vercel/og` + `satori` + `@resvg/resvg-js`.
 - Fallback to `/og-default.png` if generation fails
 - No manual configuration needed per article/note
 
-### Dynamic API Endpoints
+## Dynamic API Endpoints
 
 TypeScript files with special extensions generate dynamic content:
 
@@ -343,30 +225,6 @@ This is why reading time isn't centralized - it happens during markdown parsing,
 - **Markdown plugins:** Remark + rehype configuration
 - **Expressive Code:** Dracula-soft theme with no frame shadows
 - **Compatibility:** `headingIdCompat: true` for heading ID generation
-
-## Performance Considerations
-
-### Build Optimization
-
-- Static generation by default
-- Automatic image optimization (WebP, AVIF)
-- Component-level code splitting
-- Minimal client-side JavaScript
-
-### Content Loading
-
-- Lazy loading for below-fold images
-- Proper preload directives for critical assets
-- Optimized resource loading order
-- Efficient content collection queries
-
-### Error Handling
-
-- Schema validation prevents invalid frontmatter
-- Graceful handling of missing assets
-- Meaningful error messages in development
-- Failed MDX component renders don't break builds
-- Custom 404 page for missing content
 
 ## External Dependencies
 

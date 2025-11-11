@@ -1,6 +1,6 @@
 # Content Authoring Guide
 
-Guide for creating and editing articles and notes. For technical implementation details, see `content-system.md`.
+Guide for creating and editing the CONTENT of articles and notes. For technical implementation details, see `content-system.md`.
 
 ## Content Types
 
@@ -245,16 +245,6 @@ coverAlt: 'Descriptive alt text for accessibility'
 - [ ] Links work as expected
 - [ ] MDX components render properly
 
-### Quality Gates
-
-**Always run before publishing:**
-
-```bash
-pnpm run check:all  # Types → Format → Lint → Tests (unit + e2e)
-```
-
-All checks must pass before deploying.
-
 ### Creating Notes via CLI
 
 ```bash
@@ -272,13 +262,3 @@ Articles are created manually (no CLI command).
 External links in markdown automatically get `target="_blank" rel="noopener noreferrer"` via rehype plugin.
 
 For HTML links in components, see `critical-patterns.md` for security requirements.
-
-## RSS Feeds
-
-Your content automatically appears in RSS feeds when `draft: false`:
-
-- `/rss.xml` - Combined articles + notes
-- `/rss/articles.xml` - Articles only
-- `/rss/notes.xml` - Notes only
-
-MDX components render correctly in RSS feeds. No special configuration needed.

@@ -1,30 +1,78 @@
-# Danny's Personal Website
+# Claude Instructions for Danny's Personal Website
 
-Content-first creative playground for writing and design experimentation. Built with AstroJS and TypeScript.
+Content-first creative playground for writing and design experimentation. Built with AstroJS, TypeScript and modern CSS.
 
-## Project Essence
+## Project Overview
 
-This site serves dual purposes:
+**Goal:** Danny's Personal Website (danny.is). Clean, typographically-driven, fun. A personal site with strong visual identity inspired by constructivist/modernist design. Bold, personal expression with technical excellence. Zero-JavaScript-by-default, static HTML/CSS, progressive enhancement. Fast, accessible, maintainable long-term.
 
-1. **Content Platform** - Share thoughts, experiences, and work (articles and notes)
-2. **Creative Playground** - Experiment with CSS, HTML, and AI-assisted development
+**Purpose:**
 
-**Design Philosophy:** Clean, typographically-driven, fun. A personal site with strong visual identity inspired by constructivist/modernist design. Bold, personal expression with technical excellence.
+1. Danny's corner of the web - Share thoughts, experiences and work
+2. Creative playground - A place to experiment with CSS, HTML, and AI-assisted development
 
-**Technical Philosophy:** Zero-JavaScript-by-default, static HTML/CSS, progressive enhancement. Fast, accessible, maintainable long-term.
+**Key Features:**
 
-## Critical Rules
+- Traditional Blog with long-form articles
+- Shorter notes for quick sharing of thoughts and comments on other content
+- RSS feeds for articles, notes and both
+- Redirects and hosting for core static assets on my domain (danny.is/avatar.jpg, danny.is/cv.pdf, danny.is/meeting -> redirects to my booking link etc)
+- **Design Philosophy:**
+- **Technical Philosophy:**
 
-Follow these always:
+## Core Rules
 
-1. **No Runtime JavaScript by default** - Static HTML/CSS unless absolutely required
-2. **Typography first** - Let type drive design decisions
-3. **Use path aliases** - Always use `@components/*`, `@utils/*` etc, never relative imports
-4. **Run quality checks** - `pnpm run check:all` before completing any work
-5. **Update styleguides** - Add examples when creating visual components
-6. **Test both themes** - Verify light and dark mode for all visual changes
-7. **Maintain character** - Bold, experimental, personal feel
-8. **No unnecessary docs** - Don't create markdown files unless explicitly requested
+### New Sessions
+
+- Read @docs/tasks.md for task management
+- Review `docs/developer/architecture-guide.md` for essential patterns
+- Consult specialized guides when working on specific features (see [Documentation Structure](#documentation-structure))
+- Check git status and project structure
+
+### Development Practices
+
+**CRITICAL:** Follow these strictly:
+
+1. **Read Before Editing**: Always read files first to understand context
+2. **Follow Established Patterns**: Use patterns from this file and `docs/developer`
+3. **Senior Architect Mindset**: Consider performance, maintainability, testability
+4. **No Runtime JavaScript by default** - Static HTML/CSS unless absolutely required
+5. **Use path aliases** - Always use `@components/*`, `@utils/*` etc, never relative imports
+6. **Update styleguides** - Add examples when creating visual components
+7. **Typography first** - Let type drive design decisions
+8. **Test both themes** - Verify light and dark mode for all visual changes
+9. **Batch Operations**: Use multiple tool calls in single responses
+10. **Match Code Style**: Follow existing formatting and patterns
+11. **Test Coverage**: Write comprehensive tests for any business logic
+12. **Quality Gates**: Run `pnpm run check:all` after significant changes
+13. **No Dev Server**: Ask user to run and report back
+14. **No Unsolicited Commits**: Only when explicitly requested
+15. **Documentation**: Update `docs/developer/` guides for new patterns. Don't create other markdown files unless explicitly requested
+16. **Removing files**: Always use `rm -f`
+
+#### Directory Boundaries
+
+[TBD - WILL FILL IN LATER]
+
+### Documentation Structure
+
+**Core Guides** (read for daily development):
+
+- `docs/developer/architecture-guide.md` - Essential patterns and overview (START HERE)
+- `docs/developer/accessibility-and-performance` - Guidance for writing accessible and performant HTML, CSS, TypeScript and Astro Components
+- `docs/developer/component-patterns.md` - TypeScript patterns, component structure, error handling, and organization for building Astro components.
+- `docs/developer/code-quality.md` - Guidance and rules for keeping code quality high.
+- `docs/developer/content-system.md` - Technical implementation of content collections, RSS feeds and build-time content generation.
+- `docs/developer/design.md` - Visual philosophy, CSS architecture, and design patterns for Danny's personal website.
+
+- `docs/developer/seo.md` - Guidance and patterns for maintaining good SEO
+- `docs/developer/testing.md` - Guidance on writing tests
+
+**Reference**:
+
+- `docs/developer/content-authoring.md` - Guide for creating and editing the CONTENT of articles and notes
+
+See `docs/README.md` for the complete categorized list.
 
 ## Commands
 
@@ -73,17 +121,6 @@ docs/
 ├── developer/       # Technical documentation (you are here)
 └── tasks/           # Task management system
 ```
-
-## Developer Docs
-
-Read `@docs/developer/README.md` for quick orientation, then:
-
-- Having build errors or import issues? → `critical-patterns.md`
-- Creating or editing content? → `content-authoring.md`
-- Building components or features? → `component-patterns.md`
-- Working on visual design or CSS? → `design.md`
-- Need to understand content architecture? → `content-system.md`
-- Questions about standards or testing? → `quality-requirements.md`
 
 ## AI Assistance Tools
 

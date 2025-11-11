@@ -22,8 +22,6 @@ const { required, optional, withDefault = true, title } = Astro.props;
 
 ### Import Patterns
 
-**Always use TypeScript path aliases** (see `critical-patterns.md` for complete details):
-
 ```typescript
 // ✅ Correct: Category-specific barrel imports
 import { BaseHead, Footer } from '@components/layout';
@@ -130,30 +128,6 @@ if (!title) {
   } catch (error) {
     console.warn('Failed to fetch title, using URL as fallback:', error);
     displayTitle = url;
-  }
-}
-```
-
-### RSS Feed Error Handling
-
-For RSS generation with Container API:
-
-```javascript
-const items = [];
-for (const article of articles) {
-  try {
-    const { Content } = await render(article);
-    const content = await container.renderToString(Content);
-
-    items.push({
-      ...article.data,
-      link: `/writing/${article.id}/`,
-      content,
-    });
-  } catch (error) {
-    console.warn(`Failed to render content for ${article.id}:`, error);
-    // Skip problematic items - build continues
-    continue;
   }
 }
 ```
@@ -373,14 +347,3 @@ const { label, pressed = false } = Astro.props;
 **Organization:**
 
 - Group components by function (layout, navigation, ui, mdx)
-- Use barrel exports for clean imports
-- Update styleguide when adding components
-- Run `pnpm run check:all` before committing
-
-**Accessibility:**
-
-- Use semantic HTML elements
-- Add ARIA attributes when needed
-- Ensure keyboard navigation works
-- Provide visible focus indicators
-- See `quality-requirements.md` for complete accessibility requirements

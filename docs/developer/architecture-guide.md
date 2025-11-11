@@ -1,12 +1,18 @@
-# Critical Patterns
+# Architecture Guide
 
-**Read this first** to avoid breaking the site. These patterns are critical because they either break builds, break important URLs, or represent unique/non-obvious implementations.
+This document covers the core architectural patterns and principles used in Astro Editor. It focuses on the **essential patterns you need daily**. For specialized topics, see the [Specialized Guides](#specialized-guides) section.
 
-## TypeScript Path Aliases
+## Core Architecture Principles
+
+### 1. [TODO WILL FILL IN LATER]
+
+### 2. [TODO WILL FILL IN LATER]
+
+## Critical Patterns
+
+### TypeScript Path Aliases
 
 **ALWAYS use path aliases** - Relative imports will cause build failures.
-
-### Available Aliases
 
 ```typescript
 // Component barrel imports (preferred)
@@ -27,8 +33,6 @@ import coverImage from '@assets/articles/my-article/cover.jpg';
 
 See `tsconfig.json` for complete list.
 
-### Rules
-
 1. Always use aliases, never relative imports (`../../components/`)
 2. Prefer barrel exports (`@components/ui`) over direct paths
 3. Use direct imports only when component isn't exported from barrel
@@ -43,32 +47,24 @@ import BaseHead from '../../components/layout/BaseHead.astro';
 import { BaseHead } from '@components/layout';
 ```
 
-## Critical Redirects
+### Redirects
 
-**14 redirects configured in `astro.config.mjs`** - DO NOT BREAK THESE URLs:
-
-### Personal Links
+Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
 
 - `/meeting` → `https://cal.com/dannysmith`
 - `/cv` → `/cv-danny-smith.pdf`
 - `/linkedin` → LinkedIn profile
 - `/youtube` → YouTube channel
-
-### External Projects
-
 - `/working` → `https://betterat.work`
 - `/toolbox` → `https://betterat.work/toolbox`
 - `/tools` → `/toolbox`
-
-### Resource Pages
-
 - `/using` → Notion doc (tools Danny uses)
 - `/remote`, `/rtotd` → Notion doc (remote work tips)
 - `/music`, `/singing` → YouTube channel
 
 **Important:** No trailing slashes in target URLs (causes redirect loops).
 
-## Content Filtering Rules
+### Content Filtering Rules
 
 **GOTCHA:** Content filtering logic is duplicated across multiple files. Change in one place, update everywhere.
 
@@ -83,8 +79,6 @@ const isPublishable = entry => {
 };
 ```
 
-### Where This Appears
-
 - `/src/pages/rss.xml.js`
 - `/src/pages/rss/articles.xml.js`
 - `/src/pages/rss/notes.xml.js`
@@ -98,57 +92,9 @@ const isPublishable = entry => {
 - `styleguide: true` → hidden in production
 - Development mode shows all content
 
-## Content File Naming
+### External Link Security
 
-**Strict naming required** - Content won't be discovered if named incorrectly.
-
-### Required Format
-
-```
-Articles: YYYY-MM-DD-descriptive-slug.{md,mdx}
-Notes:    YYYY-MM-DD-descriptive-slug.{md,mdx}
-```
-
-### Ignored Files
-
-Files starting with underscore are ignored:
-
-```typescript
-// src/content.config.ts
-loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/articles' });
-```
-
-Use `_draft-article.mdx` for work-in-progress.
-
-### Examples
-
-```
-✅ 2025-01-15-my-article.mdx
-✅ 2024-12-01-quick-note.md
-❌ my-article.mdx (missing date)
-❌ 01-15-2025-article.mdx (wrong date format)
-❌ 2025-1-15-article.mdx (single-digit month/day)
-```
-
-## External Link Security
-
-All external links must include security attributes.
-
-### Automatic (Markdown/MDX)
-
-Markdown links get automatic security via `rehype-external-links`:
-
-```mdx
-[External Link](https://example.com)
-
-<!-- Automatically becomes: -->
-
-<a href="https://example.com" target="_blank" rel="noopener noreferrer">
-  External Link
-</a>
-```
-
-### Manual (Astro Components)
+All external links must include security attributes. Markdown links get automatic security via `rehype-external-links`:
 
 For HTML in components, **always include** security attributes:
 
@@ -163,13 +109,9 @@ For HTML in components, **always include** security attributes:
 <a href="https://example.com" target="_blank">Link</a>
 ```
 
-**Why:** Prevents `window.opener` vulnerabilities (tabnabbing attacks).
-
-## RSS Container API
+### RSS Container API
 
 **Unique pattern:** Uses Astro's experimental Container API to render MDX components in RSS feeds.
-
-### Implementation
 
 ```typescript
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
@@ -194,8 +136,6 @@ export async function GET(context) {
 }
 ```
 
-### Why This Matters
-
 - Enables full MDX component rendering in RSS feeds
 - All MDX components (Callout, Embed, etc.) work in RSS
 - API is experimental - could change in Astro updates
@@ -203,18 +143,14 @@ export async function GET(context) {
 
 See `content-system.md` for full RSS architecture.
 
-## Reading Time Injection
+### Reading Time Injection
 
-**NOT from SEO utilities** - Reading time is injected by a remark plugin during markdown parsing.
-
-### How It Works
+Reading time is injected by a remark plugin during markdown parsing.
 
 1. `remark-reading-time.mjs` (root directory) calculates reading time
 2. Plugin injects `minutesRead` into `data.astro.frontmatter`
 3. Access via `entry.data.minutesRead`
 4. **NOT available** through `@utils/seo` functions
-
-### Usage
 
 ```astro
 ---
@@ -227,13 +163,11 @@ const readingTime = article.data.minutesRead; // From remark plugin
 <p>Reading time: {readingTime} min</p>
 ```
 
-**Don't look for it in SEO utils** - it's frontmatter data only.
-
-## Dynamic API Endpoints
+### Dynamic API Endpoints
 
 TypeScript files with special extensions generate dynamic content - **not normal page files**.
 
-### Markdown Export (.md.ts)
+#### Markdown Export (.md.ts)
 
 ```
 src/pages/writing/[...slug].md.ts  → Exports markdown version of articles
@@ -242,7 +176,7 @@ src/pages/notes/[...slug].md.ts    → Exports markdown version of notes
 
 These are API routes that return `.md` files on request.
 
-### Image Generation (.png.ts)
+#### Image Generation (.png.ts)
 
 ```
 src/pages/writing/[...slug]/og-image.png.ts  → OpenGraph images for articles
@@ -253,58 +187,41 @@ Generate PNG images using `@vercel/og` + `satori` + `@resvg/resvg-js`.
 
 **Gotcha:** `@resvg/resvg-js` is excluded from Vite optimization in `astro.config.mjs`.
 
-## Common Mistakes
+## Performance Essentials
 
-### Wrong Check Command
+📖 **See [accessability-and-performance.md](./accessability-and-performance.md) for detailed patterns and optimization strategies**
 
-**❌ Wrong:**
+## Component Organization
 
-```bash
-pnpm run check
+### Directory Structure
+
+```
+src/
+├── components/       # Organized by type with barrel exports
+│   ├── layout/      # Structural (BaseHead, Footer, etc.)
+│   ├── navigation/  # Nav-specific
+│   ├── ui/          # Reusable utilities (FormattedDate, Pill, etc.)
+│   └── mdx/         # Available in MDX content (Callout, Embed, etc.)
 ```
 
-**✅ Correct:**
+## Testing Strategy
 
-```bash
-pnpm run check:all  # Runs types → format → lint → tests
-```
+### What to Test
 
-The `check` command doesn't exist. Always use `check:all`.
+- ✅ Business logic and algorithms (unit tests)
+- ✅ User interactions (component tests)
+- ✅ Edge cases and error handling
 
-### Relative Imports
+### What NOT to Test
 
-**❌ Wrong:**
+- ❌ Simple UI rendering
+- ❌ Third-party library internals
+- ❌ Trivial getters/setters
 
-```typescript
-import BaseHead from '../../components/layout/BaseHead.astro';
-```
+### Test Types
 
-**✅ Correct:**
+1. **Unit Tests**: Individual functions and modules in `lib/`
+2. **Integration Tests**: How multiple units work together
+3. **Component Tests**: User interactions and workflows
 
-```typescript
-import { BaseHead } from '@components/layout';
-```
-
-### Missing External Link Security
-
-**❌ Wrong:**
-
-```astro
-<a href="https://example.com">Link</a>
-```
-
-**✅ Correct:**
-
-```astro
-<a href="https://example.com" target="_blank" rel="noopener noreferrer">Link</a>
-```
-
-Markdown links are automatic, but manual HTML needs explicit attributes.
-
-### Changing Filtering Logic Partially
-
-Content filtering is duplicated in 5+ files. Update all occurrences, not just one.
-
-### Looking for Reading Time in Wrong Place
-
-Reading time comes from remark plugin (`minutesRead` in frontmatter), not `@utils/seo`.
+📖 **See [testing.md](./testing.md) for comprehensive testing strategies**
