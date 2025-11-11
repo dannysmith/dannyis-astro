@@ -13,7 +13,7 @@ export const AUTHOR = {
   jobTitle: 'Remote Work Consultant',
   email: 'hi@danny.is',
   website: 'https://danny.is',
-  image: 'https://danny.is/danny-smith.jpg',
+  image: 'https://danny.is/avatar.jpg',
   description:
     'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.',
 } as const;
@@ -22,16 +22,16 @@ export const AUTHOR = {
 export const ORGANIZATION = {
   name: 'Danny Smith Consulting',
   url: 'https://danny.is',
-  logo: 'https://danny.is/icon.jpg',
+  logo: 'https://danny.is/avatar.jpg',
   description:
     'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
 } as const;
 
 // Social Media Profiles
 export const SOCIAL_PROFILES = [
-  'https://linkedin.com/in/danny-smith-uk',
+  'https://linkedin.com/in/dannyasmith',
   'https://github.com/dannysmith',
-  'https://twitter.com/dannyfsmith',
+  'https://twitter.com/dannysmith',
 ] as const;
 
 // Site Configuration
