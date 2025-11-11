@@ -34,3 +34,5 @@ uploads/
 test-results/
 
 .playwright-mcp/
+
+.npm-cache/
