@@ -33,7 +33,15 @@ const notes = defineCollection({
   }),
 });
 
-export const collections = { articles, notes };
+// Toolbox pages collection (JSON loader)
+const toolboxPages = defineCollection({
+  loader: file('./src/content/toolbox-pages/toolbox.json'),
+  schema: z.object({
+    // ... see src/content.config.ts for complete schema
+  }),
+});
+
+export const collections = { articles, notes, toolboxPages };
 ```
 
 ### Glob Loader Behavior
@@ -43,6 +51,15 @@ export const collections = { articles, notes };
 - **Naming requirement:** `YYYY-MM-DD-descriptive-slug.{md,mdx}` format
 
 See `content-authoring.md` for file naming conventions and schema reference.
+
+### Toolbox Pages Collection
+
+The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
+
+- **Source:** `scripts/get-toolbox-json.ts` - Fetches and processes toolbox data
+- **Data file:** `src/content/toolbox-pages/toolbox.json`
+- **Consumption:** `ContentCard` component, toolbox test page
+- **Pattern:** JSON loader enables sourcing external API data at build time
 
 ### Content Filtering
 
@@ -68,7 +85,11 @@ export function remarkReadingTime() {
 }
 ```
 
-Access via `entry.data.minutesRead` - it's frontmatter data, not from `@utils/seo`.
+**Access:** Via `entry.data.minutesRead` or `remarkPluginFrontmatter.minutesRead`
+
+**Type:** String (e.g., `"3 min read"`), not a number
+
+**Important:** This is frontmatter data injected during markdown parsing, not from `@utils/seo` functions.
 
 ## RSS Feed Implementation
 
@@ -144,6 +165,19 @@ src/pages/notes/[...slug]/og-image.png.ts    → OG images for notes
 ```
 
 See [architecture-guide.md § Dynamic API Endpoints](./architecture-guide.md#dynamic-api-endpoints) for details.
+
+### Markdown Export Limitations
+
+Markdown export endpoints (`.md.ts` files) convert rendered content back to markdown format.
+
+**Important limitation:** MDX component tags remain inline as-is in the exported markdown.
+
+**Example:**
+
+- Source MDX: `<Callout type="info">This is important</Callout>`
+- Exported markdown: `<Callout type="info">This is important</Callout>` (unchanged)
+
+**Purpose:** Sharing content, not round-tripping to source. The exported markdown contains the MDX components but won't render them without the component definitions.
 
 ## Content Summary Generation
 
@@ -234,3 +268,8 @@ This is why reading time isn't centralized - it happens during markdown parsing,
 - **Astro Container API** (experimental) - MDX rendering in RSS
 
 See `package.json` for complete dependency list.
+
+## See Also
+
+- [architecture-guide.md](./architecture-guide.md) - Core Principles for organizational rules
+- [component-patterns.md](./component-patterns.md) - ContentCard component and other component details

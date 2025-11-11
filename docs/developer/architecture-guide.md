@@ -4,9 +4,177 @@ This document covers the core architectural patterns and principles used in Astr
 
 ## Core Architecture Principles
 
-### 1. [TODO WILL FILL IN LATER]
+### 1. Static Site with Minimal Client-Side JavaScript ⭐⭐⭐
 
-### 2. [TODO WILL FILL IN LATER]
+**Key Points:**
+
+- This is a **statically generated site** - almost everything happens at build time
+- Avoid client-side JavaScript wherever possible
+- **Build-time JS is fine** (OG image generation, RSS rendering, content processing)
+- **Client-side JS is acceptable** when it's genuinely the best solution for a feature
+- Prefer modern CSS features over JS (container queries, `:has()`, layers, etc.)
+- Progressive enhancement of browser-native features preferred
+- NO `client:*` directives used anywhere in this codebase
+- Interactive components use inline `<script>` tags (ThemeToggle, MainNavigation, Accordion, Lightbox, MarkdownContentActions)
+- All scripts handle ViewTransitions (`astro:after-swap` events)
+
+**Build-Time Generation Examples:**
+
+- OG images (Satori + Resvg)
+- RSS feeds with full MDX rendering (Container API)
+- Markdown export endpoints
+- Content summaries and reading time
+- All dynamic routes via `getStaticPaths()`
+
+**Cross-references:**
+
+- See [component-patterns.md](./component-patterns.md) for interactive component patterns
+- See [content-system.md](./content-system.md) for build-time content processing
+
+### 2. MDX Component Remapping (Automatic Enhancement) ⭐⭐⭐
+
+**CRITICAL: This pattern is not documented anywhere else**
+
+**What it does:**
+
+- All `<a>` tags in MDX automatically become `SmartLink` components
+- All `<img>` tags in MDX automatically become `BasicImage` components
+- Transparent to content authors - no imports needed
+- Provides automatic enhancements (external icons, security attributes, optimization, responsive images)
+
+**Implementation:**
+
+```typescript
+// In article/note page templates
+const components = {
+  a: SmartLink,    // Auto-detects internal/external, adds icons/attributes
+  img: BasicImage, // Responsive images with optimization
+};
+
+<Content components={components} />
+```
+
+**Location:**
+
+- `src/pages/writing/[...slug]/index.astro:23-27`
+- `src/pages/notes/[...slug]/index.astro` (similar pattern)
+
+**How to extend:**
+
+- Add more mappings to the `components` object (e.g., `code: CustomCode`)
+- Available for any HTML element rendered from markdown
+- Components must accept standard HTML element props
+
+**Benefits:**
+
+- Consistency across all content
+- No need to import components in every MDX file
+- Content authors don't need to know about component enhancements
+- Changes to SmartLink/BasicImage automatically apply to all content
+
+### 3. CSS Layers & Theme System ⭐⭐⭐
+
+**CSS Layers Architecture:**
+
+- Five-layer cascade system: `reset` → `base` → `simple-prose` → `longform-prose` → `theme`
+- Eliminates need for `!important` or complex specificity battles
+- Location: `src/styles/global.css:2`
+
+**Three-Tier Color System:**
+
+- **Tier 1:** Base tokens (e.g., `--color-red-500`) - **NEVER USE DIRECTLY**
+- **Tier 2:** Semantic variables (e.g., `--color-bg-primary`) - **USE THESE**
+- **Tier 3:** Component usage
+- This hierarchy enables easy theme switching
+
+**Theme Management:**
+
+- Three modes: `auto` (follows system), `light`, `dark`
+- Global `window.theme` API for programmatic access
+- Inline script in `BaseHead.astro` prevents FOUC
+- Custom `theme-changed` event for component updates
+- localStorage persistence across sessions
+- Tab synchronization via `storage` event
+
+**Why they're related:**
+
+- Semantic color variables switch automatically based on `data-theme` attribute
+- Allows entire site to re-theme without component changes
+- Modern CSS approach (layers are 2022+ feature)
+
+**Cross-references:**
+
+- See [design.md](./design.md) for complete CSS architecture details
+- See [design.md](./design.md) for color system specification
+- See [component-patterns.md](./component-patterns.md) for theme-aware component patterns
+
+### 4. Centralized Organization with Clear Boundaries ⭐⭐
+
+**Directory Rules:**
+
+**`src/config/`** - Data only (no logic)
+
+- Constants, configuration objects, schemas
+- Exported with `as const` for type inference
+- Example: `src/config/seo.ts` (AUTHOR, TITLE_TEMPLATES, SCHEMA_CONFIG)
+
+**`src/utils/`** - Pure functions only (no data)
+
+- Testable business logic
+- Consume config from `src/config/`
+- Example: `src/utils/seo.ts` (generatePageTitle, generateJSONLD)
+
+**`src/components/`** - Organized by category
+
+- `layout/` - Structural (BaseHead, Footer, MainNavigation)
+- `navigation/` - Navigation-specific (NavLink, ThemeToggle)
+- `ui/` - Reusable utilities (ContentCard, FormattedDate, Pill)
+- `mdx/` - Available in MDX content (Callout, Embed, BasicImage)
+- Use barrel exports (`index.ts`) for clean imports
+
+**When to extract:**
+
+- Config: When data is reused in 2+ places or needs single source of truth
+- Utils: When logic is pure, testable, and reusable
+- Components: When UI pattern is reused or complex enough to isolate
+
+**Import Dependencies:**
+
+- Pages → can import layouts, components, utils, config
+- Layouts → can import components, utils, config
+- Components → can import other components, utils, config
+- Utils/config → leaf dependencies (no component/page imports)
+
+**Cross-references:**
+
+- See Path Aliases section for import patterns
+- See [component-patterns.md](./component-patterns.md) for component organization details
+
+### 5. Type Safety Everywhere ⭐
+
+**Requirements:**
+
+- Strict TypeScript configuration (`extends astro/tsconfigs/strict`)
+- Zod schemas for all content collections
+- Explicit Props interfaces for all components
+- Global type declarations for runtime APIs (`src/types/`)
+
+**Component Props Pattern:**
+
+```typescript
+export interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+```
+
+**Content Validation:**
+
+- All content validated at build time via Zod schemas
+- See `src/content.config.ts` for schema definitions
+
+**Cross-reference:** See [code-quality.md](./code-quality.md) for type safety best practices
 
 ## Critical Patterns
 

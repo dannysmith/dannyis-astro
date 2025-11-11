@@ -2,6 +2,36 @@
 
 Guidance for writing accessible and performant HTML, CSS, TypeScript and Astro Components
 
+## Standards Overview
+
+This project follows industry-standard accessibility and performance benchmarks to ensure an excellent user experience for all visitors.
+
+### Accessibility Standards
+
+- **WCAG 2.1 AA** - Minimum standard for all features and content
+- **WCAG AAA compliance** - Target for critical content where feasible
+- **Screen reader testing** - Verify compatibility with common assistive technologies
+- **Keyboard navigation** - All interactive elements must be keyboard accessible
+- **Color contrast ratios** - Meet or exceed WCAG requirements (4.5:1 for normal text, 3:1 for large text)
+
+Detailed WCAG guidelines are available in the [official WCAG 2.1 documentation](https://www.w3.org/WAI/WCAG21/quickref/). Focus here is on site-specific implementation patterns.
+
+### Performance Standards
+
+Target Core Web Vitals thresholds for optimal user experience:
+
+- **LCP (Largest Contentful Paint)** - < 2.5s
+- **FID (First Input Delay)** - < 100ms
+- **CLS (Cumulative Layout Shift)** - < 0.1
+
+**Monitoring:**
+
+- Regular Lighthouse audits during development
+- Real user monitoring (RUM) in production when available
+- Performance budgets set per-page-type
+
+Learn more about Core Web Vitals at [web.dev/vitals](https://web.dev/vitals/). This documentation focuses on implementation patterns specific to this codebase.
+
 ## Accessibility
 
 ### Semantic HTML
