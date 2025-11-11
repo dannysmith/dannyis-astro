@@ -4,6 +4,7 @@ import { loadRenderers } from 'astro:container';
 import { getCollection, render } from 'astro:content';
 import rss from '@astrojs/rss';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { filterContentForListing } from '@utils/content';
 
 export async function GET(context) {
   // Initialize Container API for MDX rendering
@@ -11,17 +12,12 @@ export async function GET(context) {
   const container = await AstroContainer.create({ renderers });
 
   // Get articles and notes with filtering
-  const articles = (
-    await getCollection('articles', ({ data }) => {
-      return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
-    })
-  ).map(post => ({ ...post, type: 'article' }));
+  const articles = filterContentForListing(await getCollection('articles')).map(post => ({
+    ...post,
+    type: 'article',
+  }));
 
-  const notes = (
-    await getCollection('notes', ({ data }) => {
-      return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
-    })
-  ).map(note => ({
+  const notes = filterContentForListing(await getCollection('notes')).map(note => ({
     ...note,
     type: 'note',
   }));

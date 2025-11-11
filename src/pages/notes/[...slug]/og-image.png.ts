@@ -1,13 +1,12 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { generateOGImage } from '../../../utils/og-image-generator.js';
+import { filterContentForPage } from '../../../utils/content.js';
 
 const SITE_URL = 'https://danny.is';
 
 export async function getStaticPaths() {
-  const notes = await getCollection('notes', ({ data }) => {
-    return import.meta.env.PROD ? data.draft !== true : true;
-  });
+  const notes = filterContentForPage(await getCollection('notes'));
 
   return notes.map(note => ({
     params: { slug: note.id },

@@ -1,10 +1,9 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { filterContentForPage } from '@utils/content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('articles', ({ data }) => {
-    return import.meta.env.PROD ? data.draft !== true : true;
-  });
+  const posts = filterContentForPage(await getCollection('articles'));
   return posts.map(post => ({
     params: { slug: post.id },
     props: { post },

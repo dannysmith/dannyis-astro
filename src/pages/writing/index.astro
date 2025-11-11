@@ -5,12 +5,11 @@ import FormattedDate from '@components/ui/FormattedDate.astro';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import Pill from '@components/ui/Pill.astro';
+import { filterContentForListing } from '@utils/content';
 
-const posts = (
-  await getCollection('articles', ({ data }) => {
-    return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
-  })
-).sort((b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+const posts = filterContentForListing(await getCollection('articles')).sort(
+  (b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+);
 ---
 
 <!doctype html>

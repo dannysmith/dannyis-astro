@@ -4,15 +4,14 @@ import { loadRenderers } from 'astro:container';
 import { getCollection, render } from 'astro:content';
 import rss from '@astrojs/rss';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { filterContentForListing } from '@utils/content';
 
 export async function GET(context) {
   // Initialize Container API for MDX rendering
   const renderers = await loadRenderers([getMDXRenderer()]);
   const container = await AstroContainer.create({ renderers });
 
-  const notes = await getCollection('notes', ({ data }) => {
-    return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
-  });
+  const notes = filterContentForListing(await getCollection('notes'));
 
   // Sort by publication date (newest first)
   notes.sort((b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
