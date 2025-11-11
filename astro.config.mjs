@@ -6,7 +6,7 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeMermaid from 'rehype-mermaid';
-import { remarkReadingTime } from './remark-reading-time.mjs';
+import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import icon from 'astro-icon';
 
 import expressiveCode from 'astro-expressive-code';

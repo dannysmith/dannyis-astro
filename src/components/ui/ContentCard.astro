@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import FormattedDate from './FormattedDate.astro';
+import { FormattedDate } from '@components/ui';
 import { generateSummary } from '@utils/content-summary';
 
 export interface Props {
@@ -46,8 +46,8 @@ if (collection === 'toolboxPages') {
   
   const slug = data.slug || id.replace(/\.(md|mdx)$/, '');
   contentUrl = collection === 'articles' ? `/writing/${slug}/` : `/notes/${slug}/`;
-  
-  summary = showSummary ? generateSummary(content as any, summaryLength) : null;
+
+  summary = showSummary ? generateSummary(content, summaryLength) : null;
   contentType = collection === 'articles' ? 'article' : 'note';
   typeLabel = collection === 'articles' ? 'Article' : 'Note';
   typeIcon = collection === 'articles' ? '📖' : '📝';

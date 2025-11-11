@@ -68,7 +68,7 @@ const { markdownUrl } = Astro.props;
     }, 3000);
   }
 
-  if (navigator.share && shareLink && shareSeparator) {
+  if ('share' in navigator && shareLink && shareSeparator) {
     shareLink.style.display = shareSeparator.style.display = 'inline';
     shareLink.addEventListener('click', (e) => {
       e.preventDefault();

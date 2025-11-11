@@ -5,25 +5,17 @@ import FormattedDate from '@components/ui/FormattedDate.astro';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import NoteCard from '@components/layout/NoteCard.astro';
-import SmartLink from '@components/mdx/SmartLink.astro';
-import BasicImage from '@components/mdx/BasicImage.astro';
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
+import { filterContentForListing } from '@utils/content';
 
-const notes = (
-  await getCollection('notes', ({ data }) => {
-    return (import.meta.env.PROD ? data.draft !== true : true) && !data.styleguide;
-  })
-).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const notes = filterContentForListing(await getCollection('notes')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 
 // Split notes into recent (first 2) and archive (rest)
 const numberOfRecentNotes = 5;
 const recentNotes = notes.slice(0, numberOfRecentNotes);
 const olderNotes = notes.slice(numberOfRecentNotes);
-
-// Component prop drilling for automatic enhancements
-const components = {
-  a: SmartLink,    // Automatic internal/external link handling
-  img: BasicImage, // Automatic responsive images with loading states
-};
 
 // Render the recent notes content
 const recentNotesWithContent = await Promise.all(
@@ -61,7 +53,7 @@ const recentNotesWithContent = await Promise.all(
                   tags={note.data.tags}
                   slug={note.id}
                 >
-                  <Content components={components} />
+                  <Content components={MDX_COMPONENT_REMAPPING} />
                 </NoteCard>
               </div>
             ))}

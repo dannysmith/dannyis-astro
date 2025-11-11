@@ -273,13 +273,11 @@ Add component after the `</article>` closing tag but before `<Footer />`:
 
 **Note:** The `.replace(/\/$/, '')` removes any trailing slash to ensure clean `.md` URLs.
 
-**File: `src/layouts/Note.astro`**
-Same integration as Article.astro
+**File: `src/layouts/Note.astro`** Same integration as Article.astro
 
 ### 4. Update Barrel Exports
 
-**File: `src/components/ui/index.ts`**
-Add:
+**File: `src/components/ui/index.ts`** Add:
 
 ```typescript
 export { default as MarkdownActions } from './MarkdownActions.astro';
@@ -298,8 +296,7 @@ After building:
 - Sitemap should automatically include `.md` endpoints since they're statically generated via getStaticPaths
 - No additional configuration should be needed
 
-**Fallback plan if needed:**
-If `.md` URLs aren't automatically included, update `astro.config.mjs`:
+**Fallback plan if needed:** If `.md` URLs aren't automatically included, update `astro.config.mjs`:
 
 ```javascript
 sitemap({

@@ -1,0 +1,19 @@
+{
+  "threshold": 0,
+  "minLines": 5,
+  "minTokens": 50,
+  "mode": "mild",
+  "reporters": ["console"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/dist/**",
+    "**/.astro/**",
+    "**/public/**",
+    "**/*.md",
+    "**/*.mdx",
+    "docs/tasks-todo/**",
+    "docs/tasks-done/**"
+  ],
+  "gitignore": true
+}

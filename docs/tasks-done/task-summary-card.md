@@ -91,8 +91,7 @@ function generateSummary(entry: ContentEntry, maxLength: number = 200): string {
 
 ### 4. Responsive Layout Strategy
 
-**Container Query-Based Design:**
-Following existing patterns from `NoteCard.astro`:
+**Container Query-Based Design:** Following existing patterns from `NoteCard.astro`:
 
 ```css
 .content-card {

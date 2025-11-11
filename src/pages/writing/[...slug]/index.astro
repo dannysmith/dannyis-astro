@@ -1,13 +1,11 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Article from '@layouts/Article.astro';
-import SmartLink from '@components/mdx/SmartLink.astro';
-import BasicImage from '@components/mdx/BasicImage.astro';
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
+import { filterContentForPage } from '@utils/content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('articles', ({ data }) => {
-    return import.meta.env.PROD ? data.draft !== true : true;
-  });
+  const posts = filterContentForPage(await getCollection('articles'));
   return posts.map(post => ({
     params: { slug: post.id },
     props: post,
@@ -19,14 +17,8 @@ const post = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
 const readingTime = remarkPluginFrontmatter.minutesRead;
 const postData = { ...post.data, readingTime };
-
-// Component prop drilling for automatic enhancements
-const components = {
-  a: SmartLink,    // Automatic internal/external link handling
-  img: BasicImage, // Automatic responsive images with loading states
-};
 ---
 
 <Article {...postData}>
-  <Content components={components} />
+  <Content components={MDX_COMPONENT_REMAPPING} />
 </Article>

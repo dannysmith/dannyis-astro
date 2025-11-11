@@ -11,7 +11,6 @@ Validates and prepares articles and notes for publishing.
 
 When asked to check an article, verify:
 
-- First paragraph is long enough for drop-cap rendering
 - No links in first couple sentences
 - Proper heading hierarchy (no skipped levels)
 - Correctly formatted markdown and Astro components

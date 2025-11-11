@@ -18,8 +18,7 @@ When asked to create a new note:
 
 ### Example
 
-**Request:** "make new note about changing my desk setup"
-**Action:** `pnpm run newnote "New Desk Setup"`
+**Request:** "make new note about changing my desk setup" **Action:** `pnpm run newnote "New Desk Setup"`
 
 ## Create New Article
 
@@ -42,13 +41,9 @@ description:
 cover:
 coverAlt:
 ---
-import { BasicImage } from '@components/mdx';
-import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
+import { BasicImage } from '@components/mdx'; import { Notion, Grid, BookmarkCard, Callout, Embed, Loom } from '@components/mdx';
 ```
 
 ### Example
 
-**Request:** "new article about using LLMs to draw ducks"
-**File:** `src/content/articles/2025-01-15-drawing-ducks-with-llms.mdx`
-**Title:** "Drawing Ducks with LLMs"
-**Slug:** "drawing-ducks-with-llms"
+**Request:** "new article about using LLMs to draw ducks" **File:** `src/content/articles/2025-01-15-drawing-ducks-with-llms.mdx` **Title:** "Drawing Ducks with LLMs" **Slug:** "drawing-ducks-with-llms"

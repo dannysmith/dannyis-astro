@@ -7,26 +7,6 @@ allowed-tools: Read, Edit, Write
 
 Adds images, descriptions, tags, and other enhancements to content.
 
-## Insert Image
-
-When inserting an image:
-
-- Don't resize images unless requested
-- Rename appropriately and place in `src/assets/`
-- Use `<BasicImage>` component for content images with proper imports
-- Provide descriptive alt text
-- If no image provided, offer to find on Unsplash or generate
-- Don't use copyrighted images without permission
-
-### Example
-
-```astro
-import { BasicImage } from '@components/mdx';
-
-<BasicImage src="/assets/articles/article-name/image.jpg" alt="Descriptive alt text" />
-<BasicImage src="/assets/articles/article-name/image.jpg" alt="Descriptive alt text" bleed="left" />
-```
-
 ## Add Header Image
 
 For article header images:
@@ -63,9 +43,3 @@ When suggesting tags:
 - Use lowercase with hyphens for multi-word
 - Consider existing tags for consistency
 - Focus on broad, searchable categories
-
-### Common Tags
-
-- `development`, `design`, `astro`, `css`, `javascript`
-- `web-performance`, `typography`, `productivity`
-- `personal`, `tools`, `ai`, `writing`

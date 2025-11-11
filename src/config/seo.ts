@@ -5,6 +5,25 @@
  * Update personal branding, job titles, and descriptions here to affect the entire site.
  */
 
+// Site-level Constants
+export const SITE_TITLE = 'Danny Smith';
+export const SITE_DESCRIPTION =
+  'Remote work consultant and organizational health expert. Articles and insights on leadership, remote work, and business operations.';
+
+/**
+ * Base site URL - used for canonical URLs, OG images, RSS feeds
+ * Do not include trailing slash
+ */
+export const SITE_URL = 'https://danny.is' as const;
+
+/**
+ * Content type URL prefixes
+ */
+export const CONTENT_PATHS = {
+  articles: '/writing',
+  notes: '/notes',
+} as const;
+
 // Personal & Business Information
 export const AUTHOR = {
   name: 'Danny Smith',
@@ -13,7 +32,7 @@ export const AUTHOR = {
   jobTitle: 'Remote Work Consultant',
   email: 'hi@danny.is',
   website: 'https://danny.is',
-  image: 'https://danny.is/danny-smith.jpg',
+  image: 'https://danny.is/avatar.jpg',
   description:
     'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.',
 } as const;
@@ -22,16 +41,16 @@ export const AUTHOR = {
 export const ORGANIZATION = {
   name: 'Danny Smith Consulting',
   url: 'https://danny.is',
-  logo: 'https://danny.is/icon.jpg',
+  logo: 'https://danny.is/avatar.jpg',
   description:
     'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
 } as const;
 
 // Social Media Profiles
 export const SOCIAL_PROFILES = [
-  'https://linkedin.com/in/danny-smith-uk',
+  'https://linkedin.com/in/dannyasmith',
   'https://github.com/dannysmith',
-  'https://twitter.com/dannyfsmith',
+  'https://twitter.com/dannysmith',
 ] as const;
 
 // Site Configuration
