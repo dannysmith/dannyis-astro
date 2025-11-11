@@ -22,7 +22,11 @@ describe('Content Filtering Functions', () => {
       createMockEntry('published', { draft: false, title: 'Published Article' }),
       createMockEntry('no-draft-field', { title: 'No Draft Field' }),
       createMockEntry('styleguide', { styleguide: true, title: 'Styleguide' }),
-      createMockEntry('draft-styleguide', { draft: true, styleguide: true, title: 'Draft Styleguide' }),
+      createMockEntry('draft-styleguide', {
+        draft: true,
+        styleguide: true,
+        title: 'Draft Styleguide',
+      }),
     ];
 
     describe('Production behavior', () => {
@@ -75,7 +79,11 @@ describe('Content Filtering Functions', () => {
       createMockEntry('published', { draft: false, title: 'Published Article' }),
       createMockEntry('no-draft-field', { title: 'No Draft Field' }),
       createMockEntry('styleguide', { styleguide: true, title: 'Styleguide' }),
-      createMockEntry('draft-styleguide', { draft: true, styleguide: true, title: 'Draft Styleguide' }),
+      createMockEntry('draft-styleguide', {
+        draft: true,
+        styleguide: true,
+        title: 'Draft Styleguide',
+      }),
     ];
 
     describe('Production behavior', () => {
@@ -149,7 +157,9 @@ describe('Content Filtering Functions', () => {
       });
 
       it('handles draft: false explicitly', () => {
-        const entries = [createMockEntry('explicit-false', { draft: false, title: 'Explicit False' })];
+        const entries = [
+          createMockEntry('explicit-false', { draft: false, title: 'Explicit False' }),
+        ];
 
         const pageFiltered = filterContentForPage(entries, true);
         const listFiltered = filterContentForListing(entries, true);
