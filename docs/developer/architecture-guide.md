@@ -225,3 +225,13 @@ src/
 3. **Component Tests**: User interactions and workflows
 
 📖 **See [testing.md](./testing.md) for comprehensive testing strategies**
+
+## Quick Start for New Sessions
+
+1. **Read** `docs/TASKS.md` for current work
+2. **Check** git status and recent commits
+3. **Reference** this guide for core patterns
+4. **Consult** specialized guides when working on specific features
+5. **Follow** established patterns - don't reinvent
+6. **Test** changes thoroughly
+7. **Run** `pnpm run check:all` before committing
