@@ -78,15 +78,15 @@ Content-first creative playground for writing and design experimentation. Built 
 ## Commands
 
 ```bash
-pnpm run dev          # Dev server at localhost:4321
-pnpm run build        # Production build
-pnpm run check:all    # Types → Format → Lint → Tests (unit + e2e)
-pnpm run lint         # ESLint only
-pnpm run check:types  # TypeScript + Astro check only
-pnpm run format:check # Prettier check only
-pnpm run test:unit    # Unit tests only
-pnpm run test:e2e     # E2E tests only
-pnpm run newnote      # Create new note with proper frontmatter
+pnpm run dev           # Dev server at localhost:4321
+pnpm run build         # Production build
+pnpm run check:all     # Types → Format → Lint → Tests (unit + e2e)
+pnpm run check:lint    # ESLint only
+pnpm run check:types   # TypeScript + Astro check only
+pnpm run check:format  # Prettier check only
+pnpm run test:unit     # Unit tests only
+pnpm run test:e2e      # E2E tests only
+pnpm run newnote       # Create new note with proper frontmatter
 ```
 
 See `@docs/tasks.md` for task system details.
