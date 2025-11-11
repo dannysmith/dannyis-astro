@@ -132,9 +132,3 @@ docs/
 
 - `@design-system-expert` - Typography, CSS, visual design
 - `@astro-specialist` - Framework, performance, technical issues
-
-### Claude Commands
-
-- `/new-content` - Create notes and articles
-- `/content-checks` - Publishing validation
-- `/content-enhancements` - Images, descriptions, tags
