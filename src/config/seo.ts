@@ -5,6 +5,11 @@
  * Update personal branding, job titles, and descriptions here to affect the entire site.
  */
 
+// Site-level Constants
+export const SITE_TITLE = 'Danny Smith';
+export const SITE_DESCRIPTION =
+  'Remote work consultant and organizational health expert. Articles and insights on leadership, remote work, and business operations.';
+
 // Personal & Business Information
 export const AUTHOR = {
   name: 'Danny Smith',
