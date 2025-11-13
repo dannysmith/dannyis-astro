@@ -34,18 +34,51 @@ We'll get into more complex stuff later, but some basic Claude Code advice:
 - **Clear your context window regularly, and intentionally**.
   - Pre-empt CC's Auto-Compact. It never does it at an appropriate time.
   - Favour `/clear` over `/compact`. If you must compact, do it manually at an appropriate point and give specific guidance on what to keep in context.
-  - Think about the relevance of the current context window. If you've completely finished a feature it makes sense to `/clear` even if you have plenty of space left. But if your next task is writing a test for that feature, CC will do a better job if you *don't* clear first, because it already has a load of relevant info in the context window. Likewise if you want it to write a good commit message for the feature.
-  - That said... if you've been down a load of dead-ends in the current session, the context will include a load of stuff that ended up being *irelevant*. So you might be better off with a clean slate.
+  - Think about the relevance of the current context window. If you've completely finished a feature it makes sense to `/clear` even if you have plenty of space left. But if your next task is writing a test for that feature, CC will do a better job if you *don't* clear first, because it already has a load of relevant info in the context window. Likewise if you want it to write a good commit message for the feature. That said... if you've been down a load of dead-ends in the current session, the context will include a bunch of stuff that ended up being *irelevant*. So you might be better off with a clean slate.
 
 
-## Start with a Walking Skeleton (plus tech stack choices)
+## Start with a Walking Skeleton
 
-[Explain WS - see AK course]
+> A walking skeleton is a minimal implementation of a system that includes just enough functionality to be deployed, integrated, and tested end-to-end. It provides a basic architectural structure for the project, allowing developers to build upon it incrementally.
 
-React
-Tailwind
-shadcn/ui
-Use idiomatic patterns wherever you can
+Whether you're starting a new project or working in a huge legacy codebase, you need to make sure you have a framework which is...
+
+1. **A skeleton** – Skeletons exist to provide a perdictable structure on which future meat can be hung.
+2. **Able to walk by itself** – Everything should work even without any meat.
+
+In a greenfield project, a walking skeleton is likeley to include:
+
+- A logical directory structure with conventions for where files should live and how they should be named.
+- A working "boilerplate" system with sensible config and defaults. Think "hello world" done well.
+- Fully-configured linters, formatters and static analysis tools which are easy to run.
+- A working test framework with everything you're gonna need to write good tests.
+- A logically organised repository of developer documentation which we can expand over time. *It's okay if much of this is sparse to begin with... it's a skeleton 💀🦴*
+- A working CI/CD pipeline with sensible quality gates.
+- A well-organised set of AI-specific documents explaining how all of the above works (think `CLAUDE.md`, CC Commands, Cursor Rules etc)
+
+None of this is specific to working with AI: I learned long ago that this kinda setup is nececarry for any new project that's gonna be around for a while. Especially if I'm gonna get other people involved.
+
+A good walking skeleton brings some important things when working with AI:
+
+1. It forces **you** (the responsible human) to think carefully about how you want your codebase & system to work at a high level. And also how you want AI Agents (and humans) to work with you on it. Which really fucking matters in the long-run.
+2. It requires a bunch of up-front decisions about technologies, tools & engineering philosophies. While ChatGPT can help you out with research, no current LLM is capable of making these decisions as well as you. Try one-shotting a non-trivial app if you don't believe me.
+3. A *walking* skeleton is already **working software**, even if it does nothing useful. "Still working" is a *very* effective performance baseline for both humans and LLMs.
+4. If **you** understand the skeleton and how it should walk, it's extremely obvious when Mr Claude is trying to squeeze a pair of lungs into an eye socket. (If you let Mr Claude design the skeleton and it's movement you'll be thinking "wait maybe that's meant to be there?!?").
+5. Like humans, AI agents perform best when given creative freedom **within unambiguoius guardrails** and a **clear goal to aim at**. A good walking skeleton provides a lot of guardrails by definition.
+6. A good walking skeleton gives LLMs something concrete to work with (idiomatic patterns, concrete examples etc).
+
+### Choosing a tech stack
+
+Any *reasonable* tech stack should work if you choose boring technology over [web scale](https://youtu.be/b2F-DItXtZs?si=-J0bT_T0JAaU7pz6). AI-friendliness should not be a big consideration here, but in general *the more boring and old and widely-used* your tech is, the better LLMs understand it.
+
+My only real guidance re languages is: choose those with strong opinions and guardrails. Typescript over JS (because typed langs are good). But also Rails over Ruby. If that sounds weird... ruby is a super permissive language by design. Rails, on the other hand, is **incredibly** opinionated about everything.
+
+When it comes to web apps, there's a bit more sublety tho. You'll almost certainally have an easier life with this stack:
+
+- **React** – because everything is bloody react these days.
+- **Tailwind** – because CSS is much harder to **really grok** than anyone gives it credit for. I've been a CSS nerd for ~20 years and I still struggle with the *conceptual* mental models required. LLMs are incapable of conceptual mental models, but amazing at patterns. **Tailwind is mostly patterns**. Especially when paired with...
+- **shadcn/ui** – Has become the de facto UI component library for React/Tailwind apps. 
+
 
 
 ## Guardrails
