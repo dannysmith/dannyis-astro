@@ -2,25 +2,7 @@
 
 TypeScript patterns, component structure, error handling, and organization for building Astro components.
 
-## TypeScript Patterns
-
-### Component Props Interface
-
-All components define clear TypeScript interfaces:
-
-```typescript
-export interface Props {
-  required: string;
-  optional?: number;
-  withDefault?: boolean;
-  title?: string; // Optional override for expensive operations
-}
-
-// Props destructuring with defaults
-const { required, optional, withDefault = true, title } = Astro.props;
-```
-
-### Import Patterns
+## Import Patterns
 
 ```typescript
 // ✅ Correct: Category-specific barrel imports
@@ -36,7 +18,7 @@ import { AUTHOR } from '@config/seo';
 import { generatePageTitle } from '@utils/seo';
 ```
 
-**Never use relative imports** - they will cause build failures.
+**Never use relative imports unless you are importing a component which is in the same directory as the current component**
 
 ## Component Structure Pattern
 
@@ -245,69 +227,6 @@ export { default as NoteCard } from './NoteCard.astro';
 
 ## Common Patterns
 
-### Component with External Data
-
-```astro
----
-export interface Props {
-  url: string;
-  title?: string; // Optional override
-}
-
-const { url, title } = Astro.props;
-
-let displayTitle = title;
-if (!title) {
-  try {
-    displayTitle = await fetchTitle(url);
-  } catch (error) {
-    console.warn('Failed to fetch title:', error);
-    displayTitle = new URL(url).hostname;
-  }
-}
----
-
-<a href={url}>{displayTitle}</a>
-```
-
-### Theme-Aware Component
-
-```astro
-<div class="component">
-  <!-- Content -->
-</div>
-
-<style>
-  .component {
-    /* Use semantic variables that change with theme */
-    background: var(--color-component-bg);
-    color: var(--color-component-text);
-  }
-</style>
-```
-
-### Responsive Component with Container Queries
-
-```astro
-<div class="cq">
-  <div class="component">
-    <!-- Content -->
-  </div>
-</div>
-
-<style>
-  .cq {
-    container-type: inline-size;
-  }
-
-  @container (width > 400px) {
-    .component {
-      /* Wider styles */
-    }
-  }
-</style>
-```
-
 ### Accessible Interactive Component
 
 ```astro
@@ -342,28 +261,12 @@ const { label, pressed = false } = Astro.props;
 </style>
 ```
 
-## Best Practices
+## Quick Reference
 
-**TypeScript:**
+Key principles when building components:
 
-- Define clear interfaces for all props
-- Use optional props with sensible defaults
-- Leverage TypeScript for type safety
-
-**Error Handling:**
-
-- Wrap external API calls in try-catch
-- Always provide fallback behavior
-- Log warnings for debugging
-- Never let external failures break builds
-
-**Styling:**
-
-- Use semantic CSS variables, not base colors
-- Reference `design.md` for theme architecture
-- Test both light and dark themes
-- Use container queries for component-level responsiveness
-
-**Organization:**
-
-- Group components by function (layout, navigation, ui, mdx)
+- **TypeScript**: Define clear Props interfaces with sensible defaults (see Component Structure Pattern)
+- **Error Handling**: Wrap external API calls in try-catch with fallbacks (see Error Handling Strategies)
+- **Styling**: Use semantic CSS variables from `design.md`, test both themes (see Styling Integration)
+- **Organization**: Group by function (layout/navigation/ui/mdx), use barrel exports (see Component Organization)
+- **Imports**: Always use path aliases (@components/*), never relative imports (see Import Patterns)

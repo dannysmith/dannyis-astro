@@ -186,12 +186,13 @@ Theme switching via `data-theme` attribute on `:root` element.
 
 **Core architectural pattern** - Controls specificity without relying on selector complexity or `!important`.
 
-Organized by specificity (lowest to highest):
+Five-layer cascade system (lowest to highest specificity):
 
 1. **Reset** (@layer reset) - Basic resets, box model
 2. **Base** (@layer base) - Default element styles, typography
-3. **Prose** (@layer prose) - Article and content styling
-4. **Theme** (@layer theme) - Color schemes, dark/light mode
+3. **Simple Prose** (@layer simple-prose) - Basic content styling
+4. **Longform Prose** (@layer longform-prose) - Article and long-form content styling
+5. **Theme** (@layer theme) - Color schemes, dark/light mode
 
 ```css
 @layer base {
@@ -200,7 +201,7 @@ Organized by specificity (lowest to highest):
   }
 }
 
-@layer prose {
+@layer longform-prose {
   .prose a {
     text-decoration: underline;
   }

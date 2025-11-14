@@ -24,14 +24,6 @@ Target Core Web Vitals thresholds for optimal user experience:
 - **FID (First Input Delay)** - < 100ms
 - **CLS (Cumulative Layout Shift)** - < 0.1
 
-**Monitoring:**
-
-- Regular Lighthouse audits during development
-- Real user monitoring (RUM) in production when available
-- Performance budgets set per-page-type
-
-Learn more about Core Web Vitals at [web.dev/vitals](https://web.dev/vitals/). This documentation focuses on implementation patterns specific to this codebase.
-
 ## Accessibility
 
 ### Semantic HTML
