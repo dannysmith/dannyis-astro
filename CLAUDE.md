@@ -17,8 +17,6 @@ Content-first creative playground for writing and design experimentation. Built 
 - Shorter notes for quick sharing of thoughts and comments on other content
 - RSS feeds for articles, notes and both
 - Redirects and hosting for core static assets on my domain (danny.is/avatar.jpg, danny.is/cv.pdf, danny.is/meeting -> redirects to my booking link etc)
-- **Design Philosophy:**
-- **Technical Philosophy:**
 
 ## Core Rules
 
@@ -49,10 +47,6 @@ Content-first creative playground for writing and design experimentation. Built 
 14. **No Unsolicited Commits**: Only when explicitly requested
 15. **Documentation**: Update `docs/developer/` guides for new patterns. Don't create other markdown files unless explicitly requested
 16. **Removing files**: Always use `rm -f`
-
-#### Directory Boundaries
-
-[TBD - WILL FILL IN LATER]
 
 ### Documentation Structure
 
