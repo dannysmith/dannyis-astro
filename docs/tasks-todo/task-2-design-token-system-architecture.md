@@ -1,301 +1,575 @@
 # Design Token System Architecture & Audit
 
 **Type:** Planning + Documentation
-**Goal:** Create a comprehensive, consolidated design token system that reduces CSS variables while increasing consistency and beauty
+**Goal:** Create a comprehensive, modern design token system using OKLCH colors, `light-dark()`, and systematic tokens
+**Prerequisites:** Task 0 (Modernize Reset & Base) complete
 
 ## Context
 
-The visual review (task-1) identified inconsistencies in typography, spacing, borders, and elevation. However, audit of the codebase reveals we already have a strong foundation:
+The visual review (task-1) identified inconsistencies in typography, spacing, borders, and elevation. We have a strong foundation but need to:
 
-- ✅ Excellent semantic color token system
+1. **Complete the token system** - Add typography, spacing, border, transition tokens
+2. **Modernize color system** - Migrate to OKLCH for perceptual uniformity
+3. **Simplify theming** - Use `light-dark()` to reduce CSS duplication
+4. **Systematize elevation** - Create clear surface tiers for z-axis hierarchy
+
+**Current State:**
+- ✅ Good semantic color system (but hex-based, duplicated light/dark)
 - ✅ CSS layers architecture
 - ✅ Theme switching via data-theme
-- ✅ Basic spacing and shadow tokens
+- ⚠️ Incomplete spacing tokens (6 values, not comprehensive)
+- ❌ No typography tokens (54+ hardcoded values)
+- ❌ No border/radius tokens
+- ❌ No transition tokens
+- ❌ No surface elevation system
 
-**The real opportunity:** Consolidate and complete the token system, reducing overall CSS variables while systematizing everything from spacing to typography to transitions.
+**Goal:** World-class token system with **~100-120 total variables** (comprehensive coverage, reduced redundancy)
 
-## Current State Analysis
+---
 
-### What Exists (Good Foundation)
+## 🎨 Modern CSS Upgrades
 
-**Color System** (`src/styles/global.css:22-142`)
-- Base color palette (never used directly) ✓
-- Semantic color variables by theme ✓
-- Component-specific color tokens ✓
-- **Count:** ~80 color variables (appropriate)
+### 1. **OKLCH Color Space** (CRITICAL for Beauty)
 
-**Spacing Tokens** (`src/styles/global.css:135-142`)
+**Current:** Using hex colors (`#ff7369`, `#f6f3ea`)
+**Problem:** Not perceptually uniform, can't access wide gamut, hard to manipulate
+
+**✅ UPGRADE TO OKLCH:**
+
 ```css
---spacer-xs: 0.5rem;   /* 8px */
---spacer-sm: 1rem;     /* 16px */
---spacer-md: 2rem;     /* 32px */
---spacer-lg: 3rem;     /* 48px */
---spacer-xl: 4rem;     /* 64px */
---spacer-xxl: 6rem;    /* 96px */
+:root {
+  /* ============================================
+     BRAND COLORS - OKLCH for Perceptual Uniformity
+     ============================================ */
+
+  /* Coral/Red accent - your signature color */
+  --color-brand-primary: oklch(62% 0.19 15);
+
+  /* Beige - warm neutral */
+  --color-brand-beige: oklch(95% 0.02 75);
+
+  /* Dark greys */
+  --color-brand-grey: oklch(28% 0.01 0);
+  --color-brand-dark-grey: oklch(15% 0.01 0);
+
+  /* White */
+  --color-brand-white: oklch(100% 0 0);
+
+  /* Color palette - systematically generated */
+  --color-red-300: oklch(90% 0.1 15);
+  --color-red-400: oklch(85% 0.13 15);
+  --color-red-500: oklch(62% 0.19 15);   /* Primary */
+  --color-red-600: oklch(50% 0.18 15);
+  --color-red-700: oklch(40% 0.15 15);
+  --color-red-800: oklch(30% 0.1 15);
+
+  /* Repeat for blue, green, purple, yellow, orange palettes */
+  /* All at consistent lightness steps: 90%, 85%, 62%, 50%, 40%, 30% */
+}
 ```
-- **Issue:** Only 6 values, not comprehensive, doesn't follow 8px grid precisely
-- **Impact:** 54 instances of hardcoded spacing in components
 
-**Shadow Tokens** (`src/styles/global.css:117-129`)
-- 6 shadow levels defined ✓
-- **Issue:** Underutilized in components (most use filter: var(--shadow-*) which is good)
+**Why OKLCH?**
+- Perceptually uniform lightness (62% red looks same brightness as 62% blue)
+- Wide color gamut (more vibrant on modern displays)
+- Easy manipulation (adjust lightness without hue shift)
+- Future-proof (industry standard)
 
-**Font Tokens** (`src/styles/global.css:130-134`)
-- 3 font families defined ✓
+**Browser Support:** ✅ Baseline (Safari 15.4+, Chrome 111+, Firefox 113+)
 
-### What's Missing (Critical Gaps)
+### 2. **`light-dark()` Function** (Reduces CSS by ~50%)
 
-**Typography Scale** - ❌ None
-- Font sizes hardcoded everywhere: `0.7rem`, `0.75rem`, `0.8rem`, `1.5rem`, `2.5rem`, `clamp(...)`
-- Line heights hardcoded: `1.1`, `1.2`, `1.5`, `1.7`, `1.8`
-- Letter spacing hardcoded: `0.08em`, `0.1ch`, `-0.02em`
-- Font weights scattered: `300`, `350`, `400`, `600`, `900`
+**Current:** Manual theme switching with duplicate blocks
+**Problem:** 300+ lines of duplicated color definitions
 
-**Border & Divider Tokens** - ❌ None
-- Border widths hardcoded: `1px`, `2px` (the iconic "coral rule" has no token!)
-- Border radius hardcoded: `0.18rem`, `0.2rem`, `4px`, `12px`, `0.05em`
+**✅ UPGRADE TO `light-dark()`:**
 
-**Spacing System** - ⚠️ Incomplete
-- Current spacer-* tokens insufficient
-- Need: 4px, 8px, 12px, 16px, 20px, 24px, 32px, 40px, 48px, 64px, 80px, 96px, 128px scales
-- Should follow 8px base grid but allow for typography-driven exceptions
+```css
+:root {
+  /* Enable automatic theme switching */
+  color-scheme: light dark;
 
-**Animation/Transition Tokens** - ❌ None
-- Durations hardcoded: `0.15s`, `0.2s`
-- Easing hardcoded: `ease`, `cubic-bezier(0.4, 0, 0.2, 1)`
+  /* ============================================
+     SEMANTIC COLORS - Automatic Light/Dark
+     ============================================ */
 
-**Elevation/Surface Tiers** - ❌ Not Systematized
-- Shadow tokens exist but no documented elevation system
-- No surface color tiers (surface-0, surface-1, surface-2 for layering)
+  /* Backgrounds */
+  --color-bg-primary: light-dark(
+    oklch(95% 0.02 75),    /* Light: beige */
+    oklch(15% 0.01 0)      /* Dark: charcoal */
+  );
 
-### Redundancy Analysis (Opportunities to Consolidate)
+  --color-bg-secondary: light-dark(
+    oklch(98% 0.01 75),    /* Light: lighter beige */
+    oklch(12% 0.01 0)      /* Dark: deeper charcoal */
+  );
 
-**Current:** ~80 color variables + ~50 component-specific semantic variables = **~130 total**
+  /* Text */
+  --color-text-primary: light-dark(
+    oklch(28% 0.01 0),     /* Light: dark grey */
+    oklch(95% 0.02 75)     /* Dark: beige */
+  );
 
-**Opportunity:** Many component-specific tokens could be consolidated into semantic tiers:
-- `--color-notecard-bg`, `--color-contentcard-bg`, `--color-table-bg` → `--surface-elevated`
-- `--color-notecard-border`, `--color-contentcard-border` → `--border-subtle`
-- Multiple hover states → `--interactive-hover-opacity`
+  --color-text-secondary: light-dark(
+    oklch(50% 0.01 0),     /* Light: medium grey */
+    oklch(70% 0.02 0)      /* Dark: light grey */
+  );
 
-**Goal:** Comprehensive token system with **~100-120 total variables** (adding typography/spacing but removing redundancy)
+  /* Accent - same in both themes */
+  --color-accent: oklch(62% 0.19 15);
 
-## Proposed Token Architecture
+  /* Borders */
+  --color-border: light-dark(
+    oklch(from var(--color-bg-primary) calc(l - 0.1) c h),
+    oklch(from var(--color-bg-primary) calc(l + 0.05) c h)
+  );
+}
+
+/* Override for manual theme selection */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+```
+
+**Benefits:**
+- Cuts theme CSS from 300+ lines to ~50 lines
+- Respects system preference automatically
+- Still allows manual override
+- Easier to maintain
+
+**Browser Support:** ✅ Baseline (Safari 17.5+, Chrome 123+, Firefox 120+)
+
+### 3. **Relative Colors** (Systematic Variants)
+
+**Current:** Manual color variants in palette
+**Problem:** Hard to maintain, not systematic
+
+**✅ USE RELATIVE COLORS:**
+
+```css
+:root {
+  /* Base color */
+  --color-primary: oklch(62% 0.19 15);
+
+  /* Auto-generate hover/active states */
+  --color-primary-hover: oklch(from var(--color-primary) calc(l - 0.1) c h);
+  --color-primary-active: oklch(from var(--color-primary) calc(l - 0.15) c h);
+
+  /* Auto-generate tints/shades for theming */
+  --color-primary-light: oklch(from var(--color-primary) calc(l + 0.25) calc(c * 0.5) h);
+  --color-primary-lighter: oklch(from var(--color-primary) calc(l + 0.35) calc(c * 0.3) h);
+
+  /* Border based on background */
+  --color-border: oklch(from var(--color-bg-primary) calc(l - 0.1) c h);
+}
+```
+
+**Benefits:**
+- Systematically related colors
+- One change updates all variants
+- Reduces total variables
+
+### 4. **Surface Elevation System** (Fixes Dark Mode Flattening)
+
+**Current:** Cards flatten in dark mode (visual review finding)
+**Root Cause:** No systematic surface elevation
+
+**✅ ADD SURFACE TIERS:**
+
+```css
+:root {
+  /* ============================================
+     SURFACE ELEVATION - Z-Axis Hierarchy
+     ============================================ */
+
+  /* Surface colors */
+  --surface-base: light-dark(
+    oklch(95% 0.02 75),       /* Light: beige */
+    oklch(15% 0.01 0)          /* Dark: charcoal */
+  );
+
+  --surface-raised: light-dark(
+    oklch(100% 0 0),           /* Light: white */
+    oklch(18% 0.01 0)          /* Dark: lighter charcoal +3% */
+  );
+
+  --surface-inset: light-dark(
+    oklch(92% 0.02 75),        /* Light: darker beige */
+    oklch(12% 0.01 0)          /* Dark: deeper charcoal */
+  );
+
+  --surface-overlay: light-dark(
+    oklch(98% 0.01 75),        /* Light: very light beige */
+    oklch(20% 0.01 0)          /* Dark: elevated charcoal */
+  );
+
+  /* Elevation tokens (combine with shadows) */
+  --elevation-flat: none;
+  --elevation-low: var(--shadow-small);
+  --elevation-medium: var(--shadow-medium);
+  --elevation-high: var(--shadow-large);
+  --elevation-highest: var(--shadow-xlarge);
+}
+```
+
+**Dark Mode Strategy:**
+- Raised surfaces are *lighter* than base (not darker)
+- Creates clear z-axis hierarchy
+- Combine with shadows for depth
+
+### 5. **Type-Safe Properties with `@property`**
+
+**Current:** Untyped CSS variables
+**Problem:** No validation, can't animate
+
+**✅ ADD `@property` FOR KEY TOKENS:**
+
+```css
+/* ============================================
+   TYPE-SAFE CUSTOM PROPERTIES
+   ============================================ */
+
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(62% 0.19 15);
+}
+
+@property --space-4 {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 1rem;
+}
+
+@property --font-size-base {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 1rem;
+}
+
+/* Now custom properties can ANIMATE smoothly! */
+.element {
+  --color-accent: oklch(62% 0.19 15);
+  transition: --color-accent 300ms;
+}
+
+.element:hover {
+  --color-accent: oklch(52% 0.19 15);  /* Smoothly animates! */
+}
+```
+
+**Benefits:**
+- Type safety (catches errors early)
+- Smooth animations of custom properties
+- Better developer experience
+
+**Browser Support:** ✅ Baseline (Safari 16.4+, Chrome 85+, Firefox 128+)
+
+---
+
+## 📐 Complete Token Architecture
 
 ### 1. Spacing Scale (8px base grid)
 
 ```css
-/* Foundational spacing - 8px base grid */
---space-0: 0;
---space-1: 0.25rem;  /* 4px - micro adjustments */
---space-2: 0.5rem;   /* 8px - tight spacing */
---space-3: 0.75rem;  /* 12px - small gaps */
---space-4: 1rem;     /* 16px - base unit */
---space-5: 1.5rem;   /* 24px - comfortable */
---space-6: 2rem;     /* 32px - breathing room */
---space-8: 2.5rem;   /* 40px - section spacing */
---space-10: 3rem;    /* 48px - major sections */
---space-12: 4rem;    /* 64px - hero spacing */
---space-16: 5rem;    /* 80px - dramatic spacing */
---space-20: 6rem;    /* 96px - monumental */
---space-24: 8rem;    /* 128px - ultra-wide */
-```
+:root {
+  /* ============================================
+     SPACING - 8px Grid with Typography Half-Steps
+     ============================================ */
 
-**Rationale:**
-- Follows 8px grid for design tool compatibility
-- Includes half-steps (4px, 12px) for typography fine-tuning
-- Named by scale number (not xs/sm/md) for clarity
-- Replaces current --spacer-* with more comprehensive system
-
-### 2. Typography Scale (Modular scale with fluid sizing)
-
-```css
-/* Font size scale - fluid and responsive */
---font-size-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);      /* 11-12px */
---font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);       /* 14-16px */
---font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);     /* 16-18px */
---font-size-md: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);       /* 18-24px */
---font-size-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);         /* 24-40px */
---font-size-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);             /* 32-64px */
---font-size-2xl: clamp(3rem, 2rem + 5vw, 6rem);                /* 48-96px */
---font-size-3xl: clamp(4rem, 3rem + 5vw, 8rem);                /* 64-128px */
-
-/* Line height scale */
---leading-none: 0.9;    /* Ultra-tight display */
---leading-tight: 1.1;   /* Headlines */
---leading-snug: 1.2;    /* Subheads */
---leading-normal: 1.5;  /* UI elements */
---leading-relaxed: 1.7; /* Body prose */
---leading-loose: 1.8;   /* Dark mode prose */
-
-/* Letter spacing scale */
---tracking-tighter: -0.02em;  /* Large display type */
---tracking-tight: -0.01em;    /* Headlines */
---tracking-normal: 0;         /* Body text */
---tracking-wide: 0.08em;      /* Small caps, pills */
---tracking-wider: 0.1ch;      /* Uppercase labels */
-
-/* Font weight scale - matches Literata/League Spartan capabilities */
---font-weight-light: 300;
---font-weight-normal: 350;    /* Prose light mode */
---font-weight-prose-dark: 250; /* Prose dark mode (lighter) */
---font-weight-regular: 400;
---font-weight-medium: 500;
---font-weight-semibold: 600;
---font-weight-bold: 700;
---font-weight-black: 900;     /* Display headlines */
-```
-
-### 3. Border & Divider System
-
-```css
-/* Border width tokens - the "coral rule" systematized */
---border-width-hairline: 1px;   /* Subtle dividers, table borders */
---border-width-thin: 1.5px;     /* Default borders */
---border-width-base: 2px;       /* Emphasis borders, coral rules */
---border-width-thick: 4px;      /* Heavy dividers */
---border-width-heavy: 6px;      /* Blockquote borders, major separators */
-
-/* Border radius scale */
---radius-xs: 0.125rem;   /* 2px - subtle rounding */
---radius-sm: 0.25rem;    /* 4px - cards, buttons */
---radius-md: 0.5rem;     /* 8px - larger cards */
---radius-lg: 0.75rem;    /* 12px - prominent elements */
---radius-xl: 1rem;       /* 16px - hero cards */
---radius-full: 9999px;   /* Pills, circular elements */
-```
-
-### 4. Elevation & Surface System
-
-```css
-/* Surface colors - layering system for both themes */
-:root[data-theme='light'] {
-  --surface-base: var(--color-bg-primary);           /* Page background */
-  --surface-raised: var(--color-brand-white);        /* Cards, notecard */
-  --surface-overlay: var(--color-bg-secondary);      /* Modals, popovers */
+  --space-0: 0;
+  --space-1: 0.25rem;  /* 4px - micro adjustments */
+  --space-2: 0.5rem;   /* 8px - tight spacing */
+  --space-3: 0.75rem;  /* 12px - small gaps */
+  --space-4: 1rem;     /* 16px - base unit */
+  --space-5: 1.5rem;   /* 24px - comfortable */
+  --space-6: 2rem;     /* 32px - breathing room */
+  --space-8: 2.5rem;   /* 40px - section spacing */
+  --space-10: 3rem;    /* 48px - major sections */
+  --space-12: 4rem;    /* 64px - hero spacing */
+  --space-16: 5rem;    /* 80px - dramatic spacing */
+  --space-20: 6rem;    /* 96px - monumental */
+  --space-24: 8rem;    /* 128px - ultra-wide */
 }
+```
 
-:root[data-theme='dark'] {
-  --surface-base: var(--color-bg-dark-200);
-  --surface-raised: var(--color-bg-secondary);
-  --surface-overlay: var(--color-bg-dark-300);
+**Replaces:** Current `--spacer-xs` through `--spacer-xxl` (6 tokens → 13 tokens)
+**Impact:** Eliminates 54+ hardcoded spacing values in components
+
+### 2. Typography Scale (Fluid with `clamp()`)
+
+```css
+:root {
+  /* ============================================
+     TYPOGRAPHY - Fluid Scale with Container Units
+     ============================================ */
+
+  /* Font sizes - use viewport units for now, container units in Task 3 */
+  --font-size-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --font-size-md: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
+  --font-size-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+  --font-size-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
+  --font-size-2xl: clamp(3rem, 2rem + 5vw, 6rem);
+  --font-size-3xl: clamp(4rem, 3rem + 5vw, 8rem);
+
+  /* Line heights - semantic naming */
+  --leading-none: 0.9;
+  --leading-tight: 1.1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+  --leading-loose: 1.8;
+
+  /* Letter spacing */
+  --tracking-tighter: -0.02em;
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.1ch;
+
+  /* Font weights - match Literata/League Spartan */
+  --font-weight-light: 300;
+  --font-weight-normal: 350;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
 }
-
-/* Elevation system - consistent shadow + surface pairing */
---elevation-flat: none;
---elevation-low: var(--shadow-small);
---elevation-medium: var(--shadow-medium);
---elevation-high: var(--shadow-large);
---elevation-highest: var(--shadow-xlarge);
 ```
 
-### 5. Animation & Transition Tokens
+**Impact:** Eliminates all hardcoded font sizes, line heights, letter spacing, weights
+
+### 3. Border & Divider System (The Coral Rule!)
 
 ```css
-/* Duration scale */
---duration-instant: 0ms;
---duration-fast: 150ms;        /* Micro-interactions */
---duration-normal: 200ms;      /* Standard transitions */
---duration-slow: 300ms;        /* Emphasis transitions */
---duration-slower: 500ms;      /* Accordions, reveals */
+:root {
+  /* ============================================
+     BORDERS - The Systematic "Coral Rule"
+     ============================================ */
 
-/* Easing functions */
---ease-default: ease;
---ease-in: cubic-bezier(0.4, 0, 1, 1);
---ease-out: cubic-bezier(0, 0, 0.2, 1);
---ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
---ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  /* Playful bounce */
+  /* Border widths */
+  --border-width-hairline: 1px;   /* Subtle dividers */
+  --border-width-thin: 1.5px;     /* Default borders */
+  --border-width-base: 2px;       /* THE CORAL RULE */
+  --border-width-thick: 4px;      /* Heavy dividers */
+  --border-width-heavy: 6px;      /* Blockquotes, footer */
+
+  /* Border radius */
+  --radius-xs: 0.125rem;  /* 2px */
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 0.75rem;   /* 12px */
+  --radius-xl: 1rem;      /* 16px */
+  --radius-full: 9999px;  /* Pills */
+
+  /* Composite divider tokens (shorthand) */
+  --divider-subtle: var(--border-width-hairline) solid var(--color-accent);
+  --divider-default: var(--border-width-base) solid var(--color-accent);
+  --divider-bold: var(--border-width-thick) solid var(--color-accent);
+}
 ```
 
-### 6. Consolidated Semantic Color Tokens
+**Impact:** Systematizes the iconic coral underline across all components
 
-**Current redundant tokens to consolidate:**
+### 4. Transitions & Animations
 
 ```css
-/* BEFORE: Component-specific backgrounds */
---color-notecard-bg: var(--color-brand-white);
---color-contentcard-bg: var(--color-brand-white);
---color-table-bg: var(--color-bg-secondary);
---color-callout-default-bg: var(--color-grey-300);
+:root {
+  /* ============================================
+     MOTION - Durations & Easing
+     ============================================ */
 
-/* AFTER: Semantic surface tiers */
---surface-raised: var(--color-brand-white);        /* Used by notecard, contentcard */
---surface-inset: var(--color-bg-secondary);        /* Used by tables */
---surface-accent: var(--color-grey-300);           /* Used by callouts */
+  /* Durations */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;     /* Micro-interactions */
+  --duration-normal: 200ms;   /* Standard transitions */
+  --duration-slow: 300ms;     /* Emphasis */
+  --duration-slower: 500ms;   /* Accordions, reveals */
+
+  /* Easing functions */
+  --ease-default: ease;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
 ```
 
-**Keep component-specific tokens only when:**
-- Component needs distinct color in different themes
-- Accent color varies by content type (e.g., contentcard article vs note accent)
+**Impact:** Consistent motion throughout, eliminates hardcoded durations
 
-## Token Naming Conventions
+---
 
-### Hierarchy
+## 🎯 Token Naming Conventions
 
-1. **Primitive tokens** (never used directly): `--color-red-500`, `--color-bg-dark-200`
-2. **Semantic tokens** (use these): `--space-4`, `--font-size-lg`, `--border-width-base`
-3. **Component tokens** (rare, only when needed): `--color-contentcard-article-accent`
+### Three-Tier Hierarchy
+
+1. **Primitive tokens** (never use directly in components):
+   - `--color-red-500`, `--color-bg-dark-200`
+   - Raw OKLCH values
+
+2. **Semantic tokens** (use these in components):
+   - `--space-4`, `--font-size-lg`, `--border-width-base`
+   - `--color-bg-primary`, `--color-text-primary`
+   - `--surface-raised`, `--elevation-medium`
+
+3. **Component tokens** (rare, only when semantics differ):
+   - `--color-contentcard-article-accent` (red)
+   - `--color-contentcard-note-accent` (blue)
 
 ### Naming Pattern
 
 ```
 --{category}-{property}-{variant}
+
+Examples:
 --space-4
 --font-size-xl
 --border-width-base
 --radius-lg
 --duration-fast
+--surface-raised
+--elevation-medium
 ```
 
-## Migration Strategy
+---
 
-### Phase 1: Add New Tokens (Non-Breaking)
-- Add all new token definitions to `src/styles/global.css`
-- Keep existing tokens for backward compatibility
-- Document new tokens in `docs/developer/design-tokens.md`
+## 📊 Consolidation Opportunities
 
-### Phase 2: Component Migration (Incremental)
-- Migrate components one category at a time:
-  1. Typography (highest visual impact)
-  2. Spacing (most instances)
-  3. Borders & radius
-  4. Transitions
-- Update components to use new tokens
-- Test in both light and dark themes
+### Current Redundancies
 
-### Phase 3: Cleanup (Once All Migrated)
-- Remove deprecated `--spacer-*` tokens
-- Remove redundant component-specific tokens
-- Final audit and documentation
+**Component-specific backgrounds (all use same value):**
+```css
+/* BEFORE (5 separate tokens) */
+--color-notecard-bg: var(--color-brand-white);
+--color-contentcard-bg: var(--color-brand-white);
+--color-table-bg: var(--color-bg-secondary);
 
-## Success Metrics
+/* AFTER (2 semantic tokens) */
+--surface-raised: light-dark(oklch(100% 0 0), oklch(18% 0.01 0));
+--surface-inset: light-dark(oklch(92% 0.02 75), oklch(12% 0.01 0));
+```
 
-- [ ] Reduce total CSS variables from ~130 to ~100-120
-- [ ] Zero hardcoded spacing values in components
-- [ ] Zero hardcoded typography values in components
-- [ ] Zero hardcoded border/radius values in components
-- [ ] Comprehensive design token documentation
-- [ ] All tokens follow naming conventions
-- [ ] Both themes tested and refined
+**Keep separate ONLY when:**
+- Accent colors differ (contentcard article vs note)
+- Semantic meaning differs by theme
 
-## Deliverables
+**Goal:** ~130 variables → ~100-120 variables (comprehensive but consolidated)
 
-1. **Design token specification** (`docs/developer/design-tokens.md`)
+---
+
+## 📝 Migration Strategy
+
+### Phase 1: Add Tokens (Non-Breaking)
+
+**Action:** Add ALL new tokens to `src/styles/global.css`
+
+```css
+:root {
+  /* Keep existing tokens for backward compatibility */
+  --spacer-xs: 0.5rem;   /* DEPRECATED - use --space-2 */
+  --spacer-sm: 1rem;     /* DEPRECATED - use --space-4 */
+
+  /* Add new tokens */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  /* ... etc ... */
+}
+```
+
+### Phase 2: Documentation
+
+**Create:** `docs/developer/design-tokens.md`
+
+**Contents:**
+- Complete token reference with examples
+- OKLCH color conversion table (hex → OKLCH)
+- Usage guidelines (when to use which token)
+- Migration guide (old token → new token mapping)
+- `light-dark()` usage examples
+
+### Phase 3: Audit & Planning
+
+**Create migration spreadsheet:**
+
+| Component | Spacing | Typography | Borders | Colors | Status |
+|-----------|---------|------------|---------|--------|--------|
+| NoteCard.astro | 8 values | 5 values | 3 values | Good | Needs migration |
+| Pill.astro | 2 values | 3 values | 1 value | Good | Needs migration |
+| ... | ... | ... | ... | ... | ... |
+
+---
+
+## ✅ Success Metrics
+
+- [ ] All spacing tokens defined (13 tokens, 8px grid)
+- [ ] All typography tokens defined (8 sizes, 6 line heights, 5 tracking, 8 weights)
+- [ ] All border/radius tokens defined (5 widths, 6 radii)
+- [ ] All transition tokens defined (5 durations, 4 easing)
+- [ ] Surface elevation system defined (4 surface tiers, 5 elevation levels)
+- [ ] OKLCH color system documented
+- [ ] `light-dark()` implementation planned
+- [ ] Relative color usage documented
+- [ ] `@property` definitions for key tokens
+- [ ] Token naming conventions established
+- [ ] Migration guide created
+- [ ] Total variables: ~100-120 (comprehensive, consolidated)
+
+---
+
+## 📦 Deliverables
+
+1. **Updated `src/styles/global.css`** with:
+   - All new token definitions
+   - OKLCH color system
+   - `light-dark()` for theming
+   - `@property` definitions
+   - Surface elevation tokens
+   - Deprecated tokens marked
+
+2. **Documentation:** `docs/developer/design-tokens.md`
    - Complete token reference
+   - OKLCH conversion table
    - Usage guidelines
-   - Migration guide
-
-2. **Updated `global.css`** with new token definitions
-
-3. **Token audit spreadsheet** showing:
-   - Current tokens
-   - Proposed consolidation
    - Migration mapping
 
-## Related Tasks
+3. **Migration spreadsheet** (can be markdown table)
+   - Component audit
+   - Hardcoded values → tokens mapping
+   - Priority order
 
-- **Task 3:** Core Design Token Implementation (implements this architecture)
-- **Task 4:** Visual Refinement & Beauty Optimization (uses tokens to enhance beauty)
+---
 
-## Notes
+## 🔗 Related Tasks
 
-This is the **planning and architecture** task. The actual implementation of tokens and component migration happens in Task 3. This task delivers the blueprint.
+- **Task 0:** Modernize Reset & Base (foundation) - PREREQUISITE
+- **Task 3:** Token Implementation (executes this plan)
+- **Task 4:** Visual Refinement (uses tokens for beauty)
+
+---
+
+## 📌 Notes
+
+- This is **planning and architecture** - no code changes yet
+- Task 3 implements this architecture
+- OKLCH is a game-changer for color quality
+- `light-dark()` cuts theme CSS by 50%
+- Surface elevation fixes dark mode flattening
+- This will be a world-class design system
+
+---
+
+## ❓ Decision Points for Review
+
+Before Task 3 implementation, confirm:
+
+- [ ] OKLCH color conversions accurate?
+- [ ] Surface elevation contrast sufficient in dark mode?
+- [ ] Typography scale clamp ranges appropriate?
+- [ ] Spacing scale comprehensive enough?
+- [ ] Border width tiers make sense (1px, 1.5px, 2px, 4px, 6px)?
+- [ ] Ready to deprecate `--spacer-*` tokens?
