@@ -29,6 +29,7 @@ export default defineConfig({
   experimental: {
     headingIdCompat: true,
     csp: false,
+    svgo: true,
   },
   integrations: [
     expressiveCode({
