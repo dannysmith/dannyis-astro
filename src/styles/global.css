@@ -143,107 +143,163 @@
 
 /* Reset Layer */
 @layer reset {
-  /* Box sizing rules */
-  *,
-  *::before,
-  *::after {
+  /* Use a more-intuitive box-sizing model with :where() for zero specificity */
+  :where(*, *::before, *::after) {
     box-sizing: border-box;
   }
 
-  html {
-    /* Prevent font size inflation */
+  /* Remove default margin */
+  :where(*) {
+    margin: 0;
+  }
+
+  /* Better focus outline spacing */
+  :where(:focus-visible) {
+    outline-offset: 3px;
+  }
+
+  /* Enable keyword animations (animate to/from 'auto') */
+  @media (prefers-reduced-motion: no-preference) {
+    :where(html) {
+      interpolate-size: allow-keywords;
+    }
+  }
+
+  /* Prevent font size inflation on mobile */
+  :where(html) {
     -moz-text-size-adjust: none;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
 
-    /* Let the browser decide the best base font size, but make it a little smaller */
-    font-size: 98%;
+    /* Prevent layout shift when scrollbars appear */
+    scrollbar-gutter: stable;
   }
 
-  body {
-    /* Use the body as the positioning parent for absolutely positioned elements. */
-    position: relative;
+  :where(body) {
+    /* Add accessible line-height */
+    line-height: 1.5;
 
-    /* Set the font-size in rems so it's inherited by all elements. */
-    font-size: 1rem;
+    /* Improve text rendering */
+    -webkit-font-smoothing: antialiased;
+
+    /* Sensible min-height */
+    min-height: 100vh;
+
+    /* Position relative for absolutely positioned children */
+    position: relative;
 
     /* Remove default padding */
     padding: 0;
   }
 
-  /* Remove default margin in favour of better control in authored CSS */
-  body,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  p,
-  figure,
-  blockquote,
-  dl,
-  dd {
-    margin: 0;
+  /* Improve media defaults */
+  :where(img, picture, video, canvas, svg) {
+    display: block;
+    max-width: 100%;
   }
 
-  /* Remove list styles on ul, ol elements with a list role */
-  ul[role='list'],
-  ol[role='list'] {
-    list-style: none;
+  :where(img, picture) {
+    height: auto;
   }
 
-  /* Basic form element resets */
-  input,
-  button,
-  textarea,
-  select {
+  /* Remove default img border */
+  :where(img) {
+    border: 0;
+  }
+
+  /* Inherit fonts for form controls */
+  :where(input, button, textarea, select) {
     font: inherit;
   }
 
-  /* Remove default border */
-  img {
-    border: 0;
+  /* Auto-growing textarea */
+  :where(textarea) {
+    field-sizing: content;
   }
 
-  /* Basic image handling */
-  img,
-  picture {
-    max-width: 100%;
-    height: auto;
-    display: block;
+  /* Fix fieldset sizing in flexbox/grid */
+  :where(fieldset) {
+    min-inline-size: 0;
   }
 
-  /* Basic iframe handling */
-  iframe {
+  /* Normalize search input appearance */
+  :where([type='search']) {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+  }
+
+  /* Keep specific input types LTR in RTL layouts */
+  :where(
+    input:is([type='tel'], [type='url'], [type='email'], [type='number']):not(:placeholder-shown)
+  ) {
+    direction: ltr;
+  }
+
+  /* Sensible defaults for iframes */
+  :where(iframe) {
     border: 0;
     overflow: hidden;
-    border-radius: 0.2rem;
+  }
+
+  /* Avoid text overflows */
+  :where(p, h1, h2, h3, h4, h5, h6) {
+    overflow-wrap: break-word;
+  }
+
+  /* Improve line wrapping */
+  :where(h1, h2, h3, h4, h5, h6) {
+    text-wrap: balance;
+  }
+
+  /* Prevent widows and orphans in body text */
+  :where(p, blockquote) {
+    text-wrap: pretty;
+  }
+
+  /* Anything that has been anchored to should have extra scroll margin */
+  :where(:target) {
+    scroll-margin-block: 5ex;
+  }
+
+  /* Sensible wrapping for code blocks */
+  :where(pre) {
+    white-space: pre-wrap;
+  }
+
+  /* Strengthen hidden attribute */
+  :where([hidden]:not([hidden='until-found'])) {
+    display: none !important;
+  }
+
+  /* Remove list styles on ul, ol elements with a list role */
+  :where(ul[role='list'], ol[role='list']) {
+    list-style: none;
   }
 }
 
 /* Base Layer */
 @layer base {
   html {
-    /* Ensure Common ligs are always on */
+    /* Typography - moved from body */
     font-variant-ligatures: common-ligatures;
-
-    /* Smooth Scrolling */
-    scroll-behavior: smooth;
-
-    /* Set color scheme */
-    color-scheme: light;
-    accent-color: var(--color-accent);
-    color: var(--color-text-primary);
+    hanging-punctuation: first allow-end last;
 
     /* Set the typeface */
     font-family: var(--font-ui);
     font-weight: 300;
+
+    /* Colors - support both light/dark */
+    color-scheme: light dark;
+    accent-color: var(--color-accent);
+    color: var(--color-text-primary);
+
+    /* Smooth Scrolling */
+    scroll-behavior: smooth;
   }
 
   body {
-    /* Set core body defaults */
-    min-height: 100vh;
-    line-height: 1.5;
+    /* Background color */
+    background-color: var(--color-bg-primary);
   }
 
   /* Set shorter line heights on headings and interactive elements */
@@ -252,25 +308,11 @@
   h3,
   h4,
   h5,
+  h6,
   button,
   input,
   label {
     line-height: 1.1;
-  }
-
-  /* Balance text wrapping on headings */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5 {
-    text-wrap: balance;
-  }
-
-  /* Prevent widows and orphans in body text */
-  p,
-  blockquote {
-    text-wrap: pretty;
   }
 
   /* Default Links */
@@ -288,6 +330,20 @@
     &:active {
       color: var(--color-accent);
     }
+  }
+
+  /* Better link underlines for links without classes */
+  a:not([class]) {
+    text-decoration: underline;
+    text-decoration-thickness: max(0.08em, 1px);
+    text-underline-offset: 0.15em;
+    text-decoration-skip-ink: auto;
+    color: currentColor;
+  }
+
+  /* Subtle underlines when not interacting */
+  a:not([class]):not(:is(:hover, :focus)) {
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 75%);
   }
 
   /* Abbreviations */
@@ -326,6 +382,14 @@
     border-radius: 0.05em;
   }
 
+  /* High contrast mode support for mark */
+  @media (forced-colors: active) {
+    mark {
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+
   /* Simple, attractive global table styles */
   table {
     border-collapse: collapse;
@@ -333,6 +397,7 @@
     margin: 2em 0;
     font-size: 1em;
     background-color: var(--color-table-bg);
+    caption-side: bottom;
   }
 
   th,
@@ -340,6 +405,7 @@
     border: 1px solid var(--color-table-border);
     padding: 0.2em 0.5em;
     text-align: left;
+    vertical-align: baseline;
   }
 
   th {
@@ -347,6 +413,18 @@
     text-transform: uppercase;
     background: var(--color-table-header-bg);
     border-bottom-width: 2px;
+  }
+
+  /* Better cursor for summary */
+  summary {
+    cursor: default;
+  }
+
+  /* Smooth scrolling for user-initiated navigation */
+  @media (prefers-reduced-motion: no-preference) {
+    html:focus-within {
+      scroll-behavior: smooth;
+    }
   }
 }
 
