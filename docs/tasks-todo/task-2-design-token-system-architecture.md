@@ -1,7 +1,7 @@
 # Design Token System Architecture & Audit
 
 **Type:** Planning + Documentation
-**Goal:** Create a comprehensive, modern design token system using OKLCH colors, `light-dark()`, and systematic tokens
+**Goal:** Create a comprehensive, modern design token system using OKLCH colors, `light-dark()`, Utopia fluid typography, and systematic tokens
 **Prerequisites:** Task 0 (Modernize Reset & Base) complete
 
 ## Context
@@ -12,6 +12,7 @@ The visual review (task-1) identified inconsistencies in typography, spacing, bo
 2. **Modernize color system** - Migrate to OKLCH for perceptual uniformity
 3. **Simplify theming** - Use `light-dark()` to reduce CSS duplication
 4. **Systematize elevation** - Create clear surface tiers for z-axis hierarchy
+5. **Fluid typography** - Use Utopia-generated type scale for mathematical coherence
 
 **Current State:**
 - ✅ Good semantic color system (but hex-based, duplicated light/dark)
@@ -272,14 +273,15 @@ The visual review (task-1) identified inconsistencies in typography, spacing, bo
 
 ## 📐 Complete Token Architecture
 
-### 1. Spacing Scale (8px base grid)
+### 1. Spacing Scale (Static 8px Grid + Fluid Pairs)
+
+**Philosophy:** Keep static spacing for predictable component internals. Add 1-2 fluid pairs for large responsive gaps (hero → content, section margins).
 
 ```css
 :root {
   /* ============================================
-     SPACING - 8px Grid with Typography Half-Steps
+     SPACING - Static 8px Grid
      ============================================ */
-
   --space-0: 0;
   --space-1: 0.25rem;  /* 4px - micro adjustments */
   --space-2: 0.5rem;   /* 8px - tight spacing */
@@ -292,47 +294,81 @@ The visual review (task-1) identified inconsistencies in typography, spacing, bo
   --space-12: 4rem;    /* 64px - hero spacing */
   --space-16: 5rem;    /* 80px - dramatic spacing */
   --space-20: 6rem;    /* 96px - monumental */
-  --space-24: 8rem;    /* 128px - ultra-wide */
+
+  /* ============================================
+     FLUID SPACING - For Large Responsive Gaps
+     Generated with Utopia: https://utopia.fyi/space/calculator
+     Min: 375px, Max: 1280px
+     ============================================ */
+  --space-fluid-s-l: clamp(1.125rem, 0.5rem + 2.5vw, 2.5rem);   /* 18px → 40px */
+  --space-fluid-m-xl: clamp(1.5rem, 0.75rem + 3vw, 3.75rem);    /* 24px → 60px */
 }
 ```
 
-**Replaces:** Current `--spacer-xs` through `--spacer-xxl` (6 tokens → 13 tokens)
-**Impact:** Eliminates 54+ hardcoded spacing values in components
+**Static tokens:** Use for component padding, gaps, margins where predictability matters
+**Fluid tokens:** Use for hero-to-nav gap, section margins, page padding
 
-### 2. Typography Scale (Fluid with `clamp()`)
+**Replaces:** Current `--spacer-xs` through `--spacer-xxl` (6 tokens → 14 tokens)
+
+### 2. Typography Scale (Utopia Fluid Type)
+
+**Philosophy:** Use Utopia-generated fluid type scale for mathematical coherence. All steps relate through modular ratios, scaling smoothly between viewports.
+
+**Utopia Configuration:**
+- **Min viewport:** 375px @ 18px base, 1.2 scale ratio (Minor Third)
+- **Max viewport:** 1280px @ 20px base, 1.333 scale ratio (Perfect Fourth)
+- **Steps:** -2 to +5 (8 sizes total)
+- **Generator:** https://utopia.fyi/type/calculator
 
 ```css
 :root {
   /* ============================================
-     TYPOGRAPHY - Fluid Scale with Container Units
+     TYPOGRAPHY - Utopia Fluid Type Scale
+     https://utopia.fyi/type/calculator?c=375,18,1.2,1280,20,1.333,5,2
      ============================================ */
 
-  /* Font sizes - use viewport units for now, container units in Task 3 */
-  --font-size-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
-  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-  --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --font-size-md: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
-  --font-size-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
-  --font-size-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
-  --font-size-2xl: clamp(3rem, 2rem + 5vw, 6rem);
-  --font-size-3xl: clamp(4rem, 3rem + 5vw, 8rem);
+  /* Raw Utopia steps */
+  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.80rem);    /* ~12.5px → 12.8px */
+  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1.00rem);    /* ~15px → 16px */
+  --step-0:  clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem);    /* ~18px → 20px (base) */
+  --step-1:  clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem);    /* ~21.6px → 26.7px */
+  --step-2:  clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem);    /* ~25.9px → 35.5px */
+  --step-3:  clamp(1.94rem, 1.74rem + 0.90vw, 2.96rem);    /* ~31.1px → 47.4px */
+  --step-4:  clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem);    /* ~37.3px → 63.2px */
+  --step-5:  clamp(2.80rem, 2.38rem + 1.85vw, 5.26rem);    /* ~44.8px → 84.2px */
 
-  /* Line heights - semantic naming */
-  --leading-none: 0.9;
-  --leading-tight: 1.1;
-  --leading-snug: 1.2;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.7;
-  --leading-loose: 1.8;
+  /* Semantic aliases - use these in components */
+  --font-size-xs: var(--step--2);     /* Small labels, captions */
+  --font-size-sm: var(--step--1);     /* Secondary text, metadata */
+  --font-size-base: var(--step-0);    /* Body text */
+  --font-size-md: var(--step-1);      /* Large body, small headings */
+  --font-size-lg: var(--step-2);      /* H3, card titles */
+  --font-size-xl: var(--step-3);      /* H2, section titles */
+  --font-size-2xl: var(--step-4);     /* H1, page titles */
+  --font-size-3xl: var(--step-5);     /* Hero masthead */
 
-  /* Letter spacing */
-  --tracking-tighter: -0.02em;
-  --tracking-tight: -0.01em;
-  --tracking-normal: 0;
-  --tracking-wide: 0.08em;
-  --tracking-wider: 0.1ch;
+  /* ============================================
+     LINE HEIGHTS - Semantic naming
+     ============================================ */
+  --leading-none: 0.9;      /* Hero text, large display */
+  --leading-tight: 1.1;     /* Headings */
+  --leading-snug: 1.2;      /* Subheadings */
+  --leading-normal: 1.5;    /* Body text */
+  --leading-relaxed: 1.7;   /* Long-form prose */
+  --leading-loose: 1.8;     /* Extra breathing room */
 
-  /* Font weights - match Literata/League Spartan */
+  /* ============================================
+     LETTER SPACING
+     ============================================ */
+  --tracking-tighter: -0.02em;  /* Large display text */
+  --tracking-tight: -0.01em;    /* Headings */
+  --tracking-normal: 0;         /* Body text */
+  --tracking-wide: 0.08em;      /* All-caps labels */
+  --tracking-wider: 0.1ch;      /* Small all-caps */
+
+  /* ============================================
+     FONT WEIGHTS - Match Literata/League Spartan
+     ============================================ */
   --font-weight-light: 300;
   --font-weight-normal: 350;
   --font-weight-regular: 400;
@@ -343,7 +379,13 @@ The visual review (task-1) identified inconsistencies in typography, spacing, bo
 }
 ```
 
-**Impact:** Eliminates all hardcoded font sizes, line heights, letter spacing, weights
+**Why Utopia?**
+- **Mathematical coherence:** All sizes derived from same formula, not arbitrary
+- **Harmonious scaling:** 1.2 ratio at mobile, 1.333 at desktop creates natural progression
+- **Single source of truth:** Change the config, regenerate, done
+- **Simpler than hand-crafting:** No guessing clamp values
+
+**Impact:** Eliminates all hardcoded font sizes with mathematically related scale
 
 ### 3. Border & Divider System (The Coral Rule!)
 
@@ -506,8 +548,10 @@ Examples:
 
 ## ✅ Success Metrics
 
-- [ ] All spacing tokens defined (13 tokens, 8px grid)
-- [ ] All typography tokens defined (8 sizes, 6 line heights, 5 tracking, 8 weights)
+- [ ] Utopia type scale generated and documented (8 steps: -2 to +5)
+- [ ] Semantic font-size aliases defined (xs through 3xl)
+- [ ] All spacing tokens defined (12 static + 2 fluid pairs)
+- [ ] All typography support tokens defined (6 line heights, 5 tracking, 8 weights)
 - [ ] All border/radius tokens defined (5 widths, 6 radii)
 - [ ] All transition tokens defined (5 durations, 4 easing)
 - [ ] Surface elevation system defined (4 surface tiers, 5 elevation levels)
@@ -556,10 +600,17 @@ Examples:
 
 - This is **planning and architecture** - no code changes yet
 - Task 3 implements this architecture
+- **Utopia** provides mathematically coherent fluid typography - no hand-crafting clamp values
 - OKLCH is a game-changer for color quality
 - `light-dark()` cuts theme CSS by 50%
 - Surface elevation fixes dark mode flattening
+- Keep spacing mostly static (8px grid) for predictability; fluid only for large responsive gaps
 - This will be a world-class design system
+
+**Utopia Resources:**
+- Type calculator: https://utopia.fyi/type/calculator
+- Space calculator: https://utopia.fyi/space/calculator
+- Blog/methodology: https://utopia.fyi/blog/
 
 ---
 
@@ -569,7 +620,14 @@ Before Task 3 implementation, confirm:
 
 - [ ] OKLCH color conversions accurate?
 - [ ] Surface elevation contrast sufficient in dark mode?
-- [ ] Typography scale clamp ranges appropriate?
+- [ ] Utopia type scale feels right? (Test: hero at 375px and 1280px)
+- [ ] Utopia config correct? (375px/18px/1.2 → 1280px/20px/1.333)
 - [ ] Spacing scale comprehensive enough?
+- [ ] Fluid spacing pairs needed beyond s-l and m-xl?
 - [ ] Border width tiers make sense (1px, 1.5px, 2px, 4px, 6px)?
 - [ ] Ready to deprecate `--spacer-*` tokens?
+
+**To test Utopia scale:**
+1. Visit https://utopia.fyi/type/calculator?c=375,18,1.2,1280,20,1.333,5,2
+2. Preview at different viewport widths
+3. Adjust ratios if hero feels too large/small at extremes

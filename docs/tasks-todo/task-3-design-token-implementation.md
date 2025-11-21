@@ -12,7 +12,8 @@ This task implements the token architecture designed in Task 2, migrating all co
 - OKLCH colors for perceptual uniformity
 - `light-dark()` for automatic theming
 - Relative colors for systematic variants
-- Container query units (`cqi`) for responsive typography
+- **Utopia fluid typography** for mathematically coherent type scale
+- Container query units (`cqi`) for component-relative sizing
 - Logical properties for internationalization
 - `@property` for type-safe custom properties
 
@@ -189,7 +190,7 @@ This task implements the token architecture designed in Task 2, migrating all co
 ```css
 :root {
   /* ============================================
-     SPACING - 8px Grid
+     SPACING - Static 8px Grid
      ============================================ */
   --space-0: 0;
   --space-1: 0.25rem;  /* 4px */
@@ -203,7 +204,10 @@ This task implements the token architecture designed in Task 2, migrating all co
   --space-12: 4rem;    /* 64px */
   --space-16: 5rem;    /* 80px */
   --space-20: 6rem;    /* 96px */
-  --space-24: 8rem;    /* 128px */
+
+  /* Fluid spacing for large responsive gaps */
+  --space-fluid-s-l: clamp(1.125rem, 0.5rem + 2.5vw, 2.5rem);
+  --space-fluid-m-xl: clamp(1.5rem, 0.75rem + 3vw, 3.75rem);
 
   /* DEPRECATED - keep for now, remove in cleanup */
   --spacer-xs: var(--space-2);
@@ -214,17 +218,28 @@ This task implements the token architecture designed in Task 2, migrating all co
   --spacer-xxl: var(--space-20);
 
   /* ============================================
-     TYPOGRAPHY
+     TYPOGRAPHY - Utopia Fluid Type Scale
+     https://utopia.fyi/type/calculator?c=375,18,1.2,1280,20,1.333,5,2
      ============================================ */
-  /* Font sizes with viewport units (will upgrade to cqi in components) */
-  --font-size-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
-  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-  --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --font-size-md: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
-  --font-size-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
-  --font-size-xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
-  --font-size-2xl: clamp(3rem, 2rem + 5vw, 6rem);
-  --font-size-3xl: clamp(4rem, 3rem + 5vw, 8rem);
+  /* Raw Utopia steps */
+  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.80rem);
+  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1.00rem);
+  --step-0:  clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem);
+  --step-1:  clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem);
+  --step-2:  clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem);
+  --step-3:  clamp(1.94rem, 1.74rem + 0.90vw, 2.96rem);
+  --step-4:  clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem);
+  --step-5:  clamp(2.80rem, 2.38rem + 1.85vw, 5.26rem);
+
+  /* Semantic aliases - use these in components */
+  --font-size-xs: var(--step--2);
+  --font-size-sm: var(--step--1);
+  --font-size-base: var(--step-0);
+  --font-size-md: var(--step-1);
+  --font-size-lg: var(--step-2);
+  --font-size-xl: var(--step-3);
+  --font-size-2xl: var(--step-4);
+  --font-size-3xl: var(--step-5);
 
   /* Line heights */
   --leading-none: 0.9;
@@ -296,52 +311,95 @@ This task implements the token architecture designed in Task 2, migrating all co
 
 ### Phase 2: Component Migration (Modern CSS Patterns)
 
-#### 2.1 Typography Migration + Container Query Units
+#### 2.1 Prose Typography Simplification & Token Migration
+
+**Priority components:** `LongFormProseTypography.astro` and `SimpleProseTypography.astro`
+
+These components have significant opportunities for simplification now that Task 0 has modernized the base layer.
+
+**Redundant styles to remove (now in base/reset layers):**
+- `hanging-punctuation: first allow-end last` — now on `html` in base layer
+- `font-variant-ligatures` — now on `html` in base layer
+- `text-wrap: balance/pretty` — now in reset layer
+
+**Hardcoded values to migrate to Utopia tokens:**
+
+| Component | Current | Should Be |
+|-----------|---------|-----------|
+| LongFormProse base | `clamp(1rem, calc(0.6rem + 1vw), 1.3rem)` | `var(--font-size-base)` or `var(--step-0)` |
+| LongFormProse h1.title | `2.4em` | `var(--font-size-2xl)` |
+| LongFormProse h1 | `1.93em` | `var(--font-size-xl)` |
+| LongFormProse h2 | `1.56em` | `var(--font-size-lg)` |
+| LongFormProse h3 | `1.25em` | `var(--font-size-md)` |
+| SimpleProse base | `1rem` | `var(--font-size-base)` |
+| SimpleProse headings line-height | `1.2` | `var(--leading-snug)` |
+
+**Spacing to migrate:**
+- `--side-space: 2rem` → `var(--space-6)` or `var(--space-fluid-s-l)`
+- `margin-top: 2.5em`, `1.5em`, `1.7em` → appropriate `--space-*` tokens
+- `margin: 4rem 0` (hr) → `var(--space-12) 0`
+
+**Borders to migrate:**
+- `border-bottom: 1px solid` → `var(--border-width-hairline)`
+- `border-left: 2px solid` → `var(--border-width-base)` (coral rule)
+- `border-left: 4px solid` (SimpleProse blockquote) → `var(--border-width-thick)`
+
+**Action items:**
+- [ ] Remove redundant `hanging-punctuation` declarations
+- [ ] Remove redundant `font-variant-ligatures` declarations
+- [ ] Migrate LongFormProse font-size to `--font-size-base`
+- [ ] Migrate heading sizes to Utopia tokens
+- [ ] Migrate spacing values to `--space-*` tokens
+- [ ] Migrate border widths to `--border-width-*` tokens
+- [ ] Test both prose components in light/dark mode
+
+---
+
+#### 2.2 Typography Migration (Other Components)
 
 **Example: NoteCard.astro**
 
 ```css
 /* BEFORE */
 .note {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);  /* Viewport units */
+  font-size: clamp(1.5rem, 4vw, 2.5rem);  /* Hand-crafted, arbitrary */
   line-height: 1.2;
   letter-spacing: 0.1ch;
 }
 
-/* AFTER - Modern CSS */
-.note {
-  container-type: inline-size;  /* Make it a container */
-  font-size: clamp(1.5rem, 4cqi, 2.5rem);  /* Container query units */
+/* AFTER - Utopia tokens */
+.note h1 {
+  font-size: var(--font-size-lg);        /* Utopia step-2 */
   line-height: var(--leading-snug);
   letter-spacing: var(--tracking-wider);
-}
-
-h1 {
-  font-size: var(--font-size-lg);
-  line-height: var(--leading-snug);
   font-weight: var(--font-weight-semibold);
 }
 
-.date {
-  font-size: var(--font-size-xs);
+.note .date {
+  font-size: var(--font-size-xs);        /* Utopia step--2 */
   letter-spacing: var(--tracking-wider);
+}
+
+.note p {
+  font-size: var(--font-size-base);      /* Utopia step-0 */
+  line-height: var(--leading-normal);
 }
 ```
 
-**Why container query units (`cqi`)?**
-- Typography scales with component width, not viewport
-- Works in sidebars, grids, any container
-- More predictable than `vw`
+**Why Utopia tokens?**
+- All sizes mathematically related (same formula)
+- No hand-crafting clamp values
+- Change config once, regenerate, done
+- Harmonious progression across the scale
 
 **Action items:**
-- [ ] Add `container-type: inline-size` to components that use fluid typography
-- [ ] Replace `vw` with `cqi` in font-size clamp()
-- [ ] Migrate all font-size to tokens
-- [ ] Migrate all line-height to tokens
-- [ ] Migrate all letter-spacing to tokens
-- [ ] Migrate all font-weight to tokens
+- [ ] Replace all hardcoded font-size with `--font-size-*` tokens
+- [ ] Replace all hardcoded line-height with `--leading-*` tokens
+- [ ] Replace all hardcoded letter-spacing with `--tracking-*` tokens
+- [ ] Replace all hardcoded font-weight with `--font-weight-*` tokens
+- [ ] Use semantic aliases (`--font-size-lg`) not raw steps (`--step-2`)
 
-#### 2.2 Spacing Migration + Logical Properties
+#### 2.3 Spacing Migration + Logical Properties
 
 **Example: NoteCard.astro**
 
@@ -382,7 +440,7 @@ padding-left  → padding-inline-start
 - [ ] Convert to logical properties where appropriate
 - [ ] Add defensive CSS: `min-width: 0`, `flex-wrap: wrap`, `overflow-wrap: break-word`
 
-#### 2.3 Surface Elevation Migration
+#### 2.4 Surface Elevation Migration
 
 **Example: NoteCard.astro**
 
@@ -406,7 +464,7 @@ padding-left  → padding-inline-start
 - [ ] Use `--elevation-*` tokens instead of direct shadow references
 - [ ] Test dark mode visibility
 
-#### 2.4 Border & Radius Migration
+#### 2.5 Border & Radius Migration
 
 **Example: Multiple Components**
 
@@ -443,7 +501,7 @@ h1 {
 - [ ] Migrate all border-radius to tokens
 - [ ] Use composite `--divider-*` tokens for coral rules where appropriate
 
-#### 2.5 Transition Migration
+#### 2.6 Transition Migration
 
 ```css
 /* BEFORE */
@@ -623,14 +681,19 @@ Before marking complete:
 
 Use this table to track progress:
 
-| Component | Spacing | Typography | Borders | Surfaces | CQ Units | Logical Props | Status |
-|-----------|---------|------------|---------|----------|----------|---------------|--------|
-| global.css | - | - | - | - | - | - | ✅ Complete |
-| NoteCard.astro | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Complete |
-| Pill.astro | ⏳ | ⏳ | ⏳ | - | - | ⏳ | In Progress |
-| ButtonLink.astro | ⏳ | ⏳ | ⏳ | - | - | ⏳ | Pending |
-| Callout.astro | ⏳ | ⏳ | ⏳ | ⏳ | - | ⏳ | Pending |
-| ... | ... | ... | ... | ... | ... | ... | ... |
+| Component | Spacing | Typography | Borders | Surfaces | Cleanup | Status |
+|-----------|---------|------------|---------|----------|---------|--------|
+| global.css | - | - | - | - | - | ✅ Complete |
+| **LongFormProseTypography.astro** | ⏳ | ⏳ | ⏳ | - | ⏳ | **Priority** |
+| **SimpleProseTypography.astro** | ⏳ | ⏳ | ⏳ | - | ⏳ | **Priority** |
+| NoteCard.astro | ⏳ | ⏳ | ⏳ | ⏳ | - | Pending |
+| Pill.astro | ⏳ | ⏳ | ⏳ | - | - | Pending |
+| ButtonLink.astro | ⏳ | ⏳ | ⏳ | - | - | Pending |
+| Callout.astro | ⏳ | ⏳ | ⏳ | ⏳ | - | Pending |
+| ContentCard.astro | ⏳ | ⏳ | ⏳ | ⏳ | - | Pending |
+| ... | ... | ... | ... | ... | ... | ... |
+
+**Cleanup column:** Remove redundant styles now covered by modernized base layer (hanging-punctuation, font-variant-ligatures, text-wrap)
 
 ---
 
@@ -639,6 +702,15 @@ Use this table to track progress:
 **Quick reference for this task:**
 
 ```css
+/* Utopia typography - use semantic aliases */
+font-size: var(--font-size-lg);    /* NOT var(--step-2) */
+line-height: var(--leading-snug);
+letter-spacing: var(--tracking-wide);
+
+/* Spacing - static for components, fluid for large gaps */
+padding: var(--space-4);                    /* Static: 16px */
+margin-block: var(--space-fluid-s-l);       /* Fluid: 18px → 40px */
+
 /* OKLCH color */
 --color: oklch(62% 0.19 15);
 
@@ -647,9 +719,6 @@ Use this table to track progress:
 
 /* Relative colors */
 --hover: oklch(from var(--base) calc(l - 0.1) c h);
-
-/* Container query units */
-font-size: clamp(1rem, 3cqi, 2rem);
 
 /* Logical properties */
 margin-inline-start: var(--space-4);  /* instead of margin-left */
@@ -680,8 +749,12 @@ padding-block: var(--space-2);         /* instead of padding-top + padding-botto
 - **Test continuously:** Don't wait until end to test themes
 - **Beauty opportunities:** If a token change improves visual harmony, embrace it
 - **Document decisions:** If you deviate from planned tokens, note why
+- **Utopia typography:** Use semantic aliases (`--font-size-lg`), not raw steps (`--step-2`)
 - **OKLCH conversions:** Use online converters, verify visually
-- **Container queries:** Game-changer for responsive components
 - **Logical properties:** Future-proofs for internationalization
+
+**Utopia Reference:**
+- Config: https://utopia.fyi/type/calculator?c=375,18,1.2,1280,20,1.333,5,2
+- If scale feels wrong, adjust ratios and regenerate
 
 This is the **big implementation effort** - systematic migration to a world-class modern CSS token system.

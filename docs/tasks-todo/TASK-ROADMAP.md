@@ -20,29 +20,30 @@ Based on detailed visual review and modern CSS expert analysis, we're undertakin
 ## Task Dependencies & Sequence
 
 ```
-Task 0: Modernize CSS Reset & Base (FOUNDATION)
+Task 0: Modernize CSS Reset & Base ✅ COMPLETE
     ↓
 Task 1: Visual Review ✅ COMPLETE
     ↓
-    ├─→ Task 2: Design Token Architecture (PLANNING) ←─┐
-    │       ↓                                           │
-    │   Task 3: Token Implementation (IMPLEMENTATION)   │
-    │       ↓                                           │
-    │   Task 4: Visual Refinement (IMPLEMENTATION)      │
+    ├─→ Task 2: Design Token Architecture (READY) ←─────┐
+    │       ↓                                            │
+    │   Task 3: Token Implementation (BLOCKED)           │
+    │       • Includes prose typography simplification   │
+    │       ↓                                            │
+    │   Task 4: Visual Refinement (BLOCKED)              │
     │                                                    │
     └─→ Task 5: Component Documentation (PARALLEL) ─────┘
 ```
 
 ---
 
-## Task 0: Modernize CSS Reset & Base ⭐ NEW
+## Task 0: Modernize CSS Reset & Base ✅ COMPLETE
 
-**Status:** Ready to start (DO THIS FIRST)
+**Status:** Complete (2025-11-21)
 **Type:** Foundation / Technical Debt
 **Prerequisites:** None
 **Effort:** Small (1-2 hours)
 
-**What it delivers:**
+**What it delivered:**
 - Modern CSS reset using `:where()` for zero specificity
 - Better focus indicators (`outline-offset: 3px`)
 - Modern features: `interpolate-size`, `scrollbar-gutter`, `field-sizing`
@@ -51,19 +52,10 @@ Task 1: Visual Review ✅ COMPLETE
 - Better link underlines using `color-mix()`
 - High contrast mode support
 - Accessibility improvements throughout
+- `hanging-punctuation` on html (now global)
+- `text-wrap: balance/pretty` in reset layer
 
-**Key modern CSS patterns:**
-- `:where()` for zero-specificity selectors
-- `interpolate-size: allow-keywords` (animate to/from 'auto')
-- `scrollbar-gutter: stable` (prevent layout shift)
-- `field-sizing: content` (auto-growing textareas)
-- `hanging-punctuation` on html
-- Better form and table defaults
-
-**Why first?**
-- Non-breaking improvements
-- Foundation for all subsequent work
-- Quick, high-value modernization
+**Simplification opportunity:** Prose typography components (`LongFormProseTypography.astro`, `SimpleProseTypography.astro`) may now have redundant styles that can be removed since these patterns are in the base layer. See Task 3 for migration details.
 
 ---
 
@@ -91,6 +83,7 @@ Task 1: Visual Review ✅ COMPLETE
 **What it delivers:**
 - Complete modern CSS token specification using OKLCH
 - `light-dark()` implementation strategy (cuts CSS by 50%)
+- **Utopia fluid typography** - mathematically coherent type scale
 - Relative colors for systematic variants
 - Surface elevation system (fixes dark mode flattening)
 - `@property` definitions for type safety and animations
@@ -346,6 +339,7 @@ Task 1: Visual Review ✅ COMPLETE
 - Relative colors (`oklch(from var(--base) calc(l - 0.1) c h)`)
 
 **Layout & Typography:**
+- **Utopia fluid type scale** (mathematically coherent `clamp()` values)
 - Container query units (`cqi`, `cqb`)
 - Logical properties (`margin-inline-start`, `padding-block`)
 - Modern text features (`hanging-punctuation`, `text-wrap: balance/pretty`)
@@ -386,10 +380,11 @@ Task 1: Visual Review ✅ COMPLETE
 
 ## Next Steps
 
-1. **Start Task 0** - Modernize CSS reset & base (1-2 hours, quick win)
-2. **Review Task 2** - Approve modern token architecture (OKLCH, light-dark(), etc.)
+1. ~~**Start Task 0**~~ - ✅ Complete (2025-11-21)
+2. **Review Task 2** - Approve modern token architecture (OKLCH, light-dark(), Utopia)
 3. **Start Task 5** - Component documentation (can run in parallel)
 4. **Begin Task 3** - Modern token implementation (after Task 2 approved)
+   - Priority: Prose typography simplification (LongFormProseTypography, SimpleProseTypography)
 5. **Execute Task 4** - Visual refinement (after Task 3 complete)
 
 ---
@@ -398,13 +393,16 @@ Task 1: Visual Review ✅ COMPLETE
 
 Before starting implementation:
 
-- [ ] Does the modern CSS approach (OKLCH, light-dark(), etc.) align with goals?
+- [ ] Does the modern CSS approach (OKLCH, light-dark(), Utopia) align with goals?
+- [ ] Utopia config correct? (375px/18px/1.2 → 1280px/20px/1.333)
 - [ ] Should Task 5 be completed before Task 3, or truly in parallel?
 - [ ] Are there any visual patterns or components missing from the tasks?
 - [ ] Is the philosophy (comprehensive, beauty-focused, modern CSS) aligned with goals?
 - [ ] Are the success criteria appropriate?
 - [ ] Ready to migrate to OKLCH color space?
 - [ ] Ready to use light-dark() for automatic theming?
+
+**Utopia Preview:** https://utopia.fyi/type/calculator?c=375,18,1.2,1280,20,1.333,5,2
 
 ---
 
