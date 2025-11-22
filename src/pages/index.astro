@@ -105,11 +105,11 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
 
         h1 {
           grid-column: 1 / -1;
-          font-size: 15.7vw;
+          font-size: clamp(3rem, 15vw, 20rem);
           text-transform: uppercase;
           margin-top: -0.1em;
           pointer-events: none;
-          line-height: 1;
+          line-height: var(--leading-none);
         }
 
         .link-list {
@@ -119,17 +119,17 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
 
         .link-list li {
           text-transform: uppercase;
-          letter-spacing: 0.05ch;
+          letter-spacing: var(--tracking-wide);
           list-style-type: none;
           padding: 0;
-          border-bottom: 5px solid var(--color-homepage-link-border);
-          line-height: 1.2;
-          margin-bottom: 0.8em;
+          border-bottom: var(--border-width-thick) solid var(--color-homepage-link-border);
+          line-height: var(--leading-tight);
+          margin-bottom: var(--space-3);
         }
 
         .link-list strong {
-          letter-spacing: 0.125ch;
-          font-weight: 700;
+          letter-spacing: var(--tracking-wider);
+          font-weight: var(--font-weight-bold);
         }
 
         .link-list a {
@@ -148,7 +148,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
         @media (max-width: 600px) {
           .link-list a {
             display: flex;
-            min-height: 34px;
+            min-height: 44px; /* Touch target */
             align-items: end;
           }
         }
