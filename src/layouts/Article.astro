@@ -92,46 +92,44 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 
     <Footer />
     <Lightbox />
-    <!-- DISABLED-STYLE <style>
-      body {
-        background-color: var(--color-article-bg);
-        color: var(--color-text-primary);
-      }
-
-      /* Article grid layout */
+    <style>
+      /* Article grid layout - 3 columns for full-bleed support */
       :global(.longform-prose) {
-        --side-space: var(--space-6);
-
+        --gutter: var(--space-m);
         display: grid;
         grid-template-columns:
-          1fr
-          min(60ch, calc(100% - calc(var(--side-space) * 2)))
-          1fr;
-        grid-column-gap: var(--side-space);
-        grid-row-gap: calc(var(--line-height) * 1em);
+          minmax(var(--gutter), 1fr)
+          min(60ch, calc(100% - var(--gutter) * 2))
+          minmax(var(--gutter), 1fr);
+        row-gap: calc(var(--line-height) * 1em);
       }
 
+      /* All other elements span the middle column */
       :global(.longform-prose) > :global(*) {
         grid-column: 2 / 3;
+      }
+
+      /* Full-bleed elements span all columns */
+      :global(.longform-prose) > :global(.full-bleed),
+      .hero-image {
+        grid-column: 1 / -1;
       }
 
       .spinner-overlay {
         min-height: 100vh;
         display: grid;
-        justify-content: center;
-        align-content: center;
-        background: var(--color-article-bg);
+        place-content: center;
+        background: var(--color-background);
       }
 
       .metadata {
-        font-size: 0.7em;
-        color: var(--color-article-accent);
+        font-size: var(--font-size-s);
+        color: var(--color-accent);
         font-family: var(--font-code);
-        margin-top: 1rem;
+        margin-top: var(--space-s);
       }
 
       .hero-image {
-        grid-column: 1 / 4;
         aspect-ratio: 5 / 1;
         overflow: hidden;
       }
@@ -140,7 +138,6 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
       }
 
       @media (prefers-color-scheme: dark) {
@@ -154,14 +151,14 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       }
 
       .draft-notice {
-        border: 2px solid var(--color-article-accent);
-        color: var(--color-article-accent);
+        border: var(--border-width-base) solid var(--color-accent);
+        color: var(--color-accent);
         font-family: var(--font-ui);
-        padding: 8px 16px;
-        border-radius: 4px;
+        padding: var(--space-2xs) var(--space-s);
+        border-radius: var(--radius-sm);
         float: right;
       }
-    </style> -->
+    </style>
 
     <script>
       document.querySelectorAll('a[data-footnote-ref]').forEach(el => {
