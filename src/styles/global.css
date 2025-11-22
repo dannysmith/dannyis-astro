@@ -1,10 +1,27 @@
-/* Define our layers */
+/* ============================================
+   GLOBAL STYLESHEET - MINIMAL SKELETON
+   ============================================
+   This is a stripped-down version for CSS refactoring.
+   Full version is in global-backup.css
+
+   Structure:
+   1. Layer Declaration & Imports
+   2. Font Faces
+   3. @property Declarations
+   4. :root Custom Properties (essential tokens only)
+   5. @layer reset - Complete
+   6-11. Other layers - Empty (copy from global-backup.css)
+   ============================================ */
+
+/* Define our layers - order determines cascade priority */
 @layer reset, base, typography, layout, utilities, longform, theme;
 
-/* Import Mermaid styles */
+/* Imports */
 @import './mermaid.css';
 
-/* Font faces - these need to be outside layers as they're declarations */
+/* ============================================
+   FONT FACES
+   ============================================ */
 @font-face {
   font-family: 'Literata';
   src: url('/fonts/Literata-self-compiled-Mar2019.woff2') format('woff2');
@@ -19,10 +36,9 @@
 }
 
 /* ============================================
-   TYPE-SAFE CUSTOM PROPERTIES (@property)
-   Enables animation and provides type checking
+   @PROPERTY DECLARATIONS
+   Type-safe custom properties, enables animation
    ============================================ */
-
 @property --color-accent {
   syntax: '<color>';
   inherits: true;
@@ -35,308 +51,191 @@
   initial-value: #ffffff;
 }
 
-/* CSS Custom Properties - these need to be outside layers as they're declarations */
+/* ============================================
+   DESIGN TOKENS
+   Essential primitives - copy more from global-backup.css as needed
+   ============================================ */
 :root {
-  /* ============================================
-     PRIMITIVE COLOR PALETTE - OKLCH
-     Perceptually uniform, wide gamut colors
-     ============================================ */
+  /* Enable automatic light/dark theme switching */
+  color-scheme: light dark;
 
+  /* ----- COLORS ----- */
   /* Neutrals */
-  --color-black: oklch(15% 0 0); /* #191919 */
-  --color-true-black: oklch(0% 0 0); /* #000000 */
+  --color-black: oklch(15% 0 0);
+  --color-true-black: oklch(0% 0 0);
 
-  /* Pink (hue: 350) */
-  --color-pink-300: oklch(92% 0.04 350);
-  --color-pink-400: oklch(86% 0.08 350);
-  --color-pink-500: oklch(62% 0.18 350);
-  --color-pink-600: oklch(48% 0.16 350);
-  --color-pink-700: oklch(38% 0.08 350);
-  --color-pink-800: oklch(32% 0.04 350);
-
-  /* Red/Coral - Brand accent (hue: 25) */
-  --color-red-300: oklch(92% 0.04 25);
+  /* Brand coral (hue: 25) - your accent color */
   --color-red-400: oklch(86% 0.08 25);
-  --color-red-500: oklch(70% 0.18 25); /* Primary brand coral */
+  --color-red-500: oklch(70% 0.18 25);
   --color-red-600: oklch(58% 0.18 25);
-  --color-red-700: oklch(48% 0.12 25);
-  --color-red-800: oklch(35% 0.06 25);
 
-  /* Orange (hue: 55) */
-  --color-orange-300: oklch(94% 0.04 55);
-  --color-orange-400: oklch(88% 0.1 55);
-  --color-orange-500: oklch(78% 0.16 55);
-  --color-orange-600: oklch(68% 0.16 55);
-  --color-orange-700: oklch(48% 0.08 55);
-  --color-orange-800: oklch(38% 0.04 55);
-
-  /* Purple (hue: 300) */
-  --color-purple-300: oklch(92% 0.04 300);
-  --color-purple-400: oklch(86% 0.08 300);
+  /* Purple - for visited links */
   --color-purple-500: oklch(60% 0.14 300);
   --color-purple-600: oklch(48% 0.16 300);
-  --color-purple-700: oklch(48% 0.08 300);
-  --color-purple-800: oklch(32% 0.04 300);
 
-  /* Yellow (hue: 95) */
-  --color-yellow-300: oklch(96% 0.04 95);
-  --color-yellow-400: oklch(94% 0.1 95);
+  /* Yellow - for highlights */
   --color-yellow-500: oklch(90% 0.16 95);
   --color-yellow-600: oklch(80% 0.14 95);
-  --color-yellow-700: oklch(48% 0.06 95);
-  --color-yellow-800: oklch(40% 0.03 95);
 
-  /* Green (hue: 165) */
-  --color-green-300: oklch(92% 0.04 165);
-  --color-green-400: oklch(88% 0.08 165);
-  --color-green-500: oklch(65% 0.12 165);
-  --color-green-600: oklch(52% 0.12 165);
-  --color-green-700: oklch(42% 0.06 165);
-  --color-green-800: oklch(35% 0.04 165);
-
-  /* Blue (hue: 230) */
-  --color-blue-300: oklch(92% 0.03 230);
-  --color-blue-400: oklch(88% 0.06 230);
-  --color-blue-500: oklch(62% 0.12 230);
-  --color-blue-600: oklch(50% 0.14 230);
-  --color-blue-700: oklch(40% 0.08 230);
-  --color-blue-800: oklch(32% 0.04 230);
-
-  /* Brown (hue: 40) */
-  --color-brown-300: oklch(92% 0.02 40);
-  --color-brown-400: oklch(88% 0.04 40);
-  --color-brown-500: oklch(55% 0.06 40);
-  --color-brown-600: oklch(40% 0.06 40);
-  --color-brown-700: oklch(35% 0.03 40);
-  --color-brown-800: oklch(30% 0.02 40);
-
-  /* Grey (neutral) */
-  --color-grey-300: oklch(95% 0 0);
-  --color-grey-400: oklch(88% 0 0);
+  /* Grey - for text and UI */
   --color-grey-500: oklch(70% 0 0);
-  --color-grey-600: oklch(55% 0 0);
-  --color-grey-700: oklch(42% 0 0);
   --color-grey-800: oklch(32% 0 0);
 
   /* Background scales */
-  --color-bg-light-100: oklch(100% 0 0);
-  --color-bg-light-200: oklch(97% 0.005 210);
-  --color-bg-light-300: oklch(92% 0.005 210);
-  --color-bg-light-400: oklch(68% 0.005 210);
-  --color-bg-light-500: oklch(50% 0.005 210);
-  --color-bg-light-600: oklch(38% 0.005 210);
   --color-bg-light-700: oklch(28% 0.01 210);
-  --color-bg-light-800: oklch(15% 0 0);
-
-  --color-bg-dark-100: oklch(15% 0 0);
   --color-bg-dark-200: oklch(18% 0 0);
-  --color-bg-dark-300: oklch(22% 0 0);
-  --color-bg-dark-400: oklch(26% 0 0);
-  --color-bg-dark-500: oklch(58% 0 0);
-  --color-bg-dark-600: oklch(65% 0 0);
-  --color-bg-dark-700: oklch(86% 0 0);
-  --color-bg-dark-800: oklch(100% 0 0);
 
-  /* Named Brand colours - OKLCH */
+  /* Named Brand colours */
   --color-brand-primary: var(--color-red-500);
-  --color-brand-grey: var(--color-bg-light-700);
-  --color-brand-dark-grey: var(--color-bg-light-800);
   --color-brand-white: oklch(100% 0 0);
-  --color-brand-black: var(--color-black);
   --color-brand-beige: oklch(96% 0.02 85);
 
-  /* Shadows - should be used like filter:var(--shadow-xsmall)*/
-
-  --shadow-xsmall: drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.05));
-  --shadow-small: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.1));
-  --shadow-medium: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
-  --shadow-large: drop-shadow(0px 10px 15px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
-  --shadow-xlarge: drop-shadow(0px 20px 25px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 8px 10px rgba(16, 24, 40, 0.1));
-  --shadow-xxlarge: drop-shadow(0px 25px 50px rgba(16, 24, 40, 0.25));
-
-  /*  Fonts */
+  /* ----- FONTS ----- */
   --font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-
-  /* ============================================
-     MODERN DESIGN TOKEN SYSTEM
-     See docs/developer/design-tokens.md for full documentation
-     ============================================ */
-
-  /* ============================================
-     SPACING - Static 8px Grid
-     ============================================ */
+  /* ----- SPACING (8px grid) ----- */
   --space-0: 0;
-  --space-1: 0.25rem; /*  4px - micro adjustments */
-  --space-2: 0.5rem; /*  8px - tight spacing */
-  --space-3: 0.75rem; /* 12px - small gaps */
-  --space-4: 1rem; /* 16px - base unit */
-  --space-5: 1.5rem; /* 24px - comfortable */
-  --space-6: 2rem; /* 32px - breathing room */
-  --space-8: 2.5rem; /* 40px - section spacing */
-  --space-10: 3rem; /* 48px - major sections */
-  --space-12: 4rem; /* 64px - hero spacing */
-  --space-16: 5rem; /* 80px - dramatic spacing */
-  --space-20: 6rem; /* 96px - monumental */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 2.5rem;
+  --space-10: 3rem;
+  --space-12: 4rem;
+  --space-16: 5rem;
+  --space-20: 6rem;
 
-  /* Fluid Spacing - Utopia generated (375px → 1280px) */
-  --space-fluid-s-l: clamp(1.125rem, 0.5rem + 2.5vw, 2.5rem); /* 18px → 40px */
-  --space-fluid-m-xl: clamp(1.5rem, 0.75rem + 3vw, 3.75rem); /* 24px → 60px */
+  /* ----- TYPOGRAPHY (Utopia fluid scale) ----- */
+  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.8rem);
+  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1rem);
+  --step-0: clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem);
+  --step-2: clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem);
+  --step-3: clamp(1.94rem, 1.74rem + 0.9vw, 2.96rem);
+  --step-4: clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem);
+  --step-5: clamp(2.8rem, 2.38rem + 1.85vw, 5.26rem);
 
-  /* ============================================
-     TYPOGRAPHY - Utopia Fluid Type Scale
-     https://utopia.fyi/type/calculator?c=375,18,1.2,1280,20,1.333,5,2
-     ============================================ */
-
-  /* Raw Utopia steps */
-  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.8rem); /* ~12.5px → 12.8px */
-  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1rem); /* ~15px → 16px */
-  --step-0: clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem); /* ~18px → 20px (base) */
-  --step-1: clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem); /* ~21.6px → 26.7px */
-  --step-2: clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem); /* ~25.9px → 35.5px */
-  --step-3: clamp(1.94rem, 1.74rem + 0.9vw, 2.96rem); /* ~31.1px → 47.4px */
-  --step-4: clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem); /* ~37.3px → 63.2px */
-  --step-5: clamp(2.8rem, 2.38rem + 1.85vw, 5.26rem); /* ~44.8px → 84.2px */
-
-  /* Semantic font-size aliases */
-  --font-size-xs: var(--step--2); /* Small labels, captions */
-  --font-size-sm: var(--step--1); /* Secondary text, metadata */
-  --font-size-base: var(--step-0); /* Body text */
-  --font-size-md: var(--step-1); /* Large body, small headings */
-  --font-size-lg: var(--step-2); /* H3, card titles */
-  --font-size-xl: var(--step-3); /* H2, section titles */
-  --font-size-2xl: var(--step-4); /* H1, page titles */
-  --font-size-3xl: var(--step-5); /* Hero masthead */
+  /* Semantic aliases */
+  --font-size-xs: var(--step--2);
+  --font-size-sm: var(--step--1);
+  --font-size-base: var(--step-0);
+  --font-size-md: var(--step-1);
+  --font-size-lg: var(--step-2);
+  --font-size-xl: var(--step-3);
+  --font-size-2xl: var(--step-4);
+  --font-size-3xl: var(--step-5);
 
   /* Line Heights */
-  --leading-none: 0.9; /* Hero text, large display */
-  --leading-tight: 1.1; /* Headings */
-  --leading-snug: 1.2; /* Subheadings */
-  --leading-normal: 1.5; /* Body text */
-  --leading-relaxed: 1.7; /* Long-form prose */
-  --leading-loose: 1.8; /* Extra breathing room */
+  --leading-none: 0.9;
+  --leading-tight: 1.1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+  --leading-loose: 1.8;
 
   /* Letter Spacing */
-  --tracking-tighter: -0.02em; /* Large display text */
-  --tracking-tight: -0.01em; /* Headings */
-  --tracking-normal: 0; /* Body text */
-  --tracking-wide: 0.08em; /* All-caps labels */
-  --tracking-wider: 0.1ch; /* Small all-caps */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.1ch;
 
-  /* Font Weights - matched to Literata/League Spartan */
+  /* Font Weights */
   --font-weight-light: 300;
   --font-weight-normal: 350;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --font-weight-black: 900;
 
-  /* ============================================
-     BORDERS - The Coral Rule System
-     ============================================ */
+  /* ----- BORDERS ----- */
+  --border-width-hairline: 1px;
+  --border-width-base: 2px;
+  --border-width-thick: 4px;
+  --border-width-heavy: 6px;
+  --border-width-accent: 1rem;
 
-  /* Border widths */
-  --border-width-hairline: 1px; /* Subtle dividers */
-  --border-width-thin: 1.5px; /* Default borders */
-  --border-width-base: 2px; /* THE CORAL RULE */
-  --border-width-thick: 4px; /* Heavy dividers */
-  --border-width-heavy: 6px; /* Blockquotes */
-  --border-width-accent: 1rem; /* Bold accent strips (NoteCard, Footer, Nav panel) */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
 
-  /* Border radius */
-  --radius-xs: 0.125rem; /* 2px */
-  --radius-sm: 0.25rem; /* 4px */
-  --radius-md: 0.5rem; /* 8px */
-  --radius-lg: 0.75rem; /* 12px */
-  --radius-xl: 1rem; /* 16px */
-  --radius-full: 9999px; /* Pills */
+  /* ----- MOTION ----- */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
 
-  /* ============================================
-     MOTION - Durations & Easing
-     ============================================ */
-
-  /* Durations */
-  --duration-instant: 0ms;
-  --duration-fast: 150ms; /* Micro-interactions */
-  --duration-normal: 200ms; /* Standard transitions */
-  --duration-slow: 300ms; /* Emphasis */
-  --duration-slower: 500ms; /* Accordions, reveals */
-
-  /* Easing functions */
   --ease-default: ease;
-  --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ============================================
-     ELEVATION - Surface + Shadow combinations
-     ============================================ */
-  --elevation-flat: none;
+  /* ----- SHADOWS ----- */
+  --shadow-small: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
+    drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.1));
+  --shadow-medium: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
+    drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
+
   --elevation-low: var(--shadow-small);
   --elevation-medium: var(--shadow-medium);
-  --elevation-high: var(--shadow-large);
-  --elevation-highest: var(--shadow-xlarge);
+
+  /* ----- SEMANTIC TOKENS (light-dark auto-switching) ----- */
+  --color-bg-primary: light-dark(var(--color-brand-beige), var(--color-bg-dark-200));
+  --color-bg-secondary: light-dark(oklch(98% 0.01 85), oklch(14% 0 0));
+  --color-text-primary: light-dark(var(--color-bg-light-700), var(--color-brand-beige));
+  --color-text-secondary: light-dark(var(--color-grey-800), var(--color-grey-500));
+  --color-accent: var(--color-brand-primary);
+  --color-border: light-dark(oklch(0% 0 0 / 0.1), oklch(100% 0 0 / 0.1));
+  --color-link: light-dark(var(--color-red-500), var(--color-red-400));
+  --color-link-visited: light-dark(var(--color-purple-600), var(--color-purple-500));
+  --color-link-hover: light-dark(var(--color-red-600), var(--color-red-500));
+  --color-mark-bg: light-dark(var(--color-yellow-500), var(--color-yellow-600));
+  --color-code-background: var(--color-bg-secondary);
+  --color-table-border: var(--color-border);
+  --color-table-bg: var(--color-bg-secondary);
+  --color-table-header-bg: var(--color-bg-secondary);
 }
 
-/* Reset Layer */
+/* ============================================
+   RESET LAYER - Complete
+   Uses :where() for zero specificity
+   ============================================ */
 @layer reset {
-  /* Use a more-intuitive box-sizing model with :where() for zero specificity */
   :where(*, *::before, *::after) {
     box-sizing: border-box;
   }
 
-  /* Remove default margin */
   :where(*) {
     margin: 0;
   }
 
-  /* Better focus outline spacing */
   :where(:focus-visible) {
     outline-offset: 3px;
   }
 
-  /* Enable keyword animations (animate to/from 'auto') */
   @media (prefers-reduced-motion: no-preference) {
     :where(html) {
       interpolate-size: allow-keywords;
     }
   }
 
-  /* Prevent font size inflation on mobile */
   :where(html) {
     -moz-text-size-adjust: none;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
-
-    /* Prevent layout shift when scrollbars appear */
     scrollbar-gutter: stable;
   }
 
   :where(body) {
-    /* Add accessible line-height */
     line-height: 1.5;
-
-    /* Improve text rendering */
     -webkit-font-smoothing: antialiased;
-
-    /* Sensible min-height */
     min-height: 100vh;
-
-    /* Position relative for absolutely positioned children */
     position: relative;
-
-    /* Remove default padding */
     padding: 0;
   }
 
-  /* Improve media defaults */
   :where(img, picture, video, canvas, svg) {
     display: block;
     max-width: 100%;
@@ -346,428 +245,113 @@
     height: auto;
   }
 
-  /* Remove default img border */
   :where(img) {
     border: 0;
   }
 
-  /* Inherit fonts for form controls */
   :where(input, button, textarea, select) {
     font: inherit;
   }
 
-  /* Auto-growing textarea */
   :where(textarea) {
     field-sizing: content;
   }
 
-  /* Fix fieldset sizing in flexbox/grid */
   :where(fieldset) {
     min-inline-size: 0;
   }
 
-  /* Normalize search input appearance */
   :where([type='search']) {
     -webkit-appearance: textfield;
     appearance: textfield;
   }
 
-  /* Keep specific input types LTR in RTL layouts */
   :where(
     input:is([type='tel'], [type='url'], [type='email'], [type='number']):not(:placeholder-shown)
   ) {
     direction: ltr;
   }
 
-  /* Sensible defaults for iframes */
   :where(iframe) {
     border: 0;
     overflow: hidden;
   }
 
-  /* Avoid text overflows */
   :where(p, h1, h2, h3, h4, h5, h6) {
     overflow-wrap: break-word;
   }
 
-  /* Improve line wrapping */
   :where(h1, h2, h3, h4, h5, h6) {
     text-wrap: balance;
   }
 
-  /* Prevent widows and orphans in body text */
   :where(p, blockquote) {
     text-wrap: pretty;
   }
 
-  /* Anything that has been anchored to should have extra scroll margin */
   :where(:target) {
     scroll-margin-block: 5ex;
   }
 
-  /* Sensible wrapping for code blocks */
   :where(pre) {
     white-space: pre-wrap;
   }
 
-  /* Strengthen hidden attribute */
   :where([hidden]:not([hidden='until-found'])) {
     display: none !important;
   }
 
-  /* Remove list styles on ul, ol elements with a list role */
   :where(ul[role='list'], ol[role='list']) {
     list-style: none;
   }
 }
 
-/* Base Layer - Foundation defaults, no typography opinion */
+/* ============================================
+   BASE LAYER
+   Copy from global-backup.css as needed
+   ============================================ */
 @layer base {
-  html {
-    /* Colors - support both light/dark */
-    color-scheme: light dark;
-    accent-color: var(--color-accent);
-    color: var(--color-text-primary);
-
-    /* Smooth Scrolling */
-    scroll-behavior: smooth;
-  }
-
-  body {
-    /* Background color - global default so pages don't need to set it */
-    background-color: var(--color-bg-primary);
-  }
-
-  /* Set shorter line heights on interactive elements */
-  button,
-  input,
-  label {
-    line-height: 1.1;
-  }
-
-  /* Abbreviations */
-  abbr {
-    font-variant: all-small-caps;
-    text-decoration: underline;
-    text-decoration-style: dashed;
-    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
-    text-decoration-thickness: max(0.08em, 1px);
-    text-underline-offset: 0.2em;
-    text-decoration-skip-ink: none;
-  }
-
-  abbr[title] {
-    cursor: help;
-  }
-
-  /* Superscript and subscript */
-  sup,
-  sub {
-    font-size: 0.7em;
-    line-height: 1;
-  }
-
-  /* Strikethrough */
-  del {
-    text-decoration: line-through;
-    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-  }
-
-  /* Highlight */
-  mark {
-    background-color: var(--color-mark-bg);
-    border-radius: 0.05em;
-  }
-
-  /* High contrast mode support for mark */
-  @media (forced-colors: active) {
-    mark {
-      color: HighlightText;
-      background-color: Highlight;
-    }
-  }
-
-  /* Simple, attractive global table styles */
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 2em 0;
-    font-size: 1em;
-    background-color: var(--color-table-bg);
-    caption-side: bottom;
-  }
-
-  th,
-  td {
-    border: 1px solid var(--color-table-border);
-    padding: 0.2em 0.5em;
-    text-align: left;
-    vertical-align: baseline;
-  }
-
-  th {
-    font-weight: 600;
-    text-transform: uppercase;
-    background: var(--color-table-header-bg);
-    border-bottom-width: 2px;
-  }
-
-  /* Better cursor for summary */
-  summary {
-    cursor: default;
-  }
-
-  /* Smooth scrolling for user-initiated navigation */
-  @media (prefers-reduced-motion: no-preference) {
-    html:focus-within {
-      scroll-behavior: smooth;
-    }
-  }
+  /* TODO: Add from global-backup.css */
 }
 
 /* ============================================
-   TYPOGRAPHY LAYER - Prose-first defaults
-   This is the default typography for the site.
-   Use .ui-style to opt-out for navigation, footers, etc.
+   TYPOGRAPHY LAYER
+   Copy from global-backup.css as needed
    ============================================ */
 @layer typography {
-  html {
-    /* Typography foundation */
-    font-variant-ligatures: common-ligatures;
-    hanging-punctuation: first allow-end last;
-  }
-
-  body {
-    /* Prose is the default */
-    font-family: var(--font-prose);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-prose);
-    line-height: var(--line-height-prose);
-  }
-
-  /* Headings - with bottom borders by default */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--leading-tight);
-    margin-top: 1.5em;
-    border-bottom: var(--border-width-hairline) solid var(--prose-heading-border-color);
-    padding-bottom: 0.3em;
-  }
-
-  h1 {
-    font-size: var(--font-size-2xl);
-    margin-top: 0;
-  }
-
-  h2 {
-    font-size: var(--font-size-xl);
-  }
-
-  h3 {
-    font-size: var(--font-size-lg);
-  }
-
-  h4,
-  h5,
-  h6 {
-    font-size: var(--font-size-md);
-  }
-
-  /* Links - nice underlines for prose */
-  a {
-    color: var(--prose-link-color);
-    text-decoration: underline;
-    text-decoration-thickness: max(0.08em, 1px);
-    text-underline-offset: 0.2em;
-    text-decoration-skip-ink: auto;
-    transition: color var(--duration-fast) var(--ease-default);
-  }
-
-  a:visited {
-    color: var(--prose-link-visited-color);
-  }
-
-  a:hover,
-  a:focus {
-    color: var(--prose-link-hover-color);
-  }
-
-  /* Subtle underlines when not interacting */
-  a:not(:is(:hover, :focus)) {
-    text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
-  }
-
-  /* Lists with colored markers */
-  ul,
-  ol {
-    padding-left: var(--space-4);
-  }
-
-  li {
-    padding-left: var(--space-2);
-    margin-top: var(--space-2);
-  }
-
-  li:first-child {
-    margin-top: 0;
-  }
-
-  li::marker {
-    color: var(--prose-list-marker-color);
-  }
-
-  ul {
-    list-style-type: '•';
-  }
-
-  /* Blockquotes */
-  blockquote {
-    border-left: var(--border-width-thick) solid var(--prose-blockquote-border-color);
-    padding-left: var(--space-4);
-    font-style: italic;
-    margin-left: 0;
-  }
-
-  /* Prose spacing rhythm */
-  :where(p, ul, ol, blockquote, pre, figure, table) {
-    margin-top: 1.25em;
-  }
-
-  /* Remove top margin from first children */
-  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
-    margin-top: 0;
-  }
-
-  /* Inline code */
-  :not(pre) > code {
-    font-family: var(--font-code);
-    font-size: var(--font-size-sm);
-    background-color: var(--color-code-background);
-    border: var(--border-width-hairline) solid var(--color-border);
-    padding: 0.1em 0.4em;
-    border-radius: var(--radius-sm);
-  }
-
-  /* Strong text */
-  strong {
-    font-weight: var(--font-weight-semibold);
-  }
+  /* TODO: Add from global-backup.css */
 }
 
 /* ============================================
-   LAYOUT LAYER - Reusable layout patterns
+   LAYOUT LAYER
+   Copy from global-backup.css as needed
    ============================================ */
 @layer layout {
-  /* Flow utility - consistent vertical spacing */
-  .flow > * + * {
-    margin-top: var(--flow-space, 1.25em);
-  }
-
-  /* List reset - for navigation and UI lists */
-  .list-reset {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* All caps utility - for labels and UI text */
-  .all-caps {
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
-  }
+  /* TODO: Add from global-backup.css */
 }
 
 /* ============================================
-   UTILITIES LAYER - Single-purpose helpers
+   UTILITIES LAYER
+   Copy from global-backup.css as needed
    ============================================ */
 @layer utilities {
-  /* ----------------------------------------
-     .ui-style - Opt-out of prose typography
-     Apply to navigation, footers, page titles, and UI-heavy areas
-     ---------------------------------------- */
-  .ui-style {
-    /* Switch to UI font */
-    font-family: var(--font-ui);
-    font-weight: var(--font-weight-light);
-    line-height: var(--leading-snug);
-
-    /* Remove prose link styling */
-    & a {
-      text-decoration: none;
-      color: inherit;
-      transition: color var(--duration-fast) var(--ease-default);
-    }
-
-    & a:visited {
-      color: inherit;
-    }
-
-    & a:hover,
-    & a:focus {
-      color: var(--color-accent);
-    }
-
-    /* Remove heading borders and adjust spacing */
-    & :is(h1, h2, h3, h4, h5, h6) {
-      border-bottom: none;
-      padding-bottom: 0;
-      margin-top: 0;
-    }
-
-    /* Remove list marker colors */
-    & li::marker {
-      color: inherit;
-    }
-
-    /* Tighter prose spacing */
-    & :where(p, ul, ol, blockquote) {
-      margin-top: 0.75em;
-    }
-  }
-
-  /* ----------------------------------------
-     .dark-surface - Always-dark areas (nav, footer)
-     Combine with .ui-style for dark UI areas
-     ---------------------------------------- */
-  .dark-surface {
-    background-color: var(--color-bg-dark-200);
-    color: var(--color-brand-white);
-
-    & a:hover,
-    & a:focus {
-      color: var(--color-accent);
-    }
-  }
-
-  /* Container query utility */
-  .cq {
-    container-type: inline-size;
-  }
-
-  /* Hidden utility for screen readers and microformats */
-  .sr-only,
-  .hidden-microformat {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-  }
+  /* TODO: Add from global-backup.css */
 }
 
-/* Theme Layer - Using light-dark() for automatic theming */
+/* ============================================
+   LONGFORM LAYER
+   Used by LongFormProseTypography.astro
+   ============================================ */
+@layer longform {
+  /* Styles are in LongFormProseTypography.astro */
+}
+
+/* ============================================
+   THEME LAYER
+   Copy from global-backup.css as needed
+   ============================================ */
 @layer theme {
+  /* Reduced motion - keep this */
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
@@ -777,197 +361,5 @@
     }
   }
 
-  /* ============================================
-     SEMANTIC COLORS - Using light-dark()
-     Automatically adapts to color-scheme preference
-     ============================================ */
-  :root {
-    /* Enable automatic theme switching */
-    color-scheme: light dark;
-
-    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-    /* Note: light-dark() only works for colors, so we use defaults + dark override */
-    --font-weight-prose: 400;
-    --line-height-prose: 1.7;
-    --font-weight-article: 350;
-    --line-height-article: 1.7;
-
-    /* -------------------- PRIMARY GLOBAL COLOURS -------------------- */
-    /* Background colors */
-    --color-bg-primary: light-dark(var(--color-brand-beige), var(--color-bg-dark-200));
-    --color-bg-secondary: light-dark(oklch(98% 0.01 85), oklch(14% 0 0));
-
-    /* Text colors */
-    --color-text-primary: light-dark(var(--color-brand-grey), var(--color-brand-beige));
-    --color-text-secondary: light-dark(var(--color-grey-800), var(--color-grey-500));
-    --color-accent: var(--color-brand-primary);
-
-    /* Border and divider colors */
-    --color-border: light-dark(oklch(0% 0 0 / 0.1), oklch(100% 0 0 / 0.1));
-
-    /* Interactive colors */
-    --color-link: light-dark(var(--color-red-500), var(--color-red-400));
-    --color-link-visited: light-dark(var(--color-purple-600), var(--color-purple-500));
-    --color-link-hover: light-dark(var(--color-red-600), var(--color-red-500));
-
-    /* Inline elements */
-    --color-mark-bg: light-dark(var(--color-yellow-500), var(--color-yellow-600));
-    --color-strikethrough: light-dark(oklch(0% 0 0 / 0.5), oklch(100% 0 0 / 1));
-    --color-abbr-underline: light-dark(oklch(0% 0 0 / 0.15), oklch(100% 0 0 / 0.1));
-
-    /* Table colors */
-    --color-table-border: light-dark(oklch(0% 0 0 / 0.1), oklch(100% 0 0 / 0.1));
-    --color-table-bg: var(--color-bg-secondary);
-    --color-table-header-bg: var(--color-bg-secondary);
-
-    /* Code colors */
-    --color-code-background: var(--color-bg-secondary);
-
-    /* -------------------- SURFACE ELEVATION SYSTEM -------------------- */
-    --surface-base: var(--color-bg-primary);
-    --surface-raised: light-dark(
-      oklch(100% 0 0),
-      /* Light: white */ oklch(22% 0 0) /* Dark: elevated charcoal */
-    );
-    --surface-inset: light-dark(
-      oklch(92% 0.02 85),
-      /* Light: darker beige */ oklch(14% 0 0) /* Dark: deeper charcoal */
-    );
-    --surface-overlay: light-dark(oklch(98% 0.01 85), oklch(26% 0 0));
-
-    /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
-    --prose-heading-border-color: var(--color-border);
-    --prose-link-color: var(--color-link);
-    --prose-link-visited-color: var(--color-link-visited);
-    --prose-link-hover-color: var(--color-link-hover);
-    --prose-blockquote-border-color: var(--color-accent);
-    --prose-list-marker-color: var(--color-accent);
-
-    /* -------------------- COMPONENT COLOURS -------------------- */
-    /* Navigation colors - nav/footer stay dark in both themes */
-    --color-nav-bg: var(--color-bg-dark-200);
-    --color-nav-text: var(--color-brand-white);
-    --color-nav-link-hover: var(--color-brand-primary);
-    --color-nav-border: var(--color-brand-primary);
-    --color-hamburger-bg: light-dark(oklch(100% 0 0 / 0.6), oklch(0% 0 0 / 0.8));
-    --color-hamburger-text: var(--color-brand-primary);
-
-    /* Footer colors */
-    --color-footer-bg: var(--color-bg-dark-200);
-    --color-footer-text: var(--color-brand-white);
-    --color-footer-link-hover: var(--color-brand-primary);
-    --color-footer-border: var(--color-brand-primary);
-    --color-footer-social-hover: oklch(0% 0 0 / 0.25);
-
-    /* NoteCard colors */
-    --color-notecard-bg: light-dark(var(--color-brand-white), var(--surface-raised));
-    --color-notecard-border: light-dark(var(--color-bg-dark-200), var(--color-accent));
-    --color-notecard-dot-grid: light-dark(var(--color-red-400), transparent);
-    --color-notecard-date: var(--color-text-secondary);
-    --color-notecard-title-underline: var(--color-accent);
-
-    /* ContentCard colors */
-    --color-contentcard-bg: light-dark(var(--color-brand-white), var(--surface-raised));
-    --color-contentcard-border: var(--color-border);
-    --color-contentcard-article-accent: var(--color-red-500);
-    --color-contentcard-note-accent: light-dark(var(--color-blue-500), var(--color-blue-400));
-    --color-contentcard-toolbox-accent: light-dark(var(--color-green-500), var(--color-green-400));
-    --color-contentcard-meta: var(--color-text-secondary);
-    --color-contentcard-summary: var(--color-text-primary);
-
-    /* Pill colors */
-    --color-pill-bg: light-dark(var(--color-grey-400), var(--color-grey-800));
-    --color-pill-fg: light-dark(var(--color-grey-500), var(--color-grey-400));
-
-    /* Lightbox colors */
-    --color-lightbox-bg: oklch(0% 0 0 / 0.9);
-    --color-lightbox-close: var(--color-brand-white);
-
-    /* Callout colors */
-    --color-callout-default-bg: light-dark(var(--color-grey-300), var(--color-grey-800));
-    --color-callout-red-bg: light-dark(var(--color-red-300), var(--color-red-800));
-    --color-callout-blue-bg: light-dark(var(--color-blue-300), var(--color-blue-800));
-    --color-callout-green-bg: light-dark(var(--color-green-300), var(--color-green-800));
-    --color-callout-orange-bg: light-dark(var(--color-orange-300), var(--color-orange-800));
-    --color-callout-yellow-bg: light-dark(var(--color-yellow-300), var(--color-yellow-800));
-    --color-callout-purple-bg: light-dark(var(--color-purple-300), var(--color-purple-800));
-
-    /* Article specific colors */
-    --color-article-bg: var(--color-bg-primary);
-    --color-article-accent: light-dark(oklch(52% 0.14 25), var(--color-accent));
-    --color-article-horizontal-rule: var(--color-border);
-    --color-article-inline-footnote-bg: var(--color-bg-secondary);
-    --color-article-tasklist-border: var(--color-border);
-
-    /* Notion colors */
-    --notion-arrow-color: oklch(100% 0 0 / 0.6);
-    --notion-underline-color: light-dark(oklch(0% 0 0 / 0.15), oklch(100% 0 0 / 0.25));
-    --notion-arrow-stroke-color: var(--color-bg-primary);
-    --notion-hover-opacity: 0.8;
-
-    /* BlockQuote Citation colors */
-    --color-blockquote-citation-text: var(--color-text-secondary);
-    --color-blockquote-citation-author: var(--color-text-primary);
-    --color-blockquote-citation-source: var(--color-accent);
-    --color-blockquote-citation-source-hover: var(--color-link-hover);
-    --color-blockquote-citation-date: var(--color-text-secondary);
-
-    /* Button colors */
-    --color-button-primary-bg: var(--color-accent);
-    --color-button-primary-text: var(--color-brand-white);
-    --color-button-primary-hover-bg: var(--color-link-hover);
-    --color-button-primary-hover-text: var(--color-brand-white);
-    --color-button-secondary-bg: transparent;
-    --color-button-secondary-text: var(--color-accent);
-    --color-button-secondary-border: var(--color-accent);
-    --color-button-secondary-hover-bg: var(--color-accent);
-    --color-button-secondary-hover-text: var(--color-brand-white);
-    --color-button-secondary-hover-border: var(--color-accent);
-    --color-button-tertiary-text: var(--color-accent);
-    --color-button-tertiary-hover-text: var(--color-link-hover);
-    --color-button-tertiary-underline: var(--color-accent);
-
-    /* -------------------- PAGE COLOURS -------------------- */
-    /* Homepage */
-    --color-homepage-link-border: var(--color-accent);
-
-    /* Note list page */
-    --color-notelist-date: var(--color-text-secondary);
-    --color-notelist-border: var(--color-accent);
-
-    /* Writing list page */
-    --color-writinglist-date: var(--color-text-secondary);
-    --color-writinglist-border: var(--color-accent);
-    --color-writinglist-platform-label: light-dark(var(--color-green-700), var(--color-green-500));
-
-    /* Highlight/mark */
-    --color-highlight-bg: light-dark(oklch(95% 0.15 90), oklch(40% 0.12 90));
-  }
-
-  /* Dark theme typography overrides (light-dark() only works for colors) */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --font-weight-prose: 350;
-      --line-height-prose: 1.8;
-      --font-weight-article: 250;
-      --line-height-article: 1.6;
-    }
-  }
-
-  /* Manual theme overrides */
-  :root[data-theme='light'] {
-    color-scheme: light;
-    --font-weight-prose: 400;
-    --line-height-prose: 1.7;
-    --font-weight-article: 350;
-    --line-height-article: 1.7;
-  }
-
-  :root[data-theme='dark'] {
-    color-scheme: dark;
-    --font-weight-prose: 350;
-    --line-height-prose: 1.8;
-    --font-weight-article: 250;
-    --line-height-article: 1.6;
-  }
+  /* TODO: Add dark mode typography overrides from global-backup.css */
 }
