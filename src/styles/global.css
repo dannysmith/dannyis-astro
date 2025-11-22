@@ -450,7 +450,135 @@
    Copy from global-backup.css as needed
    ============================================ */
 @layer typography {
-  /* TODO: Add from global-backup.css */
+  html {
+    /* Font variant ligatures */
+    font-variant-ligatures: common-ligatures;
+
+    /* Hanging punctuation */
+    hanging-punctuation: first allow-end last;
+  }
+
+  body {
+    /* Defaults for font family, size, weight and line height */
+    font-family: var(--font-prose);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-normal);
+  }
+
+  /* Headings - with bottom borders by default */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-snug);
+    margin-top: 1.5em;
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    padding-bottom: 0.3em;
+  }
+
+  h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: var(--font-size-md);
+  }
+
+  /* Links - nice underlines for prose */
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: max(0.08em, 1px);
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: auto;
+    transition:
+      color var(--duration-fast) var(--ease-in-out),
+      text-decoration-color var(--duration-fast) var(--ease-in-out);
+  }
+
+  a:visited {
+    color: var(--color-visited);
+  }
+
+  a:hover,
+  a:focus {
+    color: var(--color-accent);
+  }
+
+  /* Subtle underlines when not interacting */
+  a:not(:is(:hover, :focus)) {
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
+  }
+
+  /* Lists with colored markers */
+  ul,
+  ol {
+    padding-left: var(--space-m);
+  }
+
+  li {
+    padding-left: var(--space-xs);
+    margin-top: var(--space-xs);
+  }
+
+  li:first-child {
+    margin-top: 0;
+  }
+
+  li::marker {
+    color: var(--color-accent);
+  }
+
+  ul {
+    list-style-type: '•';
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: var(--border-width-thick) solid var(--color-accent);
+    padding-left: var(--space-m);
+    font-style: italic;
+    margin-left: 0;
+  }
+
+  /* Prose spacing rhythm */
+  :where(p, ul, ol, blockquote, pre, figure, table) {
+    margin-top: 1.25em;
+  }
+
+  /* Remove top margin from first children */
+  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
+    margin-top: 0;
+  }
+
+  /* Inline code */
+  :not(pre) > code {
+    font-family: var(--font-code);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    padding: 0.1em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Strong text */
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
 }
 
 /* ============================================
