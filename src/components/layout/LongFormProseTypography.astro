@@ -16,7 +16,6 @@ const { class: className, ...props } = Astro.props;
     .longform-prose {
       line-height: var(--leading-loose);
       text-rendering: optimizeLegibility;
-      font-variant-numeric: oldstyle-nums diagonal-fractions;
     }
 
     .longform-prose:last-child {
@@ -42,6 +41,10 @@ const { class: className, ...props } = Astro.props;
     /* Remove top margin from adjacent headings */
     .longform-prose > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
       margin-top: 0;
+    }
+
+    .longform-prose :is(p, li, blockquote, figcaption) {
+      font-variant-numeric: oldstyle-nums diagonal-fractions;
     }
 
     /* ----------- Paragraphs ----------- */
