@@ -274,6 +274,11 @@
     font: inherit;
   }
 
+  /* Set shorter line heights on interactive elements */
+  :where(button, input, label) {
+    line-height: 1.1;
+  }
+
   /* Auto-growing textarea */
   :where(textarea) {
     field-sizing: content;
@@ -337,6 +342,50 @@
   :where(ul[role='list'], ol[role='list']) {
     list-style: none;
   }
+
+  /* Abbreviations */
+  :where(abbr) {
+    font-variant: all-small-caps;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
+    text-decoration-thickness: max(0.08em, 1px);
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: none;
+  }
+
+  :where(abbr[title]) {
+    cursor: help;
+  }
+
+  /* Superscript and subscript */
+  :where(sup, sub) {
+    font-size: 0.7em;
+    line-height: 1;
+  }
+
+  /* Strikethrough */
+  :where(del) {
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  /* High contrast mode support for mark */
+  @media (forced-colors: active) {
+    :where(mark) {
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+
+  /* Smooth scrolling for user-initiated navigation */
+  @media (prefers-reduced-motion: no-preference) {
+    html:focus-within {
+      scroll-behavior: smooth;
+    }
+  }
 }
 
 /* ============================================
@@ -344,10 +393,55 @@
    Copy from global-backup.css as needed
    ============================================ */
 @layer base {
-  /* TODO: Add from global-backup.css */
-  :root {
-    /* Enable automatic light/dark theme switching */
+  html {
+    /* Colors - support both light/dark */
     color-scheme: light dark;
+    accent-color: var(--color-accent);
+    color: var(--color-text);
+
+    /* Smooth Scrolling */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    /* Background color - global default so pages don't need to set it */
+    background-color: var(--color-background);
+  }
+
+  /* Highlight */
+  mark {
+    background-color: var(--color-highlight);
+    border-radius: 0.05em;
+  }
+
+  /* Simple, attractive global table styles */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 2em 0;
+    font-size: 1em;
+    background-color: var(--color-background-secondary);
+    caption-side: bottom;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--color-border);
+    padding: 0.2em 0.5em;
+    text-align: left;
+    vertical-align: baseline;
+  }
+
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: var(--color-background-secondary);
+    border-bottom-width: 2px;
+  }
+
+  /* Better cursor for summary */
+  summary {
+    cursor: default;
   }
 }
 
