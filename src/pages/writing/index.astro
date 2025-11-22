@@ -26,12 +26,12 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
     <main class="ui-style">
       <h1 class="title">Writing</h1>
       <section>
-        <ul>
+        <ul class="list-reset">
           {
             posts.map(post => (
               <li>
                 <a href={`/writing/${post.id}/`}>
-                  <p class="date">
+                  <p class="date all-caps">
                     <FormattedDate date={post.data.pubDate} />
                   </p>
                   <h4 class="post-title">

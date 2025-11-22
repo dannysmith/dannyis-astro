@@ -37,10 +37,10 @@ const recentNotesWithContent = await Promise.all(
   </head>
   <body>
     <MainNavigation />
-    <main class="ui-style">
-      <h1 class="title">Notes</h1>
+    <main>
+      <h1 class="title ui-style">Notes</h1>
 
-      <!-- Recent Notes as Cards -->
+      <!-- Recent Notes as Cards (prose styling for content) -->
       {
         recentNotesWithContent.length > 0 && (
           <section class="recent-notes" aria-label="Recent Notes">
@@ -61,17 +61,17 @@ const recentNotesWithContent = await Promise.all(
         )
       }
 
-      <!-- Archive List -->
+      <!-- Archive List (UI styling) -->
       {
         olderNotes.length > 0 && (
-          <section class="archive-section" aria-label="Archive">
+          <section class="archive-section ui-style" aria-label="Archive">
             <div class="archive-content">
               <h2 class="archive-title">Older Notes</h2>
-              <ul class="archive-list">
+              <ul class="archive-list list-reset">
                 {olderNotes.map(note => (
                   <li>
                     <a href={`/notes/${note.id}/`}>
-                      <p class="date">
+                      <p class="date all-caps">
                         <FormattedDate date={note.data.pubDate} />
                       </p>
                       <h4 class="note-title">{note.data.title}</h4>
