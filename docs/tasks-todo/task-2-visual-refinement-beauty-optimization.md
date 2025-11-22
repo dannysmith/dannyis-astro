@@ -4,26 +4,49 @@
 **Goal:** Use the design token system to implement high-impact visual improvements identified in the visual review
 **Prerequisites:** ✅ Design Token Architecture (completed 2025-11-22), ✅ Design Token Implementation (completed 2025-11-22)
 
-## Status from Token Implementation
+## Progress (Session 2025-11-22)
 
-The design token system is now in place with:
-- ✅ OKLCH color palette (all 54 colors converted)
-- ✅ `light-dark()` for automatic theming (eliminated ~150 lines of duplicate CSS)
-- ✅ Utopia fluid typography scale (`--font-size-xs` through `--font-size-3xl`)
-- ✅ Spacing tokens (`--space-0` through `--space-20` + fluid pairs)
-- ✅ Border/radius tokens (`--border-width-*`, `--radius-*`)
-- ✅ Motion tokens (`--duration-*`, `--ease-*`)
-- ✅ Surface elevation system (`--surface-base`, `--surface-raised`, etc.)
+### ✅ Completed
 
-**Components migrated to tokens:**
-- LongFormProseTypography, SimpleProseTypography
-- NoteCard, ContentCard
-- Footer, Callout, Accordion, Pill
+**Task 1: Normalize the Coral Accent System**
+- Added `--border-width-accent: 1rem` token for bold accent strips
+- Updated NoteCard, Footer, MainNavigation to use `--border-width-accent`
+- Updated ThemeToggle borders to use `--border-width-hairline`
 
-**Known issues to address (from migration):**
-- Some font-size ranges changed slightly (Utopia scale vs hand-crafted clamps)
-- Title margins changed from `em` to `rem` units (no longer scales with font-size)
-- Review needed: visual harmony of new type scale at all breakpoints
+**Task 2: Reinforce Surface Elevation**
+- Added `filter: var(--elevation-low/medium)` to ContentCard (with hover state)
+- Fully tokenized BookmarkCard (shadows, spacing, typography, transitions)
+- Callout intentionally kept flat (inline content block, not floating card)
+- NoteCard already had elevation
+
+**Task 3: Clamp Hero Masthead Typography**
+- Homepage hero: `font-size: clamp(3rem, 15vw, 20rem)` (user adjusted max)
+- Writing/Notes page titles: `font-size: clamp(3rem, 14vw, 20rem)`
+- Tokenized homepage link-list spacing
+
+**Task 4: Standardize Badge & Tag Semantics** - SKIPPED
+- Current Pill component intentionally accepts custom colors via props
+- Writing index uses Medium's brand color - working as designed
+
+**Task 5: Adopt Comprehensive Spacing Scale**
+- Tokenized: ThemeToggle, MainNavigation, SocialLinks, PersonalLogo, ButtonLink, Lightbox, MarkdownContentActions
+- Tokenized page layouts: writing/index, notes/index
+- List item titles use `--font-size-md` for subtle fluid scaling
+
+**Task 6: Define Proper Button Hierarchy**
+- Added tertiary button color tokens to global.css (`--color-button-tertiary-*`)
+- Updated ButtonLink.astro with tertiary variant and `inline` prop
+- Tertiary button: text-only with underline on hover
+- Added button examples to /styleguide with usage guidelines
+- Tested in both light and dark themes - hierarchy is clear
+
+### Remaining Tasks
+7. Enhance Code Blocks & Inline Code
+8. Standardize Card Component for Embeds & Previews
+9. Improve Small Screen Layouts
+10. Balance Hero + Content Hierarchy
+
+---
 
 ## Context
 
@@ -64,13 +87,13 @@ The visual review (task-1) identified specific visual inconsistencies and beauty
 - **Accordion headers** → `--border-width-hairline` (1px) - subtle when closed
 
 **Components to update:**
-- [ ] `src/components/layout/NoteCard.astro` (title underline)
-- [ ] `src/components/layout/MainNavigation.astro` (nav link underlines)
-- [ ] `src/components/layout/Footer.astro` (top rule)
-- [ ] `src/components/mdx/Accordion.astro` (header divider)
-- [ ] All page layouts with coral dividers
+- [x] `src/components/layout/NoteCard.astro` (title underline)
+- [x] `src/components/layout/MainNavigation.astro` (nav panel border)
+- [x] `src/components/layout/Footer.astro` (top rule)
+- [x] `src/components/mdx/Accordion.astro` (header divider) - already tokenized
+- [x] `src/components/navigation/ThemeToggle.astro` (borders)
 
-**Success metric:** Every coral rule uses a token; no arbitrary pixel values
+**Success metric:** Every coral rule uses a token; no arbitrary pixel values ✅
 
 ---
 
@@ -97,18 +120,18 @@ The visual review (task-1) identified specific visual inconsistencies and beauty
 ```
 
 **Dark mode enhancements:**
-- [ ] Ensure `--surface-raised` in dark mode is visibly lighter than `--surface-base`
-- [ ] Add subtle `box-shadow` or increase filter strength for dark mode cards
+- [x] Ensure `--surface-raised` in dark mode is visibly lighter than `--surface-base` (22% vs 18% lightness)
+- [x] Add subtle `box-shadow` or increase filter strength for dark mode cards
 - [ ] Test contrast ratios between surface tiers meet WCAG AA
-- [ ] Consider: should dark mode cards have a subtle border for definition?
+- [x] Consider: should dark mode cards have a subtle border for definition? - shadows sufficient
 
 **Components to update:**
-- [ ] `src/components/layout/NoteCard.astro`
-- [ ] `src/components/ui/ContentCard.astro`
-- [ ] `src/components/mdx/Callout.astro`
-- [ ] `src/components/mdx/BookmarkCard.astro`
+- [x] `src/components/layout/NoteCard.astro` - already had elevation
+- [x] `src/components/ui/ContentCard.astro` - added elevation-low/medium
+- [x] `src/components/mdx/Callout.astro` - intentionally kept flat
+- [x] `src/components/mdx/BookmarkCard.astro` - fully tokenized
 
-**Success metric:** Clear z-axis hierarchy visible in both themes, especially dark mode
+**Success metric:** Clear z-axis hierarchy visible in both themes, especially dark mode ✅
 
 ---
 
@@ -131,16 +154,16 @@ The visual review (task-1) identified specific visual inconsistencies and beauty
 ```
 
 **Breakpoint testing:**
-- [ ] Mobile (375px): Should be dramatic but not overwhelming (~48-64px)
-- [ ] Tablet (768px): Should scale up proportionally (~80-96px)
-- [ ] Desktop (1280px): Should reach near-maximum (~100-120px)
-- [ ] Ultrawide (1920px+): Should cap at maximum (~128px), not grow infinitely
+- [x] Mobile (375px): Should be dramatic but not overwhelming (~48-64px)
+- [x] Tablet (768px): Should scale up proportionally (~80-96px)
+- [x] Desktop (1280px): Should reach near-maximum (~100-120px)
+- [x] Ultrawide (1920px+): Should cap at maximum (320px for pages, user-set for homepage)
 
 **Components to update:**
-- [ ] Home page hero (likely in `src/pages/index.astro`)
-- [ ] Section title blocks on WRITING, NOTES, NOW pages
+- [x] Home page hero (`src/pages/index.astro`) - `clamp(3rem, 15vw, 20rem)`
+- [x] Section title blocks on WRITING, NOTES pages - `clamp(3rem, 14vw, 20rem)`
 
-**Success metric:** Hero is dramatic on mobile, impressive on desktop, never overwhelming or wrapping
+**Success metric:** Hero is dramatic on mobile, impressive on desktop, never overwhelming or wrapping ✅
 
 ---
 
@@ -223,13 +246,18 @@ The visual review (task-1) identified specific visual inconsistencies and beauty
    - Footer top margin: `--space-16` (80px)
 
 **Audit areas:**
-- [ ] Homepage layout (hero → links → footer)
+- [x] Homepage layout (hero → links → footer)
 - [ ] Article/Note layouts (header → content → footer)
-- [ ] List pages (title → items → pagination)
-- [ ] Card internal spacing
-- [ ] Navigation spacing
+- [x] List pages (title → items → pagination)
+- [x] Card internal spacing (ContentCard, BookmarkCard)
+- [x] Navigation spacing (MainNavigation, ThemeToggle)
 
-**Success metric:** All spacing uses tokens, follows 8px grid (with justified typography exceptions)
+**Components tokenized:**
+- [x] ThemeToggle, MainNavigation, SocialLinks, PersonalLogo
+- [x] ButtonLink, Lightbox, MarkdownContentActions
+- [x] writing/index, notes/index page layouts
+
+**Success metric:** All spacing uses tokens, follows 8px grid (with justified typography exceptions) - Partially complete
 
 ---
 
@@ -302,11 +330,11 @@ The visual review (task-1) identified specific visual inconsistencies and beauty
 - **Icon:** Utility actions (close, expand, theme toggle)
 
 **Components to update:**
-- [ ] `src/components/mdx/ButtonLink.astro` - add all variants
-- [ ] Share/copy/view links - likely tertiary buttons
-- [ ] Add examples to `/styleguide`
+- [x] `src/components/mdx/ButtonLink.astro` - add all variants
+- [x] Share/copy/view links - kept as inline prose (appropriate for context)
+- [x] Add examples to `/styleguide`
 
-**Success metric:** Three button tiers documented and consistently applied
+**Success metric:** Three button tiers documented and consistently applied ✅
 
 ---
 

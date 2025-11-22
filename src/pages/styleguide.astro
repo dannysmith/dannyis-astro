@@ -11,6 +11,7 @@ import Notion from '@components/mdx/Notion.astro';
 import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import ContentCard from '@components/ui/ContentCard.astro';
+import ButtonLink from '@components/mdx/ButtonLink.astro';
 import { getCollection } from 'astro:content';
 
 // Get sample content for ContentCard examples
@@ -123,6 +124,31 @@ const sampleNotes = (
         <div class="test-section">
           <h2>FormattedDate Component</h2>
           <FormattedDate date={new Date()} />
+        </div>
+
+        <div class="test-section">
+          <h2>ButtonLink Component</h2>
+          <p>Three-tier button hierarchy for clear information architecture.</p>
+
+          <h3>Primary Button</h3>
+          <p>Use for main CTAs - one per page section.</p>
+          <ButtonLink href="#">Subscribe to Newsletter</ButtonLink>
+
+          <h3>Secondary Button</h3>
+          <p>Use for alternative actions like cancel, go back, or secondary options.</p>
+          <ButtonLink href="#" variant="secondary">View All Articles</ButtonLink>
+
+          <h3>Tertiary Button</h3>
+          <p>Use for inline or low-priority actions within content.</p>
+          <ButtonLink href="#" variant="tertiary">Learn more</ButtonLink>
+
+          <h3>Button Comparison</h3>
+          <p>All three variants side by side:</p>
+          <div style="display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap; margin-top: var(--space-4);">
+            <ButtonLink href="#" inline>Primary</ButtonLink>
+            <ButtonLink href="#" variant="secondary" inline>Secondary</ButtonLink>
+            <ButtonLink href="#" variant="tertiary" inline>Tertiary</ButtonLink>
+          </div>
         </div>
 
         <div class="test-section">

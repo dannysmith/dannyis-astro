@@ -742,6 +742,9 @@
     --color-button-secondary-hover-bg: var(--color-accent);
     --color-button-secondary-hover-text: var(--color-brand-white);
     --color-button-secondary-hover-border: var(--color-accent);
+    --color-button-tertiary-text: var(--color-accent);
+    --color-button-tertiary-hover-text: var(--color-link-hover);
+    --color-button-tertiary-underline: var(--color-accent);
 
     /* -------------------- PAGE COLOURS -------------------- */
     /* Homepage specific colors */

@@ -1,17 +1,26 @@
 ---
 interface Props {
   href: string;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'tertiary';
+  inline?: boolean;
 }
 
-const { href, variant = 'primary' } = Astro.props;
+const { href, variant = 'primary', inline = false } = Astro.props;
 ---
 
-<div class="button-link-container">
-  <a href={href} class:list={['button-link', variant]}>
-    <slot />
-  </a>
-</div>
+{
+  inline ? (
+    <a href={href} class:list={['button-link', variant]}>
+      <slot />
+    </a>
+  ) : (
+    <div class="button-link-container">
+      <a href={href} class:list={['button-link', variant]}>
+        <slot />
+      </a>
+    </div>
+  )
+}
 
 <style>
   .button-link-container {
@@ -51,5 +60,19 @@ const { href, variant = 'primary' } = Astro.props;
   .button-link.secondary:hover {
     background: var(--color-button-secondary-hover-bg);
     color: var(--color-button-secondary-hover-text);
+  }
+
+  .button-link.tertiary {
+    background: transparent;
+    color: var(--color-button-tertiary-text);
+    border: none;
+    padding: var(--space-2) var(--space-4);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: var(--space-1);
+  }
+  .button-link.tertiary:hover {
+    color: var(--color-button-tertiary-hover-text);
+    text-decoration-color: var(--color-button-tertiary-underline);
   }
 </style>
