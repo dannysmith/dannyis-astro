@@ -101,7 +101,6 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
           minmax(var(--gutter), 1fr)
           min(60ch, calc(100% - var(--gutter) * 2))
           minmax(var(--gutter), 1fr);
-        row-gap: calc(var(--line-height) * 1em);
       }
 
       /* All other elements span the middle column */
@@ -157,6 +156,18 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         padding: var(--space-2xs) var(--space-s);
         border-radius: var(--radius-sm);
         float: right;
+      }
+
+      /* Inline footnotes - toggled by JS below */
+      .inline-footnote-container {
+        font-size: var(--font-size-sm);
+        padding: var(--space-s);
+        border-left: var(--border-width-base) solid var(--color-accent);
+        background: var(--color-background-secondary);
+
+        .data-footnote-backref {
+          display: none;
+        }
       }
     </style>
 

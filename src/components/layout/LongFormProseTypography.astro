@@ -21,60 +21,31 @@ const { class: className, ...props } = Astro.props;
     }
 
     .longform-prose:last-child {
-      margin-bottom: 5em;
+      margin-bottom: var(--space-l);
     }
 
     /* Headings */
 
-    .longform-prose > :is(h1, h2, h3, h4, h5, h6) {
-      /* font-variant-ligatures and hanging-punctuation now in base layer */
-      border-bottom: var(--border-width-hairline) solid var(--color-border);
-      padding-bottom: 0.6em;
-    }
-
+    /* Article title */
     .longform-prose h1.title {
       font-size: var(--font-size-2xl);
-      font-weight: var(--font-weight-medium);
       font-variation-settings: 'opsz' 50;
       line-height: var(--leading-snug);
-      margin-top: var(--space-l);
+      margin-bottom: var(--space-2xl);
+      border-bottom: none;
     }
 
-    .longform-prose > h1 {
-      /* font-size: var(--font-size-xl); */
-      /* font-weight: var(--font-weight-semibold); */
-    }
-
-    .longform-prose > h2 {
-      /* font-size: var(--font-size-lg); */
-      /* font-weight: var(--font-weight-semibold); */
-      /* margin-top: 1.7em; */
-      /* margin-bottom: -0.5em; */
-    }
-
-    .longform-prose > h3 {
-      /* font-size: var(--font-size-md); */
-      /* font-weight: var(--font-weight-semibold); */
-      /* margin-bottom: -0.5em; */
-    }
-
+    /* h4-6 use bold to differentiate from h3 at same size */
     .longform-prose > :is(h4, h5, h6) {
-      /* font-size: var(--font-size-base); */
-      /* font-weight: var(--font-weight-normal); */
-      /* font-style: italic; */
-      /* margin-bottom: -1em; */
+      font-weight: var(--font-weight-bold);
     }
 
-    /* Remove top margin from headings that are immediatly preceeded by another heading or an HR */
+    /* Remove top margin from adjacent headings */
     .longform-prose > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
-      /* margin-top: 0; */
+      margin-top: 0;
     }
 
     /* ----------- Paragraphs ----------- */
-
-    .longform-prose > p:first-of-type {
-      /* margin-top: 3em; */
-    }
 
     .longform-prose > p {
       font-variant-numeric: oldstyle-nums diagonal-fractions;
@@ -145,19 +116,19 @@ const { class: className, ...props } = Astro.props;
     }
 
     .longform-prose h1 a {
-      /* text-decoration: none; */
-      /* color: inherit; */
+      text-decoration: none;
+      color: inherit;
     }
 
     /* ----------- Lists ----------- */
 
     .longform-prose li {
-      /* margin-top: var(--space-2xs); */
+      margin-top: var(--space-2xs);
     }
 
     .longform-prose :is(ul, ol) {
       font-variant-numeric: oldstyle-nums diagonal-fractions;
-      /* padding-left: 0.4em; */
+      padding-left: 0.4em;
     }
 
     .longform-prose ol ::marker {
@@ -208,12 +179,6 @@ const { class: className, ...props } = Astro.props;
       opacity: 1;
     }
 
-    /* ----------- Text Styles ----------- */
-
-    .longform-prose strong {
-      /* font-weight: var(--font-weight-semibold); */
-    }
-
     /* ----------- HR ----------- */
     .longform-prose hr {
       display: flex;
@@ -252,17 +217,6 @@ const { class: className, ...props } = Astro.props;
       letter-spacing: var(--tracking-wide);
       text-decoration: none;
       color: var(--color-accent);
-    }
-
-    .inline-footnote-container {
-      font-size: var(--font-size-sm);
-      padding: var(--space-s);
-      border-left: var(--border-width-base) solid var(--color-accent);
-      background: var(--color-background-secondary);
-
-      .data-footnote-backref {
-        display: none;
-      }
     }
 
     .longform-prose .footnotes {
