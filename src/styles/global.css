@@ -254,7 +254,8 @@
   --border-width-thin: 1.5px;      /* Default borders */
   --border-width-base: 2px;        /* THE CORAL RULE */
   --border-width-thick: 4px;       /* Heavy dividers */
-  --border-width-heavy: 6px;       /* Blockquotes, footer */
+  --border-width-heavy: 6px;       /* Blockquotes */
+  --border-width-accent: 1rem;     /* Bold accent strips (NoteCard, Footer, Nav panel) */
 
   /* Border radius */
   --radius-xs: 0.125rem;   /* 2px */
