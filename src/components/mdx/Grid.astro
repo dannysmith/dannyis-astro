@@ -13,11 +13,11 @@ const gap = Astro.props.gap || '1rem'
   <slot />
 </div>
 
-<style define:vars={{ columns, rows, gap }}>
+<!-- DISABLED-STYLE <style define:vars={{ columns, rows, gap }}>
   .grid-wrapper {
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
     grid-gap: var(--gap);
   }
-</disabled-style>
+</style> -->

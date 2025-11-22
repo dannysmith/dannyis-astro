@@ -13,8 +13,10 @@ disable_css() {
   echo ""
 
   find "$COMPONENTS_DIR" "$LAYOUTS_DIR" "$PAGES_DIR" -name "*.astro" -type f | while read -r file; do
-    if grep -q '<style' "$file" 2>/dev/null; then
-      sed -i '' 's/<style\b/<disabled-style/g; s/<\/style>/<\/disabled-style>/g' "$file"
+    if grep -q '<style' "$file" 2>/dev/null && ! grep -q '<!-- DISABLED-STYLE' "$file" 2>/dev/null; then
+      # Wrap <style...>...</style> in HTML comments
+      # BSD sed doesn't support \b, so we match <style followed by space or >
+      sed -i '' -E 's/<style([ >])/<!-- DISABLED-STYLE <style\1/g; s/<\/style>/<\/style> -->/g' "$file"
       echo "  Disabled: $file"
     fi
   done
@@ -30,8 +32,9 @@ enable_css() {
   echo ""
 
   find "$COMPONENTS_DIR" "$LAYOUTS_DIR" "$PAGES_DIR" -name "*.astro" -type f | while read -r file; do
-    if grep -q '<disabled-style' "$file" 2>/dev/null; then
-      sed -i '' 's/<disabled-style/<style/g; s/<\/disabled-style>/<\/style>/g' "$file"
+    if grep -q '<!-- DISABLED-STYLE' "$file" 2>/dev/null; then
+      # Remove HTML comment wrappers
+      sed -i '' 's/<!-- DISABLED-STYLE <style/<style/g; s/<\/style> -->/<\/style>/g' "$file"
       echo "  Enabled: $file"
     fi
   done
@@ -46,8 +49,8 @@ enable_file() {
   echo ""
 
   find "$COMPONENTS_DIR" "$LAYOUTS_DIR" "$PAGES_DIR" -name "*.astro" -type f | while read -r file; do
-    if [[ "$file" == *"$pattern"* ]] && grep -q '<disabled-style' "$file" 2>/dev/null; then
-      sed -i '' 's/<disabled-style/<style/g; s/<\/disabled-style>/<\/style>/g' "$file"
+    if [[ "$file" == *"$pattern"* ]] && grep -q '<!-- DISABLED-STYLE' "$file" 2>/dev/null; then
+      sed -i '' 's/<!-- DISABLED-STYLE <style/<style/g; s/<\/style> -->/<\/style>/g' "$file"
       echo "  Enabled: $file"
     fi
   done
@@ -59,13 +62,13 @@ show_status() {
   echo ""
 
   echo "DISABLED:"
-  find "$COMPONENTS_DIR" "$LAYOUTS_DIR" "$PAGES_DIR" -name "*.astro" -type f -exec grep -l '<disabled-style' {} \; 2>/dev/null | sort | sed 's/^/  /' || echo "  (none)"
+  find "$COMPONENTS_DIR" "$LAYOUTS_DIR" "$PAGES_DIR" -name "*.astro" -type f -exec grep -l '<!-- DISABLED-STYLE' {} \; 2>/dev/null | sort | sed 's/^/  /' || echo "  (none)"
 
   echo ""
   echo "ENABLED:"
-  # Find files with <style but not <disabled-style
+  # Find files with <style but not disabled
   find "$COMPONENTS_DIR" "$LAYOUTS_DIR" "$PAGES_DIR" -name "*.astro" -type f | while read -r file; do
-    if grep -q '<style' "$file" 2>/dev/null && ! grep -q '<disabled-style' "$file" 2>/dev/null; then
+    if grep -q '<style' "$file" 2>/dev/null && ! grep -q '<!-- DISABLED-STYLE' "$file" 2>/dev/null; then
       echo "  $file"
     fi
   done
