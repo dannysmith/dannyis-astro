@@ -43,10 +43,26 @@
 **Task 7: Enhance Code Blocks & Inline Code** - DEFERRED
 - Will address in a separate task focused on code presentation
 
-### Remaining Tasks
-8. Standardize Card Component for Embeds & Previews
-9. Improve Small Screen Layouts
-10. Balance Hero + Content Hierarchy
+**Task 8: Standardize Card Component** - SKIPPED
+- Audited BookmarkCard, ContentCard, Embed - they serve different purposes
+- BookmarkCard: external link previews with border all around
+- ContentCard: internal content with left accent border (intentionally different)
+- Both already well-tokenized with consistent elevation, padding, focus states
+- Only minor difference: transition duration (trivial, possibly intentional)
+- A unified Card primitive would add complexity, not reduce it
+
+**Task 9: Improve Small Screen Layouts** - VERIFIED COMPLETE
+- Tested at 375px (iPhone) viewport width
+- Footer: stacks vertically with good spacing, social icons centered
+- Homepage hero: dramatic but not overwhelming, clear relationship to nav below
+- Article metadata: clean layout (date + read time), not cramped
+- Navigation panel: well-spaced links, touch-friendly theme toggle buttons
+- All layouts gracefully adapt to narrow screens
+
+**Task 10: Balance Hero + Content Hierarchy** - VERIFIED COMPLETE
+- Homepage hero-to-nav gap uses consistent spacing
+- Clear visual relationship between hero and content
+- Alignment feels intentional at all tested breakpoints (375px, 768px, 1280px)
 
 ---
 
@@ -529,12 +545,12 @@ const { variant = 'default', padding = 'md' } = Astro.props;
 ```
 
 **Areas to test:**
-- [ ] Footer on 375px width
-- [ ] Card grids on narrow containers
-- [ ] Article metadata bars on mobile
-- [ ] Navigation spacing on small screens
+- [x] Footer on 375px width
+- [x] Card grids on narrow containers
+- [x] Article metadata bars on mobile
+- [x] Navigation spacing on small screens
 
-**Success metric:** All layouts gracefully adapt to narrow screens without cramping
+**Success metric:** All layouts gracefully adapt to narrow screens without cramping ✅
 
 ---
 
@@ -573,12 +589,12 @@ const { variant = 'default', padding = 'md' } = Astro.props;
 ```
 
 **Action items:**
-- [ ] Audit homepage layout spacing
-- [ ] Ensure hero → nav gap uses spacing tokens
-- [ ] Test alignment at all breakpoints
-- [ ] Consider: should nav always align with hero left edge?
+- [x] Audit homepage layout spacing
+- [x] Ensure hero → nav gap uses spacing tokens
+- [x] Test alignment at all breakpoints
+- [x] Consider: should nav always align with hero left edge? - Yes, working as designed
 
-**Success metric:** Clear visual relationship between hero and content; never feels disconnected
+**Success metric:** Clear visual relationship between hero and content; never feels disconnected ✅
 
 ---
 
