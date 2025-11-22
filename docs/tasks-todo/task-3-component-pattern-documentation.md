@@ -6,7 +6,7 @@
 
 ## Context
 
-The visual review (task-1) catalogued 80+ visual components based purely on screenshots, without knowledge of the codebase structure. This task creates the critical bridge: mapping those visual observations to actual code, documenting patterns that exist, and identifying gaps.
+The visual review catalogued 80+ visual components based purely on screenshots, without knowledge of the codebase structure. This task creates the critical bridge: mapping those visual observations to actual code, documenting patterns that exist, and identifying gaps.
 
 **Outcome:** A comprehensive component pattern guide that allows designers and developers to understand:
 1. Which visual components already exist in code

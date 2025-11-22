@@ -2,11 +2,32 @@
 
 **Type:** Implementation (Post-Token System)
 **Goal:** Use the design token system to implement high-impact visual improvements identified in the visual review
-**Prerequisites:** Task 3 (Design Token Implementation) must be complete
+**Prerequisites:** ✅ Design Token Architecture (completed 2025-11-22), ✅ Design Token Implementation (completed 2025-11-22)
+
+## Status from Token Implementation
+
+The design token system is now in place with:
+- ✅ OKLCH color palette (all 54 colors converted)
+- ✅ `light-dark()` for automatic theming (eliminated ~150 lines of duplicate CSS)
+- ✅ Utopia fluid typography scale (`--font-size-xs` through `--font-size-3xl`)
+- ✅ Spacing tokens (`--space-0` through `--space-20` + fluid pairs)
+- ✅ Border/radius tokens (`--border-width-*`, `--radius-*`)
+- ✅ Motion tokens (`--duration-*`, `--ease-*`)
+- ✅ Surface elevation system (`--surface-base`, `--surface-raised`, etc.)
+
+**Components migrated to tokens:**
+- LongFormProseTypography, SimpleProseTypography
+- NoteCard, ContentCard
+- Footer, Callout, Accordion, Pill
+
+**Known issues to address (from migration):**
+- Some font-size ranges changed slightly (Utopia scale vs hand-crafted clamps)
+- Title margins changed from `em` to `rem` units (no longer scales with font-size)
+- Review needed: visual harmony of new type scale at all breakpoints
 
 ## Context
 
-The visual review (task-1) identified specific visual inconsistencies and beauty opportunities across the site. With the comprehensive design token system from Tasks 2-3 now in place, this task leverages those tokens to implement the high-impact visual refinements that will materially increase beauty and consistency.
+The visual review (task-1) identified specific visual inconsistencies and beauty opportunities across the site. With the comprehensive design token system now in place, this task leverages those tokens to implement the high-impact visual refinements that will materially increase beauty and consistency.
 
 **Philosophy:** This isn't about simplification for its own sake—it's about **optimization for beauty** while allowing subtle harmonization where it improves the visual language.
 
