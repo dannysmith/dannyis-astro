@@ -1,5 +1,5 @@
 /* Define our layers */
-@layer reset, base, simple-prose, longform-prose, theme;
+@layer reset, base, typography, layout, utilities, longform, theme;
 
 /* Import Mermaid styles */
 @import './mermaid.css';
@@ -43,8 +43,8 @@
      ============================================ */
 
   /* Neutrals */
-  --color-black: oklch(15% 0 0);          /* #191919 */
-  --color-true-black: oklch(0% 0 0);      /* #000000 */
+  --color-black: oklch(15% 0 0); /* #191919 */
+  --color-true-black: oklch(0% 0 0); /* #000000 */
 
   /* Pink (hue: 350) */
   --color-pink-300: oklch(92% 0.04 350);
@@ -57,14 +57,14 @@
   /* Red/Coral - Brand accent (hue: 25) */
   --color-red-300: oklch(92% 0.04 25);
   --color-red-400: oklch(86% 0.08 25);
-  --color-red-500: oklch(70% 0.18 25);    /* Primary brand coral */
+  --color-red-500: oklch(70% 0.18 25); /* Primary brand coral */
   --color-red-600: oklch(58% 0.18 25);
   --color-red-700: oklch(48% 0.12 25);
   --color-red-800: oklch(35% 0.06 25);
 
   /* Orange (hue: 55) */
   --color-orange-300: oklch(94% 0.04 55);
-  --color-orange-400: oklch(88% 0.10 55);
+  --color-orange-400: oklch(88% 0.1 55);
   --color-orange-500: oklch(78% 0.16 55);
   --color-orange-600: oklch(68% 0.16 55);
   --color-orange-700: oklch(48% 0.08 55);
@@ -80,7 +80,7 @@
 
   /* Yellow (hue: 95) */
   --color-yellow-300: oklch(96% 0.04 95);
-  --color-yellow-400: oklch(94% 0.10 95);
+  --color-yellow-400: oklch(94% 0.1 95);
   --color-yellow-500: oklch(90% 0.16 95);
   --color-yellow-600: oklch(80% 0.14 95);
   --color-yellow-700: oklch(48% 0.06 95);
@@ -164,11 +164,11 @@
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
   /* Spacer sizes - DEPRECATED: use --space-* tokens instead */
-  --spacer-xs: var(--space-2);   /* 0.5rem - alias to new system */
-  --spacer-sm: var(--space-4);   /* 1rem */
-  --spacer-md: var(--space-6);   /* 2rem */
-  --spacer-lg: var(--space-10);  /* 3rem */
-  --spacer-xl: var(--space-12);  /* 4rem */
+  --spacer-xs: var(--space-2); /* 0.5rem - alias to new system */
+  --spacer-sm: var(--space-4); /* 1rem */
+  --spacer-md: var(--space-6); /* 2rem */
+  --spacer-lg: var(--space-10); /* 3rem */
+  --spacer-xl: var(--space-12); /* 4rem */
   --spacer-xxl: var(--space-20); /* 6rem */
 
   /* ============================================
@@ -180,21 +180,21 @@
      SPACING - Static 8px Grid
      ============================================ */
   --space-0: 0;
-  --space-1: 0.25rem;   /*  4px - micro adjustments */
-  --space-2: 0.5rem;    /*  8px - tight spacing */
-  --space-3: 0.75rem;   /* 12px - small gaps */
-  --space-4: 1rem;      /* 16px - base unit */
-  --space-5: 1.5rem;    /* 24px - comfortable */
-  --space-6: 2rem;      /* 32px - breathing room */
-  --space-8: 2.5rem;    /* 40px - section spacing */
-  --space-10: 3rem;     /* 48px - major sections */
-  --space-12: 4rem;     /* 64px - hero spacing */
-  --space-16: 5rem;     /* 80px - dramatic spacing */
-  --space-20: 6rem;     /* 96px - monumental */
+  --space-1: 0.25rem; /*  4px - micro adjustments */
+  --space-2: 0.5rem; /*  8px - tight spacing */
+  --space-3: 0.75rem; /* 12px - small gaps */
+  --space-4: 1rem; /* 16px - base unit */
+  --space-5: 1.5rem; /* 24px - comfortable */
+  --space-6: 2rem; /* 32px - breathing room */
+  --space-8: 2.5rem; /* 40px - section spacing */
+  --space-10: 3rem; /* 48px - major sections */
+  --space-12: 4rem; /* 64px - hero spacing */
+  --space-16: 5rem; /* 80px - dramatic spacing */
+  --space-20: 6rem; /* 96px - monumental */
 
   /* Fluid Spacing - Utopia generated (375px → 1280px) */
-  --space-fluid-s-l: clamp(1.125rem, 0.5rem + 2.5vw, 2.5rem);   /* 18px → 40px */
-  --space-fluid-m-xl: clamp(1.5rem, 0.75rem + 3vw, 3.75rem);    /* 24px → 60px */
+  --space-fluid-s-l: clamp(1.125rem, 0.5rem + 2.5vw, 2.5rem); /* 18px → 40px */
+  --space-fluid-m-xl: clamp(1.5rem, 0.75rem + 3vw, 3.75rem); /* 24px → 60px */
 
   /* ============================================
      TYPOGRAPHY - Utopia Fluid Type Scale
@@ -202,39 +202,39 @@
      ============================================ */
 
   /* Raw Utopia steps */
-  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.80rem);   /* ~12.5px → 12.8px */
-  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1.00rem);   /* ~15px → 16px */
-  --step-0:  clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem);   /* ~18px → 20px (base) */
-  --step-1:  clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem);   /* ~21.6px → 26.7px */
-  --step-2:  clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem);   /* ~25.9px → 35.5px */
-  --step-3:  clamp(1.94rem, 1.74rem + 0.90vw, 2.96rem);   /* ~31.1px → 47.4px */
-  --step-4:  clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem);   /* ~37.3px → 63.2px */
-  --step-5:  clamp(2.80rem, 2.38rem + 1.85vw, 5.26rem);   /* ~44.8px → 84.2px */
+  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.8rem); /* ~12.5px → 12.8px */
+  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1rem); /* ~15px → 16px */
+  --step-0: clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem); /* ~18px → 20px (base) */
+  --step-1: clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem); /* ~21.6px → 26.7px */
+  --step-2: clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem); /* ~25.9px → 35.5px */
+  --step-3: clamp(1.94rem, 1.74rem + 0.9vw, 2.96rem); /* ~31.1px → 47.4px */
+  --step-4: clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem); /* ~37.3px → 63.2px */
+  --step-5: clamp(2.8rem, 2.38rem + 1.85vw, 5.26rem); /* ~44.8px → 84.2px */
 
   /* Semantic font-size aliases */
-  --font-size-xs: var(--step--2);    /* Small labels, captions */
-  --font-size-sm: var(--step--1);    /* Secondary text, metadata */
-  --font-size-base: var(--step-0);   /* Body text */
-  --font-size-md: var(--step-1);     /* Large body, small headings */
-  --font-size-lg: var(--step-2);     /* H3, card titles */
-  --font-size-xl: var(--step-3);     /* H2, section titles */
-  --font-size-2xl: var(--step-4);    /* H1, page titles */
-  --font-size-3xl: var(--step-5);    /* Hero masthead */
+  --font-size-xs: var(--step--2); /* Small labels, captions */
+  --font-size-sm: var(--step--1); /* Secondary text, metadata */
+  --font-size-base: var(--step-0); /* Body text */
+  --font-size-md: var(--step-1); /* Large body, small headings */
+  --font-size-lg: var(--step-2); /* H3, card titles */
+  --font-size-xl: var(--step-3); /* H2, section titles */
+  --font-size-2xl: var(--step-4); /* H1, page titles */
+  --font-size-3xl: var(--step-5); /* Hero masthead */
 
   /* Line Heights */
-  --leading-none: 0.9;     /* Hero text, large display */
-  --leading-tight: 1.1;    /* Headings */
-  --leading-snug: 1.2;     /* Subheadings */
-  --leading-normal: 1.5;   /* Body text */
-  --leading-relaxed: 1.7;  /* Long-form prose */
-  --leading-loose: 1.8;    /* Extra breathing room */
+  --leading-none: 0.9; /* Hero text, large display */
+  --leading-tight: 1.1; /* Headings */
+  --leading-snug: 1.2; /* Subheadings */
+  --leading-normal: 1.5; /* Body text */
+  --leading-relaxed: 1.7; /* Long-form prose */
+  --leading-loose: 1.8; /* Extra breathing room */
 
   /* Letter Spacing */
-  --tracking-tighter: -0.02em;  /* Large display text */
-  --tracking-tight: -0.01em;    /* Headings */
-  --tracking-normal: 0;         /* Body text */
-  --tracking-wide: 0.08em;      /* All-caps labels */
-  --tracking-wider: 0.1ch;      /* Small all-caps */
+  --tracking-tighter: -0.02em; /* Large display text */
+  --tracking-tight: -0.01em; /* Headings */
+  --tracking-normal: 0; /* Body text */
+  --tracking-wide: 0.08em; /* All-caps labels */
+  --tracking-wider: 0.1ch; /* Small all-caps */
 
   /* Font Weights - matched to Literata/League Spartan */
   --font-weight-light: 300;
@@ -250,20 +250,20 @@
      ============================================ */
 
   /* Border widths */
-  --border-width-hairline: 1px;    /* Subtle dividers */
-  --border-width-thin: 1.5px;      /* Default borders */
-  --border-width-base: 2px;        /* THE CORAL RULE */
-  --border-width-thick: 4px;       /* Heavy dividers */
-  --border-width-heavy: 6px;       /* Blockquotes */
-  --border-width-accent: 1rem;     /* Bold accent strips (NoteCard, Footer, Nav panel) */
+  --border-width-hairline: 1px; /* Subtle dividers */
+  --border-width-thin: 1.5px; /* Default borders */
+  --border-width-base: 2px; /* THE CORAL RULE */
+  --border-width-thick: 4px; /* Heavy dividers */
+  --border-width-heavy: 6px; /* Blockquotes */
+  --border-width-accent: 1rem; /* Bold accent strips (NoteCard, Footer, Nav panel) */
 
   /* Border radius */
-  --radius-xs: 0.125rem;   /* 2px */
-  --radius-sm: 0.25rem;    /* 4px */
-  --radius-md: 0.5rem;     /* 8px */
-  --radius-lg: 0.75rem;    /* 12px */
-  --radius-xl: 1rem;       /* 16px */
-  --radius-full: 9999px;   /* Pills */
+  --radius-xs: 0.125rem; /* 2px */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+  --radius-full: 9999px; /* Pills */
 
   /* ============================================
      MOTION - Durations & Easing
@@ -271,10 +271,10 @@
 
   /* Durations */
   --duration-instant: 0ms;
-  --duration-fast: 150ms;      /* Micro-interactions */
-  --duration-normal: 200ms;    /* Standard transitions */
-  --duration-slow: 300ms;      /* Emphasis */
-  --duration-slower: 500ms;    /* Accordions, reveals */
+  --duration-fast: 150ms; /* Micro-interactions */
+  --duration-normal: 200ms; /* Standard transitions */
+  --duration-slow: 300ms; /* Emphasis */
+  --duration-slower: 500ms; /* Accordions, reveals */
 
   /* Easing functions */
   --ease-default: ease;
@@ -428,17 +428,9 @@
   }
 }
 
-/* Base Layer */
+/* Base Layer - Foundation defaults, no typography opinion */
 @layer base {
   html {
-    /* Typography - moved from body */
-    font-variant-ligatures: common-ligatures;
-    hanging-punctuation: first allow-end last;
-
-    /* Set the typeface */
-    font-family: var(--font-ui);
-    font-weight: 300;
-
     /* Colors - support both light/dark */
     color-scheme: light dark;
     accent-color: var(--color-accent);
@@ -449,52 +441,15 @@
   }
 
   body {
-    /* Background color */
+    /* Background color - global default so pages don't need to set it */
     background-color: var(--color-bg-primary);
   }
 
-  /* Set shorter line heights on headings and interactive elements */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
+  /* Set shorter line heights on interactive elements */
   button,
   input,
   label {
     line-height: 1.1;
-  }
-
-  /* Default Links */
-  a {
-    transition: all 0.15s;
-
-    &,
-    &:visited {
-      text-decoration: none;
-      color: var(--color-text-primary);
-    }
-
-    &:hover,
-    &:focus,
-    &:active {
-      color: var(--color-accent);
-    }
-  }
-
-  /* Better link underlines for links without classes */
-  a:not([class]) {
-    text-decoration: underline;
-    text-decoration-thickness: max(0.08em, 1px);
-    text-underline-offset: 0.2em;
-    text-decoration-skip-ink: auto;
-    color: currentColor;
-  }
-
-  /* Subtle underlines when not interacting */
-  a:not([class]):not(:is(:hover, :focus)) {
-    text-decoration-color: color-mix(in srgb, currentColor, transparent 75%);
   }
 
   /* Abbreviations */
@@ -579,6 +534,245 @@
   }
 }
 
+/* ============================================
+   TYPOGRAPHY LAYER - Prose-first defaults
+   This is the default typography for the site.
+   Use .ui-style to opt-out for navigation, footers, etc.
+   ============================================ */
+@layer typography {
+  html {
+    /* Typography foundation */
+    font-variant-ligatures: common-ligatures;
+    hanging-punctuation: first allow-end last;
+  }
+
+  body {
+    /* Prose is the default */
+    font-family: var(--font-prose);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-prose);
+    line-height: var(--line-height-prose);
+  }
+
+  /* Headings - with bottom borders by default */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-tight);
+    margin-top: 1.5em;
+    border-bottom: var(--border-width-hairline) solid var(--prose-heading-border-color);
+    padding-bottom: 0.3em;
+  }
+
+  h1 {
+    font-size: var(--font-size-2xl);
+    margin-top: 0;
+  }
+
+  h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: var(--font-size-md);
+  }
+
+  /* Links - nice underlines for prose */
+  a {
+    color: var(--prose-link-color);
+    text-decoration: underline;
+    text-decoration-thickness: max(0.08em, 1px);
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: auto;
+    transition: color var(--duration-fast) var(--ease-default);
+  }
+
+  a:visited {
+    color: var(--prose-link-visited-color);
+  }
+
+  a:hover,
+  a:focus {
+    color: var(--prose-link-hover-color);
+  }
+
+  /* Subtle underlines when not interacting */
+  a:not(:is(:hover, :focus)) {
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
+  }
+
+  /* Lists with colored markers */
+  ul,
+  ol {
+    padding-left: var(--space-4);
+  }
+
+  li {
+    padding-left: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  li:first-child {
+    margin-top: 0;
+  }
+
+  li::marker {
+    color: var(--prose-list-marker-color);
+  }
+
+  ul {
+    list-style-type: '•';
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: var(--border-width-thick) solid var(--prose-blockquote-border-color);
+    padding-left: var(--space-4);
+    font-style: italic;
+    margin-left: 0;
+  }
+
+  /* Prose spacing rhythm */
+  :where(p, ul, ol, blockquote, pre, figure, table) {
+    margin-top: 1.25em;
+  }
+
+  /* Remove top margin from first children */
+  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
+    margin-top: 0;
+  }
+
+  /* Inline code */
+  :not(pre) > code {
+    font-family: var(--font-code);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-code-background);
+    border: var(--border-width-hairline) solid var(--color-border);
+    padding: 0.1em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Strong text */
+  strong {
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+/* ============================================
+   LAYOUT LAYER - Reusable layout patterns
+   ============================================ */
+@layer layout {
+  /* Flow utility - consistent vertical spacing */
+  .flow > * + * {
+    margin-top: var(--flow-space, 1.25em);
+  }
+
+  /* List reset - for navigation and UI lists */
+  .list-reset {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* All caps utility - for labels and UI text */
+  .all-caps {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+}
+
+/* ============================================
+   UTILITIES LAYER - Single-purpose helpers
+   ============================================ */
+@layer utilities {
+  /* ----------------------------------------
+     .ui-style - Opt-out of prose typography
+     Apply to navigation, footers, page titles, and UI-heavy areas
+     ---------------------------------------- */
+  .ui-style {
+    /* Switch to UI font */
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-light);
+    line-height: var(--leading-snug);
+
+    /* Remove prose link styling */
+    & a {
+      text-decoration: none;
+      color: inherit;
+      transition: color var(--duration-fast) var(--ease-default);
+    }
+
+    & a:visited {
+      color: inherit;
+    }
+
+    & a:hover,
+    & a:focus {
+      color: var(--color-accent);
+    }
+
+    /* Remove heading borders and adjust spacing */
+    & :is(h1, h2, h3, h4, h5, h6) {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-top: 0;
+    }
+
+    /* Remove list marker colors */
+    & li::marker {
+      color: inherit;
+    }
+
+    /* Tighter prose spacing */
+    & :where(p, ul, ol, blockquote) {
+      margin-top: 0.75em;
+    }
+  }
+
+  /* ----------------------------------------
+     .dark-surface - Always-dark areas (nav, footer)
+     Combine with .ui-style for dark UI areas
+     ---------------------------------------- */
+  .dark-surface {
+    background-color: var(--color-bg-dark-200);
+    color: var(--color-brand-white);
+
+    & a:hover,
+    & a:focus {
+      color: var(--color-accent);
+    }
+  }
+
+  /* Container query utility */
+  .cq {
+    container-type: inline-size;
+  }
+
+  /* Hidden utility for screen readers and microformats */
+  .sr-only,
+  .hidden-microformat {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+}
+
 /* Theme Layer - Using light-dark() for automatic theming */
 @layer theme {
   @media (prefers-reduced-motion: reduce) {
@@ -608,10 +802,7 @@
     /* -------------------- PRIMARY GLOBAL COLOURS -------------------- */
     /* Background colors */
     --color-bg-primary: light-dark(var(--color-brand-beige), var(--color-bg-dark-200));
-    --color-bg-secondary: light-dark(
-      oklch(98% 0.01 85),
-      oklch(14% 0 0)
-    );
+    --color-bg-secondary: light-dark(oklch(98% 0.01 85), oklch(14% 0 0));
 
     /* Text colors */
     --color-text-primary: light-dark(var(--color-brand-grey), var(--color-brand-beige));
@@ -642,17 +833,14 @@
     /* -------------------- SURFACE ELEVATION SYSTEM -------------------- */
     --surface-base: var(--color-bg-primary);
     --surface-raised: light-dark(
-      oklch(100% 0 0),         /* Light: white */
-      oklch(22% 0 0)           /* Dark: elevated charcoal */
+      oklch(100% 0 0),
+      /* Light: white */ oklch(22% 0 0) /* Dark: elevated charcoal */
     );
     --surface-inset: light-dark(
-      oklch(92% 0.02 85),      /* Light: darker beige */
-      oklch(14% 0 0)           /* Dark: deeper charcoal */
+      oklch(92% 0.02 85),
+      /* Light: darker beige */ oklch(14% 0 0) /* Dark: deeper charcoal */
     );
-    --surface-overlay: light-dark(
-      oklch(98% 0.01 85),
-      oklch(26% 0 0)
-    );
+    --surface-overlay: light-dark(oklch(98% 0.01 85), oklch(26% 0 0));
 
     /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
     --prose-heading-border-color: var(--color-border);
@@ -789,23 +977,4 @@
     --font-weight-article: 250;
     --line-height-article: 1.6;
   }
-}
-
-/* Utility classes that need to be outside layers */
-.cq {
-  container-type: inline-size;
-}
-
-/* Hidden utility for screen readers and microformats */
-.sr-only,
-.hidden-microformat {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
 }
