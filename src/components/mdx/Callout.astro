@@ -1,6 +1,5 @@
 ---
 import { Icon } from 'astro-icon/components';
-import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
 
 export interface Props {
   title?: string;
@@ -28,9 +27,9 @@ if (icon && emoji) {
   }
   <div class="content-wrapper">
     {title && <h3 class="title">{title}</h3>}
-    <SimpleProseTypography class="content">
+    <div class="content">
       <slot />
-    </SimpleProseTypography>
+    </div>
   </div>
 </aside>
 

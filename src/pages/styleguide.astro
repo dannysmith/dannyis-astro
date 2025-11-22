@@ -8,7 +8,6 @@ import Embed from '@components/mdx/Embed.astro';
 import Pill from '@components/ui/Pill.astro';
 import Grid from '@components/mdx/Grid.astro';
 import Notion from '@components/mdx/Notion.astro';
-import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import ContentCard from '@components/ui/ContentCard.astro';
 import ButtonLink from '@components/mdx/ButtonLink.astro';
@@ -47,7 +46,7 @@ const sampleNotes = (
     <MainNavigation />
     <main class="cq">
       <h1>Component & Styleguide</h1>
-      <SimpleProseTypography class="content">
+      <div class="content">
         <section class="intro-section">
           <p>
             <strong>Welcome!</strong> This page is a comprehensive styleguide and visual testbed for
@@ -377,7 +376,7 @@ const sampleNotes = (
             />
           </div>
         </div>
-      </SimpleProseTypography>
+      </div>
     </main>
     <Footer />
     <style>
