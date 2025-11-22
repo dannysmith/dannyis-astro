@@ -605,10 +605,9 @@ Priority is based on visual impact and complexity.
 
 | Component | Font-Size | Spacing | Border/Radius | Transitions | Status |
 |-----------|-----------|---------|---------------|-------------|--------|
-| `LongFormProseTypography.astro` | 9 values | 2 values | 2 values | 1 value | Needs migration |
-| `SimpleProseTypography.astro` | 2 values | 1 value | 2 values | 1 value | Needs migration |
-| `Footer.astro` | 1 value | 2 values | - | - | Needs migration |
-| `MainNavigation.astro` | 1 value | 3 values | 1 value | 1 value | Needs migration |
+| `LongFormProseTypography.astro` | 9 values | 2 values | 2 values | 1 value | Simplified (typography now in global.css) |
+| `Footer.astro` | 1 value | 2 values | - | - | Uses `.ui-style .dark-surface` |
+| `MainNavigation.astro` | 1 value | 3 values | 1 value | 1 value | Uses `.ui-style .dark-surface` |
 | `NoteCard.astro` | 2 values | 2 values | 1 value | 1 value | Needs migration |
 
 ### Medium Priority (Content Components)
@@ -670,12 +669,12 @@ Priority is based on visual impact and complexity.
 
 ### Migration Sequence (Recommended)
 
-1. **Prose Typography** - `LongFormProseTypography.astro`, `SimpleProseTypography.astro`
-   - Highest impact on content presentation
-   - May have redundancy from Task 0 reset updates
+1. **Prose Typography** - Now handled by `typography` layer in `global.css`
+   - `SimpleProseTypography.astro` has been **deleted** (prose is now the default)
+   - `LongFormProseTypography.astro` simplified to article-specific features only
 
-2. **Layout Components** - `Footer.astro`, `MainNavigation.astro`, `NoteCard.astro`
-   - Core site structure
+2. **Layout Components** - `NoteCard.astro`
+   - `Footer.astro` and `MainNavigation.astro` now use `.ui-style .dark-surface` utilities
 
 3. **Content Cards** - `ContentCard.astro`, `BookmarkCard.astro`, `Callout.astro`
    - High visibility in content

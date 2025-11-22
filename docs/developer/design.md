@@ -186,24 +186,39 @@ Theme switching via `data-theme` attribute on `:root` element.
 
 **Core architectural pattern** - Controls specificity without relying on selector complexity or `!important`.
 
-Five-layer cascade system (lowest to highest specificity):
+Eight-layer cascade system (lowest to highest specificity):
 
-1. **Reset** (@layer reset) - Basic resets, box model
-2. **Base** (@layer base) - Default element styles, typography
-3. **Simple Prose** (@layer simple-prose) - Basic content styling
-4. **Longform Prose** (@layer longform-prose) - Article and long-form content styling
-5. **Theme** (@layer theme) - Color schemes, dark/light mode
+1. **Reset** (@layer reset) - Browser normalization
+2. **Base** (@layer base) - Foundation: colors, element defaults
+3. **Typography** (@layer typography) - Prose-first defaults: serif font, links, lists, blockquotes, heading borders
+4. **Layout** (@layer layout) - Reusable patterns: `.flow`, `.list-reset`, `.all-caps`
+5. **Utilities** (@layer utilities) - `.ui-style`, `.dark-surface`, `.sr-only`, `.cq`
+6. **Components** (@layer components) - Component-specific styles
+7. **Longform** (@layer longform) - Article-only enhancements: end marks, footnotes, oldstyle numerals
+8. **Theme** (@layer theme) - Semantic color tokens with light-dark()
+
+**Key Design Decision:** Prose typography is the default. Use `.ui-style` to opt-out for UI areas (nav, footer, list pages).
 
 ```css
-@layer base {
+/* Typography layer sets prose defaults */
+@layer typography {
+  body {
+    font-family: var(--font-prose);
+  }
   a {
-    color: var(--prose-link-color);
+    text-decoration: underline;
   }
 }
 
-@layer longform-prose {
-  .prose a {
-    text-decoration: underline;
+/* Utilities layer provides opt-out */
+@layer utilities {
+  .ui-style {
+    font-family: var(--font-ui);
+    & a { text-decoration: none; }
+  }
+  .dark-surface {
+    background-color: var(--color-bg-dark-200);
+    color: var(--color-brand-white);
   }
 }
 ```

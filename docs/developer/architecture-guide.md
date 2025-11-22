@@ -76,7 +76,9 @@ const components = {
 
 **CSS Layers Architecture:**
 
-- Five-layer cascade system: `reset` → `base` → `simple-prose` → `longform-prose` → `theme`
+- Eight-layer cascade system: `reset` → `base` → `typography` → `layout` → `utilities` → `components` → `longform` → `theme`
+- Prose typography is the **default** - use `.ui-style` to opt-out for UI areas
+- `.dark-surface` utility for always-dark components (nav, footer)
 - Eliminates need for `!important` or complex specificity battles
 - Location: `src/styles/global.css:2`
 
@@ -382,7 +384,7 @@ This provides access to 2400+ code snippets and comprehensive Astro documentatio
 **CSS Layers** - Central to our styling architecture:
 
 - See [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification
-- Our layer order: reset → base → simple-prose → longform-prose → theme
+- Our layer order: reset → base → typography → layout → utilities → components → longform → theme
 
 ### General Principle
 
