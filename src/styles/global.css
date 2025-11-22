@@ -1,18 +1,3 @@
-/* ============================================
-   GLOBAL STYLESHEET - MINIMAL SKELETON
-   ============================================
-   This is a stripped-down version for CSS refactoring.
-   Full version is in global-backup.css
-
-   Structure:
-   1. Layer Declaration & Imports
-   2. Font Faces
-   3. @property Declarations
-   4. :root Custom Properties (essential tokens only)
-   5. @layer reset - Complete
-   6-11. Other layers - Empty (copy from global-backup.css)
-   ============================================ */
-
 /* Define our layers - order determines cascade priority */
 @layer reset, base, typography, layout, utilities, longform, theme;
 
@@ -28,6 +13,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: 'Literata';
   src: url('/fonts/Literata-Italic-self-compiled-Mar2019.woff2') format('woff2');
@@ -37,7 +23,6 @@
 
 /* ============================================
    @PROPERTY DECLARATIONS
-   Type-safe custom properties, enables animation
    ============================================ */
 @property --color-accent {
   syntax: '<color>';
@@ -53,71 +38,109 @@
 
 /* ============================================
    DESIGN TOKENS
-   Essential primitives - copy more from global-backup.css as needed
    ============================================ */
 :root {
-  /* Enable automatic light/dark theme switching */
-  color-scheme: light dark;
+  /* ======= COLOURS ======= */
 
-  /* ----- COLORS ----- */
-  /* Neutrals */
-  --color-black: oklch(15% 0 0);
-  --color-true-black: oklch(0% 0 0);
+  /* Core Hues - shared across modes */
+  --hue-coral: 25;
+  --hue-pink: 350;
+  --hue-orange: 55;
+  --hue-purple: 300;
+  --hue-yellow: 95;
+  --hue-green: 165;
+  --hue-blue: 250;
+  --hue-grey: 210;
 
-  /* Brand coral (hue: 25) - your accent color */
-  --color-red-400: oklch(86% 0.08 25);
-  --color-red-500: oklch(70% 0.18 25);
-  --color-red-600: oklch(58% 0.18 25);
+  /* Absolute colors - no mode switching needed */
+  --color-white: oklch(100% 0 0);
+  --color-black: oklch(0% 0 0);
 
-  /* Purple - for visited links */
-  --color-purple-500: oklch(60% 0.14 300);
-  --color-purple-600: oklch(48% 0.16 300);
+  /* Adaptive Color Palette
+    Each color auto-adapts for light/dark mode.
+    Dark mode: increase lightness for visibility, reduce chroma to avoid harshness */
 
-  /* Yellow - for highlights */
-  --color-yellow-500: oklch(90% 0.16 95);
-  --color-yellow-600: oklch(80% 0.14 95);
+  --color-coral: light-dark(oklch(70% 0.18 var(--hue-coral)), oklch(80% 0.14 var(--hue-coral)));
 
-  /* Grey - for text and UI */
-  --color-grey-500: oklch(70% 0 0);
-  --color-grey-800: oklch(32% 0 0);
+  --color-pink: light-dark(oklch(55% 0.15 var(--hue-pink)), oklch(70% 0.13 var(--hue-pink)));
 
-  /* Background scales */
-  --color-bg-light-700: oklch(28% 0.01 210);
-  --color-bg-dark-200: oklch(18% 0 0);
+  --color-orange: light-dark(oklch(78% 0.16 var(--hue-orange)), oklch(80% 0.14 var(--hue-orange)));
 
-  /* Named Brand colours */
-  --color-brand-primary: var(--color-red-500);
-  --color-brand-white: oklch(100% 0 0);
-  --color-brand-beige: oklch(96% 0.02 85);
+  --color-purple: light-dark(oklch(60% 0.14 var(--hue-purple)), oklch(72% 0.12 var(--hue-purple)));
 
-  /* ----- FONTS ----- */
+  --color-yellow: light-dark(oklch(90% 0.16 var(--hue-yellow)), oklch(82% 0.12 var(--hue-yellow)));
+
+  --color-green: light-dark(oklch(65% 0.12 var(--hue-green)), oklch(72% 0.1 var(--hue-green)));
+
+  --color-blue: light-dark(oklch(62% 0.15 var(--hue-blue)), oklch(70% 0.13 var(--hue-blue)));
+
+  /* Neutrals - structural colors for backgrounds/text */
+  --color-ink: oklch(28% 0.01 var(--hue-grey));
+  --color-grey: oklch(35% 0.01 var(--hue-grey));
+  --color-beige: oklch(96% 0.02 85);
+
+  /* ======= SEMANTIC COLOURS ======= */
+  /* Role-based tokens that reference the adaptive palette */
+
+  --color-accent: var(--color-coral);
+  --color-visited: var(--color-purple);
+  --color-highlight: var(--color-yellow);
+
+  --color-background: light-dark(var(--color-beige), var(--color-grey));
+  --color-background-secondary: light-dark(
+    oklch(from var(--color-beige) calc(l + 0.02) c h),
+    oklch(from var(--color-grey) calc(l - 0.04) c h)
+  );
+  --color-text: light-dark(var(--color-ink), var(--color-beige));
+  --color-text-secondary: light-dark(
+    oklch(55% 0.01 var(--hue-grey)),
+    oklch(75% 0.01 var(--hue-grey))
+  );
+  --color-border: light-dark(
+    oklch(from var(--color-black) l c h / 0.1),
+    oklch(from var(--color-white) l c h / 0.1)
+  );
+
+  /* ======= FONTS ======= */
+
   --font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-  /* ----- SPACING (8px grid) ----- */
-  --space-0: 0;
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-8: 2.5rem;
-  --space-10: 3rem;
-  --space-12: 4rem;
-  --space-16: 5rem;
-  --space-20: 6rem;
+  /* ======= SPACING ======= */
+  /* @link https://utopia.fyi/space/calculator?c=375,16,1.2,1280,24,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
 
-  /* ----- TYPOGRAPHY (Utopia fluid scale) ----- */
-  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.8rem);
-  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1rem);
-  --step-0: clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem);
-  --step-1: clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem);
-  --step-2: clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem);
-  --step-3: clamp(1.94rem, 1.74rem + 0.9vw, 2.96rem);
-  --step-4: clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem);
-  --step-5: clamp(2.8rem, 2.38rem + 1.85vw, 5.26rem);
+  --space-3xs: clamp(0.25rem, 0.1982rem + 0.221vw, 0.375rem);
+  --space-2xs: clamp(0.5rem, 0.3964rem + 0.442vw, 0.75rem);
+  --space-xs: clamp(0.75rem, 0.5946rem + 0.663vw, 1.125rem);
+  --space-s: clamp(1rem, 0.7928rem + 0.884vw, 1.5rem);
+  --space-m: clamp(1.5rem, 1.1892rem + 1.326vw, 2.25rem);
+  --space-l: clamp(2rem, 1.5856rem + 1.768vw, 3rem);
+  --space-xl: clamp(3rem, 2.3785rem + 2.6519vw, 4.5rem);
+  --space-2xl: clamp(4rem, 3.1713rem + 3.5359vw, 6rem);
+  --space-3xl: clamp(6rem, 4.7569rem + 5.3039vw, 9rem);
+
+  /* One-up pairs */
+  --space-3xs-2xs: clamp(0.25rem, 0.0428rem + 0.884vw, 0.75rem);
+  --space-2xs-xs: clamp(0.5rem, 0.241rem + 1.105vw, 1.125rem);
+  --space-xs-s: clamp(0.75rem, 0.4392rem + 1.326vw, 1.5rem);
+  --space-s-m: clamp(1rem, 0.482rem + 2.2099vw, 2.25rem);
+  --space-m-l: clamp(1.5rem, 0.8785rem + 2.6519vw, 3rem);
+  --space-l-xl: clamp(2rem, 0.9641rem + 4.4199vw, 4.5rem);
+  --space-xl-2xl: clamp(3rem, 1.7569rem + 5.3039vw, 6rem);
+  --space-2xl-3xl: clamp(4rem, 1.9282rem + 8.8398vw, 9rem);
+
+  /* ======= TYPOGRAPHY ======= */
+  /* @link https://utopia.fyi/type/calculator?c=375,16,1.2,1280,24,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+  --step--2: clamp(0.6944rem, 0.6324rem + 0.2647vw, 0.8442rem);
+  --step--1: clamp(0.8333rem, 0.7124rem + 0.5162vw, 1.1253rem);
+  --step-0: clamp(1rem, 0.7928rem + 0.884vw, 1.5rem);
+  --step-1: clamp(1.2rem, 0.8687rem + 1.4135vw, 1.9995rem);
+  --step-2: clamp(1.44rem, 0.9323rem + 2.1663vw, 2.6653rem);
+  --step-3: clamp(1.728rem, 0.9718rem + 3.2263vw, 3.5529rem);
+  --step-4: clamp(2.0736rem, 0.9704rem + 4.707vw, 4.736rem);
+  --step-5: clamp(2.4883rem, 0.9035rem + 6.762vw, 6.3131rem);
 
   /* Semantic aliases */
   --font-size-xs: var(--step--2);
@@ -134,13 +157,12 @@
   --leading-tight: 1.1;
   --leading-snug: 1.2;
   --leading-normal: 1.5;
-  --leading-relaxed: 1.7;
-  --leading-loose: 1.8;
+  --leading-loose: 1.7;
 
   /* Letter Spacing */
-  --tracking-tight: -0.01em;
+  --tracking-tight: -0.02ch;
   --tracking-normal: 0;
-  --tracking-wide: 0.08em;
+  --tracking-wide: 0.05ch;
   --tracking-wider: 0.1ch;
 
   /* Font Weights */
@@ -169,7 +191,6 @@
   --duration-normal: 200ms;
   --duration-slow: 300ms;
 
-  --ease-default: ease;
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ----- SHADOWS ----- */
@@ -177,44 +198,29 @@
     drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.1));
   --shadow-medium: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
     drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
-
-  --elevation-low: var(--shadow-small);
-  --elevation-medium: var(--shadow-medium);
-
-  /* ----- SEMANTIC TOKENS (light-dark auto-switching) ----- */
-  --color-bg-primary: light-dark(var(--color-brand-beige), var(--color-bg-dark-200));
-  --color-bg-secondary: light-dark(oklch(98% 0.01 85), oklch(14% 0 0));
-  --color-text-primary: light-dark(var(--color-bg-light-700), var(--color-brand-beige));
-  --color-text-secondary: light-dark(var(--color-grey-800), var(--color-grey-500));
-  --color-accent: var(--color-brand-primary);
-  --color-border: light-dark(oklch(0% 0 0 / 0.1), oklch(100% 0 0 / 0.1));
-  --color-link: light-dark(var(--color-red-500), var(--color-red-400));
-  --color-link-visited: light-dark(var(--color-purple-600), var(--color-purple-500));
-  --color-link-hover: light-dark(var(--color-red-600), var(--color-red-500));
-  --color-mark-bg: light-dark(var(--color-yellow-500), var(--color-yellow-600));
-  --color-code-background: var(--color-bg-secondary);
-  --color-table-border: var(--color-border);
-  --color-table-bg: var(--color-bg-secondary);
-  --color-table-header-bg: var(--color-bg-secondary);
 }
 
 /* ============================================
-   RESET LAYER - Complete
-   Uses :where() for zero specificity
+    RESET LAYER
+    Uses :where() for zero specificity
    ============================================ */
 @layer reset {
+  /* Use a more-intuitive box-sizing model with :where() for zero specificity */
   :where(*, *::before, *::after) {
     box-sizing: border-box;
   }
 
+  /* Remove default margin */
   :where(*) {
-    margin: 0;
+    margin-block: 0;
   }
 
+  /* Better focus outline spacing */
   :where(:focus-visible) {
     outline-offset: 3px;
   }
 
+  /* Enable keyword animations (animate to/from 'auto') */
   @media (prefers-reduced-motion: no-preference) {
     :where(html) {
       interpolate-size: allow-keywords;
@@ -222,20 +228,33 @@
   }
 
   :where(html) {
+    /* Prevent font size inflation on mobile */
     -moz-text-size-adjust: none;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
+
+    /* Prevent layout shift when scrollbars appear */
     scrollbar-gutter: stable;
   }
 
   :where(body) {
+    /* Add accessible line-height */
     line-height: 1.5;
+
+    /* Improve text rendering */
     -webkit-font-smoothing: antialiased;
+
+    /* Sensible min-height */
     min-height: 100vh;
+
+    /* Position relative for absolutely positioned children */
     position: relative;
+
+    /* Remove default padding */
     padding: 0;
   }
 
+  /* Improve media defaults */
   :where(img, picture, video, canvas, svg) {
     display: block;
     max-width: 100%;
@@ -245,62 +264,76 @@
     height: auto;
   }
 
+  /* Remove default img border */
   :where(img) {
     border: 0;
   }
 
+  /* Inherit fonts for form controls */
   :where(input, button, textarea, select) {
     font: inherit;
   }
 
+  /* Auto-growing textarea */
   :where(textarea) {
     field-sizing: content;
   }
 
+  /* Fix fieldset sizing in flexbox/grid */
   :where(fieldset) {
     min-inline-size: 0;
   }
 
+  /* Normalize search input appearance */
   :where([type='search']) {
     -webkit-appearance: textfield;
     appearance: textfield;
   }
 
+  /* Keep specific input types LTR in RTL layouts */
   :where(
     input:is([type='tel'], [type='url'], [type='email'], [type='number']):not(:placeholder-shown)
   ) {
     direction: ltr;
   }
 
+  /* Sensible defaults for iframes */
   :where(iframe) {
     border: 0;
     overflow: hidden;
   }
 
+  /* Avoid text overflows */
   :where(p, h1, h2, h3, h4, h5, h6) {
     overflow-wrap: break-word;
   }
 
+  /* Improve line wrapping */
   :where(h1, h2, h3, h4, h5, h6) {
     text-wrap: balance;
   }
 
+  /* Prevent widows and orphans in body text */
   :where(p, blockquote) {
     text-wrap: pretty;
   }
 
+  /* Anything that has been anchored to should have extra scroll margin */
   :where(:target) {
     scroll-margin-block: 5ex;
   }
 
+  /* Sensible wrapping for code blocks */
   :where(pre) {
     white-space: pre-wrap;
   }
 
+  /* Strengthen hidden attribute */
   :where([hidden]:not([hidden='until-found'])) {
     display: none !important;
   }
 
+  /* Remove list styles on ul, ol elements with a list role */
   :where(ul[role='list'], ol[role='list']) {
     list-style: none;
   }
@@ -312,6 +345,10 @@
    ============================================ */
 @layer base {
   /* TODO: Add from global-backup.css */
+  :root {
+    /* Enable automatic light/dark theme switching */
+    color-scheme: light dark;
+  }
 }
 
 /* ============================================
