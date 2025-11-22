@@ -99,8 +99,8 @@ if (collection === 'toolboxPages') {
     background: var(--color-contentcard-bg);
     border: none;
     border-radius: 0;
-    border-left: 3px solid var(--color-contentcard-article-accent);
-    transition: all 0.15s ease;
+    border-left: var(--border-width-thick) solid var(--color-contentcard-article-accent);
+    transition: all var(--duration-fast) var(--ease-default);
     overflow: hidden;
   }
 
@@ -113,7 +113,7 @@ if (collection === 'toolboxPages') {
   }
 
   .content-card:hover {
-    border-left-width: 6px;
+    border-left-width: var(--border-width-heavy);
     background: var(--color-bg-secondary);
   }
 
@@ -137,27 +137,29 @@ if (collection === 'toolboxPages') {
   }
 
   .card-content {
-    padding: 1rem;
+    padding: var(--space-4);
   }
 
   .card-header {
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-3);
   }
 
   .card-meta {
     display: flex;
+    flex-wrap: wrap; /* Defensive: allow wrapping */
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
-    font-size: 0.75rem;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-xs);
     opacity: 0.7;
   }
 
   .content-type {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    font-weight: 600;
+    gap: var(--space-1);
+    font-weight: var(--font-weight-semibold);
   }
 
   .type-icon {
@@ -166,32 +168,33 @@ if (collection === 'toolboxPages') {
 
   .type-label {
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.65rem;
+    letter-spacing: var(--tracking-wide);
+    font-size: var(--font-size-xs);
   }
 
   .date {
-    font-size: 0.65rem;
-    font-weight: 400;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-regular);
   }
 
   .card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1.2;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--leading-snug);
     margin: 0;
     color: var(--color-text-primary);
+    overflow-wrap: break-word; /* Defensive: handle long titles */
   }
 
   .card-summary {
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-3);
   }
 
   .card-summary p {
     margin: 0;
     color: var(--color-text-secondary);
-    line-height: 1.4;
-    font-size: 0.85rem;
+    line-height: var(--leading-normal);
+    font-size: var(--font-size-sm);
   }
 
 
@@ -202,11 +205,11 @@ if (collection === 'toolboxPages') {
   }
 
   .content-card.compact .card-content {
-    padding: 0.75rem;
+    padding: var(--space-3);
   }
 
   .content-card.compact .card-title {
-    font-size: 1rem;
+    font-size: var(--font-size-base);
   }
 
   /* Container queries for responsive behavior */
@@ -214,29 +217,29 @@ if (collection === 'toolboxPages') {
     .card-summary {
       display: none;
     }
-    
+
     .card-image {
       display: none;
     }
-    
+
     .card-content {
-      padding: 0.75rem;
+      padding: var(--space-3);
     }
-    
+
     .card-title {
-      font-size: 0.95rem;
+      font-size: var(--font-size-sm);
     }
   }
 
 
   /* Focus and accessibility */
   .card-link:focus {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline: var(--border-width-base) solid var(--color-accent);
+    outline-offset: var(--space-1);
   }
 
   .card-link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline: var(--border-width-base) solid var(--color-accent);
+    outline-offset: var(--space-1);
   }
 </style>

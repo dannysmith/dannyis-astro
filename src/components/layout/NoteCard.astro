@@ -52,16 +52,17 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
     background: var(--color-notecard-bg);
     padding: var(--line-height);
     background-image: radial-gradient(var(--color-notecard-dot-grid) 0.5px, transparent 0);
-    background-size: 1rem 1rem;
-    filter: var(--shadow-medium);
-    border-top: 1rem solid var(--color-notecard-border);
-    border-radius: 0.2rem;
+    background-size: var(--space-4) var(--space-4);
+    filter: var(--elevation-medium);
+    border-top: var(--space-4) solid var(--color-notecard-border);
+    border-radius: var(--radius-sm);
   }
 
   .note-header {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-2);
+    min-width: 0; /* Defensive: allow shrinking */
   }
 
   .date-link {
@@ -69,30 +70,31 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
   }
 
   .date {
-    font-size: 0.7rem;
+    font-size: var(--font-size-xs);
     color: var(--color-notecard-date);
     text-transform: uppercase;
-    letter-spacing: 0.1ch;
-    transition: color 0.2s ease;
+    letter-spacing: var(--tracking-wider);
+    transition: color var(--duration-normal) var(--ease-default);
   }
 
   .date-link:hover .date {
-    color: var(--color-text-accent);
+    color: var(--color-accent);
   }
 
   h1 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    line-height: 1.2;
-    font-weight: 600;
+    font-size: var(--font-size-lg);
+    line-height: var(--leading-snug);
+    font-weight: var(--font-weight-semibold);
     margin: 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-notecard-title-underline);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width-base) solid var(--color-notecard-title-underline);
+    overflow-wrap: break-word; /* Defensive: handle long titles */
   }
 
   .tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--space-2);
     line-height: 1;
   }
 
@@ -112,7 +114,7 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
     }
 
     .date {
-      font-size: 0.8rem;
+      font-size: var(--font-size-sm);
     }
   }
 

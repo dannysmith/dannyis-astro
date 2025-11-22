@@ -37,37 +37,38 @@ if (icon && emoji) {
 <style>
   .callout {
     display: flex;
+    flex-wrap: wrap; /* Defensive: allow wrapping */
     background: var(--color-callout-default-bg);
-    padding: 1rem;
-    border-radius: 4px;
-    margin: 1rem 0;
+    padding: var(--space-4);
+    border-radius: var(--radius-sm);
+    margin: var(--space-4) 0;
   }
 
   .icon-wrapper {
     flex-shrink: 0;
-    margin-right: 0.75rem;
+    margin-right: var(--space-3);
   }
 
   .icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.875rem;
+    font-size: var(--font-size-sm);
     line-height: 1;
     margin-top: 0.35rem;
   }
 
   .content-wrapper {
     flex-grow: 1;
-    min-width: 0;
+    min-width: 0; /* Defensive: allow shrinking */
     max-width: 100%;
   }
 
   .title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.4;
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-normal);
   }
 
   .content {

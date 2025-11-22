@@ -18,101 +18,132 @@
   font-display: swap;
 }
 
+/* ============================================
+   TYPE-SAFE CUSTOM PROPERTIES (@property)
+   Enables animation and provides type checking
+   ============================================ */
+
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.18 25);
+}
+
+@property --surface-raised {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
 /* CSS Custom Properties - these need to be outside layers as they're declarations */
 :root {
-  /* Palette: base color tokens, never used directly in components */
-  --color-black: #191919;
-  --color-true-black: #000000;
+  /* ============================================
+     PRIMITIVE COLOR PALETTE - OKLCH
+     Perceptually uniform, wide gamut colors
+     ============================================ */
 
-  --color-pink-300: #f4dfeb;
-  --color-pink-400: #fac8e4;
-  --color-pink-500: #e255a1;
-  --color-pink-600: #ad1a72;
-  --color-pink-700: #602d51;
-  --color-pink-800: #533b4c;
+  /* Neutrals */
+  --color-black: oklch(15% 0 0);          /* #191919 */
+  --color-true-black: oklch(0% 0 0);      /* #000000 */
 
-  --color-red-300: #fbe4e4;
-  --color-red-400: #ffd4d4;
-  --color-red-500: #ff7369;
-  --color-red-600: #e03e3e;
-  --color-red-700: #b84848;
-  --color-red-800: #594141;
+  /* Pink (hue: 350) */
+  --color-pink-300: oklch(92% 0.04 350);
+  --color-pink-400: oklch(86% 0.08 350);
+  --color-pink-500: oklch(62% 0.18 350);
+  --color-pink-600: oklch(48% 0.16 350);
+  --color-pink-700: oklch(38% 0.08 350);
+  --color-pink-800: oklch(32% 0.04 350);
 
-  --color-orange-300: #faebdd;
-  --color-orange-400: #fed9b7;
-  --color-orange-500: #ffa344;
-  --color-orange-600: #d9730d;
-  --color-orange-700: #765839;
-  --color-orange-800: #594a3a;
+  /* Red/Coral - Brand accent (hue: 25) */
+  --color-red-300: oklch(92% 0.04 25);
+  --color-red-400: oklch(86% 0.08 25);
+  --color-red-500: oklch(70% 0.18 25);    /* Primary brand coral */
+  --color-red-600: oklch(58% 0.18 25);
+  --color-red-700: oklch(48% 0.12 25);
+  --color-red-800: oklch(35% 0.06 25);
 
-  --color-purple-300: #eae4f2;
-  --color-purple-400: #e6d7f9;
-  --color-purple-500: #9a6dd7;
-  --color-purple-600: #6940a5;
-  --color-purple-700: #6f6695;
-  --color-purple-800: #443f57;
+  /* Orange (hue: 55) */
+  --color-orange-300: oklch(94% 0.04 55);
+  --color-orange-400: oklch(88% 0.10 55);
+  --color-orange-500: oklch(78% 0.16 55);
+  --color-orange-600: oklch(68% 0.16 55);
+  --color-orange-700: oklch(48% 0.08 55);
+  --color-orange-800: oklch(38% 0.04 55);
 
-  --color-yellow-300: #fbf3db;
-  --color-yellow-400: #feeebe;
-  --color-yellow-500: #ffdc49;
-  --color-yellow-600: #dfab01;
-  --color-yellow-700: #645e26;
-  --color-yellow-800: #59563b;
+  /* Purple (hue: 300) */
+  --color-purple-300: oklch(92% 0.04 300);
+  --color-purple-400: oklch(86% 0.08 300);
+  --color-purple-500: oklch(60% 0.14 300);
+  --color-purple-600: oklch(48% 0.16 300);
+  --color-purple-700: oklch(48% 0.08 300);
+  --color-purple-800: oklch(32% 0.04 300);
 
-  --color-green-300: #ddedea;
-  --color-green-400: #c8eae3;
-  --color-green-500: #4dab9a;
-  --color-green-600: #0f7b6c;
-  --color-green-700: #2c5c5a;
-  --color-green-800: #354c4b;
+  /* Yellow (hue: 95) */
+  --color-yellow-300: oklch(96% 0.04 95);
+  --color-yellow-400: oklch(94% 0.10 95);
+  --color-yellow-500: oklch(90% 0.16 95);
+  --color-yellow-600: oklch(80% 0.14 95);
+  --color-yellow-700: oklch(48% 0.06 95);
+  --color-yellow-800: oklch(40% 0.03 95);
 
-  --color-blue-300: #ddebf1;
-  --color-blue-400: #c4e4f2;
-  --color-blue-500: #529cca;
-  --color-blue-600: #0b6e99;
-  --color-blue-700: #254e66;
-  --color-blue-800: #364954;
+  /* Green (hue: 165) */
+  --color-green-300: oklch(92% 0.04 165);
+  --color-green-400: oklch(88% 0.08 165);
+  --color-green-500: oklch(65% 0.12 165);
+  --color-green-600: oklch(52% 0.12 165);
+  --color-green-700: oklch(42% 0.06 165);
+  --color-green-800: oklch(35% 0.04 165);
 
-  --color-brown-300: #e9e5e3;
-  --color-brown-400: #f1e0d8;
-  --color-brown-500: #937264;
-  --color-brown-600: #64473a;
-  --color-brown-700: #534343;
-  --color-brown-800: #434040;
+  /* Blue (hue: 230) */
+  --color-blue-300: oklch(92% 0.03 230);
+  --color-blue-400: oklch(88% 0.06 230);
+  --color-blue-500: oklch(62% 0.12 230);
+  --color-blue-600: oklch(50% 0.14 230);
+  --color-blue-700: oklch(40% 0.08 230);
+  --color-blue-800: oklch(32% 0.04 230);
 
-  --color-grey-300: #ebeced;
-  --color-grey-400: #ebeced;
-  --color-grey-500: #979a9bf2;
-  --color-grey-600: #9b9a97;
-  --color-grey-700: #596063;
-  --color-grey-800: #454b4e;
+  /* Brown (hue: 40) */
+  --color-brown-300: oklch(92% 0.02 40);
+  --color-brown-400: oklch(88% 0.04 40);
+  --color-brown-500: oklch(55% 0.06 40);
+  --color-brown-600: oklch(40% 0.06 40);
+  --color-brown-700: oklch(35% 0.03 40);
+  --color-brown-800: oklch(30% 0.02 40);
 
-  /* Backgrounds */
-  --color-bg-light-100: #ffffff;
-  --color-bg-light-200: #f3f6f7;
-  --color-bg-light-300: #e3e6e8;
-  --color-bg-light-400: #9a9fa1;
-  --color-bg-light-500: #6c7173;
-  --color-bg-light-600: #4d5254;
-  --color-bg-light-700: #2f3437;
-  --color-bg-light-800: #191919;
+  /* Grey (neutral) */
+  --color-grey-300: oklch(93% 0 0);
+  --color-grey-400: oklch(93% 0 0);
+  --color-grey-500: oklch(65% 0 0);
+  --color-grey-600: oklch(65% 0 0);
+  --color-grey-700: oklch(42% 0 0);
+  --color-grey-800: oklch(32% 0 0);
 
-  --color-bg-dark-100: #191919;
-  --color-bg-dark-200: #202020;
-  --color-bg-dark-300: #2c2c2c;
-  --color-bg-dark-400: #363636;
-  --color-bg-dark-500: #898989;
-  --color-bg-dark-600: #9b9b9b;
-  --color-bg-dark-700: #d5d5d5;
-  --color-bg-dark-800: #ffffff;
+  /* Background scales */
+  --color-bg-light-100: oklch(100% 0 0);
+  --color-bg-light-200: oklch(97% 0.005 210);
+  --color-bg-light-300: oklch(92% 0.005 210);
+  --color-bg-light-400: oklch(68% 0.005 210);
+  --color-bg-light-500: oklch(50% 0.005 210);
+  --color-bg-light-600: oklch(38% 0.005 210);
+  --color-bg-light-700: oklch(28% 0.01 210);
+  --color-bg-light-800: oklch(15% 0 0);
 
-  /* Named Brand colours */
+  --color-bg-dark-100: oklch(15% 0 0);
+  --color-bg-dark-200: oklch(18% 0 0);
+  --color-bg-dark-300: oklch(22% 0 0);
+  --color-bg-dark-400: oklch(26% 0 0);
+  --color-bg-dark-500: oklch(58% 0 0);
+  --color-bg-dark-600: oklch(65% 0 0);
+  --color-bg-dark-700: oklch(86% 0 0);
+  --color-bg-dark-800: oklch(100% 0 0);
+
+  /* Named Brand colours - OKLCH */
   --color-brand-primary: var(--color-red-500);
   --color-brand-grey: var(--color-bg-light-700);
   --color-brand-dark-grey: var(--color-bg-light-800);
-  --color-brand-white: #ffffff;
+  --color-brand-white: oklch(100% 0 0);
   --color-brand-black: var(--color-black);
-  --color-brand-beige: #f6f3ea;
+  --color-brand-beige: oklch(96% 0.02 85);
 
   /* Shadows - should be used like filter:var(--shadow-xsmall)*/
 
@@ -132,13 +163,132 @@
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-  /* Spacer sizes */
-  --spacer-xs: 0.5rem;
-  --spacer-sm: 1rem;
-  --spacer-md: 2rem;
-  --spacer-lg: 3rem;
-  --spacer-xl: 4rem;
-  --spacer-xxl: 6rem;
+  /* Spacer sizes - DEPRECATED: use --space-* tokens instead */
+  --spacer-xs: var(--space-2);   /* 0.5rem - alias to new system */
+  --spacer-sm: var(--space-4);   /* 1rem */
+  --spacer-md: var(--space-6);   /* 2rem */
+  --spacer-lg: var(--space-10);  /* 3rem */
+  --spacer-xl: var(--space-12);  /* 4rem */
+  --spacer-xxl: var(--space-20); /* 6rem */
+
+  /* ============================================
+     MODERN DESIGN TOKEN SYSTEM
+     See docs/developer/design-tokens.md for full documentation
+     ============================================ */
+
+  /* ============================================
+     SPACING - Static 8px Grid
+     ============================================ */
+  --space-0: 0;
+  --space-1: 0.25rem;   /*  4px - micro adjustments */
+  --space-2: 0.5rem;    /*  8px - tight spacing */
+  --space-3: 0.75rem;   /* 12px - small gaps */
+  --space-4: 1rem;      /* 16px - base unit */
+  --space-5: 1.5rem;    /* 24px - comfortable */
+  --space-6: 2rem;      /* 32px - breathing room */
+  --space-8: 2.5rem;    /* 40px - section spacing */
+  --space-10: 3rem;     /* 48px - major sections */
+  --space-12: 4rem;     /* 64px - hero spacing */
+  --space-16: 5rem;     /* 80px - dramatic spacing */
+  --space-20: 6rem;     /* 96px - monumental */
+
+  /* Fluid Spacing - Utopia generated (375px → 1280px) */
+  --space-fluid-s-l: clamp(1.125rem, 0.5rem + 2.5vw, 2.5rem);   /* 18px → 40px */
+  --space-fluid-m-xl: clamp(1.5rem, 0.75rem + 3vw, 3.75rem);    /* 24px → 60px */
+
+  /* ============================================
+     TYPOGRAPHY - Utopia Fluid Type Scale
+     https://utopia.fyi/type/calculator?c=375,18,1.2,1280,20,1.333,5,2
+     ============================================ */
+
+  /* Raw Utopia steps */
+  --step--2: clamp(0.78rem, 0.77rem + 0.03vw, 0.80rem);   /* ~12.5px → 12.8px */
+  --step--1: clamp(0.94rem, 0.91rem + 0.11vw, 1.00rem);   /* ~15px → 16px */
+  --step-0:  clamp(1.13rem, 1.07rem + 0.23vw, 1.25rem);   /* ~18px → 20px (base) */
+  --step-1:  clamp(1.35rem, 1.26rem + 0.39vw, 1.67rem);   /* ~21.6px → 26.7px */
+  --step-2:  clamp(1.62rem, 1.48rem + 0.61vw, 2.22rem);   /* ~25.9px → 35.5px */
+  --step-3:  clamp(1.94rem, 1.74rem + 0.90vw, 2.96rem);   /* ~31.1px → 47.4px */
+  --step-4:  clamp(2.33rem, 2.04rem + 1.31vw, 3.95rem);   /* ~37.3px → 63.2px */
+  --step-5:  clamp(2.80rem, 2.38rem + 1.85vw, 5.26rem);   /* ~44.8px → 84.2px */
+
+  /* Semantic font-size aliases */
+  --font-size-xs: var(--step--2);    /* Small labels, captions */
+  --font-size-sm: var(--step--1);    /* Secondary text, metadata */
+  --font-size-base: var(--step-0);   /* Body text */
+  --font-size-md: var(--step-1);     /* Large body, small headings */
+  --font-size-lg: var(--step-2);     /* H3, card titles */
+  --font-size-xl: var(--step-3);     /* H2, section titles */
+  --font-size-2xl: var(--step-4);    /* H1, page titles */
+  --font-size-3xl: var(--step-5);    /* Hero masthead */
+
+  /* Line Heights */
+  --leading-none: 0.9;     /* Hero text, large display */
+  --leading-tight: 1.1;    /* Headings */
+  --leading-snug: 1.2;     /* Subheadings */
+  --leading-normal: 1.5;   /* Body text */
+  --leading-relaxed: 1.7;  /* Long-form prose */
+  --leading-loose: 1.8;    /* Extra breathing room */
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.02em;  /* Large display text */
+  --tracking-tight: -0.01em;    /* Headings */
+  --tracking-normal: 0;         /* Body text */
+  --tracking-wide: 0.08em;      /* All-caps labels */
+  --tracking-wider: 0.1ch;      /* Small all-caps */
+
+  /* Font Weights - matched to Literata/League Spartan */
+  --font-weight-light: 300;
+  --font-weight-normal: 350;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  /* ============================================
+     BORDERS - The Coral Rule System
+     ============================================ */
+
+  /* Border widths */
+  --border-width-hairline: 1px;    /* Subtle dividers */
+  --border-width-thin: 1.5px;      /* Default borders */
+  --border-width-base: 2px;        /* THE CORAL RULE */
+  --border-width-thick: 4px;       /* Heavy dividers */
+  --border-width-heavy: 6px;       /* Blockquotes, footer */
+
+  /* Border radius */
+  --radius-xs: 0.125rem;   /* 2px */
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-full: 9999px;   /* Pills */
+
+  /* ============================================
+     MOTION - Durations & Easing
+     ============================================ */
+
+  /* Durations */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;      /* Micro-interactions */
+  --duration-normal: 200ms;    /* Standard transitions */
+  --duration-slow: 300ms;      /* Emphasis */
+  --duration-slower: 500ms;    /* Accordions, reveals */
+
+  /* Easing functions */
+  --ease-default: ease;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ============================================
+     ELEVATION - Surface + Shadow combinations
+     ============================================ */
+  --elevation-flat: none;
+  --elevation-low: var(--shadow-small);
+  --elevation-medium: var(--shadow-medium);
+  --elevation-high: var(--shadow-large);
+  --elevation-highest: var(--shadow-xlarge);
 }
 
 /* Reset Layer */
@@ -428,7 +578,7 @@
   }
 }
 
-/* Theme Layer */
+/* Theme Layer - Using light-dark() for automatic theming */
 @layer theme {
   @media (prefers-reduced-motion: reduce) {
     * {
@@ -439,51 +589,70 @@
     }
   }
 
-  /* Light Theme (default) */
-  :root,
-  :root[data-theme='light'] {
-    color-scheme: light;
+  /* ============================================
+     SEMANTIC COLORS - Using light-dark()
+     Automatically adapts to color-scheme preference
+     ============================================ */
+  :root {
+    /* Enable automatic theme switching */
+    color-scheme: light dark;
 
     /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-    /* Typography adjustments */
-    --font-weight-prose: 400;
-    --line-height-prose: 1.7;
-    --font-weight-article: 350;
-    --line-height-article: 1.7;
+    --font-weight-prose: light-dark(400, 350);
+    --line-height-prose: light-dark(1.7, 1.8);
+    --font-weight-article: light-dark(350, 250);
+    --line-height-article: light-dark(1.7, 1.6);
 
-    /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
+    /* -------------------- PRIMARY GLOBAL COLOURS -------------------- */
     /* Background colors */
-    --color-bg-primary: var(--color-brand-beige);
-    --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 40%, white);
+    --color-bg-primary: light-dark(var(--color-brand-beige), var(--color-bg-dark-200));
+    --color-bg-secondary: light-dark(
+      oklch(98% 0.01 85),
+      oklch(14% 0 0)
+    );
 
     /* Text colors */
-    --color-text-primary: var(--color-brand-grey);
-    --color-text-secondary: var(--color-grey-800);
+    --color-text-primary: light-dark(var(--color-brand-grey), var(--color-brand-beige));
+    --color-text-secondary: light-dark(var(--color-grey-800), var(--color-grey-500));
     --color-accent: var(--color-brand-primary);
 
     /* Border and divider colors */
-    --color-border: rgba(0, 0, 0, 0.1);
+    --color-border: light-dark(oklch(0% 0 0 / 0.1), oklch(100% 0 0 / 0.1));
 
     /* Interactive colors */
-    --color-link: var(--color-red-500);
-    --color-link-visited: var(--color-purple-600);
-    --color-link-hover: var(--color-red-600);
+    --color-link: light-dark(var(--color-red-500), var(--color-red-400));
+    --color-link-visited: light-dark(var(--color-purple-600), var(--color-purple-500));
+    --color-link-hover: light-dark(var(--color-red-600), var(--color-red-500));
 
     /* Inline elements */
-    --color-mark-bg: var(--color-yellow-500);
-    --color-strikethrough: rgba(0, 0, 0, 0.5);
-    --color-abbr-underline: rgba(0, 0, 0, 0.15);
+    --color-mark-bg: light-dark(var(--color-yellow-500), var(--color-yellow-600));
+    --color-strikethrough: light-dark(oklch(0% 0 0 / 0.5), oklch(100% 0 0 / 1));
+    --color-abbr-underline: light-dark(oklch(0% 0 0 / 0.15), oklch(100% 0 0 / 0.1));
 
     /* Table colors */
-    --color-table-border: rgba(0, 0, 0, 0.1);
+    --color-table-border: light-dark(oklch(0% 0 0 / 0.1), oklch(100% 0 0 / 0.1));
     --color-table-bg: var(--color-bg-secondary);
     --color-table-header-bg: var(--color-bg-secondary);
 
     /* Code colors */
     --color-code-background: var(--color-bg-secondary);
 
+    /* -------------------- SURFACE ELEVATION SYSTEM -------------------- */
+    --surface-base: var(--color-bg-primary);
+    --surface-raised: light-dark(
+      oklch(100% 0 0),         /* Light: white */
+      oklch(22% 0 0)           /* Dark: elevated charcoal */
+    );
+    --surface-inset: light-dark(
+      oklch(92% 0.02 85),      /* Light: darker beige */
+      oklch(14% 0 0)           /* Dark: deeper charcoal */
+    );
+    --surface-overlay: light-dark(
+      oklch(98% 0.01 85),
+      oklch(26% 0 0)
+    );
+
     /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
-    /* Prose/typography colors */
     --prose-heading-border-color: var(--color-border);
     --prose-link-color: var(--color-link);
     --prose-link-visited-color: var(--color-link-visited);
@@ -492,12 +661,12 @@
     --prose-list-marker-color: var(--color-accent);
 
     /* -------------------- COMPONENT COLOURS -------------------- */
-    /* Navigation colors */
+    /* Navigation colors - nav/footer stay dark in both themes */
     --color-nav-bg: var(--color-bg-dark-200);
     --color-nav-text: var(--color-brand-white);
     --color-nav-link-hover: var(--color-brand-primary);
     --color-nav-border: var(--color-brand-primary);
-    --color-hamburger-bg: rgba(255, 255, 255, 0.6);
+    --color-hamburger-bg: light-dark(oklch(100% 0 0 / 0.6), oklch(0% 0 0 / 0.8));
     --color-hamburger-text: var(--color-brand-primary);
 
     /* Footer colors */
@@ -505,51 +674,51 @@
     --color-footer-text: var(--color-brand-white);
     --color-footer-link-hover: var(--color-brand-primary);
     --color-footer-border: var(--color-brand-primary);
-    --color-footer-social-hover: rgba(0, 0, 0, 0.25);
+    --color-footer-social-hover: oklch(0% 0 0 / 0.25);
 
     /* NoteCard colors */
-    --color-notecard-bg: var(--color-brand-white);
-    --color-notecard-border: var(--color-bg-dark-200);
-    --color-notecard-dot-grid: var(--color-red-400);
+    --color-notecard-bg: light-dark(var(--color-brand-white), var(--surface-raised));
+    --color-notecard-border: light-dark(var(--color-bg-dark-200), var(--color-accent));
+    --color-notecard-dot-grid: light-dark(var(--color-red-400), transparent);
     --color-notecard-date: var(--color-text-secondary);
     --color-notecard-title-underline: var(--color-accent);
 
     /* ContentCard colors */
-    --color-contentcard-bg: var(--color-brand-white);
+    --color-contentcard-bg: light-dark(var(--color-brand-white), var(--surface-raised));
     --color-contentcard-border: var(--color-border);
     --color-contentcard-article-accent: var(--color-red-500);
-    --color-contentcard-note-accent: var(--color-blue-500);
-    --color-contentcard-toolbox-accent: var(--color-green-500);
+    --color-contentcard-note-accent: light-dark(var(--color-blue-500), var(--color-blue-400));
+    --color-contentcard-toolbox-accent: light-dark(var(--color-green-500), var(--color-green-400));
     --color-contentcard-meta: var(--color-text-secondary);
     --color-contentcard-summary: var(--color-text-primary);
 
     /* Pill colors */
-    --color-pill-bg: var(--color-grey-400);
-    --color-pill-fg: var(--color-grey-500);
+    --color-pill-bg: light-dark(var(--color-grey-400), var(--color-grey-800));
+    --color-pill-fg: light-dark(var(--color-grey-500), var(--color-grey-400));
 
     /* Lightbox colors */
-    --color-lightbox-bg: rgba(0, 0, 0, 0.9);
+    --color-lightbox-bg: oklch(0% 0 0 / 0.9);
     --color-lightbox-close: var(--color-brand-white);
 
     /* Callout colors */
-    --color-callout-default-bg: var(--color-grey-300);
-    --color-callout-red-bg: var(--color-red-300);
-    --color-callout-blue-bg: var(--color-blue-300);
-    --color-callout-green-bg: var(--color-green-300);
-    --color-callout-orange-bg: var(--color-orange-300);
-    --color-callout-yellow-bg: var(--color-yellow-300);
-    --color-callout-purple-bg: var(--color-purple-300);
+    --color-callout-default-bg: light-dark(var(--color-grey-300), var(--color-grey-800));
+    --color-callout-red-bg: light-dark(var(--color-red-300), var(--color-red-800));
+    --color-callout-blue-bg: light-dark(var(--color-blue-300), var(--color-blue-800));
+    --color-callout-green-bg: light-dark(var(--color-green-300), var(--color-green-800));
+    --color-callout-orange-bg: light-dark(var(--color-orange-300), var(--color-orange-800));
+    --color-callout-yellow-bg: light-dark(var(--color-yellow-300), var(--color-yellow-800));
+    --color-callout-purple-bg: light-dark(var(--color-purple-300), var(--color-purple-800));
 
     /* Article specific colors */
     --color-article-bg: var(--color-bg-primary);
-    --color-article-accent: rgb(184, 72, 72);
+    --color-article-accent: light-dark(oklch(52% 0.14 25), var(--color-accent));
     --color-article-horizontal-rule: var(--color-border);
     --color-article-inline-footnote-bg: var(--color-bg-secondary);
     --color-article-tasklist-border: var(--color-border);
 
     /* Notion colors */
-    --notion-arrow-color: rgba(255, 255, 255, 0.6);
-    --notion-underline-color: rgba(0, 0, 0, 0.15);
+    --notion-arrow-color: oklch(100% 0 0 / 0.6);
+    --notion-underline-color: light-dark(oklch(0% 0 0 / 0.15), oklch(100% 0 0 / 0.25));
     --notion-arrow-stroke-color: var(--color-bg-primary);
     --notion-hover-opacity: 0.8;
 
@@ -586,191 +755,16 @@
     --color-writinglist-title-hover: var(--color-accent);
     --color-writinglist-date: var(--color-text-secondary);
     --color-writinglist-border: var(--color-accent);
-    --color-writinglist-platform-label: var(--color-green-700);
+    --color-writinglist-platform-label: light-dark(var(--color-green-700), var(--color-green-500));
   }
 
-  /* Explicit dark theme (overrides media query) */
+  /* Manual theme overrides - only need color-scheme declarations */
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
   :root[data-theme='dark'] {
     color-scheme: dark;
-
-    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-    /* Slightly increased for better readability in dark mode */
-    --font-weight-prose: 350;
-    --line-height-prose: 1.8;
-    --font-weight-article: 250;
-    --line-height-article: 1.6;
-
-    /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
-    /* Background colors */
-    --color-bg-primary: var(--color-bg-dark-200);
-    --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
-
-    /* Text colors */
-    --color-text-primary: var(--color-brand-beige);
-    --color-text-secondary: var(--color-grey-500);
-
-    /* Border and divider colors */
-    --color-border: rgba(255, 255, 255, 0.1);
-
-    /* Interactive colors */
-    --color-link: var(--color-red-400);
-    --color-link-visited: var(--color-purple-500);
-    --color-link-hover: var(--color-red-500);
-
-    /* Inline elements */
-    --color-mark-bg: var(--color-yellow-600);
-    --color-strikethrough: rgba(255, 255, 255, 1);
-    --color-abbr-underline: rgba(255, 255, 255, 0.1);
-
-    /* Table colors */
-    --color-table-border: rgba(255, 255, 255, 0.1);
-    --color-table-bg: var(--color-bg-secondary);
-    --color-table-header-bg: var(--color-bg-secondary);
-
-    /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
-    /* Prose/typography colors */
-    --prose-link-color: var(--color-link);
-    --prose-link-visited-color: var(--color-link-visited);
-    --prose-link-hover-color: var(--color-link-hover);
-
-    /* -------------------- COMPONENT COLOURS -------------------- */
-    /* Navigation colors */
-    --color-hamburger-bg: rgba(0, 0, 0, 0.8);
-    --color-hamburger-text: var(--color-brand-primary);
-
-    /* Footer colors */
-    --color-footer-social-hover: rgba(0, 0, 0, 0.25);
-
-    /* NoteCard colors */
-    --color-notecard-bg: var(--color-bg-secondary);
-    --color-notecard-border: var(--color-accent);
-    --color-notecard-dot-grid: transparent;
-    --color-notecard-date: var(--color-text-secondary);
-    --color-notecard-title-underline: var(--color-accent);
-
-    /* ContentCard colors */
-    --color-contentcard-bg: var(--color-bg-secondary);
-    --color-contentcard-border: var(--color-border);
-    --color-contentcard-article-accent: var(--color-red-500);
-    --color-contentcard-note-accent: var(--color-blue-400);
-    --color-contentcard-toolbox-accent: var(--color-green-400);
-    --color-contentcard-meta: var(--color-text-secondary);
-    --color-contentcard-summary: var(--color-text-primary);
-
-    /* Pill colors */
-    --color-pill-bg: var(--color-grey-800);
-    --color-pill-fg: var(--color-grey-400);
-
-    /* Callout colors */
-    --color-callout-default-bg: var(--color-grey-800);
-    --color-callout-red-bg: var(--color-red-800);
-    --color-callout-blue-bg: var(--color-blue-800);
-    --color-callout-green-bg: var(--color-green-800);
-    --color-callout-orange-bg: var(--color-orange-800);
-    --color-callout-yellow-bg: var(--color-yellow-800);
-    --color-callout-purple-bg: var(--color-purple-800);
-
-    /* Article specific colors */
-    --color-article-accent: var(--color-accent);
-
-    /* Notion colors */
-    --notion-underline-color: rgba(255, 255, 255, 0.25);
-    --notion-arrow-stroke-color: var(--color-bg-primary);
-
-    /* -------------------- PAGE COLOURS -------------------- */
-    /* Writing list page colors */
-    --color-writinglist-platform-label: var(--color-green-500);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-
-      /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-      /* Slightly increased for better readability in dark mode */
-      --font-weight-prose: 350;
-      --line-height-prose: 1.8;
-      --font-weight-article: 250;
-      --line-height-article: 1.6;
-
-      /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
-      /* Background colors */
-      --color-bg-primary: var(--color-bg-dark-200);
-      --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
-
-      /* Text colors */
-      --color-text-primary: var(--color-brand-beige);
-      --color-text-secondary: var(--color-grey-500);
-
-      /* Border and divider colors */
-      --color-border: rgba(255, 255, 255, 0.1);
-
-      /* Interactive colors */
-      --color-link: var(--color-red-400);
-      --color-link-visited: var(--color-purple-500);
-      --color-link-hover: var(--color-red-500);
-
-      /* Inline elements */
-      --color-mark-bg: var(--color-yellow-600);
-      --color-strikethrough: rgba(255, 255, 255, 1);
-      --color-abbr-underline: rgba(255, 255, 255, 0.1);
-
-      /* Table colors */
-      --color-table-border: rgba(255, 255, 255, 0.1);
-      --color-table-bg: var(--color-bg-secondary);
-      --color-table-header-bg: var(--color-bg-secondary);
-
-      /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
-      /* Prose/typography colors */
-      --prose-link-color: var(--color-link);
-      --prose-link-visited-color: var(--color-link-visited);
-      --prose-link-hover-color: var(--color-link-hover);
-
-      /* -------------------- COMPONENT COLOURS -------------------- */
-      /* Navigation colors */
-      --color-hamburger-bg: rgba(0, 0, 0, 0.8);
-      --color-hamburger-text: var(--color-brand-primary);
-
-      /* Footer colors */
-      --color-footer-social-hover: rgba(0, 0, 0, 0.25);
-
-      /* NoteCard colors */
-      --color-notecard-bg: var(--color-bg-secondary);
-      --color-notecard-border: var(--color-accent);
-      --color-notecard-dot-grid: transparent;
-      --color-notecard-date: var(--color-text-secondary);
-      --color-notecard-title-underline: var(--color-accent);
-
-      /* ContentCard colors */
-      --color-contentcard-bg: var(--color-bg-secondary);
-      --color-contentcard-article-accent: var(--color-red-500);
-      --color-contentcard-note-accent: var(--color-blue-400);
-      --color-contentcard-toolbox-accent: var(--color-green-400);
-
-      /* Pill colors */
-      --color-pill-bg: var(--color-grey-800);
-      --color-pill-fg: var(--color-grey-400);
-
-      /* Callout colors */
-      --color-callout-default-bg: var(--color-grey-800);
-      --color-callout-red-bg: var(--color-red-800);
-      --color-callout-blue-bg: var(--color-blue-800);
-      --color-callout-green-bg: var(--color-green-800);
-      --color-callout-orange-bg: var(--color-orange-800);
-      --color-callout-yellow-bg: var(--color-yellow-800);
-      --color-callout-purple-bg: var(--color-purple-800);
-
-      /* Article specific colors */
-      --color-article-accent: var(--color-accent);
-
-      /* Notion colors */
-      --notion-underline-color: rgba(255, 255, 255, 0.25);
-      --notion-arrow-stroke-color: var(--color-bg-primary);
-
-      /* -------------------- PAGE COLOURS -------------------- */
-      /* Writing list page colors */
-      --color-writinglist-platform-label: var(--color-green-500);
-    }
   }
 }
 

@@ -15,7 +15,7 @@ const { class: className, ...props } = Astro.props;
   @layer longform-prose {
     .longform-prose {
       --line-height: var(--line-height-article);
-      --side-space: 2rem; /* Space on the left and right of the article on small screens. */
+      --side-space: var(--space-6);
 
       display: grid;
       grid-template-columns:
@@ -26,7 +26,7 @@ const { class: className, ...props } = Astro.props;
       grid-row-gap: calc(var(--line-height) * 1em);
 
       font-family: var(--font-prose);
-      font-size: clamp(1rem, calc(0.6rem + 1vw), 1.3rem);
+      font-size: var(--font-size-base);
       font-weight: var(--font-weight-article);
       line-height: var(--line-height);
       text-rendering: optimizeLegibility;
@@ -43,43 +43,42 @@ const { class: className, ...props } = Astro.props;
     /* Headings */
 
     .longform-prose > :is(h1, h2, h3, h4, h5, h6) {
-      font-variant-ligatures: common-ligatures discretionary-ligatures;
-      hanging-punctuation: first allow-end last;
-      border-bottom: 1px solid var(--color-border);
+      /* font-variant-ligatures and hanging-punctuation now in base layer */
+      border-bottom: var(--border-width-hairline) solid var(--color-border);
       padding-bottom: 0.6em;
     }
 
     .longform-prose h1.title {
-      font-size: 2.4em;
-      font-weight: 500;
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-medium);
       font-variation-settings: 'opsz' 50;
-      line-height: 1.25;
-      margin-top: 2.5em;
+      line-height: var(--leading-snug);
+      margin-top: var(--space-8);
     }
 
     .longform-prose > h1 {
-      font-size: 1.93em;
-      font-weight: 600;
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
       margin-top: 1.5em;
     }
 
     .longform-prose > h2 {
-      font-size: 1.56em;
-      font-weight: 600;
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
       margin-top: 1.7em;
       margin-bottom: -0.5em;
     }
 
     .longform-prose > h3 {
-      font-size: 1.25em;
-      font-weight: 600;
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semibold);
       margin-top: 1.5em;
       margin-bottom: -0.5em;
     }
 
     .longform-prose > :is(h4, h5, h6) {
-      font-size: 1em;
-      font-weight: normal;
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-normal);
       font-style: italic;
       margin-top: 1.5em;
       margin-bottom: -1em;
@@ -98,7 +97,7 @@ const { class: className, ...props } = Astro.props;
 
     .longform-prose > p {
       font-variant-numeric: oldstyle-nums diagonal-fractions;
-      hanging-punctuation: first allow-end last;
+      /* hanging-punctuation now in base layer */
     }
 
     /* Use hyphens only on small viewports. */
@@ -131,10 +130,12 @@ const { class: className, ...props } = Astro.props;
       color: inherit;
       text-decoration: underline;
       text-decoration-color: var(--color-article-accent);
-      text-decoration-thickness: 1px;
+      text-decoration-thickness: var(--border-width-hairline);
       text-underline-offset: 0.3em;
       text-decoration-skip-ink: none;
-      border-radius: 0.1em;
+      border-radius: var(--radius-xs);
+      transition: color var(--duration-fast) var(--ease-default),
+                  text-decoration-color var(--duration-fast) var(--ease-default);
     }
 
     .longform-prose a:visited {
@@ -148,7 +149,7 @@ const { class: className, ...props } = Astro.props;
     }
 
     .longform-prose a:focus-visible {
-      outline: 2px solid var(--color-article-accent);
+      outline: var(--border-width-base) solid var(--color-article-accent);
       text-decoration: none;
     }
 
@@ -171,8 +172,8 @@ const { class: className, ...props } = Astro.props;
     /* ----------- Lists ----------- */
 
     .longform-prose li {
-      padding-left: 1em;
-      margin-top: 0.5em;
+      padding-left: var(--space-4);
+      margin-top: var(--space-2);
       /* Ensure marker color for all lists */
       &::marker {
         color: var(--color-article-accent);
@@ -199,7 +200,7 @@ const { class: className, ...props } = Astro.props;
     .longform-prose ol ::marker {
       font-size: 1.4ex;
       font-variation-settings: 'opsz' 10;
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       color: var(--color-article-accent);
     }
 
@@ -221,8 +222,8 @@ const { class: className, ...props } = Astro.props;
       margin-bottom: 0;
       appearance: none;
       outline: none;
-      border-radius: 2px;
-      border: 1px solid var(--color-article-tasklist-border);
+      border-radius: var(--radius-xs);
+      border: var(--border-width-hairline) solid var(--color-article-tasklist-border);
     }
 
     .longform-prose .task-list-item input:checked {
@@ -236,8 +237,8 @@ const { class: className, ...props } = Astro.props;
       position: absolute;
       top: -0.1em;
       left: 0.05em;
-      font-size: 0.6em;
-      font-weight: 600;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
       color: var(--color-article-accent);
     }
 
@@ -248,7 +249,7 @@ const { class: className, ...props } = Astro.props;
     /* ----------- Text Styles ----------- */
 
     .longform-prose strong {
-      font-weight: 650;
+      font-weight: var(--font-weight-semibold);
     }
 
     /* ----------- HR ----------- */
@@ -259,24 +260,24 @@ const { class: className, ...props } = Astro.props;
       width: 100%;
       height: 0;
       overflow: visible;
-      margin: 4rem 0;
+      margin: var(--space-12) 0;
 
-      border: 1px solid var(--color-article-horizontal-rule);
+      border: var(--border-width-hairline) solid var(--color-article-horizontal-rule);
     }
 
     .longform-prose hr:before {
       content: '§';
       transform: translateY(-0.15em);
       background: var(--color-article-bg);
-      padding: 0 0.5em;
+      padding: 0 var(--space-2);
     }
 
     /* ----------- Blockquotes ----------- */
     .longform-prose blockquote {
       font-variant-numeric: oldstyle-nums diagonal-fractions;
-      hanging-punctuation: first allow-end last;
-      border-left: 2px solid var(--color-article-accent);
-      padding-left: calc((1em * var(--line-height)) - 2px);
+      /* hanging-punctuation now in base layer */
+      border-left: var(--border-width-base) solid var(--color-article-accent);
+      padding-left: calc((1em * var(--line-height)) - var(--border-width-base));
       font-style: italic;
       margin-left: 0;
     }
@@ -285,20 +286,19 @@ const { class: className, ...props } = Astro.props;
 
     .longform-prose [data-footnote-ref] {
       display: inline-block;
-      padding-left: 0.5ch;
-      padding-right: 0.5ch;
-      font-size: 0.7em;
-      font-weight: 600;
+      padding-inline: 0.5ch;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
       font-variant: small-caps;
-      letter-spacing: 0.05ch;
+      letter-spacing: var(--tracking-wide);
       text-decoration: none;
       color: var(--color-article-accent);
     }
 
     .inline-footnote-container {
-      font-size: 0.8em;
-      padding: 1em;
-      border-left: 2px solid var(--color-article-accent);
+      font-size: var(--font-size-sm);
+      padding: var(--space-4);
+      border-left: var(--border-width-base) solid var(--color-article-accent);
       background: var(--color-article-inline-footnote-bg);
 
       .data-footnote-backref {
@@ -307,10 +307,10 @@ const { class: className, ...props } = Astro.props;
     }
 
     .longform-prose .footnotes {
-      border-top: 1px solid var(--color-article-accent);
-      margin-top: 2em;
-      padding-top: 1em;
-      font-size: 0.8em;
+      border-top: var(--border-width-hairline) solid var(--color-article-accent);
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      font-size: var(--font-size-sm);
 
       .data-footnote-backref {
         text-decoration: none;
@@ -321,7 +321,7 @@ const { class: className, ...props } = Astro.props;
     /* Mobile optimization */
     @media (max-width: 700px) {
       .longform-prose .metadata {
-        padding-top: 3.5rem;
+        padding-top: var(--space-10);
       }
     }
   }
