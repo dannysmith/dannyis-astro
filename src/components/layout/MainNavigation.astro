@@ -35,12 +35,12 @@ const isDev = import.meta.env.MODE === 'development';
   .open-nav-link {
     display: block;
     position: absolute;
-    top: 1rem;
-    left: 1rem;
+    top: var(--space-4);
+    left: var(--space-4);
     width: 2em;
     height: 2em;
-    padding: 0.5em;
-    border-radius: 1px;
+    padding: var(--space-2);
+    border-radius: var(--radius-xs);
     z-index: 1000;
     color: var(--color-hamburger-text);
     cursor: pointer;
@@ -55,9 +55,9 @@ const isDev = import.meta.env.MODE === 'development';
     background-color: var(--color-nav-bg);
     color: var(--color-nav-text);
     border-right: var(--border-width-accent) solid var(--color-nav-border);
-    padding: 1em 2em 1em 1em;
+    padding: var(--space-4) var(--space-8) var(--space-4) var(--space-4);
     font-size: clamp(0.8rem, calc(0.6rem + 1vw), 1.2rem);
-    transition: left 0.2s ease-in-out;
+    transition: left var(--duration-normal) var(--ease-in-out);
   }
 
   .main-navigation.open {
@@ -75,21 +75,21 @@ const isDev = import.meta.env.MODE === 'development';
 
 
   .nav-nav-links {
-    margin-top: 1rem;
-    padding-left: 2rem;
+    margin-top: var(--space-4);
+    padding-left: var(--space-8);
 
     li {
       text-transform: uppercase;
-      letter-spacing: 0.1ch;
+      letter-spacing: var(--tracking-wider);
       list-style-type: none;
       padding: 0;
-      line-height: 1.65;
+      line-height: var(--leading-relaxed);
     }
 
     a,
     a:link,
     a:visited {
-      padding: 0.5rem;
+      padding: var(--space-2);
       text-decoration: none;
       color: var(--color-nav-text);
     }
@@ -103,8 +103,8 @@ const isDev = import.meta.env.MODE === 'development';
   }
   .close {
     position: absolute;
-    top: 0.7em;
-    right: 0.7em;
+    top: var(--space-3);
+    right: var(--space-3);
     font-size: 1em;
     color: var(--color-nav-text);
     cursor: pointer;
@@ -114,9 +114,8 @@ const isDev = import.meta.env.MODE === 'development';
     .nav-nav-links a {
       display: flex;
       align-items: center;
-      min-height: 34px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      min-height: 44px; /* Touch target */
+      padding-block: var(--space-3);
     }
   }
 </style>

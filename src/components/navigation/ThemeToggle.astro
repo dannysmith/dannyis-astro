@@ -40,9 +40,9 @@
 <style>
   .theme-toggle {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
     border-top: var(--border-width-hairline) solid var(--color-nav-border);
   }
 
@@ -50,19 +50,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 0.5rem;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-2);
     background: transparent;
     border: var(--border-width-hairline) solid var(--color-nav-border);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     color: var(--color-nav-text);
     font-family: inherit;
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
     text-transform: uppercase;
-    letter-spacing: 0.05ch;
+    letter-spacing: var(--tracking-wide);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--duration-normal) var(--ease-default);
     flex: 1;
     min-height: 4rem;
     position: relative;
@@ -71,13 +71,13 @@
 
   .theme-option:hover {
     border-color: var(--color-nav-link-hover);
-    background: rgba(255, 115, 105, 0.1);
+    background: oklch(70% 0.18 25 / 0.1);
     opacity: 0.8;
   }
 
   .theme-option:focus-visible {
-    outline: 2px solid var(--color-nav-link-hover);
-    outline-offset: 2px;
+    outline: var(--border-width-base) solid var(--color-nav-link-hover);
+    outline-offset: var(--space-1);
   }
 
   .theme-option.active {
@@ -85,17 +85,17 @@
     background: var(--color-nav-link-hover);
     color: var(--color-brand-white);
     opacity: 1;
-    box-shadow: 0 2px 8px rgba(255, 115, 105, 0.3);
+    box-shadow: 0 2px 8px oklch(70% 0.18 25 / 0.3);
   }
 
   .theme-icon {
-    font-size: 1.2rem;
+    font-size: var(--font-size-md);
     line-height: 1;
     display: block;
   }
 
   .theme-label {
-    font-size: 0.7rem;
+    font-size: var(--font-size-xs);
     line-height: 1;
     margin: 0;
   }
@@ -103,11 +103,11 @@
   /* Animation for theme changes */
   @media (prefers-reduced-motion: no-preference) {
     :root {
-      transition: color-scheme 0.3s ease;
+      transition: color-scheme var(--duration-slow) var(--ease-default);
     }
 
     .theme-option {
-      transition: all 0.15s ease;
+      transition: all var(--duration-fast) var(--ease-default);
     }
   }
 </style>

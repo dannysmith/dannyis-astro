@@ -61,12 +61,12 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       }
 
       section {
-        padding: 1rem;
+        padding: var(--space-4);
       }
 
       .title {
         text-transform: uppercase;
-        font-size: 14vw;
+        font-size: clamp(3rem, 14vw, 20rem);
         transform: translateY(-0.3em);
         text-align: right;
         pointer-events: none;
@@ -79,7 +79,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       }
 
       li {
-        margin-bottom: 2rem;
+        margin-bottom: var(--space-8);
       }
 
       a {
@@ -91,25 +91,25 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       }
 
       .date {
-        font-size: 0.7rem;
+        font-size: var(--font-size-xs);
         color: var(--color-writinglist-date);
         text-transform: uppercase;
-        letter-spacing: 0.1ch;
+        letter-spacing: var(--tracking-wider);
       }
 
       .post-title {
-        font-size: 24px;
-        line-height: 1.2;
-        font-weight: 500;
-        padding-bottom: 0.2rem;
-        border-bottom: 5px var(--color-writinglist-border) solid;
-        transition: all 0.15s;
+        font-size: var(--font-size-md);
+        line-height: var(--leading-tight);
+        font-weight: var(--font-weight-medium);
+        padding-bottom: var(--space-1);
+        border-bottom: var(--border-width-thick) var(--color-writinglist-border) solid;
+        transition: all var(--duration-fast) var(--ease-default);
       }
 
       .post-title :global(.pill) {
         transform: translateY(-0.2em);
         opacity: 0.7;
-        transition: opacity 0.15s;
+        transition: opacity var(--duration-fast) var(--ease-default);
       }
 
       a:hover .post-title :global(.pill) {
@@ -119,11 +119,11 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       @media screen and (min-width: 800px) {
         .date {
           text-align: right;
-          padding-bottom: calc(0.2rem + 5px);
+          padding-bottom: calc(var(--space-1) + var(--border-width-thick));
         }
         a {
           display: grid;
-          gap: 1rem;
+          gap: var(--space-4);
           grid-template-columns: 10% 5fr 1fr;
           align-items: end;
         }

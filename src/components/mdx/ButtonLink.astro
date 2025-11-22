@@ -15,23 +15,24 @@ const { href, variant = 'primary' } = Astro.props;
 
 <style>
   .button-link-container {
-    margin: 2em auto;
+    margin: var(--space-8) auto;
     text-align: center;
   }
 
   .button-link {
     display: inline-block;
-    padding: 0.9em 1.6em;
-    border-radius: 12px;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-lg);
     font-family: var(--font-ui);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     text-decoration: none;
-    border: 2px solid transparent;
+    border: var(--border-width-base) solid transparent;
+    transition: background-color var(--duration-fast) var(--ease-default);
   }
 
   .button-link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline: var(--border-width-base) solid var(--color-accent);
+    outline-offset: var(--space-1);
   }
 
   .button-link.primary {

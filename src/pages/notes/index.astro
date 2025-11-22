@@ -98,11 +98,11 @@ const recentNotesWithContent = await Promise.all(
 
       .title {
         text-transform: uppercase;
-        font-size: 14vw;
+        font-size: clamp(3rem, 14vw, 20rem);
         transform: translateY(-0.3em);
         text-align: right;
         pointer-events: none;
-        padding: 0 1rem;
+        padding: 0 var(--space-4);
       }
 
       /* Shared content width constraint */
@@ -115,18 +115,18 @@ const recentNotesWithContent = await Promise.all(
       /* Shared section styles */
       .recent-notes,
       .archive-section {
-        padding: 1rem;
+        padding: var(--space-4);
         display: grid;
         place-items: center;
       }
 
       .recent-notes {
-        padding-top: 4rem;
-        gap: 3rem;
+        padding-top: var(--space-16);
+        gap: var(--space-12);
       }
 
       .archive-section {
-        margin-top: 3rem;
+        margin-top: var(--space-12);
       }
 
       .note-container {
@@ -134,11 +134,11 @@ const recentNotesWithContent = await Promise.all(
       }
 
       .archive-title {
-        font-size: 2rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--color-border);
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--space-6);
+        padding-bottom: var(--space-2);
+        border-bottom: var(--border-width-base) solid var(--color-border);
         color: var(--color-text-primary);
       }
 
@@ -149,7 +149,7 @@ const recentNotesWithContent = await Promise.all(
       }
 
       .archive-list li {
-        margin-bottom: 2rem;
+        margin-bottom: var(--space-8);
       }
 
       .archive-list a {
@@ -163,41 +163,41 @@ const recentNotesWithContent = await Promise.all(
       }
 
       .archive-list .date {
-        font-size: 0.7rem;
+        font-size: var(--font-size-xs);
         color: var(--color-notelist-date);
         text-transform: uppercase;
-        letter-spacing: 0.1ch;
+        letter-spacing: var(--tracking-wider);
       }
 
       .archive-list .note-title {
-        font-size: 24px;
-        line-height: 1.2;
-        font-weight: 500;
-        padding-bottom: 0.2rem;
-        border-bottom: 5px var(--color-notelist-border) solid;
-        transition: all 0.15s;
+        font-size: var(--font-size-md);
+        line-height: var(--leading-tight);
+        font-weight: var(--font-weight-medium);
+        padding-bottom: var(--space-1);
+        border-bottom: var(--border-width-thick) var(--color-notelist-border) solid;
+        transition: all var(--duration-fast) var(--ease-default);
       }
 
       @media screen and (min-width: 800px) {
         .recent-notes,
         .archive-section {
-          padding: 2rem;
+          padding: var(--space-8);
         }
 
         .recent-notes {
-          padding-top: 4rem;
+          padding-top: var(--space-16);
         }
 
         .archive-list a {
           display: grid;
-          gap: 1rem;
+          gap: var(--space-4);
           grid-template-columns: 120px 1fr;
           align-items: end;
         }
 
         .archive-list .date {
           text-align: right;
-          padding-bottom: calc(0.2rem + 5px);
+          padding-bottom: calc(var(--space-1) + var(--border-width-thick));
         }
       }
     </style>

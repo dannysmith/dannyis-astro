@@ -37,14 +37,14 @@ import { Icon } from 'astro-icon/components';
   .social-links {
     ul {
       display: flex;
-      gap: 1rem;
+      gap: var(--space-4);
       justify-content: center;
       padding: 0;
       margin: 0;
     }
 
     li {
-      width: 2.5rem;
+      width: var(--space-10);
       list-style-type: none;
     }
 
@@ -53,10 +53,11 @@ import { Icon } from 'astro-icon/components';
       justify-content: center;
       align-items: center;
       text-align: center;
-      border-radius: 50%;
+      border-radius: var(--radius-full);
       aspect-ratio: 1;
       color: inherit;
       text-decoration: none;
+      transition: background-color var(--duration-fast) var(--ease-default);
     }
 
     a:hover,
@@ -69,7 +70,7 @@ import { Icon } from 'astro-icon/components';
 
   @media (max-width: 600px) {
     .social-links a {
-      min-width: 44px;
+      min-width: 44px; /* Touch target */
       min-height: 44px;
     }
   }
