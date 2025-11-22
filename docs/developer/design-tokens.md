@@ -544,30 +544,16 @@ Examples:
 
 | Old Token | New Token | Notes |
 |-----------|-----------|-------|
-| `--spacer-xs` | `--space-2` | 0.5rem |
-| `--spacer-sm` | `--space-4` | 1rem |
-| `--spacer-md` | `--space-6` | 2rem |
-| `--spacer-lg` | `--space-10` | 3rem |
-| `--spacer-xl` | `--space-12` | 4rem |
-| `--spacer-xxl` | `--space-20` | 6rem |
+| `--spacer-xs` | `--space-2` | **Removed** - use `--space-2` |
+| `--spacer-sm` | `--space-4` | **Removed** - use `--space-4` |
+| `--spacer-md` | `--space-6` | **Removed** - use `--space-6` |
+| `--spacer-lg` | `--space-10` | **Removed** - use `--space-10` |
+| `--spacer-xl` | `--space-12` | **Removed** - use `--space-12` |
+| `--spacer-xxl` | `--space-20` | **Removed** - use `--space-20` |
 | `--color-brand-primary` | `--color-accent` | OKLCH |
 | `--color-brand-beige` | `--surface-base` (light) | Via light-dark() |
 | `--color-bg-primary` | `--surface-base` | Via light-dark() |
 | `--color-bg-secondary` | `--surface-inset` | Via light-dark() |
-
-### Deprecated Tokens
-
-During migration, old tokens remain but are marked deprecated:
-
-```css
-:root {
-  /* DEPRECATED - use --space-2 instead */
-  --spacer-xs: var(--space-2);
-
-  /* DEPRECATED - use --space-4 instead */
-  --spacer-sm: var(--space-4);
-}
-```
 
 ---
 

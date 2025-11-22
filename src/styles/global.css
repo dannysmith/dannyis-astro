@@ -111,10 +111,10 @@
   --color-brown-800: oklch(30% 0.02 40);
 
   /* Grey (neutral) */
-  --color-grey-300: oklch(93% 0 0);
-  --color-grey-400: oklch(93% 0 0);
-  --color-grey-500: oklch(65% 0 0);
-  --color-grey-600: oklch(65% 0 0);
+  --color-grey-300: oklch(95% 0 0);
+  --color-grey-400: oklch(88% 0 0);
+  --color-grey-500: oklch(70% 0 0);
+  --color-grey-600: oklch(55% 0 0);
   --color-grey-700: oklch(42% 0 0);
   --color-grey-800: oklch(32% 0 0);
 
@@ -163,13 +163,6 @@
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-  /* Spacer sizes - DEPRECATED: use --space-* tokens instead */
-  --spacer-xs: var(--space-2); /* 0.5rem - alias to new system */
-  --spacer-sm: var(--space-4); /* 1rem */
-  --spacer-md: var(--space-6); /* 2rem */
-  --spacer-lg: var(--space-10); /* 3rem */
-  --spacer-xl: var(--space-12); /* 4rem */
-  --spacer-xxl: var(--space-20); /* 6rem */
 
   /* ============================================
      MODERN DESIGN TOKEN SYSTEM
@@ -935,20 +928,20 @@
     --color-button-tertiary-underline: var(--color-accent);
 
     /* -------------------- PAGE COLOURS -------------------- */
-    /* Homepage specific colors */
+    /* Homepage */
     --color-homepage-link-border: var(--color-accent);
-    --color-homepage-link-hover: var(--color-accent);
 
-    /* Note list page colors */
-    --color-notelist-title-hover: var(--color-accent);
+    /* Note list page */
     --color-notelist-date: var(--color-text-secondary);
     --color-notelist-border: var(--color-accent);
 
-    /* Writing list page colors */
-    --color-writinglist-title-hover: var(--color-accent);
+    /* Writing list page */
     --color-writinglist-date: var(--color-text-secondary);
     --color-writinglist-border: var(--color-accent);
     --color-writinglist-platform-label: light-dark(var(--color-green-700), var(--color-green-500));
+
+    /* Highlight/mark */
+    --color-highlight-bg: light-dark(oklch(95% 0.15 90), oklch(40% 0.12 90));
   }
 
   /* Dark theme typography overrides (light-dark() only works for colors) */
