@@ -4,7 +4,7 @@
 **Goal:** Use the design token system to implement high-impact visual improvements identified in the visual review
 **Prerequisites:** ✅ Design Token Architecture (completed 2025-11-22), ✅ Design Token Implementation (completed 2025-11-22)
 
-## Progress (Session 2025-11-22)
+## Progress (Sessions 2025-11-22)
 
 ### ✅ Completed
 
@@ -40,8 +40,10 @@
 - Added button examples to /styleguide with usage guidelines
 - Tested in both light and dark themes - hierarchy is clear
 
+**Task 7: Enhance Code Blocks & Inline Code** - DEFERRED
+- Will address in a separate task focused on code presentation
+
 ### Remaining Tasks
-7. Enhance Code Blocks & Inline Code
 8. Standardize Card Component for Embeds & Previews
 9. Improve Small Screen Layouts
 10. Balance Hero + Content Hierarchy
