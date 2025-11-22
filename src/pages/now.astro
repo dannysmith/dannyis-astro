@@ -3,7 +3,6 @@ import BaseHead from '@components/layout/BaseHead.astro';
 import Callout from '@components/mdx/Callout.astro';
 import Footer from '@components/layout/Footer.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
-import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
 ---
 
 <!doctype html>
@@ -17,50 +16,59 @@ import LongFormProseTypography from '@components/layout/LongFormProseTypography.
   </head>
   <body>
     <MainNavigation />
-    <main class="cq">
-      <LongFormProseTypography>
-        <h1>What I'm doing now</h1>
+    <main class="content">
+      <h1>What I'm doing now</h1>
 
-        <Callout emoji="💡">
-          This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer"
-            >Now Page</a
-          >. Thanks to Derek Sivers for the <a
-            href="https://sive.rs/nowff"
+      <Callout emoji="💡">
+        This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer"
+          >Now Page</a
+        >. Thanks to Derek Sivers for the <a
+          href="https://sive.rs/nowff"
+          target="_blank"
+          rel="noopener noreferrer">idea</a
+        >.
+      </Callout>
+      <ul>
+        <li>
+          <a href="https://betterat.work" target="_blank" rel="noopener noreferrer">Consulting</a>
+          on leadership, remote working and operations with a few companies.
+        </li>
+        <li>
+          Working on <a
+            href="https://astroeditor.danny.is"
             target="_blank"
-            rel="noopener noreferrer">idea</a
+            rel="noopener noreferrer">Astro Editor</a
+          >, a markdown editor for Astro content collections.
+        </li>
+        <li>
+          Learning a shit ton about how to work with AI to build stuff fast <strong
+            >and well</strong
           >.
-        </Callout>
-        <ul>
-          <li>
-            <a href="https://betterat.work" target="_blank" rel="noopener noreferrer">Consulting</a>
-            on leadership, remote working and operations with a few companies.
-          </li>
-          <li>
-            Working on <a
-              href="https://astroeditor.danny.is"
-              target="_blank"
-              rel="noopener noreferrer">Astro Editor</a
-            >, a markdown editor for Astro content collections.
-          </li>
-          <li>
-            Learning a shit ton about how to work with AI to build stuff fast <strong
-              >and well</strong
-            >.
-          </li>
-          <li>
-            Occasionally adding to my <a
-              href="https://betterat.work/toolbox"
-              target="_blank"
-              rel="noopener noreferrer">collection of tools and frameworks</a
-            >
-          </li>
-          <li>Playing at Open Mic nights in my local pub.</li>
-          <li>Living in a lovely little mews in Islington, North London.</li>
-        </ul>
+        </li>
+        <li>
+          Occasionally adding to my <a
+            href="https://betterat.work/toolbox"
+            target="_blank"
+            rel="noopener noreferrer">collection of tools and frameworks</a
+          >
+        </li>
+        <li>Playing at Open Mic nights in my local pub.</li>
+        <li>Living in a lovely little mews in Islington, North London.</li>
+      </ul>
 
-        <p>Updated: 2025-10-04</p>
-      </LongFormProseTypography>
+      <p>Updated: 2025-10-04</p>
     </main>
     <Footer />
+    <style>
+      .content {
+        max-width: 60ch;
+        margin: 0 auto;
+        padding: var(--space-6);
+      }
+
+      h1 {
+        margin-top: var(--space-8);
+      }
+    </style>
   </body>
 </html>

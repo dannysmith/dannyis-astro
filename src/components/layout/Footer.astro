@@ -6,7 +6,7 @@ import SocialLinks from '@components/ui/SocialLinks.astro';
 const today = new Date();
 ---
 
-<footer>
+<footer class="ui-style dark-surface">
   <PersonalLogo />
   <section class="footer-nav-links">
     <ul>
@@ -36,8 +36,6 @@ const today = new Date();
 <style>
   footer {
     position: relative;
-    background-color: var(--color-footer-bg);
-    color: var(--color-footer-text);
     border-top: var(--border-width-accent) solid var(--color-footer-border);
     padding: var(--space-4);
     font-size: var(--font-size-sm);
@@ -65,19 +63,8 @@ const today = new Date();
       line-height: var(--leading-relaxed);
     }
 
-    a,
-    a:link,
-    a:visited {
+    a {
       padding: var(--space-2);
-      text-decoration: none;
-      color: var(--color-footer-text);
-      transition: color var(--duration-fast) var(--ease-default);
-    }
-
-    a:hover,
-    a:active,
-    a:focus {
-      color: var(--color-footer-link-hover);
     }
   }
 
@@ -96,20 +83,12 @@ const today = new Date();
     position: absolute;
     font-size: var(--font-size-xs);
     opacity: 0.7;
-    color: inherit;
     left: var(--space-10);
     bottom: var(--space-4);
     text-transform: uppercase;
     letter-spacing: var(--tracking-wider);
-    font-weight: var(--font-weight-light);
-
-    a {
-      color: inherit;
-      transition: color var(--duration-fast) var(--ease-default);
-    }
 
     a:hover {
-      color: var(--color-footer-link-hover);
       opacity: 1;
     }
   }

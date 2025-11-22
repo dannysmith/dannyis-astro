@@ -9,7 +9,7 @@ const isDev = import.meta.env.MODE === 'development';
 <a class="open-nav-link" href="#">
   <Icon name="heroicons:bars-3" />
 </a>
-<nav class="main-navigation">
+<nav class="main-navigation ui-style dark-surface">
   <span class="close">&times;</span>
   <PersonalLogo />
   <section class="nav-nav-links">
@@ -52,8 +52,6 @@ const isDev = import.meta.env.MODE === 'development';
     left: -100%;
     height: 100vh;
     z-index: 1000;
-    background-color: var(--color-nav-bg);
-    color: var(--color-nav-text);
     border-right: var(--border-width-accent) solid var(--color-nav-border);
     padding: var(--space-4) var(--space-8) var(--space-4) var(--space-4);
     font-size: clamp(0.8rem, calc(0.6rem + 1vw), 1.2rem);
@@ -86,19 +84,12 @@ const isDev = import.meta.env.MODE === 'development';
       line-height: var(--leading-relaxed);
     }
 
-    a,
-    a:link,
-    a:visited {
+    a {
       padding: var(--space-2);
-      text-decoration: none;
-      color: var(--color-nav-text);
     }
 
-    a:hover,
-    a:active,
-    a:focus,
     a.active {
-      color: var(--color-nav-link-hover);
+      color: var(--color-accent);
     }
   }
   .close {

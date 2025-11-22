@@ -23,7 +23,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
   </head>
   <body>
     <MainNavigation />
-    <main>
+    <main class="ui-style">
       <h1 class="title">Writing</h1>
       <section>
         <ul>
@@ -57,7 +57,6 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       body {
         display: grid;
         grid-template-rows: auto min-content;
-        background-color: var(--color-bg-primary);
       }
 
       section {
@@ -82,12 +81,8 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
         margin-bottom: var(--space-8);
       }
 
-      a {
-        text-decoration: none;
-      }
-
       a:hover .post-title {
-        color: var(--color-writinglist-title-hover);
+        color: var(--color-accent);
       }
 
       .date {

@@ -37,7 +37,7 @@ const recentNotesWithContent = await Promise.all(
   </head>
   <body>
     <MainNavigation />
-    <main>
+    <main class="ui-style">
       <h1 class="title">Notes</h1>
 
       <!-- Recent Notes as Cards -->
@@ -89,7 +89,6 @@ const recentNotesWithContent = await Promise.all(
       body {
         display: grid;
         grid-template-rows: auto min-content;
-        background-color: var(--color-bg-primary);
       }
 
       main {
@@ -153,13 +152,12 @@ const recentNotesWithContent = await Promise.all(
       }
 
       .archive-list a {
-        text-decoration: none;
         display: block;
         width: 100%;
       }
 
       .archive-list a:hover .note-title {
-        color: var(--color-notelist-title-hover);
+        color: var(--color-accent);
       }
 
       .archive-list .date {

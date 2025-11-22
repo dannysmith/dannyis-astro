@@ -10,7 +10,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
   </head>
   <body itemtype="https://schema.org/ProfilePage" itemscope>
-    <main class="vcard h-card" itemtype="http://schema.org/Person" itemprop="mainEntity" itemscope>
+    <main class="vcard h-card ui-style" itemtype="http://schema.org/Person" itemprop="mainEntity" itemscope>
       <a rel="me" href={Astro.site?.href} class="u-url u-uid hidden-microformat">Danny Smith</a>
       <h1 class="fn p-name" itemprop="name">
         <span itemprop="givenName">Danny</span>
@@ -94,10 +94,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
       />
 
       <style>
-        body {
-          background-color: var(--color-bg-primary);
-        }
-
         main {
           display: grid;
           grid-template-columns: 1rem auto 1fr;
@@ -132,13 +128,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
           font-weight: var(--font-weight-bold);
         }
 
-        .link-list a {
-          text-decoration: none;
-          color: inherit;
-        }
-
         .link-list a:hover {
-          color: var(--color-homepage-link-hover);
+          color: var(--color-accent);
         }
 
         .avatar {
