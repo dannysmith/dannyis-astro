@@ -336,7 +336,7 @@
   a:not([class]) {
     text-decoration: underline;
     text-decoration-thickness: max(0.08em, 1px);
-    text-underline-offset: 0.15em;
+    text-underline-offset: 0.2em;
     text-decoration-skip-ink: auto;
     color: currentColor;
   }
@@ -351,8 +351,8 @@
     font-variant: all-small-caps;
     text-decoration: underline;
     text-decoration-style: dashed;
-    text-decoration-color: var(--color-grey-500);
-    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
+    text-decoration-thickness: max(0.08em, 1px);
     text-underline-offset: 0.2em;
     text-decoration-skip-ink: none;
   }
@@ -371,7 +371,7 @@
   /* Strikethrough */
   del {
     text-decoration: line-through;
-    text-decoration-color: var(--color-strikethrough);
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
   }
