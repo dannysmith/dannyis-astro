@@ -15,7 +15,7 @@
   }
 
   .circle {
-    width: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
+    width: var(--space-s);
     aspect-ratio: 1;
     background-color: var(--color-accent);
     border-radius: var(--radius-full);
@@ -23,8 +23,9 @@
 
   .name {
     text-transform: uppercase;
-    line-height: var(--leading-none);
     letter-spacing: var(--tracking-wide);
     font-weight: var(--font-weight-bold);
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
   }
 </style>
