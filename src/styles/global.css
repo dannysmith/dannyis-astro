@@ -386,6 +386,16 @@
       scroll-behavior: smooth;
     }
   }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 /* ============================================
@@ -582,43 +592,108 @@
 }
 
 /* ============================================
-   LAYOUT LAYER
-   Copy from global-backup.css as needed
+   LAYOUT LAYER - Reusable layout patterns
    ============================================ */
 @layer layout {
-  /* TODO: Add from global-backup.css */
+  /* Flow utility - consistent vertical spacing */
+  .flow > * + * {
+    margin-top: var(--space-m);
+  }
+
+  /* List reset - for navigation and UI lists */
+  .list-reset {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: var(--space-xs);
+  }
+
+  /* All caps utility - for labels and UI text */
+  .all-caps {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
 }
 
 /* ============================================
-   UTILITIES LAYER
-   Copy from global-backup.css as needed
+   UTILITIES LAYER - Single-purpose helpers
    ============================================ */
 @layer utilities {
-  /* TODO: Add from global-backup.css */
-}
+  /* ----------------------------------------
+     .ui-style - Opt-out of prose typography
+     Apply to navigation, footers, page titles, and UI-heavy areas
+     ---------------------------------------- */
+  .ui-style {
+    /* Switch to UI font */
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-snug);
 
-/* ============================================
-   LONGFORM LAYER
-   Used by LongFormProseTypography.astro
-   ============================================ */
-@layer longform {
-  /* Styles are in LongFormProseTypography.astro */
+    /* Remove prose link styling */
+    & a {
+      text-decoration: none;
+      color: inherit;
+      transition: color var(--duration-fast) ease-in-out;
+    }
+
+    & a:visited {
+      color: inherit;
+    }
+
+    & a:hover,
+    & a:focus {
+      color: var(--color-accent);
+    }
+
+    /* Remove heading borders and adjust spacing */
+    & :is(h1, h2, h3, h4, h5, h6) {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-top: 0;
+    }
+
+    /* Remove list marker colors */
+    & li::marker {
+      color: inherit;
+    }
+
+    /* Tighter prose spacing */
+    & :where(p, ul, ol, blockquote) {
+      margin-top: var(--space-m);
+    }
+  }
+
+  /* ----------------------------------------
+     .dark-surface - Always-dark areas (nav, footer etc)
+     Combine with .ui-style for dark UI areas
+     ---------------------------------------- */
+  .dark-surface {
+    background-color: var(--color-grey);
+    color: var(--color-beige);
+  }
+
+  /* Container query utility */
+  .cq {
+    container-type: inline-size;
+  }
+
+  /* Hidden utility for screen readers and microformats */
+  .sr-only,
+  .hidden-microformat {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
 }
 
 /* ============================================
    THEME LAYER
-   Copy from global-backup.css as needed
    ============================================ */
 @layer theme {
-  /* Reduced motion - keep this */
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-  }
-
-  /* TODO: Add dark mode typography overrides from global-backup.css */
 }
