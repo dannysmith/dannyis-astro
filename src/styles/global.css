@@ -598,10 +598,11 @@
     color-scheme: light dark;
 
     /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-    --font-weight-prose: light-dark(400, 350);
-    --line-height-prose: light-dark(1.7, 1.8);
-    --font-weight-article: light-dark(350, 250);
-    --line-height-article: light-dark(1.7, 1.6);
+    /* Note: light-dark() only works for colors, so we use defaults + dark override */
+    --font-weight-prose: 400;
+    --line-height-prose: 1.7;
+    --font-weight-article: 350;
+    --line-height-article: 1.7;
 
     /* -------------------- PRIMARY GLOBAL COLOURS -------------------- */
     /* Background colors */
@@ -758,13 +759,31 @@
     --color-writinglist-platform-label: light-dark(var(--color-green-700), var(--color-green-500));
   }
 
-  /* Manual theme overrides - only need color-scheme declarations */
+  /* Dark theme typography overrides (light-dark() only works for colors) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --font-weight-prose: 350;
+      --line-height-prose: 1.8;
+      --font-weight-article: 250;
+      --line-height-article: 1.6;
+    }
+  }
+
+  /* Manual theme overrides */
   :root[data-theme='light'] {
     color-scheme: light;
+    --font-weight-prose: 400;
+    --line-height-prose: 1.7;
+    --font-weight-article: 350;
+    --line-height-article: 1.7;
   }
 
   :root[data-theme='dark'] {
     color-scheme: dark;
+    --font-weight-prose: 350;
+    --line-height-prose: 1.8;
+    --font-weight-article: 250;
+    --line-height-article: 1.6;
   }
 }
 

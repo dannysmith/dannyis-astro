@@ -277,7 +277,7 @@ const { class: className, ...props } = Astro.props;
       font-variant-numeric: oldstyle-nums diagonal-fractions;
       /* hanging-punctuation now in base layer */
       border-left: var(--border-width-base) solid var(--color-article-accent);
-      padding-left: calc((1em * var(--line-height)) - var(--border-width-base));
+      padding-left: calc((1em * var(--line-height)) - 2px); /* 2px matches --border-width-base */
       font-style: italic;
       margin-left: 0;
     }
