@@ -14,10 +14,9 @@ const { class: className, ...props } = Astro.props;
 <style is:global>
   @layer longform {
     .longform-prose {
-      --line-height: var(--leading-loose);
-
-      line-height: var(--line-height);
+      line-height: var(--leading-loose);
       text-rendering: optimizeLegibility;
+      font-variant-numeric: oldstyle-nums diagonal-fractions;
     }
 
     .longform-prose:last-child {
@@ -46,10 +45,6 @@ const { class: className, ...props } = Astro.props;
     }
 
     /* ----------- Paragraphs ----------- */
-
-    .longform-prose > p {
-      font-variant-numeric: oldstyle-nums diagonal-fractions;
-    }
 
     /* Use hyphens only on small viewports. */
     @media (max-width: 42em) {
@@ -127,7 +122,6 @@ const { class: className, ...props } = Astro.props;
     }
 
     .longform-prose :is(ul, ol) {
-      font-variant-numeric: oldstyle-nums diagonal-fractions;
       padding-left: 0.4em;
     }
 
@@ -199,13 +193,6 @@ const { class: className, ...props } = Astro.props;
       padding: 0 var(--space-2xs);
     }
 
-    /* ----------- Blockquotes ----------- */
-    .longform-prose blockquote {
-      font-variant-numeric: oldstyle-nums diagonal-fractions;
-      /* border-left: var(--border-width-base) solid var(--color-accent); */
-      /* padding-left: calc((1em * var(--line-height)) - 2px); */
-    }
-
     /* ----------- Footnotes ----------- */
 
     .longform-prose [data-footnote-ref] {
@@ -228,13 +215,6 @@ const { class: className, ...props } = Astro.props;
       .data-footnote-backref {
         text-decoration: none;
         color: var(--color-accent);
-      }
-    }
-
-    /* Mobile optimization */
-    @media (max-width: 700px) {
-      .longform-prose .metadata {
-        padding-top: var(--space-l);
       }
     }
   }

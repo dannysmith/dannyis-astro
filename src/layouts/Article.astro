@@ -122,10 +122,16 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       }
 
       .metadata {
-        font-size: var(--font-size-s);
+        font-size: var(--font-size-sm);
         color: var(--color-accent);
         font-family: var(--font-code);
         margin-top: var(--space-s);
+      }
+
+      @media (max-width: 700px) {
+        .metadata {
+          padding-top: var(--space-l);
+        }
       }
 
       .hero-image {
