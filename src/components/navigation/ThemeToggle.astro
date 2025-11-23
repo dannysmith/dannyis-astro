@@ -1,161 +1,207 @@
 ---
-// ThemeToggle component for switching between auto, light, and dark themes
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  class?: string;
+}
+
+const options = [
+  {
+    value: 'light',
+    label: 'Light',
+    description: 'Use light theme',
+    icon: 'heroicons:sun',
+  },
+  {
+    value: 'auto',
+    label: 'System',
+    description: 'Follow system theme',
+    icon: 'heroicons:computer-desktop',
+  },
+  {
+    value: 'dark',
+    label: 'Dark',
+    description: 'Use dark theme',
+    icon: 'heroicons:moon',
+  },
+] as const;
+
+const { class: className = '' } = Astro.props;
+const rootClass = ['theme-toggle', className].filter(Boolean).join(' ').trim();
 ---
 
-<div class="theme-toggle" role="radiogroup" aria-label="Choose color theme">
-  <button
-    type="button"
-    class="theme-option"
-    data-theme="auto"
-    aria-label="Auto theme (follows system)"
-    title="Auto theme (follows system)"
-  >
-    <span class="theme-icon" aria-hidden="true">◐</span>
-    <span class="theme-label">Auto</span>
-  </button>
-
-  <button
-    type="button"
-    class="theme-option"
-    data-theme="light"
-    aria-label="Light theme"
-    title="Light theme"
-  >
-    <span class="theme-icon" aria-hidden="true">☀</span>
-    <span class="theme-label">Light</span>
-  </button>
-
-  <button
-    type="button"
-    class="theme-option"
-    data-theme="dark"
-    aria-label="Dark theme"
-    title="Dark theme"
-  >
-    <span class="theme-icon" aria-hidden="true">🌙</span>
-    <span class="theme-label">Dark</span>
-  </button>
+<div class={rootClass} data-theme-toggle data-theme-current="auto" role="radiogroup" aria-label="Choose color theme">
+  <span class="theme-toggle__thumb" aria-hidden="true"></span>
+  {options.map(option => (
+    <button
+      type="button"
+      role="radio"
+      aria-checked="false"
+      data-theme-option={option.value}
+      title={option.description}
+    >
+      <span class="sr-only">{option.description}</span>
+      <Icon name={option.icon} aria-hidden="true" />
+    </button>
+  ))}
 </div>
 
-<!-- DISABLED-STYLE <style>
-  .theme-toggle {
-    display: flex;
-    gap: var(--space-2);
-    margin-top: var(--space-8);
-    padding-top: var(--space-6);
-    border-top: var(--border-width-hairline) solid var(--color-nav-border);
-  }
-
-  .theme-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-2);
-    background: transparent;
-    border: var(--border-width-hairline) solid var(--color-nav-border);
-    border-radius: var(--radius-md);
-    color: var(--color-nav-text);
-    font-family: inherit;
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-medium);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    cursor: pointer;
-    transition: all var(--duration-normal) var(--ease-default);
-    flex: 1;
-    min-height: 4rem;
+<style>
+  .theme-toggle[data-theme-toggle] {
+    --theme-count: 3;
+    --theme-index: 0;
+    --theme-thumb-size: clamp(1.9rem, var(--space-m), 2.25rem);
+    --theme-track-padding-block: var(--space-4xs);
+    --theme-track-padding-inline: var(--space-2xs);
+    --theme-track-height: calc(var(--theme-thumb-size) + var(--theme-track-padding-block) * 2);
+    --theme-step: calc(
+      (100% - (var(--theme-track-padding-inline) * 2) - var(--theme-thumb-size)) / (var(--theme-count) - 1)
+    );
+    --theme-thumb-color: color-mix(in oklch, var(--color-accent) 45%, var(--color-background));
     position: relative;
-    opacity: 0.6;
+    display: inline-flex;
+    align-items: center;
+    width: clamp(10rem, 22vw, 13rem);
+    min-height: var(--theme-track-height);
+    padding: var(--theme-track-padding-block) var(--theme-track-padding-inline);
+    border-radius: var(--radius-full);
+    border: var(--border-width-hairline) solid color-mix(in oklch, var(--color-text) 12%, transparent);
+    background: color-mix(in oklch, var(--color-background) 70%, var(--color-background-secondary) 30%);
+    color: var(--color-text);
   }
 
-  .theme-option:hover {
-    border-color: var(--color-nav-link-hover);
-    background: oklch(70% 0.18 25 / 0.1);
-    opacity: 0.8;
+  .theme-toggle__thumb {
+    position: absolute;
+    top: var(--theme-track-padding-block);
+    left: calc(var(--theme-track-padding-inline) + var(--theme-step) * var(--theme-index));
+    width: var(--theme-thumb-size);
+    height: var(--theme-thumb-size);
+    border-radius: var(--radius-full);
+    background: var(--theme-thumb-color);
+    pointer-events: none;
+    transition:
+      left var(--duration-fast) var(--ease-in-out),
+      background var(--duration-fast) var(--ease-in-out);
   }
 
-  .theme-option:focus-visible {
-    outline: var(--border-width-base) solid var(--color-nav-link-hover);
-    outline-offset: var(--space-1);
+  .theme-toggle[data-theme-toggle] button {
+    flex: 1;
+    height: var(--theme-track-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3xs);
+    border: 0;
+    background: transparent;
+    color: color-mix(in oklch, var(--color-text) 45%, var(--color-background));
+    cursor: pointer;
+    border-radius: var(--radius-full);
+    position: relative;
+    z-index: 1;
+    transition: color var(--duration-fast) var(--ease-in-out);
   }
 
-  .theme-option.active {
-    border-color: var(--color-nav-link-hover);
-    background: var(--color-nav-link-hover);
-    color: var(--color-brand-white);
-    opacity: 1;
-    box-shadow: 0 2px 8px oklch(70% 0.18 25 / 0.3);
+  .theme-toggle[data-theme-toggle] button[aria-checked='true'] {
+    color: var(--color-text);
   }
 
-  .theme-icon {
-    font-size: var(--font-size-md);
-    line-height: 1;
-    display: block;
+  .theme-toggle[data-theme-toggle] button:hover {
+    color: color-mix(in oklch, var(--color-text) 65%, var(--color-background));
   }
 
-  .theme-label {
-    font-size: var(--font-size-xs);
-    line-height: 1;
-    margin: 0;
+  .theme-toggle[data-theme-toggle] button:focus-visible {
+    outline: var(--border-width-base) solid color-mix(in oklch, var(--color-accent) 65%, transparent);
+    outline-offset: var(--space-3xs);
   }
 
-  /* Animation for theme changes */
-  @media (prefers-reduced-motion: no-preference) {
-    :root {
-      transition: color-scheme var(--duration-slow) var(--ease-default);
+  .theme-toggle[data-theme-toggle] svg {
+    width: var(--space-s);
+    height: var(--space-s);
+  }
+
+  .theme-toggle[data-theme-current='light'] {
+    --theme-thumb-color: color-mix(in oklch, var(--color-accent) 45%, var(--color-background));
+  }
+
+  .theme-toggle[data-theme-current='auto'] {
+    --theme-thumb-color: color-mix(in oklch, var(--color-text) 10%, var(--color-background-secondary) 80%);
+  }
+
+  .theme-toggle[data-theme-current='dark'] {
+    --theme-thumb-color: color-mix(in oklch, var(--color-accent) 25%, var(--color-background));
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle__thumb,
+    .theme-toggle[data-theme-toggle] button {
+      transition: none;
     }
-
-    .theme-option {
-      transition: all var(--duration-fast) var(--ease-default);
-    }
   }
-</style> -->
+</style>
 
 <script>
-  function updateActiveState() {
-    if (!window.theme) return;
+  const themeOrder = ['light', 'auto', 'dark'];
+  let toggle: HTMLElement | null = null;
+  let buttons: HTMLButtonElement[] = [];
+  let systemPreference: MediaQueryList | null = null;
 
-    const currentTheme = window.theme.current;
-    document.querySelectorAll('.theme-option').forEach(button => {
-      const buttonTheme = button.getAttribute('data-theme');
-      if (buttonTheme === currentTheme) {
-        button.classList.add('active');
-        button.setAttribute('aria-pressed', 'true');
-      } else {
-        button.classList.remove('active');
-        button.setAttribute('aria-pressed', 'false');
-      }
+  function applyThemeState(theme) {
+    if (!toggle) return;
+    const index = Math.max(0, themeOrder.indexOf(theme));
+    toggle.style.setProperty('--theme-index', String(index));
+    toggle.dataset.themeCurrent = theme;
+    buttons.forEach(button => {
+      button.setAttribute('aria-checked', button.dataset.themeOption === theme ? 'true' : 'false');
     });
   }
 
-  function handleThemeChange(event: Event) {
-    const target = event.target as HTMLElement;
-    const button = target?.closest('.theme-option');
-    if (!button) return;
+  function bindToggle() {
+    toggle = document.querySelector('[data-theme-toggle]');
+    if (!toggle) return;
+    buttons = Array.from(toggle.querySelectorAll('[data-theme-option]')) as HTMLButtonElement[];
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const choice = button.dataset.themeOption;
+        if (!choice || !window.theme) return;
+        window.theme.set(choice as 'light' | 'dark' | 'auto');
+      });
+    });
+    applyThemeState(window.theme?.current ?? 'auto');
 
-    const theme = button.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
-    if (window.theme && theme) {
-      window.theme.set(theme);
+    if (!systemPreference) {
+      systemPreference = window.matchMedia('(prefers-color-scheme: dark)');
+      systemPreference.addEventListener('change', () => {
+        if (window.theme?.current === 'auto') {
+          applyThemeState('auto');
+        }
+      });
     }
   }
 
-  // Initialize when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    // Set initial state
-    updateActiveState();
-
-    // Add click handlers
-    document.querySelectorAll('.theme-option').forEach(button => {
-      button.addEventListener('click', handleThemeChange);
-    });
-
-    // Listen for theme changes
-    document.addEventListener('theme-changed', updateActiveState);
+  document.addEventListener('theme-changed', event => {
+    const nextTheme = event.detail?.theme ?? window.theme?.current ?? 'auto';
+    applyThemeState(nextTheme);
   });
 
-  // Handle ViewTransitions
+  document.addEventListener('DOMContentLoaded', () => {
+    bindToggle();
+    applyThemeState(window.theme?.current ?? 'auto');
+  });
+
   document.addEventListener('astro:after-swap', () => {
-    setTimeout(updateActiveState, 0);
+    bindToggle();
+    applyThemeState(window.theme?.current ?? 'auto');
   });
 </script>
