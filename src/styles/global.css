@@ -619,6 +619,7 @@
   :not(pre) > code {
     font-family: var(--font-code);
     font-size: var(--font-size-sm);
+    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
     background-color: var(--color-background-secondary);
     border: var(--border-width-hairline) solid var(--color-border);
     padding: 0.1em 0.4em;
@@ -635,6 +636,7 @@
     font-family: var(--font-ui);
     font-size: 0.875em;
     font-weight: var(--font-weight-medium);
+    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
     padding: 0.1em 0.4em;
     background-color: var(--color-background-secondary);
     border: var(--border-width-hairline) solid var(--color-border);
