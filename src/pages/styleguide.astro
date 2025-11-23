@@ -94,20 +94,20 @@ const sampleNotes = (
         <div class="test-section">
           <h2>Pill Component</h2>
           <Pill text="Default" />
-          <Pill text="Green" color="var(--color-green-600)" />
-          <Pill text="Yellow" color="var(--color-yellow-500)" textColor="var(--color-black)" />
-          <Pill text="Custom" color="#ff69b4" textColor="#fff" />
+          <Pill text="Green" color="var(--color-green)" textColor="var(--color-white)" />
+          <Pill text="Yellow" color="var(--color-yellow)" textColor="var(--color-black)" />
+          <Pill text="Accent" color="var(--color-accent)" textColor="var(--color-white)" />
         </div>
 
         <div class="test-section">
           <h2>Grid Component</h2>
           <Grid columns={3} rows={2} gap="1rem">
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 1</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 2</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 3</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 4</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 5</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 6</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 1</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 2</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 3</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 4</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 5</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 6</div>
           </Grid>
         </div>
 
@@ -302,7 +302,7 @@ const sampleNotes = (
 
           <h3>Responsive Test</h3>
           <div
-            style="width: 100%; max-width: 300px; border: 1px dashed var(--color-grey-400); padding: 1rem;"
+            style="width: 100%; max-width: 300px; border: 1px dashed var(--color-border); padding: 1rem;"
           >
             <p><strong>Narrow Container (300px):</strong></p>
             <Callout emoji="📱" type="purple" title="Mobile View">
