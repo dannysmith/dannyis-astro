@@ -25,7 +25,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
     <MainNavigation />
     <main class="ui-style">
       <h1 class="title">Writing</h1>
-      <section>
+      <section class="writing-index">
         <ul class="list-reset">
           {
             posts.map(post => (
@@ -53,76 +53,63 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       </section>
     </main>
     <Footer />
-    <!-- DISABLED-STYLE <style>
+<style>
       body {
         display: grid;
         grid-template-rows: auto min-content;
       }
 
-      section {
-        padding: var(--space-4);
-      }
-
       .title {
-        text-transform: uppercase;
         font-size: clamp(3rem, 14vw, 20rem);
-        transform: translateY(-0.3em);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
         text-align: right;
+        line-height: var(--leading-none);
+        transform: translateY(-0.1em);
         pointer-events: none;
-      }
-
-      ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      li {
-        margin-bottom: var(--space-8);
-      }
-
-      a:hover .post-title {
-        color: var(--color-accent);
       }
 
       .date {
         font-size: var(--font-size-xs);
-        color: var(--color-writinglist-date);
-        text-transform: uppercase;
-        letter-spacing: var(--tracking-wider);
+        color: var(--color-text-secondary);
+      }
+
+      .writing-index {
+        padding: var(--space-s);
       }
 
       .post-title {
         font-size: var(--font-size-md);
+        font-weight: var(--font-weight-semibold);
         line-height: var(--leading-tight);
-        font-weight: var(--font-weight-medium);
-        padding-bottom: var(--space-1);
-        border-bottom: var(--border-width-thick) var(--color-writinglist-border) solid;
-        transition: all var(--duration-fast) var(--ease-default);
+        letter-spacing: var(--tracking-tight);
+        padding-bottom: var(--space-3xs);
+        border-bottom: var(--border-width-thick) solid var(--color-accent);
+        transition: color var(--duration-fast) var(--ease-in-out);
+
+        & :global(.pill) {
+          transform: translateY(-0.2em);
+        }
       }
 
-      .post-title :global(.pill) {
-        transform: translateY(-0.2em);
-        opacity: 0.7;
-        transition: opacity var(--duration-fast) var(--ease-default);
-      }
+      @media (min-width: 800px) {
+        ul {
+          display: grid;
+          grid-template-columns: auto auto;
+          justify-content: start;
+          align-items: baseline;
+          gap: var(--space-m) var(--space-s);
+        }
 
-      a:hover .post-title :global(.pill) {
-        opacity: 1;
-      }
+        li,
+        a {
+          display: contents;
+        }
 
-      @media screen and (min-width: 800px) {
         .date {
           text-align: right;
-          padding-bottom: calc(var(--space-1) + var(--border-width-thick));
-        }
-        a {
-          display: grid;
-          gap: var(--space-4);
-          grid-template-columns: 10% 5fr 1fr;
-          align-items: end;
         }
       }
-    </style> -->
+    </style>
   </body>
 </html>
