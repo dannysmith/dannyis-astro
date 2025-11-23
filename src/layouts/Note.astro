@@ -43,7 +43,7 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
 
     <Footer />
 
-    <!-- DISABLED-STYLE <style>
+    <style>
       body {
         display: grid;
         grid-template-rows: auto min-content;
@@ -51,8 +51,8 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
       }
 
       main {
-        padding: 1em;
-        padding-top: 4em;
+        padding: var(--space-s);
+        padding-top: var(--space-2xl);
         display: grid;
         place-items: center;
 
@@ -60,6 +60,6 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
           max-width: 80ch;
         }
       }
-    </style> -->
+    </style>
   </body>
 </html>
