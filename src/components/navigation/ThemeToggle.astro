@@ -31,96 +31,69 @@ const { class: className } = Astro.props;
 
 <style>
   .theme-toggle {
-    /* Configurable sizing */
-    --_thumb-size: var(--theme-toggle-thumb-size, clamp(1.75rem, 4vw, 2.25rem));
-    --_padding: var(--theme-toggle-padding, var(--space-3xs));
+    --_size: var(--theme-toggle-thumb-size, clamp(1.75rem, 4vw, 2.25rem));
+    --_pad: var(--theme-toggle-padding, var(--space-3xs));
     --_gap: var(--theme-toggle-gap, var(--space-3xs));
+    --_pos: 1; /* 0=light, 1=auto, 2=dark */
 
-    /* Internal colors - adapt to theme */
-    --_track-bg: color-mix(in oklch, var(--color-background) 80%, var(--color-background-secondary));
-    --_border: color-mix(in oklch, var(--color-text) 12%, transparent);
-    --_icon-muted: color-mix(in oklch, var(--color-text) 40%, transparent);
-    --_icon-active: var(--color-text);
-
-    /* Layout */
     display: inline-grid;
-    grid-template-columns: repeat(3, var(--_thumb-size));
+    grid-template-columns: repeat(3, var(--_size));
     gap: var(--_gap);
-    padding: var(--_padding);
-
-    /* Appearance */
-    border-radius: var(--radius-full);
-    border: var(--border-width-hairline) solid var(--_border);
-    background: var(--_track-bg);
-
-    /* Establish positioning context for thumb */
+    padding: var(--_pad);
     position: relative;
-  }
-
-  /* Thumb - positioned via :has() detecting checked state */
-  .theme-toggle::before {
-    content: '';
-    position: absolute;
-    inset-block: var(--_padding);
-    width: var(--_thumb-size);
     border-radius: var(--radius-full);
-    background: color-mix(in oklch, var(--color-text) 10%, var(--color-background-secondary));
-    pointer-events: none;
-    transition: translate var(--duration-fast) var(--ease-in-out);
+    border: var(--border-width-hairline) solid color-mix(in oklch, var(--color-text) 12%, transparent);
+    background: color-mix(in oklch, var(--color-background) 80%, var(--color-background-secondary));
 
-    /* Default: middle position (auto) */
-    translate: calc(var(--_thumb-size) + var(--_gap) + var(--_padding)) 0;
-  }
+    /* Thumb */
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: var(--_pad);
+      width: var(--_size);
+      border-radius: var(--radius-full);
+      background: var(--_thumb-bg, color-mix(in oklch, var(--color-text) 10%, var(--color-background-secondary)));
+      translate: calc(var(--_pad) + (var(--_size) + var(--_gap)) * var(--_pos)) 0;
+      transition: translate var(--duration-fast) var(--ease-in-out);
+      pointer-events: none;
+    }
 
-  /* Thumb position based on checked state */
-  .theme-toggle:has([data-theme-option='light'][aria-checked='true'])::before {
-    translate: var(--_padding) 0;
-    background: color-mix(in oklch, var(--color-accent) 45%, var(--color-background));
-  }
+    &:has([data-theme-option='light'][aria-checked='true']) {
+      --_pos: 0;
+      --_thumb-bg: color-mix(in oklch, var(--color-accent) 45%, var(--color-background));
+    }
 
-  .theme-toggle:has([data-theme-option='dark'][aria-checked='true'])::before {
-    translate: calc((var(--_thumb-size) + var(--_gap)) * 2 + var(--_padding)) 0;
-    background: color-mix(in oklch, var(--color-accent) 25%, var(--color-background));
-  }
+    &:has([data-theme-option='dark'][aria-checked='true']) {
+      --_pos: 2;
+      --_thumb-bg: color-mix(in oklch, var(--color-accent) 25%, var(--color-background));
+    }
 
-  /* Buttons */
-  .theme-toggle button {
-    display: grid;
-    place-items: center;
-    width: var(--_thumb-size);
-    height: var(--_thumb-size);
-    padding: 0;
-    border: 0;
-    border-radius: var(--radius-full);
-    background: transparent;
-    color: var(--_icon-muted);
-    cursor: pointer;
-    position: relative;
-    z-index: 1;
-    transition: color var(--duration-fast) var(--ease-in-out);
-  }
+    /* Buttons */
+    & button {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-full);
+      background: transparent;
+      color: color-mix(in oklch, var(--color-text) 40%, transparent);
+      cursor: pointer;
+      z-index: 1;
+      transition: color var(--duration-fast) var(--ease-in-out);
 
-  .theme-toggle button[aria-checked='true'] {
-    color: var(--_icon-active);
-  }
+      &[aria-checked='true'] { color: var(--color-text); }
+      &:hover { color: color-mix(in oklch, var(--color-text) 70%, transparent); }
+      &:focus-visible {
+        outline: var(--border-width-base) solid color-mix(in oklch, var(--color-accent) 65%, transparent);
+        outline-offset: 2px;
+      }
+    }
 
-  .theme-toggle button:hover {
-    color: color-mix(in oklch, var(--color-text) 70%, transparent);
-  }
+    & svg { width: 1.25em; height: 1.25em; }
 
-  .theme-toggle button:focus-visible {
-    outline: var(--border-width-base) solid color-mix(in oklch, var(--color-accent) 65%, transparent);
-    outline-offset: 2px;
-  }
-
-  .theme-toggle svg {
-    width: 1.25em;
-    height: 1.25em;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .theme-toggle::before {
-      transition: none;
+    @media (prefers-reduced-motion: reduce) {
+      &::before { transition: none; }
     }
   }
 </style>
