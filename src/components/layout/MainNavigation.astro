@@ -6,17 +6,20 @@ import { Icon } from 'astro-icon/components';
 const isDev = import.meta.env.MODE === 'development';
 ---
 
-<a class="open-nav-link" href="#">
+<button class="nav-open" type="button" aria-label="Open navigation">
   <Icon name="heroicons:bars-3" />
-</a>
+</button>
 <nav class="main-navigation ui-style dark-surface">
-  <span class="close">&times;</span>
+  <button class="nav-close" type="button" aria-label="Close navigation">
+    <Icon name="heroicons:x-mark" />
+  </button>
   <PersonalLogo />
-  <section class="nav-nav-links all-caps">
+  <section class="nav-links all-caps">
     <ul class="list-reset">
       <li><NavLink href="/">Home</NavLink></li>
       <li><NavLink href="/writing">Writing</NavLink></li>
       <li><NavLink href="/notes">Notes</NavLink></li>
+      <li><NavLink href="/now">Now</NavLink></li>
       {
         isDev && (
           <li>
@@ -26,25 +29,20 @@ const isDev = import.meta.env.MODE === 'development';
       }
     </ul>
   </section>
-  <theme-toggle>
-    <ThemeToggle />
-  </theme-toggle>
+  <ThemeToggle class="theme-toggle"/>
 </nav>
 
 <style>
-  .open-nav-link {
-    display: block;
+  .nav-open {
     position: absolute;
     top: var(--space-s);
     left: var(--space-s);
-    width: 2em;
-    height: 2em;
+    aspect-ratio: 1;
     padding: var(--space-2xs);
-    border-radius: var(--radius-xs);
     z-index: 1000;
-    color: var(--color-beige);
-    cursor: pointer;
-    background: var(--color-charcoal);
+    background: oklch(from var(--color-background-secondary) l c h / 0.8);
+    color: var(--color-accent);
+    border: none;
   }
 
   .main-navigation {
@@ -53,8 +51,7 @@ const isDev = import.meta.env.MODE === 'development';
     min-height: 100vh;
     z-index: 1000;
     border-right: var(--border-width-accent) solid var(--color-accent);
-    padding: var(--space-s) var(--space-l) var(--space-s) var(--space-s);
-    font-size: clamp(0.8rem, calc(0.6rem + 1vw), 1.2rem);
+    padding: var(--space-s);
     transition: left var(--duration-normal) var(--ease-in-out);
   }
 
@@ -62,17 +59,21 @@ const isDev = import.meta.env.MODE === 'development';
     left: 0;
   }
 
-  .nav-nav-links {
-    margin-top: var(--space-s);
-    padding-left: var(--space-l);
+  .nav-close {
+    position: absolute;
+    top: var(--space-s);
+    right: var(--space-s);
+    background: transparent;
+    border: none;
+  }
+
+  .nav-links {
+    margin-block: var(--space-m);
+    padding-left: calc(var(--space-s) * 2);
 
     li {
+      margin-top: var(--space-2xs);
       padding: 0;
-      line-height: var(--leading-loose);
-    }
-
-    a {
-      padding: var(--space-2xs);
     }
 
     a.active {
@@ -80,21 +81,8 @@ const isDev = import.meta.env.MODE === 'development';
     }
   }
 
-  .close {
-    position: absolute;
-    top: var(--space-xs);
-    right: var(--space-xs);
-    font-size: 1em;
-    cursor: pointer;
-  }
-
-  @media (max-width: 600px) {
-    .nav-nav-links a {
-      display: flex;
-      align-items: center;
-      min-height: 44px; /* Touch target */
-      padding-block: var(--space-xs);
-    }
+  .theme-toggle {
+    padding-left: calc(var(--space-s) * 2);
   }
 </style>
 
@@ -107,8 +95,8 @@ const isDev = import.meta.env.MODE === 'development';
     document.querySelector('.main-navigation')?.classList.add('open');
   };
 
-  document.querySelector('.close')?.addEventListener('click', closeNav);
+  document.querySelector('.nav-close')?.addEventListener('click', closeNav);
   document.querySelector('main')?.addEventListener('click', closeNav);
   document.querySelector('footer')?.addEventListener('click', closeNav);
-  document.querySelector('.open-nav-link')?.addEventListener('click', openNav);
+  document.querySelector('.nav-open')?.addEventListener('click', openNav);
 </script>
