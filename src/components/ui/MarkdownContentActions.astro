@@ -48,17 +48,7 @@ const { markdownUrl } = Astro.props;
   function showFlashNotification(message: string) {
     const notification = document.createElement('div');
     notification.textContent = message;
-    notification.style.cssText = `
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: var(--color-brand-primary);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 0.25rem;
-      z-index: 9999;
-      animation: slideIn 0.3s ease-out forwards;
-    `;
+    notification.className = 'flash-notification';
 
     document.body.appendChild(notification);
 
@@ -85,10 +75,25 @@ const { markdownUrl } = Astro.props;
   }
 </script>
 
-<!-- DISABLED-STYLE <style>
+<style>
   .markdown-actions {
-    margin-top: var(--space-8);
+    margin-top: var(--space-l);
     color: var(--color-text-secondary);
+  }
+
+  /* Toast notification - injected via JS */
+  :global(.flash-notification) {
+    position: fixed;
+    top: var(--space-s);
+    right: var(--space-s);
+    z-index: 9999;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    padding: var(--space-2xs) var(--space-s);
+    border-radius: var(--radius-sm);
+    animation: slideIn var(--duration-slow) ease-out forwards;
   }
 
   @keyframes slideIn {
@@ -112,4 +117,4 @@ const { markdownUrl } = Astro.props;
       opacity: 0;
     }
   }
-</style> -->
+</style>
