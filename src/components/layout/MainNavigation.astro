@@ -29,7 +29,9 @@ const isDev = import.meta.env.MODE === 'development';
       }
     </ul>
   </section>
-  <ThemeToggle class="theme-toggle"/>
+  <div class="theme-toggle-wrapper">
+    <ThemeToggle />
+  </div>
 </nav>
 
 <style>
@@ -48,6 +50,7 @@ const isDev = import.meta.env.MODE === 'development';
   .main-navigation {
     position: fixed;
     left: -100%;
+    min-width: 18rem; /* Wide enough for logo + close button */
     min-height: 100vh;
     z-index: 1000;
     border-right: var(--border-width-accent) solid var(--color-accent);
@@ -61,8 +64,9 @@ const isDev = import.meta.env.MODE === 'development';
 
   .nav-close {
     position: absolute;
-    top: var(--space-s);
-    right: var(--space-s);
+    top: var(--space-2xs);
+    right: var(--space-2xs);
+    padding: var(--space-3xs);
     background: transparent;
     border: none;
   }
@@ -81,8 +85,9 @@ const isDev = import.meta.env.MODE === 'development';
     }
   }
 
-  .theme-toggle {
-    padding-left: calc(var(--space-s) * 2);
+  .theme-toggle-wrapper {
+    display: flex;
+    justify-content: center;
   }
 </style>
 
