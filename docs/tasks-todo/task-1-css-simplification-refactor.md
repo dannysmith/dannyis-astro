@@ -8,120 +8,112 @@ Drastically simplify the CSS system while retaining modern future-proofing featu
 - [x] Created minimal `global.css` skeleton (reset + essential tokens)
 - [x] Disabled all component CSS via `./scripts/toggle-component-css.sh disable`
 
-## Workflow
-
-```bash
-# Check status
-./scripts/toggle-component-css.sh status
-
-# Enable specific component CSS
-./scripts/toggle-component-css.sh enable Footer
-./scripts/toggle-component-css.sh enable MainNav
-
-# Enable all component CSS (when done)
-./scripts/toggle-component-css.sh enable
-```
-
 ---
 
-## Phase A: global.css Foundation
+## Phase A: global.css Foundation ✅
 
 Work through `global.css`, copying rules from `global-backup.css` as needed.
 
 ### A1: Review Reset Layer
-- [ ] Review reset layer (already complete in skeleton)
-- [ ] Verify it looks correct with just reset applied
-- [ ] Run dev server, check homepage, article page, notes page
+- [x] Review reset layer (already complete in skeleton)
+- [x] Verify it looks correct with just reset applied
+- [x] Run dev server, check homepage, article page, notes page
 
 ### A2: Base Layer
-- [ ] Copy `html` and `body` base styles from backup
-- [ ] Copy `abbr`, `sup`, `sub`, `del`, `mark` styles
-- [ ] Copy table styles
-- [ ] Copy form element styles
-- [ ] Review and simplify where possible
+- [x] Copy `html` and `body` base styles from backup
+- [x] Copy `abbr`, `sup`, `sub`, `del`, `mark` styles
+- [x] Copy table styles
+- [x] Copy form element styles
+- [x] Review and simplify where possible
 
 ### A3: Typography Layer
-- [ ] Copy `html` typography foundation
-- [ ] Copy `body` font defaults
-- [ ] Copy heading styles (h1-h6)
-- [ ] Copy link styles
-- [ ] Copy list styles
-- [ ] Copy blockquote styles
-- [ ] Copy prose spacing rhythm
-- [ ] Copy inline code styles
-- [ ] Review - can anything be simplified?
+- [x] Copy `html` typography foundation
+- [x] Copy `body` font defaults
+- [x] Copy heading styles (h1-h6)
+- [x] Copy link styles
+- [x] Copy list styles
+- [x] Copy blockquote styles
+- [x] Copy prose spacing rhythm
+- [x] Copy inline code styles
+- [x] Review - can anything be simplified?
 
 ### A4: Layout Layer
-- [ ] Copy `.flow` utility
-- [ ] Copy `.list-reset` utility
-- [ ] Copy `.all-caps` utility
-- [ ] Consider: do you need all of these?
+- [x] Copy `.flow` utility
+- [x] Copy `.list-reset` utility
+- [x] Copy `.all-caps` utility
+- [x] Consider: do you need all of these?
 
 ### A5: Utilities Layer
-- [ ] Copy `.ui-style` - this is important for nav/footer
-- [ ] Copy `.dark-surface`
-- [ ] Copy `.cq` (container query utility)
-- [ ] Copy `.sr-only` / `.hidden-microformat`
+- [x] Copy `.ui-style` - this is important for nav/footer
+- [x] Copy `.dark-surface`
+- [x] Copy `.cq` (container query utility)
+- [x] Copy `.sr-only` / `.hidden-microformat`
 
 ### A6: Theme Layer - Simplification Target
-- [ ] Copy reduced motion styles
-- [ ] Copy dark mode typography overrides
-- [ ] Copy manual theme override selectors
-- [ ] **Review semantic color variables** - many can be removed
+- [x] Copy reduced motion styles
+- [x] Copy dark mode typography overrides
+- [x] Copy manual theme override selectors
+- [x] **Review semantic color variables** - many can be removed
   - Do components really need their own color vars?
   - Can you use primitives + `color-mix()` directly?
   - Target: reduce from ~60 component vars to ~10-15 essential ones
 
 ---
 
-## Phase B: Core Content System
+## Phase B: Core Content System ✅
 
 ### B1: LongFormProseTypography.astro
 ```bash
 ./scripts/toggle-component-css.sh enable LongFormProseTypography
 ```
-- [ ] Enable and review
-- [ ] Check article page rendering
-- [ ] Simplify where possible
-- [ ] Consider: which styles duplicate typography layer?
+- [x] Enable and review
+- [x] Check article page rendering
+- [x] Simplify where possible
+- [x] Consider: which styles duplicate typography layer?
 
 ### B2: Article.astro Layout
 ```bash
 ./scripts/toggle-component-css.sh enable Article
 ```
-- [ ] Enable and review
-- [ ] Check grid layout
-- [ ] Check hero image
-- [ ] Check metadata styling
+- [x] Enable and review
+- [x] Check grid layout
+- [x] Check hero image
+- [x] Check metadata styling
 
 ---
 
-## Phase C: Core Layout Components
+## Phase C: Core Layout Components ✅
 
-### C1: MainNavigation.astro
-```bash
-./scripts/toggle-component-css.sh enable MainNav
-```
-- [ ] Enable and review
-- [ ] Uses `.ui-style` and `.dark-surface` - ensure those work
-- [ ] Simplify color references (use primitives?)
-
-### C2: Footer.astro
-```bash
-./scripts/toggle-component-css.sh enable Footer
-```
-- [ ] Enable and review
-- [ ] Similar patterns to nav - consolidate?
-
-### C3: Lightbox.astro
-```bash
-./scripts/toggle-component-css.sh enable Lightbox
-```
-- [ ] Enable and review
+- [x] Footer
+  - [x] Footer.astro
+  - [x] PersonalLogo.astro
+  - [x] SocialLinks.astro
+- [x] Lightbox.astro
+- [x] MainNavigation
+  - [x] MainNavigation.astro
+  - [x] ThemeToggle.astro
 
 ---
 
-## Phase D: MDX Components
+## Phase D: UI Components
+
+- [ ] `Pill.astro`
+- [ ] `MarkdownContentActions.astro`
+- [ ] `Spinner.astro`
+- [ ] `ContentCard.astro` - uses container queries, variants
+- [ ] `NoteCard.astro` - uses container queries
+
+## Phase E: Pages
+
+- [ ] `index.astro` (homepage)
+- [ ] `writing/index.astro`
+- [ ] `notes/index.astro`
+- [ ] `now.astro`
+- [ ] `404.astro`
+- [ ] `Note.astro` layout
+
+
+## Phase F: MDX Components
 
 Enable and review each, simplify where possible:
 
@@ -141,31 +133,17 @@ Enable and review each, simplify where possible:
 - [ ] `highlight.astro`
 - [ ] `SmallCaps.astro`
 
----
+## Phase G: Update docs
 
-## Phase E: UI Components
+- [ ] Update all docs in `docs/developer` so they're **accurate** as per the current system.
+- [ ] Update relevant docs in `docs/developer` so they properly explain how things work, the design patterns to use etc. Should include clear instructions on what CSS layers to use, how to use the core CSS custom properties systems, when and how to use the utility classes etc. Should also include info on how and when to extract CSS into `@base`, `@typography` or `.ui-styles`.
+- [ ] Update `CLAUDE.md` and `.claude/agents/design-system-expert.md` appropriately.
 
-- [ ] `ContentCard.astro` - uses container queries, variants
-- [ ] `NoteCard.astro` - uses container queries
-- [ ] `Pill.astro`
-- [ ] `SocialLinks.astro`
-- [ ] `ThemeToggle.astro`
-- [ ] `MarkdownContentActions.astro`
-- [ ] `PersonalLogo.astro`
-- [ ] `Spinner.astro`
+## Final Review
 
----
-
-## Phase F: Pages
-
-- [ ] `index.astro` (homepage)
-- [ ] `writing/index.astro`
-- [ ] `notes/index.astro`
-- [ ] `now.astro`
-- [ ] `404.astro`
-- [ ] `Note.astro` layout
-
----
+- [ ] Double check for any leftover "this has moved" or "we now handle..." comments. Add helpful explanatory comments wherever helpful.
+- [ ] Fully Review all CSS and Related Documentation as a CSS expert.
+- [ ] Manually test all styleguides on multiple browsers, and on mobile.
 
 ## Modernization Guidelines
 
