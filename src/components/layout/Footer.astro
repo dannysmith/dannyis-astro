@@ -20,105 +20,65 @@ const today = new Date();
       <li><NavLink href="/toolbox">Toolbox</NavLink></li>
     </ul>
   </section>
-  <SocialLinks />
-  <section class="footer-rss-inline">
+  <section class="footer-rss all-caps">
+    <a href="/rss.xml">All</a>
+    <span class="footer-rss-separator">|</span>
+    <a href="/rss/articles.xml">Articles</a>
+    <span class="footer-rss-separator">|</span>
+    <a href="/rss/notes.xml">Notes</a>
     <span class="footer-rss-icon-wrapper">
       <Icon name="social/rss" class="footer-rss-icon" />
     </span>
-    <a href="/rss.xml">All</a> |
-    <a href="/rss/articles.xml">Articles</a> |
-    <a href="/rss/notes.xml">Notes</a>
   </section>
-  <div class="copyright">
+  <div class="copyright all-caps">
     &copy; {today.getFullYear()} Danny Smith
   </div>
+  <SocialLinks />
 </footer>
-<!-- DISABLED-STYLE <style>
+
+<style>
   footer {
     position: relative;
-    border-top: var(--border-width-accent) solid var(--color-footer-border);
-    padding: var(--space-4);
-    font-size: var(--font-size-sm);
+    border-top: var(--border-width-accent) solid var(--color-accent);
+    padding: var(--space-s);
   }
-
-  ul {
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    list-style-type: none;
-  }
-
 
   .footer-nav-links {
-    margin-top: 1em;
-    padding-left: var(--space-6);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    padding-left: calc(var(--space-s) * 2);
 
     li {
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wider);
-      list-style-type: none;
+      margin-top: var(--space-3xs);
+      line-height: var(--leading-normal);
       padding: 0;
-      line-height: var(--leading-relaxed);
-    }
-
-    a {
-      padding: var(--space-2);
     }
   }
 
-
   .copyright {
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-light);
     position: absolute;
-    right: var(--space-4);
-    top: var(--space-4);
+    right: var(--space-s);
+    top: var(--space-s);
     writing-mode: vertical-rl;
   }
 
-  .footer-rss-inline {
-    position: absolute;
-    font-size: var(--font-size-xs);
-    opacity: 0.7;
-    left: var(--space-10);
-    bottom: var(--space-4);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wider);
-
-    a:hover {
-      opacity: 1;
-    }
+  .footer-rss {
+    font-size: var(--font-size-sm);
+    display: flex;
+    justify-content: left;
+    padding-left: calc(var(--space-s) * 2);
+    gap: var(--space-3xs);
+    margin-block: var(--space-m);
   }
 
   .footer-rss-icon-wrapper {
-    display: inline-block;
     color: var(--color-accent);
-    transform: translateY(0.1em);
   }
 
-  @media (max-width: 600px) {
-    footer {
-      padding-bottom: var(--space-10);
-      min-height: 220px;
-    }
-    .footer-rss-inline {
-      position: static;
-      display: block;
-      margin-top: var(--space-5);
-      text-align: center;
-    }
-    .footer-nav-links a {
-      display: flex;
-      align-items: center;
-      min-height: 44px; /* Touch target */
-      padding-block: var(--space-2);
-    }
-    .footer-social-links a {
-      min-width: 44px; /* Touch target */
-      min-height: 44px;
-    }
+  .footer-rss-separator {
+    color: color-mix(in oklch, currentColor 40%, transparent);
   }
-</style> -->
+
+</style>
