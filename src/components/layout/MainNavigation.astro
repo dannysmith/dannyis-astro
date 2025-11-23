@@ -31,29 +31,29 @@ const isDev = import.meta.env.MODE === 'development';
   </theme-toggle>
 </nav>
 
-<!-- DISABLED-STYLE <style>
+<style>
   .open-nav-link {
     display: block;
     position: absolute;
-    top: var(--space-4);
-    left: var(--space-4);
+    top: var(--space-s);
+    left: var(--space-s);
     width: 2em;
     height: 2em;
-    padding: var(--space-2);
+    padding: var(--space-2xs);
     border-radius: var(--radius-xs);
     z-index: 1000;
-    color: var(--color-hamburger-text);
+    color: var(--color-beige);
     cursor: pointer;
-    background: var(--color-hamburger-bg);
+    background: var(--color-charcoal);
   }
 
   .main-navigation {
     position: fixed;
     left: -100%;
-    height: 100vh;
+    min-height: 100vh;
     z-index: 1000;
-    border-right: var(--border-width-accent) solid var(--color-nav-border);
-    padding: var(--space-4) var(--space-8) var(--space-4) var(--space-4);
+    border-right: var(--border-width-accent) solid var(--color-accent);
+    padding: var(--space-s) var(--space-l) var(--space-s) var(--space-s);
     font-size: clamp(0.8rem, calc(0.6rem + 1vw), 1.2rem);
     transition: left var(--duration-normal) var(--ease-in-out);
   }
@@ -62,42 +62,29 @@ const isDev = import.meta.env.MODE === 'development';
     left: 0;
   }
 
-  ul {
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    list-style-type: none;
-  }
-
-
   .nav-nav-links {
-    margin-top: var(--space-4);
-    padding-left: var(--space-8);
+    margin-top: var(--space-s);
+    padding-left: var(--space-l);
 
     li {
-      text-transform: uppercase;
-      letter-spacing: var(--tracking-wider);
-      list-style-type: none;
       padding: 0;
-      line-height: var(--leading-relaxed);
+      line-height: var(--leading-loose);
     }
 
     a {
-      padding: var(--space-2);
+      padding: var(--space-2xs);
     }
 
     a.active {
       color: var(--color-accent);
     }
   }
+
   .close {
     position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
+    top: var(--space-xs);
+    right: var(--space-xs);
     font-size: 1em;
-    color: var(--color-nav-text);
     cursor: pointer;
   }
 
@@ -106,10 +93,10 @@ const isDev = import.meta.env.MODE === 'development';
       display: flex;
       align-items: center;
       min-height: 44px; /* Touch target */
-      padding-block: var(--space-3);
+      padding-block: var(--space-xs);
     }
   }
-</style> -->
+</style>
 
 <script>
   const closeNav = () => {
