@@ -101,6 +101,9 @@
     oklch(from var(--color-white) l c h / 0.1)
   );
 
+  /* Surface for raised cards/panels - white in light mode, dark grey in dark mode */
+  --surface-raised: light-dark(var(--color-white), oklch(16% 0 0));
+
   /* ======= FONTS ======= */
 
   --font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
