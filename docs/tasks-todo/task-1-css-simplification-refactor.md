@@ -97,41 +97,42 @@ Work through `global.css`, copying rules from `global-backup.css` as needed.
 
 ## Phase D: UI Components
 
-- [ ] `Pill.astro`
-- [ ] `MarkdownContentActions.astro`
-- [ ] `Spinner.astro`
-- [ ] `ContentCard.astro` - uses container queries, variants
-- [ ] `NoteCard.astro` - uses container queries
+- [x] `Pill.astro`
+- [x] `MarkdownContentActions.astro`
+- [x] `Spinner.astro`
+- [x] `NoteCard.astro` - uses container queries
+- [x] `ContentCard.astro` - uses container queries, variants
 
 ## Phase E: Pages
 
-- [ ] `index.astro` (homepage)
-- [ ] `writing/index.astro`
-- [ ] `notes/index.astro`
+- [x] `index.astro` (homepage)
+- [x] `writing/index.astro`
+- [x] `notes/index.astro`
 - [ ] `now.astro`
 - [ ] `404.astro`
-- [ ] `Note.astro` layout
+- [x] `Note.astro` layout
 
 
 ## Phase F: MDX Components
 
 Enable and review each, simplify where possible:
 
-- [ ] `Callout.astro` - uses color variants
-- [ ] `Accordion.astro`
-- [ ] `BookmarkCard.astro`
-- [ ] `IntroParagraph.astro`
-- [ ] `ButtonLink.astro`
-- [ ] `BlockQuoteCitation.astro`
-- [ ] `Notion.astro`
-- [ ] `BasicImage.astro`
-- [ ] `Spacer.astro`
-- [ ] `SmartLink.astro`
-- [ ] `Center.astro`
-- [ ] `Loom.astro`
-- [ ] `Grid.astro`
 - [ ] `highlight.astro`
 - [ ] `SmallCaps.astro`
+- [ ] `IntroParagraph.astro`
+- [ ] `Grid.astro`
+- [ ] `Center.astro`
+- [ ] `Spacer.astro`
+- [ ] `SmartLink.astro`
+- [ ] `Callout.astro` - uses color variants
+- [ ] `BlockQuoteCitation.astro`
+- [ ] `BookmarkCard.astro`
+- [ ] `BasicImage.astro`
+- [ ] `Notion.astro`
+- [ ] `ButtonLink.astro`
+- [ ] `Accordion.astro`
+- [ ] `Loom.astro`
+
 
 ## Phase G: Update docs
 
