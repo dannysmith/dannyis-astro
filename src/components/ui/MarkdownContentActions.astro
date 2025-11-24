@@ -1,14 +1,15 @@
 ---
 interface Props {
   markdownUrl: string;
+  disableShare?: boolean;
 }
 
-const { markdownUrl } = Astro.props;
+const { markdownUrl, disableShare = false } = Astro.props;
 ---
 
-<div class="markdown-actions">
-  <a href="#" id="share-post" style="display: none;">share</a>
-  <span id="share-separator" style="display: none;"> this post · </span>
+<div class="markdown-actions" data-disable-share={disableShare ? "true" : undefined}>
+  {!disableShare && <a href="#" id="share-post" style="display: none;">share</a>}
+  {!disableShare && <span id="share-separator" style="display: none;"> this post · </span>}
   <a href="#" id="copy-markdown" data-url={markdownUrl}>copy</a>
   <span> / </span>
   <a href={markdownUrl} target="_blank">view</a>
@@ -16,9 +17,12 @@ const { markdownUrl } = Astro.props;
 </div>
 
 <script>
+  const container = document.querySelector('.markdown-actions');
+  const disableShare = container?.hasAttribute('data-disable-share');
+
+  const shareLink = disableShare ? null : document.getElementById('share-post');
+  const shareSeparator = disableShare ? null : document.getElementById('share-separator');
   const copyLink = document.getElementById('copy-markdown');
-  const shareLink = document.getElementById('share-post');
-  const shareSeparator = document.getElementById('share-separator');
 
   async function copyMarkdown(url: string) {
     try {
@@ -78,6 +82,7 @@ const { markdownUrl } = Astro.props;
 <style>
   .markdown-actions {
     margin-top: var(--space-l);
+    font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
   }
 

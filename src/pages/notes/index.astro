@@ -7,6 +7,7 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
 import NoteCard from '@components/layout/NoteCard.astro';
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
 import { filterContentForListing } from '@utils/content';
+import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
@@ -54,6 +55,7 @@ const recentNotesWithContent = await Promise.all(
                   slug={note.id}
                 >
                   <Content components={MDX_COMPONENT_REMAPPING} />
+                  <MarkdownContentActions markdownUrl={`/notes/${note.id}.md`} disableShare={true} />
                 </NoteCard>
               </div>
             ))}
