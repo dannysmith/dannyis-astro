@@ -6,17 +6,22 @@ import { Icon } from 'astro-icon/components';
 const isDev = import.meta.env.MODE === 'development';
 ---
 
-<a class="open-nav-link" href="#">
+<button class="nav-open" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-navigation">
   <Icon name="heroicons:bars-3" />
-</a>
-<nav class="main-navigation">
-  <span class="close">&times;</span>
+</button>
+<nav id="main-navigation" class="main-navigation ui-style dark-surface" inert>
+  <button class="nav-close" type="button" aria-label="Close navigation">
+    <Icon name="heroicons:x-mark" />
+  </button>
   <PersonalLogo />
-  <section class="nav-nav-links">
-    <ul>
+  <section class="nav-links all-caps">
+    <ul class="list-reset">
       <li><NavLink href="/">Home</NavLink></li>
       <li><NavLink href="/writing">Writing</NavLink></li>
       <li><NavLink href="/notes">Notes</NavLink></li>
+      <li><NavLink href="/now">Now</NavLink></li>
+      <li><NavLink href="/working">Work <span class="external-arrow">↗</span></NavLink></li>
+      <li><NavLink href="/toolbox">Toolbox <span class="external-arrow">↗</span></NavLink></li>
       {
         isDev && (
           <li>
@@ -26,112 +31,95 @@ const isDev = import.meta.env.MODE === 'development';
       }
     </ul>
   </section>
-  <theme-toggle>
+  <div class="theme-toggle-wrapper">
     <ThemeToggle />
-  </theme-toggle>
+  </div>
 </nav>
 
 <style>
-  .open-nav-link {
-    display: block;
+  .nav-open {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
-    width: 2em;
-    height: 2em;
-    padding: 0.5em;
-    border-radius: 1px;
+    top: var(--space-s);
+    left: var(--space-s);
+    aspect-ratio: 1;
+    padding: var(--space-2xs);
     z-index: 1000;
-    color: var(--color-hamburger-text);
-    cursor: pointer;
-    background: var(--color-hamburger-bg);
+    background: oklch(from var(--color-background-secondary) l c h / 0.8);
+    color: var(--color-accent);
+    border: none;
   }
 
   .main-navigation {
     position: fixed;
     left: -100%;
-    height: 100vh;
+    min-width: 18rem; /* Wide enough for logo + close button */
+    min-height: 100vh;
     z-index: 1000;
-    background-color: var(--color-nav-bg);
-    color: var(--color-nav-text);
-    border-right: 1rem solid var(--color-nav-border);
-    padding: 1em 2em 1em 1em;
-    font-size: clamp(0.8rem, calc(0.6rem + 1vw), 1.2rem);
-    transition: left 0.2s ease-in-out;
+    border-right: var(--border-width-accent) solid var(--color-accent);
+    padding: var(--space-s);
+    transition: left var(--duration-normal) var(--ease-in-out);
   }
 
   .main-navigation.open {
     left: 0;
   }
 
-  ul {
-    padding: 0;
-    margin: 0;
+  .nav-close {
+    position: absolute;
+    top: var(--space-2xs);
+    right: var(--space-2xs);
+    padding: var(--space-3xs);
+    background: transparent;
+    border: none;
   }
 
-  li {
-    list-style-type: none;
-  }
-
-
-  .nav-nav-links {
-    margin-top: 1rem;
-    padding-left: 2rem;
+  .nav-links {
+    margin-block: var(--space-m);
+    padding-left: calc(var(--space-s) * 2);
 
     li {
-      text-transform: uppercase;
-      letter-spacing: 0.1ch;
-      list-style-type: none;
-      padding: 0;
-      line-height: 1.65;
+      margin-top: var(--space-2xs);
     }
 
-    a,
-    a:link,
-    a:visited {
-      padding: 0.5rem;
-      text-decoration: none;
-      color: var(--color-nav-text);
-    }
-
-    a:hover,
-    a:active,
-    a:focus,
     a.active {
-      color: var(--color-nav-link-hover);
+      color: var(--color-accent);
     }
-  }
-  .close {
-    position: absolute;
-    top: 0.7em;
-    right: 0.7em;
-    font-size: 1em;
-    color: var(--color-nav-text);
-    cursor: pointer;
   }
 
-  @media (max-width: 600px) {
-    .nav-nav-links a {
-      display: flex;
-      align-items: center;
-      min-height: 34px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
+  .theme-toggle-wrapper {
+    display: flex;
+    justify-content: center;
   }
 </style>
 
 <script>
-  const closeNav = () => {
-    document.querySelector('.main-navigation')?.classList.remove('open');
+  const nav = document.querySelector<HTMLElement>('.main-navigation');
+  const openBtn = document.querySelector<HTMLButtonElement>('.nav-open');
+  const closeBtn = document.querySelector<HTMLButtonElement>('.nav-close');
+
+  const closeNav = (returnFocus = false) => {
+    nav?.classList.remove('open');
+    nav?.setAttribute('inert', '');
+    openBtn?.setAttribute('aria-expanded', 'false');
+    if (returnFocus) openBtn?.focus();
   };
 
   const openNav = () => {
-    document.querySelector('.main-navigation')?.classList.add('open');
+    nav?.classList.add('open');
+    nav?.removeAttribute('inert');
+    openBtn?.setAttribute('aria-expanded', 'true');
+    closeBtn?.focus();
   };
 
-  document.querySelector('.close')?.addEventListener('click', closeNav);
-  document.querySelector('main')?.addEventListener('click', closeNav);
-  document.querySelector('footer')?.addEventListener('click', closeNav);
-  document.querySelector('.open-nav-link')?.addEventListener('click', openNav);
+  closeBtn?.addEventListener('click', () => closeNav(true));
+  document.querySelector('main')?.addEventListener('click', () => closeNav());
+  document.querySelector('footer')?.addEventListener('click', () => closeNav());
+  openBtn?.addEventListener('click', openNav);
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav?.classList.contains('open')) {
+      closeNav(true);
+    }
+  });
 </script>

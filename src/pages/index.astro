@@ -1,5 +1,6 @@
 ---
 import BaseHead from '@components/layout/BaseHead.astro';
+import MainNavigation from '@components/layout/MainNavigation.astro';
 import { Image } from 'astro:assets';
 import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
 ---
@@ -10,13 +11,14 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
   </head>
   <body itemtype="https://schema.org/ProfilePage" itemscope>
-    <main class="vcard h-card" itemtype="http://schema.org/Person" itemprop="mainEntity" itemscope>
+    <MainNavigation />
+    <main class="vcard h-card ui-style" itemtype="http://schema.org/Person" itemprop="mainEntity" itemscope>
       <a rel="me" href={Astro.site?.href} class="u-url u-uid hidden-microformat">Danny Smith</a>
       <h1 class="fn p-name" itemprop="name">
         <span itemprop="givenName">Danny</span>
         <span itemprop="familyName">Smith</span>
       </h1>
-      <ul class="link-list">
+      <ul class="link-list list-reset all-caps">
         <li>
           <a href="/writing"><strong>writing</strong></a>
         </li>
@@ -24,7 +26,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
           <a href="/notes"><strong>notes</strong></a>
         </li>
         <li>
-          <a href="/toolbox"><strong>remote working</strong> toolbox</a>
+          <a href="/toolbox"><strong>remote working</strong> <span>toolbox</span></a>
         </li>
         <li>
           <a href="/youtube"><strong>youtube</strong></a>
@@ -37,37 +39,37 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
         </li>
         <li>
           <a href="https://www.linkedin.com/in/dannyasmith" rel="me" target="_blank"
-            ><strong>linkedin</strong>/dannyasmith</a
+            ><strong>linkedin</strong><span>/dannyasmith</span></a
           >
         </li>
         <li>
           <a href="https://bsky.app/profile/danny.is" rel="me" target="_blank">
-            <strong>BlueSky</strong>@danny.is
+            <strong>BlueSky</strong><span>@danny.is</span>
           </a>
         </li>
         <li>
           <a href="https://indieweb.social/@dannysmith" rel="me" target="_blank">
-            <strong>Mastodon</strong>@dannyasmith@indieweb.social
+            <strong>Mastodon</strong><span>@dannyasmith@indieweb.social</span>
           </a>
         </li>
         <li>
           <a href="https://medium.com/@dannysmith" rel="me" target="_blank"
-            ><strong>medium</strong>/dannysmith</a
+            ><strong>medium</strong><span>/dannysmith</span></a
           >
         </li>
         <li>
           <a href="https://github.com/dannysmith" rel="me" target="_blank"
-            ><strong>github</strong>/dannysmith</a
+            ><strong>github</strong><span>/dannysmith</span></a
           >
         </li>
         <li>
           <a href="https://instagram.com/dannysmith" rel="me" target="_blank"
-            ><strong>instagram</strong>/dannysmith</a
+            ><strong>instagram</strong><span>/dannysmith</span></a
           >
         </li>
         <li>
           <a href="https://monzo.me/dannyasmith" rel="me" target="_blank"
-            ><strong>monzo</strong>.me</a
+            ><strong>monzo</strong><span>.me</span></a
           >
         </li>
         <li>
@@ -93,11 +95,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
         itemprop="image"
       />
 
-      <style>
-        body {
-          background-color: var(--color-bg-primary);
-        }
-
+<style>
         main {
           display: grid;
           grid-template-columns: 1rem auto 1fr;
@@ -105,51 +103,55 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
 
         h1 {
           grid-column: 1 / -1;
-          font-size: 15.7vw;
+          font-size: clamp(3rem, 15.742vw, 22rem);
+          font-weight: var(--font-weight-bold);
           text-transform: uppercase;
           margin-top: -0.1em;
           pointer-events: none;
-          line-height: 1;
+          line-height: var(--leading-none);
         }
 
         .link-list {
           grid-column: 2 / 3;
-          padding: 0;
-        }
+          min-width: 0;
 
-        .link-list li {
-          text-transform: uppercase;
-          letter-spacing: 0.05ch;
-          list-style-type: none;
-          padding: 0;
-          border-bottom: 5px solid var(--color-homepage-link-border);
-          line-height: 1.2;
-          margin-bottom: 0.8em;
-        }
+          & li {
+            border-bottom: var(--border-width-thick) solid var(--color-accent);
+            line-height: var(--leading-none);
+            padding-block: var(--space-3xs);
+            text-box: trim-both cap alphabetic;
+          }
 
-        .link-list strong {
-          letter-spacing: 0.125ch;
-          font-weight: 700;
-        }
+          & a {
+            overflow-wrap: break-word;
+            word-break: break-word;
+          }
 
-        .link-list a {
-          text-decoration: none;
-          color: inherit;
-        }
-
-        .link-list a:hover {
-          color: var(--color-homepage-link-hover);
+          & strong {
+            letter-spacing: var(--tracking-wider);
+          }
         }
 
         .avatar {
           display: none;
         }
 
-        @media (max-width: 600px) {
-          .link-list a {
-            display: flex;
-            min-height: 34px;
-            align-items: end;
+        @media (max-width: 500px) {
+          main {
+            grid-template-columns: 1fr;
+            padding-inline: var(--space-s);
+          }
+
+          .link-list {
+            grid-column: 1;
+
+
+            & a {
+              display: flex;
+              flex-wrap: wrap;
+              min-height: var(--space-l);
+              align-items: end;
+            }
           }
         }
       </style>

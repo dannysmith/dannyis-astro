@@ -1,38 +1,43 @@
 <!-- Lightbox HTML -->
 <div class="lightbox" id="lightbox">
-  <span class="close" id="close">&times;</span>
+  <span class="lightbox-close" id="close">&times;</span>
   <canvas id="lightboxCanvas"></canvas>
 </div>
 
-<style>
-  :root {
-    --lightbox-background: rgba(0, 0, 0, 0.8);
-    --lightbox-close-link: var(--color-brand-white);
+<style is:global>
+  /* Prevent background scroll when lightbox is open */
+  html:has(.lightbox.is-open) {
+    overflow: hidden;
   }
+</style>
 
-  /* Lightbox Styles */
+<style>
   .lightbox {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--lightbox-background);
+    inset: 0;
+    background: oklch(0% 0 0 / 0.9);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+
+    &.is-open {
+      display: flex;
+    }
   }
+
   .lightbox canvas {
     max-width: 90%;
     max-height: 90%;
   }
-  .lightbox .close {
+
+  .lightbox-close {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 24px;
-    color: var(--lightbox-close-link);
+    top: var(--space-m);
+    right: var(--space-m);
+    font-size: var(--font-size-xl);
+    line-height: var(--leading-none);
+    color: var(--color-white);
     cursor: pointer;
   }
 </style>
@@ -48,7 +53,7 @@
     document.querySelectorAll('img[alt]').forEach(img => {
       img.addEventListener('click', function (event) {
         const clickedImg = event.target as HTMLImageElement;
-        lightbox.style.display = 'flex';
+        lightbox.classList.add('is-open');
 
         const image = new Image();
         image.src = clickedImg.src;
@@ -64,12 +69,12 @@
     });
 
     closeBtn.addEventListener('click', function () {
-      lightbox.style.display = 'none';
+      lightbox.classList.remove('is-open');
     });
 
     lightbox.addEventListener('click', function (event) {
       if (event.target !== lightboxCanvas && event.target !== closeBtn) {
-        lightbox.style.display = 'none';
+        lightbox.classList.remove('is-open');
       }
     });
   });

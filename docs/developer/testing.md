@@ -4,11 +4,7 @@ Guidance and patterns for writing and maintaining tests.
 
 ## Testing Stack
 
-This project uses a dual testing approach optimized for different types of validation:
-
-**Vitest** for unit tests of pure business logic and utility functions.
-
-**Playwright** for E2E tests - Browser-based tests for critical user journeys and integration points.
+This project uses **Vitest** for unit tests of pure business logic and utility functions and **Playwright** for E2E tests for critical user journeys and integration points.
 
 **Commands:**
 
@@ -20,17 +16,17 @@ This project uses a dual testing approach optimized for different types of valid
 
 Focus testing effort on areas where bugs would have the highest impact:
 
-- **Pure utility functions** - e.g. SEO helpers, content summary generation, date formatting
-- **Content filtering logic** - e.g. Draft/styleguide exclusion, collection queries
-- **Critical user paths** - e.g. Main navigation, RSS feed generation, 404 pages
+- **Pure utility functions** - e.g. helpers, utilities etc
 - **Business logic** - Any function with complex conditional logic or data transformation
+- **Content filtering logic** - e.g. Draft/styleguide exclusion
+- **Critical user paths** - e.g. Main navigation, feed generation ets
 
 Avoid testing:
 
+- Astro features
 - Simple UI rendering without logic
 - Stuff which is common, idiomatic Astro code
 - Third-party library internals
-- Trivial getters/setters
 
 ## Test File Organization
 

@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon/components';
 ---
 
 <section class="social-links">
-  <ul>
+  <ul class="list-reset">
     <li>
       <a
         href="https://bsky.app/profile/danny.is"
@@ -30,6 +30,14 @@ import { Icon } from 'astro-icon/components';
         rel="noopener noreferrer"><Icon name="social/instagram" /></a
       >
     </li>
+    <li>
+      <a
+        href="https://github.com/dannysmith"
+        title="GitHub Profile"
+        target="_blank"
+        rel="noopener noreferrer"><Icon name="social/github" /></a
+      >
+    </li>
   </ul>
 </section>
 
@@ -37,40 +45,29 @@ import { Icon } from 'astro-icon/components';
   .social-links {
     ul {
       display: flex;
-      gap: 1rem;
       justify-content: center;
-      padding: 0;
       margin: 0;
     }
 
     li {
-      width: 2.5rem;
-      list-style-type: none;
+      margin: 0;
     }
 
     a {
       display: flex;
+      width: var(--space-l);
       justify-content: center;
       align-items: center;
-      text-align: center;
-      border-radius: 50%;
+      border-radius: var(--radius-full);
       aspect-ratio: 1;
       color: inherit;
-      text-decoration: none;
+      transition: background-color var(--duration-fast) var(--ease-in-out);
+
     }
 
-    a:hover,
-    a:active,
-    a:focus {
-      background-color: var(--color-footer-social-hover);
-      color: var(--color-footer-link-hover);
+    a:is(:hover, :active, :focus) {
+      background-color: color-mix(in oklch, currentColor 15%, transparent);
     }
   }
 
-  @media (max-width: 600px) {
-    .social-links a {
-      min-width: 44px;
-      min-height: 44px;
-    }
-  }
 </style>

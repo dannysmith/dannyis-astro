@@ -17,8 +17,6 @@ Content-first creative playground for writing and design experimentation. Built 
 - Shorter notes for quick sharing of thoughts and comments on other content
 - RSS feeds for articles, notes and both
 - Redirects and hosting for core static assets on my domain (danny.is/avatar.jpg, danny.is/cv.pdf, danny.is/meeting -> redirects to my booking link etc)
-- **Design Philosophy:**
-- **Technical Philosophy:**
 
 ## Core Rules
 
@@ -41,18 +39,15 @@ Content-first creative playground for writing and design experimentation. Built 
 6. **Update styleguides** - Add examples when creating visual components
 7. **Typography first** - Let type drive design decisions
 8. **Test both themes** - Verify light and dark mode for all visual changes
-9. **Batch Operations**: Use multiple tool calls in single responses
-10. **Match Code Style**: Follow existing formatting and patterns
-11. **Test Coverage**: Write comprehensive tests for any business logic
-12. **Quality Gates**: Run `pnpm run check:all` after significant changes
-13. **No Dev Server**: Ask user to run and report back
-14. **No Unsolicited Commits**: Only when explicitly requested
-15. **Documentation**: Update `docs/developer/` guides for new patterns. Don't create other markdown files unless explicitly requested
-16. **Removing files**: Always use `rm -f`
-
-#### Directory Boundaries
-
-[TBD - WILL FILL IN LATER]
+9. **CSS patterns** - Follow `docs/developer/design.md` for CSS architecture. Quality, modern CSS is important.
+10. **Batch Operations**: Use multiple tool calls in single responses
+11. **Match Code Style**: Follow existing formatting and patterns
+12. **Test Coverage**: Write comprehensive tests for any business logic
+13. **Quality Gates**: Run `pnpm run check:all` after significant changes
+14. **No Dev Server**: Ask user to run and report back
+15. **No Unsolicited Commits**: Only when explicitly requested
+16. **Documentation**: Update `docs/developer/` guides for new patterns. Don't create other markdown files unless explicitly requested
+17. **Removing files**: Always use `rm -f`
 
 ### Documentation Structure
 
@@ -133,3 +128,7 @@ docs/
 
 - `@design-system-expert` - Typography, CSS, visual design
 - `@astro-specialist` - Framework, performance, technical issues
+
+### Skills
+
+- **CSS Expert** - Available globally via `css-expert` skill for advanced CSS patterns, modern features, and defensive CSS guidance

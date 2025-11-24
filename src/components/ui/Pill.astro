@@ -23,19 +23,38 @@ const style =
 
 <style>
   .pill {
+    /* Typography - UI font, all-caps label style */
     font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    line-height: 1;
+
+    /* Layout */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.4em 0.7em 0.1em 0.7em;
-    border-radius: 0.18rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    line-height: 1;
-    background-color: var(--local-pill-bg, var(--color-pill-bg));
-    color: var(--local-pill-fg, var(--color-pill-fg));
-    border: 1px solid var(--local-pill-bg, var(--color-pill-bg));
+    padding: 0.4em 0.7em 0.1em;
+    border-radius: var(--radius-xs);
+    max-width: 100%;
+
+    /* Colors - bg can be overridden via --local-pill-bg prop.
+       Border and text are derived from bg using color-mix.
+       Light mode: darken for contrast. Dark mode: lighten for contrast. */
+    --_pill-bg: var(--local-pill-bg, var(--color-background-secondary));
+    background-color: var(--_pill-bg);
+    color: var(
+      --local-pill-fg,
+      light-dark(
+        color-mix(in oklch, var(--_pill-bg) 30%, black),
+        color-mix(in oklch, var(--_pill-bg) 30%, white)
+      )
+    );
+    border: var(--border-width-hairline) solid
+      light-dark(
+        color-mix(in oklch, var(--_pill-bg) 70%, black),
+        color-mix(in oklch, var(--_pill-bg) 70%, white)
+      );
   }
 </style>

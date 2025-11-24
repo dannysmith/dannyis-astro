@@ -2,7 +2,6 @@
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import Embed from '@components/mdx/Embed.astro';
 import Pill from '@components/ui/Pill.astro';
-import { SimpleProseTypography } from '@components/layout';
 
 export interface Props {
   title: string;
@@ -16,13 +15,13 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
 ---
 
 <article class="note h-entry cq">
-  <header class="note-header">
+  <header class="note-header ui-style">
     <a href={`/notes/${slug}/`} class="date-link">
       <time class="date" datetime={pubDate.toISOString()}>
         <FormattedDate date={pubDate} />
       </time>
     </a>
-    <h1 class="p-name">{title}</h1>
+    <h1 class="p-name title"><a href={`/notes/${slug}/`}>{title}</a></h1>
     {
       tags.length > 0 && (
         <div class="tags">
@@ -40,86 +39,63 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
       </div>
     )
   }
-  <SimpleProseTypography class="note-content p-content">
+  <div class="note-content p-content flow">
     <slot />
-  </SimpleProseTypography>
+  </div>
 </article>
 
 <style>
   .note {
-    --line-height: calc(1.8 * 1rem);
     width: 100%;
-    background: var(--color-notecard-bg);
-    padding: var(--line-height);
-    background-image: radial-gradient(var(--color-notecard-dot-grid) 0.5px, transparent 0);
-    background-size: 1rem 1rem;
+    padding: var(--space-m);
+    border-radius: var(--radius-sm);
+    border-top: var(--border-width-accent) solid light-dark(var(--color-black), var(--color-accent));
+
+    background-color: var(--surface-raised);
+    background-image: radial-gradient(
+      light-dark(color-mix(in oklch, var(--color-coral) 20%, transparent), transparent) 0.5px,
+      transparent 0
+    );
+    background-size: var(--space-xs) var(--space-xs);
+    color: var(--color-text);
     filter: var(--shadow-medium);
-    border-top: 1rem solid var(--color-notecard-border);
-    border-radius: 0.2rem;
+
+    /* View transition support - uses CSS variable set via inline style */
+    view-transition-name: var(--vt-name, none);
+    view-transition-class: note-card;
   }
 
   .note-header {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-2xs);
+    min-width: 0;
   }
 
   .date-link {
-    text-decoration: none;
+    color: var(--color-text-secondary);
   }
 
   .date {
-    font-size: 0.7rem;
-    color: var(--color-notecard-date);
+    font-size: var(--font-size-xs);
     text-transform: uppercase;
-    letter-spacing: 0.1ch;
-    transition: color 0.2s ease;
+    letter-spacing: var(--tracking-wider);
   }
 
-  .date-link:hover .date {
-    color: var(--color-text-accent);
-  }
-
-  h1 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    line-height: 1.2;
-    font-weight: 600;
-    margin: 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-notecard-title-underline);
+  h1.title {
+    font-size: var(--font-size-lg);
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--border-width-base) solid var(--color-accent);
   }
 
   .tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    line-height: 1;
+    gap: var(--space-2xs);
   }
 
-  .source-url {
-    margin-top: var(--line-height);
-  }
-
+  .source-url,
   .note-content {
-    margin-top: var(--line-height);
-  }
-
-  /* Container query styles */
-  @container (width > 600px) {
-    .note {
-      --line-height: calc(2 * 1rem);
-      padding: calc(var(--line-height) * 1.5);
-    }
-
-    .date {
-      font-size: 0.8rem;
-    }
-  }
-
-  @container (width > 800px) {
-    .note {
-      --line-height: calc(2.2 * 1rem);
-      padding: calc(var(--line-height) * 2);
-    }
+    margin-top: var(--space-m);
   }
 </style>

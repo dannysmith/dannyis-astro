@@ -28,7 +28,7 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
 
   <body>
     <MainNavigation />
-    <main>
+    <main style={`--vt-name: note-${Astro.params.slug}`}>
       <NoteCard
         title={title}
         pubDate={pubDate}
@@ -48,17 +48,16 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
         display: grid;
         grid-template-rows: auto min-content;
         grid-template-columns: 100%;
-        background-color: var(--color-bg-primary);
       }
 
       main {
-        padding: 1em;
-        padding-top: 4em;
+        padding: var(--space-s);
+        padding-block: var(--space-2xl);
         display: grid;
         place-items: center;
 
         .note {
-          max-width: 80ch;
+          max-width: var(--measure-standard);
         }
       }
     </style>

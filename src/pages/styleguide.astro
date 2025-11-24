@@ -8,9 +8,9 @@ import Embed from '@components/mdx/Embed.astro';
 import Pill from '@components/ui/Pill.astro';
 import Grid from '@components/mdx/Grid.astro';
 import Notion from '@components/mdx/Notion.astro';
-import SimpleProseTypography from '@components/layout/SimpleProseTypography.astro';
 import FormattedDate from '@components/ui/FormattedDate.astro';
 import ContentCard from '@components/ui/ContentCard.astro';
+import ButtonLink from '@components/mdx/ButtonLink.astro';
 import { getCollection } from 'astro:content';
 
 // Get sample content for ContentCard examples
@@ -19,11 +19,11 @@ const allArticles = await getCollection('articles', ({ data }) => {
 });
 
 // Ensure article styleguide is included for cover image testing
-const articleStyleguide = allArticles.find(article => 
+const articleStyleguide = allArticles.find(article =>
   article.id.includes('article-styleguide')
 );
 
-const sampleArticles = articleStyleguide 
+const sampleArticles = articleStyleguide
   ? [articleStyleguide, ...allArticles.filter(a => a !== articleStyleguide)].slice(0, 2)
   : allArticles.slice(0, 2);
 
@@ -44,10 +44,10 @@ const sampleNotes = (
   </head>
   <body>
     <MainNavigation />
-    <main class="cq">
+    <main class="cq flow">
       <h1>Component & Styleguide</h1>
-      <SimpleProseTypography class="content">
-        <section class="intro-section">
+      <div class="content flow">
+        <section class="intro-section flow">
           <p>
             <strong>Welcome!</strong> This page is a comprehensive styleguide and visual testbed for
             all Astro components used in this project.
@@ -69,7 +69,7 @@ const sampleNotes = (
           </p>
         </section>
 
-        <div class="content intro-section">
+        <div class="content intro-section flow">
           <h2>Default text styles</h2>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
           <h2>Heading 2</h2>
@@ -91,27 +91,27 @@ const sampleNotes = (
           </p>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Pill Component</h2>
           <Pill text="Default" />
-          <Pill text="Green" color="var(--color-green-600)" />
-          <Pill text="Yellow" color="var(--color-yellow-500)" textColor="var(--color-black)" />
-          <Pill text="Custom" color="#ff69b4" textColor="#fff" />
+          <Pill text="Green" color="var(--color-green)" textColor="var(--color-white)" />
+          <Pill text="Yellow" color="var(--color-yellow)" textColor="var(--color-black)" />
+          <Pill text="Accent" color="var(--color-accent)" textColor="var(--color-white)" />
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Grid Component</h2>
           <Grid columns={3} rows={2} gap="1rem">
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 1</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 2</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 3</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 4</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 5</div>
-            <div style="background:var(--color-grey-300); padding:1rem;">Item 6</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 1</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 2</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 3</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 4</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 5</div>
+            <div style="background:var(--color-background-secondary); padding:1rem;">Item 6</div>
           </Grid>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Notion Component</h2>
           <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
           <Notion
@@ -120,12 +120,32 @@ const sampleNotes = (
           />
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>FormattedDate Component</h2>
           <FormattedDate date={new Date()} />
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
+          <h2>ButtonLink Component</h2>
+          <p>Two-tier button hierarchy for clear information architecture.</p>
+
+          <h3>Primary Button</h3>
+          <p>Use for main CTAs - one per page section.</p>
+          <ButtonLink href="#">Subscribe to Newsletter</ButtonLink>
+
+          <h3>Secondary Button</h3>
+          <p>Use for alternative actions like cancel, go back, or secondary options.</p>
+          <ButtonLink href="#" variant="secondary">View All Articles</ButtonLink>
+
+          <h3>Button Comparison</h3>
+          <p>Both variants side by side:</p>
+          <div style="display: flex; gap: var(--space-s); align-items: center; flex-wrap: wrap; margin-top: var(--space-s);">
+            <ButtonLink href="#" inline>Primary</ButtonLink>
+            <ButtonLink href="#" variant="secondary" inline>Secondary</ButtonLink>
+          </div>
+        </div>
+
+        <div class="test-section flow">
           <h2>ContentCard Component Tests</h2>
 
           <h3>Standard Variant</h3>
@@ -133,26 +153,8 @@ const sampleNotes = (
           <div
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1rem 0;"
           >
-            {
-              sampleArticles.map(article => (
-                <ContentCard
-                  content={article}
-                  variant="standard"
-                  showSummary={true}
-                  summaryLength={150}
-                />
-              ))
-            }
-            {
-              sampleNotes.map(note => (
-                <ContentCard
-                  content={note}
-                  variant="standard"
-                  showSummary={true}
-                  summaryLength={120}
-                />
-              ))
-            }
+            {sampleArticles.map(article => <ContentCard content={article} />)}
+            {sampleNotes.map(note => <ContentCard content={note} />)}
           </div>
 
           <h3>Compact Variant</h3>
@@ -160,16 +162,8 @@ const sampleNotes = (
           <div
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1rem 0;"
           >
-            {
-              sampleArticles.map(article => (
-                <ContentCard content={article} variant="compact" showSummary={false} />
-              ))
-            }
-            {
-              sampleNotes.map(note => (
-                <ContentCard content={note} variant="compact" showSummary={false} />
-              ))
-            }
+            {sampleArticles.map(article => <ContentCard content={article} compact />)}
+            {sampleNotes.map(note => <ContentCard content={note} compact />)}
           </div>
 
           <h3>Responsive Testing</h3>
@@ -177,49 +171,22 @@ const sampleNotes = (
 
           <h4>Narrow Container (300px)</h4>
           <div style="width: 300px; border: 1px dashed var(--color-border); padding: 1rem;">
-            {
-              sampleArticles[0] && (
-                <ContentCard
-                  content={sampleArticles[0]}
-                  variant="standard"
-                  showSummary={true}
-                  summaryLength={100}
-                />
-              )
-            }
+            {sampleArticles[0] && <ContentCard content={sampleArticles[0]} />}
           </div>
 
           <h4>Medium Container (500px)</h4>
           <div style="width: 500px; border: 1px dashed var(--color-border); padding: 1rem;">
-            {
-              sampleNotes[0] && (
-                <ContentCard
-                  content={sampleNotes[0]}
-                  variant="standard"
-                  showSummary={true}
-                  summaryLength={150}
-                />
-              )
-            }
+            {sampleNotes[0] && <ContentCard content={sampleNotes[0]} />}
           </div>
 
           <h4>Wide Container (700px)</h4>
           <div style="width: 700px; border: 1px dashed var(--color-border); padding: 1rem;">
-            {
-              sampleArticles[0] && (
-                <ContentCard
-                  content={sampleArticles[0]}
-                  variant="standard"
-                  showSummary={true}
-                  summaryLength={200}
-                />
-              )
-            }
+            {sampleArticles[0] && <ContentCard content={sampleArticles[0]} />}
           </div>
         </div>
 
         <!-- Existing Callout, BookmarkCard, and Embed tests below -->
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Callout Component Tests</h2>
 
           <h3>Basic Callouts with Icons</h3>
@@ -277,7 +244,7 @@ const sampleNotes = (
 
           <h3>Responsive Test</h3>
           <div
-            style="width: 100%; max-width: 300px; border: 1px dashed var(--color-grey-400); padding: 1rem;"
+            style="width: 100%; max-width: 300px; border: 1px dashed var(--color-border); padding: 1rem;"
           >
             <p><strong>Narrow Container (300px):</strong></p>
             <Callout emoji="📱" type="purple" title="Mobile View">
@@ -287,7 +254,7 @@ const sampleNotes = (
           </div>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>BookmarkCard Tests</h2>
 
           <h3>Test 1: Wide Container (Horizontal Layout)</h3>
@@ -319,7 +286,7 @@ const sampleNotes = (
           </div>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Embed Component Tests</h2>
 
           <h3>Embed Component: YouTube</h3>
@@ -351,63 +318,36 @@ const sampleNotes = (
             />
           </div>
         </div>
-      </SimpleProseTypography>
+      </div>
     </main>
     <Footer />
     <style>
-      body {
-        background-color: var(--color-bg-primary);
-        display: grid;
-        grid-template-rows: auto min-content;
-      }
+  body {
+    display: grid;
+    grid-template-rows: auto min-content;
+  }
 
-      main {
-        padding: 1em;
-        width: 100%;
-        max-width: 80ch;
-        margin: 0 auto;
-      }
+  main {
+    padding: var(--space-m);
+    width: 100%;
+    max-width: var(--measure-standard);
+    margin: 0 auto;
+  }
 
-      h1 {
-        text-transform: uppercase;
-        font-size: 4rem;
-        text-align: center;
-        margin-bottom: 3rem;
-      }
+  .intro-section {
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-m);
+    margin-bottom: var(--space-m);
+  }
 
-      main > * {
-        margin-top: 3rem;
-      }
-
-      .intro-section {
-        background: var(--color-bg-secondary);
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .test-section {
-        margin: 2rem 0;
-        padding: 1rem;
-        border: 1px dashed var(--color-border);
-        border-radius: 8px;
-      }
-
-      .test-section h2 {
-        margin-top: 0;
-        font-size: 1.5rem;
-        color: var(--color-accent);
-        border-bottom: 2px solid var(--color-border);
-        padding-bottom: 0.5rem;
-      }
-
-      .test-section h3 {
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-        color: var(--color-text-primary);
-      }
-    </style>
+  .test-section {
+    margin-block: var(--space-m);
+    padding: var(--space-m);
+    border: var(--border-width-hairline) dashed var(--color-border);
+    border-radius: var(--radius-md);
+  }
+</style>
   </body>
 </html>

@@ -23,15 +23,15 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
   </head>
   <body>
     <MainNavigation />
-    <main>
+    <main class="ui-style">
       <h1 class="title">Writing</h1>
-      <section>
-        <ul>
+      <section class="writing-index">
+        <ul class="list-reset">
           {
             posts.map(post => (
               <li>
                 <a href={`/writing/${post.id}/`}>
-                  <p class="date">
+                  <p class="date all-caps">
                     <FormattedDate date={post.data.pubDate} />
                   </p>
                   <h4 class="post-title">
@@ -40,8 +40,8 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
                     {post.data.platform && (
                       <Pill
                         text={post.data.platform}
-                        color="var(--color-writinglist-platform-label)"
-                        textColor="var(--color-brand-white)"
+                        color="var(--color-green)"
+                        textColor="var(--color-white)"
                       />
                     )}
                   </h4>
@@ -53,79 +53,61 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       </section>
     </main>
     <Footer />
-    <style>
+<style>
       body {
         display: grid;
         grid-template-rows: auto min-content;
-        background-color: var(--color-bg-primary);
-      }
-
-      section {
-        padding: 1rem;
       }
 
       .title {
+        font-size: clamp(3rem, 14vw, 20rem);
+        font-weight: var(--font-weight-bold);
         text-transform: uppercase;
-        font-size: 14vw;
-        transform: translateY(-0.3em);
         text-align: right;
+        line-height: var(--leading-none);
+        transform: translateY(-0.1em);
         pointer-events: none;
       }
 
-      ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      li {
-        margin-bottom: 2rem;
-      }
-
-      a {
-        text-decoration: none;
-      }
-
-      a:hover .post-title {
-        color: var(--color-writinglist-title-hover);
-      }
-
       .date {
-        font-size: 0.7rem;
-        color: var(--color-writinglist-date);
-        text-transform: uppercase;
-        letter-spacing: 0.1ch;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+      }
+
+      .writing-index {
+        padding: var(--space-s);
+        padding-block: var(--space-2xl);
       }
 
       .post-title {
-        font-size: 24px;
-        line-height: 1.2;
-        font-weight: 500;
-        padding-bottom: 0.2rem;
-        border-bottom: 5px var(--color-writinglist-border) solid;
-        transition: all 0.15s;
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--leading-tight);
+        letter-spacing: var(--tracking-tight);
+        padding-bottom: var(--space-3xs);
+        border-bottom: var(--border-width-thick) solid var(--color-accent);
+        transition: color var(--duration-fast) var(--ease-in-out);
+
+        & :global(.pill) {
+          transform: translateY(-0.2em);
+        }
       }
 
-      .post-title :global(.pill) {
-        transform: translateY(-0.2em);
-        opacity: 0.7;
-        transition: opacity 0.15s;
-      }
+      @media (min-width: 800px) {
+        ul {
+          display: grid;
+          grid-template-columns: auto auto;
+          justify-content: start;
+          align-items: baseline;
+          gap: var(--space-m) var(--space-s);
+        }
 
-      a:hover .post-title :global(.pill) {
-        opacity: 1;
-      }
+        :is(li, a) {
+          display: contents;
+        }
 
-      @media screen and (min-width: 800px) {
         .date {
           text-align: right;
-          padding-bottom: calc(0.2rem + 5px);
-        }
-        a {
-          display: grid;
-          gap: 1rem;
-          grid-template-columns: 10% 5fr 1fr;
-          align-items: end;
         }
       }
     </style>

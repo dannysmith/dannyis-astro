@@ -7,12 +7,13 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
 import NoteCard from '@components/layout/NoteCard.astro';
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
 import { filterContentForListing } from '@utils/content';
+import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-// Split notes into recent (first 2) and archive (rest)
+// Split notes into recent and archive
 const numberOfRecentNotes = 5;
 const recentNotes = notes.slice(0, numberOfRecentNotes);
 const olderNotes = notes.slice(numberOfRecentNotes);
@@ -38,14 +39,14 @@ const recentNotesWithContent = await Promise.all(
   <body>
     <MainNavigation />
     <main>
-      <h1 class="title">Notes</h1>
+      <h1 class="title ui-style">Notes</h1>
 
-      <!-- Recent Notes as Cards -->
+      <!-- Recent Notes as Cards (prose styling for content) -->
       {
         recentNotesWithContent.length > 0 && (
           <section class="recent-notes" aria-label="Recent Notes">
             {recentNotesWithContent.map(({ note, Content }) => (
-              <div class="note-container">
+              <div class="note-container cq" style={`--vt-name: note-${note.id}`}>
                 <NoteCard
                   title={note.data.title}
                   pubDate={note.data.pubDate}
@@ -54,6 +55,7 @@ const recentNotesWithContent = await Promise.all(
                   slug={note.id}
                 >
                   <Content components={MDX_COMPONENT_REMAPPING} />
+                  <MarkdownContentActions markdownUrl={`/notes/${note.id}.md`} disableShare={true} />
                 </NoteCard>
               </div>
             ))}
@@ -61,17 +63,17 @@ const recentNotesWithContent = await Promise.all(
         )
       }
 
-      <!-- Archive List -->
+      <!-- Archive List (UI styling) -->
       {
         olderNotes.length > 0 && (
-          <section class="archive-section" aria-label="Archive">
+          <section class="archive-section ui-style" aria-label="Archive">
             <div class="archive-content">
               <h2 class="archive-title">Older Notes</h2>
-              <ul class="archive-list">
+              <ul class="archive-list list-reset">
                 {olderNotes.map(note => (
                   <li>
                     <a href={`/notes/${note.id}/`}>
-                      <p class="date">
+                      <p class="date all-caps">
                         <FormattedDate date={note.data.pubDate} />
                       </p>
                       <h4 class="note-title">{note.data.title}</h4>
@@ -85,119 +87,101 @@ const recentNotesWithContent = await Promise.all(
       }
     </main>
     <Footer />
-    <style>
+<style>
       body {
         display: grid;
         grid-template-rows: auto min-content;
-        background-color: var(--color-bg-primary);
-      }
-
-      main {
-        min-height: 100vh;
       }
 
       .title {
+        font-size: clamp(3rem, 14vw, 20rem);
+        font-weight: var(--font-weight-bold);
         text-transform: uppercase;
-        font-size: 14vw;
-        transform: translateY(-0.3em);
         text-align: right;
+        line-height: var(--leading-none);
+        transform: translateY(-0.1em);
         pointer-events: none;
-        padding: 0 1rem;
+        margin: 0;
+        border: 0;
       }
 
-      /* Shared content width constraint */
-      .note-container,
-      .archive-content {
-        max-width: 80ch;
+      .note-container {
+        max-width: var(--measure-standard);
         width: 100%;
       }
 
-      /* Shared section styles */
+      .archive-content {
+        max-width: var(--measure-standard);
+        width: 100%;
+      }
+
       .recent-notes,
       .archive-section {
-        padding: 1rem;
+        padding: var(--space-s);
         display: grid;
         place-items: center;
       }
 
       .recent-notes {
-        padding-top: 4rem;
-        gap: 3rem;
+        padding-block: var(--space-2xl);
+        gap: var(--space-xl);
       }
 
       .archive-section {
-        margin-top: 3rem;
-      }
-
-      .note-container {
-        container-type: inline-size;
+        margin-top: var(--space-xl);
+        padding-bottom: var(--space-2xl);
       }
 
       .archive-title {
-        font-size: 2rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--color-border);
-        color: var(--color-text-primary);
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--space-m);
+        padding-bottom: var(--space-2xs);
+        border-bottom: var(--border-width-base) solid var(--color-border);
       }
 
-      .archive-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
+      .date {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
       }
 
-      .archive-list li {
-        margin-bottom: 2rem;
+      .note-title {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--leading-tight);
+        padding-bottom: var(--space-3xs);
+        border-bottom: var(--border-width-thick) solid var(--color-accent);
+        transition: color var(--duration-fast) var(--ease-in-out);
+
+        a:hover & {
+          color: var(--color-accent);
+        }
       }
 
-      .archive-list a {
-        text-decoration: none;
-        display: block;
-        width: 100%;
-      }
-
-      .archive-list a:hover .note-title {
-        color: var(--color-notelist-title-hover);
-      }
-
-      .archive-list .date {
-        font-size: 0.7rem;
-        color: var(--color-notelist-date);
-        text-transform: uppercase;
-        letter-spacing: 0.1ch;
-      }
-
-      .archive-list .note-title {
-        font-size: 24px;
-        line-height: 1.2;
-        font-weight: 500;
-        padding-bottom: 0.2rem;
-        border-bottom: 5px var(--color-notelist-border) solid;
-        transition: all 0.15s;
-      }
-
-      @media screen and (min-width: 800px) {
+      @media (min-width: 800px) {
         .recent-notes,
         .archive-section {
-          padding: 2rem;
+          padding: var(--space-l);
         }
 
         .recent-notes {
-          padding-top: 4rem;
+          padding-top: var(--space-2xl);
         }
 
-        .archive-list a {
+        .archive-list {
           display: grid;
-          gap: 1rem;
-          grid-template-columns: 120px 1fr;
-          align-items: end;
+          grid-template-columns: auto auto;
+          justify-content: start;
+          align-items: baseline;
+          gap: var(--space-m) var(--space-s);
+
+          & :is(li, a) {
+            display: contents;
+          }
         }
 
-        .archive-list .date {
+        .date {
           text-align: right;
-          padding-bottom: calc(0.2rem + 5px);
         }
       }
     </style>

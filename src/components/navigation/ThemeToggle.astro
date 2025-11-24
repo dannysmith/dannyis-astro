@@ -1,161 +1,161 @@
 ---
-// ThemeToggle component for switching between auto, light, and dark themes
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  class?: string;
+}
+
+const options = [
+  { value: 'light', description: 'Use light theme', icon: 'heroicons:sun' },
+  { value: 'auto', description: 'Follow system theme', icon: 'heroicons:computer-desktop' },
+  { value: 'dark', description: 'Use dark theme', icon: 'heroicons:moon' },
+] as const;
+
+const { class: className } = Astro.props;
 ---
 
-<div class="theme-toggle" role="radiogroup" aria-label="Choose color theme">
-  <button
-    type="button"
-    class="theme-option"
-    data-theme="auto"
-    aria-label="Auto theme (follows system)"
-    title="Auto theme (follows system)"
-  >
-    <span class="theme-icon" aria-hidden="true">◐</span>
-    <span class="theme-label">Auto</span>
-  </button>
-
-  <button
-    type="button"
-    class="theme-option"
-    data-theme="light"
-    aria-label="Light theme"
-    title="Light theme"
-  >
-    <span class="theme-icon" aria-hidden="true">☀</span>
-    <span class="theme-label">Light</span>
-  </button>
-
-  <button
-    type="button"
-    class="theme-option"
-    data-theme="dark"
-    aria-label="Dark theme"
-    title="Dark theme"
-  >
-    <span class="theme-icon" aria-hidden="true">🌙</span>
-    <span class="theme-label">Dark</span>
-  </button>
+<div class:list={['theme-toggle', className]} role="radiogroup" aria-label="Choose color theme">
+  {options.map(option => (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={option.value === 'auto' ? 'true' : 'false'}
+      data-theme-option={option.value}
+      title={option.description}
+    >
+      <span class="sr-only">{option.description}</span>
+      <Icon name={option.icon} aria-hidden="true" />
+    </button>
+  ))}
 </div>
 
 <style>
+  /* Component-scoped transitioning color - enables smooth thumb color transitions */
+  @property --_thumb-bg {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: transparent;
+  }
+
+  /*
+   * Theme Toggle
+   * A 3-option segmented control (light/auto/dark) with a sliding thumb indicator.
+   *
+   * How it works:
+   * - CSS Grid creates 3 equal columns for the buttons
+   * - A ::before pseudo-element acts as the sliding thumb
+   * - :has() detects which button is checked and sets --_pos (0, 1, or 2)
+   * - The thumb position is calculated: padding + (size + gap) × position
+   * - JS only manages aria-checked state; CSS handles all visual positioning
+   *
+   * Customize with: --theme-toggle-thumb-size, --theme-toggle-padding, --theme-toggle-gap
+   */
   .theme-toggle {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-nav-border);
-  }
+    /* Configurable dimensions (override these externally if needed) */
+    --_size: var(--theme-toggle-thumb-size, clamp(1.75rem, 4vw, 2.25rem));
+    --_pad: var(--theme-toggle-padding, var(--space-3xs));
+    --_gap: var(--theme-toggle-gap, var(--space-3xs));
 
-  .theme-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 0.5rem;
-    background: transparent;
-    border: 1px solid var(--color-nav-border);
-    border-radius: 6px;
-    color: var(--color-nav-text);
-    font-family: inherit;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05ch;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex: 1;
-    min-height: 4rem;
+    /* Position index: 0=light, 1=auto (default), 2=dark */
+    --_pos: 1;
+
+    display: inline-grid;
+    grid-template-columns: repeat(3, var(--_size));
+    gap: var(--_gap);
+    padding: var(--_pad);
     position: relative;
-    opacity: 0.6;
-  }
+    border-radius: var(--radius-full);
+    border: var(--border-width-hairline) solid color-mix(in oklch, var(--color-text) 12%, transparent);
+    background: color-mix(in oklch, var(--color-background) 80%, var(--color-background-secondary));
 
-  .theme-option:hover {
-    border-color: var(--color-nav-link-hover);
-    background: rgba(255, 115, 105, 0.1);
-    opacity: 0.8;
-  }
-
-  .theme-option:focus-visible {
-    outline: 2px solid var(--color-nav-link-hover);
-    outline-offset: 2px;
-  }
-
-  .theme-option.active {
-    border-color: var(--color-nav-link-hover);
-    background: var(--color-nav-link-hover);
-    color: var(--color-brand-white);
-    opacity: 1;
-    box-shadow: 0 2px 8px rgba(255, 115, 105, 0.3);
-  }
-
-  .theme-icon {
-    font-size: 1.2rem;
-    line-height: 1;
-    display: block;
-  }
-
-  .theme-label {
-    font-size: 0.7rem;
-    line-height: 1;
-    margin: 0;
-  }
-
-  /* Animation for theme changes */
-  @media (prefers-reduced-motion: no-preference) {
-    :root {
-      transition: color-scheme 0.3s ease;
+    /* Sliding thumb indicator */
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: var(--_pad);
+      width: var(--_size);
+      border-radius: var(--radius-full);
+      pointer-events: none;
+      /* Position formula: offset from left = padding + (cell width × index) */
+      translate: calc(var(--_pad) + (var(--_size) + var(--_gap)) * var(--_pos)) 0;
+      /* Thumb color: neutral by default, accent-tinted when light/dark selected */
+      background: var(--_thumb-bg, color-mix(in oklch, var(--color-text) 10%, var(--color-background-secondary)));
+      transition: translate var(--duration-fast) var(--ease-in-out);
     }
 
-    .theme-option {
-      transition: all 0.15s ease;
+    /* State detection via :has() - sets position index and thumb color */
+    &:has([data-theme-option='light'][aria-checked='true']) {
+      --_pos: 0;
+      --_thumb-bg: color-mix(in oklch, var(--color-accent) 45%, var(--color-background));
+    }
+
+    &:has([data-theme-option='dark'][aria-checked='true']) {
+      --_pos: 2;
+      --_thumb-bg: color-mix(in oklch, var(--color-accent) 25%, var(--color-background));
+    }
+
+    /* Option buttons */
+    & button {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-full);
+      background: transparent;
+      color: color-mix(in oklch, var(--color-text) 40%, transparent);
+      cursor: pointer;
+      z-index: 1; /* Above the thumb */
+      transition: color var(--duration-fast) var(--ease-in-out);
+
+      &[aria-checked='true'] { color: var(--color-text); }
+      &:hover { color: color-mix(in oklch, var(--color-text) 70%, transparent); }
+      &:focus-visible {
+        outline: var(--border-width-base) solid color-mix(in oklch, var(--color-accent) 65%, transparent);
+        outline-offset: 2px;
+      }
+    }
+
+    & svg { width: 1.25em; height: 1.25em; }
+
+    @media (prefers-reduced-motion: reduce) {
+      &::before { transition: none; }
     }
   }
 </style>
 
 <script>
-  function updateActiveState() {
-    if (!window.theme) return;
+  /*
+   * Theme Toggle JS
+   * Minimal - only manages aria-checked state. CSS handles all visuals via :has().
+   * Relies on window.theme API (from theme script in <head>) for persistence.
+   */
+  function initThemeToggle() {
+    const toggle = document.querySelector<HTMLElement>('.theme-toggle');
+    if (!toggle) return;
 
-    const currentTheme = window.theme.current;
-    document.querySelectorAll('.theme-option').forEach(button => {
-      const buttonTheme = button.getAttribute('data-theme');
-      if (buttonTheme === currentTheme) {
-        button.classList.add('active');
-        button.setAttribute('aria-pressed', 'true');
-      } else {
-        button.classList.remove('active');
-        button.setAttribute('aria-pressed', 'false');
-      }
+    updateChecked(toggle, window.theme?.current ?? 'auto');
+
+    // Event delegation: single click listener for all option buttons
+    toggle.addEventListener('click', (e) => {
+      const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-theme-option]');
+      if (button) window.theme?.set(button.dataset.themeOption as 'light' | 'dark' | 'auto');
     });
   }
 
-  function handleThemeChange(event: Event) {
-    const target = event.target as HTMLElement;
-    const button = target?.closest('.theme-option');
-    if (!button) return;
-
-    const theme = button.getAttribute('data-theme') as 'auto' | 'light' | 'dark';
-    if (window.theme && theme) {
-      window.theme.set(theme);
-    }
+  function updateChecked(toggle: HTMLElement, theme: string) {
+    toggle.querySelectorAll<HTMLButtonElement>('[data-theme-option]').forEach(btn => {
+      btn.setAttribute('aria-checked', btn.dataset.themeOption === theme ? 'true' : 'false');
+    });
   }
 
-  // Initialize when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    // Set initial state
-    updateActiveState();
-
-    // Add click handlers
-    document.querySelectorAll('.theme-option').forEach(button => {
-      button.addEventListener('click', handleThemeChange);
-    });
-
-    // Listen for theme changes
-    document.addEventListener('theme-changed', updateActiveState);
+  // Sync with external theme changes (e.g., other toggles or system preference changes)
+  document.addEventListener('theme-changed', (e: CustomEvent) => {
+    const toggle = document.querySelector<HTMLElement>('.theme-toggle');
+    if (toggle) updateChecked(toggle, e.detail?.theme ?? 'auto');
   });
 
-  // Handle ViewTransitions
-  document.addEventListener('astro:after-swap', () => {
-    setTimeout(updateActiveState, 0);
-  });
+  // Initialize on page load and after Astro view transitions
+  document.addEventListener('DOMContentLoaded', initThemeToggle);
+  document.addEventListener('astro:after-swap', initThemeToggle);
 </script>

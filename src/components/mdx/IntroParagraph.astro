@@ -9,39 +9,29 @@
 <style>
   .intro-paragraph {
     text-indent: 0;
-  }
 
-  /* First line of intro para*/
-  .intro-paragraph::first-line {
-    text-transform: lowercase;
-    -webkit-hyphens: none;
-    hyphens: none;
-    font-variant-caps: small-caps;
-    font-weight: 525;
-  }
-
-  /* Increase first line weight slightly in dark mode */
-  @media (prefers-color-scheme: dark) {
-    .intro-paragraph::first-line {
+    /* Small-caps first line */
+    &::first-line {
+      text-transform: lowercase;
+      hyphens: none;
+      font-variant-caps: small-caps;
       font-weight: 575;
     }
-  }
 
-  :root[data-theme='dark'] .intro-paragraph::first-line {
-    font-weight: 575;
-  }
-
-  /*  Drop Cap */
-  .intro-paragraph:first-letter {
-    text-transform: uppercase;
-    float: left;
-    font-size: 4em;
-    line-height: 1;
-    font-weight: bold;
-    padding-right: 0.4ch;
+    /* Drop cap */
+    &::first-letter {
+      text-transform: uppercase;
+      float: left;
+      font-size: 4em;
+      line-height: 1;
+      font-weight: var(--font-weight-bold);
+      margin-inline-end: 0.4ch;
+    }
   }
 </style>
+
 <script>
+  // Normalize the content of the intro paragraph to remove extra spaces, which will often be there because it will be indented inside the <IntroParagraph> component tag in the MDX.
   function normalizeContent(element: HTMLElement) {
     // Process text nodes while preserving spaces around tags
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);

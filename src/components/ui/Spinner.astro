@@ -12,18 +12,15 @@ const size = Astro.props.size || '5rem';
 </div>
 
 <style define:vars={{ size }}>
-  :root {
-    --spinner-color: var(--color-brand-primary);
-  }
-
+  /* Animated SVG spinner with accent color stroke */
   .spinnersvg {
-    animation: rotate 2s linear infinite;
     width: var(--size);
     height: var(--size);
+    animation: rotate 2s linear infinite;
   }
 
   .spinnersvg .path {
-    stroke: var(--spinner-color);
+    stroke: var(--color-accent);
     stroke-linecap: round;
     animation: dash 1.5s ease-in-out infinite;
   }

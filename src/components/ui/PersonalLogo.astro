@@ -11,21 +11,20 @@
   .personal-logo {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: var(--space-s);
   }
 
   .circle {
-    width: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
-    height: clamp(1rem, calc(0.8rem + 1vw), 1.5rem);
-    background-color: var(--color-nav-border);
-    border-radius: 50%;
+    width: var(--space-s);
+    aspect-ratio: 1;
+    background-color: var(--color-accent);
+    border-radius: var(--radius-full);
   }
 
   .name {
     text-transform: uppercase;
-    line-height: 1;
-    letter-spacing: 0.05ch;
-    font-weight: 700;
-    text-align: left;
+    letter-spacing: var(--tracking-wide);
+    font-weight: var(--font-weight-bold);
+    text-box: trim-both cap alphabetic;
   }
 </style>

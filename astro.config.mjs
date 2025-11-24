@@ -9,7 +9,15 @@ import rehypeMermaid from 'rehype-mermaid';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import icon from 'astro-icon';
 
-import expressiveCode from 'astro-expressive-code';
+import { readFileSync } from 'fs';
+import expressiveCode, { ExpressiveCodeTheme } from 'astro-expressive-code';
+
+// Load custom code theme
+const codeThemeJson = readFileSync(
+  new URL('./src/config/code-theme.json', import.meta.url),
+  'utf-8'
+);
+const codeTheme = ExpressiveCodeTheme.fromJSONString(codeThemeJson);
 
 // https://astro.build/config
 export default defineConfig({
@@ -33,7 +41,7 @@ export default defineConfig({
   },
   integrations: [
     expressiveCode({
-      themes: ['dracula-soft'],
+      themes: [codeTheme],
       styleOverrides: {
         borderRadius: '0.2rem',
         frames: {

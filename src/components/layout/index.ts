@@ -6,5 +6,4 @@ export { default as NoteCard } from './NoteCard.astro';
 export { default as Lightbox } from './Lightbox.astro';
 
 // Typography wrapper components
-export { default as SimpleProseTypography } from './SimpleProseTypography.astro';
 export { default as LongFormProseTypography } from './LongFormProseTypography.astro';

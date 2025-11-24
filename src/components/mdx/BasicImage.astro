@@ -47,7 +47,7 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
 
 <figure
   class:list={[
-    'container',
+    'figure',
     { framed },
     { 'bleed-left': bleed === 'left' },
     { 'bleed-right': bleed === 'right' },
@@ -62,7 +62,6 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
           alt={alt}
           height={defaultHeight}
           width={defaultWidth}
-          class="styled-image"
           loading="eager"
         />
       ) : (
@@ -72,7 +71,6 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
           formats={['avif', 'webp', 'jpg']}
           height={defaultHeight}
           width={defaultWidth}
-          class="styled-image"
           loading="eager"
           decoding="async"
         />
@@ -92,23 +90,48 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
 </figure>
 
 <style>
-  .container {
+
+  /* Figure styles */
+  .figure {
     grid-column: 2 / 3 !important;
+    border-radius: var(--radius-xs);
     text-align: center;
-    margin: 0 auto;
-    max-width: inherit;
+    margin-inline: auto;
+    overflow: hidden;
   }
 
+  .framed {
+    border: var(--border-width-base) solid var(--color-border);
+    filter: var(--shadow-small);
+    border-radius: var(--radius-xs);
+    background-color: var(--surface-raised);
+  }
+
+  .bleed-left {
+    grid-column: 1 / 3 !important;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0 ;
+  }
+  .bleed-right {
+    grid-column: 2 / 4 !important;
+    border-top-right-radius: 0 ;
+    border-bottom-right-radius: 0;
+  }
+
+  .bleed-full {
+    grid-column: 1 / 4 !important;
+    border-radius: 0;
+  }
+
+  /* Image wrapper styles - inline-block shrink-wraps the image so the
+     ::before placeholder never exceeds image dimensions */
   .image-wrapper {
-    display: flex;
-    justify-content: center;
     position: relative;
-    width: 100%;
-    margin: 0 auto;
-    height: auto;
+    display: inline-block;
+    vertical-align: top; /* Removes baseline gap inside framed figures */
   }
 
-  /* Pulse animation for while images are loading */
+    /* Pulse animation for while images are loading */
   .image-wrapper::before {
     content: '';
     position: absolute;
@@ -116,9 +139,9 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
     left: 0;
     bottom: 0;
     right: 0;
-    border-radius: 0.2em;
-    background-color: var(--color-text-primary);
+    background-color: var(--color-text);
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    z-index: -1;
   }
 
   @keyframes pulse {
@@ -131,41 +154,9 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
     }
   }
 
-  .styled-image {
-    height: auto;
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto !important;
-    border-radius: 0.2em;
-    position: relative;
-    z-index: 1;
-    object-fit: contain;
-    display: block;
-  }
-
-  .framed {
-    border: 1px solid var(--color-border);
-    border-radius: 0.2em;
-    filter: var(--shadow-xsmall);
-    contain: content;
-    background: var(--color-bg-secondary);
-  }
-
-  .bleed-left {
-    grid-column: 1 / 3 !important;
-  }
-  .bleed-right {
-    grid-column: 2 / 4 !important;
-  }
-
-  .bleed-full {
-    width: 100%;
-    grid-column: 1 / 4 !important;
-  }
-
+  /* Figcaption styles */
   figcaption {
-    font-family: var(--font-ui);
-    width: 100%;
-    margin: 0.5em auto;
+    padding: var(--space-2xs) var(--space-xs);
+    font-size: var(--font-size-sm);
   }
 </style>

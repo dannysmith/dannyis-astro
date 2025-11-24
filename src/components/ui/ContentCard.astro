@@ -1,66 +1,106 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import { FormattedDate } from '@components/ui';
 import { generateSummary } from '@utils/content-summary';
 
-export interface Props {
-  content: CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'toolboxPages'>;
-  variant?: 'compact' | 'standard';
-  showSummary?: boolean;
-  summaryLength?: number;
+// Type configuration - easy to extend for new content types
+// All getUrl functions share signature: (slug: string, url?: string) => string
+const TYPE_CONFIG = {
+  articles: {
+    label: 'Article',
+    color: 'var(--color-accent)',
+    // eslint-disable-next-line no-unused-vars
+    getUrl: (slug: string, _url?: string) => `/writing/${slug}/`,
+  },
+  notes: {
+    label: 'Note',
+    color: 'var(--color-blue)',
+    // eslint-disable-next-line no-unused-vars
+    getUrl: (slug: string, _url?: string) => `/notes/${slug}/`,
+  },
+  toolboxPages: {
+    label: 'Tool',
+    color: 'var(--color-green)',
+    getUrl: (_slug: string, url?: string) => url ?? '',
+  },
+} as const;
+
+type ContentType = 'article' | 'note' | 'tool' | 'custom';
+
+interface Props {
+  /** Content collection entry - auto-extracts all data */
+  content?: CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'toolboxPages'>;
+
+  /** Manual props for custom/slot usage (when no content prop) */
+  href?: string;
+  title?: string;
+  date?: Date;
+  type?: ContentType;
+
+  /** Force compact display regardless of container size */
+  compact?: boolean;
 }
 
-const { 
-  content, 
-  variant = 'standard', 
-  showSummary = true, 
-  summaryLength = 200 
-} = Astro.props;
+const { content, compact = false, ...manualProps } = Astro.props;
 
-const { data, id, collection } = content;
-
-// Handle different content types
+// Derived state
+let href: string;
 let title: string;
-let pubDate: Date | undefined;
-let cover: any = undefined;
-let coverAlt: string | undefined = undefined;
-let contentUrl: string;
+let date: Date | undefined;
 let summary: string | null = null;
-let contentType: string;
+let image: ImageMetadata | undefined;
+let imageAlt: string | undefined;
+let contentType: ContentType;
 let typeLabel: string;
-let typeIcon: string;
+let borderColor: string;
 
-if (collection === 'toolboxPages') {
+if (content) {
+  // Extract from content collection entry
+  const { data, id, collection } = content;
+  const config = TYPE_CONFIG[collection];
+
   title = data.title;
-  contentUrl = data.url;
-  contentType = 'toolbox';
-  typeLabel = 'Tool';
-  typeIcon = '🔧';
+  typeLabel = config.label;
+  borderColor = config.color;
+
+  if (collection === 'toolboxPages') {
+    href = config.getUrl('', data.url);
+    contentType = 'tool';
+  } else {
+    const slug = data.slug || id.replace(/\.(md|mdx)$/, '');
+    href = config.getUrl(slug, '');
+    date = data.pubDate;
+    image = 'cover' in data ? data.cover : undefined;
+    imageAlt = 'coverAlt' in data ? data.coverAlt : undefined;
+    summary = generateSummary(content, 200);
+    contentType = collection === 'articles' ? 'article' : 'note';
+  }
 } else {
-  // Articles and notes
-  title = data.title;
-  pubDate = data.pubDate;
-  cover = 'cover' in data ? data.cover : undefined;
-  coverAlt = 'coverAlt' in data ? data.coverAlt : undefined;
-  
-  const slug = data.slug || id.replace(/\.(md|mdx)$/, '');
-  contentUrl = collection === 'articles' ? `/writing/${slug}/` : `/notes/${slug}/`;
-
-  summary = showSummary ? generateSummary(content, summaryLength) : null;
-  contentType = collection === 'articles' ? 'article' : 'note';
-  typeLabel = collection === 'articles' ? 'Article' : 'Note';
-  typeIcon = collection === 'articles' ? '📖' : '📝';
+  // Use manual props
+  href = manualProps.href || '#';
+  title = manualProps.title || '';
+  date = manualProps.date;
+  contentType = manualProps.type || 'custom';
+  typeLabel = contentType.charAt(0).toUpperCase() + contentType.slice(1);
+  borderColor = 'var(--color-accent)';
 }
+
+const hasSlot = Astro.slots.has('default');
 ---
 
-<article class={`content-card cq ${variant}`} data-type={contentType}>
-  <a href={contentUrl} class="card-link">
-    {cover && variant !== 'compact' && (
+<article
+  class:list={['content-card', 'ui-style', 'cq', { compact }]}
+  data-type={contentType}
+  style={`--_border-color: ${borderColor}`}
+>
+  <a href={href} class="card-link">
+    {image && (
       <div class="card-image">
-        <Image 
-          src={cover} 
-          alt={coverAlt || `Cover for ${title}`}
+        <Image
+          src={image}
+          alt={imageAlt || `Cover for ${title}`}
           width={400}
           height={200}
           loading="lazy"
@@ -71,172 +111,152 @@ if (collection === 'toolboxPages') {
     <div class="card-content">
       <header class="card-header">
         <div class="card-meta">
-          <span class="content-type">
-            <span class="type-icon" aria-hidden="true">{typeIcon}</span>
-            <span class="type-label">{typeLabel}</span>
-          </span>
-          {pubDate && (
-            <time class="date" datetime={pubDate.toISOString()}>
-              <FormattedDate date={pubDate} />
+          <span class="type-label">{typeLabel}</span>
+          {date && (
+            <time class="date" datetime={date.toISOString()}>
+              <FormattedDate date={date} />
             </time>
           )}
         </div>
         <h2 class="card-title">{title}</h2>
       </header>
 
-      {summary && (
-        <div class="card-summary">
-          <p>{summary}</p>
+      {hasSlot ? (
+        <div class="card-body">
+          <slot />
         </div>
+      ) : (
+        summary && <p class="card-summary">{summary}</p>
       )}
     </div>
   </a>
 </article>
 
 <style>
+  /* Component-scoped transitioning color - enables smooth interpolation */
+  @property --_border-color {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: oklch(70% 0.18 25);
+  }
+
+  /* Container query applied via .cq class */
   .content-card {
-    container-type: inline-size;
-    background: var(--color-contentcard-bg);
-    border: none;
-    border-radius: 0;
-    border-left: 3px solid var(--color-contentcard-article-accent);
-    transition: all 0.15s ease;
+    --_border-color: var(--color-accent);
+
+    position: relative;
+    background: var(--surface-raised);
+    filter: var(--shadow-small);
     overflow: hidden;
-  }
+    transition: filter var(--duration-fast) var(--ease-in-out);
 
-  .content-card[data-type="note"] {
-    border-left-color: var(--color-contentcard-note-accent);
-  }
+    /* Left border as pseudo-element - grows on hover without shifting content */
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      left: 0;
+      width: var(--border-width-thick);
+      background: var(--_border-color);
+      transition: width var(--duration-fast) var(--ease-in-out);
+      z-index: 1;
+    }
 
-  .content-card[data-type="toolbox"] {
-    border-left-color: var(--color-contentcard-toolbox-accent);
-  }
+    &:hover {
+      filter: var(--shadow-medium);
+    }
 
-  .content-card:hover {
-    border-left-width: 6px;
-    background: var(--color-bg-secondary);
+    &:hover::before {
+      width: var(--border-width-heavy);
+    }
+
+    /* Compact mode - forced via prop */
+    &.compact {
+      & :is(.card-image, .card-summary, .card-body) {
+        display: none;
+      }
+
+      & .card-content {
+        padding: var(--space-xs);
+      }
+
+      & .card-title {
+        font-size: var(--font-size-base);
+      }
+    }
   }
 
   .card-link {
     display: block;
-    text-decoration: none;
-    color: inherit;
     height: 100%;
+
+    &:focus-visible {
+      outline: var(--border-width-base) solid var(--color-accent);
+      outline-offset: 2px;
+    }
   }
 
   .card-image {
     width: 100%;
-    height: 160px;
+    aspect-ratio: 2 / 1;
+    max-height: 200px;
     overflow: hidden;
-  }
 
-  .card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
   }
 
   .card-content {
-    padding: 1rem;
-  }
-
-  .card-header {
-    margin-bottom: 0.75rem;
+    padding: var(--space-s);
   }
 
   .card-meta {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    font-size: 0.75rem;
-    opacity: 0.7;
-  }
-
-  .content-type {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-weight: 600;
-  }
-
-  .type-icon {
-    display: none;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    margin-bottom: var(--space-2xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
   }
 
   .type-label {
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.65rem;
-  }
-
-  .date {
-    font-size: 0.65rem;
-    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+    font-weight: var(--font-weight-medium);
   }
 
   .card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin: 0;
-    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--leading-snug);
   }
 
-  .card-summary {
-    margin-bottom: 0.75rem;
-  }
-
-  .card-summary p {
-    margin: 0;
+  .card-summary,
+  .card-body {
+    margin-top: var(--space-xs);
     color: var(--color-text-secondary);
-    line-height: 1.4;
-    font-size: 0.85rem;
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
   }
 
-
-
-  /* Compact variant */
-  .content-card.compact .card-summary {
-    display: none;
-  }
-
-  .content-card.compact .card-content {
-    padding: 0.75rem;
-  }
-
-  .content-card.compact .card-title {
-    font-size: 1rem;
-  }
-
-  /* Container queries for responsive behavior */
-  @container (width < 300px) {
-    .card-summary {
+  /* Container query - responsive compactness */
+  @container (width < 350px) {
+    :is(.card-image, .card-summary, .card-body) {
       display: none;
     }
-    
-    .card-image {
-      display: none;
-    }
-    
+
     .card-content {
-      padding: 0.75rem;
+      padding: var(--space-xs);
     }
-    
+
     .card-title {
-      font-size: 0.95rem;
+      font-size: var(--font-size-sm);
     }
-  }
-
-
-  /* Focus and accessibility */
-  .card-link:focus {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .card-link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
   }
 </style>

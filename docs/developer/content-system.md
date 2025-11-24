@@ -47,8 +47,8 @@ export const collections = { articles, notes, toolboxPages };
 ### Glob Loader Behavior
 
 - **Pattern:** `**/[^_]*.{md,mdx}` - Matches all `.md` and `.mdx` files except those starting with underscore
-- **Ignored files:** Anything starting with `_` (use for drafts/work-in-progress)
-- **Naming requirement:** `YYYY-MM-DD-descriptive-slug.{md,mdx}` format
+- **Ignored files:** Anything starting with `_`
+- **Naming pattern:** `YYYY-MM-DD-descriptive-slug.{md,mdx}` format
 
 See `content-authoring.md` for file naming conventions and schema reference.
 
@@ -268,7 +268,7 @@ Custom remark/rehype plugins modify content during build.
 
 ### Critical Settings
 
-- **Redirects:** 14 redirects configured (see `critical-patterns.md`)
+- **Redirects:** 14 redirects configured (see [architecture-guide.md § Redirects](./architecture-guide.md#redirects))
 - **Vite optimizations:** Excludes `@resvg/resvg-js`
 - **Markdown plugins:** Remark + rehype configuration
 - **Expressive Code:** Dracula-soft theme with no frame shadows

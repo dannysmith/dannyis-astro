@@ -14,12 +14,12 @@ const { author, title, url, small } = Astro.props;
     <slot />
     <figcaption>
       <cite class="cite">
-        — <span>{author}</span>
+        — <span class="author">{author}</span>
         {
           title && (
             <>
               {' - '}
-              <a href={url}>{title}</a>
+              <a href={url} class="title-link">{title}</a>
             </>
           )
         }
@@ -30,49 +30,40 @@ const { author, title, url, small } = Astro.props;
 
 <style>
   figure {
-    margin: 0;
+    margin-inline: 0;
   }
 
   .blockquote {
+    /* Typographic refinements beyond @typography defaults */
     font-variant-numeric: oldstyle-nums diagonal-fractions;
     hanging-punctuation: first allow-end last;
-    border-left: 2px solid var(--color-article-accent);
-    padding-left: calc((1em * var(--line-height, 1.7)) - 2px);
-    font-style: italic;
-    margin-left: 0;
     margin-bottom: 0;
-  }
-
-  figcaption {
-    margin-top: 0.25em;
-    text-align: right;
-    padding-left: calc((1em * var(--line-height, 1.7)) - 2px);
+    margin-right: 0;
   }
 
   .cite {
-    font-family: var(--font-ui);
-    font-size: 0.9em;
-    font-style: normal;
-    color: var(--color-blockquote-citation-text);
-  }
+    /* Punctuation (em-dash, hyphen) is muted; author/link override with solid colors */
+    color: color-mix(in srgb, var(--color-text-secondary) 50%, transparent);
 
-  .cite span {
-    font-weight: 600;
-    color: var(--color-blockquote-citation-author);
-  }
+    /* Author name */
+    & .author {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text);
+    }
 
-  .cite a {
-    color: var(--color-blockquote-citation-source);
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
+    /* Source link */
+    & .title-link {
+      color: var(--color-accent);
+      text-decoration: none;
+      transition: color var(--duration-fast) var(--ease-in-out);
 
-  .cite a:hover {
-    color: var(--color-blockquote-citation-source-hover);
-    text-decoration: underline;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   .small {
-    font-size: 0.9em;
+    font-size: var(--font-size-sm);
   }
 </style>

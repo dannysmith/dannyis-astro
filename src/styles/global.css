@@ -1,16 +1,16 @@
-/* Define our layers */
-@layer reset, base, simple-prose, longform-prose, theme;
+/* Define our layers - order determines cascade priority */
+@layer reset, base, typography, layout, utilities, longform, theme;
 
-/* Import Mermaid styles */
-@import './mermaid.css';
-
-/* Font faces - these need to be outside layers as they're declarations */
+/* ============================================
+   FONT FACES
+   ============================================ */
 @font-face {
   font-family: 'Literata';
   src: url('/fonts/Literata-self-compiled-Mar2019.woff2') format('woff2');
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: 'Literata';
   src: url('/fonts/Literata-Italic-self-compiled-Mar2019.woff2') format('woff2');
@@ -18,311 +18,482 @@
   font-display: swap;
 }
 
-/* CSS Custom Properties - these need to be outside layers as they're declarations */
+/* ============================================
+   @PROPERTY DECLARATIONS
+   ============================================ */
+
+/* Color properties - enable smooth color transitions */
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.18 25);
+}
+
+@property --surface-raised {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+/* Hue values - enable smooth hue interpolation in color calculations */
+@property --hue-coral {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 25;
+}
+
+@property --hue-pink {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 350;
+}
+
+@property --hue-orange {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 55;
+}
+
+@property --hue-purple {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 300;
+}
+
+@property --hue-yellow {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 95;
+}
+
+@property --hue-green {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 165;
+}
+
+@property --hue-blue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 250;
+}
+
+@property --hue-grey {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 210;
+}
+
+/* Duration/timing properties - ensure valid time values in transitions */
+@property --duration-fast {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 150ms;
+}
+
+@property --duration-normal {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 200ms;
+}
+
+@property --duration-slow {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 300ms;
+}
+
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
 :root {
-  /* Palette: base color tokens, never used directly in components */
-  --color-black: #191919;
-  --color-true-black: #000000;
+  /* ======= COLOURS ======= */
 
-  --color-pink-300: #f4dfeb;
-  --color-pink-400: #fac8e4;
-  --color-pink-500: #e255a1;
-  --color-pink-600: #ad1a72;
-  --color-pink-700: #602d51;
-  --color-pink-800: #533b4c;
+  /* Core Hues - shared across modes */
+  --hue-coral: 25;
+  --hue-pink: 350;
+  --hue-orange: 55;
+  --hue-purple: 300;
+  --hue-yellow: 95;
+  --hue-green: 165;
+  --hue-blue: 250;
+  --hue-grey: 210;
 
-  --color-red-300: #fbe4e4;
-  --color-red-400: #ffd4d4;
-  --color-red-500: #ff7369;
-  --color-red-600: #e03e3e;
-  --color-red-700: #b84848;
-  --color-red-800: #594141;
+  /* Absolute colors - no mode switching needed */
+  --color-white: oklch(100% 0 0);
+  --color-black: oklch(0% 0 0);
 
-  --color-orange-300: #faebdd;
-  --color-orange-400: #fed9b7;
-  --color-orange-500: #ffa344;
-  --color-orange-600: #d9730d;
-  --color-orange-700: #765839;
-  --color-orange-800: #594a3a;
+  /* Adaptive Color Palette
+    Each color auto-adapts for light/dark mode.
+    Dark mode: increase lightness for visibility, reduce chroma to avoid harshness */
 
-  --color-purple-300: #eae4f2;
-  --color-purple-400: #e6d7f9;
-  --color-purple-500: #9a6dd7;
-  --color-purple-600: #6940a5;
-  --color-purple-700: #6f6695;
-  --color-purple-800: #443f57;
+  --color-coral: light-dark(oklch(70% 0.18 var(--hue-coral)), oklch(80% 0.14 var(--hue-coral)));
 
-  --color-yellow-300: #fbf3db;
-  --color-yellow-400: #feeebe;
-  --color-yellow-500: #ffdc49;
-  --color-yellow-600: #dfab01;
-  --color-yellow-700: #645e26;
-  --color-yellow-800: #59563b;
+  --color-pink: light-dark(oklch(55% 0.15 var(--hue-pink)), oklch(70% 0.13 var(--hue-pink)));
 
-  --color-green-300: #ddedea;
-  --color-green-400: #c8eae3;
-  --color-green-500: #4dab9a;
-  --color-green-600: #0f7b6c;
-  --color-green-700: #2c5c5a;
-  --color-green-800: #354c4b;
+  --color-orange: light-dark(oklch(78% 0.16 var(--hue-orange)), oklch(80% 0.14 var(--hue-orange)));
 
-  --color-blue-300: #ddebf1;
-  --color-blue-400: #c4e4f2;
-  --color-blue-500: #529cca;
-  --color-blue-600: #0b6e99;
-  --color-blue-700: #254e66;
-  --color-blue-800: #364954;
+  --color-purple: light-dark(oklch(60% 0.14 var(--hue-purple)), oklch(72% 0.12 var(--hue-purple)));
 
-  --color-brown-300: #e9e5e3;
-  --color-brown-400: #f1e0d8;
-  --color-brown-500: #937264;
-  --color-brown-600: #64473a;
-  --color-brown-700: #534343;
-  --color-brown-800: #434040;
+  --color-yellow: light-dark(oklch(90% 0.16 var(--hue-yellow)), oklch(82% 0.12 var(--hue-yellow)));
 
-  --color-grey-300: #ebeced;
-  --color-grey-400: #ebeced;
-  --color-grey-500: #979a9bf2;
-  --color-grey-600: #9b9a97;
-  --color-grey-700: #596063;
-  --color-grey-800: #454b4e;
+  --color-green: light-dark(oklch(65% 0.12 var(--hue-green)), oklch(72% 0.1 var(--hue-green)));
 
-  /* Backgrounds */
-  --color-bg-light-100: #ffffff;
-  --color-bg-light-200: #f3f6f7;
-  --color-bg-light-300: #e3e6e8;
-  --color-bg-light-400: #9a9fa1;
-  --color-bg-light-500: #6c7173;
-  --color-bg-light-600: #4d5254;
-  --color-bg-light-700: #2f3437;
-  --color-bg-light-800: #191919;
+  --color-blue: light-dark(oklch(62% 0.15 var(--hue-blue)), oklch(70% 0.13 var(--hue-blue)));
 
-  --color-bg-dark-100: #191919;
-  --color-bg-dark-200: #202020;
-  --color-bg-dark-300: #2c2c2c;
-  --color-bg-dark-400: #363636;
-  --color-bg-dark-500: #898989;
-  --color-bg-dark-600: #9b9b9b;
-  --color-bg-dark-700: #d5d5d5;
-  --color-bg-dark-800: #ffffff;
+  /* Neutrals - structural colors for backgrounds/text */
+  --color-ink: oklch(28% 0.01 var(--hue-grey));
+  --color-charcoal: oklch(24.35% 0 0); /* #202020 */
+  --color-beige: oklch(96% 0.02 85);
 
-  /* Named Brand colours */
-  --color-brand-primary: var(--color-red-500);
-  --color-brand-grey: var(--color-bg-light-700);
-  --color-brand-dark-grey: var(--color-bg-light-800);
-  --color-brand-white: #ffffff;
-  --color-brand-black: var(--color-black);
-  --color-brand-beige: #f6f3ea;
+  /* ======= SEMANTIC COLOURS ======= */
+  /* Role-based tokens that reference the adaptive palette */
 
-  /* Shadows - should be used like filter:var(--shadow-xsmall)*/
+  --color-accent: var(--color-coral);
+  --color-visited: var(--color-purple);
+  --color-highlight: var(--color-yellow);
 
-  --shadow-xsmall: drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.05));
-  --shadow-small: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.1));
-  --shadow-medium: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
-  --shadow-large: drop-shadow(0px 10px 15px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
-  --shadow-xlarge: drop-shadow(0px 20px 25px rgba(16, 24, 40, 0.1))
-    drop-shadow(0px 8px 10px rgba(16, 24, 40, 0.1));
-  --shadow-xxlarge: drop-shadow(0px 25px 50px rgba(16, 24, 40, 0.25));
+  --color-background: light-dark(var(--color-beige), var(--color-charcoal));
+  --color-background-secondary: light-dark(
+    oklch(from var(--color-beige) calc(l + 0.02) c h),
+    oklch(from var(--color-charcoal) calc(l - 0.04) c h)
+  );
+  --color-text: light-dark(var(--color-ink), var(--color-beige));
+  --color-text-secondary: light-dark(
+    oklch(55% 0.01 var(--hue-grey)),
+    oklch(75% 0.01 var(--hue-grey))
+  );
+  --color-border: light-dark(
+    oklch(from var(--color-black) l c h / 0.1),
+    oklch(from var(--color-white) l c h / 0.1)
+  );
 
-  /*  Fonts */
+  /* Surface for raised cards/panels - white in light mode, dark grey in dark mode */
+  --surface-raised: light-dark(var(--color-white), oklch(16% 0 0));
+
+  /* ======= FONTS ======= */
+
   --font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
-  /* Spacer sizes */
-  --spacer-xs: 0.5rem;
-  --spacer-sm: 1rem;
-  --spacer-md: 2rem;
-  --spacer-lg: 3rem;
-  --spacer-xl: 4rem;
-  --spacer-xxl: 6rem;
+  /* ======= SPACING ======= */
+  /* @link https://utopia.fyi/space/calculator?c=375,16,1.2,1280,20,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+  --space-3xs: clamp(0.25rem, 0.2241rem + 0.1105vw, 0.3125rem);
+  --space-2xs: clamp(0.5rem, 0.4482rem + 0.221vw, 0.625rem);
+  --space-xs: clamp(0.75rem, 0.6723rem + 0.3315vw, 0.9375rem);
+  --space-s: clamp(1rem, 0.8964rem + 0.442vw, 1.25rem);
+  --space-m: clamp(1.5rem, 1.3446rem + 0.663vw, 1.875rem);
+  --space-l: clamp(2rem, 1.7928rem + 0.884vw, 2.5rem);
+  --space-xl: clamp(3rem, 2.6892rem + 1.326vw, 3.75rem);
+  --space-2xl: clamp(4rem, 3.5856rem + 1.768vw, 5rem);
+  --space-3xl: clamp(6rem, 5.3785rem + 2.6519vw, 7.5rem);
+
+  /* One-up pairs */
+  --space-3xs-2xs: clamp(0.25rem, 0.0946rem + 0.663vw, 0.625rem);
+  --space-2xs-xs: clamp(0.5rem, 0.3187rem + 0.7735vw, 0.9375rem);
+  --space-xs-s: clamp(0.75rem, 0.5428rem + 0.884vw, 1.25rem);
+  --space-s-m: clamp(1rem, 0.6374rem + 1.547vw, 1.875rem);
+  --space-m-l: clamp(1.5rem, 1.0856rem + 1.768vw, 2.5rem);
+  --space-l-xl: clamp(2rem, 1.2749rem + 3.0939vw, 3.75rem);
+  --space-xl-2xl: clamp(3rem, 2.1713rem + 3.5359vw, 5rem);
+  --space-2xl-3xl: clamp(4rem, 2.5497rem + 6.1878vw, 7.5rem);
+
+  /* ======= TYPOGRAPHY ======= */
+  /* @link https://utopia.fyi/type/calculator?c=375,16,1.2,1280,20,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+  --step--2: clamp(0.6944rem, 0.6907rem + 0.016vw, 0.7035rem);
+  --step--1: clamp(0.8333rem, 0.7901rem + 0.1846vw, 0.9377rem);
+  --step-0: clamp(1rem, 0.8964rem + 0.442vw, 1.25rem);
+  --step-1: clamp(1.2rem, 1.0068rem + 0.8243vw, 1.6663rem);
+  --step-2: clamp(1.44rem, 1.1163rem + 1.381vw, 2.2211rem);
+  --step-3: clamp(1.728rem, 1.2172rem + 2.1794vw, 2.9607rem);
+  --step-4: clamp(2.0736rem, 1.2975rem + 3.3115vw, 3.9467rem);
+  --step-5: clamp(2.4883rem, 1.3395rem + 4.9018vw, 5.2609rem);
+
+  /* Semantic aliases */
+  --font-size-xs: var(--step--2);
+  --font-size-sm: var(--step--1);
+  --font-size-base: var(--step-0);
+  --font-size-md: var(--step-1);
+  --font-size-lg: var(--step-2);
+  --font-size-xl: var(--step-3);
+  --font-size-2xl: var(--step-4);
+  --font-size-3xl: var(--step-5);
+
+  /* Line Heights */
+  --leading-none: 0.9;
+  --leading-tight: 1.1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.5;
+  --leading-loose: 1.7;
+
+  /* Letter Spacing */
+  --tracking-tight: -0.02ch;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05ch;
+  --tracking-wider: 0.1ch;
+
+  /* Measure - standard line length for readability */
+  --measure-standard: 80ch;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 350;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ----- BORDERS ----- */
+  --border-width-hairline: 1px;
+  --border-width-base: 2px;
+  --border-width-thick: 4px;
+  --border-width-heavy: 6px;
+  --border-width-accent: 1rem;
+
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+
+  /* ----- MOTION ----- */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ----- SHADOWS ----- */
+  --shadow-small: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
+    drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.1));
+  --shadow-medium: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
+    drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
 }
 
-/* Reset Layer */
+/* ============================================
+    RESET LAYER
+    Uses :where() for zero specificity
+   ============================================ */
 @layer reset {
-  /* Box sizing rules */
-  *,
-  *::before,
-  *::after {
+  /* Use a more-intuitive box-sizing model with :where() for zero specificity */
+  :where(*, *::before, *::after) {
     box-sizing: border-box;
   }
 
-  html {
-    /* Prevent font size inflation */
+  /* Remove default margin */
+  :where(*) {
+    margin-block: 0;
+  }
+
+  /* Better focus outline spacing */
+  :where(:focus-visible) {
+    outline-offset: 3px;
+  }
+
+  /* Enable keyword animations (animate to/from 'auto') */
+  @media (prefers-reduced-motion: no-preference) {
+    :where(html) {
+      interpolate-size: allow-keywords;
+    }
+  }
+
+  :where(html) {
+    /* Prevent font size inflation on mobile */
     -moz-text-size-adjust: none;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
 
-    /* Let the browser decide the best base font size, but make it a little smaller */
-    font-size: 98%;
+    /* Prevent layout shift when scrollbars appear */
+    scrollbar-gutter: stable;
   }
 
-  body {
-    /* Use the body as the positioning parent for absolutely positioned elements. */
+  :where(body) {
+    /* Add accessible line-height */
+    line-height: 1.5;
+
+    /* Improve text rendering */
+    -webkit-font-smoothing: antialiased;
+
+    /* Sensible min-height */
+    min-height: 100vh;
+
+    /* Position relative for absolutely positioned children */
     position: relative;
 
-    /* Set the font-size in rems so it's inherited by all elements. */
-    font-size: 1rem;
-
-    /* Remove default padding */
+    /* Remove default padding and margin */
     padding: 0;
-  }
-
-  /* Remove default margin in favour of better control in authored CSS */
-  body,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  p,
-  figure,
-  blockquote,
-  dl,
-  dd {
     margin: 0;
   }
 
-  /* Remove list styles on ul, ol elements with a list role */
-  ul[role='list'],
-  ol[role='list'] {
-    list-style: none;
+  /* Improve media defaults */
+  :where(img, picture, video, canvas, svg) {
+    display: block;
+    max-width: 100%;
   }
 
-  /* Basic form element resets */
-  input,
-  button,
-  textarea,
-  select {
+  :where(img, picture) {
+    height: auto;
+  }
+
+  /* Remove default img border */
+  :where(img) {
+    border: 0;
+  }
+
+  /* Inherit fonts for form controls */
+  :where(input, button, textarea, select) {
     font: inherit;
   }
 
-  /* Remove default border */
-  img {
-    border: 0;
-  }
-
-  /* Basic image handling */
-  img,
-  picture {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* Basic iframe handling */
-  iframe {
-    border: 0;
-    overflow: hidden;
-    border-radius: 0.2rem;
-  }
-}
-
-/* Base Layer */
-@layer base {
-  html {
-    /* Ensure Common ligs are always on */
-    font-variant-ligatures: common-ligatures;
-
-    /* Smooth Scrolling */
-    scroll-behavior: smooth;
-
-    /* Set color scheme */
-    color-scheme: light;
-    accent-color: var(--color-accent);
-    color: var(--color-text-primary);
-
-    /* Set the typeface */
-    font-family: var(--font-ui);
-    font-weight: 300;
-  }
-
-  body {
-    /* Set core body defaults */
-    min-height: 100vh;
-    line-height: 1.5;
-  }
-
-  /* Set shorter line heights on headings and interactive elements */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  button,
-  input,
-  label {
+  /* Set shorter line heights on interactive elements */
+  :where(button, input, label) {
     line-height: 1.1;
   }
 
-  /* Balance text wrapping on headings */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5 {
+  /* Auto-growing textarea */
+  :where(textarea) {
+    field-sizing: content;
+  }
+
+  /* Fix fieldset sizing in flexbox/grid */
+  :where(fieldset) {
+    min-inline-size: 0;
+  }
+
+  /* Normalize search input appearance */
+  :where([type='search']) {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+  }
+
+  /* Keep specific input types LTR in RTL layouts */
+  :where(
+    input:is([type='tel'], [type='url'], [type='email'], [type='number']):not(:placeholder-shown)
+  ) {
+    direction: ltr;
+  }
+
+  /* Sensible defaults for iframes */
+  :where(iframe) {
+    border: 0;
+    overflow: hidden;
+  }
+
+  /* Avoid text overflows */
+  :where(p, h1, h2, h3, h4, h5, h6) {
+    overflow-wrap: break-word;
+  }
+
+  /* Improve line wrapping */
+  :where(h1, h2, h3, h4, h5, h6) {
     text-wrap: balance;
   }
 
   /* Prevent widows and orphans in body text */
-  p,
-  blockquote {
+  :where(p, blockquote) {
     text-wrap: pretty;
   }
 
-  /* Default Links */
-  a {
-    transition: all 0.15s;
+  /* Anything that has been anchored to should have extra scroll margin */
+  :where(:target) {
+    scroll-margin-block: 5ex;
+  }
 
-    &,
-    &:visited {
-      text-decoration: none;
-      color: var(--color-text-primary);
-    }
+  /* Sensible wrapping for code blocks */
+  :where(pre) {
+    white-space: pre-wrap;
+  }
 
-    &:hover,
-    &:focus,
-    &:active {
-      color: var(--color-accent);
-    }
+  /* Strengthen hidden attribute */
+  :where([hidden]:not([hidden='until-found'])) {
+    display: none !important;
+  }
+
+  /* Remove list styles on ul, ol elements with a list role */
+  :where(ul[role='list'], ol[role='list']) {
+    list-style: none;
   }
 
   /* Abbreviations */
-  abbr {
+  :where(abbr) {
     font-variant: all-small-caps;
     text-decoration: underline;
     text-decoration-style: dashed;
-    text-decoration-color: var(--color-grey-500);
-    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
+    text-decoration-thickness: max(0.08em, 1px);
     text-underline-offset: 0.2em;
     text-decoration-skip-ink: none;
   }
 
-  abbr[title] {
+  :where(abbr[title]) {
     cursor: help;
   }
 
   /* Superscript and subscript */
-  sup,
-  sub {
+  :where(sup, sub) {
     font-size: 0.7em;
     line-height: 1;
   }
 
   /* Strikethrough */
-  del {
+  :where(del) {
     text-decoration: line-through;
-    text-decoration-color: var(--color-strikethrough);
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
   }
 
+  /* High contrast mode support for mark */
+  @media (forced-colors: active) {
+    :where(mark) {
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+
+  /* Smooth scrolling for user-initiated navigation */
+  @media (prefers-reduced-motion: no-preference) {
+    html:focus-within {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ============================================
+   BASE LAYER
+   ============================================ */
+@layer base {
+  html {
+    /* Colors - support both light/dark */
+    color-scheme: light dark;
+    accent-color: var(--color-accent);
+    color: var(--color-text);
+
+    /* Smooth Scrolling */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    /* Background color - global default so pages don't need to set it */
+    background-color: var(--color-background);
+  }
+
   /* Highlight */
   mark {
-    background-color: var(--color-mark-bg);
+    background-color: var(--color-highlight);
     border-radius: 0.05em;
   }
 
@@ -332,385 +503,414 @@
     width: 100%;
     margin: 2em 0;
     font-size: 1em;
-    background-color: var(--color-table-bg);
+    background-color: var(--color-background-secondary);
+    caption-side: bottom;
   }
 
   th,
   td {
-    border: 1px solid var(--color-table-border);
+    border: 1px solid var(--color-border);
     padding: 0.2em 0.5em;
     text-align: left;
+    vertical-align: baseline;
   }
 
   th {
     font-weight: 600;
     text-transform: uppercase;
-    background: var(--color-table-header-bg);
+    background-color: var(--color-background-secondary);
     border-bottom-width: 2px;
   }
-}
 
-/* Theme Layer */
-@layer theme {
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
+  /* Better cursor for summary */
+  summary {
+    cursor: default;
   }
 
-  /* Light Theme (default) */
-  :root,
-  :root[data-theme='light'] {
-    color-scheme: light;
-
-    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-    /* Typography adjustments */
-    --font-weight-prose: 400;
-    --line-height-prose: 1.7;
-    --font-weight-article: 350;
-    --line-height-article: 1.7;
-
-    /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
-    /* Background colors */
-    --color-bg-primary: var(--color-brand-beige);
-    --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 40%, white);
-
-    /* Text colors */
-    --color-text-primary: var(--color-brand-grey);
-    --color-text-secondary: var(--color-grey-800);
-    --color-accent: var(--color-brand-primary);
-
-    /* Border and divider colors */
-    --color-border: rgba(0, 0, 0, 0.1);
-
-    /* Interactive colors */
-    --color-link: var(--color-red-500);
-    --color-link-visited: var(--color-purple-600);
-    --color-link-hover: var(--color-red-600);
-
-    /* Inline elements */
-    --color-mark-bg: var(--color-yellow-500);
-    --color-strikethrough: rgba(0, 0, 0, 0.5);
-    --color-abbr-underline: rgba(0, 0, 0, 0.15);
-
-    /* Table colors */
-    --color-table-border: rgba(0, 0, 0, 0.1);
-    --color-table-bg: var(--color-bg-secondary);
-    --color-table-header-bg: var(--color-bg-secondary);
-
-    /* Code colors */
-    --color-code-background: var(--color-bg-secondary);
-
-    /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
-    /* Prose/typography colors */
-    --prose-heading-border-color: var(--color-border);
-    --prose-link-color: var(--color-link);
-    --prose-link-visited-color: var(--color-link-visited);
-    --prose-link-hover-color: var(--color-link-hover);
-    --prose-blockquote-border-color: var(--color-accent);
-    --prose-list-marker-color: var(--color-accent);
-
-    /* -------------------- COMPONENT COLOURS -------------------- */
-    /* Navigation colors */
-    --color-nav-bg: var(--color-bg-dark-200);
-    --color-nav-text: var(--color-brand-white);
-    --color-nav-link-hover: var(--color-brand-primary);
-    --color-nav-border: var(--color-brand-primary);
-    --color-hamburger-bg: rgba(255, 255, 255, 0.6);
-    --color-hamburger-text: var(--color-brand-primary);
-
-    /* Footer colors */
-    --color-footer-bg: var(--color-bg-dark-200);
-    --color-footer-text: var(--color-brand-white);
-    --color-footer-link-hover: var(--color-brand-primary);
-    --color-footer-border: var(--color-brand-primary);
-    --color-footer-social-hover: rgba(0, 0, 0, 0.25);
-
-    /* NoteCard colors */
-    --color-notecard-bg: var(--color-brand-white);
-    --color-notecard-border: var(--color-bg-dark-200);
-    --color-notecard-dot-grid: var(--color-red-400);
-    --color-notecard-date: var(--color-text-secondary);
-    --color-notecard-title-underline: var(--color-accent);
-
-    /* ContentCard colors */
-    --color-contentcard-bg: var(--color-brand-white);
-    --color-contentcard-border: var(--color-border);
-    --color-contentcard-article-accent: var(--color-red-500);
-    --color-contentcard-note-accent: var(--color-blue-500);
-    --color-contentcard-toolbox-accent: var(--color-green-500);
-    --color-contentcard-meta: var(--color-text-secondary);
-    --color-contentcard-summary: var(--color-text-primary);
-
-    /* Pill colors */
-    --color-pill-bg: var(--color-grey-400);
-    --color-pill-fg: var(--color-grey-500);
-
-    /* Lightbox colors */
-    --color-lightbox-bg: rgba(0, 0, 0, 0.9);
-    --color-lightbox-close: var(--color-brand-white);
-
-    /* Callout colors */
-    --color-callout-default-bg: var(--color-grey-300);
-    --color-callout-red-bg: var(--color-red-300);
-    --color-callout-blue-bg: var(--color-blue-300);
-    --color-callout-green-bg: var(--color-green-300);
-    --color-callout-orange-bg: var(--color-orange-300);
-    --color-callout-yellow-bg: var(--color-yellow-300);
-    --color-callout-purple-bg: var(--color-purple-300);
-
-    /* Article specific colors */
-    --color-article-bg: var(--color-bg-primary);
-    --color-article-accent: rgb(184, 72, 72);
-    --color-article-horizontal-rule: var(--color-border);
-    --color-article-inline-footnote-bg: var(--color-bg-secondary);
-    --color-article-tasklist-border: var(--color-border);
-
-    /* Notion colors */
-    --notion-arrow-color: rgba(255, 255, 255, 0.6);
-    --notion-underline-color: rgba(0, 0, 0, 0.15);
-    --notion-arrow-stroke-color: var(--color-bg-primary);
-    --notion-hover-opacity: 0.8;
-
-    /* BlockQuote Citation colors */
-    --color-blockquote-citation-text: var(--color-text-secondary);
-    --color-blockquote-citation-author: var(--color-text-primary);
-    --color-blockquote-citation-source: var(--color-accent);
-    --color-blockquote-citation-source-hover: var(--color-link-hover);
-    --color-blockquote-citation-date: var(--color-text-secondary);
-
-    /* Button colors */
-    --color-button-primary-bg: var(--color-accent);
-    --color-button-primary-text: var(--color-brand-white);
-    --color-button-primary-hover-bg: var(--color-link-hover);
-    --color-button-primary-hover-text: var(--color-brand-white);
-    --color-button-secondary-bg: transparent;
-    --color-button-secondary-text: var(--color-accent);
-    --color-button-secondary-border: var(--color-accent);
-    --color-button-secondary-hover-bg: var(--color-accent);
-    --color-button-secondary-hover-text: var(--color-brand-white);
-    --color-button-secondary-hover-border: var(--color-accent);
-
-    /* -------------------- PAGE COLOURS -------------------- */
-    /* Homepage specific colors */
-    --color-homepage-link-border: var(--color-accent);
-    --color-homepage-link-hover: var(--color-accent);
-
-    /* Note list page colors */
-    --color-notelist-title-hover: var(--color-accent);
-    --color-notelist-date: var(--color-text-secondary);
-    --color-notelist-border: var(--color-accent);
-
-    /* Writing list page colors */
-    --color-writinglist-title-hover: var(--color-accent);
-    --color-writinglist-date: var(--color-text-secondary);
-    --color-writinglist-border: var(--color-accent);
-    --color-writinglist-platform-label: var(--color-green-700);
-  }
-
-  /* Explicit dark theme (overrides media query) */
-  :root[data-theme='dark'] {
-    color-scheme: dark;
-
-    /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-    /* Slightly increased for better readability in dark mode */
-    --font-weight-prose: 350;
-    --line-height-prose: 1.8;
-    --font-weight-article: 250;
-    --line-height-article: 1.6;
-
-    /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
-    /* Background colors */
-    --color-bg-primary: var(--color-bg-dark-200);
-    --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
-
-    /* Text colors */
-    --color-text-primary: var(--color-brand-beige);
-    --color-text-secondary: var(--color-grey-500);
-
-    /* Border and divider colors */
-    --color-border: rgba(255, 255, 255, 0.1);
-
-    /* Interactive colors */
-    --color-link: var(--color-red-400);
-    --color-link-visited: var(--color-purple-500);
-    --color-link-hover: var(--color-red-500);
-
-    /* Inline elements */
-    --color-mark-bg: var(--color-yellow-600);
-    --color-strikethrough: rgba(255, 255, 255, 1);
-    --color-abbr-underline: rgba(255, 255, 255, 0.1);
-
-    /* Table colors */
-    --color-table-border: rgba(255, 255, 255, 0.1);
-    --color-table-bg: var(--color-bg-secondary);
-    --color-table-header-bg: var(--color-bg-secondary);
-
-    /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
-    /* Prose/typography colors */
-    --prose-link-color: var(--color-link);
-    --prose-link-visited-color: var(--color-link-visited);
-    --prose-link-hover-color: var(--color-link-hover);
-
-    /* -------------------- COMPONENT COLOURS -------------------- */
-    /* Navigation colors */
-    --color-hamburger-bg: rgba(0, 0, 0, 0.8);
-    --color-hamburger-text: var(--color-brand-primary);
-
-    /* Footer colors */
-    --color-footer-social-hover: rgba(0, 0, 0, 0.25);
-
-    /* NoteCard colors */
-    --color-notecard-bg: var(--color-bg-secondary);
-    --color-notecard-border: var(--color-accent);
-    --color-notecard-dot-grid: transparent;
-    --color-notecard-date: var(--color-text-secondary);
-    --color-notecard-title-underline: var(--color-accent);
-
-    /* ContentCard colors */
-    --color-contentcard-bg: var(--color-bg-secondary);
-    --color-contentcard-border: var(--color-border);
-    --color-contentcard-article-accent: var(--color-red-500);
-    --color-contentcard-note-accent: var(--color-blue-400);
-    --color-contentcard-toolbox-accent: var(--color-green-400);
-    --color-contentcard-meta: var(--color-text-secondary);
-    --color-contentcard-summary: var(--color-text-primary);
-
-    /* Pill colors */
-    --color-pill-bg: var(--color-grey-800);
-    --color-pill-fg: var(--color-grey-400);
-
-    /* Callout colors */
-    --color-callout-default-bg: var(--color-grey-800);
-    --color-callout-red-bg: var(--color-red-800);
-    --color-callout-blue-bg: var(--color-blue-800);
-    --color-callout-green-bg: var(--color-green-800);
-    --color-callout-orange-bg: var(--color-orange-800);
-    --color-callout-yellow-bg: var(--color-yellow-800);
-    --color-callout-purple-bg: var(--color-purple-800);
-
-    /* Article specific colors */
-    --color-article-accent: var(--color-accent);
-
-    /* Notion colors */
-    --notion-underline-color: rgba(255, 255, 255, 0.25);
-    --notion-arrow-stroke-color: var(--color-bg-primary);
-
-    /* -------------------- PAGE COLOURS -------------------- */
-    /* Writing list page colors */
-    --color-writinglist-platform-label: var(--color-green-500);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-
-      /* -------------------- TYPOGRAPHY VARIABLES -------------------- */
-      /* Slightly increased for better readability in dark mode */
-      --font-weight-prose: 350;
-      --line-height-prose: 1.8;
-      --font-weight-article: 250;
-      --line-height-article: 1.6;
-
-      /* -------------------- PRIMARY GOLBAL COLOURS -------------------- */
-      /* Background colors */
-      --color-bg-primary: var(--color-bg-dark-200);
-      --color-bg-secondary: color-mix(in srgb, var(--color-bg-primary) 70%, black);
-
-      /* Text colors */
-      --color-text-primary: var(--color-brand-beige);
-      --color-text-secondary: var(--color-grey-500);
-
-      /* Border and divider colors */
-      --color-border: rgba(255, 255, 255, 0.1);
-
-      /* Interactive colors */
-      --color-link: var(--color-red-400);
-      --color-link-visited: var(--color-purple-500);
-      --color-link-hover: var(--color-red-500);
-
-      /* Inline elements */
-      --color-mark-bg: var(--color-yellow-600);
-      --color-strikethrough: rgba(255, 255, 255, 1);
-      --color-abbr-underline: rgba(255, 255, 255, 0.1);
-
-      /* Table colors */
-      --color-table-border: rgba(255, 255, 255, 0.1);
-      --color-table-bg: var(--color-bg-secondary);
-      --color-table-header-bg: var(--color-bg-secondary);
-
-      /* -------------------- PROSE TYPOGRAPHY COLOURS -------------------- */
-      /* Prose/typography colors */
-      --prose-link-color: var(--color-link);
-      --prose-link-visited-color: var(--color-link-visited);
-      --prose-link-hover-color: var(--color-link-hover);
-
-      /* -------------------- COMPONENT COLOURS -------------------- */
-      /* Navigation colors */
-      --color-hamburger-bg: rgba(0, 0, 0, 0.8);
-      --color-hamburger-text: var(--color-brand-primary);
-
-      /* Footer colors */
-      --color-footer-social-hover: rgba(0, 0, 0, 0.25);
-
-      /* NoteCard colors */
-      --color-notecard-bg: var(--color-bg-secondary);
-      --color-notecard-border: var(--color-accent);
-      --color-notecard-dot-grid: transparent;
-      --color-notecard-date: var(--color-text-secondary);
-      --color-notecard-title-underline: var(--color-accent);
-
-      /* ContentCard colors */
-      --color-contentcard-bg: var(--color-bg-secondary);
-      --color-contentcard-article-accent: var(--color-red-500);
-      --color-contentcard-note-accent: var(--color-blue-400);
-      --color-contentcard-toolbox-accent: var(--color-green-400);
-
-      /* Pill colors */
-      --color-pill-bg: var(--color-grey-800);
-      --color-pill-fg: var(--color-grey-400);
-
-      /* Callout colors */
-      --color-callout-default-bg: var(--color-grey-800);
-      --color-callout-red-bg: var(--color-red-800);
-      --color-callout-blue-bg: var(--color-blue-800);
-      --color-callout-green-bg: var(--color-green-800);
-      --color-callout-orange-bg: var(--color-orange-800);
-      --color-callout-yellow-bg: var(--color-yellow-800);
-      --color-callout-purple-bg: var(--color-purple-800);
-
-      /* Article specific colors */
-      --color-article-accent: var(--color-accent);
-
-      /* Notion colors */
-      --notion-underline-color: rgba(255, 255, 255, 0.25);
-      --notion-arrow-stroke-color: var(--color-bg-primary);
-
-      /* -------------------- PAGE COLOURS -------------------- */
-      /* Writing list page colors */
-      --color-writinglist-platform-label: var(--color-green-500);
+  /* Button default */
+  button,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5cap;
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    cursor: pointer;
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.4em 0.75em;
+    background-color: var(--color-background-secondary);
+    color: inherit;
+    text-box: trim-both cap alphabetic;
+    svg {
+      width: 1.25cap;
+      height: 1.25cap;
+      flex-shrink: 0;
     }
   }
 }
 
-/* Utility classes that need to be outside layers */
-.cq {
-  container-type: inline-size;
+/* ============================================
+   TYPOGRAPHY LAYER
+   ============================================ */
+@layer typography {
+  html {
+    /* Font variant ligatures */
+    font-variant-ligatures: common-ligatures;
+
+    /* Hanging punctuation */
+    hanging-punctuation: first allow-end last;
+  }
+
+  body {
+    /* Defaults for font family, size, weight and line height */
+    font-family: var(--font-prose);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-normal);
+  }
+
+  /* Headings - scaled for article content, semibold weight */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-snug);
+    margin-top: 1.5em;
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    padding-bottom: 0.3em;
+  }
+
+  h1 {
+    font-size: var(--font-size-xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  h3 {
+    font-size: var(--font-size-md);
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: var(--font-size-base);
+  }
+
+  /* Links - nice underlines for prose */
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: max(0.08em, 1px);
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: auto;
+    transition:
+      color var(--duration-fast) var(--ease-in-out),
+      text-decoration-color var(--duration-fast) var(--ease-in-out);
+  }
+
+  a:visited {
+    color: var(--color-visited);
+  }
+
+  a:hover,
+  a:focus {
+    color: var(--color-accent);
+  }
+
+  /* Subtle underlines when not interacting */
+  a:not(:is(:hover, :focus)) {
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
+  }
+
+  /* Lists with colored markers */
+  ul,
+  ol {
+    padding-left: var(--space-m);
+  }
+
+  li {
+    padding-left: var(--space-xs);
+    margin-top: var(--space-xs);
+  }
+
+  li:first-child {
+    margin-top: 0;
+  }
+
+  /* Nested lists need space from parent li content */
+  li > ul,
+  li > ol {
+    margin-top: var(--space-xs);
+  }
+
+  li::marker {
+    color: var(--color-accent);
+  }
+
+  ul {
+    list-style-type: '•';
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: var(--border-width-thick) solid var(--color-accent);
+    padding-left: var(--space-m);
+    font-style: italic;
+    margin-left: 0;
+  }
+
+  /* Blockquote citations - figcaption within blockquote */
+  blockquote figcaption {
+    margin-top: var(--space-2xs);
+    text-align: right;
+    padding-left: var(--space-m);
+  }
+
+  /* Citation element - counteract italic from blockquote */
+  blockquote cite {
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    font-style: normal;
+    color: var(--color-text-secondary);
+  }
+
+  /* Prose spacing rhythm */
+  :where(p, ul, ol, blockquote, pre, figure, table) {
+    margin-top: 1.25em;
+  }
+
+  /* Remove top margin from first children */
+  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
+    margin-top: 0;
+  }
+
+  /* Inline code */
+  :not(pre) > code {
+    font-family: var(--font-code);
+    font-size: var(--font-size-sm);
+    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    padding: 0.1em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Strong text */
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Keyboard input - styled like physical keys */
+  kbd {
+    font-family: var(--font-ui);
+    font-size: 0.875em;
+    font-weight: var(--font-weight-medium);
+    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
+    padding: 0.1em 0.4em;
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 -1px 0 var(--color-border);
+    white-space: nowrap;
+  }
 }
 
-/* Hidden utility for screen readers and microformats */
-.sr-only,
-.hidden-microformat {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
+/* ============================================
+   LAYOUT LAYER - Reusable layout patterns
+   ============================================ */
+@layer layout {
+  /* Flow utility - consistent vertical spacing */
+  .flow > * + * {
+    margin-top: var(--space-m);
+  }
+
+  /* Headings get larger, proportionate top margins for clear section breaks */
+  .flow > * + :is(h1, h2) {
+    margin-top: var(--space-xl);
+  }
+
+  .flow > * + h3 {
+    margin-top: var(--space-l);
+  }
+
+  /* List reset - for navigation and UI lists */
+  .list-reset {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: var(--space-xs);
+
+    & li {
+      padding-left: 0;
+      margin-top: 0;
+    }
+  }
+
+  /* All caps utility - for labels and UI text */
+  .all-caps {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+}
+
+/* ============================================
+   UTILITIES LAYER - Single-purpose helpers
+   ============================================ */
+@layer utilities {
+  /* ----------------------------------------
+     .ui-style - Opt-out of prose typography
+     Apply to navigation, footers, page titles, and UI-heavy areas
+     ---------------------------------------- */
+  .ui-style {
+    /* Switch to UI font */
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-snug);
+
+    /* Remove prose link styling */
+    & a {
+      text-decoration: none;
+      color: inherit;
+      transition: color var(--duration-fast) ease-in-out;
+    }
+
+    & a:visited {
+      color: inherit;
+    }
+
+    & a:hover,
+    & a:focus {
+      color: var(--color-accent);
+    }
+
+    /* Remove heading borders and adjust spacing */
+    & :is(h1, h2, h3, h4, h5, h6) {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-top: 0;
+    }
+
+    /* Remove list marker colors */
+    & li::marker {
+      color: inherit;
+    }
+
+    /* Tighter prose spacing */
+    & :where(p, ul, ol, blockquote) {
+      margin-top: var(--space-m);
+    }
+  }
+
+  /* ----------------------------------------
+     .dark-surface - Always-dark areas (nav, footer etc)
+     Combine with .ui-style for dark UI areas
+     ---------------------------------------- */
+  .dark-surface {
+    background-color: var(--color-charcoal);
+    color: var(--color-beige);
+  }
+
+  /* Container query utility */
+  .cq {
+    container-type: inline-size;
+  }
+
+  /* ----------------------------------------
+     Card/panel surface styling
+     Apply to raised cards, panels, callouts etc
+     ---------------------------------------- */
+  .card-surface {
+    background-color: var(--surface-raised);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    filter: var(--shadow-small);
+  }
+
+  /* Image cover - for responsive images that fill their container */
+  .img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Content trim - removes top/bottom margins from first/last children
+     Use inside containers with padding where slotted content has margins */
+  .content-trim {
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* ----------------------------------------
+     .external-arrow - Subtle indicator for external/offsite links
+     Usage: <a href="...">Link text <span class="external-arrow">↗</span></a>
+     Note: This is for UI contexts (nav, footer). Prose external links
+     use a different mechanism in the longform layer.
+     ---------------------------------------- */
+  .external-arrow {
+    font-size: 0.75em;
+    opacity: 0.6;
+    margin-left: 0.15em;
+  }
+
+  /* Hidden utility for screen readers and microformats */
+  .sr-only,
+  .hidden-microformat {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+}
+
+/* ============================================
+   MERMAID DIAGRAMS
+   ============================================ */
+svg[id^='mermaid-'] {
+  /* Center the diagram */
+  display: block;
+  margin: var(--space-l) auto;
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+
+  /* Ensure responsive */
+  max-width: 100%;
+  height: auto;
+
+  /* Light background in both modes for consistent diagram appearance */
+  background-color: light-dark(var(--color-background-secondary), #ffffff);
+}
+
+/* ============================================
+   VIEW TRANSITION ANIMATIONS
+   ============================================ */
+
+/* Note card morph animation */
+::view-transition-group(.note-card) {
+  animation-duration: 350ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* Footer stays stable during navigation */
+::view-transition-group(site-footer) {
+  animation-duration: 250ms;
+  animation-timing-function: ease-in-out;
 }

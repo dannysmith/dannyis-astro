@@ -2,25 +2,7 @@
 
 TypeScript patterns, component structure, error handling, and organization for building Astro components.
 
-## TypeScript Patterns
-
-### Component Props Interface
-
-All components define clear TypeScript interfaces:
-
-```typescript
-export interface Props {
-  required: string;
-  optional?: number;
-  withDefault?: boolean;
-  title?: string; // Optional override for expensive operations
-}
-
-// Props destructuring with defaults
-const { required, optional, withDefault = true, title } = Astro.props;
-```
-
-### Import Patterns
+## Import Patterns
 
 ```typescript
 // ✅ Correct: Category-specific barrel imports
@@ -36,7 +18,7 @@ import { AUTHOR } from '@config/seo';
 import { generatePageTitle } from '@utils/seo';
 ```
 
-**Never use relative imports** - they will cause build failures.
+**Never use relative imports unless you are importing a component which is in the same directory as the current component**
 
 ## Component Structure Pattern
 
@@ -73,16 +55,12 @@ try {
 
 <!-- 6. Styles -->
 <style>
-  /* Component-specific CSS variables */
-  :root {
-    --component-background: var(--color-bg-dark-200);
-    --component-foreground: var(--color-brand-white);
-  }
-
-  /* Component styles */
   .component {
-    background: var(--component-background);
-    color: var(--component-foreground);
+    /* Use semantic tokens from global.css */
+    background: var(--surface-raised);
+    color: var(--color-text);
+    border: var(--border-width-hairline) solid var(--color-border);
+    padding: var(--space-m);
   }
 </style>
 ```
@@ -138,18 +116,92 @@ if (!title) {
 
 See `design.md` for complete theming architecture. Key principle:
 
-**Never use base colors directly - always use semantic variables:**
+**Use semantic variables from global.css:**
 
 ```css
-/* ❌ Wrong: Using base color directly */
+/* ✅ Correct: Using semantic tokens */
 .component {
-  background: var(--color-red-500);
+  background: var(--surface-raised);
+  color: var(--color-text);
+  border-color: var(--color-accent);
 }
 
-/* ✅ Correct: Using semantic variable */
-.component {
-  background: var(--color-component-bg);
+/* ✅ Correct: Deriving variants with relative color syntax */
+.component:hover {
+  background: oklch(from var(--color-accent) calc(l - 0.1) c h);
 }
+
+/* ✅ Correct: Using light-dark() for theme-specific values */
+.component {
+  background: light-dark(var(--color-beige), var(--color-charcoal));
+}
+```
+
+### Component Variants Pattern
+
+Use `data-*` attributes for variants, with private `--_` prefixed variables for internal state:
+
+```astro
+---
+interface Props {
+  variant?: 'primary' | 'secondary';
+}
+const { variant = 'primary' } = Astro.props;
+---
+
+<button class="button" data-variant={variant}>
+  <slot />
+</button>
+
+<style>
+  .button {
+    --_bg: var(--color-accent);
+    --_text: var(--color-text);
+
+    background: var(--_bg);
+    color: var(--_text);
+  }
+
+  .button[data-variant='secondary'] {
+    --_bg: transparent;
+    --_text: var(--color-accent);
+  }
+</style>
+```
+
+### When to Use `.content-trim`
+
+Apply to any container that:
+1. Has padding
+2. Receives slotted content (`<slot />`) with margins
+
+```astro
+<!-- ✅ Padded container with slot -->
+<div class="panel-content content-trim">
+  <slot />
+</div>
+
+<!-- ❌ No slot, fixed content - don't need it -->
+<div class="card-header">
+  <h2>{title}</h2>
+</div>
+```
+
+### Scoped vs Global Styles
+
+**Use scoped `<style>`** (default) for component-specific styles.
+
+**Use `<style is:global>`** when:
+- Contributing to a CSS layer (`@layer longform`)
+- Styling deeply nested/slotted MDX content
+
+```astro
+<!-- Adding to a layer requires is:global -->
+<style is:global>
+  @layer longform {
+    .longform-prose { ... }
+  }
+</style>
 ```
 
 ### Modern CSS Patterns
@@ -160,29 +212,68 @@ See `design.md` for complete theming architecture. Key principle:
   display: inline-flex;
   align-items: baseline;
 
-  /* Smooth transitions */
-  transition: opacity 0.2s ease;
+  /* Smooth transitions using motion tokens */
+  transition: opacity var(--duration-fast) var(--ease-in-out);
 
   /* currentColor for inherited color */
   border-color: currentColor;
 }
 
 .component:hover {
-  opacity: var(--component-hover-opacity);
+  opacity: 0.8;
 }
 
 /* Responsive with container queries */
 @container (width > 400px) {
   .component {
-    /* Desktop styles */
+    /* Wider layout styles */
   }
 }
 
-/* Fluid typography */
+/* Use fluid typography tokens instead of custom clamp() */
 .title {
-  font-size: clamp(1rem, calc(0.6rem + 1vw), 1.5rem);
+  font-size: var(--font-size-lg);
 }
 ```
+
+### Container Queries vs Media Queries
+
+**Use container queries (`@container`)** for component-level responsiveness:
+
+- Component behavior that depends on its container size
+- Cards, panels, or layouts that might appear in different contexts
+- Components that need to adapt independently of viewport
+
+```css
+/* Parent enables container queries */
+.cq {
+  container-type: inline-size;
+}
+
+/* Component responds to its container, not viewport */
+@container (width > 400px) {
+  .card {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+**Use media queries (`@media`)** for page-level layout:
+
+- Overall page structure and column counts
+- Navigation breakpoints
+- Changes that affect the entire page layout
+
+```css
+/* Page layout changes at breakpoints */
+@media (min-width: 800px) {
+  .page-layout {
+    grid-template-columns: 1fr 3fr;
+  }
+}
+```
+
+**General Rule:** If you're styling a component that might appear in different contexts (main content area, sidebar, card grid), use container queries. If you're styling page-level layout structure, use media queries.
 
 ## Component Organization
 
@@ -245,69 +336,6 @@ export { default as NoteCard } from './NoteCard.astro';
 
 ## Common Patterns
 
-### Component with External Data
-
-```astro
----
-export interface Props {
-  url: string;
-  title?: string; // Optional override
-}
-
-const { url, title } = Astro.props;
-
-let displayTitle = title;
-if (!title) {
-  try {
-    displayTitle = await fetchTitle(url);
-  } catch (error) {
-    console.warn('Failed to fetch title:', error);
-    displayTitle = new URL(url).hostname;
-  }
-}
----
-
-<a href={url}>{displayTitle}</a>
-```
-
-### Theme-Aware Component
-
-```astro
-<div class="component">
-  <!-- Content -->
-</div>
-
-<style>
-  .component {
-    /* Use semantic variables that change with theme */
-    background: var(--color-component-bg);
-    color: var(--color-component-text);
-  }
-</style>
-```
-
-### Responsive Component with Container Queries
-
-```astro
-<div class="cq">
-  <div class="component">
-    <!-- Content -->
-  </div>
-</div>
-
-<style>
-  .cq {
-    container-type: inline-size;
-  }
-
-  @container (width > 400px) {
-    .component {
-      /* Wider styles */
-    }
-  }
-</style>
-```
-
 ### Accessible Interactive Component
 
 ```astro
@@ -331,39 +359,23 @@ const { label, pressed = false } = Astro.props;
 <style>
   .interactive {
     /* Visible focus indicators */
-    &:focus {
-      outline: 2px solid var(--color-focus);
-      outline-offset: 2px;
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
     }
 
-    /* Smooth transitions */
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Smooth transitions using motion tokens */
+    transition: all var(--duration-normal) var(--ease-in-out);
   }
 </style>
 ```
 
-## Best Practices
+## Quick Reference
 
-**TypeScript:**
+Key principles when building components:
 
-- Define clear interfaces for all props
-- Use optional props with sensible defaults
-- Leverage TypeScript for type safety
-
-**Error Handling:**
-
-- Wrap external API calls in try-catch
-- Always provide fallback behavior
-- Log warnings for debugging
-- Never let external failures break builds
-
-**Styling:**
-
-- Use semantic CSS variables, not base colors
-- Reference `design.md` for theme architecture
-- Test both light and dark themes
-- Use container queries for component-level responsiveness
-
-**Organization:**
-
-- Group components by function (layout, navigation, ui, mdx)
+- **TypeScript**: Define clear Props interfaces with sensible defaults (see Component Structure Pattern)
+- **Error Handling**: Wrap external API calls in try-catch with fallbacks (see Error Handling Strategies)
+- **Styling**: Use semantic CSS variables from `design.md`, test both themes (see Styling Integration)
+- **Organization**: Group by function (layout/navigation/ui/mdx), use barrel exports (see Component Organization)
+- **Imports**: Always use path aliases (@components/*), never relative imports (see Import Patterns)

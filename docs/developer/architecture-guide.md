@@ -1,6 +1,6 @@
 # Architecture Guide
 
-This document covers the core architectural patterns and principles used in Astro Editor. It focuses on the **essential patterns you need daily**. For specialized topics, see the [Specialized Guides](#specialized-guides) section.
+This document covers the core architectural patterns and principles for Danny's personal website. It focuses on the **essential patterns you need daily**. For specialized topics, consult the [specialized guides](./README.md#tier-3-specialized-references).
 
 ## Core Architecture Principles
 
@@ -76,20 +76,22 @@ const components = {
 
 **CSS Layers Architecture:**
 
-- Five-layer cascade system: `reset` → `base` → `simple-prose` → `longform-prose` → `theme`
+- Seven-layer cascade system: `reset` → `base` → `typography` → `layout` → `utilities` → `longform` → `theme`
+- Prose typography is the **default** - use `.ui-style` to opt-out for UI areas
+- `.dark-surface` utility for always-dark components (nav, footer)
 - Eliminates need for `!important` or complex specificity battles
 - Location: `src/styles/global.css:2`
 
-**Three-Tier Color System:**
+**Color System with `light-dark()`:**
 
-- **Tier 1:** Base tokens (e.g., `--color-red-500`) - **NEVER USE DIRECTLY**
-- **Tier 2:** Semantic variables (e.g., `--color-bg-primary`) - **USE THESE**
-- **Tier 3:** Component usage
-- This hierarchy enables easy theme switching
+- Colors use `light-dark()` function for automatic theme switching
+- Semantic tokens: `--color-accent`, `--color-text`, `--color-background`, etc.
+- Adaptive palette: `--color-coral`, `--color-purple`, etc. auto-switch for theme
+- Derive variants with relative color syntax: `oklch(from var(--color-accent) calc(l - 0.1) c h)`
 
 **Theme Management:**
 
-- Three modes: `auto` (follows system), `light`, `dark`
+- Three modes: `auto` (follows system via `color-scheme`), `light`, `dark`
 - Global `window.theme` API for programmatic access
 - Inline script in `BaseHead.astro` prevents FOUC
 - Custom `theme-changed` event for component updates
@@ -98,15 +100,58 @@ const components = {
 
 **Why they're related:**
 
-- Semantic color variables switch automatically based on `data-theme` attribute
+- `light-dark()` values switch automatically based on `color-scheme` property
+- Manual override via `data-theme` attribute sets `color-scheme: light` or `dark`
 - Allows entire site to re-theme without component changes
-- Modern CSS approach (layers are 2022+ feature)
+- Modern CSS approach (layers 2022+, light-dark() 2024+)
 
 **Cross-references:**
 
 - See [design.md](./design.md) for complete CSS architecture details
 - See [design.md](./design.md) for color system specification
 - See [component-patterns.md](./component-patterns.md) for theme-aware component patterns
+
+### View Transitions
+
+The site uses the View Transitions API for smooth page navigation. Key elements have named transitions:
+
+**CSS Setup (in global.css or component styles):**
+
+```css
+/* Footer stays stable during navigation */
+footer {
+  view-transition-name: site-footer;
+}
+
+/* Note cards morph between list and detail views */
+.note {
+  view-transition-name: var(--vt-name, none);
+  view-transition-class: note-card;
+}
+
+/* Animation configuration (in global.css) */
+::view-transition-group(site-footer) {
+  animation-duration: 250ms;
+  animation-timing-function: ease-in-out;
+}
+```
+
+**Dynamic transition names via CSS variable:**
+
+```astro
+<!-- Pass unique ID via inline style -->
+<div class="note-container" style={`--vt-name: note-${note.id}`}>
+  <NoteCard ... />
+</div>
+```
+
+**Scripts must handle transitions:**
+
+All interactive components re-initialize on `astro:after-swap`:
+
+```javascript
+document.addEventListener('astro:after-swap', initComponent);
+```
 
 ### 4. Centralized Organization with Clear Boundaries ⭐⭐
 
@@ -257,36 +302,12 @@ Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
 
 All RSS feeds, markdown export endpoints, and page routes use these centralized functions.
 
-**Filtering Logic:**
-
-```typescript
-// Individual pages - allows styleguide pages to be accessed directly
-export function filterContentForPage(entries) {
-  return entries.filter(entry => {
-    if (import.meta.env.PROD) {
-      return entry.data.draft !== true;
-    }
-    return true; // Show everything in development
-  });
-}
-
-// Listings and RSS - always excludes styleguide
-export function filterContentForListing(entries) {
-  return entries.filter(entry => {
-    if (import.meta.env.PROD) {
-      return entry.data.draft !== true && !entry.data.styleguide;
-    }
-    return entry.data.draft !== true && !entry.data.styleguide;
-  });
-}
-```
-
 **Rules:**
 
 - `draft: true` → hidden in production (both individual pages and listings); visible in development
 - `styleguide: true` → accessible by direct URL in any environment, but never appears in listings or RSS feeds
-- Individual pages (`filterContentForPage`) only filter out drafts in production
-- Listings and RSS (`filterContentForListing`) filter out both drafts (in production) and styleguides (always)
+
+📖 **See [content-system.md § Content Filtering](./content-system.md#content-filtering) for implementation details**
 
 ### External Link Security
 
@@ -382,7 +403,7 @@ This provides access to 2400+ code snippets and comprehensive Astro documentatio
 **CSS Layers** - Central to our styling architecture:
 
 - See [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification
-- Our layer order: reset → base → simple-prose → longform-prose → theme
+- Our layer order: reset → base → typography → layout → utilities → longform → theme
 
 ### General Principle
 
@@ -392,7 +413,7 @@ This provides access to 2400+ code snippets and comprehensive Astro documentatio
 
 ## Quick Start for New Sessions
 
-1. **Read** `docs/TASKS.md` for current work
+1. **Read** `docs/tasks.md` for current work
 2. **Check** git status and recent commits
 3. **Reference** this guide for core patterns
 4. **Consult** specialized guides when working on specific features

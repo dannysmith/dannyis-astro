@@ -93,27 +93,48 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     <Footer />
     <Lightbox />
     <style>
-      body {
-        background-color: var(--color-article-bg);
-        color: var(--color-text-primary);
+      /* Article grid layout - 3 columns for full-bleed support */
+      :global(.longform-prose) {
+        --gutter: var(--space-m);
+        display: grid;
+        grid-template-columns:
+          minmax(var(--gutter), 1fr)
+          min(60ch, calc(100% - var(--gutter) * 2))
+          minmax(var(--gutter), 1fr);
       }
+
+      /* All other elements span the middle column */
+      :global(.longform-prose) > :global(*) {
+        grid-column: 2 / 3;
+      }
+
+      /* Full-bleed elements span all columns */
+      :global(.longform-prose) > :global(.full-bleed),
+      .hero-image {
+        grid-column: 1 / -1;
+      }
+
       .spinner-overlay {
         min-height: 100vh;
         display: grid;
-        justify-content: center;
-        align-content: center;
-        background: var(--color-article-bg);
+        place-content: center;
+        background: var(--color-background);
       }
 
       .metadata {
-        font-size: 0.7em;
-        color: var(--color-article-accent);
+        font-size: var(--font-size-sm);
+        color: var(--color-accent);
         font-family: var(--font-code);
-        margin-top: 1rem;
+        margin-top: var(--space-s);
+      }
+
+      @media (max-width: 700px) {
+        .metadata {
+          padding-top: var(--space-l);
+        }
       }
 
       .hero-image {
-        grid-column: 1 / 4;
         aspect-ratio: 5 / 1;
         overflow: hidden;
       }
@@ -122,26 +143,48 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        .hero-image img {
-          filter: grayscale(70%);
-        }
-      }
-
-      :root[data-theme='dark'] .hero-image img {
-        filter: grayscale(70%);
+        filter: light-dark(none, grayscale(70%));
       }
 
       .draft-notice {
-        border: 2px solid var(--color-article-accent);
-        color: var(--color-article-accent);
+        border: var(--border-width-base) solid var(--color-accent);
+        color: var(--color-accent);
         font-family: var(--font-ui);
-        padding: 8px 16px;
-        border-radius: 4px;
+        padding: var(--space-2xs) var(--space-s);
+        border-radius: var(--radius-sm);
         float: right;
+      }
+
+      /* Inline footnotes - toggled by JS below */
+      /* Use :global() so styles apply to dynamically created elements */
+      :global(.inline-footnote-container) {
+        font-size: var(--font-size-sm);
+        padding: var(--space-s);
+        margin-top: var(--space-xs);
+        position: relative;
+
+        /* Hide the return link - not needed for inline footnotes */
+        [data-footnote-backref] {
+          display: none;
+        }
+      }
+
+      :global(.inline-footnote-close) {
+        position: absolute;
+        top: var(--space-2xs);
+        right: var(--space-2xs);
+        border: none;
+        background: transparent;
+        color: var(--color-text-secondary);
+        font-size: 1.2rem;
+        line-height: 1;
+        padding: 0.25rem;
+        opacity: 0.6;
+        transition: opacity var(--duration-fast);
+
+        &:hover {
+          opacity: 1;
+        }
       }
     </style>
 
@@ -150,16 +193,28 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         const elm = el as HTMLAnchorElement;
         const footnoteId = elm.getAttribute('href')?.slice(1);
         if (!footnoteId) return;
-        const footnote = document.getElementById(footnoteId)?.children;
+        const footnoteElement = document.getElementById(footnoteId);
 
-        const closestP = elm.closest('p');
+        // Find the closest block-level parent (p, div, li, etc.)
+        const closestBlock = elm.closest('p, .intro-paragraph, li, blockquote, div.longform-prose > *');
+        if (!closestBlock || !footnoteElement?.firstElementChild) return;
+
         const inlineFootNoteContainer = document.createElement('div');
-        inlineFootNoteContainer.classList.add('inline-footnote-container');
+        inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
         inlineFootNoteContainer.style.display = 'none';
-        if (footnote) {
-          inlineFootNoteContainer.appendChild(footnote[0].cloneNode(true));
-        }
-        closestP?.insertAdjacentElement('afterend', inlineFootNoteContainer);
+
+        // Close button
+        const closeBtn = document.createElement('button');
+        closeBtn.classList.add('inline-footnote-close');
+        closeBtn.innerHTML = '×';
+        closeBtn.setAttribute('aria-label', 'Close footnote');
+        closeBtn.addEventListener('click', () => {
+          inlineFootNoteContainer.style.display = 'none';
+        });
+
+        inlineFootNoteContainer.appendChild(closeBtn);
+        inlineFootNoteContainer.appendChild(footnoteElement.firstElementChild.cloneNode(true));
+        closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
 
         elm.addEventListener('click', e => {
           e.preventDefault();
