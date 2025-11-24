@@ -24,6 +24,8 @@
 /* ============================================
    @PROPERTY DECLARATIONS
    ============================================ */
+
+/* Color properties - enable smooth color transitions */
 @property --color-accent {
   syntax: '<color>';
   inherits: true;
@@ -34,6 +36,74 @@
   syntax: '<color>';
   inherits: true;
   initial-value: #ffffff;
+}
+
+/* Hue values - enable smooth hue interpolation in color calculations */
+@property --hue-coral {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 25;
+}
+
+@property --hue-pink {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 350;
+}
+
+@property --hue-orange {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 55;
+}
+
+@property --hue-purple {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 300;
+}
+
+@property --hue-yellow {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 95;
+}
+
+@property --hue-green {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 165;
+}
+
+@property --hue-blue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 250;
+}
+
+@property --hue-grey {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 210;
+}
+
+/* Duration/timing properties - ensure valid time values in transitions */
+@property --duration-fast {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 150ms;
+}
+
+@property --duration-normal {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 200ms;
+}
+
+@property --duration-slow {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 300ms;
 }
 
 /* ============================================

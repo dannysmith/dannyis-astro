@@ -30,6 +30,13 @@ const { class: className } = Astro.props;
 </div>
 
 <style>
+  /* Component-scoped transitioning color - enables smooth thumb color transitions */
+  @property --_thumb-bg {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: transparent;
+  }
+
   /*
    * Theme Toggle
    * A 3-option segmented control (light/auto/dark) with a sliding thumb indicator.

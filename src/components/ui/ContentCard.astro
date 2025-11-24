@@ -129,6 +129,13 @@ const hasSlot = Astro.slots.has('default');
 </article>
 
 <style>
+  /* Component-scoped transitioning color - enables smooth interpolation */
+  @property --_border-color {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: oklch(70% 0.18 25);
+  }
+
   /* Container query applied via .cq class */
   .content-card {
     --_border-color: var(--color-accent);
