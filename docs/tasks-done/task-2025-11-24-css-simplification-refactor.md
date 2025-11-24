@@ -162,7 +162,7 @@ Simplify to make use of new defaults inherited from base @typography. Ensure no 
 - [x] `404.astro`
 
 
-### Phase 5: MDX Components
+### Phase 5: MDX Components ✅
 
 These components are intended mainly for use in MDX (articles, notes, pages, future content).
 
@@ -193,7 +193,7 @@ Bugfixes and other Cleanup
 - [x] Reenable and update toolboxtest page CSS
 - [x] Fix vertical flow issues
 
-### Phase 6: Final Reviews
+### Phase 6: Final Reviews ✅
 
 
 - [ ] Fully Review all CSS as a CSS expert.
@@ -208,7 +208,7 @@ Bugfixes and other Cleanup
   - [x] Run `pnpm run check:all` and fix any issues
 
 
-### Phase 6A: Other Random Things I wanna fix
+### Phase 6A: Other Random Things I wanna fix ✅
 
 - [x] Inline footnotes are broken in articles
 - [x] Mermaid diagram colours
@@ -217,13 +217,13 @@ Bugfixes and other Cleanup
   - [x] Footer
   - [x] NoteCard
 
-### Phase 7: Test on Preview Deploy
+### Phase 7: Test on Preview Deploy ✅
 
 - [x] Force Push to GH branch and review any CodeRabbit comments
 - [x] Manually test preview branch on Chrome and Safari
 - [x] Repush
 
-### Phase 8: Update docs
+### Phase 8: Update docs ✅
 
 - [x] Pass One: update all docs in `docs/developer` so they're **accurate** as per the current system. Update outdated CSS custom properties, layer names, component interfaces etc. Do not add new guidance but mark any areas we should change or update with a TODO for thenext pass.
 - [x] Pass Two: Update relevant docs in `docs/developer` so they properly explain the current system, the design patterns to use etc. Should include clear instructions on what CSS layers to use, how to use the core CSS custom properties systems, when and how to use the utility classes, what patterns to follow etc. Should also include brief guidance on how and when its appropriate to extract CSS into `@base`, `@typography` or `.ui-styles`.
@@ -231,8 +231,8 @@ Bugfixes and other Cleanup
 - [x] Pass Three: Check the docs for correctness and usefullness and remove any overly verbose, brittle or "AI fluff" stuff.
 - [x] Pass four: Review ALL developer docs together and ensure they make sense and are correct.
 - [x] Update `CLAUDE.md` and `.claude/agents/design-system-expert.md` appropriately. Include reference to CSS expert skill (available globally - not in project)
-- [ ] Final pass over documentation as a whole.
-- [ ] Run pnpm check all
+- [x] Final pass over documentation as a whole.
+- [x] Run pnpm check all
 
 ### Phase 9: Testing Post Merge
 
