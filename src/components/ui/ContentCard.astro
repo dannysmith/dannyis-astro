@@ -133,18 +133,30 @@ const hasSlot = Astro.slots.has('default');
     --_border-color: var(--color-accent);
 
     container-type: inline-size;
+    position: relative;
     background: var(--surface-raised);
-    box-shadow: inset var(--border-width-thick) 0 0 var(--_border-color);
-    padding-left: var(--border-width-heavy);
     filter: var(--shadow-small);
     overflow: hidden;
-    transition:
-      box-shadow var(--duration-fast) var(--ease-in-out),
-      filter var(--duration-fast) var(--ease-in-out);
+    transition: filter var(--duration-fast) var(--ease-in-out);
+
+    /* Left border as pseudo-element - grows on hover without shifting content */
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      left: 0;
+      width: var(--border-width-thick);
+      background: var(--_border-color);
+      transition: width var(--duration-fast) var(--ease-in-out);
+      z-index: 1;
+    }
 
     &:hover {
-      box-shadow: inset var(--border-width-heavy) 0 0 var(--_border-color);
       filter: var(--shadow-medium);
+    }
+
+    &:hover::before {
+      width: var(--border-width-heavy);
     }
 
     /* Compact mode - forced via prop */
