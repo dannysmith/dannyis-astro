@@ -197,8 +197,8 @@ Bugfixes and other Cleanup
 
 
 - [ ] Fully Review all CSS as a CSS expert.
-  - [ ] Look for any outdated or redundant CSS we've left behind in astro components/pages.
-  - [ ] Look for any identical CSS being used in more than one place. Consider whether we should extract these patterns into something reusable. This may be core global CSS custom properties (colour etc), utility classes or even new Atro wrapper components.
+  - [x] Look for any outdated or redundant CSS we've left behind in astro components/pages.
+  - [x] Look for any identical CSS being used in more than one place. Consider whether we should extract these patterns into something reusable. This may be core global CSS custom properties (colour etc), utility classes or even new Atro wrapper components.
   - [ ] Look for places where we're repeatedly overriding styles applied in global.css in the same way in multipkle places. This *may* be an signal to change the global styles.
   - [ ] Look for anywhere we can consolidate selectors by using nesting, where, is etc.
   - [ ] Look for any opportunities to make the CSS more defensive WITHOUT ADDING MUCH CODE. Think small, easy changes. We only need to care about this in components which may be used in multiple places/contexts etc.

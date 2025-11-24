@@ -46,7 +46,7 @@ const recentNotesWithContent = await Promise.all(
         recentNotesWithContent.length > 0 && (
           <section class="recent-notes" aria-label="Recent Notes">
             {recentNotesWithContent.map(({ note, Content }) => (
-              <div class="note-container">
+              <div class="note-container cq">
                 <NoteCard
                   title={note.data.title}
                   pubDate={note.data.pubDate}
@@ -106,13 +106,12 @@ const recentNotesWithContent = await Promise.all(
       }
 
       .note-container {
-        max-width: 80ch;
+        max-width: var(--measure-standard);
         width: 100%;
-        container-type: inline-size;
       }
 
       .archive-content {
-        max-width: 80ch;
+        max-width: var(--measure-standard);
         width: 100%;
       }
 

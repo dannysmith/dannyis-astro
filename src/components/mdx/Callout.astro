@@ -27,7 +27,7 @@ if (icon && emoji) {
   }
   <div class="content-wrapper">
     {title && <h3 class="title">{title}</h3>}
-    <div class="content">
+    <div class="content content-trim">
       <slot />
     </div>
   </div>
@@ -73,15 +73,7 @@ if (icon && emoji) {
     padding-bottom: 0;
   }
 
-  .content {
-    & > :first-child {
-      margin-top: 0;
-    }
-
-    & > :last-child {
-      margin-bottom: 0;
-    }
-  }
+  /* .content-trim applied via class for first/last child margin reset */
 
   /* Color variants - muted tinted backgrounds with accent borders
      Light mode: ~93-96% lightness, very low chroma (0.015-0.04)

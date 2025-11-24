@@ -168,6 +168,9 @@
   --tracking-wide: 0.05ch;
   --tracking-wider: 0.1ch;
 
+  /* Measure - standard line length for readability */
+  --measure-standard: 80ch;
+
   /* Font Weights */
   --font-weight-light: 300;
   --font-weight-normal: 350;
@@ -748,6 +751,35 @@
   /* Container query utility */
   .cq {
     container-type: inline-size;
+  }
+
+  /* ----------------------------------------
+     Card/panel surface styling
+     Apply to raised cards, panels, callouts etc
+     ---------------------------------------- */
+  .card-surface {
+    background-color: var(--surface-raised);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    filter: var(--shadow-small);
+  }
+
+  /* Image cover - for responsive images that fill their container */
+  .img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Content trim - removes top/bottom margins from first/last children
+     Use inside containers with padding where slotted content has margins */
+  .content-trim {
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
   }
 
   /* Hidden utility for screen readers and microformats */

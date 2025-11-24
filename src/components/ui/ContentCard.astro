@@ -87,7 +87,7 @@ const hasSlot = Astro.slots.has('default');
 ---
 
 <article
-  class:list={['content-card', 'ui-style', { compact }]}
+  class:list={['content-card', 'ui-style', 'cq', { compact }]}
   data-type={contentType}
   style={`--_border-color: ${borderColor}`}
 >
@@ -129,10 +129,10 @@ const hasSlot = Astro.slots.has('default');
 </article>
 
 <style>
+  /* Container query applied via .cq class */
   .content-card {
     --_border-color: var(--color-accent);
 
-    container-type: inline-size;
     position: relative;
     background: var(--surface-raised);
     filter: var(--shadow-small);

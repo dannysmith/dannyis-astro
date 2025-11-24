@@ -24,8 +24,8 @@ const data = metadata || fallbackMetadata;
 const isFallback = !metadata;
 ---
 
-<div class={`bookmark-card ${className}`}>
-	<a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
+<div class={`bookmark-card cq ${className}`}>
+	<a href={url} class="bookmark-link card-surface" target="_blank" rel="noopener noreferrer">
 		<div class="bookmark-content">
 			<span class="bookmark-domain">{data.domain}</span>
 			<span class="bookmark-title">{data.title}</span>
@@ -37,17 +37,10 @@ const isFallback = !metadata;
 </div>
 
 <style>
-	.bookmark-card {
-		container-type: inline-size;
-	}
-
+	/* .card-surface applied via class for base card styles */
 	.bookmark-link {
 		display: block;
-		background: var(--surface-raised);
-		border: var(--border-width-hairline) solid var(--color-border);
-		border-radius: var(--radius-sm);
 		overflow: hidden;
-		filter: var(--shadow-small);
 		text-decoration: none;
 		color: inherit;
 		transition:
