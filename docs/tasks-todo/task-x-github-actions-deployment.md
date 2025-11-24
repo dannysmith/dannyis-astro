@@ -1,5 +1,7 @@
 # GitHub Actions Deployment with Playwright Support
 
+https://github.com/dannysmith/dannyis-astro/issues/98
+
 ## Context
 
 Mermaid diagrams are currently broken on the site. They display as raw code instead of rendered diagrams.
