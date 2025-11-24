@@ -110,7 +110,7 @@ Work through `global.css`, copying rules from `global-backup.css` as needed.
 - [x] `notes/index.astro`
 - [x] `now.astro`
 - [x] `Note.astro` layout
-- [] `404.astro`
+- [x] `404.astro`
 
 
 ## Phase F: MDX Components

@@ -14,39 +14,42 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
   <body>
     <MainNavigation />
     <main>
-      <div class="page-404">
+      <div class="page-404 ui-style">
         <h1>404</h1>
         <h2>Page Not Found</h2>
         <p>
-          Ooops. What you're looking for isn't here. Try hitting the
-          <a href="/">home page</a>.
+          Ooops. Try the
+          <a href="/">home page</a>?
         </p>
       </div>
     </main>
-    <!-- DISABLED-STYLE <style>
+    <style>
       body {
         max-width: 100%;
         overflow-x: hidden;
       }
+
       .page-404 {
         position: relative;
         min-height: 80vh;
         min-width: 100%;
         transform-origin: top center;
         transform: rotate(-45deg) translateY(10vh) translateX(-10vh);
-        color: var(--color-text-primary);
 
         h1 {
           font-size: 40vw;
-        }
+          line-height: var(--leading-none);
+          font-weight: var(--font-weight-bold);
+          margin: 0;
 
-        h1::after {
-          display: block;
-          content: ' ';
-          background: var(--color-accent);
-          height: 4vw;
-          margin-top: -9.2vw;
-          width: 200%;
+          &::after {
+            content: '';
+            display: block;
+            background: var(--color-accent);
+            height: 4vw;
+            margin-top: -9.2vw;
+            width: 200%;
+          }
         }
 
         h2 {
@@ -55,18 +58,23 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
           letter-spacing: 0.3vw;
           transform-origin: bottom right;
           transform: rotate(90deg);
-          background: var(--color-yellow-500);
+          background: var(--color-yellow);
           padding: 0.3vw 0.7vw;
           font-size: 2vw;
+          margin: 0;
         }
 
         p {
           text-transform: uppercase;
           letter-spacing: 0.1rem;
-          font-weight: 300;
+          font-weight: var(--font-weight-light);
           margin: 0 0 0 40vw;
         }
+
+        a {
+          color: var(--color-accent);
+        }
       }
-    </style> -->
+    </style>
   </body>
 </html>
