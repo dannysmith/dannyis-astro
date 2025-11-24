@@ -108,9 +108,9 @@ Work through `global.css`, copying rules from `global-backup.css` as needed.
 - [x] `index.astro` (homepage)
 - [x] `writing/index.astro`
 - [x] `notes/index.astro`
-- [ ] `now.astro`
-- [ ] `404.astro`
+- [x] `now.astro`
 - [x] `Note.astro` layout
+- [] `404.astro`
 
 
 ## Phase F: MDX Components
@@ -133,18 +133,47 @@ Enable and review each, simplify where possible:
 - [ ] `Accordion.astro`
 - [ ] `Loom.astro`
 
+## Phase G: Final Reviews
 
-## Phase G: Update docs
+- [ ] Fully Review all CSS as a CSS expert.
+  - [ ] Look for any outdated or redundant CSS we've left behind in astro components/pages.
+  - [ ] Look for any identical CSS being used in more than one place. Consider whether we should extract these patterns into something reusable. This may be core global CSS custom properties (colour etc), utility classes or even new Atro wrapper components.
+  - [ ] Look for places where we're repeatedly overriding styles applied in global.css in the same way in multipkle places. This *may* be an signal to change the global styles.
+  - [ ] Look for anywhere we can consolidate selectors by using nesting, where, is etc.
+  - [ ] Look for any opportunities to make the CSS more defensive WITHOUT ADDING MUCH CODE. Think small, easy changes. We only need to care about this in components which may be used in multiple places/contexts etc.
+  - [ ] Review global.css and other areas we use custom properties for opportunities to add `@property` type definitions. We should only do this where it might help reduce errors in the future.
+  - [ ] Double check for any leftover "this has moved" or "we now handle..." AI comments and remove. Where appropriate, add helpful explanatory comments for non-obvious CSS rules to help AI and humans quickly understand what CSS does and why (no AI slop & must not be brittle "eg. "❌ Inherits Red background from X" because red may change etc). The reset in `global.css` is a good example of doing this in a very verbose way (because most rules in any reset have a non-obvious "why") Add structure to global.css and any other long CSS things with section titles, seperators etc as comments.
+  - [ ] Conduct final comprehensive review of all CSS in the project as an expert and make any reccomendations.
 
-- [ ] Update all docs in `docs/developer` so they're **accurate** as per the current system.
-- [ ] Update relevant docs in `docs/developer` so they properly explain how things work, the design patterns to use etc. Should include clear instructions on what CSS layers to use, how to use the core CSS custom properties systems, when and how to use the utility classes etc. Should also include info on how and when to extract CSS into `@base`, `@typography` or `.ui-styles`.
-- [ ] Update `CLAUDE.md` and `.claude/agents/design-system-expert.md` appropriately.
+## Phase H: Test on Preview Deploy
 
-## Final Review
+- [ ] Push to GH branch and review any CodeRabbit comments
+- [ ] Manually test preview branch on:
+  - [ ] Desktop
+    - [ ] Chrome
+    - [ ] Safari
+    - [ ] Firefox
+  - [ ] iPhone
+    - [ ] Chrome
+    - [ ] Safari
+  - [ ] iPad
+    - [ ] Chrome
+    - [ ] Safari
 
-- [ ] Double check for any leftover "this has moved" or "we now handle..." comments. Add helpful explanatory comments wherever helpful.
-- [ ] Fully Review all CSS and Related Documentation as a CSS expert.
-- [ ] Manually test all styleguides on multiple browsers, and on mobile.
+## Phase I: Update docs
+
+- [ ] Pass One: update all docs in `docs/developer` so they're **accurate** as per the current system. Update outdated CSS custom properties, layer names, component interfaces etc. Do not add new guidance but mark any areas we should change or update with a TODO for thenext pass.
+- [ ] Update relevant docs in `docs/developer` so they properly explain the current system, the design patterns to use etc. Should include clear instructions on what CSS layers to use, how to use the core CSS custom properties systems, when and how to use the utility classes, what patterns to follow etc. Should also include info on how and when to extract CSS into `@base`, `@typography` or `.ui-styles`.
+- [ ] Update `CLAUDE.md` and `.claude/agents/design-system-expert.md` appropriately. Include reference to CSS expert skill (available globally - not in project)
+- [ ] Final pass over documentation to ensure it's correct and as useful as possible for AI agents working on CSS.
+
+## Phase J: Pre-Merge Checks
+
+- [ ] Remove `global-backup.css`
+- [ ] Remove `toggle-component-css.sh`
+- [ ] Run `pnpm run check:all` and fix any issues
+- [ ] Resolve any last Coderabbit issues
+- [ ] Danny will manually review all the CSS and docs one last time before merging on GH
 
 ## Modernization Guidelines
 
@@ -175,19 +204,6 @@ Enable and review each, simplify where possible:
 
 ---
 
-## Final Checks
-
-- [ ] Test light mode
-- [ ] Test dark mode
-- [ ] Test mobile viewport
-- [ ] Test article pages
-- [ ] Test notes pages
-- [ ] Test homepage
-- [ ] Run `pnpm run check:all`
-- [ ] Remove `global-backup.css` when confident
-- [ ] Remove or update `toggle-component-css.sh` script
-
----
 
 ## Reference Files
 
