@@ -76,22 +76,22 @@ const components = {
 
 **CSS Layers Architecture:**
 
-- Eight-layer cascade system: `reset` → `base` → `typography` → `layout` → `utilities` → `components` → `longform` → `theme`
+- Seven-layer cascade system: `reset` → `base` → `typography` → `layout` → `utilities` → `longform` → `theme`
 - Prose typography is the **default** - use `.ui-style` to opt-out for UI areas
 - `.dark-surface` utility for always-dark components (nav, footer)
 - Eliminates need for `!important` or complex specificity battles
 - Location: `src/styles/global.css:2`
 
-**Three-Tier Color System:**
+**Color System with `light-dark()`:**
 
-- **Tier 1:** Base tokens (e.g., `--color-red-500`) - **NEVER USE DIRECTLY**
-- **Tier 2:** Semantic variables (e.g., `--color-bg-primary`) - **USE THESE**
-- **Tier 3:** Component usage
-- This hierarchy enables easy theme switching
+- Colors use `light-dark()` function for automatic theme switching
+- Semantic tokens: `--color-accent`, `--color-text`, `--color-background`, etc.
+- Adaptive palette: `--color-coral`, `--color-purple`, etc. auto-switch for theme
+- Derive variants with relative color syntax: `oklch(from var(--color-accent) calc(l - 0.1) c h)`
 
 **Theme Management:**
 
-- Three modes: `auto` (follows system), `light`, `dark`
+- Three modes: `auto` (follows system via `color-scheme`), `light`, `dark`
 - Global `window.theme` API for programmatic access
 - Inline script in `BaseHead.astro` prevents FOUC
 - Custom `theme-changed` event for component updates
@@ -100,9 +100,10 @@ const components = {
 
 **Why they're related:**
 
-- Semantic color variables switch automatically based on `data-theme` attribute
+- `light-dark()` values switch automatically based on `color-scheme` property
+- Manual override via `data-theme` attribute sets `color-scheme: light` or `dark`
 - Allows entire site to re-theme without component changes
-- Modern CSS approach (layers are 2022+ feature)
+- Modern CSS approach (layers 2022+, light-dark() 2024+)
 
 **Cross-references:**
 
@@ -384,7 +385,7 @@ This provides access to 2400+ code snippets and comprehensive Astro documentatio
 **CSS Layers** - Central to our styling architecture:
 
 - See [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification
-- Our layer order: reset → base → typography → layout → utilities → components → longform → theme
+- Our layer order: reset → base → typography → layout → utilities → longform → theme
 
 ### General Principle
 

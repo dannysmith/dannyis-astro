@@ -77,12 +77,13 @@ If you need rich previews for commonly blocked sites:
 ## Styling
 
 BookmarkCard uses CSS custom properties from the theme:
-- `--color-bg-secondary`: Card background
+- `--surface-raised`: Card background
 - `--color-border`: Card border
 - `--color-accent`: Title color and hover border
 - `--color-text-secondary`: Description and domain text
-- `--color-text-tertiary`: Fallback notice text
 - `--font-code`: Domain name font
+
+Uses container queries for responsive layout via `.cq` utility class.
 
 ## Related utilities
 

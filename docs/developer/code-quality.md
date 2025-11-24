@@ -27,25 +27,30 @@ These can be run together with `pnpm run check:all`.
 
 ## Common Quality Issues
 
-### Issue 1: Using Base Color Tokens Directly
+### Issue 1: Using Hardcoded Colors
 
-Always use semantic color variables instead of base tokens. This ensures proper theme switching and maintainability.
+Always use semantic color variables from `global.css`. This ensures proper theme switching and maintainability.
 
 ```css
-/* ❌ BAD - Using base tokens directly */
+/* ❌ BAD - Hardcoded colors */
 .component {
-  background: var(--color-red-500);
-  color: var(--color-blue-700);
+  background: #ff7369;
+  color: oklch(50% 0.15 250);
 }
 
 /* ✅ GOOD - Using semantic variables */
 .component {
-  background: var(--color-bg-primary);
-  color: var(--color-text-link);
+  background: var(--surface-raised);
+  color: var(--color-accent);
+}
+
+/* ✅ GOOD - Deriving variants from semantic variables */
+.component:hover {
+  background: oklch(from var(--color-accent) calc(l - 0.1) c h);
 }
 ```
 
-**Why:** Semantic variables automatically switch values based on the current theme (`data-theme` attribute), while base tokens remain static.
+**Why:** Semantic variables use `light-dark()` to automatically switch values based on the current color scheme, while hardcoded values remain static.
 
 ### Issue 2: Missing Path Aliases
 

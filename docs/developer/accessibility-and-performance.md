@@ -85,18 +85,14 @@ Include when semantic HTML isn't enough:
 **All interactive elements must be keyboard accessible:**
 
 ```css
-/* Visible focus indicators */
-.interactive:focus {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-
-/* Focus-visible for mouse vs keyboard */
+/* Focus-visible for keyboard navigation (not mouse clicks) */
 .interactive:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 ```
+
+The reset layer in `global.css` sets `outline-offset: 3px` globally for `:focus-visible`.
 
 ## Performance
 

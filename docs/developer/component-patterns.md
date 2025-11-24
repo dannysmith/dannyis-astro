@@ -55,16 +55,12 @@ try {
 
 <!-- 6. Styles -->
 <style>
-  /* Component-specific CSS variables */
-  :root {
-    --component-background: var(--color-bg-dark-200);
-    --component-foreground: var(--color-brand-white);
-  }
-
-  /* Component styles */
   .component {
-    background: var(--component-background);
-    color: var(--component-foreground);
+    /* Use semantic tokens from global.css */
+    background: var(--surface-raised);
+    color: var(--color-text);
+    border: var(--border-width-hairline) solid var(--color-border);
+    padding: var(--space-m);
   }
 </style>
 ```
@@ -120,17 +116,24 @@ if (!title) {
 
 See `design.md` for complete theming architecture. Key principle:
 
-**Never use base colors directly - always use semantic variables:**
+**Use semantic variables from global.css:**
 
 ```css
-/* ❌ Wrong: Using base color directly */
+/* ✅ Correct: Using semantic tokens */
 .component {
-  background: var(--color-red-500);
+  background: var(--surface-raised);
+  color: var(--color-text);
+  border-color: var(--color-accent);
 }
 
-/* ✅ Correct: Using semantic variable */
+/* ✅ Correct: Deriving variants with relative color syntax */
+.component:hover {
+  background: oklch(from var(--color-accent) calc(l - 0.1) c h);
+}
+
+/* ✅ Correct: Using light-dark() for theme-specific values */
 .component {
-  background: var(--color-component-bg);
+  background: light-dark(var(--color-beige), var(--color-charcoal));
 }
 ```
 
@@ -142,29 +145,31 @@ See `design.md` for complete theming architecture. Key principle:
   display: inline-flex;
   align-items: baseline;
 
-  /* Smooth transitions */
-  transition: opacity 0.2s ease;
+  /* Smooth transitions using motion tokens */
+  transition: opacity var(--duration-fast) var(--ease-in-out);
 
   /* currentColor for inherited color */
   border-color: currentColor;
 }
 
 .component:hover {
-  opacity: var(--component-hover-opacity);
+  opacity: 0.8;
 }
 
 /* Responsive with container queries */
 @container (width > 400px) {
   .component {
-    /* Desktop styles */
+    /* Wider layout styles */
   }
 }
 
-/* Fluid typography */
+/* Use fluid typography tokens instead of custom clamp() */
 .title {
-  font-size: clamp(1rem, calc(0.6rem + 1vw), 1.5rem);
+  font-size: var(--font-size-lg);
 }
 ```
+
+<!-- TODO: Pass Two - Add guidance on when to use container queries vs media queries -->
 
 ## Component Organization
 
@@ -250,13 +255,13 @@ const { label, pressed = false } = Astro.props;
 <style>
   .interactive {
     /* Visible focus indicators */
-    &:focus {
-      outline: 2px solid var(--color-focus);
-      outline-offset: 2px;
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
     }
 
-    /* Smooth transitions */
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Smooth transitions using motion tokens */
+    transition: all var(--duration-normal) var(--ease-in-out);
   }
 </style>
 ```

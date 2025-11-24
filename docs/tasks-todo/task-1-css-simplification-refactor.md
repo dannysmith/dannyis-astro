@@ -226,7 +226,7 @@ Bugfixes and other Cleanup
 ### Phase 8: Update docs
 
 - [ ] Pass One: update all docs in `docs/developer` so they're **accurate** as per the current system. Update outdated CSS custom properties, layer names, component interfaces etc. Do not add new guidance but mark any areas we should change or update with a TODO for thenext pass.
-- [ ] Update relevant docs in `docs/developer` so they properly explain the current system, the design patterns to use etc. Should include clear instructions on what CSS layers to use, how to use the core CSS custom properties systems, when and how to use the utility classes, what patterns to follow etc. Should also include info on how and when to extract CSS into `@base`, `@typography` or `.ui-styles`.
+- [ ] Update relevant docs in `docs/developer` so they properly explain the current system, the design patterns to use etc. Should include clear instructions on what CSS layers to use, how to use the core CSS custom properties systems, when and how to use the utility classes, what patterns to follow etc. Should also include brief guidance on how and when its appropriate to extract CSS into `@base`, `@typography` or `.ui-styles`.
 - [ ] Update `CLAUDE.md` and `.claude/agents/design-system-expert.md` appropriately. Include reference to CSS expert skill (available globally - not in project)
 - [ ] Final pass over documentation to ensure it's correct and as useful as possible for AI agents working on CSS.
 

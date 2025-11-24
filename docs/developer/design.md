@@ -42,8 +42,8 @@ Typography is **central** - large, expressive, and layout-defining.
 ### Article Typography (Long-form)
 
 - **Primary Font**: Literata (variable font) - serif for bookish, elegant feel
-- **Base Size**: 16px with fluid scaling using clamp()
-- **Line Height**: 1.5 (24px baseline grid)
+- **Base Size**: Fluid 16px→20px via Utopia scale (`--font-size-base`)
+- **Line Height**: 1.5 (`--leading-normal`)
 - **Advanced Features**: Drop caps, ligatures, small caps, old-style figures, optical margin alignment, hanging punctuation
 
 ### Expressive Typography
@@ -56,9 +56,10 @@ Typography is **central** - large, expressive, and layout-defining.
 ### Implementation
 
 ```css
-/* Fluid typography with clamp() */
+/* Use fluid typography tokens (Utopia-generated) */
 .title {
-  font-size: clamp(1rem, calc(0.6rem + 1vw), 1.5rem);
+  font-size: var(--font-size-lg);
+  line-height: var(--leading-tight);
 }
 
 /* Advanced typography features */
@@ -72,10 +73,10 @@ Typography is **central** - large, expressive, and layout-defining.
 
 /* Oversized display typography */
 .display-huge {
-  font-size: clamp(3rem, 8vw, 8rem);
-  font-weight: 900;
-  line-height: 0.9;
-  letter-spacing: -0.02em;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
 }
 ```
 
@@ -85,49 +86,49 @@ Typography is **central** - large, expressive, and layout-defining.
 
 Three theme modes:
 
-- **Auto** - Follows system preference (`prefers-color-scheme`)
+- **Auto** - Follows system preference via `color-scheme: light dark`
 - **Light** - Warm, beige backgrounds
 - **Dark** - Deep, rich backgrounds
 
-Theme switching via `data-theme` attribute on `:root` element.
+Theme switching uses `color-scheme` property with `light-dark()` function for automatic adaptation. Manual overrides via `data-theme` attribute on `:root` element.
 
 ### CSS Variable Structure
 
-**Three-tier system:**
+**Two-tier system using `light-dark()`:**
 
-1. **Base Colors** (outside layers) - Raw color tokens, **never use directly**
-2. **Semantic Variables** (@layer theme) - Theme-aware, component-specific
-3. **Component Variables** (in components) - Component-specific overrides
+1. **Adaptive Palette** - Colors that auto-switch based on color-scheme (e.g., `--color-coral`, `--color-text`)
+2. **Semantic Variables** - Role-based tokens referencing the palette (e.g., `--color-accent`, `--color-background`)
 
 ```css
-/* 1. Base color tokens (never use directly) */
+/* Adaptive colors switch automatically via light-dark() */
 :root {
-  --color-red-500: #ff7369;
-  --color-cream-500: #fef9ef;
+  color-scheme: light dark;
+
+  /* Adaptive palette - auto-switches for theme */
+  --color-coral: light-dark(
+    oklch(70% 0.18 var(--hue-coral)),
+    oklch(80% 0.14 var(--hue-coral))
+  );
+
+  /* Semantic variables reference the adaptive palette */
+  --color-accent: var(--color-coral);
+  --color-background: light-dark(var(--color-beige), var(--color-charcoal));
+  --color-text: light-dark(var(--color-ink), var(--color-beige));
 }
 
-/* 2. Semantic variables (use these) */
-:root[data-theme='light'] {
-  --color-nav-bg: var(--color-bg-dark-200);
-  --prose-link-color: var(--color-coral-500);
-}
-
-:root[data-theme='dark'] {
-  --color-nav-bg: var(--color-bg-light-200);
-  --prose-link-color: var(--color-red-500);
-}
-
-/* 3. Component usage */
+/* Component usage */
 .component {
-  background: var(--color-nav-bg);
+  background: var(--color-background);
+  color: var(--color-text);
+  border-color: var(--color-accent);
 }
 ```
 
 ### Rules
 
-1. **Never use base colors directly** - Always use semantic variables
-2. **Use descriptive names** - `--color-{component}-{property}`
-3. **Test both themes** when adding new variables
+1. **Use semantic variables** - `--color-accent`, `--color-text`, `--color-background`, etc.
+2. **Test both themes** when making visual changes
+3. **Derive variants with relative color syntax** when needed: `oklch(from var(--color-accent) calc(l - 0.1) c h)`
 
 ### Primary Palette
 
@@ -165,7 +166,7 @@ Theme switching via `data-theme` attribute on `:root` element.
 .layout-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-lg);
+  gap: var(--space-l);
 }
 
 /* Container queries for component responsiveness */
@@ -186,16 +187,15 @@ Theme switching via `data-theme` attribute on `:root` element.
 
 **Core architectural pattern** - Controls specificity without relying on selector complexity or `!important`.
 
-Eight-layer cascade system (lowest to highest specificity):
+Seven-layer cascade system (lowest to highest specificity):
 
-1. **Reset** (@layer reset) - Browser normalization
-2. **Base** (@layer base) - Foundation: colors, element defaults
+1. **Reset** (@layer reset) - Browser normalization with `:where()` for zero specificity
+2. **Base** (@layer base) - Foundation: color-scheme, accent-color, body background, tables, buttons
 3. **Typography** (@layer typography) - Prose-first defaults: serif font, links, lists, blockquotes, heading borders
 4. **Layout** (@layer layout) - Reusable patterns: `.flow`, `.list-reset`, `.all-caps`
-5. **Utilities** (@layer utilities) - `.ui-style`, `.dark-surface`, `.sr-only`, `.cq`
-6. **Components** (@layer components) - Component-specific styles
-7. **Longform** (@layer longform) - Article-only enhancements: end marks, footnotes, oldstyle numerals
-8. **Theme** (@layer theme) - Semantic color tokens with light-dark()
+5. **Utilities** (@layer utilities) - `.ui-style`, `.dark-surface`, `.card-surface`, `.cq`, `.img-cover`, `.content-trim`, `.sr-only`
+6. **Longform** (@layer longform) - Article-only enhancements: end marks, footnotes, oldstyle numerals
+7. **Theme** (@layer theme) - Component-scoped styles (when needed)
 
 **Key Design Decision:** Prose typography is the default. Use `.ui-style` to opt-out for UI areas (nav, footer, list pages).
 
@@ -207,6 +207,7 @@ Eight-layer cascade system (lowest to highest specificity):
   }
   a {
     text-decoration: underline;
+    color: var(--color-accent);
   }
 }
 
@@ -214,16 +215,18 @@ Eight-layer cascade system (lowest to highest specificity):
 @layer utilities {
   .ui-style {
     font-family: var(--font-ui);
-    & a { text-decoration: none; }
+    & a { text-decoration: none; color: inherit; }
   }
   .dark-surface {
-    background-color: var(--color-bg-dark-200);
-    color: var(--color-brand-white);
+    background-color: var(--color-charcoal);
+    color: var(--color-beige);
   }
 }
 ```
 
 **Documentation:** See [MDN @layer reference](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification details. Layer order is defined in `src/styles/global.css:2`.
+
+<!-- TODO: Pass Two - Add guidance on when to use each layer, and when component styles should go in .astro files vs global layers -->
 
 ### Modern CSS Features
 
@@ -232,8 +235,8 @@ Eight-layer cascade system (lowest to highest specificity):
   /* currentColor to inherit text color */
   border-color: currentColor;
 
-  /* Smooth transitions */
-  transition: opacity 0.2s ease;
+  /* Smooth transitions using motion tokens */
+  transition: opacity var(--duration-normal) var(--ease-in-out);
 }
 
 /* object-fit for image sizing */
@@ -271,7 +274,7 @@ Prefer CSS Grid over Flexbox for complex layouts.
 .modernist-grid {
   display: grid;
   grid-template-columns: 1.618fr 1fr;
-  gap: var(--space-lg);
+  gap: var(--space-l);
 }
 
 /* Overlapping elements */
@@ -309,31 +312,35 @@ Prefer CSS Grid over Flexbox for complex layouts.
 
 ```css
 .card {
-  background: var(--color-notecard-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  transition: box-shadow 0.2s ease;
+  background: var(--surface-raised);
+  border: var(--border-width-hairline) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-m);
+  filter: var(--shadow-small);
+  transition: filter var(--duration-fast) var(--ease-in-out);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-lg);
+  filter: var(--shadow-medium);
 }
 ```
+
+<!-- TODO: Pass Two - Document the `.card-surface` utility class as alternative -->
 
 ### Navigation Elements
 
 ```css
+/* Navigation typically uses .ui-style .dark-surface utilities */
 .nav-link {
   display: inline-flex;
   align-items: center;
-  color: var(--color-nav-text);
+  color: inherit;
   text-decoration: none;
-  transition: background-color 0.2s ease;
+  transition: color var(--duration-fast) var(--ease-in-out);
 }
 
 .nav-link:hover {
-  background-color: var(--color-nav-hover-bg);
+  color: var(--color-accent);
 }
 ```
 
@@ -341,10 +348,12 @@ Prefer CSS Grid over Flexbox for complex layouts.
 
 ```css
 .callout {
-  border-left: 4px solid var(--callout-accent-color);
-  background: var(--callout-bg-color);
-  padding: var(--space-md);
-  margin: var(--space-lg) 0;
+  /* Callouts define local --accent for variant colors */
+  --accent: var(--color-coral);
+  border-left: var(--border-width-thick) solid var(--accent);
+  background: oklch(from var(--accent) 96% calc(c * 0.3) h);
+  padding: var(--space-m);
+  margin: var(--space-l) 0;
 }
 ```
 
@@ -360,9 +369,9 @@ Prefer CSS Grid over Flexbox for complex layouts.
 ### Patterns
 
 ```css
-/* Smooth transitions */
+/* Smooth transitions using motion tokens */
 .interactive {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--duration-normal) var(--ease-in-out);
 }
 
 /* Hover states */
@@ -372,38 +381,40 @@ Prefer CSS Grid over Flexbox for complex layouts.
 }
 
 /* Focus states for accessibility */
-.focusable:focus {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
+.focusable:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 ```
 
 ## Technical Implementation
 
-### Adding New Theme Variables
+### Adding Theme-Aware Colors
 
-When a component needs different colors in light/dark modes:
+When a component needs different colors in light/dark modes, use `light-dark()`:
 
-1. **Add semantic variables to global.css:**
-
-```css
-/* In @layer theme section */
-:root[data-theme='light'] {
-  --color-your-component-bg: var(--color-bg-light-200);
-}
-
-:root[data-theme='dark'] {
-  --color-your-component-bg: var(--color-bg-dark-200);
-}
-```
-
-2. **Use in component:**
+1. **Define in the component's `<style>` block or in global.css:**
 
 ```css
 .your-component {
-  background: var(--color-your-component-bg);
+  /* light-dark() auto-switches based on color-scheme */
+  background: light-dark(
+    var(--color-beige),      /* Light mode */
+    var(--color-charcoal)    /* Dark mode */
+  );
 }
 ```
+
+2. **Or derive from existing semantic variables:**
+
+```css
+.your-component {
+  /* Use relative color syntax to derive variants */
+  background: oklch(from var(--color-background) calc(l - 0.05) c h);
+}
+```
+
+<!-- TODO: Pass Two - Document when to add new global tokens vs use local light-dark() -->
 
 ### Container Queries
 
@@ -440,7 +451,7 @@ The styleguide serves as living documentation and QA tool.
 **Visual Design:**
 
 - Test both themes for every change
-- Use semantic variables, never base color tokens directly
+- Use semantic variables (`--color-accent`, `--color-text`, etc.) and design tokens
 - Maintain clear hierarchy with typography and spacing
 - Keep it experimental - bold choices aligned with site character
 
