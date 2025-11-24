@@ -61,6 +61,13 @@ const today = new Date();
     right: var(--space-s);
     top: var(--space-s);
     writing-mode: vertical-rl;
+
+    @media (max-width: 380px) {
+      position: static;
+      writing-mode: horizontal-tb;
+      text-align: center;
+      margin-top: var(--space-m);
+    }
   }
 
   .footer-rss {
