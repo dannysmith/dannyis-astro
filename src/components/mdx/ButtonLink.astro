@@ -52,7 +52,7 @@ const { href, variant = 'primary', inline = false } = Astro.props;
     text-box: trim-both cap alphabetic;
   }
 
-  [data-variant='primary'] {
+  .button-link[data-variant='primary'] {
     background-color: var(--color-accent);
     color: var(--color-text);
 
@@ -62,7 +62,7 @@ const { href, variant = 'primary', inline = false } = Astro.props;
     }
   }
 
-  [data-variant='secondary'] {
+  .button-link[data-variant='secondary'] {
     background-color: transparent;
     color: var(--color-text);
     border-color: color-mix(in oklch, var(--color-text) 20%, transparent);

@@ -6,21 +6,24 @@ import { FormattedDate } from '@components/ui';
 import { generateSummary } from '@utils/content-summary';
 
 // Type configuration - easy to extend for new content types
+// All getUrl functions share signature: (slug: string, url?: string) => string
 const TYPE_CONFIG = {
   articles: {
     label: 'Article',
     color: 'var(--color-accent)',
-    getUrl: (slug: string) => `/writing/${slug}/`,
+    // eslint-disable-next-line no-unused-vars
+    getUrl: (slug: string, _url?: string) => `/writing/${slug}/`,
   },
   notes: {
     label: 'Note',
     color: 'var(--color-blue)',
-    getUrl: (slug: string) => `/notes/${slug}/`,
+    // eslint-disable-next-line no-unused-vars
+    getUrl: (slug: string, _url?: string) => `/notes/${slug}/`,
   },
   toolboxPages: {
     label: 'Tool',
     color: 'var(--color-green)',
-    getUrl: (_slug: string, url: string) => url,
+    getUrl: (_slug: string, url?: string) => url ?? '',
   },
 } as const;
 
