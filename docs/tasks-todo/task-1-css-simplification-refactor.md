@@ -191,8 +191,7 @@ Bugfixes and other Cleanup
 
 - [x] Update styleguide page CSS
 - [x] Reenable and update toolboxtest page CSS
-- [ ] Fix vertical flow issues
-
+- [x] Fix vertical flow issues
 
 ### Phase 6: Final Reviews
 
