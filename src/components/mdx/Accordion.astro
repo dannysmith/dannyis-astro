@@ -1,97 +1,117 @@
 ---
 export interface Props {
   header: string;
+  open?: boolean;
+  plain?: boolean;
 }
 
-const { header } = Astro.props;
+const { header, open = false, plain = false } = Astro.props;
 ---
 
-<div class="accordion-container">
-  <button class="accordion-button" aria-expanded="false">
-    <span class="accordion-header">{header}</span>
-    <span class="accordion-toggle" aria-hidden="true">+</span>
-  </button>
-  <div class="accordion-panel">
+<details class="accordion" open={open} data-plain={plain || undefined}>
+  <summary class="accordion-header">
+    <span class="accordion-title"><span class="accordion-title-text">{header}</span></span>
+    <span class="accordion-icon" aria-hidden="true"></span>
+  </summary>
+  <div class="accordion-content">
     <slot />
   </div>
-</div>
+</details>
 
-<!-- DISABLED-STYLE <style>
-  .accordion-container {
-    margin: var(--space-5) 0;
+<style>
+  .accordion {
+    margin-block: var(--space-s);
     border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-raised);
   }
 
-  .accordion-button {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-4) var(--space-5);
-    background: var(--color-bg-secondary);
+  .accordion[data-plain] {
+    background-color: transparent;
     border: none;
-    font-family: var(--font-ui);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-primary);
-    cursor: pointer;
-    transition: background-color var(--duration-normal) var(--ease-default);
-    min-height: 44px; /* Touch target */
-  }
 
-  .accordion-button[aria-expanded='true'] {
-    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    .accordion-header, .accordion-content {
+      padding-inline: 0;
+    }
   }
 
   .accordion-header {
-    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--space-m);
+    font-family: var(--font-ui);
     font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-md);
+    cursor: pointer;
+    list-style: none; /* Remove default marker */
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::marker {
+      display: none;
+    }
   }
 
-  .accordion-toggle {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-normal);
-    line-height: 1;
+  .accordion-title {
+    flex: 1;
+  }
+
+  /* text-box must be on inline box inside flex item, not the flex item itself */
+  .accordion-title-text {
+    text-box: trim-both cap alphabetic;
+  }
+
+  .accordion-icon {
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    position: relative;
     color: var(--color-accent);
-    transition: transform var(--duration-normal) var(--ease-default);
-    transform: translateY(0.08em);
+
+    /* Horizontal bar */
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background-color: currentColor;
+      transition: transform var(--duration-normal) var(--ease-in-out);
+    }
+
+    &::before {
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      transform: translateY(-50%);
+    }
+
+    /* Vertical bar - rotates to horizontal when open */
+    &::after {
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      transform: translateX(-50%);
+    }
   }
 
-  .accordion-button[aria-expanded='true'] .accordion-toggle {
-    transform: translateY(0.08em) rotate(45deg);
+  .accordion[open] .accordion-icon::after {
+    transform: translateX(-50%) rotate(90deg);
   }
 
-  .accordion-panel {
-    display: none;
-    padding: var(--space-5);
-    background: var(--color-bg-primary);
-    font-family: var(--font-prose);
+  .accordion-content {
+    padding: 0 var(--space-m) var(--space-m);
+
+    & > :first-child {
+      margin-top: 0;
+    }
+
+    & > :last-child {
+      margin-bottom: 0;
+    }
   }
-
-  .accordion-panel.open {
-    display: block;
-  }
-
-  .accordion-panel :global(> *:first-child) {
-    margin-top: 0;
-  }
-
-  .accordion-panel :global(> *:last-child) {
-    margin-bottom: 0;
-  }
-</style> -->
-
-<script>
-  document.querySelectorAll('.accordion-button').forEach(button => {
-    button.addEventListener('click', () => {
-      const panel = button.nextElementSibling as HTMLElement;
-      const isExpanded = button.getAttribute('aria-expanded') === 'true';
-
-      // Toggle state
-      button.setAttribute('aria-expanded', (!isExpanded).toString());
-      panel.classList.toggle('open', !isExpanded);
-    });
-  });
-</script>
+</style>
