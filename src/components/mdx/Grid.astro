@@ -6,18 +6,18 @@ export interface Props {
 }
 const columns = Astro.props.columns || 2
 const rows = Astro.props.rows || 1
-const gap = Astro.props.gap || '1rem'
+const gap = Astro.props.gap || 'var(--space-s)'
 ---
 
 <div class="grid-wrapper">
   <slot />
 </div>
 
-<!-- DISABLED-STYLE <style define:vars={{ columns, rows, gap }}>
+<style define:vars={{ columns, rows, gap }}>
   .grid-wrapper {
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
     grid-gap: var(--gap);
   }
-</style> -->
+</style>
