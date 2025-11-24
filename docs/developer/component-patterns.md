@@ -169,7 +169,44 @@ See `design.md` for complete theming architecture. Key principle:
 }
 ```
 
-<!-- TODO: Pass Two - Add guidance on when to use container queries vs media queries -->
+### Container Queries vs Media Queries
+
+**Use container queries (`@container`)** for component-level responsiveness:
+
+- Component behavior that depends on its container size
+- Cards, panels, or layouts that might appear in different contexts
+- Components that need to adapt independently of viewport
+
+```css
+/* Parent enables container queries */
+.cq {
+  container-type: inline-size;
+}
+
+/* Component responds to its container, not viewport */
+@container (width > 400px) {
+  .card {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+**Use media queries (`@media`)** for page-level layout:
+
+- Overall page structure and column counts
+- Navigation breakpoints
+- Changes that affect the entire page layout
+
+```css
+/* Page layout changes at breakpoints */
+@media (min-width: 800px) {
+  .page-layout {
+    grid-template-columns: 1fr 3fr;
+  }
+}
+```
+
+**General Rule:** If you're styling a component that might appear in different contexts (main content area, sidebar, card grid), use container queries. If you're styling page-level layout structure, use media queries.
 
 ## Component Organization
 

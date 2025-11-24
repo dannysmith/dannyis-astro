@@ -162,9 +162,9 @@ For responsive gaps that jump between sizes:
 ### Font Families
 
 ```css
---font-ui: 'League Spartan Variable', 'Inter', sans-serif;
---font-prose: 'Literata', Georgia, serif;
---font-code: 'Fira Code Variable', monospace;
+--font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-prose: 'Literata', Georgia, 'Times New Roman', serif;
+--font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 ```
 
 ### Fluid Type Scale
@@ -328,11 +328,121 @@ All features are Baseline (widely available):
 
 ---
 
+## When to Create New Tokens
+
+**Don't create new tokens for:**
+
+- One-off values used in a single component
+- Derived values (use relative color syntax or `calc()` instead)
+- Theme-specific variants (use `light-dark()` inline)
+- Slight variations of existing tokens
+
+**Do create new tokens when:**
+
+- A value is used identically in 3+ unrelated places
+- A semantic role doesn't have an existing token (e.g., new accent color)
+- The value is foundational and likely to change site-wide
+
+**Example: Deriving vs Creating**
+
+```css
+/* ❌ Don't create --color-accent-hover */
+--color-accent-hover: oklch(60% 0.18 25);
+
+/* ✅ Derive it inline */
+.button:hover {
+  background: oklch(from var(--color-accent) calc(l - 0.1) c h);
+}
+
+/* ❌ Don't create --space-card-padding */
+--space-card-padding: 1.5rem;
+
+/* ✅ Use existing token */
+.card {
+  padding: var(--space-m);
+}
+```
+
+---
+
+## Common Token Combinations
+
+Quick reference for common contexts:
+
+### Cards and Panels
+
+```css
+.card {
+  background: var(--surface-raised);
+  border: var(--border-width-hairline) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-m);
+  filter: var(--shadow-small);
+}
+```
+
+### Navigation and UI
+
+```css
+.nav {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-wide);
+}
+```
+
+### Article Content
+
+```css
+.prose {
+  font-family: var(--font-prose);
+  font-size: var(--font-size-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+}
+```
+
+### Headings
+
+```css
+.heading {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+```
+
+### Interactive Elements
+
+```css
+.interactive {
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.interactive:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+```
+
+### Metadata and Labels
+
+```css
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+```
+
+---
+
 ## Utopia Resources
 
 - **Type calculator:** https://utopia.fyi/type/calculator
 - **Space calculator:** https://utopia.fyi/space/calculator
 - **Configuration used:** 375px min → 1280px max, 16px → 20px base, 1.2 → 1.333 ratio
-
-<!-- TODO: Pass Two - Add guidance on when to create new tokens vs use existing ones -->
-<!-- TODO: Pass Two - Add examples of common token combinations for different contexts -->
