@@ -54,7 +54,7 @@ export default defineConfig({
       [rehypeHeadingIds, { headingIdCompat: true }],
       rehypeAutolinkHeadings,
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
-      [rehypeMermaid, { mermaidConfig }],
+      [rehypeMermaid, { strategy: 'pre-mermaid' }],
     ],
     remarkPlugins: [remarkReadingTime],
   },

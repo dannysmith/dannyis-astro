@@ -205,15 +205,17 @@ Bugfixes and other Cleanup
   - [x] Review global.css and other areas we use custom properties for opportunities to add `@property` type definitions. We should only do this where it might help reduce errors in the future.
   - [x] Double check for any leftover "this has moved" or "we now handle..." AI comments and remove. Where appropriate, add helpful explanatory comments for non-obvious CSS rules to help AI and humans quickly understand what CSS does and why (no AI slop & must not be brittle "eg. "❌ Inherits Red background from X" because red may change etc). The reset in `global.css` is a good example of doing this in a very verbose way (because most rules in any reset have a very non-obvious "why"). Don;t go mad with this, be surgical. MAke sure we have structure in global.css and any other long blocks of CSS by adding section titles, seperators etc as comments.
   - [x] Conduct final comprehensive review of all CSS in the project as an expert and make any reccomendations.
-  - [ ] Run `pnpm run check:all` and fix any issues
+  - [x] Run `pnpm run check:all` and fix any issues
 
 
 ### Phase 6A: Other Random Things I wanna fix
 
-- [ ] Inline footnotes are broken in articles
-- [ ] Code styles
-- [ ] Mermaid diagrams broken
+- [x] Inline footnotes are broken in articles
+- [ ] Mermaid diagram colours
+- [ ] Code block colours
+  - We use the expressiveCode plugin with the dracula-soft theme to display our codeblocks. This comes with a whole hist of great features, but the theme doesn't look great with our thing. Is it possible for us to create our own theme, perhaps based on Dracula Soft, which we include in this repository and then have that used instead of the actual Dracula soft theme? Or is there a better way of doing this? 
 - [ ] Add view transitions
+  - I'd like to experiment with adding some simple CSS view transitions. Some obvious candidates are the footer, so that if we navigate anywhere and the footer is visible, it'll just kind of stay where it is. The note card, so that if we're looking at a note card on the notes index page and then we click on it, it'll stay there, the whole card. And then we may just want to experiment with adding that one line of CSS to add a crossfade view transition to everything in the site. But I think that might need a bit of experimentation. Beyond that, I don't think we currently have much that we can do with view transitions, but we will lean into this more in the future as we add more functionality to the site. 
   - [ ] Footer
   - [ ] NoteCard
   - [ ] General cross-fade?
