@@ -54,6 +54,7 @@ const { href, variant = 'primary', inline = false } = Astro.props;
 
   [data-variant='primary'] {
     background-color: var(--color-accent);
+    color: var(--color-text);
 
     &:hover {
       background-color: oklch(from var(--color-accent) calc(l - 0.08) c h);
