@@ -22,8 +22,7 @@ const toolboxPages = await getCollection('toolboxPages');
           toolboxPages.map(toolboxPage => (
             <ContentCard
               content={toolboxPage}
-              variant="compact"
-              showSummary={false}
+              compact={true}
             />
           ))
         }
