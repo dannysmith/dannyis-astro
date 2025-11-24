@@ -342,6 +342,16 @@ Each layer has a specific purpose:
 
 **Use for:** Text that should be accessible but visually hidden.
 
+### `.external-arrow` - External Link Indicator
+
+**Use for:** Indicating external/offsite links in UI contexts (nav, footer).
+
+```html
+<a href="/working">Work <span class="external-arrow">↗</span></a>
+```
+
+Note: Prose external links use a different mechanism in the longform layer.
+
 ---
 
 ## Design Tokens

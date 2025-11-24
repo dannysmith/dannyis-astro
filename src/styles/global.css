@@ -854,6 +854,18 @@
     }
   }
 
+  /* ----------------------------------------
+     .external-arrow - Subtle indicator for external/offsite links
+     Usage: <a href="...">Link text <span class="external-arrow">↗</span></a>
+     Note: This is for UI contexts (nav, footer). Prose external links
+     use a different mechanism in the longform layer.
+     ---------------------------------------- */
+  .external-arrow {
+    font-size: 0.75em;
+    opacity: 0.6;
+    margin-left: 0.15em;
+  }
+
   /* Hidden utility for screen readers and microformats */
   .sr-only,
   .hidden-microformat {
