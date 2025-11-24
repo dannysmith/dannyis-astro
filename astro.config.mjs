@@ -8,6 +8,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeMermaid from 'rehype-mermaid';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import icon from 'astro-icon';
+import { mermaidConfig } from './src/config/mermaid.js';
 
 import expressiveCode from 'astro-expressive-code';
 
@@ -53,7 +54,7 @@ export default defineConfig({
       [rehypeHeadingIds, { headingIdCompat: true }],
       rehypeAutolinkHeadings,
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
-      [rehypeMermaid, { strategy: 'pre-mermaid' }],
+      [rehypeMermaid, { mermaidConfig }],
     ],
     remarkPlugins: [remarkReadingTime],
   },
