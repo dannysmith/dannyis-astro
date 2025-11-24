@@ -117,8 +117,8 @@ Work through `global.css`, copying rules from `global-backup.css` as needed.
 
 Enable and review each, simplify where possible:
 
-- [ ] `highlight.astro`
-- [ ] `SmallCaps.astro`
+- [x] `highlight.astro`
+- [x] `SmallCaps.astro`
 - [ ] `IntroParagraph.astro`
 - [ ] `Grid.astro`
 - [ ] `Center.astro`
