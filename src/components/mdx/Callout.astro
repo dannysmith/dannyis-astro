@@ -76,8 +76,10 @@ if (icon && emoji) {
   /* .content-trim applied via class for first/last child margin reset */
 
   /* Color variants - muted tinted backgrounds with accent borders
-     Light mode: ~93-96% lightness, very low chroma (0.015-0.04)
-     Dark mode: ~35-42% lightness, low chroma (0.02-0.05) */
+     Philosophy: Subtle color hint without overwhelming content
+     Light mode: Very high lightness (93-96%) + minimal chroma (0.015-0.04) = barely-there tint
+     Dark mode: Mid-low lightness (35-42%) + low chroma (0.02-0.05) = visible but muted
+     Higher chroma values (yellow/orange) accommodate their naturally higher visibility */
   [data-callout-color='red'] {
     --_bg: light-dark(
       oklch(94% 0.024 var(--hue-coral)),

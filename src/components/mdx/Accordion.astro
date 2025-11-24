@@ -57,6 +57,8 @@ const { header, open = false, plain = false } = Astro.props;
 
   .accordion-title {
     flex: 1;
+    /* Defensive: wrap long headers that lack natural break points */
+    overflow-wrap: break-word;
   }
 
   /* text-box must be on inline box inside flex item, not the flex item itself */

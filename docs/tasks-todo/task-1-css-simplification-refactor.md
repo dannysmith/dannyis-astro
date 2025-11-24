@@ -202,9 +202,21 @@ Bugfixes and other Cleanup
   - [x] Look for places where we're repeatedly overriding styles applied in global.css in the same way in multipkle places. This *may* be an signal to change the global styles.
   - [x] Look for anywhere we can consolidate selectors by using nesting, where, is etc.
   - [x] Look for any opportunities to make the CSS more defensive WITHOUT ADDING MUCH CODE. Think tiny, easy changes. We only need to care about this in components which may be used in multiple places/contexts etc.
-  - [ ] Review global.css and other areas we use custom properties for opportunities to add `@property` type definitions. We should only do this where it might help reduce errors in the future.
-  - [ ] Double check for any leftover "this has moved" or "we now handle..." AI comments and remove. Where appropriate, add helpful explanatory comments for non-obvious CSS rules to help AI and humans quickly understand what CSS does and why (no AI slop & must not be brittle "eg. "❌ Inherits Red background from X" because red may change etc). The reset in `global.css` is a good example of doing this in a very verbose way (because most rules in any reset have a non-obvious "why") Add structure to global.css and any other long CSS things with section titles, seperators etc as comments.
-  - [ ] Conduct final comprehensive review of all CSS in the project as an expert and make any reccomendations.
+  - [x] Review global.css and other areas we use custom properties for opportunities to add `@property` type definitions. We should only do this where it might help reduce errors in the future.
+  - [x] Double check for any leftover "this has moved" or "we now handle..." AI comments and remove. Where appropriate, add helpful explanatory comments for non-obvious CSS rules to help AI and humans quickly understand what CSS does and why (no AI slop & must not be brittle "eg. "❌ Inherits Red background from X" because red may change etc). The reset in `global.css` is a good example of doing this in a very verbose way (because most rules in any reset have a very non-obvious "why"). Don;t go mad with this, be surgical. MAke sure we have structure in global.css and any other long blocks of CSS by adding section titles, seperators etc as comments.
+  - [x] Conduct final comprehensive review of all CSS in the project as an expert and make any reccomendations.
+  - [ ] Run `pnpm run check:all` and fix any issues
+
+
+### Phase 6A: Other Random Things I wanna fix
+
+- [ ] Inline footnotes are broken in articles
+- [ ] Code styles
+- [ ] Mermaid diagrams broken
+- [ ] Add view transitions
+  - [ ] Footer
+  - [ ] NoteCard
+  - [ ] General cross-fade?
 
 ### Phase 7: Test on Preview Deploy
 

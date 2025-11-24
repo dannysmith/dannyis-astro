@@ -69,7 +69,7 @@ const isFallback = !metadata;
 	.bookmark-domain,
 	.bookmark-description,
 	.bookmark-fallback {
-		color: var(--color-text-primary);
+		color: var(--color-text);
 	}
 
 	.bookmark-domain {
@@ -85,6 +85,8 @@ const isFallback = !metadata;
 		line-height: var(--leading-snug);
 		color: var(--color-accent);
 		margin-block-end: var(--space-2xs);
+		/* Defensive: break very long unbreakable strings (e.g., long URLs as titles) */
+		word-break: break-word;
 	}
 
 	.bookmark-description {
