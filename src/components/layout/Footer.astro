@@ -30,6 +30,11 @@ const today = new Date();
       <Icon name="social/rss" class="footer-rss-icon" />
     </span>
   </section>
+  <section class="footer-meta">
+    <a href="https://danny.is/key.txt">pgp key</a>
+    <span class="footer-meta-separator">·</span>
+    <a href="https://atproto-browser.vercel.app/at/danny.is">atproto at://danny.is</a>
+  </section>
   <div class="copyright all-caps">
     &copy; {today.getFullYear()} Danny Smith
   </div>
@@ -77,7 +82,7 @@ const today = new Date();
     justify-content: flex-start;
     padding-left: calc(var(--space-s) * 2);
     gap: var(--space-3xs);
-    margin-block: var(--space-m);
+    margin-top: var(--space-m);
   }
 
   .footer-rss-icon-wrapper {
@@ -86,6 +91,21 @@ const today = new Date();
 
   .footer-rss-separator {
     color: color-mix(in oklch, currentColor 40%, transparent);
+  }
+
+  .footer-meta {
+    font-size: var(--font-size-sm);
+    display: flex;
+    justify-content: flex-start;
+    padding-left: calc(var(--space-s) * 2);
+    gap: var(--space-3xs);
+    margin-top: var(--space-3xs);
+    margin-bottom: var(--space-m);
+    color: color-mix(in oklch, currentColor 50%, transparent);
+  }
+
+  .footer-meta-separator {
+    color: color-mix(in oklch, currentColor 60%, transparent);
   }
 
 </style>
