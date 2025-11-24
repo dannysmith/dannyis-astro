@@ -6,7 +6,7 @@
 
 <style is:global>
   /* Prevent background scroll when lightbox is open */
-  html:has(.lightbox[style*="flex"]) {
+  html:has(.lightbox.is-open) {
     overflow: hidden;
   }
 </style>
@@ -20,6 +20,10 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+
+    &.is-open {
+      display: flex;
+    }
   }
 
   .lightbox canvas {
@@ -33,7 +37,7 @@
     right: var(--space-m);
     font-size: var(--font-size-xl);
     line-height: var(--leading-none);
-    color: var(--color-brand-white);
+    color: var(--color-white);
     cursor: pointer;
   }
 </style>
@@ -49,7 +53,7 @@
     document.querySelectorAll('img[alt]').forEach(img => {
       img.addEventListener('click', function (event) {
         const clickedImg = event.target as HTMLImageElement;
-        lightbox.style.display = 'flex';
+        lightbox.classList.add('is-open');
 
         const image = new Image();
         image.src = clickedImg.src;
@@ -65,12 +69,12 @@
     });
 
     closeBtn.addEventListener('click', function () {
-      lightbox.style.display = 'none';
+      lightbox.classList.remove('is-open');
     });
 
     lightbox.addEventListener('click', function (event) {
       if (event.target !== lightboxCanvas && event.target !== closeBtn) {
-        lightbox.style.display = 'none';
+        lightbox.classList.remove('is-open');
       }
     });
   });

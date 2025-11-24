@@ -143,16 +143,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         width: 100%;
         height: 100%;
         object-fit: cover;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        .hero-image img {
-          filter: grayscale(70%);
-        }
-      }
-
-      :root[data-theme='dark'] .hero-image img {
-        filter: grayscale(70%);
+        filter: light-dark(none, grayscale(70%));
       }
 
       .draft-notice {
