@@ -6,10 +6,10 @@ import { Icon } from 'astro-icon/components';
 const isDev = import.meta.env.MODE === 'development';
 ---
 
-<button class="nav-open" type="button" aria-label="Open navigation">
+<button class="nav-open" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-navigation">
   <Icon name="heroicons:bars-3" />
 </button>
-<nav class="main-navigation ui-style dark-surface">
+<nav id="main-navigation" class="main-navigation ui-style dark-surface" inert>
   <button class="nav-close" type="button" aria-label="Close navigation">
     <Icon name="heroicons:x-mark" />
   </button>
@@ -91,16 +91,33 @@ const isDev = import.meta.env.MODE === 'development';
 </style>
 
 <script>
-  const closeNav = () => {
-    document.querySelector('.main-navigation')?.classList.remove('open');
+  const nav = document.querySelector<HTMLElement>('.main-navigation');
+  const openBtn = document.querySelector<HTMLButtonElement>('.nav-open');
+  const closeBtn = document.querySelector<HTMLButtonElement>('.nav-close');
+
+  const closeNav = (returnFocus = false) => {
+    nav?.classList.remove('open');
+    nav?.setAttribute('inert', '');
+    openBtn?.setAttribute('aria-expanded', 'false');
+    if (returnFocus) openBtn?.focus();
   };
 
   const openNav = () => {
-    document.querySelector('.main-navigation')?.classList.add('open');
+    nav?.classList.add('open');
+    nav?.removeAttribute('inert');
+    openBtn?.setAttribute('aria-expanded', 'true');
+    closeBtn?.focus();
   };
 
-  document.querySelector('.nav-close')?.addEventListener('click', closeNav);
-  document.querySelector('main')?.addEventListener('click', closeNav);
-  document.querySelector('footer')?.addEventListener('click', closeNav);
-  document.querySelector('.nav-open')?.addEventListener('click', openNav);
+  closeBtn?.addEventListener('click', () => closeNav(true));
+  document.querySelector('main')?.addEventListener('click', () => closeNav());
+  document.querySelector('footer')?.addEventListener('click', () => closeNav());
+  openBtn?.addEventListener('click', openNav);
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav?.classList.contains('open')) {
+      closeNav(true);
+    }
+  });
 </script>
