@@ -1,7 +1,7 @@
 ---
 interface Props {
   href: string;
-  variant?: 'primary' | 'secondary' | 'tertiary';
+  variant?: 'primary' | 'secondary';
   inline?: boolean;
 }
 
@@ -10,69 +10,66 @@ const { href, variant = 'primary', inline = false } = Astro.props;
 
 {
   inline ? (
-    <a href={href} class:list={['button-link', variant]}>
-      <slot />
+    <a href={href} class="button-link" data-variant={variant}>
+      <span class="button-link-text"><slot /></span>
     </a>
   ) : (
     <div class="button-link-container">
-      <a href={href} class:list={['button-link', variant]}>
-        <slot />
+      <a href={href} class="button-link" data-variant={variant}>
+        <span class="button-link-text"><slot /></span>
       </a>
     </div>
   )
 }
 
-<!-- DISABLED-STYLE <style>
+<style>
   .button-link-container {
-    margin: var(--space-8) auto;
+    margin-block: var(--space-m);
     text-align: center;
   }
 
   .button-link {
-    display: inline-block;
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-lg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5ch;
+    padding: .8em 1.2em;
     font-family: var(--font-ui);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-bold);
     text-decoration: none;
-    border: var(--border-width-base) solid transparent;
-    transition: background-color var(--duration-fast) var(--ease-default);
+    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    border: var(--border-width-base) solid var(--color-accent);
+    transition: background-color var(--duration-normal) var(--ease-in-out), border-color var(--duration-normal) var(--ease-in-out), color var(--duration-normal) var(--ease-in-out);
+    line-height: var(--leading-none);
+
+    &:visited {
+      color: inherit;
+    }
   }
 
-  .button-link:focus-visible {
-    outline: var(--border-width-base) solid var(--color-accent);
-    outline-offset: var(--space-1);
+  /* text-box must be on inline box inside flex container, not the flex container itself */
+  .button-link-text {
+    text-box: trim-both cap alphabetic;
   }
 
-  .button-link.primary {
-    background: var(--color-button-primary-bg);
-    color: var(--color-button-primary-text);
-  }
-  .button-link.primary:hover {
-    background: var(--color-button-primary-hover-bg);
+  [data-variant='primary'] {
+    background-color: var(--color-accent);
+
+    &:hover {
+      background-color: oklch(from var(--color-accent) calc(l - 0.08) c h);
+      border-color: oklch(from var(--color-accent) calc(l - 0.08) c h);
+    }
   }
 
-  .button-link.secondary {
-    background: var(--color-button-secondary-bg);
-    color: var(--color-button-secondary-text);
-    border-color: var(--color-button-secondary-border);
-  }
-  .button-link.secondary:hover {
-    background: var(--color-button-secondary-hover-bg);
-    color: var(--color-button-secondary-hover-text);
-  }
+  [data-variant='secondary'] {
+    background-color: transparent;
+    color: var(--color-text);
+    border-color: color-mix(in oklch, var(--color-text) 20%, transparent);
 
-  .button-link.tertiary {
-    background: transparent;
-    color: var(--color-button-tertiary-text);
-    border: none;
-    padding: var(--space-2) var(--space-4);
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-underline-offset: var(--space-1);
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+    }
   }
-  .button-link.tertiary:hover {
-    color: var(--color-button-tertiary-hover-text);
-    text-decoration-color: var(--color-button-tertiary-underline);
-  }
-</style> -->
+</style>
