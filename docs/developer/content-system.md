@@ -268,7 +268,7 @@ Custom remark/rehype plugins modify content during build.
 
 ### Critical Settings
 
-- **Redirects:** 14 redirects configured (see `critical-patterns.md`)
+- **Redirects:** 14 redirects configured (see [architecture-guide.md § Redirects](./architecture-guide.md#redirects))
 - **Vite optimizations:** Excludes `@resvg/resvg-js`
 - **Markdown plugins:** Remark + rehype configuration
 - **Expressive Code:** Dracula-soft theme with no frame shadows

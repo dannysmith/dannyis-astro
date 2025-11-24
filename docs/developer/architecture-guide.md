@@ -1,6 +1,6 @@
 # Architecture Guide
 
-This document covers the core architectural patterns and principles used in Astro Editor. It focuses on the **essential patterns you need daily**. For specialized topics, see the [Specialized Guides](#specialized-guides) section.
+This document covers the core architectural patterns and principles for Danny's personal website. It focuses on the **essential patterns you need daily**. For specialized topics, consult the [specialized guides](./README.md#tier-3-specialized-references).
 
 ## Core Architecture Principles
 
@@ -260,36 +260,12 @@ Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
 
 All RSS feeds, markdown export endpoints, and page routes use these centralized functions.
 
-**Filtering Logic:**
-
-```typescript
-// Individual pages - allows styleguide pages to be accessed directly
-export function filterContentForPage(entries) {
-  return entries.filter(entry => {
-    if (import.meta.env.PROD) {
-      return entry.data.draft !== true;
-    }
-    return true; // Show everything in development
-  });
-}
-
-// Listings and RSS - always excludes styleguide
-export function filterContentForListing(entries) {
-  return entries.filter(entry => {
-    if (import.meta.env.PROD) {
-      return entry.data.draft !== true && !entry.data.styleguide;
-    }
-    return entry.data.draft !== true && !entry.data.styleguide;
-  });
-}
-```
-
 **Rules:**
 
 - `draft: true` → hidden in production (both individual pages and listings); visible in development
 - `styleguide: true` → accessible by direct URL in any environment, but never appears in listings or RSS feeds
-- Individual pages (`filterContentForPage`) only filter out drafts in production
-- Listings and RSS (`filterContentForListing`) filter out both drafts (in production) and styleguides (always)
+
+📖 **See [content-system.md § Content Filtering](./content-system.md#content-filtering) for implementation details**
 
 ### External Link Security
 
@@ -395,7 +371,7 @@ This provides access to 2400+ code snippets and comprehensive Astro documentatio
 
 ## Quick Start for New Sessions
 
-1. **Read** `docs/TASKS.md` for current work
+1. **Read** `docs/tasks.md` for current work
 2. **Check** git status and recent commits
 3. **Reference** this guide for core patterns
 4. **Consult** specialized guides when working on specific features

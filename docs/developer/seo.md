@@ -1,8 +1,8 @@
-## SEO
+# SEO
 
 Guidance and patterns for maintaining good SEO.
 
-### Using SEO Utilities
+## Using SEO Utilities
 
 **Always use centralized SEO configuration:**
 
@@ -16,7 +16,7 @@ const title = generatePageTitle(seoData.title, seoData.pageType);
 const title = `${props.title} | Danny Smith`;
 ```
 
-### SEO Checklist
+## SEO Checklist
 
 - [ ] Use `generatePageTitle()` for consistent titles
 - [ ] Validate data with `validateSEOData()`

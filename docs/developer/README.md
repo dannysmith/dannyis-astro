@@ -12,6 +12,7 @@ Read these first for daily development:
 
 Consult when working on specific features:
 
+- [design-tokens.md](./design-tokens.md) - Complete CSS custom property reference
 - [accessibility-and-performance.md](./accessibility-and-performance.md) - Accessible and performant code
 - [content-system.md](./content-system.md) - Content collections, RSS, build-time generation
 - [content-authoring.md](./content-authoring.md) - Creating and editing articles/notes
