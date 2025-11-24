@@ -886,3 +886,19 @@ svg[id^='mermaid-'] {
   /* Light background in both modes for consistent diagram appearance */
   background-color: light-dark(var(--color-background-secondary), #ffffff);
 }
+
+/* ============================================
+   VIEW TRANSITION ANIMATIONS
+   ============================================ */
+
+/* Note card morph animation */
+::view-transition-group(.note-card) {
+  animation-duration: 350ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* Footer stays stable during navigation */
+::view-transition-group(site-footer) {
+  animation-duration: 250ms;
+  animation-timing-function: ease-in-out;
+}

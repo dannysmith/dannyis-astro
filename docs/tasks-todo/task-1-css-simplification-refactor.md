@@ -211,18 +211,15 @@ Bugfixes and other Cleanup
 ### Phase 6A: Other Random Things I wanna fix
 
 - [x] Inline footnotes are broken in articles
-- [ ] Mermaid diagram colours
-- [ ] Code block colours
-  - We use the expressiveCode plugin with the dracula-soft theme to display our codeblocks. This comes with a whole hist of great features, but the theme doesn't look great with our thing. Is it possible for us to create our own theme, perhaps based on Dracula Soft, which we include in this repository and then have that used instead of the actual Dracula soft theme? Or is there a better way of doing this? 
-- [ ] Add view transitions
-  - I'd like to experiment with adding some simple CSS view transitions. Some obvious candidates are the footer, so that if we navigate anywhere and the footer is visible, it'll just kind of stay where it is. The note card, so that if we're looking at a note card on the notes index page and then we click on it, it'll stay there, the whole card. And then we may just want to experiment with adding that one line of CSS to add a crossfade view transition to everything in the site. But I think that might need a bit of experimentation. Beyond that, I don't think we currently have much that we can do with view transitions, but we will lean into this more in the future as we add more functionality to the site. 
-  - [ ] Footer
-  - [ ] NoteCard
-  - [ ] General cross-fade?
+- [x] Mermaid diagram colours
+- [x] Code block colour - use local theme
+- [x] Add view transitions
+  - [x] Footer
+  - [x] NoteCard
 
 ### Phase 7: Test on Preview Deploy
 
-- [ ] Push to GH branch and review any CodeRabbit comments
+- [ ] Force Push to GH branch and review any CodeRabbit comments
 - [ ] Manually test preview branch on:
   - [ ] Desktop
     - [ ] Chrome

@@ -28,7 +28,7 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
 
   <body>
     <MainNavigation />
-    <main>
+    <main style={`--vt-name: note-${Astro.params.slug}`}>
       <NoteCard
         title={title}
         pubDate={pubDate}

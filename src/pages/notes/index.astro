@@ -46,7 +46,7 @@ const recentNotesWithContent = await Promise.all(
         recentNotesWithContent.length > 0 && (
           <section class="recent-notes" aria-label="Recent Notes">
             {recentNotesWithContent.map(({ note, Content }) => (
-              <div class="note-container cq">
+              <div class="note-container cq" style={`--vt-name: note-${note.id}`}>
                 <NoteCard
                   title={note.data.title}
                   pubDate={note.data.pubDate}

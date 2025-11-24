@@ -59,6 +59,10 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
     background-size: var(--space-xs) var(--space-xs);
     color: var(--color-text);
     filter: var(--shadow-medium);
+
+    /* View transition support - uses CSS variable set via inline style */
+    view-transition-name: var(--vt-name, none);
+    view-transition-class: note-card;
   }
 
   .note-header {
