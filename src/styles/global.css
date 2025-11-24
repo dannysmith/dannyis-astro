@@ -682,6 +682,11 @@
     margin: 0;
     padding: 0;
     gap: var(--space-xs);
+
+    & li {
+      padding-left: 0;
+      margin-top: 0;
+    }
   }
 
   /* All caps utility - for labels and UI text */
