@@ -35,6 +35,7 @@ export default defineConfig([
         module: 'readonly',
         require: 'readonly',
         exports: 'readonly',
+        URL: 'readonly',
       },
     },
     rules: {

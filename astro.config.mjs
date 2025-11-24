@@ -8,7 +8,6 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeMermaid from 'rehype-mermaid';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import icon from 'astro-icon';
-import { mermaidConfig } from './src/config/mermaid.js';
 
 import { readFileSync } from 'fs';
 import expressiveCode, { ExpressiveCodeTheme } from 'astro-expressive-code';
