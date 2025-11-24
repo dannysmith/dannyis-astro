@@ -181,13 +181,21 @@ More complex components CSS-wise. Maybe an opportunity to resesign some of these
 
 - [x] `Callout.astro` - uses color variants
 - [x] `BlockQuoteCitation.astro`
-- [ ] `BookmarkCard.astro`
-- [ ] `BasicImage.astro`
-- [ ] `Notion.astro`
-- [ ] `ButtonLink.astro` - this is mega ugly we should totally redesign it to look lovely
-- [ ] `Accordion.astro` - this is mega ugly we should totally redesign it to look lovely
+- [x] `BookmarkCard.astro`
+- [x] `BasicImage.astro`
+- [x] `Notion.astro`
+- [x] `ButtonLink.astro` - this is mega ugly we should totally redesign it to look lovely
+- [x] `Accordion.astro` - this is mega ugly we should totally redesign it to look lovely
+
+Bugfixes and other Cleanup
+
+- [x] Update styleguide page CSS
+- [x] Reenable and update toolboxtest page CSS
+- [ ] Fix vertical flow issues
+
 
 ### Phase 6: Final Reviews
+
 
 - [ ] Fully Review all CSS as a CSS expert.
   - [ ] Look for any outdated or redundant CSS we've left behind in astro components/pages.
