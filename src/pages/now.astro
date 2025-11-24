@@ -17,7 +17,7 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
   <body>
     <MainNavigation />
     <main class="content">
-      <h1>What I'm doing now</h1>
+      <h1 class="ui-style">What I'm doing now</h1>
 
       <Callout emoji="💡">
         This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer"
@@ -59,16 +59,19 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
       <p>Updated: 2025-10-04</p>
     </main>
     <Footer />
-    <!-- DISABLED-STYLE <style>
+
+    <style>
       .content {
-        max-width: 60ch;
-        margin: 0 auto;
-        padding: var(--space-6);
+        max-width: 80ch;
+        margin-inline: auto;
+        padding: var(--space-2xl) var(--space-s);
       }
 
       h1 {
-        margin-top: var(--space-8);
+        font-weight: var(--font-weight-bold);
+        margin-top: 0;
+        margin-bottom: var(--space-m);
       }
-    </style> -->
+    </style>
   </body>
 </html>
