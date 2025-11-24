@@ -44,7 +44,7 @@ const sampleNotes = (
   </head>
   <body>
     <MainNavigation />
-    <main class="cq">
+    <main class="cq flow">
       <h1>Component & Styleguide</h1>
       <div class="content">
         <section class="intro-section">
@@ -374,59 +374,34 @@ const sampleNotes = (
       </div>
     </main>
     <Footer />
-    <!-- DISABLED-STYLE <style>
-      body {
-        display: grid;
-        grid-template-rows: auto min-content;
-      }
-
-      main {
-        padding: 1em;
-        width: 100%;
-        max-width: 80ch;
-        margin: 0 auto;
-      }
-
-      h1 {
-        text-transform: uppercase;
-        font-size: 4rem;
-        text-align: center;
-        margin-bottom: 3rem;
-      }
-
-      main > * {
-        margin-top: 3rem;
-      }
-
-      .intro-section {
-        background: var(--color-bg-secondary);
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .test-section {
-        margin: 2rem 0;
-        padding: 1rem;
-        border: 1px dashed var(--color-border);
-        border-radius: 8px;
-      }
-
-      .test-section h2 {
-        margin-top: 0;
-        font-size: 1.5rem;
-        color: var(--color-accent);
-        border-bottom: 2px solid var(--color-border);
-        padding-bottom: 0.5rem;
-      }
-
-      .test-section h3 {
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
-        color: var(--color-text-primary);
-      }
-    </style> -->
   </body>
 </html>
+<style>
+  body {
+    display: grid;
+    grid-template-rows: auto min-content;
+  }
+
+  main {
+    padding: var(--space-m);
+    width: 100%;
+    max-width: 80ch;
+    margin: 0 auto;
+  }
+
+  .intro-section {
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-m);
+    margin-bottom: var(--space-m);
+  }
+
+  .test-section {
+    margin-block: var(--space-m);
+    padding: var(--space-m);
+    border: var(--border-width-hairline) dashed var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+</style>
