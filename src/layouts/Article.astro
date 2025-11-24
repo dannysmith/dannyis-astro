@@ -156,14 +156,34 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       }
 
       /* Inline footnotes - toggled by JS below */
-      .inline-footnote-container {
+      /* Use :global() so styles apply to dynamically created elements */
+      :global(.inline-footnote-container) {
         font-size: var(--font-size-sm);
         padding: var(--space-s);
-        border-left: var(--border-width-base) solid var(--color-accent);
-        background: var(--color-background-secondary);
+        margin-top: var(--space-xs);
+        position: relative;
 
-        .data-footnote-backref {
+        /* Hide the return link - not needed for inline footnotes */
+        [data-footnote-backref] {
           display: none;
+        }
+      }
+
+      :global(.inline-footnote-close) {
+        position: absolute;
+        top: var(--space-2xs);
+        right: var(--space-2xs);
+        border: none;
+        background: transparent;
+        color: var(--color-text-secondary);
+        font-size: 1.2rem;
+        line-height: 1;
+        padding: 0.25rem;
+        opacity: 0.6;
+        transition: opacity var(--duration-fast);
+
+        &:hover {
+          opacity: 1;
         }
       }
     </style>
@@ -175,14 +195,28 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         if (!footnoteId) return;
         const footnote = document.getElementById(footnoteId)?.children;
 
-        const closestP = elm.closest('p');
+        // Find the closest block-level parent (p, div, li, etc.)
+        const closestBlock = elm.closest('p, .intro-paragraph, li, blockquote, div.longform-prose > *');
+        if (!closestBlock) return;
+
         const inlineFootNoteContainer = document.createElement('div');
-        inlineFootNoteContainer.classList.add('inline-footnote-container');
+        inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
         inlineFootNoteContainer.style.display = 'none';
+
+        // Close button
+        const closeBtn = document.createElement('button');
+        closeBtn.classList.add('inline-footnote-close');
+        closeBtn.innerHTML = '×';
+        closeBtn.setAttribute('aria-label', 'Close footnote');
+        closeBtn.addEventListener('click', () => {
+          inlineFootNoteContainer.style.display = 'none';
+        });
+
+        inlineFootNoteContainer.appendChild(closeBtn);
         if (footnote) {
           inlineFootNoteContainer.appendChild(footnote[0].cloneNode(true));
         }
-        closestP?.insertAdjacentElement('afterend', inlineFootNoteContainer);
+        closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
 
         elm.addEventListener('click', e => {
           e.preventDefault();
