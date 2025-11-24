@@ -577,6 +577,12 @@
     margin-top: 0;
   }
 
+  /* Nested lists need space from parent li content */
+  li > ul,
+  li > ol {
+    margin-top: var(--space-xs);
+  }
+
   li::marker {
     color: var(--color-accent);
   }
@@ -656,6 +662,15 @@
   /* Flow utility - consistent vertical spacing */
   .flow > * + * {
     margin-top: var(--space-m);
+  }
+
+  /* Headings get larger, proportionate top margins for clear section breaks */
+  .flow > * + :is(h1, h2) {
+    margin-top: var(--space-xl);
+  }
+
+  .flow > * + h3 {
+    margin-top: var(--space-l);
   }
 
   /* List reset - for navigation and UI lists */

@@ -46,8 +46,8 @@ const sampleNotes = (
     <MainNavigation />
     <main class="cq flow">
       <h1>Component & Styleguide</h1>
-      <div class="content">
-        <section class="intro-section">
+      <div class="content flow">
+        <section class="intro-section flow">
           <p>
             <strong>Welcome!</strong> This page is a comprehensive styleguide and visual testbed for
             all Astro components used in this project.
@@ -69,7 +69,7 @@ const sampleNotes = (
           </p>
         </section>
 
-        <div class="content intro-section">
+        <div class="content intro-section flow">
           <h2>Default text styles</h2>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
           <h2>Heading 2</h2>
@@ -91,7 +91,7 @@ const sampleNotes = (
           </p>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Pill Component</h2>
           <Pill text="Default" />
           <Pill text="Green" color="var(--color-green)" textColor="var(--color-white)" />
@@ -99,7 +99,7 @@ const sampleNotes = (
           <Pill text="Accent" color="var(--color-accent)" textColor="var(--color-white)" />
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Grid Component</h2>
           <Grid columns={3} rows={2} gap="1rem">
             <div style="background:var(--color-background-secondary); padding:1rem;">Item 1</div>
@@ -111,7 +111,7 @@ const sampleNotes = (
           </Grid>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Notion Component</h2>
           <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
           <Notion
@@ -120,12 +120,12 @@ const sampleNotes = (
           />
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>FormattedDate Component</h2>
           <FormattedDate date={new Date()} />
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>ButtonLink Component</h2>
           <p>Two-tier button hierarchy for clear information architecture.</p>
 
@@ -145,7 +145,7 @@ const sampleNotes = (
           </div>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>ContentCard Component Tests</h2>
 
           <h3>Standard Variant</h3>
@@ -239,7 +239,7 @@ const sampleNotes = (
         </div>
 
         <!-- Existing Callout, BookmarkCard, and Embed tests below -->
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Callout Component Tests</h2>
 
           <h3>Basic Callouts with Icons</h3>
@@ -307,7 +307,7 @@ const sampleNotes = (
           </div>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>BookmarkCard Tests</h2>
 
           <h3>Test 1: Wide Container (Horizontal Layout)</h3>
@@ -339,7 +339,7 @@ const sampleNotes = (
           </div>
         </div>
 
-        <div class="test-section">
+        <div class="test-section flow">
           <h2>Embed Component Tests</h2>
 
           <h3>Embed Component: YouTube</h3>

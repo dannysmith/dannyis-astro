@@ -7,7 +7,7 @@ export interface Props {
 const { class: className, ...props } = Astro.props;
 ---
 
-<div class={`longform-prose cq ${className || ''}`} {...props}>
+<div class={`longform-prose cq flow ${className || ''}`} {...props}>
   <slot />
 </div>
 
