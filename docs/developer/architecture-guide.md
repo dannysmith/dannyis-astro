@@ -111,6 +111,48 @@ const components = {
 - See [design.md](./design.md) for color system specification
 - See [component-patterns.md](./component-patterns.md) for theme-aware component patterns
 
+### View Transitions
+
+The site uses the View Transitions API for smooth page navigation. Key elements have named transitions:
+
+**CSS Setup (in global.css or component styles):**
+
+```css
+/* Footer stays stable during navigation */
+footer {
+  view-transition-name: site-footer;
+}
+
+/* Note cards morph between list and detail views */
+.note {
+  view-transition-name: var(--vt-name, none);
+  view-transition-class: note-card;
+}
+
+/* Animation configuration (in global.css) */
+::view-transition-group(site-footer) {
+  animation-duration: 250ms;
+  animation-timing-function: ease-in-out;
+}
+```
+
+**Dynamic transition names via CSS variable:**
+
+```astro
+<!-- Pass unique ID via inline style -->
+<div class="note-container" style={`--vt-name: note-${note.id}`}>
+  <NoteCard ... />
+</div>
+```
+
+**Scripts must handle transitions:**
+
+All interactive components re-initialize on `astro:after-swap`:
+
+```javascript
+document.addEventListener('astro:after-swap', initComponent);
+```
+
 ### 4. Centralized Organization with Clear Boundaries ⭐⭐
 
 **Directory Rules:**

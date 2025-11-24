@@ -294,7 +294,9 @@ Uses `drop-shadow` filter for better performance with rounded corners:
 
 ## @property Declarations
 
-Type-safe custom properties enabling smooth animations:
+Type-safe custom properties enabling smooth animations and type checking.
+
+### Global Properties (in global.css)
 
 ```css
 @property --color-accent {
@@ -311,6 +313,33 @@ Type-safe custom properties enabling smooth animations:
 ```
 
 Hue properties (`--hue-coral`, etc.) are declared as `<number>` for smooth interpolation.
+
+### Component-Scoped @property
+
+Components can define their own typed properties for smooth transitions on internal state:
+
+```css
+/* ContentCard.astro - enables smooth color transitions on hover */
+@property --_border-color {
+  syntax: '<color>';
+  inherits: false;           /* Scoped to this component */
+  initial-value: oklch(70% 0.18 25);
+}
+
+.content-card {
+  --_border-color: var(--color-accent);
+
+  &::before {
+    background: var(--_border-color);
+    transition: background var(--duration-fast) var(--ease-in-out);
+  }
+}
+```
+
+**When to use component-scoped `@property`:**
+- Animating between colors (CSS can't interpolate untyped custom properties)
+- Ensuring type safety for component-internal values
+- Use `inherits: false` to prevent leaking to children
 
 ---
 

@@ -137,6 +137,73 @@ See `design.md` for complete theming architecture. Key principle:
 }
 ```
 
+### Component Variants Pattern
+
+Use `data-*` attributes for variants, with private `--_` prefixed variables for internal state:
+
+```astro
+---
+interface Props {
+  variant?: 'primary' | 'secondary';
+}
+const { variant = 'primary' } = Astro.props;
+---
+
+<button class="button" data-variant={variant}>
+  <slot />
+</button>
+
+<style>
+  .button {
+    --_bg: var(--color-accent);
+    --_text: var(--color-text);
+
+    background: var(--_bg);
+    color: var(--_text);
+  }
+
+  .button[data-variant='secondary'] {
+    --_bg: transparent;
+    --_text: var(--color-accent);
+  }
+</style>
+```
+
+### When to Use `.content-trim`
+
+Apply to any container that:
+1. Has padding
+2. Receives slotted content (`<slot />`) with margins
+
+```astro
+<!-- ✅ Padded container with slot -->
+<div class="panel-content content-trim">
+  <slot />
+</div>
+
+<!-- ❌ No slot, fixed content - don't need it -->
+<div class="card-header">
+  <h2>{title}</h2>
+</div>
+```
+
+### Scoped vs Global Styles
+
+**Use scoped `<style>`** (default) for component-specific styles.
+
+**Use `<style is:global>`** when:
+- Contributing to a CSS layer (`@layer longform`)
+- Styling deeply nested/slotted MDX content
+
+```astro
+<!-- Adding to a layer requires is:global -->
+<style is:global>
+  @layer longform {
+    .longform-prose { ... }
+  }
+</style>
+```
+
 ### Modern CSS Patterns
 
 ```css

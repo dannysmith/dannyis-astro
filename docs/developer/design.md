@@ -171,10 +171,35 @@ Each layer has a specific purpose:
 
 <style>
   .my-component {
-    /* Component-specific styles here */
+    /* Component-specific styles here - automatically scoped */
   }
 </style>
 ```
+
+#### Scoped vs Global Styles in Components
+
+**Default (`<style>`)** - Astro scopes styles to the component. Use for most components.
+
+**Global (`<style is:global>`)** - Styles apply globally. Use sparingly for:
+
+1. **Layer contributions** - When adding to a CSS layer like `@layer longform`:
+   ```astro
+   <!-- LongFormProseTypography.astro -->
+   <style is:global>
+     @layer longform {
+       .longform-prose { ... }
+     }
+   </style>
+   ```
+
+2. **Deeply nested content** - When styling slotted MDX content where scoping breaks:
+   ```astro
+   <style is:global>
+     .prose-wrapper :is(h1, h2, h3) { ... }
+   </style>
+   ```
+
+**Rule of thumb:** If your styles need to participate in the layer cascade or style content you don't directly render, use `is:global`. Otherwise, use scoped styles.
 
 **Add to global.css only when:**
 
@@ -281,7 +306,29 @@ Each layer has a specific purpose:
 
 ### `.content-trim` - Margin Cleanup
 
-**Use inside:** Containers with padding where slotted content has margins.
+**Use on:** Containers with padding that receive slotted/arbitrary content (like `<slot />`).
+
+**When to apply:** Add to any element that:
+1. Has padding (creating space from edges)
+2. Receives content with margins (headings, paragraphs, lists)
+3. Would otherwise have awkward double-spacing at top/bottom
+
+```html
+<!-- ✅ Callout with slotted content -->
+<div class="callout-content content-trim">
+  <slot />
+</div>
+
+<!-- ✅ Accordion body -->
+<div class="accordion-content content-trim">
+  <slot />
+</div>
+
+<!-- ❌ Don't need it - no slotted content -->
+<div class="card-meta">
+  <span>Fixed content here</span>
+</div>
+```
 
 **What it does:**
 - Removes top margin from first child
@@ -333,7 +380,7 @@ border-radius: var(--radius-sm);
 
 ### Deriving Variants
 
-Don't create new tokens for every shade. Derive variants using relative color syntax:
+Don't create new tokens for every shade. Derive variants using relative color syntax or `color-mix()`:
 
 ```css
 /* Darken for hover */
@@ -342,8 +389,12 @@ background: oklch(from var(--color-accent) calc(l - 0.1) c h);
 /* Lighten with reduced saturation for backgrounds */
 background: oklch(from var(--color-accent) 96% calc(c * 0.3) h);
 
-/* Add transparency */
+/* Add transparency - two approaches */
 background: oklch(from var(--color-accent) l c h / 0.1);
+border-color: color-mix(in oklch, var(--color-text) 20%, transparent);
+
+/* Mute currentColor */
+color: color-mix(in oklch, currentColor 40%, transparent);
 
 /* Theme-specific values */
 background: light-dark(var(--color-beige), var(--color-charcoal));
@@ -352,6 +403,64 @@ background: light-dark(var(--color-beige), var(--color-charcoal));
 ---
 
 ## CSS Patterns & Best Practices
+
+### Component CSS Conventions
+
+#### Private Variables with `--_` Prefix
+
+Use `--_` prefix for component-internal custom properties. This signals "private to this component":
+
+```css
+.callout {
+  --_bg: var(--color-background-secondary);
+  --_border: var(--color-text-secondary);
+
+  background: var(--_bg);
+  border-color: var(--_border);
+}
+
+/* Variants override the private vars */
+[data-callout-color='red'] {
+  --_bg: light-dark(oklch(94% 0.024 var(--hue-coral)), oklch(35% 0.036 var(--hue-coral)));
+  --_border: var(--color-coral);
+}
+```
+
+#### Variants with `data-*` Attributes
+
+Use `data-*` attributes for component variants, not class modifiers:
+
+```css
+/* ✅ Preferred: data attributes */
+.button[data-variant='primary'] { ... }
+.button[data-variant='secondary'] { ... }
+.callout[data-callout-color='blue'] { ... }
+.accordion[data-plain] { ... }
+
+/* ❌ Avoid: BEM-style modifiers */
+.button--primary { ... }
+.callout--blue { ... }
+```
+
+**Benefits:** Cleaner HTML, easier to set from props, works well with `class:list`.
+
+#### Combining Utility Classes
+
+Utilities are designed to combine. Common patterns:
+
+```html
+<!-- Dark UI areas -->
+<footer class="ui-style dark-surface">
+
+<!-- Content that needs flow spacing and container queries -->
+<div class="longform-prose cq flow">
+
+<!-- Slotted content in padded containers -->
+<div class="accordion-content content-trim">
+
+<!-- Cards with container query context -->
+<article class="note-card ui-style cq">
+```
 
 ### Modern Patterns to Use
 
@@ -414,11 +523,16 @@ gap: 1.5rem;
 padding: var(--space-m);
 gap: var(--space-s);
 
-/* ❌ Custom clamp() for font sizes */
+/* ❌ Custom clamp() for body/component font sizes */
 font-size: clamp(1rem, 2vw, 1.5rem);
 
 /* ✅ Use typography scale */
 font-size: var(--font-size-lg);
+
+/* ✅ EXCEPTION: Hero/display text can use custom clamp() for dramatic scaling */
+.hero-title {
+  font-size: clamp(3rem, 15vw, 22rem); /* Intentionally outside token system */
+}
 
 /* ❌ Fighting inherited styles */
 .my-nav a {
