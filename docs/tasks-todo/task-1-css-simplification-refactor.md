@@ -164,15 +164,21 @@ Simplify to make use of new defaults inherited from base @typography. Ensure no 
 
 ### Phase 5: MDX Components
 
-Enable and review each, simplify where possible:
+These components are intended mainly for use in MDX (articles, notes, pages, future content).
+
+Simple(ish) components css-wise:
 
 - [x] `highlight.astro`
 - [x] `SmallCaps.astro`
-- [ ] `IntroParagraph.astro`
-- [ ] `Grid.astro`
-- [ ] `Center.astro`
-- [ ] `Spacer.astro`
-- [ ] `SmartLink.astro`
+- [x] `IntroParagraph.astro`
+- [x] `Grid.astro`
+- [x] `Center.astro`
+- [x] `Spacer.astro`
+- [x] `SmartLink.astro`
+- [x] `Loom.astro`
+
+More complex components CSS-wise. Maybe an opportunity to resesign some of these visually to improve how they look:
+
 - [ ] `Callout.astro` - uses color variants
 - [ ] `BlockQuoteCitation.astro`
 - [ ] `BookmarkCard.astro`
@@ -180,7 +186,6 @@ Enable and review each, simplify where possible:
 - [ ] `Notion.astro`
 - [ ] `ButtonLink.astro`
 - [ ] `Accordion.astro`
-- [ ] `Loom.astro`
 
 ### Phase 6: Final Reviews
 
@@ -231,6 +236,7 @@ Enable and review each, simplify where possible:
 - If the user gives you a screenshot of the site REALLY STUDY AND ANALYSE IT. Don't assume you already know what it shows.
 - Remember the developer documentation in `/docs` was written before this refactor, so is likeley out-of-date in some areas and patterns (we'll address this in Phase 8).
 - Before adding CSS, check what's already inherited from `@typography` and `@base` layers. Many components had redundant declarations that global.css now handles.
+- Don't run a browser (eg chrome-dev-tools or playwright MCP) unless the user specifically asks. The user can take screenshots for you if needed.
 
 ### Replace These Patterns
 
