@@ -95,8 +95,7 @@ const { class: className, ...props } = Astro.props;
       text-decoration-color: var(--color-visited);
     }
 
-    .longform-prose a:hover,
-    .longform-prose a:active {
+    .longform-prose a:is(:hover, :active) {
       text-decoration-color: var(--color-accent);
       color: var(--color-accent);
     }

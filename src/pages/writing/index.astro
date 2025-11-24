@@ -101,8 +101,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
           gap: var(--space-m) var(--space-s);
         }
 
-        li,
-        a {
+        :is(li, a) {
           display: contents;
         }
 

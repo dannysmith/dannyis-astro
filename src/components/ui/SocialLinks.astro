@@ -57,9 +57,7 @@ import { Icon } from 'astro-icon/components';
 
     }
 
-    a:hover,
-    a:active,
-    a:focus {
+    a:is(:hover, :active, :focus) {
       background-color: color-mix(in oklch, currentColor 15%, transparent);
     }
   }

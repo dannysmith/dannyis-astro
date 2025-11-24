@@ -174,8 +174,7 @@ const recentNotesWithContent = await Promise.all(
           align-items: baseline;
           gap: var(--space-m) var(--space-s);
 
-          & li,
-          & a {
+          & :is(li, a) {
             display: contents;
           }
         }

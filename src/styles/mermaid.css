@@ -6,22 +6,18 @@
   background-color: var(--color-background-secondary);
   border-radius: var(--radius-md);
   overflow-x: auto;
-}
-
-/* Ensure SVGs are responsive */
-.mermaid svg {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Dark mode support - invert colors to work on dark backgrounds */
-.mermaid {
   filter: light-dark(none, invert(0.85) hue-rotate(180deg));
-}
 
-/* Ensure proper spacing */
-.mermaid + * {
-  margin-top: 2rem;
+  /* Ensure SVGs are responsive */
+  & svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Ensure proper spacing */
+  & + * {
+    margin-top: 2rem;
+  }
 }
 
 /* Style the pre elements that contain mermaid diagrams */
@@ -29,12 +25,12 @@ pre.mermaid {
   background: transparent;
   border: none;
   padding: 0;
-}
 
-/* Override any syntax highlighting that might be applied */
-pre.mermaid code {
-  background: transparent;
-  padding: 0;
-  border: none;
-  font-family: inherit;
+  /* Override any syntax highlighting that might be applied */
+  & code {
+    background: transparent;
+    padding: 0;
+    border: none;
+    font-family: inherit;
+  }
 }
