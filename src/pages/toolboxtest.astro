@@ -20,36 +20,35 @@ const toolboxPages = await getCollection('toolboxPages');
       <section class="toolbox-grid">
         {
           toolboxPages.map(toolboxPage => (
-            <ContentCard 
-              content={toolboxPage} 
-              variant="compact" 
+            <ContentCard
+              content={toolboxPage}
+              variant="compact"
               showSummary={false}
             />
           ))
         }
       </section>
     </main>
-    
-    <!-- DISABLED-STYLE <style>
-      main {
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      
-      .title {
-        text-align: center;
-        margin-bottom: 3rem;
-        font-size: 3rem;
-        text-transform: uppercase;
-      }
-      
-      .toolbox-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1rem;
-      }
-    </style> -->
     <Footer />
   </body>
 </html>
+
+<style>
+  main {
+    padding: var(--space-m);
+    margin: 0 auto;
+  }
+
+  .title {
+    text-align: center;
+    margin-bottom: var(--space-m);
+    font-size: 3rem;
+    text-transform: uppercase;
+  }
+
+  .toolbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-m);
+  }
+</style>
