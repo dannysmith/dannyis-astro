@@ -1,9 +1,6 @@
 /* Define our layers - order determines cascade priority */
 @layer reset, base, typography, layout, utilities, longform, theme;
 
-/* Imports */
-@import './mermaid.css';
-
 /* ============================================
    FONT FACES
    ============================================ */
@@ -870,4 +867,22 @@
     white-space: nowrap !important;
     border: 0 !important;
   }
+}
+
+/* ============================================
+   MERMAID DIAGRAMS
+   ============================================ */
+svg[id^='mermaid-'] {
+  /* Center the diagram */
+  display: block;
+  margin: var(--space-l) auto;
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+
+  /* Ensure responsive */
+  max-width: 100%;
+  height: auto;
+
+  /* Light background in both modes for consistent diagram appearance */
+  background-color: light-dark(var(--color-background-secondary), #ffffff);
 }
