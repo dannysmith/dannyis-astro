@@ -193,11 +193,11 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         const elm = el as HTMLAnchorElement;
         const footnoteId = elm.getAttribute('href')?.slice(1);
         if (!footnoteId) return;
-        const footnote = document.getElementById(footnoteId)?.children;
+        const footnoteElement = document.getElementById(footnoteId);
 
         // Find the closest block-level parent (p, div, li, etc.)
         const closestBlock = elm.closest('p, .intro-paragraph, li, blockquote, div.longform-prose > *');
-        if (!closestBlock) return;
+        if (!closestBlock || !footnoteElement?.firstElementChild) return;
 
         const inlineFootNoteContainer = document.createElement('div');
         inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
@@ -213,9 +213,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         });
 
         inlineFootNoteContainer.appendChild(closeBtn);
-        if (footnote) {
-          inlineFootNoteContainer.appendChild(footnote[0].cloneNode(true));
-        }
+        inlineFootNoteContainer.appendChild(footnoteElement.firstElementChild.cloneNode(true));
         closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
 
         elm.addEventListener('click', e => {

@@ -13,7 +13,7 @@ const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-// Split notes into recent (first 2) and archive (rest)
+// Split notes into recent and archive
 const numberOfRecentNotes = 5;
 const recentNotes = notes.slice(0, numberOfRecentNotes);
 const olderNotes = notes.slice(numberOfRecentNotes);
