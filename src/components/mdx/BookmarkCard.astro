@@ -25,16 +25,12 @@ const isFallback = !metadata;
 ---
 
 <div class={`bookmark-card ${className}`}>
-	<a href={url} class="link-preview" target="_blank" rel="noopener noreferrer">
-		<div class="link-preview__content">
-			<span class="link-preview__domain">{data.domain}</span>
-			<span class="link-preview__title">{data.title}</span>
-			{data.description && <p class="link-preview__description">{data.description}</p>}
-			{
-				isFallback && (
-					<p class="link-preview__fallback-notice">Preview unavailable - click to visit</p>
-				)
-			}
+	<a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
+		<div class="bookmark-content">
+			<span class="bookmark-domain">{data.domain}</span>
+			<span class="bookmark-title">{data.title}</span>
+			{data.description && <p class="bookmark-description">{data.description}</p>}
+			{isFallback && <p class="bookmark-fallback">Preview unavailable - click to visit</p>}
 		</div>
 		{data.image && <img src={data.image} alt="" loading="lazy" />}
 	</a>
@@ -45,7 +41,7 @@ const isFallback = !metadata;
 		container-type: inline-size;
 	}
 
-	.link-preview {
+	.bookmark-link {
 		display: block;
 		background: var(--surface-raised);
 		border: var(--border-width-hairline) solid var(--color-border);
@@ -62,30 +58,35 @@ const isFallback = !metadata;
 			border-color: var(--color-accent);
 			filter: var(--shadow-medium);
 		}
-
-		&:focus-visible {
-			outline: var(--border-width-base) solid var(--color-accent);
-			outline-offset: 3px;
-		}
 	}
 
-	.link-preview__content {
+	.bookmark-content {
 		padding: var(--space-s);
 	}
 
-	.link-preview__domain {
-		display: block;
-		font-family: var(--font-code);
-		font-size: var(--font-size-xs);
-		color: var(--color-text-secondary);
-		margin-block-end: var(--space-2xs);
-	}
-
-	.link-preview__title {
+	/* Shared: line clamping */
+	.bookmark-title,
+	.bookmark-description {
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+	}
+
+	.bookmark-domain,
+	.bookmark-description,
+	.bookmark-fallback {
+		color: var(--color-text-primary);
+	}
+
+	.bookmark-domain {
+		display: block;
+		font-family: var(--font-code);
+		font-size: var(--font-size-xs);
+		margin-block-end: var(--space-2xs);
+	}
+
+	.bookmark-title {
 		font-size: var(--font-size-base);
 		font-weight: var(--font-weight-semibold);
 		line-height: var(--leading-snug);
@@ -93,54 +94,45 @@ const isFallback = !metadata;
 		margin-block-end: var(--space-2xs);
 	}
 
-	.link-preview__description {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
+	.bookmark-description {
 		font-size: var(--font-size-sm);
 		line-height: var(--leading-normal);
-		color: var(--color-text-secondary);
 		margin: 0;
 	}
 
-	.link-preview__fallback-notice {
+	.bookmark-fallback {
 		font-size: var(--font-size-xs);
 		font-style: italic;
-		color: var(--color-text-secondary);
 		margin-block: var(--space-2xs) 0;
 	}
 
-	.link-preview img {
+	.bookmark-link img {
 		display: block;
 		width: 100%;
-		height: auto;
 		object-fit: cover;
 	}
 
 	/* Horizontal layout when container is wide enough */
 	@container (min-width: 400px) {
-		.link-preview {
+		.bookmark-link {
 			display: flex;
 			align-items: stretch;
-			min-height: 120px;
+			min-height: var(--space-2xl);
 		}
 
-		.link-preview__content {
+		.bookmark-content {
 			flex: 1;
-			padding: var(--space-m);
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 		}
 
-		.link-preview__description {
+		.bookmark-description {
 			flex-grow: 1;
 		}
 
-		.link-preview img {
-			width: 160px;
-			min-height: 120px;
+		.bookmark-link img {
+			width: calc(var(--space-2xl) * 2);
 			flex-shrink: 0;
 			order: 2;
 		}

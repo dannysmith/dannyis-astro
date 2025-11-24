@@ -179,13 +179,13 @@ Simple(ish) components css-wise:
 
 More complex components CSS-wise. Maybe an opportunity to resesign some of these visually to improve how they look:
 
-- [ ] `Callout.astro` - uses color variants
-- [ ] `BlockQuoteCitation.astro`
+- [x] `Callout.astro` - uses color variants
+- [x] `BlockQuoteCitation.astro`
 - [ ] `BookmarkCard.astro`
 - [ ] `BasicImage.astro`
 - [ ] `Notion.astro`
-- [ ] `ButtonLink.astro`
-- [ ] `Accordion.astro`
+- [ ] `ButtonLink.astro` - this is mega ugly we should totally redesign it to look lovely
+- [ ] `Accordion.astro` - this is mega ugly we should totally redesign it to look lovely
 
 ### Phase 6: Final Reviews
 
