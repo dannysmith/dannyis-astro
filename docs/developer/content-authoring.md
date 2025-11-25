@@ -256,9 +256,3 @@ pnpm run newnote "https://example.com/article"
 ```
 
 Articles are created manually (no CLI command).
-
-## External Links
-
-External links in markdown automatically get `target="_blank" rel="noopener noreferrer"` via rehype plugin.
-
-For HTML links in components, see [architecture-guide.md § External Link Security](./architecture-guide.md#external-link-security) for security requirements.
