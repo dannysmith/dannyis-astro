@@ -89,6 +89,12 @@ jobs:
         with:
           name: dist
           path: dist/
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: vercel.json
+          sparse-checkout-cone-mode: false
+      - name: Prepare deployment
+        run: cp vercel.json dist/
       - name: Deploy to Vercel
         run: npx vercel deploy dist/ --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
@@ -111,6 +117,12 @@ jobs:
         with:
           name: dist
           path: dist/
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: vercel.json
+          sparse-checkout-cone-mode: false
+      - name: Prepare deployment
+        run: cp vercel.json dist/
       - name: Deploy to Vercel
         id: deploy
         run: |
