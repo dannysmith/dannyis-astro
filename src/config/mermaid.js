@@ -3,12 +3,6 @@
  * Diagrams are generated at build-time in light mode using brand colors.
  * In dark mode, they're displayed in a light-colored container (handled by CSS).
  *
- * TODO: This config is currently NOT wired up to rehype-mermaid.
- * When implementing GitHub Actions deployment (see docs/tasks-todo/task-x-github-actions-deployment.md),
- * import this config in astro.config.mjs and pass it to the plugin:
- *   import { mermaidConfig } from './src/config/mermaid.js';
- *   rehypePlugins: [..., [rehypeMermaid, { mermaidConfig }], ...]
- *
  * @see https://mermaid.js.org/config/theming.html
  */
 

@@ -6,6 +6,7 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeMermaid from 'rehype-mermaid';
+import { mermaidConfig } from './src/config/mermaid.js';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import icon from 'astro-icon';
 
@@ -62,7 +63,7 @@ export default defineConfig({
       [rehypeHeadingIds, { headingIdCompat: true }],
       rehypeAutolinkHeadings,
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
-      rehypeMermaid,
+      [rehypeMermaid, { mermaidConfig }],
     ],
     remarkPlugins: [remarkReadingTime],
   },
