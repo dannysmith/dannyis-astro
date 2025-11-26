@@ -32,7 +32,7 @@ Steps marked with **[MANUAL]** require you to do something in a browser or termi
 
 ---
 
-### Step 1: Get Vercel credentials [MANUAL]
+### Step 1: Get Vercel credentials [MANUAL] ✅
 
 You need three values. Do this in your terminal:
 
@@ -66,7 +66,7 @@ You now have three values:
 
 ---
 
-### Step 2: Add secrets to GitHub [MANUAL]
+### Step 2: Add secrets to GitHub [MANUAL] ✅
 
 1. Go to https://github.com/dannysmith/dannyis-astro/settings/secrets/actions
 2. Click "New repository secret" for each:
@@ -76,13 +76,13 @@ You now have three values:
 
 ---
 
-### Step 3: Create the workflow file
+### Step 3: Create the workflow file ✅
 
 Create `.github/workflows/deploy.yml` with the content from the "Workflow File" section below.
 
 ---
 
-### Step 4: Fix mermaid config
+### Step 4: Fix mermaid config ✅
 
 In `astro.config.mjs`, change:
 
@@ -98,7 +98,7 @@ This uses the default `inline-svg` strategy (build-time SVG generation).
 
 ---
 
-### Step 5: Update .gitignore
+### Step 5: Update .gitignore ✅
 
 Add if not already present:
 
@@ -109,7 +109,7 @@ Add if not already present:
 
 ---
 
-### Step 6: Test locally
+### Step 6: Test locally ✅
 
 ```bash
 pnpm exec playwright install --with-deps chromium
@@ -120,7 +120,7 @@ Verify mermaid diagrams in `dist/` are SVGs, not code blocks.
 
 ---
 
-### Step 7: Create PR and test [MANUAL]
+### Step 7: Create PR and test [MANUAL] ✅
 
 1. Create branch with these changes
 2. Push to GitHub

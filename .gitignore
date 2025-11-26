@@ -36,3 +36,4 @@ test-results/
 .playwright-mcp/
 
 .npm-cache/
+.vercel
