@@ -102,8 +102,17 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
           gap: var(--space-m) var(--space-s);
         }
 
-        :is(li, a) {
-          display: contents;
+        li {
+          display: grid;
+          grid-template-columns: subgrid;
+          grid-column: 1 / -1;
+        }
+
+        a {
+          display: grid;
+          grid-template-columns: subgrid;
+          grid-column: 1 / -1;
+          align-items: baseline;
         }
 
         .date {

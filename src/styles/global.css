@@ -288,9 +288,11 @@
     margin-block: 0;
   }
 
-  /* Better focus outline spacing */
+  /* Consistent focus ring styling */
   :where(:focus-visible) {
-    outline-offset: 3px;
+    outline: 2px solid var(--color-blue);
+    outline-offset: 5px;
+    border-radius: 1px;
   }
 
   /* Enable keyword animations (animate to/from 'auto') */
