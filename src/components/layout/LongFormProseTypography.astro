@@ -53,11 +53,12 @@ const { class: className, ...props } = Astro.props;
 
     /* ----------- Paragraphs ----------- */
 
-    /* Use hyphens only on small viewports. */
+    /* On small viewports: enable hyphens, disable text-wrap: pretty */
     @media (max-width: 42em) {
       .longform-prose > p {
         -webkit-hyphens: auto;
         hyphens: auto;
+        text-wrap: auto;
       }
     }
 
