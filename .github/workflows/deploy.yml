@@ -66,11 +66,17 @@ jobs:
       - name: Build site
         run: pnpm run build
 
+      - name: Prepare Vercel output
+        run: |
+          mkdir -p .vercel/output/static
+          cp -r dist/* .vercel/output/static/
+          echo '{"version":3}' > .vercel/output/config.json
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
+          name: vercel-output
+          path: .vercel/output/
           retention-days: 30
 
   deploy-production:
@@ -82,21 +88,12 @@ jobs:
       name: production
       url: https://danny.is
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist/
-      - uses: actions/checkout@v4
-        with:
-          sparse-checkout: vercel.json
-          sparse-checkout-cone-mode: false
-      - name: Prepare deployment
-        run: cp vercel.json dist/
+          name: vercel-output
+          path: .vercel/output/
       - name: Deploy to Vercel
-        run: npx vercel deploy dist/ --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -110,23 +107,14 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist/
-      - uses: actions/checkout@v4
-        with:
-          sparse-checkout: vercel.json
-          sparse-checkout-cone-mode: false
-      - name: Prepare deployment
-        run: cp vercel.json dist/
+          name: vercel-output
+          path: .vercel/output/
       - name: Deploy to Vercel
         id: deploy
         run: |
-          URL=$(npx vercel deploy dist/ --yes --token=${{ secrets.VERCEL_TOKEN }})
+          URL=$(npx vercel deploy --prebuilt --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "url=$URL" >> $GITHUB_OUTPUT
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
