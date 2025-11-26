@@ -861,9 +861,15 @@
      use a different mechanism in the longform layer.
      ---------------------------------------- */
   .external-arrow {
-    font-size: 0.75em;
-    opacity: 0.6;
-    margin-left: 0.15em;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif; /* System fonts have this glyph */
+    font-size: 0.7em;
+    vertical-align: 0.1em;
+    opacity: 0.5;
+    font-weight: 600;
+    margin-left: 0.18em;
   }
 
   /* Hidden utility for screen readers and microformats */

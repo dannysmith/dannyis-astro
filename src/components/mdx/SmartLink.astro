@@ -23,10 +23,13 @@ const isExternal = href?.startsWith('http') && !href.includes('danny.is');
   .external::after {
     content: '↗';
     display: inline-block;
-    font-family: inherit; /* Safari fix: reset inheritance first */
-    font-family: var(--font-ui);
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif; /* System fonts have this glyph */
     font-size: 0.6em;
-    vertical-align: 0.35em;
+    font-weight: 600;
+    vertical-align: 0.5em;
     margin-inline-start: -0.2em;
     opacity: 0.5;
   }
