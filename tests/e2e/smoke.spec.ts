@@ -15,7 +15,7 @@ test.describe('Critical Path Tests', () => {
     expect(await articles.count()).toBeGreaterThan(0);
 
     // Check page has the expected structure
-    await expect(page.locator('h1')).toHaveText('Writing');
+    await expect(page.locator('main h1')).toHaveText('Writing');
   });
 
   test('RSS feed returns valid XML', async ({ page }) => {
@@ -50,7 +50,7 @@ test.describe('Content Filtering Tests', () => {
   test('styleguide note renders individually', async ({ page }) => {
     const response = await page.goto('/notes/note-styleguide/');
     expect(response?.status()).toBe(200);
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('main h1')).toBeVisible();
   });
 
   test('writing page excludes styleguide even in development', async ({ page }) => {
