@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI
 
 permissions:
   contents: read
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   checks:
-    name: Checks
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -80,7 +80,7 @@ jobs:
           retention-days: 30
 
   deploy-production:
-    name: Deploy Production
+    name: Deploy (danny.is)
     needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -99,7 +99,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   deploy-preview:
-    name: Deploy Preview
+    name: Deploy (Preview)
     needs: build
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'preview')
     runs-on: ubuntu-latest
