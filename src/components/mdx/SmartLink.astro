@@ -14,10 +14,8 @@ const isExternal = href?.startsWith('http') && !href.includes('danny.is');
   target={isExternal ? '_blank' : undefined}
   rel={isExternal ? 'noopener noreferrer' : undefined}
   class:list={[{ external: isExternal }]}
-  {...props}
+  {...props}><slot /></a
 >
-  <slot />
-</a>
 
 <style>
   .external::after {
@@ -30,7 +28,7 @@ const isExternal = href?.startsWith('http') && !href.includes('danny.is');
     font-size: 0.6em;
     font-weight: 600;
     vertical-align: 0.5em;
-    margin-inline-start: -0.2em;
+    margin-inline-start: 0.1em;
     opacity: 0.5;
   }
 </style>
