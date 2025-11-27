@@ -7,12 +7,7 @@ pubDate: 2025-10-25
 
 import { Callout, IntroParagraph } from '@components/mdx';
 
-<IntroParagraph>
-  I started on a redesign of this site [back in May 2020](/writing/website-redesign-i) after
-  deciding I wanted a simpler, content-first statically generated site.My main goals were to keep
-  the core as simple as possible – writing in markdown and minimal boilerplate code – while allowing
-  me to noodle around with new-fangled CSS & web-native stuff when I want to.
-</IntroParagraph>
+<IntroParagraph>I started on a redesign of this site [back in May 2020](/writing/website-redesign-i) after deciding I wanted a simpler, content-first statically generated site. My main goals were to keep the core as simple as possible – writing in markdown and minimal boilerplate code – while allowing me to noodle around with new-fangled CSS & web-native stuff when I want to.</IntroParagraph>
 
 After about three years running on Jekyll I started to get frustrated at some of the stuff I couldn't do easily - primarily the difficulty of working with custom components in markdown. I was using some kinda-janky markdown pre-parsers to let me insert things like callouts...
 
@@ -25,11 +20,9 @@ Which wasn't exactly easy to work with and more importantly, if I ever decided t
 
 What I really wanted was the ability to use HTML- or React-like components in my markdown. And as with web components or react components, I wanted to define these as self-contained components with scoped CSS and the like.
 
-So in Jan 2023 I started to play with [AstroJS](https://astro.build/), which had hit 1.0 six months earlier and was the latest cool kid on the block when it came to static site generators.
+So in early 2023 I started playing with [AstroJS](https://astro.build/). The most appealing thing about it was the native support for [MDX](https://mdxjs.com/), its React-like component architecture where `.astro` files contain scoped HTML, CSS and JS, and the relatively small amount of boilerplate needed to get a blog up-and-running.
 
-By far the most appealing thing about astro in early 2023 was its somewhat native support for [MDX](https://mdxjs.com/), its React-like component architecture where `.astro` files contain scoped HTML, CSS and JS and the relatively small amount of boilerplate code necessary to get a basic statically-generated blog up-and-running.
-
-So I quietly ported this site over to Astro in Feb/March 2023 with the intention of cleaning everything up a bit later, but with the release of Astro 3.0 in August '23 so much had changed that it made more sense to start again from scratch. So I quietly switched to the [current codebase](https://github.com/dannysmith/dannyis-astro/) around the time Astro 4.0 was released in December '23.
+I quietly ported this site over to Astro, but with the release of Astro 3.0 in August '23 so much had changed that it made more sense to start again from scratch. So I switched to the [current codebase](https://github.com/dannysmith/dannyis-astro/) around the time Astro 4.0 dropped in December '23.
 
 ## Why Astro?
 
@@ -40,34 +33,6 @@ Astro is very well designed, and because it's built with a modern typescript-bas
 When used as an SSG, Astro is also very simple. File-based routing, markdown parsing and YAML frontmatter Just Work™ and stuff like image optimisation come out-of-the-box. And while composing pages from astro components _feels_ very Reactish, it's "zero Javascript by default" – the generated site will only include client-side JS when necessary, which for this site is hardly ever.
 
 Astro has an extremely strong ecosystem of plugins, tools and themes around it.
-
-### Content Collections
-
-[Content Collections](https://docs.astro.build/en/guides/content-collections/) let us define sets of content and their properties via zod schemas, and then load the relevant content from a collection of Markdown or MDX files. I currently have two content collections: **Articles** and **Notes**.
-
-1. **Articles** - Longish-form articles (see [/writing](https://danny.is/writing))
-   - `title` - The article title
-   - `slug` - URL slug (optional, generated from filename if not provided)
-   - `draft` - Whether the article is published or still a draft
-   - `description` - Meta description for SEO and article cards
-   - `pubDate` - Publication date
-   - `updatedDate` - Last updated date (optional)
-   - `cover` - Cover image (optional)
-   - `coverAlt` - Alt text for cover image
-   - `tags` - Array of topic tags
-   - `platform` - For articles published elsewhere (Medium, etc.)
-   - `redirectURL` - URL to redirect to if published on another platform
-   - `styleguide` - Flag for articles used in the site styleguide
-
-2. **Notes** - Short thoughts or comments on other people's stuff (see [/notes](https://danny.is/notes))
-   - `title` - The note title
-   - `sourceURL` - Link to the thing being commented on (optional)
-   - `slug` - URL slug (optional, generated from filename if not provided)
-   - `draft` - Whether the note is published or still a draft
-   - `description` - Meta description for SEO
-   - `pubDate` - Publication date
-   - `tags` - Array of topic tags
-   - `styleguide` - Flag for notes used in the site styleguide
 
 ### Astro Components & MDX
 
@@ -93,16 +58,16 @@ const theNumber = Math.random();
 </script>
 ```
 
-1. The TypeScript in the _component script_ at the top runs only at build time. The ability to co-locate this "server-side" code with the component is super useful for keeping things organised.
+1. The TypeScript in the _component script_ at the top runs only at build time. The ability to co-locate this "server-side" code with the component is useful for keeping things organised.
 2. The _component template_ (below the last `---`) is the HTML which will be rendered when the component is used, except (much like JSX) you can use variables defined in the _component script_ , or other astro components imported in it.
 3. The CSS in the style tag is scoped to this astro component only.
-4. The script tag at the bottom uses a special astro directive, and will be executed clien-side.
+4. The script tag at the bottom uses a special astro directive, and will be executed client-side.
 
-Building a site using Astro components is much the same as using react components (or _partials_ in other SSGs). But these components really come into their own when used **inside Markdown Content**.
+Building a site using Astro components is much the same as using react components (or _partials_ in other SSGs). But the real power is using them **inside Markdown Content**.
 
 #### MDX Components
 
-[MDX](https://mdxjs.com/) lets you use JSX inside markdown file, and is one of the main reasons I chose Astro over other SSGs. In Astro, you can import `.astro` components into `mdx` files and use them in the same way you can anywhere else. I've ended up with quite a lot of _really simple_ components which just render some HTML and apply some scoped CSS to it. Here's my `highlight.astro` component:
+[MDX](https://mdxjs.com/) lets you use JSX inside markdown files, and is one of the main reasons I chose Astro over other SSGs. In Astro, you can import `.astro` components into `mdx` files and use them in the same way you can anywhere else. I've ended up with quite a lot of _really simple_ components which just render some HTML and apply some scoped CSS to it. Here's my `highlight.astro` component:
 
 ```html
 <span class="highlight"><slot /></span>
@@ -122,7 +87,7 @@ And now when I'm writing in markdown I can use it like this:
 Here is some text <highlight>that is highlighted</highlight>.
 ```
 
-This really comes into its own with more complex components like callouts...
+And with more complex components like callouts...
 
 ```md
 <Callout emoji="💡" type="blue">
@@ -136,16 +101,16 @@ This really comes into its own with more complex components like callouts...
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum hic a dolorem ipsa labore cum.
 </Callout>
 
-The combination of Astro's component-based architecture and _components-in-MDX-files_ ticks some super important boxes for me:
+The combination of Astro's component-based architecture and _components-in-MDX-files_ ticks some important boxes for me:
 
-- Components make for easy maintenance long term. Especially when dealing with CSS.
-- Scoped CSS and JavaScript allow me to CSS without worrying affecting parts of the site.
+- Components make for easy maintenance long term, especially when dealing with CSS.
+- Scoped CSS and JavaScript mean I can iterate on styles without worrying about breaking other parts of the site.
 - Using components in Markdown makes it extremely easy and quick to write fully featured content.
 - If I ever want to switch away from Astro, the structure of Astro components and how they're used in Markdown files should make it fairly easy to port my content to another system.
 
 ## So Where am I now?
 
-Two years into running this site on Astro, I've settled into a pretty straightforward setup that gives me everything I need without much fuss.
+Two years into running this site on Astro, I've settled into a setup that gives me everything I need without much fuss.
 
 ### Content Collections
 
@@ -169,11 +134,9 @@ I've also got a custom remark plugin that calculates reading time for articles.
 
 ### Components
 
-One of the big selling points of Astro is the ability to use components directly in MDX files. I've got about fifteen components in `src/components/mdx/` – things like `<Callout>` for highlighted notes, `<Accordion>` for collapsible sections, `<BookmarkCard>` for pretty link cards, and `<Notion>` for embedding Notion links with a custom style.
+I've got about fifteen components in `src/components/mdx/` – things like `<Callout>` for highlighted notes, `<Accordion>` for collapsible sections, `<BookmarkCard>` for pretty link cards, and `<Notion>` for embedding Notion links. Nothing fancy – just small bits of HTML with scoped styles.
 
-These are just regular Astro components with scoped CSS, which means I can iterate on their design without worrying about breaking other parts of the site. And because they're used in MDX, the markdown stays fairly readable even if I decide to move away from Astro in the future.
-
-The page layouts themselves are pretty straightforward – components like `BaseHead`, `MainNavigation`, and `Footer` get composed into layout templates like `Article.astro` and `Note.astro`, which wrap the markdown content. The whole design system is based on CSS custom properties defined in `global.css`, so switching between light and dark themes (or tweaking colours) is just a matter of changing a few variable values.
+The page layouts are simple – components like `BaseHead`, `MainNavigation`, and `Footer` get composed into layout templates like `Article.astro` and `Note.astro`, which wrap the markdown content. The whole design system is based on CSS custom properties defined in `global.css`, so switching between light and dark themes (or tweaking colours) is just a matter of changing a few variable values.
 
 ## Future Plans
 
