@@ -16,6 +16,7 @@ function buildToc(flatHeadings: MarkdownHeading[]): TocHeading[] {
   const toc: TocHeading[] = [];
   const parentHeadings = new Map<number, TocHeading>();
 
+  // Include H2 and H3 only (ignore H4+)
   flatHeadings
     .filter(h => h.depth >= 2 && h.depth <= 3)
     .forEach(h => {
@@ -179,146 +180,140 @@ const toc = buildToc(headings);
 </style>
 
 <script>
-  // Hakim El Hattab's Progress Nav approach - simple and proven
-  // https://lab.hakim.se/progress-nav/
+  // Scroll-based TOC tracking
+  // Key insight: highlight the LAST heading that has scrolled past the reading threshold
+  // This correctly handles "reading a long section where the heading has scrolled away"
+
+  const linkStarts = new WeakMap<HTMLAnchorElement, number>();
+  const linkEnds = new WeakMap<HTMLAnchorElement, number>();
 
   let defined = false;
+  let resizeObserver: ResizeObserver | null = null;
+
+  interface TocItem {
+    link: HTMLAnchorElement;
+    target: HTMLElement;
+    li: HTMLLIElement;
+  }
 
   function initToc() {
+    resizeObserver?.disconnect();
+
     const toc = document.querySelector<HTMLElement>('.toc');
     const tocPath = document.querySelector<SVGPathElement>('.toc-marker path');
 
     if (!toc || !tocPath) return;
 
-    // Prevent duplicate initialization
     if (defined) return;
     defined = true;
 
-    interface TocItem {
-      listItem: HTMLLIElement;
-      anchor: HTMLAnchorElement;
-      target: HTMLElement | null;
-      pathStart: number;
-      pathEnd: number;
-    }
+    const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a.toc-link'));
+    if (links.length === 0) return;
 
-    let tocItems: TocItem[] = [];
-    let pathLength = 0;
-
-    // Factor of screen size that the element must cross before it's considered visible
-    const TOP_MARGIN = 0.1;
-    const BOTTOM_MARGIN = 0.2;
+    // Build list of TOC items with their target headings
+    const tocItems: TocItem[] = [];
+    links.forEach(link => {
+      const targetId = link.getAttribute('href')?.slice(1);
+      const target = targetId ? document.getElementById(targetId) : null;
+      const li = link.closest('li');
+      if (target && li) {
+        tocItems.push({ link, target, li: li as HTMLLIElement });
+      }
+    });
 
     function drawPath() {
-      if (!toc || !tocPath) return;
-      // Get all list items in the TOC
-      const listItems = Array.from(toc.querySelectorAll('li'));
-
-      // Cache element references and measurements
-      tocItems = listItems.map(item => {
-        const anchor = item.querySelector('a') as HTMLAnchorElement;
-        const targetId = anchor.getAttribute('href')?.slice(1);
-        const target = targetId ? document.getElementById(targetId) : null;
-
-        return {
-          listItem: item as HTMLLIElement,
-          anchor,
-          target,
-          pathStart: 0,
-          pathEnd: 0,
-        };
-      });
-
-      // Remove missing targets
-      tocItems = tocItems.filter(item => !!item.target);
-
-      if (tocItems.length === 0) return;
+      if (!tocPath) return;
 
       const pathData: (string | number)[] = [];
-      let pathIndent = 0;
+      let left = 0;
 
-      tocItems.forEach((item, i) => {
-        const x = item.anchor.offsetLeft - 5;
-        const y = item.anchor.offsetTop;
-        const height = item.anchor.offsetHeight;
+      links.forEach((link, i) => {
+        const x = link.offsetLeft;
+        const y = link.offsetTop;
+        const height = link.offsetHeight;
 
         if (i === 0) {
+          linkStarts.set(link, 0);
           pathData.push('M', x, y, 'L', x, y + height);
-          item.pathStart = 0;
         } else {
-          // Draw an additional line when there's a change in indent levels
-          if (pathIndent !== x) {
-            pathData.push('L', pathIndent, y);
-          }
-
+          if (left !== x) pathData.push('L', left, y);
           pathData.push('L', x, y);
-
-          // Set the current path so we can measure it
           tocPath.setAttribute('d', pathData.join(' '));
-          item.pathStart = tocPath.getTotalLength() || 0;
-
+          linkStarts.set(link, tocPath.getTotalLength());
           pathData.push('L', x, y + height);
         }
 
-        pathIndent = x;
-
+        left = x;
         tocPath.setAttribute('d', pathData.join(' '));
-        item.pathEnd = tocPath.getTotalLength();
+        linkEnds.set(link, tocPath.getTotalLength());
       });
-
-      pathLength = tocPath.getTotalLength();
-      sync();
     }
 
-    function sync() {
+    function updatePath() {
       if (!tocPath) return;
-      const windowHeight = window.innerHeight;
 
-      let pathStart = pathLength;
-      let pathEnd = 0;
-      let visibleCount = 0;
+      const pathLength = tocPath.getTotalLength();
+      const activeLink = toc!.querySelector<HTMLAnchorElement>('a.toc-link.active');
 
-      tocItems.forEach(item => {
-        if (!item.target) return;
-
-        const targetBounds = item.target.getBoundingClientRect();
-
-        // Check if the target is visible in the viewport
-        if (
-          targetBounds.bottom > windowHeight * TOP_MARGIN &&
-          targetBounds.top < windowHeight * (1 - BOTTOM_MARGIN)
-        ) {
-          pathStart = Math.min(item.pathStart, pathStart);
-          pathEnd = Math.max(item.pathEnd, pathEnd);
-          visibleCount++;
-          item.listItem.classList.add('visible');
-        } else {
-          item.listItem.classList.remove('visible');
-        }
-      });
-
-      // Update the path to show the visible range
-      if (visibleCount > 0 && pathStart < pathEnd) {
-        tocPath.setAttribute('stroke-dashoffset', '1');
-        tocPath.setAttribute(
-          'stroke-dasharray',
-          `1, ${pathStart}, ${pathEnd - pathStart}, ${pathLength}`
-        );
-        tocPath.style.opacity = '1';
+      if (activeLink) {
+        const start = linkStarts.get(activeLink) ?? 0;
+        const end = linkEnds.get(activeLink) ?? 0;
+        tocPath.style.display = 'inline';
+        tocPath.setAttribute('stroke-dasharray', `1 ${start} ${end - start} ${pathLength}`);
       } else {
-        tocPath.style.opacity = '0';
+        tocPath.style.display = 'none';
       }
     }
 
-    // Set up event listeners
-    window.addEventListener('resize', drawPath);
+    function sync() {
+      // Reading threshold: ~33% from top of viewport
+      // Headings become active when they enter upper third (where eyes typically read)
+      const threshold = window.innerHeight * 0.33;
+
+      // Find the last heading that has scrolled past the threshold
+      // This is the section we're currently "in"
+      let activeItem: TocItem | null = null;
+
+      for (const item of tocItems) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= threshold) {
+          activeItem = item;
+        } else {
+          // Headings are in document order, so once we find one below threshold, stop
+          break;
+        }
+      }
+
+      // Clear all active states
+      tocItems.forEach(item => {
+        item.link.classList.remove('active');
+        item.li.classList.remove('visible');
+      });
+
+      // Set the active one
+      if (activeItem) {
+        activeItem.link.classList.add('active');
+        activeItem.li.classList.add('visible');
+      }
+
+      updatePath();
+    }
+
+    // Handle layout changes
+    resizeObserver = new ResizeObserver(() => {
+      drawPath();
+      updatePath();
+    });
+    resizeObserver.observe(toc);
+
+    // Scroll listener
     window.addEventListener('scroll', sync, { passive: true });
 
     // Initial setup
     drawPath();
+    sync();
   }
 
-  // Initialize
   initToc();
   document.addEventListener('astro:after-swap', () => {
     defined = false;
