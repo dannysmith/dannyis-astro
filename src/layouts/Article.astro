@@ -28,6 +28,7 @@ const {
   platform,
   readingTime,
   headings,
+  toc,
 } = Astro.props;
 
 // Build OG image path for this article
@@ -58,7 +59,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     }
     <main>
       <article class="h-entry" itemscope itemtype="https://schema.org/Article">
-        <TableOfContents headings={headings} />
+        {toc && <TableOfContents headings={headings} />}
         <LongFormProseTypography>
           {
             cover && coverAlt && (
