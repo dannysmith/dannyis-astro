@@ -1,0 +1,321 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+export interface Props {
+  headings: MarkdownHeading[];
+}
+
+interface TocHeading extends MarkdownHeading {
+  subheadings: TocHeading[];
+}
+
+const { headings } = Astro.props;
+
+// Build nested structure from flat headings array
+function buildToc(flatHeadings: MarkdownHeading[]): TocHeading[] {
+  const toc: TocHeading[] = [];
+  const parentHeadings = new Map<number, TocHeading>();
+
+  flatHeadings
+    .filter(h => h.depth >= 2 && h.depth <= 3)
+    .forEach(h => {
+      const heading: TocHeading = { ...h, subheadings: [] };
+      parentHeadings.set(heading.depth, heading);
+
+      if (heading.depth === 2) {
+        toc.push(heading);
+      } else {
+        const parent = parentHeadings.get(heading.depth - 1);
+        if (parent) {
+          parent.subheadings.push(heading);
+        } else {
+          toc.push(heading);
+        }
+      }
+    });
+
+  return toc;
+}
+
+const toc = buildToc(headings);
+---
+
+{
+  toc.length > 0 && (
+    <aside class="toc-wrapper">
+      <nav class="toc" aria-label="Table of contents">
+        <ul class="toc-list">
+          {toc.map(heading => (
+            <li>
+              <a href={`#${heading.slug}`} class="toc-link">
+                {heading.text}
+              </a>
+              {heading.subheadings.length > 0 && (
+                <ul class="toc-sublist">
+                  {heading.subheadings.map(sub => (
+                    <li>
+                      <a href={`#${sub.slug}`} class="toc-link">
+                        {sub.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+        <svg class="toc-marker" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-dasharray="1 0 0 1000"
+            stroke-dashoffset="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </nav>
+    </aside>
+  )
+}
+
+<style>
+  .toc-wrapper {
+    display: none;
+    position: absolute;
+    top: 26rem;
+    left: var(--space-s);
+    width: calc(calc(100vw - var(--measure-standard)) / 2);
+    height: 100%;
+  }
+
+  @media (min-width: 1100px) {
+    .toc-wrapper {
+      display: block;
+    }
+  }
+
+  .toc {
+    position: sticky;
+    top: var(--space-l);
+    font-size: var(--font-size-sm);
+    z-index: 100;
+  }
+
+  .toc-list,
+  .toc-sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-list {
+    position: relative;
+    /* Padding creates space for the SVG marker on the left */
+    padding-left: var(--space-m);
+  }
+
+  .toc-sublist {
+    padding-left: var(--space-s);
+  }
+
+  .toc-list li {
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-link {
+    display: block;
+    padding: var(--space-2xs) 0;
+    padding-left: var(--space-xs);
+    line-height: var(--leading-snug);
+    color: color-mix(in oklch, var(--color-text) 50%, transparent);
+    text-decoration: none;
+    overflow-wrap: break-word;
+    transition: color var(--duration-fast) var(--ease-in-out);
+  }
+
+  .toc-link:hover {
+    color: var(--color-text);
+  }
+
+  li.visible > .toc-link {
+    color: var(--color-accent);
+  }
+
+  .toc-marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: color-mix(in oklch, var(--color-accent) 50%, transparent);
+    transition: color var(--duration-fast) var(--ease-in-out);
+  }
+
+  .toc:hover .toc-marker {
+    color: var(--color-accent);
+  }
+
+  .toc-marker path {
+    transition:
+      stroke-dasharray 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc-marker path {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Hakim El Hattab's Progress Nav approach - simple and proven
+  // https://lab.hakim.se/progress-nav/
+
+  let defined = false;
+
+  function initToc() {
+    const toc = document.querySelector<HTMLElement>('.toc');
+    const tocPath = document.querySelector<SVGPathElement>('.toc-marker path');
+
+    if (!toc || !tocPath) return;
+
+    // Prevent duplicate initialization
+    if (defined) return;
+    defined = true;
+
+    interface TocItem {
+      listItem: HTMLLIElement;
+      anchor: HTMLAnchorElement;
+      target: HTMLElement | null;
+      pathStart: number;
+      pathEnd: number;
+    }
+
+    let tocItems: TocItem[] = [];
+    let pathLength = 0;
+
+    // Factor of screen size that the element must cross before it's considered visible
+    const TOP_MARGIN = 0.1;
+    const BOTTOM_MARGIN = 0.2;
+
+    function drawPath() {
+      if (!toc || !tocPath) return;
+      // Get all list items in the TOC
+      const listItems = Array.from(toc.querySelectorAll('li'));
+
+      // Cache element references and measurements
+      tocItems = listItems.map(item => {
+        const anchor = item.querySelector('a') as HTMLAnchorElement;
+        const targetId = anchor.getAttribute('href')?.slice(1);
+        const target = targetId ? document.getElementById(targetId) : null;
+
+        return {
+          listItem: item as HTMLLIElement,
+          anchor,
+          target,
+          pathStart: 0,
+          pathEnd: 0,
+        };
+      });
+
+      // Remove missing targets
+      tocItems = tocItems.filter(item => !!item.target);
+
+      if (tocItems.length === 0) return;
+
+      const pathData: (string | number)[] = [];
+      let pathIndent = 0;
+
+      tocItems.forEach((item, i) => {
+        const x = item.anchor.offsetLeft - 5;
+        const y = item.anchor.offsetTop;
+        const height = item.anchor.offsetHeight;
+
+        if (i === 0) {
+          pathData.push('M', x, y, 'L', x, y + height);
+          item.pathStart = 0;
+        } else {
+          // Draw an additional line when there's a change in indent levels
+          if (pathIndent !== x) {
+            pathData.push('L', pathIndent, y);
+          }
+
+          pathData.push('L', x, y);
+
+          // Set the current path so we can measure it
+          tocPath.setAttribute('d', pathData.join(' '));
+          item.pathStart = tocPath.getTotalLength() || 0;
+
+          pathData.push('L', x, y + height);
+        }
+
+        pathIndent = x;
+
+        tocPath.setAttribute('d', pathData.join(' '));
+        item.pathEnd = tocPath.getTotalLength();
+      });
+
+      pathLength = tocPath.getTotalLength();
+      sync();
+    }
+
+    function sync() {
+      if (!tocPath) return;
+      const windowHeight = window.innerHeight;
+
+      let pathStart = pathLength;
+      let pathEnd = 0;
+      let visibleCount = 0;
+
+      tocItems.forEach(item => {
+        if (!item.target) return;
+
+        const targetBounds = item.target.getBoundingClientRect();
+
+        // Check if the target is visible in the viewport
+        if (
+          targetBounds.bottom > windowHeight * TOP_MARGIN &&
+          targetBounds.top < windowHeight * (1 - BOTTOM_MARGIN)
+        ) {
+          pathStart = Math.min(item.pathStart, pathStart);
+          pathEnd = Math.max(item.pathEnd, pathEnd);
+          visibleCount++;
+          item.listItem.classList.add('visible');
+        } else {
+          item.listItem.classList.remove('visible');
+        }
+      });
+
+      // Update the path to show the visible range
+      if (visibleCount > 0 && pathStart < pathEnd) {
+        tocPath.setAttribute('stroke-dashoffset', '1');
+        tocPath.setAttribute(
+          'stroke-dasharray',
+          `1, ${pathStart}, ${pathEnd - pathStart}, ${pathLength}`
+        );
+        tocPath.style.opacity = '1';
+      } else {
+        tocPath.style.opacity = '0';
+      }
+    }
+
+    // Set up event listeners
+    window.addEventListener('resize', drawPath);
+    window.addEventListener('scroll', sync, { passive: true });
+
+    // Initial setup
+    drawPath();
+  }
+
+  // Initialize
+  initToc();
+  document.addEventListener('astro:after-swap', () => {
+    defined = false;
+    initToc();
+  });
+</script>
