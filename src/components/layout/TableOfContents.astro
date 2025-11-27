@@ -84,7 +84,7 @@ const toc = buildToc(headings);
   .toc-wrapper {
     display: none;
     position: absolute;
-    top: 26rem;
+    top: 27rem;
     left: var(--space-s);
     width: calc(calc(100vw - var(--measure-standard)) / 2);
     height: 100%;
@@ -100,7 +100,13 @@ const toc = buildToc(headings);
     position: sticky;
     top: var(--space-l);
     font-size: var(--font-size-sm);
-    z-index: 100;
+    font-weight: var(--font-weight-medium);
+    font-optical-sizing: auto;
+    font-variant-caps: all-small-caps;
+    font-variant-numeric: tabular-nums;
+    font-variant-ligatures: common-ligatures;
+
+    letter-spacing: var(--tracking-tight);
   }
 
   .toc-list,
