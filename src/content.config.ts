@@ -7,17 +7,25 @@ const articles = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      slug: z.string().optional(), // Custom URL slug
+      slug: z.string().optional().describe('Custom URL slug (defaults to filename)'),
       draft: z.boolean().default(false),
-      description: z.string().optional(), // SEO meta description
-      pubDate: z.coerce.date(), // Publication date
-      updatedDate: z.coerce.date().optional(), // Last updated date
-      cover: image().optional(), // Header image
-      coverAlt: z.string().optional(), // Alt text for header image
+      toc: z.boolean().default(false).describe('Show table of contents sidebar on wide viewports'),
+      description: z.string().optional(),
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      cover: image().optional(),
+      coverAlt: z.string().optional(),
       tags: z.array(z.string()).optional(),
-      platform: z.enum(['medium', 'external']).optional(), // For articles published elsewhere (Medium, etc.)
-      redirectURL: z.string().url().optional(), // For articles published elsewhere – where to redirect to
-      styleguide: z.boolean().optional(), // Flag for the article styleguide. Excludes from RSS/indexes etc in prod
+      platform: z
+        .enum(['medium', 'external'])
+        .optional()
+        .describe('For articles published elsewhere'),
+      redirectURL: z
+        .string()
+        .url()
+        .optional()
+        .describe('Redirect destination for external articles'),
+      styleguide: z.boolean().optional().describe('Styleguide page; excluded from RSS and indexes'),
     }),
 });
 
@@ -26,13 +34,13 @@ const notes = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/notes' }),
   schema: z.object({
     title: z.string(),
-    sourceURL: z.string().url().optional(), // Original URL for link posts
-    slug: z.string().optional(), // Custom URL slug
+    sourceURL: z.string().url().optional().describe('Original URL for link posts'),
+    slug: z.string().optional().describe('Custom URL slug (defaults to filename)'),
     draft: z.boolean().default(false),
-    description: z.string().optional(), // SEO description
+    description: z.string().optional(),
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).optional(),
-    styleguide: z.boolean().optional(), // Flag for the article styleguide. Excludes from RSS/indexes etc in prod
+    styleguide: z.boolean().optional().describe('Styleguide page; excluded from RSS and indexes'),
   }),
 });
 

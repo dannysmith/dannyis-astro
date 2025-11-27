@@ -21,19 +21,23 @@ const today = new Date();
     </ul>
   </section>
   <section class="footer-rss all-caps">
-    <a href="/rss.xml">All</a>
+    <a href="/rss.xml" target="_blank">All</a>
     <span class="footer-rss-separator">|</span>
-    <a href="/rss/articles.xml">Articles</a>
+    <a href="/rss/articles.xml" target="_blank">Articles</a>
     <span class="footer-rss-separator">|</span>
-    <a href="/rss/notes.xml">Notes</a>
+    <a href="/rss/notes.xml" target="_blank">Notes</a>
     <span class="footer-rss-icon-wrapper">
       <Icon name="social/rss" class="footer-rss-icon" />
     </span>
   </section>
   <section class="footer-meta">
-    <a href="https://danny.is/key.txt">pgp key</a>
+    <a href="https://danny.is/key.txt" target="_blank">pgp key</a>
     <span class="footer-meta-separator">·</span>
-    <a href="https://atproto-browser.vercel.app/at/danny.is">atproto at://danny.is</a>
+    <a
+      href="https://atproto-browser.vercel.app/at/danny.is"
+      rel="me noopener noreferrer"
+      target="_blank">atproto at://danny.is</a
+    >
   </section>
   <div class="copyright all-caps">
     &copy; {today.getFullYear()} Danny Smith
@@ -107,5 +111,4 @@ const today = new Date();
   .footer-meta-separator {
     color: color-mix(in oklch, currentColor 60%, transparent);
   }
-
 </style>

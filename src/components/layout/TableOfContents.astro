@@ -1,0 +1,322 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+export interface Props {
+  headings: MarkdownHeading[];
+}
+
+interface TocHeading extends MarkdownHeading {
+  subheadings: TocHeading[];
+}
+
+const { headings } = Astro.props;
+
+// Build nested structure from flat headings array
+function buildToc(flatHeadings: MarkdownHeading[]): TocHeading[] {
+  const toc: TocHeading[] = [];
+  const parentHeadings = new Map<number, TocHeading>();
+
+  // Include H2 and H3 only (ignore H4+)
+  flatHeadings
+    .filter(h => h.depth >= 2 && h.depth <= 3)
+    .forEach(h => {
+      const heading: TocHeading = { ...h, subheadings: [] };
+      parentHeadings.set(heading.depth, heading);
+
+      if (heading.depth === 2) {
+        toc.push(heading);
+      } else {
+        const parent = parentHeadings.get(heading.depth - 1);
+        if (parent) {
+          parent.subheadings.push(heading);
+        } else {
+          toc.push(heading);
+        }
+      }
+    });
+
+  return toc;
+}
+
+const toc = buildToc(headings);
+---
+
+{
+  toc.length > 0 && (
+    <aside class="toc-wrapper">
+      <nav class="toc" aria-label="Table of contents">
+        <ul class="toc-list">
+          {toc.map(heading => (
+            <li>
+              <a href={`#${heading.slug}`} class="toc-link">
+                {heading.text}
+              </a>
+              {heading.subheadings.length > 0 && (
+                <ul class="toc-sublist">
+                  {heading.subheadings.map(sub => (
+                    <li>
+                      <a href={`#${sub.slug}`} class="toc-link">
+                        {sub.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+        <svg class="toc-marker" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-dasharray="1 0 0 1000"
+            stroke-dashoffset="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </nav>
+    </aside>
+  )
+}
+
+<style>
+  .toc-wrapper {
+    display: none;
+    position: absolute;
+    top: 27rem;
+    left: var(--space-s);
+    width: calc(calc(100vw - var(--measure-standard)) / 2);
+    height: 100%;
+  }
+
+  @media (min-width: 1400px) {
+    .toc-wrapper {
+      display: block;
+    }
+  }
+
+  .toc {
+    position: sticky;
+    top: var(--space-l);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    font-optical-sizing: auto;
+    font-variant-caps: all-small-caps;
+    font-variant-numeric: tabular-nums;
+    font-variant-ligatures: common-ligatures;
+
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .toc-list,
+  .toc-sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-list {
+    position: relative;
+    /* Padding creates space for the SVG marker on the left */
+    padding-left: var(--space-m);
+  }
+
+  .toc-sublist {
+    padding-left: var(--space-s);
+  }
+
+  .toc-list li {
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-link {
+    display: block;
+    padding: var(--space-2xs) 0;
+    padding-left: var(--space-xs);
+    line-height: var(--leading-snug);
+    color: color-mix(in oklch, var(--color-text) 50%, transparent);
+    text-decoration: none;
+    overflow-wrap: break-word;
+    transition: color var(--duration-fast) var(--ease-in-out);
+  }
+
+  .toc-link:hover {
+    color: var(--color-text);
+  }
+
+  li.visible > .toc-link {
+    color: var(--color-accent);
+  }
+
+  .toc-marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: color-mix(in oklch, var(--color-accent) 50%, transparent);
+    transition: color var(--duration-fast) var(--ease-in-out);
+  }
+
+  .toc:hover .toc-marker {
+    color: var(--color-accent);
+  }
+
+  .toc-marker path {
+    transition:
+      stroke-dasharray 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc-marker path {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Scroll-based TOC tracking
+  // Key insight: highlight the LAST heading that has scrolled past the reading threshold
+  // This correctly handles "reading a long section where the heading has scrolled away"
+
+  const linkStarts = new WeakMap<HTMLAnchorElement, number>();
+  const linkEnds = new WeakMap<HTMLAnchorElement, number>();
+
+  let defined = false;
+  let resizeObserver: ResizeObserver | null = null;
+
+  interface TocItem {
+    link: HTMLAnchorElement;
+    target: HTMLElement;
+    li: HTMLLIElement;
+  }
+
+  function initToc() {
+    resizeObserver?.disconnect();
+
+    const toc = document.querySelector<HTMLElement>('.toc');
+    const tocPath = document.querySelector<SVGPathElement>('.toc-marker path');
+
+    if (!toc || !tocPath) return;
+
+    if (defined) return;
+    defined = true;
+
+    const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a.toc-link'));
+    if (links.length === 0) return;
+
+    // Build list of TOC items with their target headings
+    const tocItems: TocItem[] = [];
+    links.forEach(link => {
+      const targetId = link.getAttribute('href')?.slice(1);
+      const target = targetId ? document.getElementById(targetId) : null;
+      const li = link.closest('li');
+      if (target && li) {
+        tocItems.push({ link, target, li: li as HTMLLIElement });
+      }
+    });
+
+    function drawPath() {
+      if (!tocPath) return;
+
+      const pathData: (string | number)[] = [];
+      let left = 0;
+
+      links.forEach((link, i) => {
+        const x = link.offsetLeft;
+        const y = link.offsetTop;
+        const height = link.offsetHeight;
+
+        if (i === 0) {
+          linkStarts.set(link, 0);
+          pathData.push('M', x, y, 'L', x, y + height);
+        } else {
+          if (left !== x) pathData.push('L', left, y);
+          pathData.push('L', x, y);
+          tocPath.setAttribute('d', pathData.join(' '));
+          linkStarts.set(link, tocPath.getTotalLength());
+          pathData.push('L', x, y + height);
+        }
+
+        left = x;
+        tocPath.setAttribute('d', pathData.join(' '));
+        linkEnds.set(link, tocPath.getTotalLength());
+      });
+    }
+
+    function updatePath() {
+      if (!tocPath) return;
+
+      const pathLength = tocPath.getTotalLength();
+      const activeLink = toc!.querySelector<HTMLAnchorElement>('a.toc-link.active');
+
+      if (activeLink) {
+        const start = linkStarts.get(activeLink) ?? 0;
+        const end = linkEnds.get(activeLink) ?? 0;
+        tocPath.style.display = 'inline';
+        tocPath.setAttribute('stroke-dasharray', `1 ${start} ${end - start} ${pathLength}`);
+      } else {
+        tocPath.style.display = 'none';
+      }
+    }
+
+    function sync() {
+      // Reading threshold: ~33% from top of viewport
+      // Headings become active when they enter upper third (where eyes typically read)
+      const threshold = window.innerHeight * 0.33;
+
+      // Find the last heading that has scrolled past the threshold
+      // This is the section we're currently "in"
+      let activeItem: TocItem | null = null;
+
+      for (const item of tocItems) {
+        const rect = item.target.getBoundingClientRect();
+        if (rect.top <= threshold) {
+          activeItem = item;
+        } else {
+          // Headings are in document order, so once we find one below threshold, stop
+          break;
+        }
+      }
+
+      // Clear all active states
+      tocItems.forEach(item => {
+        item.link.classList.remove('active');
+        item.li.classList.remove('visible');
+      });
+
+      // Set the active one
+      if (activeItem) {
+        activeItem.link.classList.add('active');
+        activeItem.li.classList.add('visible');
+      }
+
+      updatePath();
+    }
+
+    // Handle layout changes
+    resizeObserver = new ResizeObserver(() => {
+      drawPath();
+      updatePath();
+    });
+    resizeObserver.observe(toc);
+
+    // Scroll listener
+    window.addEventListener('scroll', sync, { passive: true });
+
+    // Initial setup
+    drawPath();
+    sync();
+  }
+
+  initToc();
+  document.addEventListener('astro:after-swap', () => {
+    defined = false;
+    initToc();
+  });
+</script>

@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 import { Image } from 'astro:assets';
 import Spinner from '@components/ui/Spinner.astro';
 import BaseHead from '@components/layout/BaseHead.astro';
@@ -9,8 +10,12 @@ import Lightbox from '@components/layout/Lightbox.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
 import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
+import TableOfContents from '@components/layout/TableOfContents.astro';
 
-type Props = CollectionEntry<'articles'>['data'] & { readingTime: string };
+type Props = CollectionEntry<'articles'>['data'] & {
+  readingTime: string;
+  headings: MarkdownHeading[];
+};
 const {
   title,
   description,
@@ -22,6 +27,8 @@ const {
   redirectURL,
   platform,
   readingTime,
+  headings,
+  toc,
 } = Astro.props;
 
 // Build OG image path for this article
@@ -52,6 +59,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     }
     <main>
       <article class="h-entry" itemscope itemtype="https://schema.org/Article">
+        {toc && <TableOfContents headings={headings} />}
         <LongFormProseTypography>
           {
             cover && coverAlt && (
@@ -93,6 +101,11 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
     <Footer />
     <Lightbox />
     <style>
+      /* Article needs position context for TOC */
+      article {
+        position: relative;
+      }
+
       /* Article grid layout - 3 columns for full-bleed support */
       :global(.longform-prose) {
         --gutter: var(--space-m);
@@ -196,7 +209,9 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         const footnoteElement = document.getElementById(footnoteId);
 
         // Find the closest block-level parent (p, div, li, etc.)
-        const closestBlock = elm.closest('p, .intro-paragraph, li, blockquote, div.longform-prose > *');
+        const closestBlock = elm.closest(
+          'p, .intro-paragraph, li, blockquote, div.longform-prose > *'
+        );
         if (!closestBlock || !footnoteElement?.firstElementChild) return;
 
         const inlineFootNoteContainer = document.createElement('div');

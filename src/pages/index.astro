@@ -12,7 +12,12 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
   </head>
   <body itemtype="https://schema.org/ProfilePage" itemscope>
     <MainNavigation />
-    <main class="vcard h-card ui-style" itemtype="http://schema.org/Person" itemprop="mainEntity" itemscope>
+    <main
+      class="vcard h-card ui-style"
+      itemtype="http://schema.org/Person"
+      itemprop="mainEntity"
+      itemscope
+    >
       <a rel="me" href={Astro.site?.href} class="u-url u-uid hidden-microformat">Danny Smith</a>
       <h1 class="fn p-name" itemprop="name">
         <span itemprop="givenName">Danny</span>
@@ -26,16 +31,22 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
           <a href="/notes"><strong>notes</strong></a>
         </li>
         <li>
-          <a href="/toolbox"><strong>remote working</strong> <span>toolbox</span></a>
+          <a href="/now"><strong>now</strong></a>
         </li>
         <li>
-          <a href="/youtube"><strong>youtube</strong></a>
+          <a href="https://betterat.work"><strong>work</strong></a>
+        </li>
+        <li>
+          <a href="/toolbox"><strong>toolbox</strong></a>
         </li>
         <li>
           <a href="/using">stuff I'm <strong>using</strong></a>
         </li>
         <li>
-          <a href="/music">my <b>music</b></a>
+          <a href="/youtube"><strong>youtube</strong></a>
+        </li>
+        <li>
+          <a href="/music"><strong>music</strong></a>
         </li>
         <li>
           <a href="https://www.linkedin.com/in/dannyasmith" rel="me" target="_blank"
@@ -49,13 +60,8 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
         </li>
         <li>
           <a href="https://indieweb.social/@dannysmith" rel="me" target="_blank">
-            <strong>Mastodon</strong><span>@dannyasmith@indieweb.social</span>
+            <strong>Mastodon</strong>
           </a>
-        </li>
-        <li>
-          <a href="https://medium.com/@dannysmith" rel="me" target="_blank"
-            ><strong>medium</strong><span>/dannysmith</span></a
-          >
         </li>
         <li>
           <a href="https://github.com/dannysmith" rel="me" target="_blank"
@@ -77,11 +83,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
             ><strong>email</strong></a
           >
         </li>
-        <li>
-          <a href="https://atproto-browser.vercel.app/at/danny.is" rel="me" target="_blank"
-            >at://danny.is</a
-          >
-        </li>
       </ul>
       <Image
         src="/icon.jpg"
@@ -95,7 +96,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
         itemprop="image"
       />
 
-<style>
+      <style>
         main {
           display: grid;
           grid-template-columns: 1rem auto 1fr;
@@ -144,7 +145,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
 
           .link-list {
             grid-column: 1;
-
 
             & a {
               display: flex;
