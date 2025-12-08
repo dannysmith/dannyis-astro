@@ -2,20 +2,20 @@
 title: How I'm Coding with LLMs in Nov '25
 slug: coding-with-llms-oct-25
 draft: true
-pubDate: 2025-11-01
+pubDate: 2025-12-09
 ---
 
 import { BookmarkCard, Callout, Embed, IntroParagraph } from '@components/mdx';
 
 <IntroParagraph>
-For the last three months or so I've been working on [Astro Editor](http://astroeditor.danny.is/), a Markdown editor for [Astro](https://astro.build/) sites built with [Tauri](https://v2.tauri.app/) and React. What started as an extercise in learning how to work effectively with AI coding agents at a basic level very quickly turned into an exercise in learning how to use them to build **decent quality** codebases. I've deliberatly tried to hand-write as little code as possible, but I can't really call Astro Editor *vibe-coded* because I've read about 60-70% of the codebase. I'm still learning, but here's where I'm at right now when it comes to setting up for success with AI coding agents.
+For the last three months or so I've been working on [Astro Editor](http://astroeditor.danny.is/), a Markdown editor for [Astro](https://astro.build/) sites built with [Tauri](https://v2.tauri.app/) and React. What started as an exercise in learning how to work effectively with AI coding agents at a basic level very quickly turned into an exercise in learning how to use them to build **decent quality** codebases. I've deliberately tried to hand-write as little code as possible, but I can't really call Astro Editor *vibe-coded* because I've read about 60-70% of the codebase. I'm still learning, but here's where I'm at right now when it comes to setting up for success with AI coding agents.
 </IntroParagraph>
 
 ## Basic Toolset
 
 I use Cursor as my primary editor, primarily because the AI tab-completion is still the best out there for the times when I'm hand-coding. I don't make much use of the agentic features at the moment, except occasionally when I'm working on some visual design tasks. I've drastically slimmed down the number of extensions I use thanks to AI tools, but still find ESLint, Prettier, path intellisense and the like helpful.
 
-ChatGPT with GPT-5 thinking is sometimes invaulable for helping me refine task docs before I give them to Claude Code, and is my go-to for things like image generation. I also use it and Claude Desktop for any non-technical "deep research" tasks which require extensive digging about on the internet.
+ChatGPT with GPT-5 thinking is sometimes invaluable for helping me refine task docs before I give them to Claude Code, and is my go-to for things like image generation. I also use it and Claude Desktop for any non-technical "deep research" tasks which require extensive digging about on the internet.
 
 I talk to my computer using [VoiceInk](/notes/voiceink).
 
@@ -23,7 +23,7 @@ I talk to my computer using [VoiceInk](/notes/voiceink).
 
 I use Claude Code running in [Ghostty](/notes/ghostty-terminal) as my main AI Agent. For the most part I'm running a couple of instances of it - one working on a well-defined task and the other working out a plan for the next task.
 
-I've messed about with multiple instances and worktrees but for all the hype about *"running twenty agents in parallel if you wanna be a 10x dev"*, this introducs way too much **cognative debt** for my liking. Even if I properly code-review all the output, I'm never going to develop a sufficiently robust mental model of the codebase unless I spend a significant amount of time looking over Claude's shoulder while it works. There are a few exceptions (small clearly-defined bugfixes etc). I guess my rule is *"if a human was doing this would I rather pair with them or review the PR after?"*
+I've messed about with multiple instances and worktrees but for all the hype about *"running twenty agents in parallel if you wanna be a 10x dev"*, this introduces way too much **cognitive debt** for my liking. Even if I properly code-review all the output, I'm never going to develop a sufficiently robust mental model of the codebase unless I spend a significant amount of time looking over Claude's shoulder while it works. There are a few exceptions (small clearly-defined bugfixes etc). I guess my rule is *"if a human was doing this would I rather pair with them or review the PR after?"*
 
 We'll get into more complex stuff later, but some basic Claude Code advice:
 
@@ -34,7 +34,7 @@ We'll get into more complex stuff later, but some basic Claude Code advice:
 - **Clear your context window regularly, and intentionally**.
   - Pre-empt CC's Auto-Compact. It never does it at an appropriate time.
   - Favour `/clear` over `/compact`. If you must compact, do it manually at an appropriate point and give specific guidance on what to keep in context.
-  - Think about the relevance of the current context window. If you've completely finished a feature it makes sense to `/clear` even if you have plenty of space left. But if your next task is writing a test for that feature, CC will do a better job if you *don't* clear first, because it already has a load of relevant info in the context window. Likewise if you want it to write a good commit message for the feature. That said... if you've been down a load of dead-ends in the current session, the context will include a bunch of stuff that ended up being *irelevant*. So you might be better off with a clean slate.
+  - Think about the relevance of the current context window. If you've completely finished a feature it makes sense to `/clear` even if you have plenty of space left. But if your next task is writing a test for that feature, CC will do a better job if you *don't* clear first, because it already has a load of relevant info in the context window. Likewise if you want it to write a good commit message for the feature. That said... if you've been down a load of dead-ends in the current session, the context will include a bunch of stuff that ended up being *irrelevant*. So you might be better off with a clean slate.
 
 
 ## Start with a Walking Skeleton
@@ -43,10 +43,10 @@ We'll get into more complex stuff later, but some basic Claude Code advice:
 
 Whether you're starting a new project or working in a huge legacy codebase, you need to make sure you have a framework which is...
 
-1. **A skeleton** – Skeletons exist to provide a perdictable structure on which future meat can be hung.
+1. **A skeleton** – Skeletons exist to provide a predictable structure on which future meat can be hung.
 2. **Able to walk by itself** – Everything should work even without any meat.
 
-In a greenfield project, a walking skeleton is likeley to include:
+In a greenfield project, a walking skeleton is likely to include:
 
 - A logical directory structure with conventions for where files should live and how they should be named.
 - A working "boilerplate" system with sensible config and defaults. Think "hello world" done well.
@@ -56,7 +56,7 @@ In a greenfield project, a walking skeleton is likeley to include:
 - A working CI/CD pipeline with sensible quality gates.
 - A well-organised set of AI-specific documents explaining how all of the above works (think `CLAUDE.md`, CC Commands, Cursor Rules etc)
 
-None of this is specific to working with AI: I learned long ago that this kinda setup is nececarry for any new project that's gonna be around for a while. Especially if I'm gonna get other people involved.
+None of this is specific to working with AI: I learned long ago that this kinda setup is necessary for any new project that's gonna be around for a while. Especially if I'm gonna get other people involved.
 
 A good walking skeleton brings some important things when working with AI:
 
@@ -64,7 +64,7 @@ A good walking skeleton brings some important things when working with AI:
 2. It requires a bunch of up-front decisions about technologies, tools & engineering philosophies. While ChatGPT can help you out with research, no current LLM is capable of making these decisions as well as you. Try one-shotting a non-trivial app if you don't believe me.
 3. A *walking* skeleton is already **working software**, even if it does nothing useful. "Still working" is a *very* effective performance baseline for both humans and LLMs.
 4. If **you** understand the skeleton and how it should walk, it's extremely obvious when Mr Claude is trying to squeeze a pair of lungs into an eye socket. (If you let Mr Claude design the skeleton and it's movement you'll be thinking "wait maybe that's meant to be there?!?").
-5. Like humans, AI agents perform best when given creative freedom **within unambiguoius guardrails** and a **clear goal to aim at**. A good walking skeleton provides a lot of guardrails by definition.
+5. Like humans, AI agents perform best when given creative freedom **within unambiguous guardrails** and a **clear goal to aim at**. A good walking skeleton provides a lot of guardrails by definition.
 6. A good walking skeleton gives LLMs something concrete to work with (idiomatic patterns, concrete examples etc).
 
 ### Choosing a tech stack
@@ -73,7 +73,7 @@ Any *reasonable* tech stack should work if you choose boring technology over [we
 
 My only real guidance re languages is: choose those with strong opinions and guardrails. Typescript over JS (because typed langs are good). But also Rails over Ruby. If that sounds weird... ruby is a super permissive language by design. Rails, on the other hand, is **incredibly** opinionated about everything.
 
-When it comes to web apps, there's a bit more sublety tho. You'll almost certainally have an easier life with this stack:
+When it comes to web apps, there's a bit more subtlety tho. You'll almost certainly have an easier life with this stack:
 
 - **React** – because everything is bloody react these days.
 - **Tailwind** – because CSS is much harder to **really grok** than anyone gives it credit for. I've been a CSS nerd for ~20 years and I still struggle with the *conceptual* mental models required. LLMs are incapable of conceptual mental models, but amazing at patterns. **Tailwind is mostly patterns**. Especially when paired with...
@@ -112,8 +112,8 @@ When it comes to web apps, there's a bit more sublety tho. You'll almost certain
 
 1. Plan
    - Dictate your requirements into a markdown doc
-   - Have AI reserach best approaches
-   - Have AI build a god technical plan
+   - Have AI research best approaches
+   - Have AI build a good technical plan
 2. Execute
    - Have AI work through the plan and stop after each phase.
    - Ask AI to review its work and ensure conformity with your `architecture.md` doc.
@@ -122,11 +122,14 @@ When it comes to web apps, there's a bit more sublety tho. You'll almost certain
 3. Clean up
    - At the end of each feature, ask AI to clean up any comments, logs etc.
    - Have AI document any new patterns in the simplest way possible and update CLAUDE.md as needed.
--
+4. Enter GH:
+   - Have Claude rework the commits if needed so they make a bit more sense.
+   - Push to GH and ask Claude to fix any suggestions from CodeRabbit (or any other tools running against new PRs)
+   - 
 
 ## What's Next?
 
-Claude Skills! The whole progressive disclosure thing should make itmuch easier to provide all the tools, instructions and context  the LLMs need *when theyneed it*, and without bloating the context window. I'm hoping they'll allow me to consolidate & simplify a lot of the stuff I mentioned in this article into something a bit more coherent. I think my favourite thing about Skills is how simple the *human* mental model for them is – even with fairly complex setups, Skills are easy for humans to reason about.
+Claude Skills! The whole progressive disclosure thing should make it much easier to provide all the tools, instructions and context the LLMs need *when they need it*, and without bloating the context window. I'm hoping they'll allow me to consolidate & simplify a lot of the stuff I mentioned in this article into something a bit more coherent. I think my favourite thing about Skills is how simple the *human* mental model for them is – even with fairly complex setups, Skills are easy for humans to reason about.
 
 As an example, imagine a **"Looking Stuff Up" Skill** which CC should always use when looking up documentation. It might include:
 
@@ -143,11 +146,11 @@ I'll share fuller thoughts on this once I've spent some time with it. In the mea
 
 # [NOTES]
 
-The belowis from https://simonwillison.net/2025/Sep/29/armin-ronacher-90/ and is relevant here.
+The below is from https://simonwillison.net/2025/Sep/29/armin-ronacher-90/ and is relevant here.
 
 Armin Ronacher: 90% (via) The idea of AI writing "90% of the code" to-date has mostly been expressed by people who sell AI tooling.
 
-Over the last few months, I've increasingly seen the same idea come coming much more credible sources.
+Over the last few months, I've increasingly seen the same idea coming from much more credible sources.
 
 Armin is the creator of a bewildering array of valuable open source projects - Flask, Jinja, Click, Werkzeug, and many more. When he says something like this it's worth paying attention:
 
