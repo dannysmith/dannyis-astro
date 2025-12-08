@@ -30,6 +30,7 @@ seo-audit-results/
 usage_tracking2.json
 uploads/
 .claude/settings.local.json
+.serena/
 
 test-results/
 
