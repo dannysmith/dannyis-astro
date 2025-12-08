@@ -11,7 +11,7 @@ pubDate: 2025-07-21
 
 Leaving the ethics of LLM training aside, my biggest issue with AI-generated "slop" is that it's invariably shit.
 
-I've read **so damm many** AI generated READMEs on GitHub in the last few weeks, and on at least two occasions lost my temper trying to find what I needed amonst the nonsense. It was better when lazy devs just had ten-line READMEs.
+I've read **so damn many** AI generated READMEs on GitHub in the last few weeks, and on at least two occasions lost my temper trying to find what I needed amongst the nonsense. It was better when lazy devs just had ten-line READMEs.
 
 And I routinely have to wade through AI-generated slop articles in Google searches all the time.
 

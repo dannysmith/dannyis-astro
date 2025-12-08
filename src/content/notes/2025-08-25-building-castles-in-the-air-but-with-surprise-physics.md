@@ -6,4 +6,4 @@ draft: false
 pubDate: 2025-08-24
 ---
 
-> Programmers still build castles in the air, but the first have to discover what physics apply.
+> Programmers still build castles in the air, but they first have to discover what physics apply.

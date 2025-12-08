@@ -6,7 +6,7 @@ pubDate: 2025-09-01
 ---
 
 So seven years hence I'm re-reading this, and... this paragraph applies even bloody more in 2025 if we replace googling and stackoverflow with "talking with Large Language Models".
-I'm generally bullish re LLMs as far as speeding up coding. But I'm the opposite opposite as far as learning and what I wrote in this article is concerned.
+I'm generally bullish re LLMs as far as speeding up coding. But I'm the opposite as far as learning and what I wrote in this article is concerned.
 
 Like StackOverflow in 2018, LLMs are very good at knowing how to solve well-defined, general-case problems which can be defined with some specificity. And like StackOverflow in 2018, they are shit at solving ill-defined general technical problems... especially when those problems exist in a niche business domain.
 

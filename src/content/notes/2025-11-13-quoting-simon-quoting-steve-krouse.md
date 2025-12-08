@@ -11,4 +11,4 @@ pubDate: 2025-11-13
 > 
 > But MCP servers are called by LLMs which dynamically read the spec every time, which allow us to constantly change the MCP server. It doesn't matter! We haven't made any promises. The LLM can figure it out afresh every time
 
-[otiginal tweet](https://x.com/stevekrouse/status/1988641250329989533)
+[original tweet](https://x.com/stevekrouse/status/1988641250329989533)

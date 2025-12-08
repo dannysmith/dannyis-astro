@@ -16,11 +16,11 @@ In fact, I think READMEs are a brilliant example of this point. As someone who's
 
 The most bare-bones READMEs (of old) were often written by a human who really didn't wanna write them, but took the time to think about the people using their software and the minimum docs they'd need to do so. **Proof-of-thought.**
 
-I'd rather have a thousand sparse READMEs than the hundreds of emoji-filled monstrosities I've had to work through recently. Especially because 90% of them have _less_ actual information than the sparce docs they replaced.
+I'd rather have a thousand sparse READMEs than the hundreds of emoji-filled monstrosities I've had to work through recently. Especially because 90% of them have _less_ actual information than the sparse docs they replaced.
 
 But then the [docs for Astro Editor](https://github.com/dannysmith/astro-editor/tree/main/docs) are mostly AI slop. But it's **very useful** slop when AI coding tools are also the reader. In fact, I've started putting callouts at the top of markdown files to make it clear whether their contents is intended for humans or LLMs or both.
 
-But in a much more pholosophical context, this his really hard...
+But in a much more philosophical context, this is really hard...
 
 > We can't rely on proof-of-thought anymore.
 
