@@ -5,29 +5,45 @@ draft: true
 pubDate: 2025-12-09
 ---
 
-import { BookmarkCard, Callout, Embed, IntroParagraph } from '@components/mdx';
+import { BookmarkCard, Callout, Embed, IntroParagraph, BlockQuoteCitation } from '@components/mdx';
 
 <IntroParagraph>
 For the last three months or so I've been working on [Astro Editor](http://astroeditor.danny.is/), a Markdown editor for [Astro](https://astro.build/) sites built with [Tauri](https://v2.tauri.app/) and React. What started as an exercise in learning how to work effectively with AI coding agents at a basic level very quickly turned into an exercise in learning how to use them to build **decent quality** codebases. I've deliberately tried to hand-write as little code as possible, but I can't really call Astro Editor *vibe-coded* because I've read about 60-70% of the codebase. I'm still learning, but here's where I'm at right now when it comes to setting up for success with AI coding agents.
 </IntroParagraph>
 
+## The Prime Directive
+
+<BlockQuoteCitation author="IBM training manual, 1979">A computer can never be held accountable</BlockQuoteCitation>
+
+LLMs are computers, and AI coding tools are developer tools just like VSCode or the rust compiler or Chrome's DevTools. And we're ultimately accountable for the quality of things we build.
+
+Since *quality* is context-dependant, I'm not gonna say that you must always read every line of generated code. But I am gonna say that you **must act responsibly for your context**.
+
+Astro Editor's website is a single HTML file written entierly by an LLM, and I hope to never ever damage my eyes looking at it. Astro Editor's state management system was also written by an LLM, but I spent literal days paying close attention to it because done badly it has the potential to cause massive performance issues and corrupt user's data.
+
+This website's CSS is 70% hand-written, and I know what every line of it does and why it's there. None of the words on this website are written by an LLM.
+
+Quality is context-dependant, but **you the human** are always accountable for it.
+
 ## Basic Toolset
 
-I use Cursor as my primary editor, primarily because the AI tab-completion is still the best out there for the times when I'm hand-coding. I don't make much use of the agentic features at the moment, except occasionally when I'm working on some visual design tasks. I've drastically slimmed down the number of extensions I use thanks to AI tools, but still find ESLint, Prettier, path intellisense and the like helpful.
+I use Cursor as my primary editor, mainly because the AI tab-completion is still the best out there for the times when I'm hand-coding. I don't make much use of the agentic features at the moment, except occasionally when I'm working on some visual design tasks. I've drastically slimmed down the number of extensions I use thanks to AI tooling, but still find ESLint, Prettier, path intellisense and the like helpful.
 
-ChatGPT with GPT-5 thinking is sometimes invaluable for helping me refine task docs before I give them to Claude Code, and is my go-to for things like image generation. I also use it and Claude Desktop for any non-technical "deep research" tasks which require extensive digging about on the internet.
+ChatGPT and Claude Desktop are sometimes useful for refining task docs and doing any non-technical "deep research" tasks which require extensive digging about on the internet, though increasingly I use TUI-based tools for this too.
 
-I talk to my computer using [VoiceInk](/notes/voiceink).
+I talk to my computer with [Handy](https://handy.computer), which I'm enthusiastically contributing to at the moment.
 
-### The Main Tool: Claude Code
+## The Main Tool: Claude Code
 
-I use Claude Code running in [Ghostty](/notes/ghostty-terminal) as my main AI Agent. For the most part I'm running a couple of instances of it - one working on a well-defined task and the other working out a plan for the next task.
+I use Claude Code running in [Ghostty](/notes/ghostty-terminal) as my main AI tool. I usually have a couple of instances of it running: one implementing a well-defined task and the other doing some reviewing or planning work.
 
 I've messed about with multiple instances and worktrees but for all the hype about *"running twenty agents in parallel if you wanna be a 10x dev"*, this introduces way too much **cognitive debt** for my liking. Even if I properly code-review all the output, I'm never going to develop a sufficiently robust mental model of the codebase unless I spend a significant amount of time looking over Claude's shoulder while it works. There are a few exceptions (small clearly-defined bugfixes etc). I guess my rule is *"if a human was doing this would I rather pair with them or review the PR after?"*
 
-We'll get into more complex stuff later, but some basic Claude Code advice:
+### The Basics
 
-- Use the best model available *(at time of writing this is Sonnet 4.5, which is excellent for most coding tasks)*
+We'll go into details later later, but here's my basic "101" Claude Code advice:
+
+- Use the best model available *(at time of writing this is Opus 4.5, which is excellent for most coding tasks)*
 - **ALWAYS** use thinking mode. Really.
 - Avoid loading a million MCPs - they eat up tokens. I only have [Context7](https://context7.com/) by default in most projects.
 - Add a [hook which pings you with an OS Notification](https://github.com/dannysmith/dotfiles/blob/5fd5b368bd6980a6aa5736a8d7431064f02a5911/claude/settings.json#L87) when CC finishes a task or needs your input.
@@ -35,6 +51,7 @@ We'll get into more complex stuff later, but some basic Claude Code advice:
   - Pre-empt CC's Auto-Compact. It never does it at an appropriate time.
   - Favour `/clear` over `/compact`. If you must compact, do it manually at an appropriate point and give specific guidance on what to keep in context.
   - Think about the relevance of the current context window. If you've completely finished a feature it makes sense to `/clear` even if you have plenty of space left. But if your next task is writing a test for that feature, CC will do a better job if you *don't* clear first, because it already has a load of relevant info in the context window. Likewise if you want it to write a good commit message for the feature. That said... if you've been down a load of dead-ends in the current session, the context will include a bunch of stuff that ended up being *irrelevant*. So you might be better off with a clean slate.
+  - Always work on a feature branch. As with any coding, committing regularly and at logical points makes it way easier to roll back changes. By doing this on a branch you can `rebase -i` or squash all the messy "WIP AI Attempt 1" commits into a sane hostory on `main`.
 
 
 ## Start with a Walking Skeleton
@@ -61,29 +78,53 @@ None of this is specific to working with AI: I learned long ago that this kinda 
 A good walking skeleton brings some important things when working with AI:
 
 1. It forces **you** (the responsible human) to think carefully about how you want your codebase & system to work at a high level. And also how you want AI Agents (and humans) to work with you on it. Which really fucking matters in the long-run.
-2. It requires a bunch of up-front decisions about technologies, tools & engineering philosophies. While ChatGPT can help you out with research, no current LLM is capable of making these decisions as well as you. Try one-shotting a non-trivial app if you don't believe me.
+2. It requires a bunch of up-front decisions about technologies, tools & engineering philosophies. While they can help with research, no current LLM is capable of making these decisions as well as you can. Try one-shotting a non-trivial app if you don't believe me.
 3. A *walking* skeleton is already **working software**, even if it does nothing useful. "Still working" is a *very* effective performance baseline for both humans and LLMs.
-4. If **you** understand the skeleton and how it should walk, it's extremely obvious when Mr Claude is trying to squeeze a pair of lungs into an eye socket. (If you let Mr Claude design the skeleton and it's movement you'll be thinking "wait maybe that's meant to be there?!?").
+4. If **you** understand the skeleton and how it should walk, it's extremely obvious when Mr Claude is trying to squeeze a pair of lungs into an eye socket. (If you let Mr Claude design the skeleton you'll be thinking "wait maybe that's meant to be there?!?").
 5. Like humans, AI agents perform best when given creative freedom **within unambiguous guardrails** and a **clear goal to aim at**. A good walking skeleton provides a lot of guardrails by definition.
-6. A good walking skeleton gives LLMs something concrete to work with (idiomatic patterns, concrete examples etc).
+6. A good walking skeleton gives LLMs something concrete to work with (idiomatic patterns, concrete examples, tools to validate its work etc).
 
 ### Choosing a tech stack
 
 Any *reasonable* tech stack should work if you choose boring technology over [web scale](https://youtu.be/b2F-DItXtZs?si=-J0bT_T0JAaU7pz6). AI-friendliness should not be a big consideration here, but in general *the more boring and old and widely-used* your tech is, the better LLMs understand it.
 
-My only real guidance re languages is: choose those with strong opinions and guardrails. Typescript over JS (because typed langs are good). But also Rails over Ruby. If that sounds weird... ruby is a super permissive language by design. Rails, on the other hand, is **incredibly** opinionated about everything.
+My only real guidance re languages is: choose those with strong opinions and guardrails. Typescript over JS (because LLMs can run typechecks themselves). But also Rails over Ruby. If that sounds weird... ruby is a super permissive language by design so LLMs training data includes a million different ways to write it. Rails, on the other hand, is **incredibly** opinionated, so LLMs tend to write good idiomatic Rails code.
 
-When it comes to web apps, there's a bit more subtlety tho. You'll almost certainly have an easier life with this stack:
+When it comes to web apps though, you'll almost certainly have an easier life with the following front-end stack.
 
-- **React** – because everything is bloody react these days.
-- **Tailwind** – because CSS is much harder to **really grok** than anyone gives it credit for. I've been a CSS nerd for ~20 years and I still struggle with the *conceptual* mental models required. LLMs are incapable of conceptual mental models, but amazing at patterns. **Tailwind is mostly patterns**. Especially when paired with...
-- **shadcn/ui** – Has become the de facto UI component library for React/Tailwind apps. 
+- **React** – because everything is react these days.
+- **Tailwind** – because CSS is much harder to **really grok** than anyone gives it credit for. I've been a CSS nerd for ~20 years and I still struggle with certain *conceptual* mental models. LLMs are incapable of conceptual mental models, but amazing at patterns. **Tailwind is mostly patterns**. Especially when paired with...
+- **shadcn/ui** – Has become the de facto UI component library for React/Tailwind apps.
 
+<Callout>Modern CSS is amazing and it kinda pains me to be recommending tailwind/shadcn here. If you are making something smallish and know CSS well, you may not need them. But you should expect AI tools to be worse than you at writing CSS even if you [give them a skill to help](https://github.com/dannysmith/css-expert).</Callout>
 
 
 ## Guardrails
 
-### Static analysis and tests
+Guardrails exist to **prevent mistakes**. Let's consider some effective guardails for human developers:
+
+1. **Code Reviews**. We haveother humans check our work before we merge it. The feedback loop here is fairly long: we see our mistakes some time after we made them.
+2. **Enforced quality gates**. We enforce rules through failing CI pipelines and pre-commit or pre-push hooks. These work great for **really enforcing** rules, but also have a fairly long feedback loop.
+3. **Automated checks we can run**. We run tests, linters, formatters and friends periodically while we work so we don;t get caught by the enforced gates. We can run these against only the code we're working on, and immediatly address any problems.
+4. **Immediate in-editor feedback**. When your editor puts a <span style="text-decoration-line: underline; text-decoration-style: wavy; text-decoration-color: var(--color-coral, red); text-decoration-skip-ink: none;">red squiggly line</span> under something, we're getting immediate feedback *as we write the code* - super-tight feedback loop.
+5. **Our knowledge of the system**. It might seem weird to call this a guardrail, but it is. By insisting that a programmer a) knows the language, b) has a general understanding of the system and c) has read the relevant documentation **before** they write code, we're setting up for the shortest-possible-feedback-loop guardrail: your brain seeing a mistake before you type it.
+6. **Our knowledge of the problem**. Similarly, we usually insist that someone thinks about the task at hand before starting work. The act of defining the problem and thinking through various options helps avoid a whole bunch of potential mistakes.
+
+We've long-known that this stuff reduces human error and (usually) increases velocity as a result. And all bar one of these guardrails can do the same for AI tools.
+
+### Key Differences for AI tools
+
+- They cannot recieve *immediate in-editor feedback* because they aren't working in an IDE. (4) does not apply.
+- They are way better at remembering to run *automated checks we can run* than most humans, provided they know about them.
+- They respond way better to "go read the docs about our system" than humans do, and are generally very good at sticking to the conventions.
+- They don't have actual brains, so are poor at **inferring** stuff from the documentation and existing code. Especially when it comes to making judgements about what is and isn't important. they need hand-holding here.
+
+So long as we bear this in mind, the guardrails which work for humans are also good for LLMs. But whereas humans can often write decent code without them, LLMs **really need guardrails** to do well.
+
+### Automated checks we can run
+
+
+
 - Typescript
 - ESLint
 - React Compiler
@@ -94,11 +135,15 @@ When it comes to web apps, there's a bit more subtlety tho. You'll almost certai
 - Knip
 - jscpd
 
-### Developer Documentation
+### Knowledge of the system: Developer documentation
 
-### CodeRabbit
+### Knowledge of the problem: Task Planning & Management
 
-## The Claude Setup
+### Enforced Quality Gates & Code Review
+
+PRs and CodeRabbit
+
+## My Current Claude Code Setup
 
 ### Global
 
@@ -108,7 +153,7 @@ When it comes to web apps, there's a bit more subtlety tho. You'll almost certai
   - Commands
 
 
-## The Development Cycle
+## The Development Workflow
 
 1. Plan
    - Dictate your requirements into a markdown doc
