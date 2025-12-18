@@ -41,7 +41,7 @@ I've messed about with multiple instances and worktrees but for all the hype abo
 
 ### The Basics
 
-We'll go into details later later, but here's my basic "101" Claude Code advice:
+We'll go into details later, but here's my basic "101" Claude Code advice:
 
 - Use the best model available *(at time of writing this is Opus 4.5, which is excellent for most coding tasks)*
 - **ALWAYS** use thinking mode. Really.
@@ -105,7 +105,7 @@ Guardrails exist to **prevent mistakes**. Let's consider some effective guardail
 
 1. **Code Reviews**. We haveother humans check our work before we merge it. The feedback loop here is fairly long: we see our mistakes some time after we made them.
 2. **Enforced quality gates**. We enforce rules through failing CI pipelines and pre-commit or pre-push hooks. These work great for **really enforcing** rules, but also have a fairly long feedback loop.
-3. **Automated checks we can run**. We run tests, linters, formatters and friends periodically while we work so we don;t get caught by the enforced gates. We can run these against only the code we're working on, and immediatly address any problems.
+3. **Automated checks we can run**. We run tests, linters, formatters and friends periodically while we work so we don't get caught by the enforced gates. We can run these against only the code we're working on, and immediately address any problems.
 4. **Immediate in-editor feedback**. When your editor puts a <span style="text-decoration-line: underline; text-decoration-style: wavy; text-decoration-color: var(--color-coral, red); text-decoration-skip-ink: none;">red squiggly line</span> under something, we're getting immediate feedback *as we write the code* - super-tight feedback loop.
 5. **Our knowledge of the system**. It might seem weird to call this a guardrail, but it is. By insisting that a programmer a) knows the language, b) has a general understanding of the system and c) has read the relevant documentation **before** they write code, we're setting up for the shortest-possible-feedback-loop guardrail: your brain seeing a mistake before you type it.
 6. **Our knowledge of the problem**. Similarly, we usually insist that someone thinks about the task at hand before starting work. The act of defining the problem and thinking through various options helps avoid a whole bunch of potential mistakes.
