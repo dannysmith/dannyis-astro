@@ -1,0 +1,39 @@
+---
+title: Using Claude Code to pull old articles into this Astro site
+slug: claude-code-to-pull-old-articles-into-astro
+pubDate: 2025-12-18
+---
+
+I read [Simon Willison's blog religeously](https://simonwillison.net/), and occasionally he references a post he wrote way back in the dark ages of 2005. Every time he does I think what a shame it is that 've lost a lot of the content I've posted over the years by intermittently switching the platform and domain I publish on. I've various published on:
+
+- http://danny.is (since about 2013)
+- http://dasmith.co.uk
+- http://blog.dasmith.co.uk
+- http://notes.dasmith.co.uk
+- http://thescri.be
+
+In July I stumbled on a GitHub repo which had some of my old posts from dasmith.co.uk, and [ported them over](https://github.com/dannysmith/dannyis-astro/commit/0eb989215fbd265bf0fd7b6f2f4806f5ca3846b7) to this site.
+
+Today I spent a little bit of time looking on the Wayback Machine to see if I could find and move over some of my much older writing - particularly the stuff I published on my first blog (thescri.be) circa 2005-07. I asked Claude Code to:
+
+```text
+Okay, so I Just remembered that many years ago I used to have a blog on http://thescri.be And some of those posts are archived on the Wayback Machine. The latest snapshot I can find is here: https://web.archive.org/web/20080521124353/http://thescri.be/
+
+I would like you to go through the posts on there and download their content into a series of markdown files. I think that eventually I will want to make all of these Notes in this site, But for now I just want to get down the content, ensure that the links are correct. Ensure that the dates and titles and everything are correct. And also wherever possible get any images which have been backed up. Um before actually trying to get all of these, you should come up with a plan for how you're going to get them. Ultrathink And do a little bit of exploring and research to work out the best way of doing this.
+```
+
+It came up with a plan which involced using the [chrome-devtools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp) to spin up a browser and navigate the internet archive to find as many posts as it could from various snapshots. It did a really good job of f finding posts which only appeared in one snapshot, which it turned out was quite a lot of them (all in different snapshots). It then extracted their contents and downloaded any archived images and created some markdown files with YAML frontmatter for them. I then asked it to:
+
+```text
+Okay, now what I'd like you to do is go through these posts and do the following:
+
+1. Turn them into MDX files which import <Callout> from '@components/mdx'
+1. Update the frontmatter so that it matches the correct format for my notes content collection. Turn the categories into tags and discard the originalURL. 
+2. Fix up any markdown formatting issues.
+3. Add a <Callout> at the top of each saying "This was originally posted on [thescri.be](originalURL) on <date in human readable format> and was imported here from the [Internet Archive](archiveUrl) on 18 December 2025"
+4. Move the files into `src/notes`
+3. Move any images to `src/assets/notes` and rename in the form "xxxx-xx-xx-current-file-name.ext" where xxx-xx-xx is the date the post was made. Update the image links in the posts.
+3. Ensure internal links use the correct Astro URLs (eg: [link](/notes/<slug>)). If the internal links point at posts which we haven't been able to retrieve, leave the original thescri.be URLs.
+```
+
+So in three prompts I ended up with a load of my super old writing as notes in this site! I'll do something similar for the other old domains I have soon!
