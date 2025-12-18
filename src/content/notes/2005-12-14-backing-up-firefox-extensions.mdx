@@ -1,0 +1,33 @@
+---
+title: "Backing up your Firefox extensions (on windows)"
+pubDate: 2005-12-14
+tags: ["geekery"]
+---
+import { Callout } from '@components/mdx';
+
+<Callout emoji="📜">
+This was originally posted on [thescri.be](http://thescri.be/2005/12/14/backing-up-your-firefox-extensions-on-windows) on 14 December 2005 and was imported here from the [Internet Archive](https://web.archive.org/web/20070116055205/http://thescri.be/2005/12/14/backing-up-your-firefox-extensions-on-windows) on 18 December 2025.
+</Callout>
+
+It's always been a source of irritation to me that whenever my FF installation breaks, or if I decide to reinstall it, I have to hunt down and reinstall all of my thirty-six extensions. If you're running Windows you can use the following method to back up your extensions:
+
+Create a batch file (open notepad and save the file with a .bat extension) with the following code:
+
+```batch
+del C:\PATH TO BACKUP FOLDER\ffarchive.zip
+7za a -tzip C:\PATH TO BACKUP FOLDER\ffarchive.zip -r "C:\Documents and Settings\YOUR USER NAME\Application Data\Mozilla\Firefox"
+```
+
+Name this script something like ffbackup.bat and put it in the C:\WINDOWS directory (or anywhere that the windows PATH points to). To run the script you can simply type "ffbackup" at the command prompt or in the run box.
+
+This script uses a command line version of [7-Zip](http://www.7-zip.org/), a free WinZip-type program. The first line of the batch file deletes the current archive and the second replaces it with a zipped up version of your Firefox application data.
+
+If you're interested, the "a" specifies that files are to be added to the archive, the "-tzip" specifies zip as the archive format, the "C:\PATH TO BACKUP FOLDER\ffarchive.zip" is the path to the backup that will be created, the "-r" tells it to zip up the subdirectories too. The "C:\Documents and Settings\username here\Application Data\Mozilla\Firefox" is the path to the data which needs to be backed up.
+
+If you clear the cache, history & cookies and ensure that Firefox is closed before you run ffbackup, you'll help reduce the size of the archive produced.
+
+**Steps:**
+
+1. [Download 7-Zip Command Line for Windows](http://prdownloads.sourceforge.net/sevenzip/7za432.zip?download) (Unzip it to C:\WINDOWS)
+2. Create the ffbackup.bat batch file (also place in C:\WINDOWS)
+3. Run it.

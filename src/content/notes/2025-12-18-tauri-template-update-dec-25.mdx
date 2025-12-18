@@ -1,0 +1,24 @@
+---
+title: Major Update to Tauri Template
+slug: tauri-template-update-dec-25
+pubDate: 2025-12-18
+---
+
+[Tauri Template](https://github.com/dannysmith/tauri-template) is a batteries-included template for building production-ready desktop applications with Tauri, React and TypeScript. It's designed with opinionated patterns that help both humans and AI coding agents build well-architected apps. The first version of it was extracted from Astro Editor in the summer, and yesterday I shipped some fairly major updates to it...
+
+- Added **cross-platform support** including path normalisation, OS-detection utilities, sensible title bars and updated GitHub actions for building releases for all platforms.
+- Added [tauri-specta](https://github.com/specta-rs/tauri-specta) for **typesafe Tauri commands**.
+- Switched to **React Compiler**.
+- Added **static analysis** tools: [knip](https://knip.dev/), [jspcd](https://github.com/kucherenko/jscpd) and [ast-grep](https://ast-grep.github.io/).
+- Added a **quick entry pane** which is a floating window that can appear anywhere. This is triggered by a global shortcut which can be changed in the preferences. On macOS it's converted to an `NSPane` so it works over fullscreen apps, and there is an event bridge pattern which allows for this kind of pane to send data to the main window. The idea here is to provide a working example of how global spotlight-esque things should work.
+- Added a bunch of other [common **Tauri plugins**](https://github.com/dannysmith/tauri-template/blob/main/docs/developer/tauri-plugins.md) which are likely to be needed in most apps.
+- Added **internationalisation**, including support for RTL languages.
+- Tweaked the shadcn theme and **cleaned up the Tailwind and CSS** a bit.
+- **Refactored the monolithic `lib.rs`** into multiple files.
+- **Refactored** the React components slightly.
+- Fixed a whole slew of **bugs, potential edge cases and performance issues** and generally made the code more **defensive**.
+- Completely overhauled the **developer documentation**.
+- Simplified the Claude Code Commands and Agents and **updated the AI Agent files**.
+- Plus a load of other little things which I can't remember.
+
+If you're looking to start a new Tauri project, it's a good place to start. [Give it a try](https://github.com/dannysmith/tauri-template).

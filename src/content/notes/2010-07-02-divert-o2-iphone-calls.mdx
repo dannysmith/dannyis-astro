@@ -1,0 +1,24 @@
+---
+title: "Divert O2 & iPhone calls or change your voicemail time"
+pubDate: 2010-07-02
+tags: ["geekery"]
+---
+import { Callout } from '@components/mdx';
+
+<Callout emoji="📜">
+This was originally posted on blog.dasmith.co.uk on 2 July 2010 and was imported here from the [Internet Archive](https://web.archive.org/web/20130702010726/http://blog.dasmith.co.uk/tagged/article) on 18 December 2025.
+</Callout>
+
+I just found some cool numbers you can use if you're on O2 in the UK - these apply to most iPhone users and could be useful.
+
+- Call `**61*NUMBER*11*TIME#` (where TIME is the number of seconds to ring for before forwarding and NUMBER is the number to divert to). So to divert to voicemail after 30 seconds you'd call `**61*901*11*30#`.
+- Call `*#61#` for current status of call forwarding when you're busy/don't answer.
+- Call `**62*` to activate call forwarding when you're not reachable (`##62#` to cancel)
+- Call `**21*NUMBER#` to divert all calls to NUMBER. Calling `##21#` cancels this.
+
+A number of my mates divert their mobile calls to their office phones while they're at their desks. You could easily set up two contacts:
+
+- "Set office divert ON" - `**21*YOUR_OFFICE_NUMBER#`
+- "Set office divert OFF" - `##21#`
+
+You can find more general information about these codes online.

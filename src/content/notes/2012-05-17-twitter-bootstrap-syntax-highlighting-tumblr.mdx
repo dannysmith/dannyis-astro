@@ -1,0 +1,99 @@
+---
+title: "Twitter Bootstrap-style syntax highlighting in a Tumblr theme"
+pubDate: 2012-05-17
+tags: ["geekery", "css"]
+---
+import { Callout } from '@components/mdx';
+
+<Callout emoji="📜">
+This was originally posted on blog.dasmith.co.uk on 17 May 2012 and was imported here from the [Internet Archive](https://web.archive.org/web/20121026030127/http://blog.dasmith.co.uk/post/23246957282/twitter-bootsrap-style-syntax-highlighting-in-a-tumblr) on 18 December 2025.
+</Callout>
+
+I've just spent a bit of time adding syntax highlighting to this theme after seeing the code block in Twitter Bootstrap. Although I don't post a lot of code on here, I do occasionally post snippets up and have always hated sites that don't bother to display code nicely.
+
+For starters I realised that the font-size and line-height I've been using on here make longer text posts quite difficult to read, so I reduced the `font-size` of text posts a bit and set the `line-height` to 1.61803399 (the golden ratio). If I ever find myself writing lots of text-heavy posts then I'll put a bit more effort into the typography.
+
+I started out by styling up the `<code>` element exactly as it is in the Bootstrap CSS, although I removed the `font-size` rules so that they'd be inherited:
+
+```css
+code,
+pre {
+  padding: 0 3px 2px;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  color: #333333;
+  -webkit-border-radius: 3px;
+     -moz-border-radius: 3px;
+          border-radius: 3px;
+}
+
+code {
+  padding: 2px 4px;
+  color: #d14;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+}
+```
+
+I then uploaded the Google Code Prettify script to Tumblr and included it in my theme. Rather than include another remote CSS file, I dropped the prettify CSS code from `prettify.css`, `lang-css.css` and `lang-yaml.css` directly into the theme and added the relevant CSS from Bootstrap:
+
+```css
+pre {
+  display: block;
+  padding: 8.5px;
+  margin: 0 0 9px;
+  font-size: 12.025px;
+  line-height: 18px;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre;
+  white-space: pre-wrap;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+pre.prettyprint {
+  margin-bottom: 18px;
+}
+
+.pre-scrollable {
+  max-height: 340px;
+  overflow-y: scroll;
+}
+```
+
+This pretty much sorted things out, although things didn't quite look the same as they did on the Bootstrap demo website. After adding the prettify.css from Bootstrap and adjusting some of the colours to fit better, everything was sorted.
+
+Prettify allows you to specify the language too, so by applying `prettyprint linenums language-ruby` classes to the `pre` tag, we get line numbers and syntax-highlighting for Ruby:
+
+```ruby
+#ruby.rb
+require 'sinatra'
+
+def some_method(arg)
+  if (params[:somesym] == 56)
+    bar = foo
+  else
+    bar = "A String"
+  end
+end
+```
+
+It's worth noting that it only labels every fifth line by default and adds a different background for odd rows. You can fix this by removing:
+
+```css
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}
+```
+
+and:
+
+```css
+li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+```
+
+from the Prettify CSS respectively.
+
+Although I find it slightly saddening that Twitter Bootstrap has become so prevalent and would avoid using it for everything bar quick-and-dirty app development and prototyping, it's fantastically useful for achieving things like this in a fraction of the time it would take otherwise.
