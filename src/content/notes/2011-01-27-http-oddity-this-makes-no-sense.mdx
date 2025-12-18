@@ -1,0 +1,28 @@
+---
+title: "HTTP oddity - This makes no Sense"
+pubDate: 2011-01-27
+tags: ["geekery"]
+---
+import { Callout } from '@components/mdx';
+
+<Callout emoji="📜">
+This was originally posted on blog.dasmith.co.uk on 27 January 2011 and was imported here from the [Internet Archive](https://web.archive.org/web/20110502173512/http://blog.dasmith.co.uk/archive) on 18 December 2025. The full post was not archived - only this preview was available.
+</Callout>
+
+According to the DNS, the domain points to heroku:
+
+```bash
+→ host tumble.dasmith.co.uk
+tumble.dasmith.co.uk is an alias for proxy.heroku.com.
+proxy.heroku.com has address 50.16.215.196
+proxy.heroku.com has address 75.101.145.87
+proxy.heroku.com has address 75.101.163.44
+proxy.heroku.com has address 174.129.212.2
+```
+
+Yet if I send a TRACE request, I get this back:
+
+```
+Content-Length: 277
+Date: Thu, 27 Jan 2011...
+```
