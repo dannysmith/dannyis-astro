@@ -1,0 +1,50 @@
+---
+title: My Global Raycast Snippets
+slug: my-global-snippets-dec-25
+draft: false
+pubDate: 2025-12-31
+---
+
+I use [Raycast Snippets](https://www.raycast.com/core-features/snippets) to insert text wherever I'm typing. All my snippets start with a `!` character so they never trigger by accident.
+
+I used to have a lot more of these but found myself having to look up the trigger keywords for the infrequently-used ones, which was slower than just typing the thing. Here's what I currently have.
+
+### `!ultra`
+
+> Ultrathink and take your time. Use parallel subagents freely and look online if you need to.
+
+I find myself typing this into Claude Code regularly enough that I wanted a snippet for it. It's pretty much the only "AI prompt" snippet I have now.
+
+### `!starttodo`
+
+> We are working on @docs/tasks-todo/ {cursor} . Gather as much context as you need and then continue implementation.
+
+I routinely start new Claude Code sessions like this. Almost all my projects have a `docs/tasks-todo` folder where I keep markdown files describing implementation plans. After iterating on these implementation plans and heavily editing them, I often have Claude Code implement them across a number of different sessions.
+
+### `!iso`
+
+> {date "yyyy-MM-dd"}
+
+Probably my most used snippet. Inserts an ISO date for today.
+
+### `!gd` and `!gdos`
+
+> {date "yyyyMMdd"}-{cursor}-OS
+
+Inserts the important parts of a MoD filename/email subject ([which I wrote about in 2013](/writing/mod-email-subject-lines-with-applescript-osx/)). The "OS" suffix is an **OFFICIAL-SENSITIVE** [protective marking](https://www.gov.uk/government/publications/government-security-classifications/government-security-classifications-policy-html#definitions-for-official-secret-and-top-secret), which isn't always required, hence two separate commands.
+
+### `!eraf`, `!ehi` and `!mob`
+
+These insert my two current email addresses and phone number, respectively. My RAF email is in the form *name.surname.number@rafac.mod.gov.uk* which is far too long to type by hand. I use the others less frequently than I used to because my password manager got better at inserting my details into web forms.
+
+### `!meet`, `!zoom` and `!linkedin`
+
+These insert URLs which I use regularly or which are long enough that I struggle to remember them.
+
+- *meet* - My meeting booking link. I can use Raycast's Cal.com integration to get meeting links for my specific types of meeting, but most of the time I just wanna share my "book a meeting" homepage.
+- *zoom* - The join link for my Zoom personal meeting room.
+- *linkedin* - Because I can **never** remember the form of my LinkedIn profile URL.
+
+### `!a1`, `!a2` and `!ap`
+
+Insert the first, second and [postcode](https://en.wikipedia.org/wiki/Postcodes_in_the_United_Kingdom) lines of my home address. Again, I used these much more before my password manager got good at webforms.
