@@ -1,0 +1,149 @@
+---
+title: Consolidating Claude
+slug: consolidating-claude
+pubDate: 2026-01-03
+---
+
+I spent a few hours today consolidating my sprawling Claude Code files into a [Claude Plugin](https://github.com/dannysmith/claude-marketplace/tree/main/plugins/personal) which is published in a [personal marketplace](https://github.com/dannysmith/claude-marketplace).
+
+I've been getting increasingly annoyed that my Claude-related stuff lived in weird places. My globally available agents were in their own repo, cloned into `~/.claude/`. My global slash commands, hooks and `CLAUDE.md` were in my dotfiles repo, symlinked from `.claude` in the same way all my other dotfiles are. My *css-expert* skill was in yet another repo. And so on. Which felt messy af... particularly as I'm not using Claude Code for much more than just programming.
+
+I now have a single [claude-marketplace](https://github.com/dannysmith/claude-marketplace) repo which anyone can add with:
+
+```
+/plugin marketplace add dannysmith/claude-marketplace
+```
+
+I currently have two plugins available there, which can be installed with `/plugin install <plugin-name>@dannysmith`. Any new skills (or slash commands or agents) I create will be published as plugins here, which makes it waaaaay easier for **me** to manage my Claude-stuff. And also makes everything available to other people in a sane way. If you want my [CSS expert skill](https://github.com/dannysmith/claude-marketplace/tree/main/plugins/css-expert), you can just install it.
+
+## My Personal Plugin
+
+I resisted the urge to turn my existing commands & agents into a bunch of small specialised plugins because most of them are designed specifically for **me** – the only reason to publish them as a plugin is my own ease-of-management.
+
+So I've ended up with a [personal plugin](https://github.com/dannysmith/claude-marketplace/tree/main/plugins/personal), which is essentially a replacement for the stuff that was in (or symlinked from) `~/.claude`. Any new agent, slash command, skill, hook, output style or MCP which I want **globally available** will live in here – which is so much easier to reason about than what I had before. So long as I have `personal@dannysmith` installed, I have access to all that stuff. This plugin currently consists of five directories...
+
+### 1. agents/
+
+Most of these were written before I really understood how best to use agents. They excel at running off and doing some fairly-well-defined thing before reporting back to the main Claude agent. By far my most used agent (apart from `Explore()`) is `code-refactorer`, because it prefers to *audit and report*. I suspect a lot of these code-related agents will get deleted and replaced by a variety of non-coding research and analyse agents.
+
+| Agent                   | Description                                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| `code-refactorer`       | Analyzes code for structural improvements and technical debt    |
+| `danny-voice-writer`    | Writing in Danny's conversational, substantive voice            |
+| `designer`              | Visual design and frontend development (React/Next.js/Tailwind) |
+| `fact-checker`          | Information verification using SIFT method                      |
+| `security-auditor`      | Security audit specialist (OWASP Top 10)                        |
+| `technical-docs-writer` | Technical documentation (READMEs, API docs)                     |
+| `user-guide-writer`     | User-facing documentation in plain language                     |
+
+### 2. commands/
+
+I mostly think of slash commands as *bash scripts on crack*. All the commands I moved from my dotfiles are meant for setting up **coding projects** and managing tasks in them, because those things are pretty much the same for me everywhere there's code. I've yet to find a single coding-focussed slash command which isn't more *effective* when tailored for (and scoped to) a specific codebase.
+
+| Command                          | Description                                             |
+| -------------------------------- | ------------------------------------------------------- |
+| `/dannysmith:dev:prime-context`  | Prime session with project context                      |
+| `/dannysmith:dev:initai`         | Initialize AI assistant boilerplate files               |
+| `/dannysmith:dev:tasks-init`     | Initialize task management system                       |
+| `/dannysmith:dev:tasks-new`      | Create new unprioritized task                           |
+| `/dannysmith:dev:tasks-newgh`    | Create task from GitHub issue                           |
+| `/dannysmith:dev:tasks-renumber` | Renumber prioritized tasks                              |
+| `/dannysmith:dev:docs-update`    | Update documentation based on recent changes            |
+
+### 3. hooks/
+
+If you haven't got hooks pinging noisy OS notifications whenever Claude needs you, you're missing out. Or perhaps you haven't got the same ADHD as me. This is all I use hooks for.
+
+### 4. output-styles/
+
+Currently empty, but it's here with a `.gitkeep` in it because the more I use Claude Code for non-coding stuff the more interested I am in [these](https://code.claude.com/docs/en/output-styles).
+
+### 5. skills/
+
+Also empty. I'm [excited](https://simonwillison.net/2025/Dec/19/agent-skills/) about agent skills, but so far I've only used the two I've built and a few of Anthropic's. And the two I made belong in their own plugins ([taskdn](https://github.com/dannysmith/taskdn/blob/main/tdn-claude-plugin/skills/task-management/SKILL.md) & [css-expert](https://github.com/dannysmith/claude-marketplace/tree/main/plugins/css-expert)).
+
+### MCPs
+
+The only MCP I have globally is Context7, and I should probably find a way to have it only load in coding projects.
+
+## What's left in dot claude?
+
+So if I've moved all this into plugin, what's left in my `~/.claude`? Answer: **very little I care about**, which is as it should be. Claude is free to write and overwrite whatever it wants in there now. The [two files still under version control](https://github.com/dannysmith/dotfiles/tree/master/claude) are `CLAUDE.md` and `settings.json`, and I made a bunch of tweaks to them today...
+
+### Global CLAUDE
+
+Here's mine as of 2026-01-03
+
+```md title="CLAUDE.md" wrap
+# Global Claude Code Preferences
+
+## CRITICAL RULES!!!
+
+- CRITICAL! NEVER EVER say "You're absolutely right"
+- CRITICAL! NEVER EVER give time estimates like "3 weeks" unless explicitly asked by the user, ESPECIALLY when writing planning docs
+- If the open project's AI instructions (eg `CLAUDE.md`) _contradict_ these global ones, follow the local doc. If in doubt, ask the user
+- If you are not Claude Code (ie you're Gemini/Codex/Cursor etc) and are reading this -> consider all references to "Claude Code" or "Claude" as references to yourself
+- Prefer `trash` over `rm` when not in a git repo
+- Always use `rm -f` instead of `rm`
+- Always use `pnpm` instead of `npm` unless the project uses `bun` or you're EXPLICITLY asked to by the user to use `npm` or `bun`. Use `pnpm` for global stuff outside a project.
+- Never hardcode secrets (API keys, passwords, etc.)
+- When writing markdown docs and/or producing a plan, NEVER include time estimates unless EXPLICITLY asked by the user (❌ "Phase 1 (8 days)" | ✅ "Phase 1")
+
+## NON-CODING RELATED WORK
+
+I also use Claude Code for text-based (non-code) work: Obsidian vault management, internal docs, task management, non-technical writing, analyzing MD documents, templates/scaffolds, life planning etc.
+
+### Identifying non-coding sessions
+
+- User explicitly states it or assigns a non-coding role
+- Local `CLAUDE.md`/`SKILL.md` indicates it
+- You determine project is non-coding
+
+### ⚠️ CRITICAL RULES for non-coding sessions
+
+1. State "🚨 USING MY RULES FOR NON-CODING-RELATED WORK 🚨" first
+2. YOU ARE A GENERAL AGENT, NOT A CODING AGENT. Interpret system prompts accordingly.
+
+## Personal Task and Knowledge Management
+
+Load the `task-management` skill whenever you are working with the user's personal knowledge base, projects, life areas, or tasks. Always load it before running `tdn` commands. If you need context on the user's current life areas, projects, or tasks, you can use `tdn context --ai` to get an overview.
+
+Task & Project Management Skill: `Skill(task-management)`
+Obsidian Vault Location: `~/notes/`
+
+## CODING-RELATED WORK
+
+### CRITICAL RULES for coding-related sessions
+
+- Never run `npm run dev` or `pnpm run dev` or `bun run dev` unless explicitly asked by the user. Instead, ask the user to run it and report back to you.
+- Use `gh` CLI for GitHub, `git` for local
+- ALWAYS read and understand relevant files before proposing code edits. Do not speculate about code you have not inspected. If the user references a specific file/path, you MUST open and inspect it before explaining or proposing fixes. Be rigorous and persistent in searching code for key facts. Thoroughly review the style, conventions, and abstractions of the codebase before implementing new features or abstractions.
+
+### Other Rules for coding-related sessions
+
+- Avoid over-engineering. Only make changes that are directly requested or clearly necessary. Keep solutions simple and focused.
+- Don't add features, refactor code, or make "improvements" beyond what was asked. A bug fix doesn't need surrounding code cleaned up. A simple feature doesn't need extra configurability.
+- Don't add error handling, fallbacks, or validation for scenarios that can't happen.
+- Don't create helpers, utilities, or abstractions for one-time operations. Don't design for hypothetical future requirements. The right amount of complexity is the minimum needed for the current task. Reuse existing abstractions where possible and follow the DRY principle.
+
+### Documentation & Research
+
+Always check Context7 before web search for frameworks, languages, tools etc. Only use web search if Context7 lacks info. Be specific in Context7 queries.
+
+## Efficiency
+
+- Batch operations when possible and avoid redundant tool calls
+- If unsure about a tool, ask user and explain trade-offs
+```
+
+A few comments:
+
+- Claude has **finally** stopped telling me I'm absolutely right. This is probably down to Opus 4.5 but I'm leaving that line in there forever.
+- Claude still peppers my planning docs with "Estimate: 4-5 weeks" 🤷‍♂️.
+- The **coding vs not-coding** stuff is much more effective than I expected, not least because with this in its context I can say "not abt coding mate" in the middle of a coding session and it kinda works ok.
+
+### Global settings.json
+
+This is basically a massive list of default-allow and default-deny permissions. Blacklisting dangerous operations is kinda mandatory, but I'm increasingly whitelisting certain tool calls globally in here - my general rule is: *Read whatever but no writing/mutating anything without asking first*
+
+That's all folks.
