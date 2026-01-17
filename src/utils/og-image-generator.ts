@@ -110,6 +110,7 @@ export async function generateOGImage(
     const element = templateFn(data);
 
     // Generate SVG using Satori
+    // @ts-expect-error - satori accepts { type, props } objects at runtime, but types only expose ReactNode
     const svg = await satori(element, {
       width,
       height,

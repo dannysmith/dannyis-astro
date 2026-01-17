@@ -1,64 +1,28 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*",
-    "src/types/*.d.ts"
-  ],
-  "exclude": [
-    "dist"
-  ],
+  "include": [".astro/types.d.ts", "**/*", "src/types/*.d.ts"],
+  "exclude": ["dist"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "strictNullChecks": true,
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "paths": {
-      "@components": [
-        "src/components/index.ts"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@components/layout": [
-        "src/components/layout/index.ts"
-      ],
-      "@components/layout/*": [
-        "src/components/layout/*"
-      ],
-      "@components/navigation": [
-        "src/components/navigation/index.ts"
-      ],
-      "@components/navigation/*": [
-        "src/components/navigation/*"
-      ],
-      "@components/mdx": [
-        "src/components/mdx/index.ts"
-      ],
-      "@components/mdx/*": [
-        "src/components/mdx/*"
-      ],
-      "@components/ui": [
-        "src/components/ui/index.ts"
-      ],
-      "@components/ui/*": [
-        "src/components/ui/*"
-      ],
-      "@layouts/*": [
-        "src/layouts/*"
-      ],
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@lib/*": [
-        "src/lib/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ]
+      "@components": ["src/components/index.ts"],
+      "@components/*": ["src/components/*"],
+      "@components/layout": ["src/components/layout/index.ts"],
+      "@components/layout/*": ["src/components/layout/*"],
+      "@components/navigation": ["src/components/navigation/index.ts"],
+      "@components/navigation/*": ["src/components/navigation/*"],
+      "@components/mdx": ["src/components/mdx/index.ts"],
+      "@components/mdx/*": ["src/components/mdx/*"],
+      "@components/ui": ["src/components/ui/index.ts"],
+      "@components/ui/*": ["src/components/ui/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@assets/*": ["src/assets/*"],
+      "@config/*": ["src/config/*"],
+      "@lib/*": ["src/lib/*"],
+      "@utils/*": ["src/utils/*"]
     },
     "jsxImportSource": "react"
   }

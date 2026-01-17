@@ -42,15 +42,21 @@ export default defineConfig({
     csp: false,
     svgo: true,
   },
-  integrations: [expressiveCode({
-    themes: [codeTheme],
-    styleOverrides: {
-      borderRadius: '0.2rem',
-      frames: {
-        frameBoxShadowCssValue: 'none',
+  integrations: [
+    expressiveCode({
+      themes: [codeTheme],
+      styleOverrides: {
+        borderRadius: '0.2rem',
+        frames: {
+          frameBoxShadowCssValue: 'none',
+        },
       },
-    },
-  }), mdx(), sitemap(), icon(), react()],
+    }),
+    mdx(),
+    sitemap(),
+    icon(),
+    react(),
+  ],
   markdown: {
     syntaxHighlight: {
       type: 'shiki',
