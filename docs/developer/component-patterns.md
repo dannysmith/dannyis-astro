@@ -289,6 +289,7 @@ components/
 │   └── index.ts     # Barrel exports
 ├── mdx/             # Components for MDX content
 │   └── index.ts     # Barrel exports
+├── demos/           # One-off interactive demos (React allowed)
 └── index.ts         # Main component barrel
 ```
 
@@ -369,6 +370,49 @@ const { label, pressed = false } = Astro.props;
   }
 </style>
 ```
+
+## Demo Components
+
+The `demos/` directory is for **one-off interactive components** that accompany specific articles or notes. This is the only place where React and `client:*` directives are permitted.
+
+### When to Use `demos/`
+
+- Demonstrating a React library you've built or are writing about
+- Interactive examples that genuinely require client-side state
+- One-off experiments that don't fit the site's zero-JS philosophy
+
+### Guidelines
+
+1. **Keep it isolated** - Demo components should be self-contained. Don't import them elsewhere.
+2. **Inline styles preferred** - For small demos, inline styles keep everything in one file.
+3. **Use `client:load`** - For demos that need to be interactive immediately.
+4. **No barrel exports** - These are one-offs, not reusable components.
+
+### Example
+
+```tsx
+// src/components/demos/MyDemo.tsx
+import { useState } from 'react';
+import { SomeLibrary } from 'some-library';
+
+export function MyDemo() {
+  const [value, setValue] = useState('');
+  return <SomeLibrary value={value} onChange={setValue} />;
+}
+```
+
+```mdx
+// In your article/note
+import { MyDemo } from '@components/demos/MyDemo';
+
+<MyDemo client:load />
+```
+
+### What NOT to Use `demos/` For
+
+- Site-wide interactive features (use inline `<script>` tags instead)
+- Reusable UI components (use `ui/` with Astro components)
+- Anything that should work without JavaScript
 
 ## Quick Reference
 

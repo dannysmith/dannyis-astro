@@ -106,7 +106,8 @@ src/
 │   ├── layout/      # Structural (BaseHead, Footer, etc.)
 │   ├── navigation/  # Nav-specific
 │   ├── ui/          # Reusable utilities (FormattedDate, Pill, etc.)
-│   └── mdx/         # Available in MDX content (Callout, Embed, etc.)
+│   ├── mdx/         # Available in MDX content (Callout, Embed, etc.)
+│   └── demos/       # One-off interactive demos for articles/notes (React OK here)
 ├── content/
 │   ├── articles/    # Long-form writing
 │   └── notes/       # Short-form writing

@@ -14,7 +14,7 @@ This document covers the core architectural patterns and principles for Danny's 
 - **Client-side JS is acceptable** when it's genuinely the best solution for a feature
 - Prefer modern CSS features over JS (container queries, `:has()`, layers, etc.)
 - Progressive enhancement of browser-native features preferred
-- NO `client:*` directives used anywhere in this codebase
+- NO `client:*` directives used anywhere in this codebase, **except** for one-off demo components in `demos/` (see [component-patterns.md § Demo Components](./component-patterns.md#demo-components))
 - Interactive components use inline `<script>` tags (ThemeToggle, MainNavigation, Accordion, Lightbox, MarkdownContentActions)
 - All scripts handle ViewTransitions (`astro:after-swap` events)
 
@@ -184,6 +184,7 @@ document.addEventListener('astro:after-swap', initComponent);
 - `navigation/` - Navigation-specific (NavLink, ThemeToggle)
 - `ui/` - Reusable utilities (ContentCard, FormattedDate, Pill)
 - `mdx/` - Available in MDX content (Callout, Embed, BasicImage)
+- `demos/` - One-off interactive demos for articles/notes (React allowed here)
 - Use barrel exports (`index.ts`) for clean imports
 
 **lib/ vs utils/ distinction:**
@@ -358,7 +359,8 @@ src/
 │   ├── layout/      # Structural (BaseHead, Footer, etc.)
 │   ├── navigation/  # Nav-specific
 │   ├── ui/          # Reusable utilities (FormattedDate, Pill, etc.)
-│   └── mdx/         # Available in MDX content (Callout, Embed, etc.)
+│   ├── mdx/         # Available in MDX content (Callout, Embed, etc.)
+│   └── demos/       # One-off interactive demos (React OK here)
 ├── config/          # Constants and configuration (data only)
 ├── lib/             # Build-time plugins and scripts (runs independently)
 ├── utils/           # Shared helper functions (imported throughout codebase)
