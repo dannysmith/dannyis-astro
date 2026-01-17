@@ -13,6 +13,8 @@ import icon from 'astro-icon';
 import { readFileSync } from 'fs';
 import expressiveCode, { ExpressiveCodeTheme } from 'astro-expressive-code';
 
+import react from '@astrojs/react';
+
 // Load custom code theme
 const codeThemeJson = readFileSync(
   new URL('./src/config/code-theme.json', import.meta.url),
@@ -40,20 +42,15 @@ export default defineConfig({
     csp: false,
     svgo: true,
   },
-  integrations: [
-    expressiveCode({
-      themes: [codeTheme],
-      styleOverrides: {
-        borderRadius: '0.2rem',
-        frames: {
-          frameBoxShadowCssValue: 'none',
-        },
+  integrations: [expressiveCode({
+    themes: [codeTheme],
+    styleOverrides: {
+      borderRadius: '0.2rem',
+      frames: {
+        frameBoxShadowCssValue: 'none',
       },
-    }),
-    mdx(),
-    sitemap(),
-    icon(),
-  ],
+    },
+  }), mdx(), sitemap(), icon(), react()],
   markdown: {
     syntaxHighlight: {
       type: 'shiki',
