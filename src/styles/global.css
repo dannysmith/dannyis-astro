@@ -158,6 +158,10 @@
     oklch(from var(--color-beige) calc(l + 0.02) c h),
     oklch(from var(--color-charcoal) calc(l - 0.04) c h)
   );
+  --color-background-code: light-dark(
+    oklch(from var(--color-beige) calc(l - 0.025) 0.01 var(--hue-grey)),
+    oklch(from var(--color-charcoal) calc(l - 0.04) c h)
+  );
   --color-text: light-dark(var(--color-ink), var(--color-beige));
   --color-text-secondary: light-dark(
     oklch(55% 0.01 var(--hue-grey)),
@@ -701,7 +705,7 @@
     font-family: var(--font-code);
     font-size: var(--font-size-sm);
     font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
-    background-color: var(--color-background-secondary);
+    background-color: var(--color-background-code);
     border: var(--border-width-hairline) solid var(--color-border);
     padding: 0.1em 0.4em;
     border-radius: var(--radius-sm);
