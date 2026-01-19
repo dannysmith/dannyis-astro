@@ -8,10 +8,10 @@ Danny Smith's personal website – http://danny.is
 
 ```
 src/
-├── components/        # Organized component library
-│   ├── layout/        # Page structure components
+├── components/       # Organized component library
+│   ├── layout/       # Page structure components
 │   ├── mdx/          # Components for MDX content
-│   ├── navigation/    # Navigation components
+│   ├── navigation/   # Navigation components
 │   └── ui/           # Reusable UI utilities
 ├── content/          # Content collections
 │   ├── articles/     # Long-form articles
@@ -21,7 +21,7 @@ src/
 └── utils/            # Utility functions
 ```
 
-## 🧞 Commands
+## Commands
 
 All commands are run from the root of the project, from a terminal:
 
@@ -52,4 +52,4 @@ pnpm run newnote "Some Title Here"        # Uses the supplied title
 pnpm run newnote "https://some-url.com"   # Fetches the og:title or <title> and sets sourceUR to the URL.
 ```
 
-New draft notes can also be created using this Chrome extension https://github.com/dannysmith/dannyischromeextension. Working on a desktop editor at https://github.com/dannysmith/astro-editor
+New draft notes can also be created using [this Chrome extension](https://github.com/dannysmith/dannyischromeextension) or [Astro Editor](https://astroeditor.dannyu.is).

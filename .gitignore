@@ -5,6 +5,8 @@ dist/
 
 # dependencies
 node_modules/
+.npm-cache/
+.vercel
 
 # logs
 npm-debug.log*
@@ -19,9 +21,9 @@ seo-audit-results/
 .env.production
 
 # Local files
-*.local.json
-*.local.md
-*.local.txt
+.local/
+*.local.*
+*.local
 
 # macOS-specific files
 .DS_Store
@@ -31,10 +33,5 @@ usage_tracking2.json
 uploads/
 .claude/settings.local.json
 .serena/
-
 test-results/
-
 .playwright-mcp/
-
-.npm-cache/
-.vercel
