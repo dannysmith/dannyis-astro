@@ -9,20 +9,10 @@ This project follows industry-standard accessibility and performance benchmarks 
 ### Accessibility Standards
 
 - **WCAG 2.1 AA** - Minimum standard for all features and content
-- **WCAG AAA compliance** - Target for critical content where feasible
-- **Screen reader testing** - Verify compatibility with common assistive technologies
 - **Keyboard navigation** - All interactive elements must be keyboard accessible
 - **Color contrast ratios** - Meet or exceed WCAG requirements (4.5:1 for normal text, 3:1 for large text)
 
 Detailed WCAG guidelines are available in the [official WCAG 2.1 documentation](https://www.w3.org/WAI/WCAG21/quickref/). Focus here is on site-specific implementation patterns.
-
-### Performance Standards
-
-Target Core Web Vitals thresholds for optimal user experience:
-
-- **LCP (Largest Contentful Paint)** - < 2.5s
-- **FID (First Input Delay)** - < 100ms
-- **CLS (Cumulative Layout Shift)** - < 0.1
 
 ## Accessibility
 
@@ -93,6 +83,8 @@ Include when semantic HTML isn't enough:
 ```
 
 The reset layer in `global.css` sets `outline-offset: 3px` globally for `:focus-visible`.
+
+See [component-patterns.md § Accessible Interactive Component](./component-patterns.md#accessible-interactive-component) for a full component example with ARIA attributes and transitions.
 
 ## Performance
 

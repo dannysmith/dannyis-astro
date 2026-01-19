@@ -25,75 +25,13 @@ We have various tools available to help with maintaining code quality:
 
 These can be run together with `pnpm run check:all`.
 
-## Common Quality Issues
+## Common Patterns Reference
 
-### Issue 1: Using Hardcoded Colors
+For coding patterns and common issues, see:
 
-Always use semantic color variables from `global.css`. This ensures proper theme switching and maintainability.
-
-```css
-/* ❌ BAD - Hardcoded colors */
-.component {
-  background: #ff7369;
-  color: oklch(50% 0.15 250);
-}
-
-/* ✅ GOOD - Using semantic variables */
-.component {
-  background: var(--surface-raised);
-  color: var(--color-accent);
-}
-
-/* ✅ GOOD - Deriving variants from semantic variables */
-.component:hover {
-  background: oklch(from var(--color-accent) calc(l - 0.1) c h);
-}
-```
-
-**Why:** Semantic variables use `light-dark()` to automatically switch values based on the current color scheme, while hardcoded values remain static.
-
-### Issue 2: Missing Path Aliases
-
-Always use path aliases for imports. Relative imports will cause build failures and make refactoring difficult.
-
-```typescript
-// ❌ BAD - Relative imports
-import { BaseHead } from '../../components/layout/BaseHead.astro';
-import { generatePageTitle } from '../../../utils/seo';
-
-// ✅ GOOD - Path aliases
-import { BaseHead } from '@components/layout';
-import { generatePageTitle } from '@utils/seo';
-```
-
-**Why:** Path aliases are configured in `tsconfig.json` and ensure imports work correctly regardless of file location. They also make imports more readable and easier to maintain.
-
-### Issue 3: Missing Props Interface
-
-All components must have an explicit Props interface for type safety.
-
-```astro
-<!-- ❌ BAD - No interface, no type safety -->
----
-const { title, description } = Astro.props;
----
-
-<!-- ✅ GOOD - Explicit interface -->
----
-export interface Props {
-  title: string;
-  description?: string;
-}
-const { title, description } = Astro.props;
----
-```
-
-**Why:** TypeScript can't validate props without an explicit interface, leading to runtime errors when required props are missing or wrong types are passed.
-
-**See Also:**
-
-- [architecture-guide.md](./architecture-guide.md) - Core Principles for project-specific rules
-- [component-patterns.md](./component-patterns.md) - Component best practices
+- **CSS patterns** (colors, tokens, styling) → [design.md](./design.md)
+- **Import patterns** (path aliases) → [architecture-guide.md § TypeScript Path Aliases](./architecture-guide.md#typescript-path-aliases)
+- **Component patterns** (props, structure) → [component-patterns.md](./component-patterns.md)
 
 ## Code Analysis Tools
 

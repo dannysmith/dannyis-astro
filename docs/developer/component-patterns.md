@@ -4,21 +4,9 @@ TypeScript patterns, component structure, error handling, and organization for b
 
 ## Import Patterns
 
-```typescript
-// ✅ Correct: Category-specific barrel imports
-import { BaseHead, Footer } from '@components/layout';
-import { FormattedDate, Pill } from '@components/ui';
-import { NavLink, ThemeToggle } from '@components/navigation';
+**Always use path aliases** — see [architecture-guide.md § TypeScript Path Aliases](./architecture-guide.md#typescript-path-aliases) for complete reference.
 
-// ✅ Correct: Direct imports when not in barrel
-import Callout from '@components/mdx/Callout.astro';
-
-// ✅ Correct: Config and utilities
-import { AUTHOR } from '@config/seo';
-import { generatePageTitle } from '@utils/seo';
-```
-
-**Never use relative imports unless you are importing a component which is in the same directory as the current component**
+Never use relative imports unless importing a component in the same directory.
 
 ## Component Structure Pattern
 
@@ -39,18 +27,13 @@ export interface Props {
 // 3. Props destructuring with defaults
 const { required, optional, withDefault = true } = Astro.props;
 
-// 4. Data fetching with error handling (if needed)
-try {
-  const data = await fetchData();
-} catch (error) {
-  console.warn('Failed to fetch data:', error);
-  // Implement fallback behavior
-}
+// 4. Component logic (data fetching, calculations, etc.)
+const processedData = transformData(required);
 ---
 
-<!-- 5. Template with accessibility attributes -->
-<div class="component" role="region" aria-label="Component description">
-  <!-- Content -->
+<!-- 5. Template -->
+<div class="component">
+  <slot />
 </div>
 
 <!-- 6. Styles -->
@@ -59,11 +42,12 @@ try {
     /* Use semantic tokens from global.css */
     background: var(--surface-raised);
     color: var(--color-text);
-    border: var(--border-width-hairline) solid var(--color-border);
     padding: var(--space-m);
   }
 </style>
 ```
+
+For data fetching with error handling, see [Error Handling Strategies](#error-handling-strategies) below.
 
 ## Error Handling Strategies
 
@@ -277,23 +261,7 @@ Apply to any container that:
 
 ## Component Organization
 
-### Directory Structure
-
-```
-components/
-├── layout/           # Layout and structural components
-│   └── index.ts     # Barrel exports
-├── navigation/       # Navigation-specific components
-│   └── index.ts     # Barrel exports
-├── ui/              # Small, reusable UI utilities
-│   └── index.ts     # Barrel exports
-├── mdx/             # Components for MDX content
-│   └── index.ts     # Barrel exports
-├── demos/           # One-off interactive demos (React allowed)
-└── index.ts         # Main component barrel
-```
-
-Each category includes barrel exports for clean imports.
+See [architecture-guide.md § Component Organization](./architecture-guide.md#component-organization) for the directory structure. Each category uses barrel exports for clean imports.
 
 ### Layout Components vs UI Components
 

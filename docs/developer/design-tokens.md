@@ -91,24 +91,15 @@ Role-based tokens - **use these in components**:
 
 ### Deriving Color Variants
 
-Use relative color syntax for hover states and variants:
+Use relative color syntax to derive hover states and variants from tokens:
 
 ```css
-/* Darken for hover */
-.button:hover {
-  background: oklch(from var(--color-accent) calc(l - 0.1) c h);
-}
-
-/* Lighten with reduced chroma for subtle backgrounds */
-.subtle-bg {
-  background: oklch(from var(--color-accent) 96% calc(c * 0.3) h);
-}
-
-/* Add transparency */
-.overlay {
-  background: oklch(from var(--color-accent) l c h / 0.1);
-}
+/* Darken: oklch(from [token] calc(l - 0.1) c h) */
+/* Lighten: oklch(from [token] calc(l + 0.1) c h) */
+/* Transparency: oklch(from [token] l c h / 0.1) */
 ```
+
+See [design.md § Deriving Variants](./design.md#deriving-variants) for full examples including `color-mix()` and `light-dark()`.
 
 ---
 
@@ -389,82 +380,6 @@ All features are Baseline (widely available):
 /* ✅ Use existing token */
 .card {
   padding: var(--space-m);
-}
-```
-
----
-
-## Common Token Combinations
-
-Quick reference for common contexts:
-
-### Cards and Panels
-
-```css
-.card {
-  background: var(--surface-raised);
-  border: var(--border-width-hairline) solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-m);
-  filter: var(--shadow-small);
-}
-```
-
-### Navigation and UI
-
-```css
-.nav {
-  font-family: var(--font-ui);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--tracking-wide);
-}
-```
-
-### Article Content
-
-```css
-.prose {
-  font-family: var(--font-prose);
-  font-size: var(--font-size-base);
-  line-height: var(--leading-normal);
-  color: var(--color-text);
-}
-```
-
-### Headings
-
-```css
-.heading {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-tight);
-}
-```
-
-### Interactive Elements
-
-```css
-.interactive {
-  transition: all var(--duration-fast) var(--ease-in-out);
-}
-
-.interactive:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-}
-```
-
-### Metadata and Labels
-
-```css
-.label {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
 }
 ```
 

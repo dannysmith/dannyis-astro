@@ -516,35 +516,26 @@ padding-inline: var(--space-s);
 
 ### Patterns to Avoid
 
+**Always use tokens instead of hardcoded values:**
+
 ```css
-/* ❌ Hardcoded colors */
+/* ❌ Hardcoded values */
 color: #ff7369;
-background: oklch(70% 0.18 25);
-
-/* ✅ Use tokens */
-color: var(--color-accent);
-background: var(--color-background);
-
-/* ❌ Hardcoded spacing */
 padding: 24px;
-gap: 1.5rem;
-
-/* ✅ Use fluid tokens */
-padding: var(--space-m);
-gap: var(--space-s);
-
-/* ❌ Custom clamp() for body/component font sizes */
 font-size: clamp(1rem, 2vw, 1.5rem);
 
-/* ✅ Use typography scale */
+/* ✅ Use design tokens */
+color: var(--color-accent);
+padding: var(--space-m);
 font-size: var(--font-size-lg);
+```
 
-/* ✅ EXCEPTION: Hero/display text can use custom clamp() for dramatic scaling */
-.hero-title {
-  font-size: clamp(3rem, 15vw, 22rem); /* Intentionally outside token system */
-}
+**Exception:** Hero/display text can use custom `clamp()` for dramatic viewport-based scaling.
 
-/* ❌ Fighting inherited styles */
+**Fight the cascade with utilities, not overrides:**
+
+```css
+/* ❌ Fighting inherited prose styles */
 .my-nav a {
   text-decoration: none;
   color: inherit;
@@ -552,24 +543,20 @@ font-size: var(--font-size-lg);
 
 /* ✅ Use utility class */
 <nav class="ui-style">
+```
 
-/* ❌ Media queries for component layout */
-@media (min-width: 600px) {
-  .card { ... }
-}
+**Use semantic tokens for muted states:**
 
-/* ✅ Container queries */
-@container (width > 400px) {
-  .card { ... }
-}
-
-/* ❌ Opacity for muted text */
+```css
+/* ❌ Opacity creates inconsistent results across backgrounds */
 color: var(--color-text);
 opacity: 0.6;
 
-/* ✅ Use secondary token or adjust lightness */
+/* ✅ Use semantic token or derive with relative color */
 color: var(--color-text-secondary);
 ```
+
+**Use container queries for component responsiveness** — see [component-patterns.md § Container Queries vs Media Queries](./component-patterns.md#container-queries-vs-media-queries).
 
 ### Defensive CSS (For Reusable Components Only)
 
@@ -678,23 +665,11 @@ background: oklch(from var(--color-accent) 96% calc(c * 0.3) h);
 ### Responsive Approach
 
 - **Mobile-first** design methodology
-- **Fluid typography and spacing** - no breakpoints needed for size
+- **Fluid typography and spacing** — no breakpoints needed for size
 - **Container queries** for component-level responsiveness
 - **Media queries** only for page-level layout changes
 
-```css
-/* Container queries for components */
-.cq { container-type: inline-size; }
-
-@container (width > 400px) {
-  .component { grid-template-columns: 1fr 1fr; }
-}
-
-/* Media queries for page layout only */
-@media (min-width: 800px) {
-  .page-layout { grid-template-columns: 1fr 3fr; }
-}
-```
+See [component-patterns.md § Container Queries vs Media Queries](./component-patterns.md#container-queries-vs-media-queries) for detailed guidance on when to use each.
 
 ---
 
