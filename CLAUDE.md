@@ -20,56 +20,27 @@ Content-first creative playground for writing and design experimentation. Built 
 
 ## Core Rules
 
-### New Sessions
+@docs/tasks.md
 
-- Read @docs/tasks.md for task management
-- Review `docs/developer/architecture-guide.md` for essential patterns
-- Consult specialized guides when working on specific features (see [Documentation Structure](#documentation-structure))
-- Check git status and project structure
+### Developer Docs
+
+@docs/README.md
+
+Review `docs/developer/architecture-guide.md` for essential patterns
 
 ### Development Practices
 
-**CRITICAL:** Follow these strictly:
+1. **Follow Established Patterns**: Reference `docs/developer` guides
+2. **No Runtime JavaScript** - Static HTML/CSS unless absolutely required
+3. **Use path aliases** - `@components/*`, `@utils/*` etc, never relative imports
+4. **Typography first** - Let type drive design decisions
+5. **Test both themes** - Verify light and dark mode for visual changes
+6. **CSS patterns** - Follow `docs/developer/design.md`
+7. **Update styleguides** - Add examples when creating visual components
+8. **Quality Gates**: Run `pnpm run check:all` after significant changes
+9. **Documentation**: Update `docs/developer/` for new patterns
 
-1. **Read Before Editing**: Always read files first to understand context
-2. **Follow Established Patterns**: Use patterns from this file and `docs/developer`
-3. **Senior Architect Mindset**: Consider performance, maintainability, testability
-4. **No Runtime JavaScript by default** - Static HTML/CSS unless absolutely required
-5. **Use path aliases** - Always use `@components/*`, `@utils/*` etc, never relative imports
-6. **Update styleguides** - Add examples when creating visual components
-7. **Typography first** - Let type drive design decisions
-8. **Test both themes** - Verify light and dark mode for all visual changes
-9. **CSS patterns** - Follow `docs/developer/design.md` for CSS architecture. Quality, modern CSS is important.
-10. **Batch Operations**: Use multiple tool calls in single responses
-11. **Match Code Style**: Follow existing formatting and patterns
-12. **Test Coverage**: Write comprehensive tests for any business logic
-13. **Quality Gates**: Run `pnpm run check:all` after significant changes
-14. **No Dev Server**: Ask user to run and report back
-15. **No Unsolicited Commits**: Only when explicitly requested
-16. **Documentation**: Update `docs/developer/` guides for new patterns. Don't create other markdown files unless explicitly requested
-17. **Removing files**: Always use `rm -f`
 
-### Documentation Structure
-
-**Tier 1: Orientation**
-
-- `docs/developer/README.md` - Categorized index of all developer documentation
-
-**Tier 2: Core Guides** (daily use - read these first)
-
-- `docs/developer/architecture-guide.md` - Essential patterns and overview (START HERE)
-- `docs/developer/component-patterns.md` - Component development patterns
-- `docs/developer/design.md` - Visual philosophy and CSS architecture
-
-**Tier 3: Specialized References** (consult when working on specific features)
-
-- `docs/developer/accessibility-and-performance.md` - Accessible and performant code
-- `docs/developer/content-system.md` - Content collections, RSS, build-time generation
-- `docs/developer/content-authoring.md` - Creating and editing articles/notes
-- `docs/developer/seo.md` - SEO utilities and patterns
-- `docs/developer/code-quality.md` - Quality checks and standards
-- `docs/developer/testing.md` - Testing strategy and patterns
-- `docs/developer/mcp-chrome-devtools.md` - Using Chrome DevTools MCP for visual debugging
 
 ## Commands
 
@@ -87,8 +58,6 @@ pnpm run test:e2e      # E2E tests only
 pnpm run newnote       # Create new note with proper frontmatter
 ```
 
-See `@docs/tasks.md` for task system details.
-
 ## Tech Stack
 
 - **Framework:** Astro 5.15+ with TypeScript (strict mode)
@@ -101,26 +70,37 @@ See `@docs/tasks.md` for task system details.
 ## File Organization
 
 ```
-src/
-├── components/       # Organized by type with barrel exports
-│   ├── layout/      # Structural (BaseHead, Footer, etc.)
-│   ├── navigation/  # Nav-specific
-│   ├── ui/          # Reusable utilities (FormattedDate, Pill, etc.)
-│   ├── mdx/         # Available in MDX content (Callout, Embed, etc.)
-│   └── demos/       # One-off interactive demos for articles/notes (React OK here)
-├── content/
-│   ├── articles/    # Long-form writing
-│   └── notes/       # Short-form writing
-├── config/          # Centralized config (SEO, constants)
-├── lib/             # Build-time plugins and scripts (runs independently)
-├── utils/           # Shared helper functions (imported throughout codebase)
-├── layouts/         # Page templates (Article, Note)
-├── pages/           # Routes and API endpoints
-└── styles/          # Global CSS and theme
-
-docs/
-├── developer/       # Technical documentation (you are here)
-└── tasks/           # Task management system
+├── public/            # Static files served at root (favicon, avatar, fonts)
+├── scripts/           # Build and task scripts
+├── tests/             # Test files
+│   ├── e2e/           # Playwright end-to-end tests
+│   ├── unit/          # Vitest unit tests
+│   └── fixtures/      # Test fixtures
+├── docs/
+│   ├── README.md      # Documentation index
+│   ├── tasks.md       # Task management system
+│   ├── developer/     # Technical documentation
+│   ├── tasks-todo/    # Pending tasks
+│   └── tasks-done/    # Completed tasks
+└── src/
+    ├── assets/        # Images, videos for content & components
+    ├── components/    # Organized by type with barrel exports
+    │   ├── layout/    # Structural (BaseHead, Footer, etc.)
+    │   ├── navigation/# Nav-specific
+    │   ├── ui/        # Reusable utilities (FormattedDate, Pill, etc.)
+    │   ├── mdx/       # Available in MDX content (Callout, Embed, etc.)
+    │   └── demos/     # Interactive demos for articles/notes (React OK here)
+    ├── config/        # Centralized config (SEO, constants)
+    ├── content/
+    │   ├── articles/  # Long-form writing
+    │   └── notes/     # Short-form writing
+    ├── icons/         # Custom SVG icons (social, ui)
+    ├── layouts/       # Page templates (Article, Note)
+    ├── lib/           # Build-time plugins (runs independently)
+    ├── pages/         # Routes and API endpoints
+    ├── styles/        # Global CSS and theme
+    ├── types/         # TypeScript type declarations
+    └── utils/         # Shared helper functions
 ```
 
 ## AI Assistance Tools
