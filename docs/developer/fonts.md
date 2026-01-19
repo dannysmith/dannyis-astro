@@ -215,41 +215,50 @@ font-feature-settings: 'ordn' on;
 
 #### Stylistic Sets
 
-Additional stylistic alternates. Check the typeface specimen to see what each set provides.
+Literata includes stylistic sets primarily for Greek polytonic typography:
+
+| Set | Description |
+|-----|-------------|
+| `ss01` | **Greek prosgegrammeni (adscript iota)** — Displays the mute iota beside uppercase Greek vowels (Α, Η, Ω) rather than below them. Used in some scholarly publishing traditions outside Greece. |
+| `ss02` | **Alternate arrows and geometric shapes** — Provides alternate forms for certain symbols. |
 
 ```css
-font-feature-settings: 'ss01' on; /* Stylistic Set 1 */
-font-feature-settings: 'ss02' on; /* Stylistic Set 2 */
+/* Enable Greek adscript iota for scholarly text */
+.greek-scholarly {
+  font-feature-settings: 'ss01' on;
+}
 ```
+
+These stylistic sets are specialised for Greek typography and unlikely to be needed for English text.
 
 ### Complete Feature List
 
 All OpenType features available in Literata:
 
-| Tag | Name | Default |
-|-----|------|---------|
-| `aalt` | Access All Alternates | - |
-| `c2sc` | Caps to Small Caps | off |
-| `case` | Case-Sensitive Forms | off |
-| `ccmp` | Glyph Composition/Decomposition | on |
-| `dlig` | Discretionary Ligatures | off |
-| `dnom` | Denominators | off |
-| `frac` | Fractions | off |
-| `liga` | Standard Ligatures | on |
-| `lnum` | Lining Figures | off |
-| `locl` | Localized Forms | on |
-| `numr` | Numerators | off |
-| `onum` | Oldstyle Figures | off |
-| `ordn` | Ordinals | off |
-| `pnum` | Proportional Figures | off |
-| `sinf` | Scientific Inferiors | off |
-| `smcp` | Small Caps | off |
-| `ss01` | Stylistic Set 1 | off |
-| `ss02` | Stylistic Set 2 | off |
-| `subs` | Subscript | off |
-| `sups` | Superscript | off |
-| `tnum` | Tabular Figures | off |
-| `zero` | Slashed Zero | off |
+| Tag | Name | Default | When to use |
+|-----|------|---------|-------------|
+| `aalt` | Access All Alternates | - | Font inspection tools; not for CSS |
+| `c2sc` | Caps to Small Caps | off | Combined with `smcp` for all-small-caps text (acronyms, emphasis) |
+| `case` | Case-Sensitive Forms | off | ALL CAPS text — adjusts punctuation to align with capitals |
+| `ccmp` | Glyph Composition/Decomposition | on | Leave on; handles character composition |
+| `dlig` | Discretionary Ligatures | off | Decorative text; may reduce readability in body copy |
+| `dnom` | Denominators | off | Building custom fractions manually |
+| `frac` | Fractions | off | Display proper fractions (½ instead of 1/2) in recipes, measurements |
+| `liga` | Standard Ligatures | on | Leave on; improves fi, fl combinations |
+| `lnum` | Lining Figures | off | Numbers in tables, UI, or mixed with capitals |
+| `locl` | Localized Forms | on | Leave on; provides correct forms for different languages |
+| `numr` | Numerators | off | Building custom fractions manually |
+| `onum` | Oldstyle Figures | off | Body text — numbers blend with lowercase (3 and 4 descend) |
+| `ordn` | Ordinals | off | Automatic superscript for 1st, 2nd, 3rd |
+| `pnum` | Proportional Figures | off | Body text — numbers have varying widths |
+| `sinf` | Scientific Inferiors | off | Chemical formulas (H₂O) |
+| `smcp` | Small Caps | off | Acronyms (NASA), emphasis, legal text |
+| `ss01` | Greek Prosgegrammeni | off | Scholarly Greek text with adscript iota |
+| `ss02` | Alternate Symbols | off | Alternate arrows/geometric shapes |
+| `subs` | Subscript | off | Chemical formulas, footnote markers |
+| `sups` | Superscript | off | Footnotes, mathematical notation, trademark symbols |
+| `tnum` | Tabular Figures | off | Tables, columns of numbers that need to align vertically |
+| `zero` | Slashed Zero | off | Code, technical contexts — distinguishes 0 from O |
 
 ---
 
@@ -272,9 +281,10 @@ Downloaded from the [GitHub releases](https://github.com/theleagueof/league-spar
 
 #### Weight (`wght`)
 
+Range: 200–900
+
 | Value | Name |
 |-------|------|
-| 100 | Thin |
 | 200 | ExtraLight |
 | 300 | Light |
 | 400 | Regular |
@@ -291,7 +301,34 @@ font-weight: var(--font-weight-semibold);
 
 ### OpenType Features
 
-League Spartan has minimal OpenType features as a display face. Check the source repository for current feature support.
+League Spartan includes the following OpenType features:
+
+| Tag | Name | Description |
+|-----|------|-------------|
+| `aalt` | Access All Alternates | Access to all alternate glyphs |
+| `calt` | Contextual Alternates | Context-aware glyph substitution |
+| `case` | Case-Sensitive Forms | Adjusts punctuation for all-caps text |
+| `ccmp` | Glyph Composition | Handles character composition |
+| `frac` | Fractions | Proper fraction forms (½) |
+| `liga` | Standard Ligatures | Common ligature combinations |
+| `locl` | Localized Forms | Language-specific glyph forms |
+| `ordn` | Ordinals | Superscript for 1st, 2nd, 3rd |
+| `sups` | Superscript | Superior/superscript figures |
+| `ss01` | Stylistic Set 1 | **Alternate C and a** — provides alternate forms for C (and variants) and lowercase 'a' |
+| `ss02` | Stylistic Set 2 | **Alternate Q** — provides an alternate Q design |
+
+```css
+/* Enable alternate letterforms */
+.alt-style {
+  font-feature-settings: 'ss01' on; /* Alternate C and a */
+}
+
+/* Case-sensitive punctuation for headings */
+h1 {
+  text-transform: uppercase;
+  font-feature-settings: 'case' on;
+}
+```
 
 ---
 
@@ -384,21 +421,6 @@ The `font-variant-*` properties are more readable and don't override each other:
   font-feature-settings: 'smcp' on, 'onum' on;
 }
 ```
-
-### Inheriting and Extending Features
-
-Use CSS custom properties to build up feature sets:
-
-```css
-:root {
-  --features-base: 'liga' on, 'kern' on;
-}
-
-.prose {
-  font-feature-settings: var(--features-base), 'onum' on;
-}
-```
-
 ### Variable Font Performance
 
 Variable fonts load a single file for all weights/styles, but consider:
@@ -425,7 +447,7 @@ Check for variable font support if providing fallbacks:
 
 When adding a new font to this project:
 
-1. Add font files to `public/fonts/`
+1. Add font files to `public/fonts/`, as woff2 variable fonts if available.
 2. Define `@font-face` rules in `src/styles/global.css`
 3. Add a CSS custom property for the font stack
 4. Document in this file following the pattern above:
