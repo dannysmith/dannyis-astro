@@ -34,7 +34,6 @@
     "@astropub/icons": "^0.2.0",
     "@dannysmith/datepicker": "^0.1.5",
     "@fontsource-variable/fira-code": "^5.2.7",
-    "@fontsource-variable/league-spartan": "^5.2.8",
     "@iconify-json/heroicons": "^1.2.3",
     "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.2.8",

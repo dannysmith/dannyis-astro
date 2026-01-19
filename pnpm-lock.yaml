@@ -32,9 +32,6 @@ importers:
       '@fontsource-variable/fira-code':
         specifier: ^5.2.7
         version: 5.2.7
-      '@fontsource-variable/league-spartan':
-        specifier: ^5.2.8
-        version: 5.2.8
       '@iconify-json/heroicons':
         specifier: ^1.2.3
         version: 1.2.3
@@ -815,9 +812,6 @@ packages:
 
   '@fontsource-variable/fira-code@5.2.7':
     resolution: {integrity: sha512-J2bxN7fz5rd8WpQYyau4o19WqTzxoTqaNj9jhsv4p21GSu1Rf34tbqsxqjyDCR+wDMHM3SajyFqtq+5uvRUQ7w==}
-
-  '@fontsource-variable/league-spartan@5.2.8':
-    resolution: {integrity: sha512-cwi1hV4qsQh7FQ+eITyXxBNJY6JqBpfr651Ov0ux/BH1kUPl5gAPJdDyNYQ7QmljXcq11H359jIBC6S1PnIwRQ==}
 
   '@fortawesome/fontawesome-free@6.7.2':
     resolution: {integrity: sha512-JUOtgFW6k9u4Y+xeIaEiLr3+cjoUPiAuLXoyKOJSia6Duzb7pq+A76P9ZdPDoAoxHdHzq6gE9/jKBGXlZT8FbA==}
@@ -5794,8 +5788,6 @@ snapshots:
       '@expressive-code/core': 0.41.3
 
   '@fontsource-variable/fira-code@5.2.7': {}
-
-  '@fontsource-variable/league-spartan@5.2.8': {}
 
   '@fortawesome/fontawesome-free@6.7.2': {}
 
