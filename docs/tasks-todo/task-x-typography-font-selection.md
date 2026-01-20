@@ -12,6 +12,49 @@ Review and potentially replace the typefaces used across the site. The goal is t
 | `--font-ui` | League Spartan | Navigation, footer, UI elements, display headings |
 | `--font-code` | Fira Code | Code blocks, inline code, some stylistic uses |
 
+---
+
+## Testing Shortlist
+
+Fonts to test side-by-side before making final decisions.
+
+### Long-form Prose
+
+**Decision: Keep Literata** - Works excellently for dense paragraphs and sustained reading. No change needed.
+
+### UI + Sans Body Copy
+
+Test these for navigation, footer, buttons, tables, short-form content (notes, Now page):
+
+| Font | Source | Notes |
+|------|--------|-------|
+| **Inter** | rsms.me/inter | Proven Literata pairing, excellent for screens. Use variable version from rsms.me (not Google Fonts) for full OpenType features. Ubiquitous but that's not a concern. |
+| **Figtree** | Google Fonts | Friendly while still being an interface font. Independent designer (Erik Kennedy). Less common than Inter. |
+
+### Display (Large, Bold, Presentational)
+
+Test these at massive scale (homepage "DANNY SMITH", page headers like "WRITING"):
+
+| Font | Source | Notes |
+|------|--------|-------|
+| **League Spartan** | Current | Include for comparison. Known issues: sharp corners lack visual interest at large sizes. |
+| **Satoshi** | Fontshare | Current leading candidate. Cleaner than League Spartan, more geometric. May be slightly too "even" - looking for a touch more refinement/interest. |
+| **Bricolage Grotesque** | Google Fonts | Has weight, width, AND optical size axes. French/British grotesque heritage. Worth reconsidering - axes provide flexibility. |
+| **Familjen Grotesk** | Google Fonts | Subtle ink traps add craft at display scale. Include for comparison despite uppercase N looking odd at large sizes. |
+| **Instrument Sans** | Google Fonts | "Balances precision with subtle playfulness." Satoshi may perform better but worth comparing. |
+| **Geist Sans** | Vercel | Angular terminals add craft at scale. Has companion Geist Mono. |
+
+**Display font direction:** Looking for something like Satoshi but a tiny bit less "even" - subtle refinement rather than extreme ink traps. Geometric/humanist enough to feel modern. Should look like it was designed for billboard-scale typography.
+
+### Code
+
+| Font | Source | Notes |
+|------|--------|-------|
+| **Fira Code** | Current | Functional, keep for comparison. |
+| **Monaspace** | GitHub Next | Flexible family with multiple variants (Neon, Argon, Xenon, Radon, Krypton). Could work in places beyond just code. |
+
+---
+
 ## Usage Contexts
 
 ### 1. Display (Large, Bold, Presentational)
@@ -19,14 +62,11 @@ Review and potentially replace the typefaces used across the site. The goal is t
 **Where:** Page headers, 404 page, large headings, hero text
 
 **Requirements:**
-- Works beautifully at very large sizes - this is the "big text aesthetic"
+- Works beautifully at very large sizes - the "big text aesthetic"
 - Bold, in-your-face presence
-- Should evoke Bauhaus/constructivist/modernist influences but with contemporary refinement
-- More fun and interesting than the strict 1920s geometric letterforms
+- Bauhaus/constructivist/modernist feel but with contemporary refinement
 - Should also work at thinner weights
-- Ideally: rich OpenType features and variable axes for "doing layout with words"
-
-**Current:** League Spartan
+- Ideally: rich OpenType features and variable axes
 
 ### 2. UI (Interface Elements)
 
@@ -35,204 +75,137 @@ Review and potentially replace the typefaces used across the site. The goal is t
 **Requirements:**
 - Clean, readable at small sizes
 - Works well for interface elements
-- Almost certainly sans-serif
-- Not needed for long-form body copy
-
-**Current:** League Spartan
+- Sans-serif
 
 ### 3. Long-form Prose
 
-**Where:** Articles with dense paragraphs, book-like reading experiences
+**Where:** Articles with dense paragraphs
 
 **Requirements:**
 - Excellent readability in long blocks of text
 - Works well for sustained reading
-- Good typographic features for fine-tuning
 
-**Current:** Literata (works well for this specific use case - keep it)
+**Decision:** Literata works well - keeping it.
 
-### 4. Short-form Content / General Purpose
+### 4. Short-form Content
 
-**Where:** Notes, Now page, bullet lists, tables, shorter paragraphs, headings within content
+**Where:** Notes, Now page, bullet lists, tables, shorter paragraphs
 
 **Requirements:**
 - Looks good in shorter, varied content
-- Works well in tables
-- Handles bullet lists and mixed content gracefully
-- Suitable for content that isn't dense long-form prose
-- The letterforms need to work for this context (Literata's don't)
+- Works well in tables and lists
+- Less formal than Literata
 
-**Current:** Literata (not ideal - letterforms optimised for book-like text don't suit short paragraphs and lists)
-
-**Note:** A good sans-serif might work better here. This could potentially be the same typeface as the UI font if it works well for both purposes.
+**Note:** The UI font (Inter or Figtree) will likely serve this purpose too.
 
 ### 5. Code
 
 **Where:** Code blocks, inline code
 
-**Current:** Fira Code (functional)
+**Requirements:**
+- Monospace, clear character differentiation
 
-**Note:** Not a research priority. However, if any font families under consideration include a matching monospace variant, that's a bonus worth noting.
+---
 
 ## Problems with Current Setup
 
 ### League Spartan Issues
 
-1. **UI controls:** Too geometric for buttons and form elements - doesn't look modern or refined
-2. **Display sizes:** Glyphs aren't beautiful at very large sizes - sharp corners lack visual interest
-3. **Limited flexibility:** The version in use lacks variable font settings and refinement
-4. **Not designed for display:** Works okay but isn't optimised for the big, bold, in-your-face usage
+1. Too geometric for buttons/form elements - doesn't look modern or refined
+2. Glyphs aren't beautiful at very large sizes - sharp corners lack visual interest
+3. Limited variable font settings
+4. Chosen partly for Gill Sans similarity (London connection) but not condensed enough for ideal display impact
 
 ### Literata Issues
 
-1. **Tables:** Not ideal for tabular data etc
-2. **Short content:** Optimised for dense long-form text like books, not for notes with short paragraphs, lists and the like
+1. Not ideal for tables
+2. Too bookish for short-form content (notes, Now page)
 
-**Note on headings:** Literata actually works acceptably for article/note titles and headings within content - this isn't a priority to change. However, if a new font pairs beautifully with Literata, using it for content headings could be considered. (Using the current League Spartan for headings within Literata body text would look awful - too much contrast.)
+**Note:** Literata works acceptably for article headings - not a priority to change.
 
 ### Cohesion Issues
 
-The three typefaces don't always work together as a harmonious system. They were chosen independently for their individual merits rather than as a coordinated family.
+The three typefaces don't work together as a harmonious system.
 
-## Potential Approaches
-
-### Option A: Three Fonts (Replace League Spartan)
-
-Find a single sans-serif that:
-- Excels at large display sizes (primary requirement)
-- Can work for UI elements with appropriate settings/weights
-- Possibly works for short-form prose content
-
-Keep Literata for long-form prose only.
-
-### Option B: Four Fonts (Separate Display and UI)
-
-- **Display:** A refined display face specifically for large, bold usage
-- **UI/Short-form:** A versatile sans-serif for interface and casual content
-- **Long-form:** Keep Literata
-- **Code:** Keep Fira Code (or swap later independently)
-
-This allows each font to excel at its specific job. Open to this approach if it produces better results.
+---
 
 ## Technical Requirements
 
-- **Licensing:** Free or very inexpensive, no subscriptions (no Typekit etc.)
-- **Format:** Variable font preferred (required for UI, Prose; optional for Display and Code)
-- **Features:** Rich OpenType features and variable axes where possible
-- **Web-ready:** Must work reliably on the web
+- **Licensing:** Free or inexpensive, no subscriptions
+- **Format:** Variable font preferred (especially for UI)
+- **Features:** Rich OpenType features where possible
+- **Hosting:** Will self-host - any open source font works regardless of source
+
+---
 
 ## Design Direction
 
-The overall aesthetic should evoke:
-- Bauhaus / constructivist / modernist influences - but with contemporary refinement
-- Type-driven design where text itself is a visual element
+- Bauhaus/constructivist/modernist influences with contemporary refinement
+- Type-driven design where text is a visual element
 - Bold personal expression
-- "Big text aesthetic" - large type that's beautiful and interesting, not just functional
+- "Big text aesthetic" - large type that's beautiful and interesting
 - More fun and modern than strict historical geometric forms
 
-Not looking for: faithful reproductions of 1920s Bauhaus letterforms. Want something that captures the spirit but feels fresh.
-
-## Research Needed
-
-1. Identify candidate display typefaces that capture a modern take on the Bauhaus/geometric/modernist aesthetic - prioritising beauty at very large sizes
-2. Evaluate whether any display candidates can also serve UI needs (could reduce font count)
-3. Consider sans-serif options for short-form content and UI - these might be the same font
-4. Research which sans-serif typefaces are known to pair well with Literata
-5. Assess how all candidates work together as a system
-
-Code fonts are out of scope for this research. If a candidate font family happens to include a monospace, note it as a bonus.
-
-## Out of Scope
-
-- Technical implementation details (CSS, font loading, etc.)
-- Code font selection (can be addressed separately later)
-
-This is purely about typeface selection and design decisions.
+---
 
 ## Visual Context
 
-### Homepage (danny.is)
+### Homepage
+"DANNY SMITH" at massive scale across full viewport. This is where the display font needs to shine.
 
-"DANNY SMITH" displayed at massive scale across the full viewport width in League Spartan bold. Below, navigation links in smaller League Spartan caps with red underlines. The huge text fills the screen and is the primary visual element - this is where the display font needs to shine. Currently the letterforms feel a bit stark and unrefined at this scale.
-
-### Writing Index Page
-
-"WRITING" as a large display heading in the upper right, same treatment as homepage. Article titles below in Literata. The display heading works reasonably but could have more visual interest.
+### Writing/Notes Index Pages
+Large display heading ("WRITING") plus article/note titles below.
 
 ### Now Page
+Short bullet list content. Demonstrates the Literata problem - too bookish for casual content.
 
-Page heading "What I'm doing now" in Literata. Content is a short bullet list - just a few sentences each. Footer shows League Spartan in small caps. This page demonstrates the Literata problem clearly: the serif letterforms feel too bookish and heavy for what's essentially a quick status update. The content is casual and brief but the typography makes it feel formal.
+### Article Page
+Large Literata heading, drop cap, dense body text. Sidebar TOC in League Spartan small caps. Literata works well here for body; sidebar feels disconnected.
 
-### Article Page (Long-form)
-
-Large Literata heading ("Moving this site to Astro"), drop cap at start of first paragraph, dense body text. Table of contents in left sidebar using League Spartan small caps. This is where Literata works well - sustained reading of multiple paragraphs. The heading is acceptable but not beautiful. The sidebar nav in League Spartan feels disconnected from the serif body text.
+---
 
 ## Key Pages for Evaluation
 
-When testing candidates, check these pages specifically:
 - Homepage (display at massive scale)
 - 404 page (display usage)
-- Writing/Notes index pages (display headings + list items)
-- Now page (short-form content problem case)
-- Any article (long-form prose + headings + sidebar)
-- Footer (UI usage at small scale)
+- Writing/Notes index pages (display + list items)
+- Now page (short-form content)
+- Any article (long-form + headings + sidebar)
+- Footer (UI at small scale)
 
 ---
 
 ## Research Notes
 
-### Display Font Candidates Explored
+### Literata Pairing Findings
 
-**Big Shoulders Display** - Too condensed. Designed for Chicago's civic design system, explicitly for large-format signage. Ruled out.
+Both Satoshi + Literata and Figtree + Literata should work well (high compatibility based on typographic principles). No documented examples in the wild, but:
+- Satoshi + Literata → more modernist/editorial feel
+- Figtree + Literata → more friendly/approachable feel
 
-**Clash Display** (Fontshare) - Free Druk alternative, neo-grotesk with small apertures. Not the right feel - ruled out.
+Literata's documented pairings include Inter, Work Sans, DM Sans, Alegreya Sans - all humanist or geometric sans-serifs.
 
-**Bricolage Grotesque** - Has weight, width, and optical size axes. French/British grotesque heritage. Worth noting for axis flexibility but not ideal for this use case.
+### Display Font Direction
 
-**Satoshi** (Fontshare) - Tested at large scale, looks better than League Spartan. Cleaner, more geometric. However, could use a bit more visual interest at large bold sizes, and potentially doesn't go black/bold enough. Currently the leading display candidate, but searching for something with similar form plus more character at massive sizes.
+Interest at large sizes comes from: ink traps, subtle stroke contrast, optical refinements. Distinctive letterforms are less important.
 
-**Context on League Spartan preference:** Chosen partly for similarity to Gill Sans (London connection). However, both are probably not condensed *enough* for ideal display impact. Looking for something in a similar vein but more refined and interesting at scale.
+NOT looking for extreme ink traps - want subtle refinement. Satoshi may actually be close to ideal; if printed on paper at billboard scale it might look exactly right.
 
-### UI + Short-form Content Candidates
+### Ruled Out
 
-**Inter** - Documented "perfect pairing" with Literata. Excellent for screens, tall x-height. Variable version from rsms.me/inter has full OpenType features (Google Fonts strips many). Strong candidate for UI + short-form prose. Ubiquity not a concern but worth noting.
+| Font | Reason |
+|------|--------|
+| Big Shoulders Display | Too condensed |
+| Clash Display | Not the right feel |
+| Trap* | Over-the-top ink traps |
+| Work Sans | Feels too "Google" |
+| Plus Jakarta Sans | Not ideal for either UI or display |
+| Mona Sans / Hubot Sans | Feels very "GitHub" at display sizes |
+| Whyte Inktrap | Paid/premium - noting for reference only |
 
-**Work Sans** - Google's own Literata pairing recommendation. Ruled out - feels too "Google".
+---
 
-**Alegreya Sans** - Humanist with calligraphic influences, philosophically aligned with Literata. Described as good for personal blogs. Worth considering as Inter alternative.
+## Out of Scope
 
-**DM Sans** - Documented Literata pairing, designed for smaller text/UI. Less common than Inter.
-
-**Plus Jakarta Sans** - Modern geometric with stylistic sets. Tested but doesn't feel perfect for either UI or massive display.
-
-### General Findings
-
-- Humanist sans-serifs pair best with Literata (shared calligraphic DNA)
-- Open source fonts can be self-hosted - not limited to Google Fonts or Fontshare CDN
-- Looking for: Satoshi-like form with more visual interest at large bold sizes
-- Interest at large sizes comes from: ink traps, subtle stroke contrast, optical refinements (distinctive letterforms less important)
-
-### Inter Alternatives Explored
-
-**Geist Sans** (Vercel) - Nice, modern. Has companion Geist Mono which could serve as code font.
-
-**Figtree** - Feels super friendly while still being an interface font. Designed by independent designer Erik Kennedy. Strong candidate.
-
-**Mona Sans + Hubot Sans** (GitHub) - Could potentially serve both display and UI. However, feels very "GitHub" at display sizes - recognisable brand association.
-
-**Monaspace** (GitHub Next) - Flexible monospace family with multiple variants (Neon, Argon, Xenon, Radon, Krypton). Could be interesting for code, and its flexibility means it might work in other places too.
-
-### Current Leading Candidates
-
-**Display:** Satoshi - better than League Spartan but still searching for something with same form plus more visual interest at massive sizes (ink traps, stroke contrast, optical refinements)
-
-**UI + Sans Body Copy:** Figtree or Inter
-- Inter: proven Literata pairing, excellent but ubiquitous
-- Figtree: friendly, independent designer, less common
-
-**Code:** Monaspace (GitHub) - flexible family worth considering
-
-### Still Researching
-
-- Display fonts similar to Satoshi but with more character at large sizes
-- Whether anyone pairs Satoshi or Figtree with Literata
+- Technical implementation (CSS, font loading, etc.)
+- This is purely about typeface selection
