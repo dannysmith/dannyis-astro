@@ -1,43 +1,15 @@
 ---
 /**
  * Color System partial - displays all color tokens
- * Shows hue variables, adaptive palette, absolute colors, and semantic colors
+ * Shows adaptive palette, absolute colors, and semantic colors
+ * All colors are displayed using CSS variables so they update automatically
  */
 import ColorSwatch from '@components/mdx/ColorSwatch.astro';
 
-// Hue variables (these are just numbers, not actual colors)
-const hueVariables = [
-  { name: 'Coral', variable: '--hue-coral', value: '25' },
-  { name: 'Pink', variable: '--hue-pink', value: '350' },
-  { name: 'Orange', variable: '--hue-orange', value: '55' },
-  { name: 'Purple', variable: '--hue-purple', value: '300' },
-  { name: 'Yellow', variable: '--hue-yellow', value: '95' },
-  { name: 'Green', variable: '--hue-green', value: '165' },
-  { name: 'Blue', variable: '--hue-blue', value: '250' },
-  { name: 'Grey', variable: '--hue-grey', value: '210' },
-];
+// Color names mapped to their CSS variables
+const adaptiveColors = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
+const absoluteColors = ['white', 'black', 'ink', 'charcoal', 'beige'];
 
-// Adaptive palette colors (these change based on theme)
-const adaptiveColors = [
-  { name: 'Coral', variable: '--color-coral' },
-  { name: 'Pink', variable: '--color-pink' },
-  { name: 'Orange', variable: '--color-orange' },
-  { name: 'Purple', variable: '--color-purple' },
-  { name: 'Yellow', variable: '--color-yellow' },
-  { name: 'Green', variable: '--color-green' },
-  { name: 'Blue', variable: '--color-blue' },
-];
-
-// Absolute colors (don't change with theme)
-const absoluteColors = [
-  { name: 'White', variable: '--color-white' },
-  { name: 'Black', variable: '--color-black' },
-  { name: 'Ink', variable: '--color-ink' },
-  { name: 'Charcoal', variable: '--color-charcoal' },
-  { name: 'Beige', variable: '--color-beige' },
-];
-
-// Semantic colors (role-based, change with theme)
 const semanticColors = [
   { name: 'Accent', variable: '--color-accent', description: 'Primary brand color, links' },
   { name: 'Visited', variable: '--color-visited', description: 'Visited links' },
@@ -46,11 +18,7 @@ const semanticColors = [
 
 const backgroundColors = [
   { name: 'Background', variable: '--color-background', description: 'Page background' },
-  {
-    name: 'Background Secondary',
-    variable: '--color-background-secondary',
-    description: 'Cards, panels',
-  },
+  { name: 'Background Secondary', variable: '--color-background-secondary', description: 'Cards, panels' },
   { name: 'Background Code', variable: '--color-background-code', description: 'Code blocks' },
   { name: 'Surface Raised', variable: '--surface-raised', description: 'Elevated surfaces' },
 ];
@@ -65,55 +33,37 @@ const textColors = [
 <section id="colors" class="styleguide-section flow">
   <h2>Color System</h2>
   <p>
-    All colors are defined using <a href="https://oklch.com/">OKLCH</a> for perceptual uniformity. Adaptive
-    colors use the <code>light-dark()</code> function to automatically adjust for theme.
+    All colors are defined using <a href="https://oklch.com/">OKLCH</a> for perceptual uniformity.
+    Adaptive colors use <code>light-dark()</code> to automatically adjust for theme.
   </p>
-
-  <!-- Hue Variables -->
-  <div class="color-subsection">
-    <h3>Hue Variables</h3>
-    <p>Base hue values used to generate the adaptive palette. These are angle values (0-360).</p>
-    <div class="hue-grid">
-      {
-        hueVariables.map(({ name, variable, value }) => (
-          <div class="hue-item">
-            <div class="hue-preview" style={`background: oklch(65% 0.15 ${value})`} />
-            <span class="hue-name">{name}</span>
-            <code class="hue-variable">{variable}</code>
-            <span class="hue-value">{value}°</span>
-          </div>
-        ))
-      }
-    </div>
-  </div>
 
   <!-- Adaptive Palette -->
   <div class="color-subsection">
     <h3>Adaptive Palette</h3>
     <p>
-      These colors automatically adjust for light and dark modes. The light mode values have lower
-      lightness and higher chroma; dark mode increases lightness and reduces chroma for visibility.
+      These colors automatically adjust for light and dark modes. Light mode has lower lightness
+      and higher chroma; dark mode increases lightness and reduces chroma for visibility.
     </p>
 
     <div class="theme-comparison">
       <div class="theme-column light-theme">
         <span class="theme-label">Light Mode</span>
         <div class="color-grid">
-          {
-            adaptiveColors.map(({ name, variable }) => (
-              <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />
-            ))
-          }
+          {adaptiveColors.map((color) => {
+            const name = color.charAt(0).toUpperCase() + color.slice(1);
+            const variable = `--color-${color}`;
+            return <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />;
+          })}
         </div>
       </div>
       <div class="theme-column dark-theme">
         <span class="theme-label">Dark Mode</span>
         <div class="color-grid">
-          {
-            adaptiveColors.map(({ name, variable }) => (
-              <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />
-            ))
-          }
+          {adaptiveColors.map((color) => {
+            const name = color.charAt(0).toUpperCase() + color.slice(1);
+            const variable = `--color-${color}`;
+            return <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />;
+          })}
         </div>
       </div>
     </div>
@@ -124,11 +74,11 @@ const textColors = [
     <h3>Absolute Colors</h3>
     <p>Static colors that don't change between themes. Used for specific design elements.</p>
     <div class="color-grid color-grid-wide">
-      {
-        absoluteColors.map(({ name, variable }) => (
-          <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />
-        ))
-      }
+      {absoluteColors.map((color) => {
+        const name = color.charAt(0).toUpperCase() + color.slice(1);
+        const variable = `--color-${color}`;
+        return <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />;
+      })}
     </div>
   </div>
 
@@ -251,43 +201,6 @@ const textColors = [
     color: var(--color-text-secondary);
     border-bottom: none;
     padding-bottom: 0;
-  }
-
-  /* Hue grid */
-  .hue-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-    gap: var(--space-m);
-  }
-
-  .hue-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3xs);
-    font-family: var(--font-ui);
-  }
-
-  .hue-preview {
-    width: 100%;
-    aspect-ratio: 2 / 1;
-    border-radius: var(--radius-sm);
-    border: var(--border-width-hairline) solid var(--color-border);
-  }
-
-  .hue-name {
-    font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-sm);
-  }
-
-  .hue-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .hue-value {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
   }
 
   /* Color grids */

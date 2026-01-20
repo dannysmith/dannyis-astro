@@ -176,3 +176,38 @@ When testing candidates, check these pages specifically:
 - Now page (short-form content problem case)
 - Any article (long-form prose + headings + sidebar)
 - Footer (UI usage at small scale)
+
+---
+
+## Research Notes
+
+### Display Font Candidates Explored
+
+**Big Shoulders Display** - Too condensed. Designed for Chicago's civic design system, explicitly for large-format signage. Ruled out.
+
+**Clash Display** (Fontshare) - Free Druk alternative, neo-grotesk with small apertures. Not the right feel - ruled out.
+
+**Bricolage Grotesque** - Has weight, width, and optical size axes. French/British grotesque heritage. Worth noting for axis flexibility but not ideal for this use case.
+
+**Satoshi** (Fontshare) - Tested at large scale, looks better than League Spartan. Cleaner, more geometric. However, could use a bit more visual interest at large bold sizes, and potentially doesn't go black/bold enough. Currently the leading display candidate, but searching for something with similar form plus more character at massive sizes.
+
+**Context on League Spartan preference:** Chosen partly for similarity to Gill Sans (London connection). However, both are probably not condensed *enough* for ideal display impact. Looking for something in a similar vein but more refined and interesting at scale.
+
+### UI + Short-form Content Candidates
+
+**Inter** - Documented "perfect pairing" with Literata. Excellent for screens, tall x-height. Variable version from rsms.me/inter has full OpenType features (Google Fonts strips many). Strong candidate for UI + short-form prose. Ubiquity not a concern but worth noting.
+
+**Work Sans** - Google's own Literata pairing recommendation. Ruled out - feels too "Google".
+
+**Alegreya Sans** - Humanist with calligraphic influences, philosophically aligned with Literata. Described as good for personal blogs. Worth considering as Inter alternative.
+
+**DM Sans** - Documented Literata pairing, designed for smaller text/UI. Less common than Inter.
+
+**Plus Jakarta Sans** - Modern geometric with stylistic sets. Tested but doesn't feel perfect for either UI or massive display.
+
+### General Findings
+
+- Humanist sans-serifs pair best with Literata (shared calligraphic DNA)
+- Open source fonts can be self-hosted - not limited to Google Fonts or Fontshare CDN
+- Looking for: Satoshi-like form with more visual interest at large bold sizes
+- Inter is leading UI candidate but exploring less ubiquitous alternatives with similar quality
