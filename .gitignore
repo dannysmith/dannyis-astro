@@ -35,3 +35,4 @@ uploads/
 .serena/
 test-results/
 .playwright-mcp/
+.styleguide-screenshots/
