@@ -1,9 +1,679 @@
 ---
-// Spacing System partial - displays all spacing tokens
-// TODO: Implement in Phase 2
+/**
+ * Spacing System partial - displays all spacing, typography, border, and motion tokens
+ * Comprehensive design token reference
+ */
+import { SpacingScale } from '@components/styleguide';
+
+// Typography tokens
+const fontFamilies = [
+  { name: 'Prose', variable: '--font-prose', value: 'Literata', description: 'Body text, articles' },
+  {
+    name: 'UI',
+    variable: '--font-ui',
+    value: 'League Spartan',
+    description: 'Navigation, labels, UI',
+  },
+  { name: 'Code', variable: '--font-code', value: 'Fira Code', description: 'Code blocks, inline code' },
+];
+
+const fontSizes = [
+  { name: 'xs', variable: '--font-size-xs', step: '--step--2' },
+  { name: 'sm', variable: '--font-size-sm', step: '--step--1' },
+  { name: 'base', variable: '--font-size-base', step: '--step-0' },
+  { name: 'md', variable: '--font-size-md', step: '--step-1' },
+  { name: 'lg', variable: '--font-size-lg', step: '--step-2' },
+  { name: 'xl', variable: '--font-size-xl', step: '--step-3' },
+  { name: '2xl', variable: '--font-size-2xl', step: '--step-4' },
+  { name: '3xl', variable: '--font-size-3xl', step: '--step-5' },
+];
+
+const lineHeights = [
+  { name: 'none', variable: '--leading-none', value: '0.9', usage: 'Display headings' },
+  { name: 'tight', variable: '--leading-tight', value: '1.1', usage: 'Headings' },
+  { name: 'snug', variable: '--leading-snug', value: '1.2', usage: 'Subheadings, UI' },
+  { name: 'normal', variable: '--leading-normal', value: '1.5', usage: 'Body text' },
+  { name: 'loose', variable: '--leading-loose', value: '1.7', usage: 'Long-form prose' },
+];
+
+const letterSpacings = [
+  { name: 'tight', variable: '--tracking-tight', value: '-0.02ch' },
+  { name: 'normal', variable: '--tracking-normal', value: '0' },
+  { name: 'wide', variable: '--tracking-wide', value: '0.05ch' },
+  { name: 'wider', variable: '--tracking-wider', value: '0.1ch' },
+];
+
+const fontWeights = [
+  { name: 'light', variable: '--font-weight-light', value: '300' },
+  { name: 'normal', variable: '--font-weight-normal', value: '350' },
+  { name: 'regular', variable: '--font-weight-regular', value: '400' },
+  { name: 'medium', variable: '--font-weight-medium', value: '500' },
+  { name: 'semibold', variable: '--font-weight-semibold', value: '600' },
+  { name: 'bold', variable: '--font-weight-bold', value: '700' },
+];
+
+// Border tokens
+const borderWidths = [
+  { name: 'hairline', variable: '--border-width-hairline', value: '1px' },
+  { name: 'base', variable: '--border-width-base', value: '2px' },
+  { name: 'thick', variable: '--border-width-thick', value: '4px' },
+  { name: 'heavy', variable: '--border-width-heavy', value: '6px' },
+  { name: 'accent', variable: '--border-width-accent', value: '1rem' },
+];
+
+const borderRadii = [
+  { name: 'xs', variable: '--radius-xs', value: '0.125rem' },
+  { name: 'sm', variable: '--radius-sm', value: '0.25rem' },
+  { name: 'md', variable: '--radius-md', value: '0.5rem' },
+  { name: 'lg', variable: '--radius-lg', value: '0.75rem' },
+  { name: 'full', variable: '--radius-full', value: '9999px' },
+];
+
+// Motion tokens
+const durations = [
+  { name: 'fast', variable: '--duration-fast', value: '150ms', usage: 'Micro-interactions' },
+  { name: 'normal', variable: '--duration-normal', value: '200ms', usage: 'Standard transitions' },
+  { name: 'slow', variable: '--duration-slow', value: '300ms', usage: 'Complex animations' },
+];
+
+const shadows = [
+  { name: 'small', variable: '--shadow-small', description: 'Subtle elevation' },
+  { name: 'medium', variable: '--shadow-medium', description: 'Cards, modals' },
+];
 ---
 
 <section id="spacing" class="styleguide-section flow">
-  <h2>Spacing Scale</h2>
-  <p>Spacing tokens - coming soon.</p>
+  <h2>Design Tokens</h2>
+  <p>
+    Spacing, typography, borders, and motion tokens that provide consistent rhythm and visual
+    harmony across the site. All values use fluid scaling via <code>clamp()</code> for responsive
+    behavior.
+  </p>
+
+  <!-- Spacing Scale -->
+  <div class="token-subsection">
+    <h3>Spacing Scale</h3>
+    <p>
+      Generated using <a href="https://utopia.fyi/space/calculator">Utopia</a>. Base scale provides
+      consistent spacing; fluid pairs smoothly interpolate between sizes based on viewport.
+    </p>
+    <SpacingScale />
+  </div>
+
+  <!-- Typography Tokens -->
+  <div class="token-subsection">
+    <h3>Typography</h3>
+
+    <h4>Font Families</h4>
+    <div class="font-families">
+      {
+        fontFamilies.map(({ name, variable, value, description }) => (
+          <div class="font-family-item">
+            <span class="font-preview" style={`font-family: var(${variable})`}>
+              The quick brown fox jumps over the lazy dog
+            </span>
+            <div class="font-meta">
+              <span class="font-name">{name}</span>
+              <code class="font-variable">{variable}</code>
+              <span class="font-value">{value}</span>
+              <span class="font-description">{description}</span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <h4>Font Sizes</h4>
+    <p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
+    <div class="font-sizes">
+      {
+        fontSizes.map(({ name, variable }) => (
+          <div class="font-size-item">
+            <span class="size-name">{name}</span>
+            <span class="size-preview" style={`font-size: var(${variable})`}>
+              Aa
+            </span>
+            <code class="size-variable">{variable}</code>
+          </div>
+        ))
+      }
+    </div>
+
+    <h4>Line Heights</h4>
+    <div class="line-heights">
+      {
+        lineHeights.map(({ name, variable, value, usage }) => (
+          <div class="line-height-item">
+            <span class="lh-name">{name}</span>
+            <span class="lh-value">{value}</span>
+            <code class="lh-variable">{variable}</code>
+            <span class="lh-usage">{usage}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <h4>Letter Spacing</h4>
+    <div class="letter-spacings">
+      {
+        letterSpacings.map(({ name, variable, value }) => (
+          <div class="tracking-item">
+            <span class="tracking-name">{name}</span>
+            <span class="tracking-preview" style={`letter-spacing: var(${variable})`}>
+              LETTER SPACING
+            </span>
+            <code class="tracking-variable">{variable}</code>
+            <span class="tracking-value">{value}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <h4>Font Weights</h4>
+    <div class="font-weights">
+      {
+        fontWeights.map(({ name, variable, value }) => (
+          <div class="weight-item">
+            <span class="weight-name">{name}</span>
+            <span class="weight-preview" style={`font-weight: var(${variable})`}>
+              {value}
+            </span>
+            <code class="weight-variable">{variable}</code>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Border & Radius -->
+  <div class="token-subsection">
+    <h3>Borders & Radius</h3>
+
+    <h4>Border Widths</h4>
+    <div class="border-widths">
+      {
+        borderWidths.map(({ name, variable, value }) => (
+          <div class="border-item">
+            <span class="border-name">{name}</span>
+            <div class="border-preview">
+              <div class="border-line" style={`border-bottom-width: var(${variable})`} />
+            </div>
+            <code class="border-variable">{variable}</code>
+            <span class="border-value">{value}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <h4>Border Radii</h4>
+    <div class="border-radii">
+      {
+        borderRadii.map(({ name, variable, value }) => (
+          <div class="radius-item">
+            <span class="radius-name">{name}</span>
+            <div class="radius-preview" style={`border-radius: var(${variable})`} />
+            <code class="radius-variable">{variable}</code>
+            <span class="radius-value">{value}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Motion & Shadows -->
+  <div class="token-subsection">
+    <h3>Motion & Shadows</h3>
+
+    <h4>Durations</h4>
+    <p>Animation timing tokens. Hover each bar to see the transition speed.</p>
+    <div class="durations">
+      {
+        durations.map(({ name, variable, value, usage }) => (
+          <div class="duration-item">
+            <span class="duration-name">{name}</span>
+            <div class="duration-preview">
+              <div
+                class="duration-bar"
+                style={`transition-duration: var(${variable})`}
+                title="Hover to see transition"
+              />
+            </div>
+            <code class="duration-variable">{variable}</code>
+            <span class="duration-value">{value}</span>
+            <span class="duration-usage">{usage}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <h4>Easing</h4>
+    <div class="easing-item">
+      <span class="easing-name">in-out</span>
+      <code class="easing-variable">--ease-in-out</code>
+      <span class="easing-value">cubic-bezier(0.4, 0, 0.2, 1)</span>
+    </div>
+
+    <h4>Shadows</h4>
+    <div class="shadows">
+      {
+        shadows.map(({ name, variable, description }) => (
+          <div class="shadow-item">
+            <div class="shadow-preview" style={`filter: var(${variable})`}>
+              <span>{name}</span>
+            </div>
+            <div class="shadow-meta">
+              <code class="shadow-variable">{variable}</code>
+              <span class="shadow-description">{description}</span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
 </section>
+
+<style>
+  .token-subsection {
+    margin-top: var(--space-xl);
+  }
+
+  .token-subsection:first-of-type {
+    margin-top: var(--space-m);
+  }
+
+  .token-subsection h3 {
+    margin-top: 0;
+  }
+
+  .token-subsection h4 {
+    margin-top: var(--space-l);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-secondary);
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Font families */
+  .font-families {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  .font-family-item {
+    padding: var(--space-s);
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-sm);
+  }
+
+  .font-preview {
+    display: block;
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-xs);
+  }
+
+  .font-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .font-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+  }
+
+  .font-variable {
+    font-family: var(--font-code);
+  }
+
+  /* Font sizes */
+  .font-sizes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .font-size-item {
+    display: grid;
+    grid-template-columns: 3rem 4rem 1fr;
+    align-items: baseline;
+    gap: var(--space-s);
+    font-family: var(--font-ui);
+  }
+
+  .size-name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .size-preview {
+    font-family: var(--font-prose);
+  }
+
+  .size-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  /* Line heights */
+  .line-heights {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .line-height-item {
+    display: grid;
+    grid-template-columns: 4rem 2rem 12rem 1fr;
+    align-items: center;
+    gap: var(--space-s);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+  }
+
+  .lh-name {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .lh-value {
+    color: var(--color-text-secondary);
+  }
+
+  .lh-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .lh-usage {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Letter spacing */
+  .letter-spacings {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .tracking-item {
+    display: grid;
+    grid-template-columns: 4rem 10rem 12rem auto;
+    align-items: center;
+    gap: var(--space-s);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+  }
+
+  .tracking-name {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .tracking-preview {
+    font-size: var(--font-size-xs);
+  }
+
+  .tracking-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .tracking-value {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Font weights */
+  .font-weights {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: var(--space-m);
+  }
+
+  .weight-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    font-family: var(--font-ui);
+  }
+
+  .weight-name {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .weight-preview {
+    font-size: var(--font-size-xl);
+    font-family: var(--font-prose);
+  }
+
+  .weight-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  /* Border widths */
+  .border-widths {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .border-item {
+    display: grid;
+    grid-template-columns: 5rem 1fr 14rem 4rem;
+    align-items: center;
+    gap: var(--space-s);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+  }
+
+  .border-name {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .border-preview {
+    padding: var(--space-2xs) 0;
+  }
+
+  .border-line {
+    border-bottom-style: solid;
+    border-bottom-color: var(--color-accent);
+  }
+
+  .border-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .border-value {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Border radii */
+  .border-radii {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: var(--space-m);
+  }
+
+  .radius-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    font-family: var(--font-ui);
+  }
+
+  .radius-name {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .radius-preview {
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--color-accent);
+  }
+
+  .radius-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .radius-value {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  /* Durations */
+  .durations {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .duration-item {
+    display: grid;
+    grid-template-columns: 4rem 8rem 12rem 4rem 1fr;
+    align-items: center;
+    gap: var(--space-s);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+  }
+
+  .duration-name {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .duration-preview {
+    height: var(--space-s);
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-xs);
+    overflow: hidden;
+  }
+
+  .duration-bar {
+    width: 20%;
+    height: 100%;
+    background-color: var(--color-accent);
+    transition-property: width;
+    transition-timing-function: var(--ease-in-out);
+  }
+
+  .duration-preview:hover .duration-bar {
+    width: 100%;
+  }
+
+  .duration-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .duration-value {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  .duration-usage {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Easing */
+  .easing-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    padding: var(--space-s);
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-sm);
+  }
+
+  .easing-name {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .easing-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .easing-value {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Shadows */
+  .shadows {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: var(--space-l);
+  }
+
+  .shadow-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .shadow-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    background-color: var(--surface-raised);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .shadow-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .shadow-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .shadow-description {
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .font-size-item,
+    .line-height-item,
+    .tracking-item,
+    .border-item,
+    .duration-item {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xs);
+    }
+  }
+</style>
