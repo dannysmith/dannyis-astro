@@ -5,14 +5,25 @@
  */
 import { SpacingScale } from '@components/styleguide';
 
-// Simple arrays of token names - no hardcoded values
+// Font families with usage descriptions
 const fontFamilies = [
-  { name: 'Prose', variable: '--font-prose', description: 'Body text, articles' },
-  { name: 'UI', variable: '--font-ui', description: 'Navigation, labels, UI' },
-  { name: 'Code', variable: '--font-code', description: 'Code blocks, inline code' },
+  { name: 'Prose', variable: '--font-prose', usage: 'Body text, articles, long-form reading' },
+  { name: 'UI', variable: '--font-ui', usage: 'Navigation, labels, buttons, interface elements' },
+  { name: 'Code', variable: '--font-code', usage: 'Code blocks, inline code, technical content' },
 ];
 
-const fontSizes = ['xs', 'sm', 'base', 'md', 'lg', 'xl', '2xl', '3xl'];
+// Font sizes with typical usage
+const fontSizes = [
+  { variable: '--font-size-xs', usage: 'Captions, labels, fine print' },
+  { variable: '--font-size-sm', usage: 'Secondary text, metadata, UI elements' },
+  { variable: '--font-size-base', usage: 'Body text, paragraphs' },
+  { variable: '--font-size-md', usage: 'Emphasized body text, lead paragraphs' },
+  { variable: '--font-size-lg', usage: 'Section headings (h4), large UI text' },
+  { variable: '--font-size-xl', usage: 'Subheadings (h3)' },
+  { variable: '--font-size-2xl', usage: 'Major headings (h2)' },
+  { variable: '--font-size-3xl', usage: 'Page titles (h1)' },
+];
+
 const lineHeights = ['none', 'tight', 'snug', 'normal', 'loose'];
 const letterSpacings = ['tight', 'normal', 'wide', 'wider'];
 const fontWeights = ['light', 'normal', 'regular', 'medium', 'semibold', 'bold'];
@@ -46,36 +57,44 @@ const shadows = ['small', 'medium'];
 
     <h4>Font Families</h4>
     <div class="font-families">
-      {fontFamilies.map(({ name, variable, description }) => (
+      {fontFamilies.map(({ name, variable, usage }) => (
         <div class="font-family-item">
           <span class="font-preview" style={`font-family: var(${variable})`}>
             The quick brown fox jumps over the lazy dog
           </span>
-          <div class="font-meta">
-            <span class="font-name">{name}</span>
-            <code class="font-variable">{variable}</code>
-            <span class="font-description">{description}</span>
-          </div>
+          <span class="font-meta">
+            <strong>{name}</strong> · <code>{variable}</code> · {usage}
+          </span>
         </div>
       ))}
     </div>
 
     <h4>Font Sizes</h4>
     <p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
-    <div class="font-sizes">
-      {fontSizes.map((size) => {
-        const variable = `--font-size-${size}`;
-        return (
-          <div class="font-size-item">
-            <span class="size-name">{size}</span>
-            <span class="size-preview" style={`font-size: var(${variable})`}>Aa</span>
-            <code class="size-variable">{variable}</code>
-          </div>
-        );
-      })}
-    </div>
+    <table class="font-sizes-table">
+      <thead>
+        <tr>
+          <th>Preview</th>
+          <th>Variable</th>
+          <th>Typical Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {fontSizes.map(({ variable, usage }) => (
+          <tr>
+            <td class="size-preview" style={`font-size: var(${variable})`}>Aa</td>
+            <td><code>{variable}</code></td>
+            <td class="size-usage">{usage}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
 
     <h4>Line Heights</h4>
+    <p>
+      Adjust line height based on content type: tighter for headings and UI elements where text
+      is short, looser for body text where readability matters over multiple lines.
+    </p>
     <div class="line-heights">
       {lineHeights.map((name) => {
         const variable = `--leading-${name}`;
@@ -90,6 +109,10 @@ const shadows = ['small', 'medium'];
     </div>
 
     <h4>Letter Spacing</h4>
+    <p>
+      Wider tracking improves readability of uppercase text and small labels. Tighter tracking
+      can work for large display headings. Normal tracking is suitable for most body text.
+    </p>
     <div class="letter-spacings">
       {letterSpacings.map((name) => {
         const variable = `--tracking-${name}`;
@@ -104,6 +127,10 @@ const shadows = ['small', 'medium'];
     </div>
 
     <h4>Font Weights</h4>
+    <p>
+      We use variable fonts, so weight can be any value between 300–700. These tokens provide
+      common weight stops, but you're not limited to them — use intermediate values when needed.
+    </p>
     <div class="font-weights">
       {fontWeights.map((name) => {
         const variable = `--font-weight-${name}`;
@@ -123,6 +150,10 @@ const shadows = ['small', 'medium'];
     <h3>Borders & Radius</h3>
 
     <h4>Border Widths</h4>
+    <p>
+      Use hairline for subtle dividers, base for standard borders, and heavier weights for emphasis
+      or interactive states.
+    </p>
     <div class="border-widths">
       {borderWidths.map((name) => {
         const variable = `--border-width-${name}`;
@@ -139,6 +170,10 @@ const shadows = ['small', 'medium'];
     </div>
 
     <h4>Border Radii</h4>
+    <p>
+      From subtle rounding (xs) to fully circular (full). Use smaller radii for compact UI elements,
+      larger for cards and containers.
+    </p>
     <div class="border-radii">
       {borderRadii.map((name) => {
         const variable = `--radius-${name}`;
@@ -175,6 +210,7 @@ const shadows = ['small', 'medium'];
     </div>
 
     <h4>Easing</h4>
+    <p>Smooth acceleration and deceleration for natural-feeling motion. Hover the ball to see it.</p>
     <div class="easing-item">
       <span class="easing-name">in-out</span>
       <code class="easing-variable">--ease-in-out</code>
@@ -184,6 +220,7 @@ const shadows = ['small', 'medium'];
     </div>
 
     <h4>Shadows</h4>
+    <p>Drop shadows for creating depth and elevation. Use sparingly to draw attention to raised elements.</p>
     <div class="shadows">
       {shadows.map((name) => {
         const variable = `--shadow-${name}`;
@@ -221,51 +258,36 @@ const shadows = ['small', 'medium'];
   }
 
   .font-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-s);
     font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .font-name {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text);
-  }
-
-  .font-variable {
-    font-family: var(--font-code);
-  }
-
-  /* Font sizes */
-  .font-sizes {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
-  .font-size-item {
-    display: grid;
-    grid-template-columns: 3rem 4rem 1fr;
-    align-items: baseline;
-    gap: var(--space-s);
-    font-family: var(--font-ui);
-  }
-
-  .size-name {
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .size-preview {
-    font-family: var(--font-prose);
-  }
-
-  .size-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
+
+    & strong {
+      color: var(--color-text);
+    }
+
+    & code {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  /* Font sizes table */
+  .font-sizes-table {
+    font-family: var(--font-ui);
+
+    & .size-preview {
+      font-family: var(--font-prose);
+      white-space: nowrap;
+    }
+
+    & .size-usage {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    & code {
+      font-size: var(--font-size-xs);
+    }
   }
 
   /* Line heights */
