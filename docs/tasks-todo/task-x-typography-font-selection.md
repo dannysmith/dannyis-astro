@@ -28,8 +28,11 @@ Test these for navigation, footer, buttons, tables, short-form content (notes, N
 
 | Font | Source | Notes |
 |------|--------|-------|
-| **Inter** | rsms.me/inter | Proven Literata pairing, excellent for screens. Use variable version from rsms.me (not Google Fonts) for full OpenType features. Ubiquitous but that's not a concern. |
+| **Inter** | rsms.me/inter | Proven Literata pairing, excellent for screens. Use variable version from rsms.me (not Google Fonts) for full OpenType features. Tabular figures excellent for tables. |
 | **Figtree** | Google Fonts | Friendly while still being an interface font. Independent designer (Erik Kennedy). Less common than Inter. |
+| **Bricolage Grotesque** | Google Fonts | Test at small optical sizes (12-14pt range). The optical size axis adapts the design for legibility at small sizes. Could potentially serve as unified sans for both display AND UI. |
+
+**Unified approach to test:** Bricolage Grotesque's optical size axis (12-96pt) means it adapts its design for different sizes. Worth testing whether one font can serve both display and UI/short-form roles - would reduce font count and create visual cohesion.
 
 ### Display (Large, Bold, Presentational)
 
@@ -39,7 +42,7 @@ Test these at massive scale (homepage "DANNY SMITH", page headers like "WRITING"
 |------|--------|-------|
 | **League Spartan** | Current | Include for comparison. Known issues: sharp corners lack visual interest at large sizes. |
 | **Satoshi** | Fontshare | Current leading candidate. Cleaner than League Spartan, more geometric. May be slightly too "even" - looking for a touch more refinement/interest. |
-| **Bricolage Grotesque** | Google Fonts | Has weight, width, AND optical size axes. French/British grotesque heritage. Worth reconsidering - axes provide flexibility. |
+| **Bricolage Grotesque** | Google Fonts | 3 axes: weight (200-800), width (75-100), optical size (12-96pt). At large optical sizes, ink traps become decorative/stylistic. Softened corners avoid League Spartan's harsh angularity. French/British grotesque heritage. Strong candidate. |
 | **Familjen Grotesk** | Google Fonts | Subtle ink traps add craft at display scale. Include for comparison despite uppercase N looking odd at large sizes. |
 | **Instrument Sans** | Google Fonts | "Balances precision with subtle playfulness." Satoshi may perform better but worth comparing. |
 | **Geist Sans** | Vercel | Angular terminals add craft at scale. Has companion Geist Mono. |
@@ -189,7 +192,19 @@ Literata's documented pairings include Inter, Work Sans, DM Sans, Alegreya Sans 
 
 Interest at large sizes comes from: ink traps, subtle stroke contrast, optical refinements. Distinctive letterforms are less important.
 
-NOT looking for extreme ink traps - want subtle refinement. Satoshi may actually be close to ideal; if printed on paper at billboard scale it might look exactly right.
+NOT looking for extreme ink traps - want subtle refinement. Satoshi may actually be close to ideal; if printed on paper at billboard scale it might look exactly right. The "life" in printed type comes from physical imperfection (ink bleed, micro-variations) - digital vectors lack this. Can't be fully solved by typeface selection, but fonts with subtle humanist qualities or optical corrections get closer.
+
+### Bricolage Grotesque Deep Dive
+
+Emerged as strong candidate after further research. Key insight: the optical size axis (12-96pt) transforms the font's character:
+- At large optical sizes: ink traps become decorative/stylistic features
+- At small optical sizes: adapts for legibility with more pronounced traps
+- Softened corners throughout avoid League Spartan's harsh angularity
+- 3-axis flexibility (weight, width, optical size) enables "doing layout with words"
+
+French influences (Antique Olive's relaxed confidence) + British grotesque heritage. Could potentially serve as unified sans for both display AND UI - worth testing this approach.
+
+Pairing with Literata: geometric/transitional combination leverages difference productively. Both share intellectual rigour without feeling cold.
 
 ### Ruled Out
 
