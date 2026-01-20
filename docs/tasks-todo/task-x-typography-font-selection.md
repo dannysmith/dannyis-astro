@@ -210,4 +210,29 @@ When testing candidates, check these pages specifically:
 - Humanist sans-serifs pair best with Literata (shared calligraphic DNA)
 - Open source fonts can be self-hosted - not limited to Google Fonts or Fontshare CDN
 - Looking for: Satoshi-like form with more visual interest at large bold sizes
-- Inter is leading UI candidate but exploring less ubiquitous alternatives with similar quality
+- Interest at large sizes comes from: ink traps, subtle stroke contrast, optical refinements (distinctive letterforms less important)
+
+### Inter Alternatives Explored
+
+**Geist Sans** (Vercel) - Nice, modern. Has companion Geist Mono which could serve as code font.
+
+**Figtree** - Feels super friendly while still being an interface font. Designed by independent designer Erik Kennedy. Strong candidate.
+
+**Mona Sans + Hubot Sans** (GitHub) - Could potentially serve both display and UI. However, feels very "GitHub" at display sizes - recognisable brand association.
+
+**Monaspace** (GitHub Next) - Flexible monospace family with multiple variants (Neon, Argon, Xenon, Radon, Krypton). Could be interesting for code, and its flexibility means it might work in other places too.
+
+### Current Leading Candidates
+
+**Display:** Satoshi - better than League Spartan but still searching for something with same form plus more visual interest at massive sizes (ink traps, stroke contrast, optical refinements)
+
+**UI + Sans Body Copy:** Figtree or Inter
+- Inter: proven Literata pairing, excellent but ubiquitous
+- Figtree: friendly, independent designer, less common
+
+**Code:** Monaspace (GitHub) - flexible family worth considering
+
+### Still Researching
+
+- Display fonts similar to Satoshi but with more character at large sizes
+- Whether anyone pairs Satoshi or Figtree with Literata
