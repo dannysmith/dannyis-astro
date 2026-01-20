@@ -425,13 +425,15 @@ These are helpers for the styleguide that aren't useful elsewhere:
 src/
 ├── components/
 │   ├── mdx/
-│   │   ├── ColorSwatch.astro         # New - reusable in MDX
-│   │   ├── ResizableContainer.astro  # New - reusable in MDX
+│   │   ├── ColorSwatch.astro         # Reusable in MDX
+│   │   ├── ResizableContainer.astro  # Reusable in MDX
 │   │   └── ... (existing MDX components)
-│   └── styleguide/                   # New - styleguide-specific
+│   └── styleguide/                   # Styleguide-specific
 │       ├── SpacingScale.astro
 │       ├── StyleguideTOC.astro
 │       └── index.ts
+├── styles/
+│   └── styleguide.css                # Shared styleguide utilities (loaded only on styleguide)
 ├── pages/
 │   └── styleguide/
 │       ├── index.astro               # Main orchestrator page
@@ -449,23 +451,24 @@ src/
 
 ## Implementation Phases
 
-### Phase 1: Setup & Infrastructure
-- [ ] Rename existing `src/pages/styleguide.astro` to `src/pages/styleguide-old.astro` (temporary, delete after completion)
-- [ ] Create `src/pages/styleguide/` directory with `index.astro` as orchestrator
-- [ ] Create `src/components/styleguide/` directory
-- [ ] Create `ColorSwatch` component in `mdx/`
-- [ ] Create `ResizableContainer` component in `mdx/`
-- [ ] Create `SpacingScale` component in `styleguide/`
-- [ ] Create `StyleguideTOC` component in `styleguide/`
-- [ ] Create basic section partial structure (empty partials)
-- [ ] Add barrel exports
-- [ ] Register new MDX components (ColorSwatch, ResizableContainer) in `src/components/mdx/index.ts`
+### Phase 1: Setup & Infrastructure ✅
+- [x] Rename existing `src/pages/styleguide.astro` to `src/pages/styleguide-old.astro` (temporary, delete after completion)
+- [x] Create `src/pages/styleguide/` directory with `index.astro` as orchestrator
+- [x] Create `src/components/styleguide/` directory
+- [x] Create `ColorSwatch` component in `mdx/`
+- [x] Create `ResizableContainer` component in `mdx/`
+- [x] Create `SpacingScale` component in `styleguide/`
+- [x] Create `StyleguideTOC` component in `styleguide/`
+- [x] Create basic section partial structure (empty partials)
+- [x] Add barrel exports
+- [x] Register new MDX components (ColorSwatch, ResizableContainer) in `src/components/mdx/index.ts`
 
-### Phase 2: Design Tokens
-- [ ] Implement `_ColorSystem.astro` with all color tokens
-- [ ] Implement `_SpacingSystem.astro` with spacing scale
-- [ ] Add typography tokens display
-- [ ] Add borders, radii, shadows, motion tokens
+### Phase 2: Design Tokens ✅
+- [x] Implement `_ColorSystem.astro` with all color tokens
+- [x] Implement `_SpacingSystem.astro` with spacing scale
+- [x] Add typography tokens display
+- [x] Add borders, radii, shadows, motion tokens
+- [x] Create `src/styles/styleguide.css` for shared utilities
 
 ### Phase 3: Typography
 - [ ] Implement `_Typography.astro`
@@ -544,34 +547,49 @@ Flexoki color palette inspiration: https://stephango.com/flexoki
 
 ## Session Context for Continuation
 
-**Key exploration completed:**
-- Full CSS architecture explored (7 layers, design tokens, utility classes)
-- All 37 components catalogued with props and usage context (verified January 2026)
-- Note/Article styleguide content analyzed for gaps
-- Screenshots taken of current styleguide, note styleguide, article styleguide, homepage (in `.styleguide-screenshots/`)
-- Verified dual-theme implementation approach using `color-scheme` property
-- Identified additional features to demonstrate: footnotes, mermaid diagrams, astro-expressive-code markers, Astro Image/Picture, task lists
+**Current Status (January 2026):**
+- Phase 1 (Setup & Infrastructure) complete
+- Phase 2 (Design Tokens) complete
+- Ready to begin Phase 3 (Typography)
 
-**Key files to understand:**
-- `src/styles/global.css` - All design tokens, CSS layers, reset
+**Phase 2 Implementation Details:**
+
+The design tokens section is fully implemented with:
+
+1. **Color System** (`_ColorSystem.astro`):
+   - Adaptive palette with side-by-side light/dark theme comparison
+   - Absolute colors in grid layout
+   - Semantic colors in proper `<table>` with mini swatches for both themes
+
+2. **Spacing/Typography Tokens** (`_SpacingSystem.astro`):
+   - Spacing scale with visual bars (SpacingScale component)
+   - Fluid pairs explained with text + table (not redundant visualization)
+   - Font families: simplified display with inline metadata (Name · Variable · Usage)
+   - Font sizes: table with Preview, Variable, Typical Usage columns
+   - Line heights, letter spacing, font weights: grid displays with explanatory paragraphs
+   - Border widths, border radii: visual demonstrations with explanatory paragraphs
+   - Motion (durations, easing) and shadows: interactive demos with explanatory paragraphs
+
+3. **Shared Utilities** (`src/styles/styleguide.css`):
+   - `.sg-label` - Small caps label pattern
+   - `.sg-panel`, `.sg-panel-compact` - Contained areas with background
+   - `.sg-grid` - Configurable grid for token displays
+   - `.sg-subsection` - Subsection with h4 styling
+   - `.sg-theme-comparison`, `.sg-theme-column` - Side-by-side theme comparison
+   - `[data-theme]` utilities - Force light/dark mode on containers via `color-scheme`
+
+**Key files for Phase 3:**
+- `src/styles/global.css` - CSS layers including `@typography` and `@longform`
 - `src/components/layout/LongFormProseTypography.astro` - `@longform` layer styles
-- `docs/developer/design.md` - CSS philosophy and patterns
-- `docs/developer/design-tokens.md` - Token reference
-- `docs/developer/fonts.md` - OpenType features available (old-style numerals, ligatures, small caps, etc.)
+- `docs/developer/fonts.md` - OpenType features (old-style numerals, ligatures, small caps)
 
-**CSS architecture summary:**
-- 7 layers: `@layer reset, base, typography, layout, utilities, longform, theme`
-- Prose is default (`@typography`), UI areas opt-out with `.ui-style`
-- All values via tokens (`--color-*`, `--space-*`, `--font-size-*`, etc.)
-- Components use scoped CSS; global only for layer contributions
-
-**Typography contexts to demonstrate:**
+**Typography contexts to demonstrate in Phase 3:**
 1. Default - `@typography` layer (serif, underlined links, colored markers)
 2. Long-form - `<LongFormProseTypography>` adds `@longform` (old-style numerals, end mark, etc.)
 3. UI - `.ui-style` class (sans-serif, no underlines, tighter)
 
 **User preferences noted:**
-- Wants realistic, self-explanatory copy in typography demos (not lorem ipsum)
-- Flexoki-inspired color swatches with click-to-copy
+- Realistic, self-explanatory copy in typography demos (not lorem ipsum)
 - Selective code examples (complex components only, use `<details>` disclosure)
-- Simple sticky TOC, not over-engineered
+- Simple, clean presentation without over-abstraction
+- Explanatory paragraphs for each token category to explain when/why to use them
