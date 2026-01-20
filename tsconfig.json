@@ -18,6 +18,8 @@
       "@components/mdx/*": ["src/components/mdx/*"],
       "@components/ui": ["src/components/ui/index.ts"],
       "@components/ui/*": ["src/components/ui/*"],
+      "@components/styleguide": ["src/components/styleguide/index.ts"],
+      "@components/styleguide/*": ["src/components/styleguide/*"],
       "@layouts/*": ["src/layouts/*"],
       "@assets/*": ["src/assets/*"],
       "@config/*": ["src/config/*"],

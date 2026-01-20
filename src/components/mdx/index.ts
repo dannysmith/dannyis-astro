@@ -14,6 +14,8 @@ import Spacer from './Spacer.astro';
 import IntroParagraph from './IntroParagraph.astro';
 import SmartLink from './SmartLink.astro';
 import Center from './Center.astro';
+import ColorSwatch from './ColorSwatch.astro';
+import ResizableContainer from './ResizableContainer.astro';
 
 // Typography components
 import Title1 from './typography/Title1.astro';
@@ -38,6 +40,8 @@ export {
   IntroParagraph,
   SmartLink,
   Center,
+  ColorSwatch,
+  ResizableContainer,
   // Typography
   Title1,
   Title2,
