@@ -1,0 +1,159 @@
+/**
+ * Styleguide-specific styles
+ * Only loaded on /styleguide pages - does not affect the rest of the site
+ *
+ * This file contains:
+ * - Shared utilities for styleguide components
+ * - Section/subsection patterns
+ * - Theme-forcing utilities for light/dark previews
+ */
+
+/* ============================================
+   Styleguide Label Pattern
+   Small caps labels used throughout the styleguide
+   ============================================ */
+
+.sg-label {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   Styleguide Panel Pattern
+   Contained areas with subtle background
+   ============================================ */
+
+.sg-panel {
+  padding: var(--space-m);
+  background-color: var(--color-background-secondary);
+  border: var(--border-width-hairline) solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+/* Compact variant for inline swatches */
+.sg-panel-compact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xs);
+  border: var(--border-width-hairline) solid var(--color-border);
+  border-radius: var(--radius-xs);
+}
+
+/* ============================================
+   Theme Forcing Utilities
+   Force light or dark mode on containers
+   ============================================ */
+
+[data-theme] {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* ============================================
+   Styleguide Section Structure
+   Main sections and subsections
+   ============================================ */
+
+.styleguide-section {
+  padding-top: var(--space-l);
+  margin-top: var(--space-xl);
+  border-top: var(--border-width-hairline) solid var(--color-border);
+
+  &:first-of-type {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  & h2 {
+    margin-top: 0;
+    font-size: var(--font-size-xl);
+  }
+
+  & h3 {
+    margin-top: var(--space-l);
+  }
+}
+
+/* Subsection pattern - used for grouping related content */
+.sg-subsection {
+  margin-top: var(--space-xl);
+
+  &:first-of-type {
+    margin-top: var(--space-m);
+  }
+
+  & h3 {
+    margin-top: 0;
+  }
+
+  /* h4 as label-styled subheading */
+  & h4 {
+    margin-top: var(--space-l);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-secondary);
+    border-bottom: none;
+  }
+}
+
+/* ============================================
+   Styleguide-specific component: Subsection panel
+   A subsection that's also a panel
+   ============================================ */
+
+.styleguide-subsection {
+  margin-top: var(--space-m);
+  padding: var(--space-m);
+  background-color: var(--color-background-secondary);
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================
+   Grid Patterns
+   Common grid layouts for displaying tokens
+   ============================================ */
+
+.sg-grid {
+  --sg-grid-min: 6rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--sg-grid-min), 1fr));
+  gap: var(--space-m);
+}
+
+/* ============================================
+   Theme Comparison Layout
+   Side-by-side light/dark mode comparison
+   ============================================ */
+
+.sg-theme-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-m);
+  margin-top: var(--space-m);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sg-theme-column {
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  border: var(--border-width-hairline) solid var(--color-border);
+}
