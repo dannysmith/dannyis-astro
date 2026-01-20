@@ -10,31 +10,31 @@ import ColorSwatch from '@components/mdx/ColorSwatch.astro';
 const adaptiveColors = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
 const absoluteColors = ['white', 'black', 'ink', 'charcoal', 'beige'];
 
-// Semantic colors grouped by category for compact display
+// Semantic colors grouped by category
 const semanticColorGroups = [
   {
     category: 'Accent & Interaction',
     colors: [
-      { name: 'Accent', variable: '--color-accent', description: 'Primary brand color, links' },
-      { name: 'Visited', variable: '--color-visited', description: 'Visited links' },
-      { name: 'Highlight', variable: '--color-highlight', description: 'Text highlights' },
+      { name: 'Accent', variable: '--color-accent', usage: 'Primary brand color, links' },
+      { name: 'Visited', variable: '--color-visited', usage: 'Visited links' },
+      { name: 'Highlight', variable: '--color-highlight', usage: 'Text highlights' },
     ],
   },
   {
     category: 'Backgrounds & Surfaces',
     colors: [
-      { name: 'Background', variable: '--color-background', description: 'Page background' },
-      { name: 'Background Secondary', variable: '--color-background-secondary', description: 'Cards, panels' },
-      { name: 'Background Code', variable: '--color-background-code', description: 'Code blocks' },
-      { name: 'Surface Raised', variable: '--surface-raised', description: 'Elevated surfaces' },
+      { name: 'Background', variable: '--color-background', usage: 'Page background' },
+      { name: 'Background Secondary', variable: '--color-background-secondary', usage: 'Cards, panels' },
+      { name: 'Background Code', variable: '--color-background-code', usage: 'Code blocks' },
+      { name: 'Surface Raised', variable: '--surface-raised', usage: 'Elevated surfaces' },
     ],
   },
   {
     category: 'Text & Borders',
     colors: [
-      { name: 'Text', variable: '--color-text', description: 'Body text' },
-      { name: 'Text Secondary', variable: '--color-text-secondary', description: 'Muted text' },
-      { name: 'Border', variable: '--color-border', description: 'Borders, dividers' },
+      { name: 'Text', variable: '--color-text', usage: 'Body text' },
+      { name: 'Text Secondary', variable: '--color-text-secondary', usage: 'Muted text' },
+      { name: 'Border', variable: '--color-border', usage: 'Borders, dividers' },
     ],
   },
 ];
@@ -48,17 +48,17 @@ const semanticColorGroups = [
   </p>
 
   <!-- Adaptive Palette -->
-  <div class="color-subsection">
+  <div class="sg-subsection">
     <h3>Adaptive Palette</h3>
     <p>
       These colors automatically adjust for light and dark modes. Light mode has lower lightness
       and higher chroma; dark mode increases lightness and reduces chroma for visibility.
     </p>
 
-    <div class="theme-comparison">
-      <div class="theme-column light-theme">
-        <span class="theme-label">Light Mode</span>
-        <div class="color-grid">
+    <div class="sg-theme-comparison">
+      <div class="sg-theme-column" data-theme="light">
+        <span class="sg-label theme-label">Light Mode</span>
+        <div class="sg-grid">
           {adaptiveColors.map((color) => {
             const name = color.charAt(0).toUpperCase() + color.slice(1);
             const variable = `--color-${color}`;
@@ -66,9 +66,9 @@ const semanticColorGroups = [
           })}
         </div>
       </div>
-      <div class="theme-column dark-theme">
-        <span class="theme-label">Dark Mode</span>
-        <div class="color-grid">
+      <div class="sg-theme-column" data-theme="dark">
+        <span class="sg-label theme-label">Dark Mode</span>
+        <div class="sg-grid">
           {adaptiveColors.map((color) => {
             const name = color.charAt(0).toUpperCase() + color.slice(1);
             const variable = `--color-${color}`;
@@ -80,11 +80,11 @@ const semanticColorGroups = [
   </div>
 
   <!-- Absolute Colors -->
-  <div class="color-subsection">
+  <div class="sg-subsection">
     <h3>Absolute Colors</h3>
     <p>Static colors that don't change between themes. Used for specific design elements.</p>
-    <div class="absolute-colors-container">
-      <div class="color-grid color-grid-wide">
+    <div class="sg-panel">
+      <div class="sg-grid" style="--sg-grid-min: 8rem">
         {absoluteColors.map((color) => {
           const name = color.charAt(0).toUpperCase() + color.slice(1);
           const variable = `--color-${color}`;
@@ -95,120 +95,53 @@ const semanticColorGroups = [
   </div>
 
   <!-- Semantic Colors -->
-  <div class="color-subsection">
+  <div class="sg-subsection">
     <h3>Semantic Colors</h3>
     <p>Role-based colors that map to specific UI purposes. These adapt to the current theme.</p>
 
-    <div class="semantic-table">
-      <div class="semantic-header">
-        <span class="semantic-col-name">Token</span>
-        <span class="semantic-col-swatches">
-          <span class="swatch-header">Light</span>
-          <span class="swatch-header">Dark</span>
-        </span>
-        <span class="semantic-col-variable">Variable</span>
-        <span class="semantic-col-description">Usage</span>
-      </div>
-
+    <table class="semantic-table">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th class="swatch-col">Light</th>
+          <th class="swatch-col">Dark</th>
+          <th>Variable</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
       {semanticColorGroups.map(({ category, colors }) => (
-        <>
-          <div class="semantic-category">{category}</div>
-          {colors.map(({ name, variable, description }) => (
-            <div class="semantic-row">
-              <span class="semantic-col-name">{name}</span>
-              <span class="semantic-col-swatches">
-                <span class="swatch-container light-theme">
+        <tbody>
+          <tr class="category-row">
+            <td colspan="5">{category}</td>
+          </tr>
+          {colors.map(({ name, variable, usage }) => (
+            <tr>
+              <td class="token-name">{name}</td>
+              <td class="swatch-col">
+                <span class="sg-panel-compact" data-theme="light">
                   <span class="mini-swatch" style={`background-color: var(${variable})`} />
                 </span>
-                <span class="swatch-container dark-theme">
+              </td>
+              <td class="swatch-col">
+                <span class="sg-panel-compact" data-theme="dark">
                   <span class="mini-swatch" style={`background-color: var(${variable})`} />
                 </span>
-              </span>
-              <span class="semantic-col-variable">{variable}</span>
-              <span class="semantic-col-description">{description}</span>
-            </div>
+              </td>
+              <td class="variable-name">{variable}</td>
+              <td class="usage-desc">{usage}</td>
+            </tr>
           ))}
-        </>
+        </tbody>
       ))}
-    </div>
+    </table>
   </div>
 </section>
 
 <style>
-  .color-subsection {
-    margin-top: var(--space-xl);
-  }
-
-  .color-subsection:first-of-type {
-    margin-top: var(--space-m);
-  }
-
-  .color-subsection h3 {
-    margin-top: 0;
-  }
-
-  /* Color grids */
-  .color-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
-    gap: var(--space-m);
-  }
-
-  .color-grid-wide {
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  }
-
-  /* Theme comparison - side by side */
-  .theme-comparison {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-m);
-    margin-top: var(--space-m);
-  }
-
-  @media (max-width: 640px) {
-    .theme-comparison {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .theme-column {
-    padding: var(--space-m);
-    border-radius: var(--radius-sm);
-    border: var(--border-width-hairline) solid var(--color-border);
-  }
-
-  /* Force light mode on light column */
-  .light-theme {
-    color-scheme: light;
-    background-color: var(--color-background);
-    color: var(--color-text);
-  }
-
-  /* Force dark mode on dark column */
-  .dark-theme {
-    color-scheme: dark;
-    background-color: var(--color-background);
-    color: var(--color-text);
-  }
-
+  /* Theme label positioning */
   .theme-label {
     display: block;
-    font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    color: var(--color-text-secondary);
     margin-bottom: var(--space-s);
-  }
-
-  /* Absolute colors container */
-  .absolute-colors-container {
-    padding: var(--space-m);
-    background-color: var(--color-background-secondary);
-    border-radius: var(--radius-sm);
-    border: var(--border-width-hairline) solid var(--color-border);
   }
 
   /* Semantic colors table */
@@ -216,81 +149,49 @@ const semanticColorGroups = [
     margin-top: var(--space-m);
     font-family: var(--font-ui);
     font-size: var(--font-size-sm);
+
+    /* Override default table styles for this context */
+    & th,
+    & td {
+      padding: var(--space-xs) var(--space-s);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    & th {
+      font-size: var(--font-size-xs);
+    }
+
+    & .swatch-col {
+      width: 3rem;
+      text-align: center;
+    }
+
+    & .category-row td {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      padding-top: var(--space-m);
+    }
+
+    & .token-name {
+      font-weight: var(--font-weight-medium);
+    }
+
+    & .variable-name {
+      font-family: var(--font-code);
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+
+    & .usage-desc {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-xs);
+    }
   }
 
-  .semantic-header {
-    display: grid;
-    grid-template-columns: 10rem 5rem 1fr 1fr;
-    gap: var(--space-s);
-    padding: var(--space-xs) var(--space-s);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    color: var(--color-text-secondary);
-    border-bottom: var(--border-width-hairline) solid var(--color-border);
-  }
-
-  .semantic-col-swatches {
-    display: flex;
-    gap: var(--space-xs);
-  }
-
-  .swatch-header {
-    width: 2rem;
-    text-align: center;
-  }
-
-  .semantic-category {
-    margin-top: var(--space-m);
-    padding: var(--space-2xs) var(--space-s);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    color: var(--color-text-secondary);
-    background-color: var(--color-background-secondary);
-    border-radius: var(--radius-xs);
-  }
-
-  .semantic-row {
-    display: grid;
-    grid-template-columns: 10rem 5rem 1fr 1fr;
-    gap: var(--space-s);
-    padding: var(--space-xs) var(--space-s);
-    align-items: center;
-    border-bottom: var(--border-width-hairline) solid var(--color-border);
-  }
-
-  .semantic-row:last-child {
-    border-bottom: none;
-  }
-
-  .semantic-col-name {
-    font-weight: var(--font-weight-medium);
-  }
-
-  .semantic-col-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .semantic-col-description {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-xs);
-  }
-
-  /* Mini swatches for the table */
-  .swatch-container {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-3xs);
-    border-radius: var(--radius-xs);
-    border: var(--border-width-hairline) solid var(--color-border);
-  }
-
+  /* Mini swatches */
   .mini-swatch {
     display: block;
     width: 1.5rem;
@@ -299,28 +200,46 @@ const semanticColorGroups = [
     border: var(--border-width-hairline) solid var(--color-border);
   }
 
+  /* Mobile: convert table to stacked cards */
   @media (max-width: 640px) {
-    .semantic-header {
-      display: none;
-    }
+    .semantic-table {
+      & thead {
+        display: none;
+      }
 
-    .semantic-row {
-      grid-template-columns: 1fr;
-      gap: var(--space-2xs);
-      padding: var(--space-s);
-    }
+      & tbody {
+        display: block;
+      }
 
-    .semantic-col-swatches {
-      order: -1;
-    }
+      & tr {
+        display: block;
+        padding: var(--space-s);
+        border-bottom: var(--border-width-hairline) solid var(--color-border);
+      }
 
-    .swatch-container {
-      padding: var(--space-2xs);
-    }
+      & td {
+        display: block;
+        padding: var(--space-2xs) 0;
+      }
 
-    .mini-swatch {
-      width: 2.5rem;
-      height: 1.75rem;
+      & .category-row td {
+        padding: var(--space-s) 0;
+        background: transparent;
+      }
+
+      & .swatch-col {
+        display: inline-block;
+        width: auto;
+      }
+
+      & .sg-panel-compact {
+        padding: var(--space-2xs);
+      }
+
+      & .mini-swatch {
+        width: 2.5rem;
+        height: 1.75rem;
+      }
     }
   }
 </style>
