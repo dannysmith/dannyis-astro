@@ -4,12 +4,7 @@
  * Used in the styleguide to display the spacing scale
  */
 
-export interface Props {
-  /** Which spacing tokens to display */
-  tokens?: Array<{ name: string; variable: string }>;
-}
-
-const defaultTokens = [
+const baseTokens = [
   { name: '3xs', variable: '--space-3xs' },
   { name: '2xs', variable: '--space-2xs' },
   { name: 'xs', variable: '--space-xs' },
@@ -21,25 +16,23 @@ const defaultTokens = [
   { name: '3xl', variable: '--space-3xl' },
 ];
 
-const pairTokens = [
-  { name: '3xs-2xs', variable: '--space-3xs-2xs' },
-  { name: '2xs-xs', variable: '--space-2xs-xs' },
-  { name: 'xs-s', variable: '--space-xs-s' },
-  { name: 's-m', variable: '--space-s-m' },
-  { name: 'm-l', variable: '--space-m-l' },
-  { name: 'l-xl', variable: '--space-l-xl' },
-  { name: 'xl-2xl', variable: '--space-xl-2xl' },
-  { name: '2xl-3xl', variable: '--space-2xl-3xl' },
+const fluidPairs = [
+  { variable: '--space-3xs-2xs', from: '3xs', to: '2xs' },
+  { variable: '--space-2xs-xs', from: '2xs', to: 'xs' },
+  { variable: '--space-xs-s', from: 'xs', to: 's' },
+  { variable: '--space-s-m', from: 's', to: 'm' },
+  { variable: '--space-m-l', from: 'm', to: 'l' },
+  { variable: '--space-l-xl', from: 'l', to: 'xl' },
+  { variable: '--space-xl-2xl', from: 'xl', to: '2xl' },
+  { variable: '--space-2xl-3xl', from: '2xl', to: '3xl' },
 ];
-
-const { tokens = defaultTokens } = Astro.props;
 ---
 
 <div class="spacing-scale">
   <h4>Base Scale</h4>
   <div class="spacing-list">
     {
-      tokens.map(({ name, variable }) => (
+      baseTokens.map(({ name, variable }) => (
         <div class="spacing-item">
           <span class="spacing-name">{name}</span>
           <div class="spacing-bar" style={`width: var(${variable})`} />
@@ -50,20 +43,31 @@ const { tokens = defaultTokens } = Astro.props;
   </div>
 
   <h4>Fluid Pairs</h4>
-  <p class="spacing-description">
-    These tokens smoothly interpolate between two sizes based on viewport width.
+  <p>
+    Fluid pairs smoothly interpolate between two base sizes as the viewport changes. Use these when
+    you want spacing that feels proportionally correct at any screen size — small on mobile, larger
+    on desktop — without jarring breakpoints.
   </p>
-  <div class="spacing-list">
-    {
-      pairTokens.map(({ name, variable }) => (
-        <div class="spacing-item">
-          <span class="spacing-name">{name}</span>
-          <div class="spacing-bar spacing-bar-fluid" style={`width: var(${variable})`} />
-          <code class="spacing-variable">{variable}</code>
-        </div>
-      ))
-    }
-  </div>
+  <table class="fluid-pairs-table">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>From</th>
+        <th>To</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        fluidPairs.map(({ variable, from, to }) => (
+          <tr>
+            <td><code>{variable}</code></td>
+            <td>{from}</td>
+            <td>{to}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
 </div>
 
 <style>
@@ -84,7 +88,7 @@ const { tokens = defaultTokens } = Astro.props;
     margin-top: 0;
   }
 
-  .spacing-description {
+  .spacing-scale p {
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
     margin-bottom: var(--space-s);
@@ -98,7 +102,7 @@ const { tokens = defaultTokens } = Astro.props;
 
   .spacing-item {
     display: grid;
-    grid-template-columns: 4rem 1fr auto;
+    grid-template-columns: 3rem 1fr auto;
     align-items: center;
     gap: var(--space-s);
   }
@@ -115,14 +119,20 @@ const { tokens = defaultTokens } = Astro.props;
     min-width: 4px;
   }
 
-  .spacing-bar-fluid {
-    background: linear-gradient(90deg, var(--color-accent), var(--color-purple));
-  }
-
   .spacing-variable {
     font-family: var(--font-code);
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
     white-space: nowrap;
+  }
+
+  /* Fluid pairs table */
+  .fluid-pairs-table {
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-s);
+
+    & code {
+      font-size: var(--font-size-xs);
+    }
   }
 </style>
