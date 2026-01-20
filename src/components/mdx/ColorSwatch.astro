@@ -1,0 +1,148 @@
+---
+export interface Props {
+  /** CSS color value or variable (e.g., 'var(--color-coral)' or '#ff0000') */
+  color: string;
+  /** Display label for the swatch */
+  name?: string;
+  /** CSS variable name for copying (e.g., '--color-coral') */
+  variable?: string;
+  /** Optional size override - defaults to responding to container */
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { color, name, variable, size } = Astro.props;
+
+const sizeClass = size ? `swatch-${size}` : '';
+const copyValue = variable || color;
+---
+
+<button
+  class:list={['color-swatch', sizeClass]}
+  style={`--swatch-color: ${color}`}
+  data-copy-value={copyValue}
+  type="button"
+  title={`Click to copy: ${copyValue}`}
+>
+  <span class="swatch-color"></span>
+  {name && <span class="swatch-label">{name}</span>}
+  {variable && <span class="swatch-variable">{variable}</span>}
+  <span class="swatch-copied" aria-hidden="true">Copied!</span>
+</button>
+
+<script>
+  document.querySelectorAll('.color-swatch').forEach((swatch) => {
+    swatch.addEventListener('click', async () => {
+      const value = swatch.getAttribute('data-copy-value');
+      if (value) {
+        try {
+          await navigator.clipboard.writeText(value);
+          swatch.classList.add('copied');
+          setTimeout(() => swatch.classList.remove('copied'), 1500);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .color-swatch {
+    --swatch-size: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2xs);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    font-family: var(--font-ui);
+    text-align: left;
+    width: 100%;
+  }
+
+  .color-swatch:focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .swatch-color {
+    display: block;
+    width: var(--swatch-size);
+    aspect-ratio: 1;
+    background-color: var(--swatch-color);
+    border-radius: var(--radius-sm);
+    border: var(--border-width-hairline) solid var(--color-border);
+    transition: transform var(--duration-fast) var(--ease-in-out);
+  }
+
+  .color-swatch:hover .swatch-color {
+    transform: scale(1.02);
+  }
+
+  .color-swatch:active .swatch-color {
+    transform: scale(0.98);
+  }
+
+  .swatch-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    line-height: var(--leading-tight);
+  }
+
+  .swatch-variable {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-tight);
+  }
+
+  .swatch-copied {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-charcoal);
+    color: var(--color-beige);
+    padding: var(--space-2xs) var(--space-xs);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-fast) var(--ease-in-out);
+  }
+
+  .color-swatch.copied .swatch-copied {
+    opacity: 1;
+  }
+
+  /* Size variants */
+  .swatch-sm {
+    --swatch-size: 2rem;
+  }
+
+  .swatch-sm .swatch-color {
+    width: var(--swatch-size);
+  }
+
+  .swatch-md {
+    --swatch-size: 4rem;
+  }
+
+  .swatch-md .swatch-color {
+    width: var(--swatch-size);
+  }
+
+  .swatch-lg {
+    --swatch-size: 6rem;
+  }
+
+  .swatch-lg .swatch-color {
+    width: var(--swatch-size);
+  }
+</style>
