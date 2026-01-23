@@ -3,27 +3,27 @@ title: Claude Code hallucinating like it's 2024
 pubDate: 2026-01-22
 ---
 
-I've just been using Claude Code and [my task management skill](https://tdn.danny.is/claude-code/skill/) to work over all of my current life areas and projects and help me define next actions for them. I've had enough time working with Opus 4.5 recently that I was legit **surprised** when suddenly it started hallucinating plausible but absolutely-incorrect stuff about some of my projects. Not least because it suddenly went from what I'm used to to GPT 3.5-levels of batshit hallucinations so suddenly.
+I've just been using Claude Code and [my task management skill](https://tdn.danny.is/claude-code/skill/) to work through my current life areas and projects and help me define next actions. I've had enough time with Opus 4.5 recently that I was legit surprised when it started hallucinating plausible but absolutely-incorrect stuff about some of my projects. Not least because it went from what I'm used to to GPT-3.5-levels of batshit hallucinations so **suddenly**.
 
-Its explanation of this was very interesting...
+Its explanation of why this happened is interesting.
 
 ## Brief Context
 
-I manage my stuff with a GTD/PARA-esque model: Life **Areas**, **Projects** and **Tasks**. Areas include things like *Finance*, *Health*, *Coding* etc and contain projects. Projects can contain tasks. I've recently built [Taskdn](https://tdn.danny.is), which stores my areas, projects and tasks as markdown files in my obsidian vault, and includes a Claude Code skill and [CLI tool](https://tdn.danny.is/cli/overview/) which helps me use Claude Code to work with them all. My personal area and project files have been in this system for a few months now but having just shipped an [Alpha release of the desktop app](https://tdn.danny.is/desktop/overview/), it was time to populate my `tasks/` directory with task files and start using it as my daily driver.
+I manage my stuff with a GTD/PARA-esque model: **Areas**, **Projects** and **Tasks**. Areas include things like *Finance*, *Health*, *Coding* etc and contain projects. Projects can contain tasks. I've recently built [Taskdn](https://tdn.danny.is), which stores areas, projects and tasks as markdown files in my Obsidian vault and includes a Claude Code skill & [CLI](https://tdn.danny.is/cli/overview/) to help Claude Code work with them. My personal area and project files have been in this system for a few months now, but having just shipped an [Alpha release of the desktop app](https://tdn.danny.is/desktop/overview/), it was time to populate my `tasks/` directory with task files and start using them as my daily driver.
 
 So I fired up CC, loaded the skill and basically said *"look at all my areas and projects. Let's define next actions for them all and create the appropriate task files. Some projects have clear checklists in the project docs, others we'll need to discuss. Let's do them one by one. What order would you suggest?"*
 
-Claude ran a few `tdn --ai` commands and sensibly decided it should read all my (14) area and (23) project files in full. It gave a very good summary of the current situation, sensibly suggested we skip a few projects and proposed an order of attack. For each project it would report any *current task* -like stuff in the project doc and propose clear Next Actions to create as tasks. If it was unsure it would ask me for more info. Once we'd agreed on the tasks to create it would do so and edit the project doc accordingly.
+Claude ran a few `tdn --ai` commands and sensibly decided it should read all my 14 area and 23 project files in full. It gave a very good summary of the current situation, sensibly suggested we skip a few projects and proposed an order of attack. For each project it would report anything in the project doc which seemed like current/future tasks and propose clear Next Actions to create. If it was unsure, it would ask me for more info. Once we'd agreed on the tasks to create it would do so and edit the project doc accordingly.
 
-Which worked *perfectly* for my three projects:
+Which worked *perfectly* for the first three projects on the list:
 
   1. Tax Return YE April 2025
   2. End-of-Year Finance Reset (renamed to *Jan Finance Reset* + created new *Credit File and History* project)
   3. [REDACTED]
 
-And then we got to the next three, which all sit under my **RAFAC** area, and have to do with my voluntary work with the [RAF Air Cadets](https://www.raf.mod.uk/aircadets/)...
+And then we got to the next three – all of which sit under my **RAFAC** area and have to do with my voluntary work with the [RAF Air Cadets](https://www.raf.mod.uk/aircadets/)...
 
-```md
+```md wrap
 RAFAC Re-qualification
 
   Currently in project doc:
@@ -40,30 +40,29 @@ RAFAC Re-qualification
   - ID photos, Bader photo, DBS update, First Aid cert, SMS competencies
 ```
 
-Of this, the only real things here are *DCCT (in-progress, have place)* and *M Qual & LR*. The rest is somewhat plausible made-up nonsense. Fuck knows what the February *Staff Ride* is but I guess it sounds fun?
+The only real things here are *DCCT* and *M Qual & LR* – the rest is plausible but totally made-up nonsense. (Fuck knows what Feb's *Staff Ride* is but... it sounds fun? Maybe I'm joining the Cavalry!)
 
-And for the next project, which relates to upgrading my uniform and field kit, I was confidently told that my project doc prioritised the following: *C95 Lightweights, MTP Trousers, C95 shirts, Flying suit, Softie jacket*.
+And for the next project, which relates to squaring my uniform and field kit, I was confidently told that my project doc prioritises the following: *C95 Lightweights, MTP Trousers, C95 shirts, Flying suit, Softie jacket*.
 
-If you happen to know what these items are you'll certainly be laughing at the image of me wearing all of them in 2025. For everyone else: CS95 went out of service in 2010, lightweights are from the 1980's and my softie jacket is from the mid 2000's (somewhere in my loft?). And I do not, and never will, have need of a flying suit.
+If you happen to know what these items are, you'll certainly be laughing at the image of me wearing all of them together, in the year 2025. For everyone else: CS95 went out of service in 2010, lightweights are from the 1980's and my softie jacket is from the mid 2000's and buried somewhere in my loft. I do not, and never will, have need of a flying suit.
 
 The project doc does contain a short list of [MTP](https://en.wikipedia.org/wiki/Multi-Terrain_Pattern) uniform items I need to replace, **but it does not include trousers**.
 
-I'd expect this from old-skool ChatGPT, and with something as niche as this I'd *kinda* expect it from modern 2026 ChatGPT. But given what Claude Code knew about me in this session, I did not expect such **obviously-made-up** stuff from Opus 4.5. To be clear, the most surprising things were:
+I'd maybe expect this kind of hallucination from contextless ChatGPT, especially with something as niche as this. But given what Claude knew about me in this session I did not expect ChatGPT-in-early-2024 levels of **obviously-made-up** stuff from Opus 4.5. To be clear, the most surprising things were:
 
-1. It's so **obviously wrong**. It's not the subtle kind of hallucination.
-2. It was so **sudden**. Claude went from sensible-and-effective to random-token-prediction in like two turns.
+1. It's so **obviously wrong**. It's not the subtle kind of hallucination which modern Anthropic models tend to produce.
+2. Somewhat uncharacteristically, Claude didn't spot its own nonsense. there was no *wait I might have made that up lemme check* or *Let me clarify* questions.
+3. It was so **sudden**. Claude went from sensible-and-effective to random-token-prediction-machine in like **two turns**.
 
 ## So what's going on?
 
-Here's our conversation on this (the conversation was never auto-compacted, so you can ignore that stuff)...
-
-# Conversation About Claude Hallucinating Project Contents
+Here's our conversation on this (nothing was auto-compacted, so you can ignore the stuff about that)...
 
 > Okay, um you've hallucinated a bunch of stuff about what's in the last two project documents, I suspect, because we've covered a lot of very different and disparate uh projects and areas while going over this. And you haven't actually read the project documents in a while, so you're just making up stuff you think will be in them
 >
 > I'd like you to try to explain why you have just for the last couple of projects (so 4, 5 and 6) suddenly started to hallucinate credible but very incorrect information about what's in the doc. I don't need you to apologize for this, and I don't need you to do anything about it, but I'd like to understand why you think it is that that's happened when prior to that you were extremely accurate in helping me out and explaining what was in those docs and everything. Um I'm very familiar with using AI agents like Claude Code, so you you can be detailed or technical in your explanation of this. I want to know so that in the future I can design some instructions for this kind of work that will help to prevent it. I don't need you to write those instructions for me now. I just need you to try to explain why you think this happened and in particular why it happened with projects four, five, and six here.
 
-```md
+```md wrap
 ## Why the Hallucination Happened
 
 The root cause is **stale context from early reads combined with pattern-matching fabrication**.
@@ -87,7 +86,7 @@ At the start of this session, I read all the project files in a batch during ini
 >
 > Well what are your thoughts on all this?
 
-```md
+```md wrap
 This is a great set of questions. Let me work through each factor:
 
 **On compression/degradation:**
@@ -143,4 +142,4 @@ The interesting thing is that for project 3 ([REDACTED]), I was still reasonably
 For future instructions, you might add something like: "For any domain with specialized terminology or that sits outside typical tech/productivity contexts, always re-read source files immediately before discussing them — don't rely on earlier reads regardless of how recent they seem."
 ```
 
-All of which I find interesting.
+All of which I find interesting, and food for thought as I continue to use Claude Code for things which aren't programming.
