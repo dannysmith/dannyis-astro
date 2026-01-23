@@ -1,0 +1,146 @@
+---
+title: Claude Code hallucinating like it's 2024
+pubDate: 2026-01-22
+---
+
+I've just been using Claude Code and [my task management skill](https://tdn.danny.is/claude-code/skill/) to work over all of my current life areas and projects and help me define next actions for them. I've had enough time working with Opus 4.5 recently that I was legit **surprised** when suddenly it started hallucinating plausible but absolutely-incorrect stuff about some of my projects. Not least because it suddenly went from what I'm used to to GPT 3.5-levels of batshit hallucinations so suddenly.
+
+Its explanation of this was very interesting...
+
+## Brief Context
+
+I manage my stuff with a GTD/PARA-esque model: Life **Areas**, **Projects** and **Tasks**. Areas include things like *Finance*, *Health*, *Coding* etc and contain projects. Projects can contain tasks. I've recently built [Taskdn](https://tdn.danny.is), which stores my areas, projects and tasks as markdown files in my obsidian vault, and includes a Claude Code skill and [CLI tool](https://tdn.danny.is/cli/overview/) which helps me use Claude Code to work with them all. My personal area and project files have been in this system for a few months now but having just shipped an [Alpha release of the desktop app](https://tdn.danny.is/desktop/overview/), it was time to populate my `tasks/` directory with task files and start using it as my daily driver.
+
+So I fired up CC, loaded the skill and basically said *"look at all my areas and projects. Let's define next actions for them all and create the appropriate task files. Some projects have clear checklists in the project docs, others we'll need to discuss. Let's do them one by one. What order would you suggest?"*
+
+Claude ran a few `tdn --ai` commands and sensibly decided it should read all my (14) area and (23) project files in full. It gave a very good summary of the current situation, sensibly suggested we skip a few projects and proposed an order of attack. For each project it would report any *current task* -like stuff in the project doc and propose clear Next Actions to create as tasks. If it was unsure it would ask me for more info. Once we'd agreed on the tasks to create it would do so and edit the project doc accordingly.
+
+Which worked *perfectly* for my three projects:
+
+  1. Tax Return YE April 2025
+  2. End-of-Year Finance Reset (renamed to *Jan Finance Reset* + created new *Credit File and History* project)
+  3. [REDACTED]
+
+And then we got to the next three, which all sit under my **RAFAC** area, and have to do with my voluntary work with the [RAF Air Cadets](https://www.raf.mod.uk/aircadets/)...
+
+```md
+RAFAC Re-qualification
+
+  Currently in project doc:
+
+  eLearning modules:
+  - Safeguarding (yearly), Data Protection (yearly), Prevent, Fire Safety, GDPR, Cyber Security, AMS 5 & 6
+
+  Courses:
+  - DCCT (in-progress, have place)
+  - Staff Ride (Feb 2026)
+  - M Qual & LR (need applications)
+
+  Admin:
+  - ID photos, Bader photo, DBS update, First Aid cert, SMS competencies
+```
+
+Of this, the only real things here are *DCCT (in-progress, have place)* and *M Qual & LR*. The rest is somewhat plausible made-up nonsense. Fuck knows what the February *Staff Ride* is but I guess it sounds fun?
+
+And for the next project, which relates to upgrading my uniform and field kit, I was confidently told that my project doc prioritised the following: *C95 Lightweights, MTP Trousers, C95 shirts, Flying suit, Softie jacket*.
+
+If you happen to know what these items are you'll certainly be laughing at the image of me wearing all of them in 2025. For everyone else: CS95 went out of service in 2010, lightweights are from the 1980's and my softie jacket is from the mid 2000's (somewhere in my loft?). And I do not, and never will, have need of a flying suit.
+
+The project doc does contain a short list of [MTP](https://en.wikipedia.org/wiki/Multi-Terrain_Pattern) uniform items I need to replace, **but it does not include trousers**.
+
+I'd expect this from old-skool ChatGPT, and with something as niche as this I'd *kinda* expect it from modern 2026 ChatGPT. But given what Claude Code knew about me in this session, I did not expect such **obviously-made-up** stuff from Opus 4.5. To be clear, the most surprising things were:
+
+1. It's so **obviously wrong**. It's not the subtle kind of hallucination.
+2. It was so **sudden**. Claude went from sensible-and-effective to random-token-prediction in like two turns.
+
+## So what's going on?
+
+Here's our conversation on this (the conversation was never auto-compacted, so you can ignore that stuff)...
+
+# Conversation About Claude Hallucinating Project Contents
+
+> Okay, um you've hallucinated a bunch of stuff about what's in the last two project documents, I suspect, because we've covered a lot of very different and disparate uh projects and areas while going over this. And you haven't actually read the project documents in a while, so you're just making up stuff you think will be in them
+>
+> I'd like you to try to explain why you have just for the last couple of projects (so 4, 5 and 6) suddenly started to hallucinate credible but very incorrect information about what's in the doc. I don't need you to apologize for this, and I don't need you to do anything about it, but I'd like to understand why you think it is that that's happened when prior to that you were extremely accurate in helping me out and explaining what was in those docs and everything. Um I'm very familiar with using AI agents like Claude Code, so you you can be detailed or technical in your explanation of this. I want to know so that in the future I can design some instructions for this kind of work that will help to prevent it. I don't need you to write those instructions for me now. I just need you to try to explain why you think this happened and in particular why it happened with projects four, five, and six here.
+
+```md
+## Why the Hallucination Happened
+
+The root cause is **stale context from early reads combined with pattern-matching fabrication**.
+
+At the start of this session, I read all the project files in a batch during initial context gathering. That was ~50+ turns ago. As the conversation progressed:
+
+1. **Context compression**: Those early file reads got pushed further back in my context window. The model may have summarized or partially dropped details to make room for new content (task creation outputs, your detailed explanations, etc.).
+
+2. **No re-read before presenting**: For projects 1-3, I happened to have fresher memory or you provided enough detail that my errors were corrected. By projects 4-6, I was confidently presenting "what's in the doc" without actually re-reading it — I was reconstructing from degraded memory plus plausible-sounding details based on project titles.
+
+3. **Pattern matching from similar content**: I'd read many RAFAC-related files, kit lists, workshop docs. My outputs for projects 4-6 were plausible *patterns* of what such docs typically contain — but not what *your* docs actually said.
+
+4. **Confidence without verification**: The format "Currently in project doc:" followed by a code block looked authoritative, but I wasn't actually quoting the file — I was generating what I *expected* to find.
+
+**The fix is simple**: Always run `Read` on the project file immediately before discussing its contents, even if I "remember" reading it earlier. Long conversations with many file operations require fresh reads, not memory.
+```
+
+> Got it, that's interesting. Can you just explain a tiny bit about how um your memory of your earlier reads degraded over time? Like I assume that that is compressed in addition to just the more context you have in your contact window, the more stuff there is to get confused about, right? Is that correct, that there is some form of of of compression happening there, i.e. summaries for for much older information. I'm also particularly interested that this seemed to happen with RAFAC-related stuff. Like the task immediately before that, you very correctly told me what was in the project document from memory without re reading. And then immediately the next project You were hallucinating plausible things. So in addition to uh compression and degradation in your context window, I'm wondering about two things: All my RAFAC-Related docs Make heavy use of very niche millitary-specific terminology and acronyms. And I'm wondering if that's likely to have had effect on the training data that you you will use when you're workingout what to generate next. And the second thing is that many of my previous projects were f fairly specific. I I can't imagine you've read a great deal in your training data about fixing a Credit Record with [REDACTED] etc. And then finally I'm conscious that if you read all of my area and projects together, a lot of the other stuff is very kinda connected, right? Like you you you can imagine me as a programmer who does coding things, who is also into self improvement and systems management and has a consultancy, those things fit neatly together as a like an expected persona almost. My RAFAC/Millitary stuff um would not necessarily fit next to that in the same kind of way. And so I guess these three things I I'm asking here, I'm interested to know or four things I suppose, I'm interested to know if you think these have had an effect, and if so, how much, which of them do you think likely have the most effect. I'd really just like to explore this to help understand how you work herea little bit more.
+>
+> completely agree with your fix of instructing you to always read the project doc (and probably area doc) before a new thing BTW.
+>
+> Well what are your thoughts on all this?
+
+```md
+This is a great set of questions. Let me work through each factor:
+
+**On compression/degradation:**
+
+There are two mechanisms at play:
+
+1. **Attention diffusion** — As context grows, my attention over earlier tokens becomes more spread out. I don't literally "forget" earlier content, but my ability to precisely retrieve specific details weakens. It's less like deleting a file and more like trying to read a book where earlier pages are progressively out of focus.
+
+2. **Autocompact summarization** — Claude Code specifically has an infrastructure-level feature that summarizes older conversation when context gets long. Your `/context` output showed "Autocompact buffer: 45.0k tokens" — this means there's a mechanism that can literally rewrite earlier exchanges into compressed summaries. If my file reads got autocompacted, the specific line-by-line content would be replaced with something like "read several RAFAC project files containing training requirements and kit lists." That's enough to generate plausible content, but not accurate content.
+
+**On RAFAC terminology:**
+
+I think this is a significant factor. When I encounter dense domain-specific acronyms (DCCT, MT600, SMS competencies, Bader Learn, DLE, CFAV, ODI), several things happen:
+
+- These tokens are rarer in my training data, so my associations are weaker and more generic
+- I pattern-match to "military/organizational training documentation" as a category rather than your specific situation
+- When reconstructing, I generate what military training docs *typically* contain rather than what *yours* actually say
+
+Contrast this with "Credit File and History" — that's unusual *content* but uses common *vocabulary*. I can represent "contact [REDACTED] at [REDACTED] about credit file" precisely because those are all common tokens with clear meanings. But "complete CFAV SPO Refresher on DLE" is a string of rare tokens where I'm essentially guessing at the relationships.
+
+**On persona coherence:**
+
+I think you've identified something real here. My training data contains strong clusters of co-occurring personas:
+
+- Programmer + consultant + productivity systems + side projects + self-improvement
+- These fit together as a recognizable "type" with predictable project structures
+
+Your RAFAC involvement doesn't fit that cluster. It's a different persona — military volunteer instructor — that would typically appear alongside different life contexts in my training data.
+
+When I'm reconstructing content from degraded memory, I'm essentially asking "what would plausibly be in this document?" My answer draws on:
+1. What I vaguely remember reading (degraded)
+2. What documents like this typically contain (training data patterns)
+3. What fits this person's overall context (persona coherence)
+
+For your coding/finance/productivity projects, (2) and (3) align well with your actual situation. For RAFAC, they don't — so my reconstructions pulled from "generic military training documents" rather than "Danny's specific RAFAC situation."
+
+**Which factors matter most:**
+
+Ranked by impact:
+
+1. **Not re-reading** — Proximate cause. Everything else is downstream of this.
+
+2. **Autocompact summarization** — If the system compressed "Read RAFAC Re-qualification.md containing [specific content]" into "read several RAFAC files," I've literally lost the ground truth.
+
+3. **Niche terminology** — Weak token associations mean my reconstructions are more "vibes-based" and less precise.
+
+4. **Persona mismatch** — My priors for "what this person's projects contain" are calibrated to the programmer-consultant cluster, not the military-instructor cluster.
+
+The interesting thing is that for project 3 ([REDACTED]), I was still reasonably accurate. That project sits firmly in the productivity/self-improvement cluster where my pattern-matching works well. RAFAC was where the wheels came off — exactly where you'd predict based on this analysis.
+
+**Practical implication:**
+
+For future instructions, you might add something like: "For any domain with specialized terminology or that sits outside typical tech/productivity contexts, always re-read source files immediately before discussing them — don't rely on earlier reads regardless of how recent they seem."
+```
+
+All of which I find interesting.
