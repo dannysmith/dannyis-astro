@@ -61,8 +61,7 @@ const semanticColorGroups = [
         <div class="sg-grid">
           {adaptiveColors.map((color) => {
             const name = color.charAt(0).toUpperCase() + color.slice(1);
-            const variable = `--color-${color}`;
-            return <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />;
+            return <ColorSwatch color={`var(--color-${color})`} name={name} />;
           })}
         </div>
       </div>
@@ -71,8 +70,7 @@ const semanticColorGroups = [
         <div class="sg-grid">
           {adaptiveColors.map((color) => {
             const name = color.charAt(0).toUpperCase() + color.slice(1);
-            const variable = `--color-${color}`;
-            return <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />;
+            return <ColorSwatch color={`var(--color-${color})`} name={name} />;
           })}
         </div>
       </div>
@@ -87,8 +85,7 @@ const semanticColorGroups = [
       <div class="sg-grid" style="--sg-grid-min: 8rem">
         {absoluteColors.map((color) => {
           const name = color.charAt(0).toUpperCase() + color.slice(1);
-          const variable = `--color-${color}`;
-          return <ColorSwatch color={`var(${variable})`} name={name} variable={variable} />;
+          return <ColorSwatch color={`var(--color-${color})`} name={name} />;
         })}
       </div>
     </div>
@@ -118,13 +115,13 @@ const semanticColorGroups = [
             <tr>
               <td class="token-name">{name}</td>
               <td class="swatch-col">
-                <span class="sg-panel-compact" data-theme="light">
-                  <span class="mini-swatch" style={`background-color: var(${variable})`} />
+                <span class="sg-panel-compact mini-swatch" data-theme="light">
+                  <ColorSwatch color={`var(${variable})`} />
                 </span>
               </td>
               <td class="swatch-col">
-                <span class="sg-panel-compact" data-theme="dark">
-                  <span class="mini-swatch" style={`background-color: var(${variable})`} />
+                <span class="sg-panel-compact mini-swatch" data-theme="dark">
+                  <ColorSwatch color={`var(${variable})`} />
                 </span>
               </td>
               <td class="variable-name">{variable}</td>
@@ -138,6 +135,12 @@ const semanticColorGroups = [
 </section>
 
 <style>
+  /* Give grid swatches a square aspect ratio */
+  .sg-grid :global(.color-swatch) {
+    height: auto;
+    aspect-ratio: 1;
+  }
+
   /* Theme label positioning */
   .theme-label {
     display: block;
@@ -191,13 +194,11 @@ const semanticColorGroups = [
     }
   }
 
-  /* Mini swatches */
+  /* Mini swatches - sized wrapper for ColorSwatch */
   .mini-swatch {
     display: block;
-    width: 1.5rem;
-    height: 1.25rem;
-    border-radius: var(--radius-xs);
-    border: var(--border-width-hairline) solid var(--color-border);
+    width: 2.5rem;
+    height: 2rem;
   }
 
   /* Mobile: convert table to stacked cards */
@@ -238,7 +239,7 @@ const semanticColorGroups = [
 
       & .mini-swatch {
         width: 2.5rem;
-        height: 1.75rem;
+        height: 2rem;
       }
     }
   }
