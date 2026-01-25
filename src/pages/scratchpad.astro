@@ -250,10 +250,446 @@ console.log(greet('World'));</code></pre>
           </p>
         </TabItem>
         <TabItem label="Long Form Prose Wrapper">
-          <p>Io, Europa, Ganymede</p>
+          <LongFormProseTypography>
+          <h1>The Art of Web Typography</h1>
+          <p>
+            Good typography is invisible. When text is set well, readers don't notice the typeface, the line
+            length, or the spacing—they simply absorb the content. This page demonstrates the typographic
+            elements available on this site.
+          </p>
+
+          <h2>Inline Text Styles</h2>
+          <p>
+            Text can be emphasised in several ways. Use <strong>strong text</strong> for importance and
+            <em>emphasis</em> for stress. You can also use <b>bold</b> and <i>italic</i> for stylistic
+            purposes without semantic weight. For keyboard shortcuts, use <kbd>Ctrl</kbd> + <kbd>S</kbd> to
+            save, or <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> on macOS.
+          </p>
+          <p>
+            Inline <code>code snippets</code> appear in a monospace font. Links like
+            <a href="https://developer.mozilla.org">MDN Web Docs</a> provide navigation to other resources.
+            You can also mark text as <ins>inserted</ins> or <del>deleted</del>, which is useful for showing
+            edits. The <mark>mark element</mark> highlights text for reference.
+          </p>
+          <p>
+            Abbreviations can include titles: <abbr title="HyperText Markup Language">HTML</abbr> and
+            <abbr title="Cascading Style Sheets">CSS</abbr> are the building blocks of the web. Some
+            abbreviations like <abbr>NASA</abbr> or <abbr>ASAP</abbr> are common enough to stand alone.
+          </p>
+          <p>Short paragraph. Sometimes you need just a sentence or two.</p>
+          <p>
+            Scientific notation uses subscript and superscript: H<sub>2</sub>O is water, and Einstein's
+            famous equation is E = mc<sup>2</sup>. Footnotes often use superscript<sup>1</sup> as well.
+          </p>
+          <p>
+            The <u>underline element</u> should be used sparingly as it can be confused with links. The
+            <small>small element</small> represents side comments and small print.
+          </p>
+
+          <hr />
+
+          <h2>Headings Hierarchy</h2>
+          <p>
+            Headings create document structure. Each level should be used semantically, not for styling.
+            Below is a demonstration of all heading levels in context.
+          </p>
+
+          <h3>Third-Level Heading</h3>
+          <p>
+            This is body text following an H3. Third-level headings work well for subsections within a
+            larger topic. They provide enough visual distinction without overwhelming the reader.
+          </p>
+
+          <h4>Fourth-Level Heading</h4>
+          <p>
+            Fourth-level headings are useful for detailed breakdowns. They're common in technical
+            documentation and long-form articles where deep nesting is necessary.
+          </p>
+
+          <h5>Fifth-Level Heading</h5>
+          <p>
+            At this level, headings become quite subtle. They're rarely needed but exist for completeness.
+          </p>
+
+          <h6>Sixth-Level Heading</h6>
+          <p>
+            The smallest heading level. If you need this many levels of hierarchy, consider restructuring
+            your content.
+          </p>
+
+          <hr />
+
+          <h2>Lists</h2>
+          <p>Lists organise related items. They come in ordered and unordered varieties.</p>
+
+          <h3>Unordered Lists</h3>
+          <ul>
+            <li>First item at the top level</li>
+            <li>
+              Second item with nested content
+              <ul>
+                <li>Nested item one</li>
+                <li>
+                  Nested item two with further nesting
+                  <ul>
+                    <li>Deeply nested item</li>
+                    <li>Another deeply nested item</li>
+                  </ul>
+                </li>
+                <li>Nested item three</li>
+              </ul>
+            </li>
+            <li>Third item back at the top level</li>
+            <li>Fourth item with a longer description that might wrap to multiple lines depending on the viewport width</li>
+          </ul>
+
+          <h3>Ordered Lists</h3>
+          <ol>
+            <li>Preheat the oven to 180°C</li>
+            <li>
+              Prepare the ingredients:
+              <ol>
+                <li>Measure 200g of flour</li>
+                <li>Weigh 100g of butter</li>
+                <li>
+                  Gather the spices:
+                  <ol>
+                    <li>1 tsp cinnamon</li>
+                    <li>½ tsp nutmeg</li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>Mix dry ingredients together</li>
+            <li>Add wet ingredients gradually</li>
+            <li>Bake for 25 minutes</li>
+          </ol>
+
+          <hr />
+
+          <h2>Blockquotes</h2>
+          <p>Quotations deserve distinct styling to set them apart from the author's voice.</p>
+          <blockquote>
+            <p>
+              The details are not the details. They make the design. Good design is as little design as
+              possible—less, but better, because it concentrates on the essential aspects.
+            </p>
+          </blockquote>
+          <p>Longer quotations can span multiple paragraphs:</p>
+          <blockquote>
+            <p>
+              Typography is the craft of endowing human language with a durable visual form. It is a craft
+              with ancient roots, but one that has been transformed repeatedly by technological change.
+            </p>
+            <p>
+              In the digital age, typography has become both more accessible and more complex. Anyone can
+              set type, but setting it well requires understanding principles developed over centuries.
+            </p>
+          </blockquote>
+
+          <hr />
+
+          <h2>Tables</h2>
+          <p>Tables present structured data in rows and columns.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Element</th>
+                <th>Purpose</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&lt;strong&gt;</code></td>
+                <td>Important text</td>
+                <td><strong>Bold text</strong></td>
+              </tr>
+              <tr>
+                <td><code>&lt;em&gt;</code></td>
+                <td>Emphasised text</td>
+                <td><em>Italic text</em></td>
+              </tr>
+              <tr>
+                <td><code>&lt;code&gt;</code></td>
+                <td>Code fragments</td>
+                <td><code>const x = 1</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;kbd&gt;</code></td>
+                <td>Keyboard input</td>
+                <td><kbd>Enter</kbd></td>
+              </tr>
+              <tr>
+                <td><code>&lt;mark&gt;</code></td>
+                <td>Highlighted text</td>
+                <td><mark>Marked</mark></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h2>Code Blocks</h2>
+          <p>Longer code samples use preformatted blocks:</p>
+          <pre><code>function greet(name) &#123;
+  return `Hello, $&#123;name&#125;!`;
+&#125;
+
+console.log(greet('World'));</code></pre>
+
+          <hr />
+
+          <h2>Putting It Together</h2>
+          <p>
+            Real content rarely uses every element in isolation. A typical paragraph might mention that
+            the <abbr title="World Wide Web Consortium">W3C</abbr> published the
+            <a href="https://www.w3.org/TR/html52/">HTML5.2 specification</a> in 2017, note that browsers
+            render <code>&lt;article&gt;</code> as a block element, and remind readers to press
+            <kbd>F12</kbd> to open developer tools.
+          </p>
+          <p>
+            Typography matters because it affects comprehension. Studies show that well-set text improves
+            reading speed by 10–20%. Bad typography, meanwhile, creates <em>friction</em>—readers struggle
+            without knowing why. The goal isn't decoration; it's <strong>communication</strong>. Consider
+            how line length affects readability: too short and the eye jumps constantly, breaking rhythm;
+            too long and readers lose their place when moving to the next line. The ideal measure sits
+            somewhere between 45 and 75 characters, though context matters enormously. A novel might push
+            toward the upper end, while a mobile interface demands brevity. Then there's line height, which
+            must balance density against legibility. Cramped lines blur together; overly loose ones
+            fragment into isolated strips. The interplay between typeface, size, weight, and spacing forms
+            a complex system where changing one variable ripples through all the others. A heavier weight
+            might demand more line height. A larger size might tolerate tighter tracking. These decisions
+            compound across hundreds of paragraphs, thousands of headings, and millions of characters.
+            Consistency becomes paramount—not rigid uniformity, but a coherent system that readers
+            internalise without conscious effort. When everything works, the typography disappears entirely.
+            Readers see only ideas, stories, arguments, instructions. They feel informed or moved or
+            persuaded, never once thinking about the letters on the screen. That invisibility is the
+            highest achievement of typographic craft, and it requires obsessive attention to details that
+            most people will never notice.
+          </p>
+          </LongFormProseTypography>
         </TabItem>
         <TabItem label="UI Style Class">
-          <p>Mercury, Venus, Earth, Mars</p>
+          <div class="ui-style">
+          <h1>The Art of Web Typography</h1>
+          <p>
+            Good typography is invisible. When text is set well, readers don't notice the typeface, the line
+            length, or the spacing—they simply absorb the content. This page demonstrates the typographic
+            elements available on this site.
+          </p>
+
+          <h2>Inline Text Styles</h2>
+          <p>
+            Text can be emphasised in several ways. Use <strong>strong text</strong> for importance and
+            <em>emphasis</em> for stress. You can also use <b>bold</b> and <i>italic</i> for stylistic
+            purposes without semantic weight. For keyboard shortcuts, use <kbd>Ctrl</kbd> + <kbd>S</kbd> to
+            save, or <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> on macOS.
+          </p>
+          <p>
+            Inline <code>code snippets</code> appear in a monospace font. Links like
+            <a href="https://developer.mozilla.org">MDN Web Docs</a> provide navigation to other resources.
+            You can also mark text as <ins>inserted</ins> or <del>deleted</del>, which is useful for showing
+            edits. The <mark>mark element</mark> highlights text for reference.
+          </p>
+          <p>
+            Abbreviations can include titles: <abbr title="HyperText Markup Language">HTML</abbr> and
+            <abbr title="Cascading Style Sheets">CSS</abbr> are the building blocks of the web. Some
+            abbreviations like <abbr>NASA</abbr> or <abbr>ASAP</abbr> are common enough to stand alone.
+          </p>
+          <p>Short paragraph. Sometimes you need just a sentence or two.</p>
+          <p>
+            Scientific notation uses subscript and superscript: H<sub>2</sub>O is water, and Einstein's
+            famous equation is E = mc<sup>2</sup>. Footnotes often use superscript<sup>1</sup> as well.
+          </p>
+          <p>
+            The <u>underline element</u> should be used sparingly as it can be confused with links. The
+            <small>small element</small> represents side comments and small print.
+          </p>
+
+          <hr />
+
+          <h2>Headings Hierarchy</h2>
+          <p>
+            Headings create document structure. Each level should be used semantically, not for styling.
+            Below is a demonstration of all heading levels in context.
+          </p>
+
+          <h3>Third-Level Heading</h3>
+          <p>
+            This is body text following an H3. Third-level headings work well for subsections within a
+            larger topic. They provide enough visual distinction without overwhelming the reader.
+          </p>
+
+          <h4>Fourth-Level Heading</h4>
+          <p>
+            Fourth-level headings are useful for detailed breakdowns. They're common in technical
+            documentation and long-form articles where deep nesting is necessary.
+          </p>
+
+          <h5>Fifth-Level Heading</h5>
+          <p>
+            At this level, headings become quite subtle. They're rarely needed but exist for completeness.
+          </p>
+
+          <h6>Sixth-Level Heading</h6>
+          <p>
+            The smallest heading level. If you need this many levels of hierarchy, consider restructuring
+            your content.
+          </p>
+
+          <hr />
+
+          <h2>Lists</h2>
+          <p>Lists organise related items. They come in ordered and unordered varieties.</p>
+
+          <h3>Unordered Lists</h3>
+          <ul>
+            <li>First item at the top level</li>
+            <li>
+              Second item with nested content
+              <ul>
+                <li>Nested item one</li>
+                <li>
+                  Nested item two with further nesting
+                  <ul>
+                    <li>Deeply nested item</li>
+                    <li>Another deeply nested item</li>
+                  </ul>
+                </li>
+                <li>Nested item three</li>
+              </ul>
+            </li>
+            <li>Third item back at the top level</li>
+            <li>Fourth item with a longer description that might wrap to multiple lines depending on the viewport width</li>
+          </ul>
+
+          <h3>Ordered Lists</h3>
+          <ol>
+            <li>Preheat the oven to 180°C</li>
+            <li>
+              Prepare the ingredients:
+              <ol>
+                <li>Measure 200g of flour</li>
+                <li>Weigh 100g of butter</li>
+                <li>
+                  Gather the spices:
+                  <ol>
+                    <li>1 tsp cinnamon</li>
+                    <li>½ tsp nutmeg</li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>Mix dry ingredients together</li>
+            <li>Add wet ingredients gradually</li>
+            <li>Bake for 25 minutes</li>
+          </ol>
+
+          <hr />
+
+          <h2>Blockquotes</h2>
+          <p>Quotations deserve distinct styling to set them apart from the author's voice.</p>
+          <blockquote>
+            <p>
+              The details are not the details. They make the design. Good design is as little design as
+              possible—less, but better, because it concentrates on the essential aspects.
+            </p>
+          </blockquote>
+          <p>Longer quotations can span multiple paragraphs:</p>
+          <blockquote>
+            <p>
+              Typography is the craft of endowing human language with a durable visual form. It is a craft
+              with ancient roots, but one that has been transformed repeatedly by technological change.
+            </p>
+            <p>
+              In the digital age, typography has become both more accessible and more complex. Anyone can
+              set type, but setting it well requires understanding principles developed over centuries.
+            </p>
+          </blockquote>
+
+          <hr />
+
+          <h2>Tables</h2>
+          <p>Tables present structured data in rows and columns.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Element</th>
+                <th>Purpose</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&lt;strong&gt;</code></td>
+                <td>Important text</td>
+                <td><strong>Bold text</strong></td>
+              </tr>
+              <tr>
+                <td><code>&lt;em&gt;</code></td>
+                <td>Emphasised text</td>
+                <td><em>Italic text</em></td>
+              </tr>
+              <tr>
+                <td><code>&lt;code&gt;</code></td>
+                <td>Code fragments</td>
+                <td><code>const x = 1</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;kbd&gt;</code></td>
+                <td>Keyboard input</td>
+                <td><kbd>Enter</kbd></td>
+              </tr>
+              <tr>
+                <td><code>&lt;mark&gt;</code></td>
+                <td>Highlighted text</td>
+                <td><mark>Marked</mark></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <h2>Code Blocks</h2>
+          <p>Longer code samples use preformatted blocks:</p>
+          <pre><code>function greet(name) &#123;
+  return `Hello, $&#123;name&#125;!`;
+&#125;
+
+console.log(greet('World'));</code></pre>
+
+          <hr />
+
+          <h2>Putting It Together</h2>
+          <p>
+            Real content rarely uses every element in isolation. A typical paragraph might mention that
+            the <abbr title="World Wide Web Consortium">W3C</abbr> published the
+            <a href="https://www.w3.org/TR/html52/">HTML5.2 specification</a> in 2017, note that browsers
+            render <code>&lt;article&gt;</code> as a block element, and remind readers to press
+            <kbd>F12</kbd> to open developer tools.
+          </p>
+          <p>
+            Typography matters because it affects comprehension. Studies show that well-set text improves
+            reading speed by 10–20%. Bad typography, meanwhile, creates <em>friction</em>—readers struggle
+            without knowing why. The goal isn't decoration; it's <strong>communication</strong>. Consider
+            how line length affects readability: too short and the eye jumps constantly, breaking rhythm;
+            too long and readers lose their place when moving to the next line. The ideal measure sits
+            somewhere between 45 and 75 characters, though context matters enormously. A novel might push
+            toward the upper end, while a mobile interface demands brevity. Then there's line height, which
+            must balance density against legibility. Cramped lines blur together; overly loose ones
+            fragment into isolated strips. The interplay between typeface, size, weight, and spacing forms
+            a complex system where changing one variable ripples through all the others. A heavier weight
+            might demand more line height. A larger size might tolerate tighter tracking. These decisions
+            compound across hundreds of paragraphs, thousands of headings, and millions of characters.
+            Consistency becomes paramount—not rigid uniformity, but a coherent system that readers
+            internalise without conscious effort. When everything works, the typography disappears entirely.
+            Readers see only ideas, stories, arguments, instructions. They feel informed or moved or
+            persuaded, never once thinking about the letters on the screen. That invisibility is the
+            highest achievement of typographic craft, and it requires obsessive attention to details that
+            most people will never notice.
+          </p>
+          </div>
         </TabItem>
       </Tabs>
     </main>
@@ -267,6 +703,7 @@ console.log(greet('World'));</code></pre>
       main {
         margin: 0 auto;
         padding: var(--space-m);
+        max-width: 100ch;
       }
     </style>
   </body>
