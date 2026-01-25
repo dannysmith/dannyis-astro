@@ -32,32 +32,25 @@ const { class: className } = Astro.props;
 </div>
 
 <style>
+  .tabs {
+    border: var(--border-width-hairline) solid var(--color-border);
+  }
+
   .tabs-list {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2xs);
     border-bottom: var(--border-width-hairline) solid var(--color-border);
-    margin-bottom: var(--space-m);
   }
 
   .tabs-list :global(button) {
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    padding: var(--space-xs) var(--space-s);
     background: transparent;
     border: none;
-    border-bottom: var(--border-width-thick) solid transparent;
-    margin-bottom: calc(-1 * var(--border-width-hairline));
-    cursor: pointer;
+    border-radius: 0;
+    border-bottom: var(--border-width-base) solid transparent;
     color: var(--color-text-secondary);
-    transition:
-      color var(--duration-fast) var(--ease-in-out),
-      border-color var(--duration-fast) var(--ease-in-out);
-
-    &:hover {
-      color: var(--color-text);
-    }
+    text-transform: lowercase;
+    font-variant: small-caps;
 
     &[aria-selected='true'] {
       color: var(--color-accent);
@@ -69,6 +62,10 @@ const { class: className } = Astro.props;
       outline-offset: 2px;
       border-radius: var(--radius-xs);
     }
+  }
+
+  .tabs-panels {
+    padding: var(--space-m) var(--space-xs);
   }
 
   /* No-JS fallback: show all panels with labels */
@@ -94,8 +91,6 @@ const { class: className } = Astro.props;
 </style>
 
 <script>
-  let idCounter = 0;
-
   class TabsController {
     private container: HTMLElement;
     private tabList: HTMLElement;
@@ -116,7 +111,7 @@ const { class: className } = Astro.props;
       // Create tab buttons from panel labels
       this.panels.forEach((panel, index) => {
         const label = panel.getAttribute('data-tab-label')!;
-        const id = idCounter++;
+        const id = crypto.randomUUID().slice(0, 8);
         const tabId = `tab-${id}`;
         const panelId = `panel-${id}`;
 
@@ -142,7 +137,7 @@ const { class: className } = Astro.props;
 
         // Event listeners
         tab.addEventListener('click', () => this.selectTab(index));
-        tab.addEventListener('keydown', (e) => this.handleKeyDown(e, index));
+        tab.addEventListener('keydown', e => this.handleKeyDown(e, index));
 
         this.tabList.appendChild(tab);
         this.tabs.push(tab);
@@ -162,11 +157,7 @@ const { class: className } = Astro.props;
 
       // Update all panels
       this.panels.forEach((panel, i) => {
-        if (i === index) {
-          panel.removeAttribute('hidden');
-        } else {
-          panel.setAttribute('hidden', '');
-        }
+        panel.toggleAttribute('hidden', i !== index);
       });
 
       // Focus the selected tab
@@ -201,7 +192,7 @@ const { class: className } = Astro.props;
 
   // Initialize all tabs on the page
   function initTabs() {
-    document.querySelectorAll<HTMLElement>('[data-tabs]:not(.tabs-initialized)').forEach((el) => {
+    document.querySelectorAll<HTMLElement>('[data-tabs]:not(.tabs-initialized)').forEach(el => {
       new TabsController(el);
     });
   }
