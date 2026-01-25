@@ -1,0 +1,49 @@
+---
+/**
+ * Scratchpad - A minimal page for experimenting with components
+ * No additional styles beyond the basics.
+ */
+import BaseHead from '@components/layout/BaseHead.astro';
+import MainNavigation from '@components/layout/MainNavigation.astro';
+import Footer from '@components/layout/Footer.astro';
+import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
+import { Tabs, TabItem } from '@components/mdx/index';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Scratchpad" description="Component experimentation area" />
+  </head>
+  <body>
+    <MainNavigation />
+    <main>
+      <h1>Scratchpad</h1>
+
+      <Tabs>
+        <TabItem label="Stars">
+          <p>Sirius, Vega, Betelgeuse</p>
+        </TabItem>
+        <TabItem label="Moons">
+          <p>Io, Europa, Ganymede</p>
+        </TabItem>
+        <TabItem label="Planets">
+          <p>Mercury, Venus, Earth, Mars</p>
+        </TabItem>
+      </Tabs>
+    </main>
+    <!-- <Footer /> -->
+
+    <style>
+      body {
+        min-height: 100vh;
+      }
+
+      main {
+        margin: 0 auto;
+        padding: var(--space-m);
+      }
+
+    </style>
+  </body>
+</html>

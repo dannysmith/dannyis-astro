@@ -13,6 +13,8 @@ import ButtonLink from './ButtonLink.astro';
 import Spacer from './Spacer.astro';
 import IntroParagraph from './IntroParagraph.astro';
 import SmartLink from './SmartLink.astro';
+import Tabs from './Tabs.astro';
+import TabItem from './TabItem.astro';
 import Center from './Center.astro';
 import ColorSwatch from './ColorSwatch.astro';
 import ResizableContainer from './ResizableContainer.astro';
@@ -42,6 +44,8 @@ export {
   Center,
   ColorSwatch,
   ResizableContainer,
+  Tabs,
+  TabItem,
   // Typography
   Title1,
   Title2,

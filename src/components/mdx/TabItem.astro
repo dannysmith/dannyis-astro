@@ -1,0 +1,20 @@
+---
+/**
+ * TabItem - A single tab panel for use within <Tabs>
+ *
+ * Usage:
+ *   <Tabs>
+ *     <TabItem label="First">Content here</TabItem>
+ *     <TabItem label="Second">More content</TabItem>
+ *   </Tabs>
+ */
+export interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div data-tab-label={label} role="tabpanel" hidden>
+  <slot />
+</div>

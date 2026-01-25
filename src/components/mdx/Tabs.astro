@@ -1,0 +1,214 @@
+---
+/**
+ * Tabs - Accessible tabbed interface component
+ *
+ * Usage:
+ *   <Tabs>
+ *     <TabItem label="First">Content for first tab</TabItem>
+ *     <TabItem label="Second">Content for second tab</TabItem>
+ *   </Tabs>
+ *
+ * Accessibility:
+ * - Uses proper ARIA roles (tablist, tab, tabpanel)
+ * - Keyboard navigation: Arrow keys, Home, End
+ * - Focus management follows WAI-ARIA Tabs pattern
+ *
+ * Progressive enhancement:
+ * - Without JS, all panels are visible (graceful degradation)
+ */
+export interface Props {
+  /** Optional class for custom styling */
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={['tabs', className]} data-tabs>
+  <div class="tabs-list" role="tablist"></div>
+  <div class="tabs-panels">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .tabs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    margin-bottom: var(--space-m);
+  }
+
+  .tabs-list :global(button) {
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    padding: var(--space-xs) var(--space-s);
+    background: transparent;
+    border: none;
+    border-bottom: var(--border-width-thick) solid transparent;
+    margin-bottom: calc(-1 * var(--border-width-hairline));
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition:
+      color var(--duration-fast) var(--ease-in-out),
+      border-color var(--duration-fast) var(--ease-in-out);
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &[aria-selected='true'] {
+      color: var(--color-accent);
+      border-bottom-color: var(--color-accent);
+    }
+
+    &:focus-visible {
+      outline: var(--border-width-base) solid var(--color-accent);
+      outline-offset: 2px;
+      border-radius: var(--radius-xs);
+    }
+  }
+
+  /* No-JS fallback: show all panels with labels */
+  .tabs:not(.tabs-initialized) .tabs-panels :global([data-tab-label]) {
+    display: block;
+
+    &::before {
+      content: attr(data-tab-label);
+      display: block;
+      font-family: var(--font-ui);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-xs);
+      padding-bottom: var(--space-2xs);
+      border-bottom: var(--border-width-hairline) solid var(--color-border);
+    }
+
+    &:not(:first-child) {
+      margin-top: var(--space-m);
+    }
+  }
+</style>
+
+<script>
+  let idCounter = 0;
+
+  class TabsController {
+    private container: HTMLElement;
+    private tabList: HTMLElement;
+    private panels: HTMLElement[];
+    private tabs: HTMLButtonElement[] = [];
+
+    constructor(container: HTMLElement) {
+      this.container = container;
+      this.tabList = container.querySelector('.tabs-list')!;
+      this.panels = Array.from(container.querySelectorAll('[data-tab-label]'));
+
+      if (this.panels.length === 0) return;
+
+      this.init();
+    }
+
+    private init() {
+      // Create tab buttons from panel labels
+      this.panels.forEach((panel, index) => {
+        const label = panel.getAttribute('data-tab-label')!;
+        const id = idCounter++;
+        const tabId = `tab-${id}`;
+        const panelId = `panel-${id}`;
+
+        // Create tab button
+        const tab = document.createElement('button');
+        tab.textContent = label;
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('id', tabId);
+        tab.setAttribute('aria-controls', panelId);
+        tab.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+        tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
+
+        // Set up panel
+        panel.setAttribute('id', panelId);
+        panel.setAttribute('aria-labelledby', tabId);
+
+        // Show first panel, hide others
+        if (index === 0) {
+          panel.removeAttribute('hidden');
+        } else {
+          panel.setAttribute('hidden', '');
+        }
+
+        // Event listeners
+        tab.addEventListener('click', () => this.selectTab(index));
+        tab.addEventListener('keydown', (e) => this.handleKeyDown(e, index));
+
+        this.tabList.appendChild(tab);
+        this.tabs.push(tab);
+      });
+
+      // Mark as initialized (removes no-JS fallback styles)
+      this.container.classList.add('tabs-initialized');
+    }
+
+    private selectTab(index: number) {
+      // Update all tabs
+      this.tabs.forEach((tab, i) => {
+        const isSelected = i === index;
+        tab.setAttribute('aria-selected', String(isSelected));
+        tab.setAttribute('tabindex', isSelected ? '0' : '-1');
+      });
+
+      // Update all panels
+      this.panels.forEach((panel, i) => {
+        if (i === index) {
+          panel.removeAttribute('hidden');
+        } else {
+          panel.setAttribute('hidden', '');
+        }
+      });
+
+      // Focus the selected tab
+      this.tabs[index].focus();
+    }
+
+    private handleKeyDown(event: KeyboardEvent, currentIndex: number) {
+      const { key } = event;
+      let newIndex: number | null = null;
+
+      switch (key) {
+        case 'ArrowLeft':
+          newIndex = currentIndex === 0 ? this.tabs.length - 1 : currentIndex - 1;
+          break;
+        case 'ArrowRight':
+          newIndex = currentIndex === this.tabs.length - 1 ? 0 : currentIndex + 1;
+          break;
+        case 'Home':
+          newIndex = 0;
+          break;
+        case 'End':
+          newIndex = this.tabs.length - 1;
+          break;
+      }
+
+      if (newIndex !== null) {
+        event.preventDefault();
+        this.selectTab(newIndex);
+      }
+    }
+  }
+
+  // Initialize all tabs on the page
+  function initTabs() {
+    document.querySelectorAll<HTMLElement>('[data-tabs]:not(.tabs-initialized)').forEach((el) => {
+      new TabsController(el);
+    });
+  }
+
+  // Run on initial load
+  initTabs();
+
+  // Re-run after Astro page transitions (View Transitions)
+  document.addEventListener('astro:page-load', initTabs);
+</script>
