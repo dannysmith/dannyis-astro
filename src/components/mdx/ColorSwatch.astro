@@ -1,148 +1,108 @@
 ---
 export interface Props {
-  /** CSS color value or variable (e.g., 'var(--color-coral)' or '#ff0000') */
-  color: string;
-  /** Display label for the swatch */
-  name?: string;
-  /** CSS variable name for copying (e.g., '--color-coral') */
-  variable?: string;
-  /** Optional size override - defaults to responding to container */
-  size?: 'sm' | 'md' | 'lg';
+  color: string /** CSS color value or variable */;
+  name?: string /** Label shown inside the swatch */;
+  class?: string /** Additional classes */;
 }
 
-const { color, name, variable, size } = Astro.props;
-
-const sizeClass = size ? `swatch-${size}` : '';
-const copyValue = variable || color;
+const { color, name, class: className } = Astro.props;
+const value = color.replace(/^var\((.+)\)$/, '$1');
 ---
 
-<button
-  class:list={['color-swatch', sizeClass]}
+<div
+  class:list={['color-swatch', className]}
   style={`--swatch-color: ${color}`}
-  data-copy-value={copyValue}
-  type="button"
-  title={`Click to copy: ${copyValue}`}
+  role="button"
+  tabindex="0"
+  title="Click to copy hex"
+  aria-label={name || value}
 >
-  <span class="swatch-color"></span>
-  {name && <span class="swatch-label">{name}</span>}
-  {variable && <span class="swatch-variable">{variable}</span>}
-  <span class="swatch-copied" aria-hidden="true">Copied!</span>
-</button>
+  {name && <span class="swatch-name">{name}</span>}
+  <span class="swatch-value" aria-hidden="true">{value}</span>
+</div>
 
-<script>
-  document.querySelectorAll('.color-swatch').forEach((swatch) => {
-    swatch.addEventListener('click', async () => {
-      const value = swatch.getAttribute('data-copy-value');
-      if (value) {
-        try {
-          await navigator.clipboard.writeText(value);
-          swatch.classList.add('copied');
-          setTimeout(() => swatch.classList.remove('copied'), 1500);
-        } catch (err) {
-          console.error('Failed to copy:', err);
-        }
+<script is:inline>
+  {
+    const swatch = document.currentScript.previousElementSibling;
+
+    /* Get the hex value of the swatch */
+    const getHex = () => {
+      const ctx = document.createElement('canvas').getContext('2d');
+      ctx.fillStyle = getComputedStyle(swatch).backgroundColor;
+      ctx.fillRect(0, 0, 1, 1);
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    };
+
+    /* Copy the hex value to the clipboard */
+    const copy = async () => {
+      await navigator.clipboard.writeText(getHex());
+    };
+
+    /* Add event listeners to the swatch */
+    swatch.addEventListener('click', copy);
+    swatch.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        copy();
       }
     });
-  });
+  }
 </script>
 
 <style>
   .color-swatch {
-    --swatch-size: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-2xs);
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
     position: relative;
-    font-family: var(--font-ui);
-    text-align: left;
-    width: 100%;
-  }
-
-  .color-swatch:focus-visible {
-    outline: 2px solid var(--color-blue);
-    outline-offset: 2px;
+    height: 100%;
+    container-type: size;
+    background: var(--swatch-color);
+    color: oklch(from var(--swatch-color) calc(1 - round(l)) 0 0);
     border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-family: var(--font-code), monospace;
+    text-transform: uppercase;
+    font-weight: bold;
+    overflow: hidden;
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    /* Show the value and hide the name on hover */
+    &:hover {
+      .swatch-value {
+        opacity: 1;
+      }
+      .swatch-name {
+        opacity: 0;
+      }
+    }
   }
 
-  .swatch-color {
-    display: block;
-    width: var(--swatch-size);
-    aspect-ratio: 1;
-    background-color: var(--swatch-color);
-    border-radius: var(--radius-sm);
-    border: var(--border-width-hairline) solid var(--color-border);
-    transition: transform var(--duration-fast) var(--ease-in-out);
+  /* Make the name and value font size responsive */
+  .swatch-name,
+  .swatch-value {
+    font-size: min(1em, 15cqmin);
   }
 
-  .color-swatch:hover .swatch-color {
-    transform: scale(1.02);
-  }
-
-  .color-swatch:active .swatch-color {
-    transform: scale(0.98);
-  }
-
-  .swatch-label {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text);
-    line-height: var(--leading-tight);
-  }
-
-  .swatch-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-tight);
-  }
-
-  .swatch-copied {
+  /* The value is displayed on hover */
+  .swatch-value {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--color-charcoal);
-    color: var(--color-beige);
-    padding: var(--space-2xs) var(--space-xs);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-medium);
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: inherit;
     opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--duration-fast) var(--ease-in-out);
+    background: rgba(0, 0, 0, 0.3);
   }
 
-  .color-swatch.copied .swatch-copied {
-    opacity: 1;
-  }
-
-  /* Size variants */
-  .swatch-sm {
-    --swatch-size: 2rem;
-  }
-
-  .swatch-sm .swatch-color {
-    width: var(--swatch-size);
-  }
-
-  .swatch-md {
-    --swatch-size: 4rem;
-  }
-
-  .swatch-md .swatch-color {
-    width: var(--swatch-size);
-  }
-
-  .swatch-lg {
-    --swatch-size: 6rem;
-  }
-
-  .swatch-lg .swatch-color {
-    width: var(--swatch-size);
+  /* Hide the name if the swatch is too small */
+  @container (width < 3em) or (height < 1em) {
+    .swatch-name {
+      opacity: 0;
+    }
   }
 </style>
