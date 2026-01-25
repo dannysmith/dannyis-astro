@@ -100,8 +100,8 @@ const semanticColorGroups = [
       <thead>
         <tr>
           <th>Token</th>
-          <th class="swatch-col">Light</th>
-          <th class="swatch-col">Dark</th>
+          <th>Light</th>
+          <th>Dark</th>
           <th>Variable</th>
           <th>Usage</th>
         </tr>
@@ -114,18 +114,18 @@ const semanticColorGroups = [
           {colors.map(({ name, variable, usage }) => (
             <tr>
               <td class="token-name">{name}</td>
-              <td class="swatch-col">
+              <td>
                 <span class="sg-panel-compact mini-swatch" data-theme="light">
                   <ColorSwatch color={`var(${variable})`} />
                 </span>
               </td>
-              <td class="swatch-col">
+              <td>
                 <span class="sg-panel-compact mini-swatch" data-theme="dark">
                   <ColorSwatch color={`var(${variable})`} />
                 </span>
               </td>
-              <td class="variable-name">{variable}</td>
-              <td class="usage-desc">{usage}</td>
+              <td><code>{variable}</code></td>
+              <td>{usage}</td>
             </tr>
           ))}
         </tbody>
@@ -141,56 +141,14 @@ const semanticColorGroups = [
     aspect-ratio: 1;
   }
 
-  /* Theme label positioning */
-  .theme-label {
-    display: block;
-    margin-bottom: var(--space-s);
-  }
-
   /* Semantic colors table */
   .semantic-table {
     margin-top: var(--space-m);
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
-
-    /* Override default table styles for this context */
-    & th,
-    & td {
-      padding: var(--space-xs) var(--space-s);
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    & th {
-      font-size: var(--font-size-xs);
-    }
-
-    & .swatch-col {
-      width: 3rem;
-      text-align: center;
-    }
 
     & .category-row td {
-      font-size: var(--font-size-xs);
       font-weight: var(--font-weight-semibold);
       text-transform: uppercase;
-      letter-spacing: var(--tracking-wide);
-      padding-top: var(--space-m);
-    }
-
-    & .token-name {
-      font-weight: var(--font-weight-medium);
-    }
-
-    & .variable-name {
-      font-family: var(--font-code);
-      font-size: var(--font-size-xs);
-      color: var(--color-text-secondary);
-    }
-
-    & .usage-desc {
-      color: var(--color-text-secondary);
-      font-size: var(--font-size-xs);
+      text-align: center;
     }
   }
 
@@ -198,49 +156,6 @@ const semanticColorGroups = [
   .mini-swatch {
     display: block;
     width: 2.5rem;
-    height: 2rem;
-  }
-
-  /* Mobile: convert table to stacked cards */
-  @media (max-width: 640px) {
-    .semantic-table {
-      & thead {
-        display: none;
-      }
-
-      & tbody {
-        display: block;
-      }
-
-      & tr {
-        display: block;
-        padding: var(--space-s);
-        border-bottom: var(--border-width-hairline) solid var(--color-border);
-      }
-
-      & td {
-        display: block;
-        padding: var(--space-2xs) 0;
-      }
-
-      & .category-row td {
-        padding: var(--space-s) 0;
-        background: transparent;
-      }
-
-      & .swatch-col {
-        display: inline-block;
-        width: auto;
-      }
-
-      & .sg-panel-compact {
-        padding: var(--space-2xs);
-      }
-
-      & .mini-swatch {
-        width: 2.5rem;
-        height: 2rem;
-      }
-    }
+    height: 2.5rem;
   }
 </style>
