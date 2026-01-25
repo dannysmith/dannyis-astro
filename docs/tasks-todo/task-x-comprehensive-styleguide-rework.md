@@ -470,12 +470,12 @@ src/
 - [x] Add borders, radii, shadows, motion tokens
 - [x] Create `src/styles/styleguide.css` for shared utilities
 
-### Phase 3: Typography
-- [ ] Implement `_Typography.astro`
-- [ ] Three-context comparison (default, longform, ui-style)
-- [ ] All inline elements
-- [ ] OpenType feature demonstrations
-- [ ] Lists, blockquotes, horizontal rules
+### Phase 3: Typography ✅
+- [x] Implement `_Typography.astro`
+- [x] Three-context comparison (default, longform, ui-style)
+- [x] All inline elements
+- [x] OpenType feature demonstrations
+- [x] Lists, blockquotes, horizontal rules
 
 ### Phase 4: HTML Elements & Extended Features
 - [ ] Implement `_HtmlElements.astro`
@@ -550,7 +550,8 @@ Flexoki color palette inspiration: https://stephango.com/flexoki
 **Current Status (January 2026):**
 - Phase 1 (Setup & Infrastructure) complete
 - Phase 2 (Design Tokens) complete
-- Ready to begin Phase 3 (Typography)
+- Phase 3 (Typography) complete
+- Ready to begin Phase 4 (HTML Elements & Extended Features)
 
 **Phase 2 Implementation Details:**
 
@@ -578,18 +579,40 @@ The design tokens section is fully implemented with:
    - `.sg-theme-comparison`, `.sg-theme-column` - Side-by-side theme comparison
    - `[data-theme]` utilities - Force light/dark mode on containers via `color-scheme`
 
-**Key files for Phase 3:**
-- `src/styles/global.css` - CSS layers including `@typography` and `@longform`
-- `src/components/layout/LongFormProseTypography.astro` - `@longform` layer styles
-- `docs/developer/fonts.md` - OpenType features (old-style numerals, ligatures, small caps)
+**Phase 3 Implementation Details:**
 
-**Typography contexts to demonstrate in Phase 3:**
-1. Default - `@typography` layer (serif, underlined links, colored markers)
-2. Long-form - `<LongFormProseTypography>` adds `@longform` (old-style numerals, end mark, etc.)
-3. UI - `.ui-style` class (sans-serif, no underlines, tighter)
+The typography section (`_Typography.astro`) includes:
+
+1. **Three-Context Comparison** - Vertically stacked panels showing identical content in:
+   - Default (`@typography` layer) - serif, underlined links, colored markers, heading borders
+   - Long-form (`<LongFormProseTypography>`) - looser line height, old-style numerals, end mark
+   - UI Style (`.ui-style`) - sans-serif, no underlines, no heading borders, tighter spacing
+
+2. **Inline Elements** - Self-explanatory demo paragraphs showing:
+   - strong, b, em, i, del, mark
+   - code, kbd, var, samp
+   - sup, sub, dfn, cite, q
+   - abbr (with title), small
+
+3. **OpenType Features** - Side-by-side comparisons with explanatory copy:
+   - Old-style vs lining numerals
+   - Ligatures (fi, fl, ff, ffi, ffl)
+   - Diagonal fractions
+   - Small caps for acronyms
+
+4. **Typography Components** - MDX components with `<details>` code examples:
+   - `IntroParagraph` - drop cap and small-caps first line
+   - `SmallCaps` - uppercase with wide letter spacing
+   - `Highlight` - yellow background emphasis
+
+**Key files for Phase 4:**
+- Form elements, tables, media will go in `_HtmlElements.astro`
+- Code blocks with expressive-code features (titles, line highlighting, diff)
+- Mermaid diagrams
+- Task lists (article context)
 
 **User preferences noted:**
-- Realistic, self-explanatory copy in typography demos (not lorem ipsum)
+- Realistic, self-explanatory copy (not lorem ipsum)
 - Selective code examples (complex components only, use `<details>` disclosure)
 - Simple, clean presentation without over-abstraction
-- Explanatory paragraphs for each token category to explain when/why to use them
+- Explanatory paragraphs for each section

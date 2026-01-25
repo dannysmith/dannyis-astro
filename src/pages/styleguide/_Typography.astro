@@ -1,9 +1,438 @@
 ---
-// Typography partial - displays typography in different contexts
-// TODO: Implement in Phase 3
+/**
+ * Typography partial - demonstrates typography across three contexts:
+ * 1. Default (@typography layer) - base prose styling
+ * 2. Long-form (<LongFormProseTypography>) - enhanced for articles
+ * 3. UI Style (.ui-style) - sans-serif for interface elements
+ */
+import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
+import SmallCaps from '@components/mdx/typography/SmallCaps.astro';
+import Highlight from '@components/mdx/typography/highlight.astro';
+import IntroParagraph from '@components/mdx/IntroParagraph.astro';
 ---
 
 <section id="typography" class="styleguide-section flow">
   <h2>Typography</h2>
-  <p>Typography tokens and contexts - coming soon.</p>
+  <p>
+    Typography on this site operates in three contexts: <strong>default</strong> prose styling,
+    <strong>long-form</strong> enhancements for articles, and <strong>UI style</strong> for
+    interface elements. Each context builds on or overrides the base to suit its purpose.
+  </p>
+
+  <!-- Three-Context Comparison -->
+  <div class="sg-subsection">
+    <h3>Typography Contexts</h3>
+    <p>
+      The same content rendered in each context. Notice the differences in font family, link
+      styling, heading borders, list markers, and overall rhythm.
+    </p>
+
+    <!-- Default Context -->
+    <div class="typography-context">
+      <h4>Default</h4>
+      <p class="context-description">
+        Base prose styling from the <code>@typography</code> layer. Serif font (Literata),
+        underlined accent-colored links, colored list markers, heading borders.
+      </p>
+      <div class="sg-panel">
+        <h1>Heading Level One</h1>
+        <h2>Heading Level Two</h2>
+        <h3>Heading Level Three</h3>
+        <h4>Heading Level Four</h4>
+        <h5>Heading Level Five</h5>
+        <h6>Heading Level Six</h6>
+
+        <p>
+          This paragraph demonstrates default prose styling. Links like
+          <a href="#">this example link</a> use the accent color with subtle underlines that
+          strengthen on hover. The text uses Literata, a contemporary serif designed for
+          comfortable screen reading.
+        </p>
+
+        <ul>
+          <li>Unordered list items have colored bullet markers</li>
+          <li>Each item has consistent spacing</li>
+          <li>
+            Nested lists are supported:
+            <ul>
+              <li>First nested item</li>
+              <li>Second nested item</li>
+            </ul>
+          </li>
+        </ul>
+
+        <ol>
+          <li>Ordered lists also have colored markers</li>
+          <li>Numbers align neatly with the text</li>
+          <li>The rhythm matches unordered lists</li>
+        </ol>
+
+        <blockquote>
+          Blockquotes are set in italics with a thick accent-colored left border. They provide
+          visual distinction for quoted material without overwhelming the surrounding text.
+        </blockquote>
+
+        <hr />
+
+        <p>Horizontal rules provide clear section breaks within content.</p>
+      </div>
+    </div>
+
+    <!-- Long-form Context -->
+    <div class="typography-context">
+      <h4>Long-form Prose</h4>
+      <p class="context-description">
+        Enhanced styling via <code>&lt;LongFormProseTypography&gt;</code>. Adds looser line
+        height, old-style numerals, diagonal fractions, enhanced link styling, and an end mark
+        (§) after the final paragraph.
+      </p>
+      <div class="sg-panel">
+        <LongFormProseTypography>
+          <h1>Heading Level One</h1>
+          <h2>Heading Level Two</h2>
+          <h3>Heading Level Three</h3>
+          <h4>Heading Level Four</h4>
+          <h5>Heading Level Five</h5>
+          <h6>Heading Level Six</h6>
+
+          <p>
+            This paragraph demonstrates long-form prose styling. Links like
+            <a href="#">this example link</a> use colored underlines rather than colored text,
+            making them less visually dominant while still discoverable. Notice the looser line
+            height that improves readability for extended reading.
+          </p>
+
+          <ul>
+            <li>List styling remains consistent with default</li>
+            <li>But inherits the enhanced line height</li>
+            <li>
+              Nested lists work identically:
+              <ul>
+                <li>First nested item</li>
+                <li>Second nested item</li>
+              </ul>
+            </li>
+          </ul>
+
+          <ol>
+            <li>Ordered list markers use a refined optical size</li>
+            <li>Numbers like 1234567890 use old-style figures</li>
+            <li>Fractions like 1/2 and 3/4 render as proper glyphs</li>
+          </ol>
+
+          <blockquote>
+            Blockquotes in long-form context maintain the same visual treatment, ensuring
+            consistency while benefiting from the enhanced line height.
+          </blockquote>
+
+          <hr />
+
+          <p>
+            The horizontal rule in long-form context includes a section mark (§) centered on the
+            line, providing an elegant visual break.
+          </p>
+
+          <p>
+            This final paragraph will display the end mark—a small decorative flourish that
+            signals the conclusion of the content.
+          </p>
+        </LongFormProseTypography>
+      </div>
+    </div>
+
+    <!-- UI Style Context -->
+    <div class="typography-context">
+      <h4>UI Style</h4>
+      <p class="context-description">
+        Interface styling via <code>.ui-style</code> class. Sans-serif font (League Spartan), no
+        link underlines, no heading borders, tighter spacing. Use for navigation, footers, and
+        UI-heavy areas.
+      </p>
+      <div class="sg-panel ui-style">
+        <h1>Heading Level One</h1>
+        <h2>Heading Level Two</h2>
+        <h3>Heading Level Three</h3>
+        <h4>Heading Level Four</h4>
+        <h5>Heading Level Five</h5>
+        <h6>Heading Level Six</h6>
+
+        <p>
+          This paragraph demonstrates UI style. Links like <a href="#">this example link</a>
+          have no underline by default, appearing as plain text until hovered. The sans-serif
+          font (League Spartan) provides a cleaner, more utilitarian feel suited to interface
+          elements.
+        </p>
+
+        <ul>
+          <li>List markers lose their accent color</li>
+          <li>Spacing is tighter overall</li>
+          <li>
+            Nested lists:
+            <ul>
+              <li>First nested item</li>
+              <li>Second nested item</li>
+            </ul>
+          </li>
+        </ul>
+
+        <ol>
+          <li>Ordered lists follow the same pattern</li>
+          <li>Numbers use lining figures (uniform height)</li>
+          <li>Better suited for data and UI contexts</li>
+        </ol>
+
+        <blockquote>
+          Blockquotes in UI context maintain the border treatment but use the sans-serif font,
+          creating a different character while preserving the structural distinction.
+        </blockquote>
+
+        <hr />
+
+        <p>Horizontal rules remain simple dividers without decorative elements.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inline Elements -->
+  <div class="sg-subsection">
+    <h3>Inline Elements</h3>
+    <p>
+      HTML inline elements for semantic markup within prose. Each has specific styling to convey
+      its meaning visually.
+    </p>
+
+    <div class="sg-panel">
+      <p>
+        Use <strong>strong</strong> or <b>bold</b> for importance, and <em>emphasis</em> or
+        <i>italics</i> for stress or titles. Mark <del>deleted text</del> with strikethrough and
+        <mark>highlighted text</mark> with a background color.
+      </p>
+
+      <p>
+        For technical content: <code>inline code</code> for code snippets, <kbd>Cmd</kbd>+<kbd
+          >S</kbd
+        > for keyboard shortcuts, and <var>variable</var> for mathematical or programming variables.
+        Show <samp>sample output</samp> from programs.
+      </p>
+
+      <p>
+        Scientific notation uses superscript (E=mc<sup>2</sup>) and subscript (H<sub>2</sub>O).
+        Define terms with <dfn>definition</dfn>, cite works with <cite>The Elements of
+          Typographic Style</cite>, and mark <q>inline quotations</q> with proper quote marks.
+      </p>
+
+      <p>
+        Abbreviations like <abbr title="HyperText Markup Language">HTML</abbr> and <abbr
+          title="Cascading Style Sheets">CSS</abbr
+        > display in small caps with a dashed underline. Hover to see the expansion. Use <small
+          >small text</small
+        > for fine print, disclaimers, or de-emphasized content.
+      </p>
+    </div>
+  </div>
+
+  <!-- OpenType Features -->
+  <div class="sg-subsection">
+    <h3>OpenType Features</h3>
+    <p>
+      Literata includes rich OpenType features that enhance typographic refinement. These are
+      applied automatically in appropriate contexts.
+    </p>
+
+    <h4>Numerals</h4>
+    <div class="opentype-comparison">
+      <div class="sg-panel">
+        <LongFormProseTypography>
+          <p class="numeral-demo">
+            <strong>Old-style figures (long-form):</strong> In body text, numbers like
+            1234567890 use old-style figures. Notice how 3, 4, 5, 7, and 9 have descenders that
+            blend naturally with lowercase letters, while 0, 1, and 2 sit on the baseline.
+            Prices like £42.50 and dates like 2024 feel integrated into the prose.
+          </p>
+        </LongFormProseTypography>
+      </div>
+      <div class="sg-panel ui-style">
+        <p class="numeral-demo">
+          <strong>Lining figures (UI):</strong> In interface contexts, numbers like 1234567890
+          use lining figures. All digits share uniform height, aligning with capital letters.
+          This works better for tabular data, prices in buttons, or any context where numbers
+          should stand at attention: £42.50, 2024, 100%.
+        </p>
+      </div>
+    </div>
+
+    <h4>Ligatures</h4>
+    <div class="sg-panel">
+      <p>
+        Standard ligatures improve readability where letters would otherwise collide:
+        <span class="ligature-demo">fi, fl, ff, ffi, ffl</span>. The letters connect smoothly
+        rather than awkwardly overlapping. Compare "efinite" and "affluent" with ligatures
+        enabled versus disabled.
+      </p>
+      <p class="no-ligatures">
+        Without ligatures: fi, fl, ff, ffi, ffl — notice the collision between f and i, and f
+        and l.
+      </p>
+    </div>
+
+    <h4>Fractions</h4>
+    <div class="sg-panel">
+      <LongFormProseTypography>
+        <p>
+          In long-form prose, fraction sequences automatically render as proper typographic
+          fractions: 1/2 cup of flour, 3/4 teaspoon of salt, 1/4 inch margins. Compare to fake
+          fractions made with plain slashes in UI context.
+        </p>
+      </LongFormProseTypography>
+    </div>
+
+    <h4>Small Caps</h4>
+    <div class="sg-panel">
+      <p>
+        Acronyms and initialisms like
+        <span class="small-caps-demo">NASA</span>,
+        <span class="small-caps-demo">BBC</span>, and
+        <span class="small-caps-demo">HTML</span>
+        look better in small caps, blending with surrounding lowercase text rather than shouting.
+        The <code>&lt;abbr&gt;</code> element automatically applies small caps styling.
+      </p>
+    </div>
+  </div>
+
+  <!-- Typography Components -->
+  <div class="sg-subsection">
+    <h3>Typography Components</h3>
+    <p>MDX components for specific typographic treatments in articles and notes.</p>
+
+    <h4>IntroParagraph</h4>
+    <p class="context-description">
+      Creates a drop cap and small-caps first line for article openings.
+    </p>
+    <div class="sg-panel">
+      <LongFormProseTypography>
+        <IntroParagraph>
+          This demonstrates the IntroParagraph component, which creates an elegant article
+          opening with a large drop cap and small-caps first line. The effect draws the reader's
+          eye and signals the beginning of substantive content, a typographic tradition dating
+          back to illuminated manuscripts.
+        </IntroParagraph>
+      </LongFormProseTypography>
+    </div>
+    <details>
+      <summary>View code</summary>
+      <pre><code>{`<IntroParagraph>
+  Your opening paragraph text here...
+</IntroParagraph>`}</code></pre>
+    </details>
+
+    <h4>SmallCaps</h4>
+    <p class="context-description">
+      Renders text in uppercase with wide letter spacing for labels and emphasis.
+    </p>
+    <div class="sg-panel">
+      <SmallCaps>Chapter One: The Beginning</SmallCaps>
+      <p>Regular paragraph text following the small caps heading.</p>
+    </div>
+    <details>
+      <summary>View code</summary>
+      <pre><code>{`<SmallCaps>Chapter One: The Beginning</SmallCaps>`}</code></pre>
+    </details>
+
+    <h4>Highlight</h4>
+    <p class="context-description">
+      Applies a yellow background highlight for emphasis within prose.
+    </p>
+    <div class="sg-panel">
+      <p>
+        Use the highlight component to draw attention to <Highlight>key phrases or important
+          information</Highlight> within your text.
+      </p>
+    </div>
+    <details>
+      <summary>View code</summary>
+      <pre><code>{`<Highlight>key phrases or important information</Highlight>`}</code></pre>
+    </details>
+  </div>
 </section>
+
+<style>
+  /* Typography context containers */
+  .typography-context {
+    margin-top: var(--space-l);
+
+    &:first-of-type {
+      margin-top: var(--space-m);
+    }
+
+    & h4 {
+      margin-top: 0;
+      margin-bottom: var(--space-2xs);
+    }
+  }
+
+  .context-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-top: 0;
+    margin-bottom: var(--space-s);
+  }
+
+  /* Reset heading margins inside demo panels */
+  .sg-panel h1 {
+    margin-top: 0;
+  }
+
+  /* OpenType comparison grid */
+  .opentype-comparison {
+    display: grid;
+    gap: var(--space-m);
+
+    @media (min-width: 640px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .numeral-demo {
+    font-size: var(--font-size-md);
+  }
+
+  /* Ligature demos */
+  .ligature-demo {
+    font-size: var(--font-size-lg);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .no-ligatures {
+    font-variant-ligatures: none;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  /* Small caps demo */
+  .small-caps-demo {
+    font-variant-caps: all-small-caps;
+  }
+
+  /* Code in details */
+  details {
+    margin-top: var(--space-xs);
+    font-size: var(--font-size-sm);
+
+    & summary {
+      color: var(--color-text-secondary);
+      cursor: pointer;
+    }
+
+    & pre {
+      margin-top: var(--space-xs);
+      padding: var(--space-s);
+      background-color: var(--color-background-code);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+    }
+
+    & code {
+      font-size: var(--font-size-xs);
+    }
+  }
+</style>
