@@ -8,6 +8,7 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
 import Footer from '@components/layout/Footer.astro';
 import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
 import { Tabs, TabItem } from '@components/mdx/index';
+import ColorSwatch from '@components/mdx/ColorSwatch.astro';
 ---
 
 <!doctype html>
@@ -19,6 +20,14 @@ import { Tabs, TabItem } from '@components/mdx/index';
     <MainNavigation />
     <main>
       <h1>Scratchpad</h1>
+
+      <div style="width: 100px; height: 100px">
+        <ColorSwatch color="var(--color-coral)" name="Coral" />
+      </div>
+
+      <br />
+      <hr />
+      <br />
 
       <Tabs>
         <TabItem label="Stars">
@@ -43,7 +52,6 @@ import { Tabs, TabItem } from '@components/mdx/index';
         margin: 0 auto;
         padding: var(--space-m);
       }
-
     </style>
   </body>
 </html>
