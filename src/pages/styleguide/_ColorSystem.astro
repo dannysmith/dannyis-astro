@@ -24,7 +24,11 @@ const semanticColorGroups = [
     category: 'Backgrounds & Surfaces',
     colors: [
       { name: 'Background', variable: '--color-background', usage: 'Page background' },
-      { name: 'Background Secondary', variable: '--color-background-secondary', usage: 'Cards, panels' },
+      {
+        name: 'Background Secondary',
+        variable: '--color-background-secondary',
+        usage: 'Cards, panels',
+      },
       { name: 'Background Code', variable: '--color-background-code', usage: 'Code blocks' },
       { name: 'Surface Raised', variable: '--surface-raised', usage: 'Elevated surfaces' },
     ],
@@ -43,119 +47,124 @@ const semanticColorGroups = [
 <section id="colors" class="styleguide-section flow">
   <h2>Color System</h2>
   <p>
-    All colors are defined using <a href="https://oklch.com/">OKLCH</a> for perceptual uniformity.
-    Adaptive colors use <code>light-dark()</code> to automatically adjust for theme.
+    All colors are defined using <a href="https://oklch.com/">OKLCH</a> for perceptual uniformity. Adaptive
+    colors use <code>light-dark()</code> to automatically adjust for theme.
   </p>
 
   <!-- Adaptive Palette -->
-  <div class="sg-subsection">
-    <h3>Adaptive Palette</h3>
-    <p>
-      These colors automatically adjust for light and dark modes. Light mode has lower lightness
-      and higher chroma; dark mode increases lightness and reduces chroma for visibility.
-    </p>
+  <h3>Adaptive Palette</h3>
+  <p>
+    These colors automatically adjust for light and dark modes. Light mode has lower lightness and
+    higher chroma; dark mode increases lightness and reduces chroma for visibility.
+  </p>
 
-    <div class="sg-theme-comparison">
-      <div class="sg-theme-column" data-theme="light">
-        <span class="sg-label theme-label">Light Mode</span>
-        <div class="sg-grid">
-          {adaptiveColors.map((color) => {
+  <div class="sg-theme-comparison">
+    <div class="sg-theme-column" data-theme="light">
+      <div class="sg-grid">
+        {
+          adaptiveColors.map(color => {
             const name = color.charAt(0).toUpperCase() + color.slice(1);
             return <ColorSwatch color={`var(--color-${color})`} name={name} />;
-          })}
-        </div>
+          })
+        }
       </div>
-      <div class="sg-theme-column" data-theme="dark">
-        <span class="sg-label theme-label">Dark Mode</span>
-        <div class="sg-grid">
-          {adaptiveColors.map((color) => {
+    </div>
+    <div class="sg-theme-column" data-theme="dark">
+      <div class="sg-grid">
+        {
+          adaptiveColors.map(color => {
             const name = color.charAt(0).toUpperCase() + color.slice(1);
             return <ColorSwatch color={`var(--color-${color})`} name={name} />;
-          })}
-        </div>
+          })
+        }
       </div>
     </div>
   </div>
 
   <!-- Absolute Colors -->
-  <div class="sg-subsection">
-    <h3>Absolute Colors</h3>
-    <p>Static colors that don't change between themes. Used for specific design elements.</p>
-    <div class="sg-panel">
-      <div class="sg-grid" style="--sg-grid-min: 8rem">
-        {absoluteColors.map((color) => {
+  <h3>Absolute Colors</h3>
+  <p>Static colors that don't change between themes. Used for specific design elements.</p>
+  <div class="sg-panel">
+    <div class="sg-grid" style="--sg-grid-min: 8rem">
+      {
+        absoluteColors.map(color => {
           const name = color.charAt(0).toUpperCase() + color.slice(1);
           return <ColorSwatch color={`var(--color-${color})`} name={name} />;
-        })}
-      </div>
+        })
+      }
     </div>
   </div>
 
   <!-- Semantic Colors -->
-  <div class="sg-subsection">
-    <h3>Semantic Colors</h3>
-    <p>Role-based colors that map to specific UI purposes. These adapt to the current theme.</p>
+  <h3>Semantic Colors</h3>
+  <p>Role-based colors that map to specific UI purposes. These adapt to the current theme.</p>
 
-    <table class="semantic-table">
-      <thead>
-        <tr>
-          <th>Token</th>
-          <th>Light</th>
-          <th>Dark</th>
-          <th>Variable</th>
-          <th>Usage</th>
-        </tr>
-      </thead>
-      {semanticColorGroups.map(({ category, colors }) => (
+  <table>
+    <thead>
+      <tr>
+        <th>Token</th>
+        <th>Light</th>
+        <th>Dark</th>
+        <th>Variable</th>
+        <th>Usage</th>
+      </tr>
+    </thead>
+    {
+      semanticColorGroups.map(({ category, colors }) => (
         <tbody>
-          <tr class="category-row">
-            <td colspan="5">{category}</td>
+          <tr>
+            <td colspan="5" class="center">
+              {category}
+            </td>
           </tr>
           {colors.map(({ name, variable, usage }) => (
             <tr>
-              <td class="token-name">{name}</td>
-              <td>
-                <span class="sg-panel-compact mini-swatch" data-theme="light">
+              <td>{name}</td>
+              <td class="center" data-theme="light">
+                <span class="mini-swatch" data-theme="light">
+                  <ColorSwatch color={`var(${variable})`} />
+                </span>
+              </td>
+              <td class="center" data-theme="dark">
+                <span class="mini-swatch" data-theme="dark">
                   <ColorSwatch color={`var(${variable})`} />
                 </span>
               </td>
               <td>
-                <span class="sg-panel-compact mini-swatch" data-theme="dark">
-                  <ColorSwatch color={`var(${variable})`} />
-                </span>
+                <code>{variable}</code>
               </td>
-              <td><code>{variable}</code></td>
               <td>{usage}</td>
             </tr>
           ))}
         </tbody>
-      ))}
-    </table>
-  </div>
+      ))
+    }
+  </table>
 </section>
 
 <style>
   /* Give grid swatches a square aspect ratio */
   .sg-grid :global(.color-swatch) {
-    height: auto;
     aspect-ratio: 1;
   }
 
-  /* Semantic colors table */
-  .semantic-table {
-    margin-top: var(--space-m);
-
-    & .category-row td {
-      font-weight: var(--font-weight-semibold);
-      text-transform: uppercase;
+  table {
+    th,
+    td.center {
       text-align: center;
+    }
+    td {
+      vertical-align: middle;
     }
   }
 
   /* Mini swatches - sized wrapper for ColorSwatch */
   .mini-swatch {
-    display: block;
+    display: inline-block;
+    vertical-align: middle;
     width: 2.5rem;
     height: 2.5rem;
+    padding: 0.2em;
+    border-radius: var(--radius-sm);
   }
 </style>
