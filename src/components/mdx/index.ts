@@ -20,10 +20,6 @@ import ColorSwatch from './ColorSwatch.astro';
 import ResizableContainer from './ResizableContainer.astro';
 
 // Typography components
-import Title1 from './typography/Title1.astro';
-import Title2 from './typography/Title2.astro';
-import Title3 from './typography/Title3.astro';
-import Title4 from './typography/Title4.astro';
 import SmallCaps from './typography/SmallCaps.astro';
 import highlight from './typography/highlight.astro';
 
@@ -47,10 +43,6 @@ export {
   Tabs,
   TabItem,
   // Typography
-  Title1,
-  Title2,
-  Title3,
-  Title4,
   SmallCaps,
   highlight,
 };
