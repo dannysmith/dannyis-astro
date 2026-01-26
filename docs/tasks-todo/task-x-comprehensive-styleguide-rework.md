@@ -148,58 +148,47 @@ Text can be <em>emphasised</em> in several ways. We can use <strong>strong text<
 
 IMPORTANT: The example above deliberately has a load of filler words because without them the paragraph would be too short to depict em, strong, b, i and kbd in a realistic setting. Instead of just using Lorum Ipsum, We're using filler, which also helps to explain the various tags and what they're used for. If it's necessary to have long runs of text or multiple paragraphs, we don't have to do this. We could use some dummy text from a classic book or something, and then in amongst it we could insert this type of stuff as well. The expectation here is not that someone reading this style guide will actually read all of this text. They're gonna look at it, but it would be good if then when we focus in on a particular element, say <kbd>, in the dummy text, the actual text around it helps to explain about it.
 
-#### Block HTML Elements to include in Typography
+#### Checklist
 
-- Paragraphs of various lengths
-- H1-H6
-- Blockquotes with and without citations
-- ULs with nesting
-- OLs with nesting
-- Checklists with nesting
-- Tables
-- Horizontal rules
+Each item below is a "chunk" wrapped in `SGTypographySwitcher`. OpenType features (ligatures, numerals, fractions, small caps) should be woven naturally into the content rather than having a separate demo section.
 
-#### Inline HTML Elements to include in Typography
+- [ ] **Paragraphs & Basic Inline Text**
+      Multiple paragraphs of varying lengths demonstrating common inline elements:
+      `<a>` (internal/external), `<strong>`/`<b>`, `<em>`/`<i>`, `<code>`
+      Include an H2 for context, plus an `<hr>` between sections.
+      Naturally include: ligatures (fi, fl, ff), old-style numerals in prose, fractions (1/2, 3/4).
 
-- `<a>` - Links (include examples of internal/external, visited/notvisited etc)
-- `<strong>` / `<b>` - Bold
-- `<em>` / `<i>` - Italic
-- `<del>` / `<s>` - Strikethrough
-- `<sup>` - Superscript
-- `<sub>` - Subscript
-- `<code>` - Inline code
-- `<mark>` - Highlight
-- `<kbd>` - Keyboard input
-- `<abbr>` - Abbreviation (with and without title attributes)
-- `<small>` - Small text
-- `<cite>` - Citation
-- `<q>` - Inline quote
-- `<dfn>` - Definition
-- `<var>` - Variable
-- `<samp>` - Sample output
+- [ ] **Technical & Specialized Inline Elements**
+      Paragraphs (optionally with headings) demonstrating less common inline elements:
+      `<kbd>`, `<mark>`, `<del>`/`<s>`, `<sup>`, `<sub>`, `<small>`, `<cite>`, `<q>`, `<dfn>`, `<var>`, `<samp>`
+      Also demo together: `<abbr>` (with/without title), `<SmallCaps>` component, `<highlight>` component.
+      Can have a slightly "technical documentation" flavour to make these feel natural.
 
+- [ ] **Headings (H1-H6)**
+      Full heading hierarchy with realistic paragraphs between them (varying lengths, not all super short).
+      Include ligatures naturally in heading text (words with fi, fl, ff).
 
-#### OpenType Features to demonstrate in typography
+- [ ] **Blockquotes**
+      Include headings/paragraphs between blockquotes for realistic context.
+      Demo both:
+      - Plain HTML `<blockquote>` (what markdown produces)
+      - `<BlockQuoteCitation>` variants: author only, +title, +url, small
 
-Use explanatory copy that demonstrates the feature within the text itself:
+- [ ] **Lists: Unordered**
+      `<ul>` with nesting, realistic content. Can include inline elements within list items.
 
-**Old-style Numerals:**
-> "In long-form prose, numbers like 1234567890 use old-style figures. Notice how 3, 4, 5, 7, and 9 have descenders that blend naturally with lowercase text, while 0, 1, and 2 sit on the baseline."
+- [ ] **Lists: Ordered**
+      `<ol>` with nesting, realistic content.
 
-**Lining Numerals:**
-> "In UI contexts, numbers like 1234567890 use lining figures. All digits share the same height, aligning with capital letters for clean tabular display."
+- [ ] **Lists: Checklists**
+      Render via MDX snippet import (e.g., `import { Content } from './_snippets/checklist.mdx'`)
+      to ensure output matches actual MDX processing. Include nesting.
 
-**Ligatures:**
-> "Standard ligatures improve readability: fi, fl, ff, ffi, ffl. The letters connect smoothly rather than colliding."
-
-**Fractions:**
-> "Proper fractions: 1/2, 1/4, 3/4. Compare to fake fractions made with slashes."
-
-**Small Caps:**
-> "ACRONYMS like NASA, BBC, and HTML look better in small caps, blending with surrounding text."
-
-**Tabular vs Proportional:**
-Show in a table with columns that should/shouldn't align.
+- [ ] **Tables**
+      Two tables to cover common use cases:
+      1. Numeric/tabular data - demonstrates lining numerals, tabular figures
+      2. Mixed content - with `<code>`, images, or `<ColorSwatch>` in columns
+      Include a paragraph with numerals before the first table to show old-style vs lining contrast.
 
 
 ### 4. Content Components
@@ -214,19 +203,10 @@ For components which should respond to their container (which is most of the blo
 
 Some of these components are configured to replace the default components when markdown content is parsed (eg a markdown image task renders a `BasicImage`) - if this is the case, it should be noted somehow.
 
-#### Typography Enhancement Components
-
-| Component           | Key Variants/Configs | Notes          |
-| ------------------- | -------------------- | -------------- |
-| `Title1` - `Title4` | Default              | Show hierarchy |
-| `SmallCaps`         | Default              | Simple         |
-| `highlight`         | Default              | Simple         |
-| `BlockQuoteCitation` | Author only, +title, +url, small                |   |
-| `IntroParagraph`     | Default (drop cap)                              |   |
-
 #### Content Components
 | Component            | Key Variants/Configs                            | Notes      |
 | -------------------- | ----------------------------------------------- | ---------- |
+| `IntroParagraph`     | Default (drop cap)                              |            |
 | `Embed`              | YouTube, Vimeo, Twitter, Loom, fallback         |            |
 | `Accordion`          | Standard, plain, open/closed                    |            |
 | `BasicImage`         | Normal, framed, bleed variants, showAlt, source |            |
