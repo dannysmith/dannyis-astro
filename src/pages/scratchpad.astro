@@ -7,6 +7,7 @@ import { ResizableContainer } from '@components';
 import BaseHead from '@components/layout/BaseHead.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import { SGTypographySwitcher } from '@components/styleguide';
+import ColorSwatch from '@components/mdx/ColorSwatch.astro';
 ---
 
 <!doctype html>
@@ -19,13 +20,11 @@ import { SGTypographySwitcher } from '@components/styleguide';
     <main>
       <h1>Scratchpad</h1>
       <br />
-      <ResizableContainer>
-        <h1>The Art of Web Typography</h1>
-        <p>
-          Good typography is invisible. When text is set well, readers don't notice the typeface,
-          the line length, or the spacing—they simply absorb the content. This page demonstrates
-          the typographic elements available on this site.
-        </p>
+
+      <ResizableContainer minWidth='10px' initialWidth='200px'>
+        <div style="aspect-ratio: 1;">
+          <ColorSwatch color="#444444" name="Charcoal" />
+        </div>
       </ResizableContainer>
 
       <hr />
@@ -35,8 +34,8 @@ import { SGTypographySwitcher } from '@components/styleguide';
         <h1>The Art of Web Typography</h1>
         <p>
           Good typography is invisible. When text is set well, readers don't notice the typeface,
-          the line length, or the spacing—they simply absorb the content. This page demonstrates
-          the typographic elements available on this site.
+          the line length, or the spacing—they simply absorb the content. This page demonstrates the
+          typographic elements available on this site.
         </p>
 
         <h2>Inline Text Styles</h2>
@@ -55,8 +54,8 @@ import { SGTypographySwitcher } from '@components/styleguide';
         </p>
         <p>
           Abbreviations can include titles: <abbr title="HyperText Markup Language">HTML</abbr> and
-          <abbr title="Cascading Style Sheets">CSS</abbr> are the building blocks of the web. Some
-          abbreviations like <abbr>NASA</abbr> or <abbr>ASAP</abbr> are common enough to stand alone.
+          <abbr title="Cascading Style Sheets">CSS</abbr> are the building blocks of the web. Some abbreviations
+          like <abbr>NASA</abbr> or <abbr>ASAP</abbr> are common enough to stand alone.
         </p>
         <p>Short paragraph. Sometimes you need just a sentence or two.</p>
         <p>
@@ -80,8 +79,8 @@ import { SGTypographySwitcher } from '@components/styleguide';
 
         <h3>Third-Level Heading</h3>
         <p>
-          This is body text following an H3. Third-level headings work well for subsections within
-          a larger topic. They provide enough visual distinction without overwhelming the reader.
+          This is body text following an H3. Third-level headings work well for subsections within a
+          larger topic. They provide enough visual distinction without overwhelming the reader.
         </p>
 
         <h4>Fourth-Level Heading</h4>
@@ -126,8 +125,8 @@ import { SGTypographySwitcher } from '@components/styleguide';
           </li>
           <li>Third item back at the top level</li>
           <li>
-            Fourth item with a longer description that might wrap to multiple lines depending on
-            the viewport width
+            Fourth item with a longer description that might wrap to multiple lines depending on the
+            viewport width
           </li>
         </ul>
 
@@ -167,13 +166,13 @@ import { SGTypographySwitcher } from '@components/styleguide';
         <blockquote>
           <p>
             Typography is the craft of endowing human language with a durable visual form. It is a
-            craft with ancient roots, but one that has been transformed repeatedly by
-            technological change.
+            craft with ancient roots, but one that has been transformed repeatedly by technological
+            change.
           </p>
           <p>
-            In the digital age, typography has become both more accessible and more complex.
-            Anyone can set type, but setting it well requires understanding principles developed
-            over centuries.
+            In the digital age, typography has become both more accessible and more complex. Anyone
+            can set type, but setting it well requires understanding principles developed over
+            centuries.
           </p>
         </blockquote>
 
@@ -247,22 +246,21 @@ console.log(greet('World'));</code></pre>
           breaking rhythm; too long and readers lose their place when moving to the next line. The
           ideal measure sits somewhere between 45 and 75 characters, though context matters
           enormously. A novel might push toward the upper end, while a mobile interface demands
-          brevity. Then there's line height, which must balance density against legibility.
-          Cramped lines blur together; overly loose ones fragment into isolated strips. The
-          interplay between typeface, size, weight, and spacing forms a complex system where
-          changing one variable ripples through all the others. A heavier weight might demand more
-          line height. A larger size might tolerate tighter tracking. These decisions compound
-          across hundreds of paragraphs, thousands of headings, and millions of characters.
-          Consistency becomes paramount—not rigid uniformity, but a coherent system that readers
-          internalise without conscious effort. When everything works, the typography disappears
-          entirely. Readers see only ideas, stories, arguments, instructions. They feel informed
-          or moved or persuaded, never once thinking about the letters on the screen. That
-          invisibility is the highest achievement of typographic craft, and it requires obsessive
-          attention to details that most people will never notice.
+          brevity. Then there's line height, which must balance density against legibility. Cramped
+          lines blur together; overly loose ones fragment into isolated strips. The interplay
+          between typeface, size, weight, and spacing forms a complex system where changing one
+          variable ripples through all the others. A heavier weight might demand more line height. A
+          larger size might tolerate tighter tracking. These decisions compound across hundreds of
+          paragraphs, thousands of headings, and millions of characters. Consistency becomes
+          paramount—not rigid uniformity, but a coherent system that readers internalise without
+          conscious effort. When everything works, the typography disappears entirely. Readers see
+          only ideas, stories, arguments, instructions. They feel informed or moved or persuaded,
+          never once thinking about the letters on the screen. That invisibility is the highest
+          achievement of typographic craft, and it requires obsessive attention to details that most
+          people will never notice.
         </p>
       </SGTypographySwitcher>
     </main>
-
     <style>
       body {
         min-height: 100vh;
