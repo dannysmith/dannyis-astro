@@ -62,16 +62,17 @@ If it's appropriate to include user-facing code examples, remember we have `astr
 
 **Implementation:** The CSS uses `light-dark()` function with `color-scheme: light dark`. To force a specific theme on a container, set `color-scheme: light` or `color-scheme: dark` on that element. This causes all `light-dark()` values within to resolve to the forced mode.
 
-## Globally Reusable Components & Setup
+## Globally Reusable Components & Setup [✅ COMPLETE]
 
 - [x] ColorSwatch.astro
 - [x] Tabs.astro and TabItem.astro
-- [ ] ResizableContainer.astro (Needs review and cleaning up)
+- [x] ResizableContainer.astro
 
 ### Setup  [✅ COMPLETE]
 
 - [x] New `styleguide.astro` and set up imports
 - [x] Styleguide TOC Component
+- [x] SGTypographyswitcher - src/components/styleguide/SGTypographySwitcher.astro
 
 
 ## The Sections
