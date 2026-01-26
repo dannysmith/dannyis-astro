@@ -13,8 +13,7 @@ A single place to see all styling and components used in the site. I'll use this
 2. When experimenting with changes to global styles – I can see their effect in one place.
 3. When designing new visual components: I'll get them working in here first and then check they work in actual articles, notes etc.
 4. When working in external tools like Figma or visual AI Agents: An HTML export and/or a full-page screenshot will give a decent overview of ALL UI and styling on the site.
-5. I'll also use this when experimenting with changes to global styles, to see in one place how 
-6. Since this will be public, I may include a link to it in my site's footer for people who are interested.
+5. Since this will be public, I may include a link to it in my site's footer for people who are interested.
 
 ### Existing Styleguides
 
@@ -75,11 +74,11 @@ We'll use this extensively in the styleguie to show how things are styled differ
 
 ## Implementation Rules & Guidance
 
-- Avoid styleguide-specific CSS wherever possible and instead rely on inheritance from the standard global styles. (Eg. if we need to display font weights we should prefer a standard `<table>` with something like `<tr><td class="font-weight-example" style="[inject stuff]">Aa</td><td><code>--font-size-xs</code></td></tr>`. We can rely on the global stling for everything except `.font-weight-example`, ehich obviously needs some styleguide-specific styling just for this use case.) This ensures as far as possible that the styleguide is the truest represenation of the ACTUAL styles and components as possible.
+- Avoid styleguide-specific CSS wherever possible and instead rely on inheritance from the standard global styles. (Eg. if we need to display font weights we should prefer a standard `<table>` with something like `<tr><td class="font-weight-example" style="[inject stuff]">Aa</td><td><code>--font-size-xs</code></td></tr>`. We can rely on the global styling for everything except `.font-weight-example`, which obviously needs some styleguide-specific styling just for this use case.) This ensures as far as possible that the styleguide is the truest represenation of the ACTUAL styles and components as possible.
 - Keep all markup as simple and minimal as possible. This makes it much easier to understand and edit the styleguide HTML.
 - Use modern CSS to the fullest extent to help with the above.
 - Ensure all dummy content is as useful as possible. (Eg. "Aa" is better than a paragraph of lorem ipsum in a table showing font weights. A chunky paragraph of lorem ipsum is ideal for comparing various line-heights. And when comparing different typography styles, a realistic text including headings, inline styles etc is probably best)
-- Where possible, dummy content should naturally test the same kind of boundries real content does. It we're demoing H1-H6: make one long enough it naturally wraps, include numbers and emoji occasionally to see how they're rendered. Maybe include common ligatures like "fi", or some inline `<code>`? This kind of stuff should not be so pervasive that it takes over, but these kind of things can really help us sport styling problems before they occur with real content.
+- Where possible, dummy content should naturally test the same kind of boundries real content does. It we're demoing H1-H6: make one long enough it naturally wraps, include numbers and emoji occasionally to see how they're rendered. Maybe include common ligatures like "fi", or some inline `<code>`? This kind of stuff should not be so pervasive that it takes over, but these kind of things can really help us spot styling problems before they occur with real content.
 - Generally speaking, each styleguide partial should be conceptually about one concept (or a group of closeley-related concepts).
 - When a developer is reading a partial, it should generally not be nececarry to refer to any other styleguide-specific file to understand it.
 - Do not hardcode CSS variable *values* unless absolutely unavoidable. (eg. Changing the value of `--color-accent` in `global.css` should not require any changes to the styleguide.)
@@ -143,13 +142,11 @@ This section will include normal "contentish" HTML elements like paragraphs, blo
 
 ```
 <p>
-Text can be <em>emphasised</em> in several ways. We can use <strong>strong text</strong> for indicating the importance of a word and <em>emphasis</em> for stresssing. You could also use <b>bold</b> and <i>italic</i> for stylistic purposes, but thi doesn't give any semantic meaning so should generally be avoided. For keyboard shortcuts, use the `kbd` element to make them look nicer. So we could do <kbd>Ctrl</kbd> + <kbd>S</kbd> to which should look fairly loveley, or perhaps we could use <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> as another example. We can see that these are all inline text treatments which should work everywhere.
+Text can be <em>emphasised</em> in several ways. We can use <strong>strong text</strong> for indicating the importance of a word and <em>emphasis</em> for stressing. You could also use <b>bold</b> and <i>italic</i> for stylistic purposes, but this doesn't give any semantic meaning so should generally be avoided. For keyboard shortcuts, use the `kbd` element to make them look nicer. So we could do <kbd>Ctrl</kbd> + <kbd>S</kbd> to which should look fairly loveley, or perhaps we could use <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> as another example. We can see that these are all inline text treatments which should work everywhere.
 </p>
 ```
 
 IMPORTANT: The example above deliberately has a load of filler words because without them the paragraph would be too short to depict em, strong, b, i and kbd in a realistic setting. Instead of just using Lorum Ipsum, We're using filler, which also helps to explain the various tags and what they're used for. If it's necessary to have long runs of text or multiple paragraphs, we don't have to do this. We could use some dummy text from a classic book or something, and then in amongst it we could insert this type of stuff as well. The expectation here is not that someone reading this style guide will actually read all of this text. They're gonna look at it, but it would be good if then when we focus in on a particular element, say <kbd>, in the dummy text, the actual text around it helps to explain about it.
-
-TBD
 
 #### Block HTML Elements to include in Typography
 
@@ -164,7 +161,7 @@ TBD
 
 #### Inline HTML Elements to include in Typography
 
-- `<a>` - Links (include )
+- `<a>` - Links (include examples of internal/external, visited/notvisited etc)
 - `<strong>` / `<b>` - Bold
 - `<em>` / `<i>` - Italic
 - `<del>` / `<s>` - Strikethrough
@@ -217,34 +214,35 @@ For components which should respond to their container (which is most of the blo
 
 Some of these components are configured to replace the default components when markdown content is parsed (eg a markdown image task renders a `BasicImage`) - if this is the case, it should be noted somehow.
 
+#### Typography Enhancement Components
+
 | Component           | Key Variants/Configs | Notes          |
 | ------------------- | -------------------- | -------------- |
 | `Title1` - `Title4` | Default              | Show hierarchy |
 | `SmallCaps`         | Default              | Simple         |
 | `highlight`         | Default              | Simple         |
-| `BlockQuoteCitation` | Author only, +title, +url, small                | Show code  |
-| `IntroParagraph`     | Default (drop cap)                              | Show code  |
+| `BlockQuoteCitation` | Author only, +title, +url, small                |   |
+| `IntroParagraph`     | Default (drop cap)                              |   |
 
 #### Content Components
 | Component            | Key Variants/Configs                            | Notes      |
 | -------------------- | ----------------------------------------------- | ---------- |
-| `Embed`              | YouTube, Vimeo, Twitter, Loom, fallback         | Show code  |
-| `Accordion`          | Standard, plain, open/closed                    | Show code  |
-| `BasicImage`         | Normal, framed, bleed variants, showAlt, source | Show code  |
-| `<Image>` | from `astro:assets` - Optimized, responsive images | |
-| `<Picture>` | from `astro:assets` - Art direction with multiple formats | |
+| `Embed`              | YouTube, Vimeo, Twitter, Loom, fallback         |            |
+| `Accordion`          | Standard, plain, open/closed                    |            |
+| `BasicImage`         | Normal, framed, bleed variants, showAlt, source |            |
+| `<Image>` | from `astro:assets` - Optimized, responsive images |            |
+| `<Picture>` | from `astro:assets` - Art direction with multiple formats |            |
 | `BookmarkCard`       | Various URLs                                    | Responsive |
-| `ButtonLink`         | Primary, secondary, inline                      | Show code  |
-| `Callout`            | All 7 types, with/without title, icon/emoji     | Show code  |
+| `ButtonLink`         | Primary, secondary, inline                      |            |
+| `Callout`            | All 7 types, with/without title, icon/emoji     |            |
 | `Center`             | Default                                         | Simple     |
-| `Grid`               | Various columns/rows/gaps                       | Show code  |
+| `Grid`               | Various columns/rows/gaps                       |            |
 | `Loom`               | Default                                         | Simple     |
-| `Notion`             | Auto title, manual title                        | Show code  |
+| `Notion`             | Auto title, manual title                        |            |
 | `Spacer`             | Multiple sizes                                  | Simple     |
 | `SmartLink`          | Internal, external                              | Simple     |
-| `IntroParagraph`     | Default (drop cap)                              | Show code  |
-| `Tabs & TabItem`     |                               | Show code  |
-| `ResizableContainer`     |                               | Show code  |
+| `Tabs & TabItem`     |                                                 |            |
+| `ResizableContainer` |                                                 |            |
 
 Note: `Lightbox` component should "Just work" when images are clicked?
 
@@ -269,7 +267,7 @@ These components are intended for use in the "UI" of the site. Some of them are 
 | `PersonalLogo`           | Default                        | Simple                 |
 | `Pill`                   | Multiple colors                | Simple                 |
 | `SocialLinks`            | Default                        | Simple                 |
-| `ContentCard`            | Standard/compact, article/note | Responsive, show code  |
+| `ContentCard`            | Standard/compact, article/note | Responsive             |
 | `Spinner`                | Default, custom size           | Simple                 |
 | `MarkdownContentActions` | Default                        | May need context       |
 | `FormattedDate`          | Various dates                  | Simple, no code needed |
@@ -306,13 +304,6 @@ We have already included a number of plain HTML elements in the earlier sections
 - `<video>` - Native video (if used)
 - `<iframe>` - Embedded content
 - `<dl>` / `<dt>` / `<dd>`
-
-
-#### Footnotes (Article Context)
-Demonstrate footnote rendering (article-specific via LongFormProseTypography):
-- Inline footnote references `[^1]`
-- Footnote section at bottom
-- Back-reference links
 
 ### 7. Other Stuff
 
