@@ -53,11 +53,12 @@ const fontSizes = [
 ];
 ---
 
-<h2>Design Tokens</h2>
-<p>
-  Spacing, typography, borders, and motion tokens that provide consistent rhythm and visual harmony
-  across the site. All values use fluid scaling via <code>clamp()</code> for responsive behavior.
-</p>
+<section id="design-tokens" class="styleguide-section flow">
+  <h2>Design Tokens</h2>
+  <p>
+    Spacing, typography, borders, and motion tokens that provide consistent rhythm and visual harmony
+    across the site. All values use fluid scaling via <code>clamp()</code> for responsive behavior.
+  </p>
 
 <!-- Spacing Scale -->
 <h3>Spacing Scale</h3>
@@ -103,20 +104,16 @@ const fontSizes = [
   </thead>
   <tbody>
     {
-      borderWidths.length > 0 &&
-        borderWidths.map(name => {
-          const variable = `--border-width-${name}`;
-          return (
-            <tr>
-              <td>
-                <code>{variable}</code>
-              </td>
-              <td>
-                <div class="border-width-preview" style={`border-bottom-width: var(${variable})`} />
-              </td>
-            </tr>
-          );
-        })
+      borderWidths.map(name => (
+        <tr>
+          <td>
+            <code>{`--border-width-${name}`}</code>
+          </td>
+          <td>
+            <div class="border-width-preview" style={`border-bottom-width: var(--border-width-${name})`} />
+          </td>
+        </tr>
+      ))
     }
   </tbody>
 </table>
@@ -135,20 +132,16 @@ const fontSizes = [
   </thead>
   <tbody>
     {
-      borderRadii.length > 0 &&
-        borderRadii.map(name => {
-          const variable = `--radius-${name}`;
-          return (
-            <tr>
-              <td>
-                <code>{variable}</code>
-              </td>
-              <td>
-                <div class="border-radius-preview" style={`border-radius: var(${variable})`} />
-              </td>
-            </tr>
-          );
-        })
+      borderRadii.map(name => (
+        <tr>
+          <td>
+            <code>{`--radius-${name}`}</code>
+          </td>
+          <td>
+            <div class="border-radius-preview" style={`border-radius: var(--radius-${name})`} />
+          </td>
+        </tr>
+      ))
     }
   </tbody>
 </table>
@@ -164,21 +157,20 @@ const fontSizes = [
       <th>Preview</th>
     </tr>
   </thead>
-  {
-    shadows.map(name => {
-      const variable = `--shadow-${name}`;
-      return (
+  <tbody>
+    {
+      shadows.map(name => (
         <tr>
           <td>
-            <code>{variable}</code>
+            <code>{`--shadow-${name}`}</code>
           </td>
           <td class="shadow-preview-container">
-            <div class="shadow-preview" style={`filter: var(${variable})`} />
+            <div class="shadow-preview" style={`filter: var(--shadow-${name})`} />
           </td>
         </tr>
-      );
-    })
-  }
+      ))
+    }
+  </tbody>
 </table>
 
 <!-- Typography Tokens -->
@@ -278,22 +270,20 @@ const fontSizes = [
   </thead>
   <tbody>
     {
-      fontWeights.map(name => {
-        const variable = `--font-weight-${name}`;
-        return (
-          <tr>
-            <td class="font-weight-preview" style={`font-weight: var(${variable})`}>
-              Aa
-            </td>
-            <td>
-              <code>{variable}</code>
-            </td>
-          </tr>
-        );
-      })
+      fontWeights.map(name => (
+        <tr>
+          <td class="font-weight-preview" style={`font-weight: var(--font-weight-${name})`}>
+            Aa
+          </td>
+          <td>
+            <code>{`--font-weight-${name}`}</code>
+          </td>
+        </tr>
+      ))
     }
   </tbody>
 </table>
+</section>
 
 <style>
   /* Spacing scale */
