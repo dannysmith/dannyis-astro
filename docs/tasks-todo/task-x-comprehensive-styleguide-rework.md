@@ -79,13 +79,17 @@ If it's appropriate to include user-facing code examples, remember we have `astr
 
 Each of these will be its own partial.
 
-### ColorSystem [✅ COMPLETE]
+### 1. ColorSystem [✅ COMPLETE]
+
+This section should outline the colour system and include the main palette which is always visible in both light and dark colours using clickable colour swatches to copy hex codes. It should also include absolute colours and then a table of the various semantic colours which we use across the site. 
 
 - [x] Main Palette
 - [x] Absolute Colours
 - [x] Semantic Colour Table
 
-### Design Tokens [✅ COMPLETE]
+### 2. Design Tokens [✅ COMPLETE]
+
+This section basically includes a visual reference for the main design tokens that we have available. That should include the regular spacing scale, the standard border widths and radii, our standard shadow treatments, the font families in use, the standard font size system, line height and letter-spacing utilities, standard font weights etc. While this section does contain stuff to do with typography, the reason it's here is because it is basically just showing the standardized design tokens that we have available rather than showing off the typography in various realistic situations. We can think of this more as a reference than as a visual example or demo remote of these things in use. 
 
 - [x] Spacing Scale
 - [x] BorderWidths
@@ -97,7 +101,19 @@ Each of these will be its own partial.
 - [x] Letter Spacing
 - [x] Font Weights
 
-### Typography
+### 3. Typography
+
+This section needs to show off the various typography elements in a realistic setting. For each chunk of this, the content should be wrapped in SGTypographySwitcher, so it's easy to compare how the contents look accross all typography "systems" (ie default, wrapped in LongFormProseTypography or wrapped in a div with `class="ui-style"`). Ideally these "chunks" will be short enough that they're not much longer than a whole screen in most cases, whough with some (paragraphs of variuos lenghs, headings with paragraphs in-between etc) realism is more important than this.
+
+This section will include normal "contentish" HTML elements like paragraphs, blockquotes, lists, headings, tables etc, as well as inline type treatments like `<strong>`, `<a>` and `<kbd>` etc. Examples of opentype features should also be included appropriately. Ideally, all inline examples should be realistic, in a realistic setting and explain themselves. Eg:
+
+```
+<p>
+Text can be <em>emphasised</em> in several ways. We can use <strong>strong text</strong> for indicating the importance of a word and <em>emphasis</em> for stresssing. You could also use <b>bold</b> and <i>italic</i> for stylistic purposes, but thi doesn't give any semantic meaning so should generally be avoided. For keyboard shortcuts, use the `kbd` element to make them look nicer. So we could do <kbd>Ctrl</kbd> + <kbd>S</kbd> to which should look fairly loveley, or perhaps we could use <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> as another example. We can see that these are all inline text treatments which should work everywhere.
+</p>
+```
+
+IMPORTANT: The example above deliberately has a load of filler words because without them the paragraph would be too short to depict em, strong, b, i and kbd in a realistic setting. Instead of just using Lorum Ipsum, We're using filler, which also helps to explain the various tags and what they're used for. If it's necessary to have long runs of text or multiple paragraphs, we don't have to do this. We could use some dummy text from a classic book or something, and then in amongst it we could insert this type of stuff as well. The expectation here is not that someone reading this style guide will actually read all of this text. They're gonna look at it, but it would be good if then when we focus in on a particular element, say <kbd>, in the dummy text, the actual text around it helps to explain about it.
 
 TBD
 
@@ -155,49 +171,74 @@ Use explanatory copy that demonstrates the feature within the text itself:
 Show in a table with columns that should/shouldn't align.
 
 
-### MDX Components
+### 4. Content Components
 
-#### MDX Content Components
-| Component            | Key Variants/Configs                            | Notes      |
-| -------------------- | ----------------------------------------------- | ---------- |
-| `Embed`              | YouTube, Vimeo, Twitter, Loom, fallback         | Show code  |
-| `Accordion`          | Standard, plain, open/closed                    | Show code  |
-| `BasicImage`         | Normal, framed, bleed variants, showAlt, source | Show code  |
-| `BlockQuoteCitation` | Author only, +title, +url, small                | Show code  |
-| `BookmarkCard`       | Various URLs                                    | Responsive |
-| `ButtonLink`         | Primary, secondary, inline                      | Show code  |
-| `Callout`            | All 7 types, with/without title, icon/emoji     | Show code  |
-| `Center`             | Default                                         | Simple     |
-| `Grid`               | Various columns/rows/gaps                       | Show code  |
-| `IntroParagraph`     | Default (drop cap)                              | Show code  |
-| `Loom`               | Default                                         | Simple     |
-| `Notion`             | Auto title, manual title                        | Show code  |
-| `Spacer`             | Multiple sizes                                  | Simple     |
-| `SmartLink`          | Internal, external                              | Simple     |
-| `ColorSwatch`        |                                                 |            |
+This section should show off our Astro content components. These are components which are designed primarily to be used inside content. Either inside `.astro` pages, or in `.mdx` content files.
 
-Note: `Tabs`, `TabItem` and `ResizableContainer` do not need demonstrating because they are used so frequently elsewhere in the styleguide.
+As with the typography section, these should all be shown insite a `SGTypographySwitcher` in a realistic context. For example, an `IntroParagraph` example should be realistically long, probably include a link and be preceeded by a normal paragraph or two for realism.
 
-#### MDX Typography Components
+Most of the other block-level things should be shown with a short paragraph before/after because that's how they'll likeley be used. These "dummy" paragraphs could be used to help explain a bit about the thing if it's appropriate.
+
+For components which should respond to their container (which is most of the block-level ones), we should wrap the SGTypographySwitcher in a ResizableContainer.
+
+Some of these components are configured to replace the default components when markdown content is parsed (eg a markdown image task renders a `BasicImage`) - if this is the case, it should be noted somehow.
+
 | Component           | Key Variants/Configs | Notes          |
 | ------------------- | -------------------- | -------------- |
 | `Title1` - `Title4` | Default              | Show hierarchy |
 | `SmallCaps`         | Default              | Simple         |
 | `highlight`         | Default              | Simple         |
+| `BlockQuoteCitation` | Author only, +title, +url, small                | Show code  |
+| `IntroParagraph`     | Default (drop cap)                              | Show code  |
 
-### Astro Components
+#### Content Components
+| Component            | Key Variants/Configs                            | Notes      |
+| -------------------- | ----------------------------------------------- | ---------- |
+| `Embed`              | YouTube, Vimeo, Twitter, Loom, fallback         | Show code  |
+| `Accordion`          | Standard, plain, open/closed                    | Show code  |
+| `BasicImage`         | Normal, framed, bleed variants, showAlt, source | Show code  |
+| `<Image>` | from `astro:assets` - Optimized, responsive images | |
+| `<Picture>` | from `astro:assets` - Art direction with multiple formats | |
+| `BookmarkCard`       | Various URLs                                    | Responsive |
+| `ButtonLink`         | Primary, secondary, inline                      | Show code  |
+| `Callout`            | All 7 types, with/without title, icon/emoji     | Show code  |
+| `Center`             | Default                                         | Simple     |
+| `Grid`               | Various columns/rows/gaps                       | Show code  |
+| `Loom`               | Default                                         | Simple     |
+| `Notion`             | Auto title, manual title                        | Show code  |
+| `Spacer`             | Multiple sizes                                  | Simple     |
+| `SmartLink`          | Internal, external                              | Simple     |
+| `IntroParagraph`     | Default (drop cap)                              | Show code  |
+| `Tabs & TabItem`     |                               | Show code  |
+| `ResizableContainer`     |                               | Show code  |
 
-### UI Components
+Note: `Lightbox` component should "Just work" when images are clicked?
+
+#### Code Blocks (astro-expressive-code)
+- `<pre>` / `<code>` - Plain Code blocks
+
+Demonstrate all expressive-code features beyond basic syntax highlighting:
+- `title="filename.js"` - File name/title in frame header
+- `{3,5-7}` - Marked/highlighted lines (neutral)
+- `ins={2-3}` - Inserted lines (green, for showing additions)
+- `del={4}` - Deleted lines (red, for showing removals)
+- `diff` language - Diff syntax with `+`/`-` line prefixes
+- Line numbers (automatic)
+- Language indicators
+
+### 5. UI Components
+
+These components are intended for use in the "UI" of the site. Some of them are essentially UI primitives and are very reusable (eg "Pill" or "ContentCard"), and some of them will only ever be used in specific contexts (eg "NavLink"). If these components are block-level, they should be shown in a ResizableContainer, and if they have multiple variants and/or optional props we should aim to show a fairly full representation of the options. In many cases, we should show how these look in all typography systems (ie wrap in a SGTypographySwitcher) - this is important for things like `ContentCard` which may well find itself used in various contexts. We don't need to do this for layout components where we 100% know their use is limited to specific places (eg `NavLink` or `Footer`).
 
 | Component                | Key Variants/Configs           | Notes                  |
 | ------------------------ | ------------------------------ | ---------------------- |
-| `FormattedDate`          | Various dates                  | Simple, no code needed |
 | `PersonalLogo`           | Default                        | Simple                 |
 | `Pill`                   | Multiple colors                | Simple                 |
 | `SocialLinks`            | Default                        | Simple                 |
 | `ContentCard`            | Standard/compact, article/note | Responsive, show code  |
 | `Spinner`                | Default, custom size           | Simple                 |
 | `MarkdownContentActions` | Default                        | May need context       |
+| `FormattedDate`          | Various dates                  | Simple, no code needed |
 
 #### Layout Components
 | Component        | Key Variants/Configs         | Notes                              |
@@ -207,9 +248,11 @@ Note: `Tabs`, `TabItem` and `ResizableContainer` do not need demonstrating becau
 | `MainNavigation` | Open/closed states           | May not work in isolation - try it |
 | `Footer`         | Full width                   | Should work in ResizableContainer  |
 | `NoteCard`       | With/without sourceURL, tags | Grid display                       |
-| `Lightbox`       | Click interaction            | Show clickable image               |
 
-### HTML UI Elements
+
+### 6. HTML Elements
+
+We have already included a number of plain HTML elements in the earlier sections, but these were mostly confined to typography-related stuff. This section should include any other HTML elements which we may find ourselves using in the site. We should show how these look in all three type systems (ie wrap in SGTypographySwitcher) and for block elements we should also wrap that in a ResizableContainer. We should do our best to group these elements together into logical, realistic demos. For example, the demo of the form elements should probably be an actual `<form>` with `<fieldset>`, labels and all common form controls.
 
 #### Form Elements
 - `<button>` - Default button styling
@@ -230,21 +273,6 @@ Note: `Tabs`, `TabItem` and `ResizableContainer` do not need demonstrating becau
 - `<iframe>` - Embedded content
 - `<dl>` / `<dt>` / `<dd>`
 
-#### Astro Built-in Components
-- `<Image>` from `astro:assets` - Optimized, responsive images
-- `<Picture>` from `astro:assets` - Art direction with multiple formats
-
-#### Code Blocks (astro-expressive-code)
-- `<pre>` / `<code>` - Code blocks
-- 
-Demonstrate all expressive-code features beyond basic syntax highlighting:
-- `title="filename.js"` - File name/title in frame header
-- `{3,5-7}` - Marked/highlighted lines (neutral)
-- `ins={2-3}` - Inserted lines (green, for showing additions)
-- `del={4}` - Deleted lines (red, for showing removals)
-- `diff` language - Diff syntax with `+`/`-` line prefixes
-- Line numbers (automatic)
-- Language indicators
 
 #### Footnotes (Article Context)
 Demonstrate footnote rendering (article-specific via LongFormProseTypography):
@@ -252,8 +280,18 @@ Demonstrate footnote rendering (article-specific via LongFormProseTypography):
 - Footnote section at bottom
 - Back-reference links
 
+### 7. Other Stuff
 
-### Utility Classes
+This section should contain any other stuff which which we wanna keep visible in the styleguide. At the moment, the only examples I can think of for this are:
+
+- Footnote styles (from LongFormProseTypography and `/src/layouts/Article.astro`)?
+- Inline footnote styles (from `/src/layouts/Article.astro`)
+
+If this section ends up completely empty, that's fine. We'll still keep the section and add to it as necessary.
+
+### 8. Utility Classes
+
+This section should simply include the details of the available utility classes. where there is no need for a visual demonstration. We should simply include a list explaining what each of them does. where a visual demonstration will make sense, we should include that with some realistic content. As ever, we should wrap these in SGTypographySwitcher Wherever they are a) likeley to be used in multiple systems and b) will potentially render differently in different systems (eg `.flow`, `.list-reset` etc.).
 
 Document and demonstrate:
 - `.dark-surface` - Always-dark areas
