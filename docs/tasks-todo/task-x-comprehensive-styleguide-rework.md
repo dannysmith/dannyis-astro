@@ -36,9 +36,42 @@ Where we identify components which will clearly be useful outside of the stylegu
 
 There are at least three reusable components we **know** we'll need in the styleguide pages:
 
-1. Tab System - See `src/components/mdx/Tabs.astro` and `src/components/mdx/TabItem.astro`.
+1. Tabs - See `src/components/mdx/Tabs.astro` and `src/components/mdx/TabItem.astro`.
 2. Colour Swatches - See `src/components/mdx/ColorSwatch.astro`. We'll use this in various contexts to display colour swatches in the styleguide, but this is also very likely to be used elsewhere in the site. 
-3. Resizable Container - We can use this to wrap other components, allowing users to see how they respond to their container size. This will help make our styleguide shorter (we won't need to show the same componentt at various widths) but will clearly also be useful elsewhere in the site. 
+3. Resizable Container - See `/src/components/mdx/ResizableContainer.astro`. We can use this to wrap other components, allowing users to see how they respond to their container size. This will help make our styleguide shorter (we won't need to show the same componentt at various widths) but will clearly also be useful elsewhere in the site. 
+
+### Styleguide Specific Components
+
+Where possible, we should avoid abstracting out SG-specific components and instead use (or create) generally reusable ones, or keep things simple and scoped to the relevant partial or styleguide/index.astro. We will create `SGTOC.astro` to handles the floating TOC.
+
+We will also create `SGTypographySwitcher.astro` - This important component lets us write:
+
+```astro
+<SGTypographySwitcher>
+   <p>Some content here</p>
+</SGTypographySwitcher>
+```
+and have that turn into:
+
+```astro
+<Tabs>
+   <TabItem label="Default">
+      <p>Some content here</p>
+   </TabItem>
+   <TabItem label="Long Form Prose">
+      <LongFormProseTypography>
+      <p>Some content here</p>
+      </LongFormProseTypography>
+   </TabItem>
+<TabItem label="UI Style">
+<div class="ui-style">
+<p>Some content here</p>
+</div>
+</TabItem>
+</Tabs>
+```
+
+We'll use this extensively in the styleguie to show how things are styled differently depending on the typography system they appear in. See `/src/components/styleguide/SGTypographySwitcher.astro` for the implementation of this.
 
 ## Implementation Rules & Guidance
 
@@ -50,17 +83,18 @@ There are at least three reusable components we **know** we'll need in the style
 - Generally speaking, each styleguide partial should be conceptually about one concept (or a group of closeley-related concepts).
 - When a developer is reading a partial, it should generally not be nececarry to refer to any other styleguide-specific file to understand it.
 - Do not hardcode CSS variable *values* unless absolutely unavoidable. (eg. Changing the value of `--color-accent` in `global.css` should not require any changes to the styleguide.)
+- Any components created in `src/components/styleguide/` must be named with SG PRefix (eg: "SGMyComponent")
 
 ### Code Examples
 
-If it's appropriate to include user-facing code examples, remember we have `astro-expressive-code` available.
+If it's ever nececarry to include user-facing code examples in the stylegude, remember we have `astro-expressive-code` available.
 
 ### Theme Display Approach
 
 - **Colour Palette Examples:** Show BOTH light and dark variants side-by-side, regardless of current theme. This allows quick visual comparison of what `--color-coral` maps to in each theme.
 - **Everywhere else:** Rely on the site's normal theme toggle. Components and examples render in the current theme.
 
-**Implementation:** The CSS uses `light-dark()` function with `color-scheme: light dark`. To force a specific theme on a container, set `color-scheme: light` or `color-scheme: dark` on that element. This causes all `light-dark()` values within to resolve to the forced mode.
+**Implementation:** See `/src/pages/styleguide/_ColorSystem.astro` and `/src/pages/styleguide/index.astro`. The CSS uses `light-dark()` function with `color-scheme: light dark`. To force a specific theme on a container, set `color-scheme: light` or `color-scheme: dark` on that element. This causes all `light-dark()` values within to resolve to the forced mode.
 
 ## Globally Reusable Components & Setup [✅ COMPLETE]
 
@@ -71,7 +105,7 @@ If it's appropriate to include user-facing code examples, remember we have `astr
 ### Setup  [✅ COMPLETE]
 
 - [x] New `styleguide.astro` and set up imports
-- [x] Styleguide TOC Component
+- [x] SGTOC Component
 - [x] SGTypographyswitcher - src/components/styleguide/SGTypographySwitcher.astro
 
 
