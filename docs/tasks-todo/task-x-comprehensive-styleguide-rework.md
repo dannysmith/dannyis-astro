@@ -269,26 +269,57 @@ Each chunk is wrapped in `SGTypographySwitcher`. Most block-level components sho
 
 ### 5. UI Components
 
-These components are intended for use in the "UI" of the site. Some of them are essentially UI primitives and are very reusable (eg "Pill" or "ContentCard"), and some of them will only ever be used in specific contexts (eg "NavLink"). If these components are block-level, they should be shown in a ResizableContainer, and if they have multiple variants and/or optional props we should aim to show a fairly full representation of the options. In many cases, we should show how these look in all typography systems (ie wrap in a SGTypographySwitcher) - this is important for things like `ContentCard` which may well find itself used in various contexts. We don't need to do this for layout components where we 100% know their use is limited to specific places (eg `NavLink` or `Footer`).
+These components are intended for use in the "UI" of the site. Some are highly reusable primitives (eg "Pill", "Spinner"), while others are more specialized but still self-contained and worth including for visual reference when experimenting with CSS changes.
 
-| Component                | Key Variants/Configs           | Notes                  |
-| ------------------------ | ------------------------------ | ---------------------- |
-| `PersonalLogo`           | Default                        | Simple                 |
-| `Pill`                   | Multiple colors                | Simple                 |
-| `SocialLinks`            | Default                        | Simple                 |
-| `ContentCard`            | Standard/compact, article/note | Responsive             |
-| `Spinner`                | Default, custom size           | Simple                 |
-| `MarkdownContentActions` | Default                        | May need context       |
-| `FormattedDate`          | Various dates                  | Simple, no code needed |
+Most components should be wrapped in `SGTypographySwitcher` to show how they appear in different type contexts. The exception is `Footer` which has fixed styling (`dark-surface`) and should only be shown in a `ResizableContainer`.
 
-#### Layout Components
-| Component        | Key Variants/Configs         | Notes                              |
-| ---------------- | ---------------------------- | ---------------------------------- |
-| `NavLink`        | Active/inactive              | Show both states                   |
-| `ThemeToggle`    | Light/auto/dark              | Interactive                        |
-| `MainNavigation` | Open/closed states           | May not work in isolation - try it |
-| `Footer`         | Full width                   | Should work in ResizableContainer  |
-| `NoteCard`       | With/without sourceURL, tags | Grid display                       |
+**Not included:** `NavLink` (minimal - just adds active class), `FormattedDate` (no visual styling), `MainNavigation` (position:fixed, too dependent on page context), `TableOfContents` (too fiddly, rarely used).
+
+#### Checklist
+
+- [ ] **PersonalLogo**
+      Simple component showing circle + "Danny Smith" text.
+      Wrap in SGTypographySwitcher.
+
+- [ ] **Pill**
+      Show various colors (default, custom colors via props).
+      Wrap in SGTypographySwitcher.
+
+- [ ] **Spinner**
+      Show default and various custom sizes.
+      Wrap in SGTypographySwitcher.
+
+- [ ] **SocialLinks**
+      Social media icon links.
+      Wrap in SGTypographySwitcher.
+
+- [ ] **ThemeToggle**
+      Interactive light/auto/dark toggle.
+      Wrap in SGTypographySwitcher for consistency.
+
+- [ ] **MarkdownContentActions**
+      Shows "share / copy / view as markdown" links.
+      Use fake URL for visual appearance only (functionality won't work in demo).
+      Wrap in SGTypographySwitcher.
+
+- [ ] **ContentCard: Articles**
+      Show article-type cards with various prop permutations (standard/compact, with/without image, etc.).
+      Wrap in SGTypographySwitcher and ResizableContainer.
+
+- [ ] **ContentCard: Notes**
+      Show note-type cards with various prop permutations.
+      Wrap in SGTypographySwitcher and ResizableContainer.
+
+- [ ] **Footer**
+      Self-contained footer component. Uses PersonalLogo, NavLink, SocialLinks internally.
+      **Do NOT wrap in SGTypographySwitcher** (has fixed `dark-surface` styling).
+      Wrap in ResizableContainer to test responsive behaviour.
+
+#### NoteCard
+
+- [ ] **NoteCard**
+      Card component for notes with title, date, optional tags, optional sourceURL.
+      Approach TBD - needs slot content and may require special handling.
 
 
 ### 6. HTML Elements
