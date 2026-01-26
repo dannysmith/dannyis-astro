@@ -4,8 +4,6 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
 import Footer from '@components/layout/Footer.astro';
 import { SGTOC } from '@components/styleguide';
 
-// Styleguide-specific styles (only loaded on this page)
-import '../../styles/styleguide.css';
 
 // Section partials
 import ColorSystem from './_ColorSystem.astro';
@@ -84,6 +82,28 @@ const sections = [
 
       .styleguide-content {
         max-width: var(--measure-standard);
+      }
+
+      /* Shared styleguide utilities (global) */
+      :global(.sg-panel) {
+        padding: var(--space-m);
+        background-color: var(--color-background-secondary);
+        border: var(--border-width-hairline) solid var(--color-border);
+        border-radius: var(--radius-sm);
+      }
+
+      /* Theme forcing - force light or dark mode on containers */
+      :global([data-theme]) {
+        background-color: var(--color-background);
+        color: var(--color-text);
+      }
+
+      :global([data-theme='light']) {
+        color-scheme: light;
+      }
+
+      :global([data-theme='dark']) {
+        color-scheme: dark;
       }
     </style>
   </body>
