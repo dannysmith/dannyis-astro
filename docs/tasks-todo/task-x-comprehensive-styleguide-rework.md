@@ -158,6 +158,9 @@ Each item below is a "chunk" wrapped in `SGTypographySwitcher`. OpenType feature
       Include an H2 for context, plus an `<hr>` between sections.
       Naturally include: ligatures (fi, fl, ff), old-style numerals in prose, fractions (1/2, 3/4).
 
+      Also include a duplicate paragraph using `<SmartLink>` instead of `<a>` to show the difference
+      (SmartLink auto-replaces markdown links via MDX remapping). Explain in the demo copy itself.
+
 - [ ] **Technical & Specialized Inline Elements**
       Paragraphs (optionally with headings) demonstrating less common inline elements:
       `<kbd>`, `<mark>`, `<del>`/`<s>`, `<sup>`, `<sub>`, `<small>`, `<cite>`, `<q>`, `<dfn>`, `<var>`, `<samp>`
@@ -201,42 +204,68 @@ Most of the other block-level things should be shown with a short paragraph befo
 
 For components which should respond to their container (which is most of the block-level ones), we should wrap the SGTypographySwitcher in a ResizableContainer.
 
-Some of these components are configured to replace the default components when markdown content is parsed (eg a markdown image task renders a `BasicImage`) - if this is the case, it should be noted somehow.
+Some of these components are configured to replace the default components when markdown content is parsed (eg a markdown image renders as `BasicImage`, links render as `SmartLink`) - this should be noted in the demos.
 
-#### Content Components
-| Component            | Key Variants/Configs                            | Notes      |
-| -------------------- | ----------------------------------------------- | ---------- |
-| `IntroParagraph`     | Default (drop cap)                              |            |
-| `Embed`              | YouTube, Vimeo, Twitter, Loom, fallback         |            |
-| `Accordion`          | Standard, plain, open/closed                    |            |
-| `BasicImage`         | Normal, framed, bleed variants, showAlt, source |            |
-| `<Image>` | from `astro:assets` - Optimized, responsive images |            |
-| `<Picture>` | from `astro:assets` - Art direction with multiple formats |            |
-| `BookmarkCard`       | Various URLs                                    | Responsive |
-| `ButtonLink`         | Primary, secondary, inline                      |            |
-| `Callout`            | All 7 types, with/without title, icon/emoji     |            |
-| `Center`             | Default                                         | Simple     |
-| `Grid`               | Various columns/rows/gaps                       |            |
-| `Loom`               | Default                                         | Simple     |
-| `Notion`             | Auto title, manual title                        |            |
-| `Spacer`             | Multiple sizes                                  | Simple     |
-| `SmartLink`          | Internal, external                              | Simple     |
-| `Tabs & TabItem`     |                                                 |            |
-| `ResizableContainer` |                                                 |            |
+#### Checklist
 
-Note: `Lightbox` component should "Just work" when images are clicked?
+Each chunk is wrapped in `SGTypographySwitcher`. Most block-level components should also be wrapped in `ResizableContainer`. Include realistic context (paragraphs before/after) where appropriate.
 
-#### Code Blocks (astro-expressive-code)
-- `<pre>` / `<code>` - Plain Code blocks
+- [ ] **IntroParagraph**
+      Realistic long paragraph with drop cap. Include a link and precede with a normal paragraph or two for context.
 
-Demonstrate all expressive-code features beyond basic syntax highlighting:
-- `title="filename.js"` - File name/title in frame header
-- `{3,5-7}` - Marked/highlighted lines (neutral)
-- `ins={2-3}` - Inserted lines (green, for showing additions)
-- `del={4}` - Deleted lines (red, for showing removals)
-- `diff` language - Diff syntax with `+`/`-` line prefixes
-- Line numbers (automatic)
-- Language indicators
+- [ ] **Images**
+      Group `BasicImage`, `<Image>`, and `<Picture>` together.
+      - `BasicImage` variants: normal, framed, bleed, showAlt, source
+      - Note that BasicImage auto-replaces markdown images
+      - `<Image>` and `<Picture>` from astro:assets
+
+- [ ] **Embeds**
+      Group `Embed`, `Loom`, and `Notion` together. Use real URLs to test actual functionality.
+      - `Embed`: YouTube, Vimeo, Twitter examples
+      - `Loom`: embedded Loom video
+      - `Notion`: auto title and manual title variants
+
+- [ ] **BookmarkCard**
+      Various real URLs to test link preview functionality. Show responsive behaviour.
+
+- [ ] **ButtonLink**
+      Own chunk (expecting more variants in future).
+      Show: primary, secondary, inline variants.
+
+- [ ] **Callout**
+      Be smart about combinations - demo various prop permutations overlapping with color demos:
+      - All 7 colors (default, red, blue, green, orange, yellow, purple)
+      - With/without title, icon vs emoji vs neither
+      At least one callout with complex content: code block, headings, lists, inline styling (code, links, bold, italic).
+
+- [ ] **Accordion**
+      - Standard and plain variants
+      - At least one with complex content: lists, headings, code block, longer paragraphs
+      - No need to separately demo open/closed prop
+
+- [ ] **Tabs & TabItem**
+      Demo tabbed content with multiple tabs.
+
+- [ ] **Layout Utilities**
+      Group `Center`, `Grid`, `Spacer`, and `ResizableContainer` together.
+      - `Center`: simple demo
+      - `Grid`: various columns/rows/gaps configurations. Try putting inside ResizableContainer to test responsiveness.
+      - `Spacer`: multiple sizes
+      - `ResizableContainer`: demo the component itself (meta - we use it throughout!)
+
+- [ ] **ColorSwatch**
+      Demo the ColorSwatch component with various colors.
+
+- [ ] **Code Blocks (astro-expressive-code)**
+      May need multiple SGTypographySwitchers under this heading depending on number of examples.
+      Demonstrate all expressive-code features:
+      - `title="filename.js"` - File name/title in frame header
+      - `{3,5-7}` - Marked/highlighted lines (neutral)
+      - `ins={2-3}` - Inserted lines (green, for additions)
+      - `del={4}` - Deleted lines (red, for removals)
+      - `diff` language - Diff syntax with `+`/`-` line prefixes
+      - Line numbers (automatic)
+      - Language indicators
 
 ### 5. UI Components
 
