@@ -3,6 +3,7 @@
  * Scratchpad - A minimal page for experimenting with components
  * No additional styles beyond the basics.
  */
+import { ResizableContainer } from '@components';
 import BaseHead from '@components/layout/BaseHead.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import { SGTypographySwitcher } from '@components/styleguide';
@@ -17,6 +18,17 @@ import { SGTypographySwitcher } from '@components/styleguide';
     <MainNavigation />
     <main>
       <h1>Scratchpad</h1>
+      <br />
+      <ResizableContainer>
+        <h1>The Art of Web Typography</h1>
+        <p>
+          Good typography is invisible. When text is set well, readers don't notice the typeface,
+          the line length, or the spacing—they simply absorb the content. This page demonstrates
+          the typographic elements available on this site.
+        </p>
+      </ResizableContainer>
+
+      <hr />
       <br />
 
       <SGTypographySwitcher>
