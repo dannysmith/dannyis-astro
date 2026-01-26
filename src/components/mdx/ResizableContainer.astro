@@ -6,221 +6,25 @@ export interface Props {
   minWidth?: string;
   /** Maximum resize width */
   maxWidth?: string;
-  /** Display current width indicator */
-  showWidth?: boolean;
-  /** Optional label for the container */
-  label?: string;
 }
 
-const {
-  initialWidth = '100%',
-  minWidth = '200px',
-  maxWidth = '100%',
-  showWidth = true,
-  label,
-} = Astro.props;
+const { initialWidth = '100%', minWidth = '200px', maxWidth = '100%' } = Astro.props;
 ---
 
 <div
-  class="resizable-container"
-  style={`--initial-width: ${initialWidth}; --min-width: ${minWidth}; --max-width: ${maxWidth};`}
+  class="resizable-container cq"
+  style={`width: ${initialWidth}; min-width: ${minWidth}; max-width: ${maxWidth};`}
 >
-  {label && <span class="resizable-label">{label}</span>}
-  <div class="resizable-wrapper">
-    <div class="resizable-content">
-      <slot />
-    </div>
-    <div class="resizable-handle" aria-hidden="true">
-      <span class="handle-grip"></span>
-    </div>
-  </div>
-  {showWidth && <span class="resizable-width-indicator" aria-live="polite"></span>}
+  <slot />
 </div>
-
-<script>
-  class ResizableContainer {
-    container: HTMLElement;
-    wrapper: HTMLElement;
-    handle: HTMLElement;
-    indicator: HTMLElement | null;
-    isResizing = false;
-    startX = 0;
-    startWidth = 0;
-
-    constructor(container: HTMLElement) {
-      this.container = container;
-      this.wrapper = container.querySelector('.resizable-wrapper') as HTMLElement;
-      this.handle = container.querySelector('.resizable-handle') as HTMLElement;
-      this.indicator = container.querySelector('.resizable-width-indicator');
-
-      this.init();
-    }
-
-    init() {
-      // Set initial width
-      const initialWidth = getComputedStyle(this.container).getPropertyValue('--initial-width');
-      this.wrapper.style.width = initialWidth;
-      this.updateIndicator();
-
-      // Mouse events
-      this.handle.addEventListener('mousedown', this.startResize.bind(this));
-      document.addEventListener('mousemove', this.resize.bind(this));
-      document.addEventListener('mouseup', this.stopResize.bind(this));
-
-      // Touch events
-      this.handle.addEventListener('touchstart', this.startResizeTouch.bind(this), {
-        passive: true,
-      });
-      document.addEventListener('touchmove', this.resizeTouch.bind(this), { passive: false });
-      document.addEventListener('touchend', this.stopResize.bind(this));
-
-      // Mark as JS-enabled
-      this.container.classList.add('js-enabled');
-    }
-
-    startResize(e: MouseEvent) {
-      this.isResizing = true;
-      this.startX = e.clientX;
-      this.startWidth = this.wrapper.offsetWidth;
-      this.container.classList.add('is-resizing');
-      e.preventDefault();
-    }
-
-    startResizeTouch(e: TouchEvent) {
-      this.isResizing = true;
-      this.startX = e.touches[0].clientX;
-      this.startWidth = this.wrapper.offsetWidth;
-      this.container.classList.add('is-resizing');
-    }
-
-    resize(e: MouseEvent) {
-      if (!this.isResizing) return;
-      this.doResize(e.clientX);
-    }
-
-    resizeTouch(e: TouchEvent) {
-      if (!this.isResizing) return;
-      e.preventDefault();
-      this.doResize(e.touches[0].clientX);
-    }
-
-    doResize(clientX: number) {
-      const minWidth = parseInt(getComputedStyle(this.container).getPropertyValue('--min-width'));
-      const maxWidthValue = getComputedStyle(this.container).getPropertyValue('--max-width');
-      const maxWidth =
-        maxWidthValue === '100%' ? this.container.offsetWidth : parseInt(maxWidthValue);
-
-      const diff = clientX - this.startX;
-      let newWidth = this.startWidth + diff;
-
-      newWidth = Math.max(minWidth, Math.min(maxWidth, newWidth));
-      this.wrapper.style.width = `${newWidth}px`;
-      this.updateIndicator();
-    }
-
-    stopResize() {
-      this.isResizing = false;
-      this.container.classList.remove('is-resizing');
-    }
-
-    updateIndicator() {
-      if (this.indicator) {
-        this.indicator.textContent = `${this.wrapper.offsetWidth}px`;
-      }
-    }
-  }
-
-  // Initialize all resizable containers
-  document.querySelectorAll('.resizable-container').forEach((container) => {
-    new ResizableContainer(container as HTMLElement);
-  });
-</script>
 
 <style>
   .resizable-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xs);
-    width: 100%;
-  }
-
-  .resizable-label {
-    font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-  }
-
-  .resizable-wrapper {
-    position: relative;
-    width: var(--initial-width);
-    min-width: var(--min-width);
-    max-width: var(--max-width);
-    border: var(--border-width-hairline) dashed var(--color-border);
-    border-radius: var(--radius-sm);
-    background-color: var(--color-background-secondary);
+    resize: horizontal;
     overflow: hidden;
-  }
-
-  .resizable-content {
     padding: var(--space-s);
-  }
-
-  .resizable-handle {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 12px;
-    cursor: ew-resize;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-background);
-    border-left: var(--border-width-hairline) solid var(--color-border);
-    opacity: 0;
-    transition: opacity var(--duration-fast) var(--ease-in-out);
-  }
-
-  /* Only show handle when JS is enabled */
-  .resizable-container.js-enabled .resizable-handle {
-    opacity: 0.5;
-  }
-
-  .resizable-container.js-enabled:hover .resizable-handle,
-  .resizable-container.is-resizing .resizable-handle {
-    opacity: 1;
-  }
-
-  .handle-grip {
-    width: 4px;
-    height: 24px;
-    background: repeating-linear-gradient(
-      to bottom,
-      var(--color-text-secondary) 0,
-      var(--color-text-secondary) 2px,
-      transparent 2px,
-      transparent 4px
-    );
-    border-radius: 1px;
-  }
-
-  .resizable-width-indicator {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    align-self: flex-start;
-  }
-
-  /* Prevent text selection while resizing */
-  .resizable-container.is-resizing {
-    user-select: none;
-  }
-
-  /* No-JS fallback: just show the content at initial width */
-  .resizable-container:not(.js-enabled) .resizable-handle {
-    display: none;
+    border: var(--border-width-hairline) dashed var(--color-border);
+    border-right: 3px solid var(--color-border);
+    border-radius: var(--radius-sm);
   }
 </style>
