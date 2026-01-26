@@ -42,7 +42,7 @@ const sections = [
     <div class="styleguide-layout">
       <StyleguideTOC sections={sections} />
       <main class="styleguide-content flow">
-        <header class="styleguide-header">
+        <header>
           <h1>Design System</h1>
           <p>
             A comprehensive reference for all visual treatments, components, and utilities used
@@ -80,36 +80,10 @@ const sections = [
         max-width: 100%;
         margin: 0 auto;
         padding: var(--space-m);
-
-        @media (max-width: 768px) {
-          grid-template-columns: 1fr;
-        }
       }
 
       .styleguide-content {
         max-width: var(--measure-standard);
-        width: 100%;
-      }
-
-      .styleguide-header {
-        margin-bottom: var(--space-xl);
-        padding-bottom: var(--space-m);
-        border-bottom: var(--border-width-base) solid var(--color-accent);
-
-        & h1 {
-          border-bottom: none;
-          margin-top: 0;
-          padding-bottom: 0;
-        }
-
-        & p {
-          color: var(--color-text-secondary);
-        }
-      }
-
-      .styleguide-links {
-        font-family: var(--font-ui);
-        font-size: var(--font-size-sm);
       }
     </style>
   </body>

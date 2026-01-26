@@ -12,7 +12,6 @@ const { sections } = Astro.props;
 ---
 
 <nav class="styleguide-toc ui-style" aria-label="Styleguide navigation">
-  <span class="toc-title">Sections</span>
   <ul class="toc-list list-reset">
     {
       sections.map(({ id, label }) => (
@@ -84,20 +83,11 @@ const { sections } = Astro.props;
     }
   }
 
-  .toc-title {
-    display: block;
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-xs);
-  }
-
   .toc-list {
     display: flex;
     flex-direction: column;
     gap: var(--space-3xs);
+    margin: 0;
   }
 
   .toc-link {
