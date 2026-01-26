@@ -1,15 +1,43 @@
 ---
 /**
- * Design Tokens partial - displays spacing, typography, border, and motion tokens
- * All values are displayed via CSS variables so they update automatically
+ * Design Tokens partial
  */
-import { SpacingScale } from '@components/styleguide';
+
+import { Tabs, TabItem } from '@components/mdx/index';
+
+// Spacing scale tokens
+const baseTokens = [
+  { variable: '--space-3xs' },
+  { variable: '--space-2xs' },
+  { variable: '--space-xs' },
+  { variable: '--space-s' },
+  { variable: '--space-m' },
+  { variable: '--space-l' },
+  { variable: '--space-xl' },
+  { variable: '--space-2xl' },
+  { variable: '--space-3xl' },
+];
+
+const lineHeights = ['normal', 'loose', 'snug', 'tight', 'none'];
+const letterSpacings = ['normal', 'tight', 'wide', 'wider'];
+const fontWeights = ['light', 'normal', 'regular', 'medium', 'semibold', 'bold'];
+const borderWidths = ['hairline', 'base', 'thick', 'heavy', 'accent'];
+const borderRadii = ['xs', 'sm', 'md', 'lg', 'full'];
+const shadows = ['small', 'medium'];
 
 // Font families with usage descriptions
 const fontFamilies = [
-  { name: 'Prose', variable: '--font-prose', usage: 'Body text, articles, long-form reading' },
-  { name: 'UI', variable: '--font-ui', usage: 'Navigation, labels, buttons, interface elements' },
-  { name: 'Code', variable: '--font-code', usage: 'Code blocks, inline code, technical content' },
+  { variable: '--font-prose', family: 'Literata', usage: 'Body text, articles, long-form reading' },
+  {
+    variable: '--font-ui',
+    family: 'League Spartan',
+    usage: 'Navigation, labels, buttons, interface elements',
+  },
+  {
+    variable: '--font-code',
+    family: 'Fira Code',
+    usage: 'Code blocks, inline code, technical content',
+  },
 ];
 
 // Font sizes with typical usage
@@ -23,560 +51,311 @@ const fontSizes = [
   { variable: '--font-size-2xl', usage: 'Major headings (h2)' },
   { variable: '--font-size-3xl', usage: 'Page titles (h1)' },
 ];
-
-const lineHeights = ['none', 'tight', 'snug', 'normal', 'loose'];
-const letterSpacings = ['tight', 'normal', 'wide', 'wider'];
-const fontWeights = ['light', 'normal', 'regular', 'medium', 'semibold', 'bold'];
-const borderWidths = ['hairline', 'base', 'thick', 'heavy', 'accent'];
-const borderRadii = ['xs', 'sm', 'md', 'lg', 'full'];
-const durations = ['fast', 'normal', 'slow'];
-const shadows = ['small', 'medium'];
 ---
 
-<section id="spacing" class="styleguide-section flow">
-  <h2>Design Tokens</h2>
-  <p>
-    Spacing, typography, borders, and motion tokens that provide consistent rhythm and visual
-    harmony across the site. All values use fluid scaling via <code>clamp()</code> for responsive
-    behavior.
-  </p>
+<h2>Design Tokens</h2>
+<p>
+  Spacing, typography, borders, and motion tokens that provide consistent rhythm and visual harmony
+  across the site. All values use fluid scaling via <code>clamp()</code> for responsive behavior.
+</p>
 
-  <!-- Spacing Scale -->
-  <div class="sg-subsection">
-    <h3>Spacing Scale</h3>
-    <p>
-      Generated using <a href="https://utopia.fyi/space/calculator">Utopia</a>. Base scale provides
-      consistent spacing; fluid pairs smoothly interpolate between sizes based on viewport.
-    </p>
-    <SpacingScale />
-  </div>
+<!-- Spacing Scale -->
+<h3>Spacing Scale</h3>
+<p>
+  Generated using <a href="https://utopia.fyi/space/calculator">Utopia</a>. Base scale provides
+  consistent spacing; fluid pairs smoothly interpolate between sizes based on viewport.
+</p>
 
-  <!-- Typography Tokens -->
-  <div class="sg-subsection">
-    <h3>Typography</h3>
-
-    <h4>Font Families</h4>
-    <div class="font-families">
-      {fontFamilies.map(({ name, variable, usage }) => (
-        <div class="font-family-item">
-          <span class="font-preview" style={`font-family: var(${variable})`}>
-            The quick brown fox jumps over the lazy dog
-          </span>
-          <span class="font-meta">
-            <strong>{name}</strong> · <code>{variable}</code> · {usage}
-          </span>
-        </div>
-      ))}
-    </div>
-
-    <h4>Font Sizes</h4>
-    <p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
-    <table class="font-sizes-table">
-      <thead>
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Visual Representation</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      baseTokens.map(({ variable }) => (
         <tr>
-          <th>Preview</th>
-          <th>Variable</th>
-          <th>Typical Usage</th>
+          <td>
+            <code>{variable}</code>
+          </td>
+          <td>
+            <div class="spacing-bar" style={`width: var(${variable})`} />
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        {fontSizes.map(({ variable, usage }) => (
-          <tr>
-            <td class="size-preview" style={`font-size: var(${variable})`}>Aa</td>
-            <td><code>{variable}</code></td>
-            <td class="size-usage">{usage}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))
+    }
+  </tbody>
+</table>
 
-    <h4>Line Heights</h4>
-    <p>
-      Adjust line height based on content type: tighter for headings and UI elements where text
-      is short, looser for body text where readability matters over multiple lines.
-    </p>
-    <div class="line-heights">
-      {lineHeights.map((name) => {
-        const variable = `--leading-${name}`;
-        return (
-          <div class="line-height-item">
-            <span class="lh-name">{name}</span>
-            <span class="lh-preview" style={`line-height: var(${variable})`}>Line<br/>Height</span>
-            <code class="lh-variable">{variable}</code>
-          </div>
-        );
-      })}
+<h3>Border Widths</h3>
+<p>
+  Use hairline for subtle dividers, base for standard borders, and heavier weights for emphasis or
+  interactive states.
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Preview</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      borderWidths.length > 0 &&
+        borderWidths.map(name => {
+          const variable = `--border-width-${name}`;
+          return (
+            <tr>
+              <td>
+                <code>{variable}</code>
+              </td>
+              <td>
+                <div class="border-width-preview" style={`border-bottom-width: var(${variable})`} />
+              </td>
+            </tr>
+          );
+        })
+    }
+  </tbody>
+</table>
+
+<h3>Border Radii</h3>
+<p>
+  From subtle rounding (xs) to fully circular (full). Use smaller radii for compact UI elements,
+  larger for cards and containers.
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Preview</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      borderRadii.length > 0 &&
+        borderRadii.map(name => {
+          const variable = `--radius-${name}`;
+          return (
+            <tr>
+              <td>
+                <code>{variable}</code>
+              </td>
+              <td>
+                <div class="border-radius-preview" style={`border-radius: var(${variable})`} />
+              </td>
+            </tr>
+          );
+        })
+    }
+  </tbody>
+</table>
+
+<h3>Shadows</h3>
+<p>
+  Drop shadows for creating depth and elevation. Use sparingly to draw attention to raised elements.
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Preview</th>
+    </tr>
+  </thead>
+  {
+    shadows.map(name => {
+      const variable = `--shadow-${name}`;
+      return (
+        <tr>
+          <td>
+            <code>{variable}</code>
+          </td>
+          <td class="shadow-preview-container">
+            <div class="shadow-preview" style={`filter: var(${variable})`} />
+          </td>
+        </tr>
+      );
+    })
+  }
+</table>
+
+<!-- Typography Tokens -->
+
+<h3>Font Families</h3>
+{
+  fontFamilies.map(({ family, variable, usage }) => (
+    <div class="sg-panel">
+      <p class="font-preview" style={`font-family: var(${variable})`}>
+        The quick brown fox jumps over the lazy dog
+      </p>
+      <p class="font-meta">
+        <strong>{family}</strong> · <code>{variable}</code> · {usage}
+      </p>
     </div>
+  ))
+}
 
-    <h4>Letter Spacing</h4>
-    <p>
-      Wider tracking improves readability of uppercase text and small labels. Tighter tracking
-      can work for large display headings. Normal tracking is suitable for most body text.
-    </p>
-    <div class="letter-spacings">
-      {letterSpacings.map((name) => {
-        const variable = `--tracking-${name}`;
-        return (
-          <div class="tracking-item">
-            <span class="tracking-name">{name}</span>
-            <span class="tracking-preview" style={`letter-spacing: var(${variable})`}>SPACING</span>
-            <code class="tracking-variable">{variable}</code>
-          </div>
-        );
-      })}
-    </div>
+<h3>Font Sizes</h3>
+<p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
+<table>
+  <thead>
+    <tr>
+      <th>Preview</th>
+      <th>Variable</th>
+      <th>Typical Usage</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      fontSizes.map(({ variable, usage }) => (
+        <tr>
+          <td class="font-size-preview" style={`font-size: var(${variable})`}>
+            Aa
+          </td>
+          <td>
+            <code>{variable}</code>
+          </td>
+          <td>{usage}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
 
-    <h4>Font Weights</h4>
-    <p>
-      We use variable fonts, so weight can be any value between 300–700. These tokens provide
-      common weight stops, but you're not limited to them — use intermediate values when needed.
-    </p>
-    <div class="font-weights">
-      {fontWeights.map((name) => {
+<h4>Line Height</h4>
+<p>
+  Line height can be controlled via the <code>--leading-*</code> CSS variables. The default is <code
+    >var(--leading-normal)</code
+  >.
+</p>
+<Tabs>
+  {
+    lineHeights.map(name => (
+      <TabItem label={name}>
+        <p style={`line-height: var(--leading-${name})`}>
+          Hello there this is a line of text to show the line height. Lorem ipsum dolor sit amet
+          consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur
+          adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+        </p>
+      </TabItem>
+    ))
+  }
+</Tabs>
+
+<h4>Letter Spacing</h4>
+<p>
+  Letter spacing can be controlled via the <code>--tracking-*</code> CSS variables. The default is <code
+    >var(--tracking-normal)</code
+  >.
+</p>
+<Tabs>
+  {
+    letterSpacings.map(name => (
+      <TabItem label={name}>
+        <p class="letter-spacing-preview" style={`letter-spacing: var(--tracking-${name})`}>
+          Hello there this is a line of text to show the letter spacing.
+        </p>
+      </TabItem>
+    ))
+  }
+</Tabs>
+
+<h3>Font Weights</h3>
+<p>
+  We use variable fonts, so weight can be any value between 300–700. These tokens provide common
+  weight stops, but you're not limited to them — use intermediate values when needed.
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>Preview</th>
+      <th>Variable</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      fontWeights.map(name => {
         const variable = `--font-weight-${name}`;
         return (
-          <div class="weight-item">
-            <span class="weight-name">{name}</span>
-            <span class="weight-preview" style={`font-weight: var(${variable})`}>Aa</span>
-            <code class="weight-variable">{variable}</code>
-          </div>
+          <tr>
+            <td class="font-weight-preview" style={`font-weight: var(${variable})`}>
+              Aa
+            </td>
+            <td>
+              <code>{variable}</code>
+            </td>
+          </tr>
         );
-      })}
-    </div>
-  </div>
-
-  <!-- Border & Radius -->
-  <div class="sg-subsection">
-    <h3>Borders & Radius</h3>
-
-    <h4>Border Widths</h4>
-    <p>
-      Use hairline for subtle dividers, base for standard borders, and heavier weights for emphasis
-      or interactive states.
-    </p>
-    <div class="border-widths">
-      {borderWidths.map((name) => {
-        const variable = `--border-width-${name}`;
-        return (
-          <div class="border-item">
-            <span class="border-name">{name}</span>
-            <div class="border-preview">
-              <div class="border-line" style={`border-bottom-width: var(${variable})`} />
-            </div>
-            <code class="border-variable">{variable}</code>
-          </div>
-        );
-      })}
-    </div>
-
-    <h4>Border Radii</h4>
-    <p>
-      From subtle rounding (xs) to fully circular (full). Use smaller radii for compact UI elements,
-      larger for cards and containers.
-    </p>
-    <div class="border-radii">
-      {borderRadii.map((name) => {
-        const variable = `--radius-${name}`;
-        return (
-          <div class="radius-item">
-            <span class="radius-name">{name}</span>
-            <div class="radius-preview" style={`border-radius: var(${variable})`} />
-            <code class="radius-variable">{variable}</code>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-
-  <!-- Motion & Shadows -->
-  <div class="sg-subsection">
-    <h3>Motion & Shadows</h3>
-
-    <h4>Durations</h4>
-    <p>Animation timing tokens. Hover each bar to see the transition speed.</p>
-    <div class="durations">
-      {durations.map((name) => {
-        const variable = `--duration-${name}`;
-        return (
-          <div class="duration-item">
-            <span class="duration-name">{name}</span>
-            <div class="duration-preview">
-              <div class="duration-bar" style={`transition-duration: var(${variable})`} />
-            </div>
-            <code class="duration-variable">{variable}</code>
-          </div>
-        );
-      })}
-    </div>
-
-    <h4>Easing</h4>
-    <p>Smooth acceleration and deceleration for natural-feeling motion. Hover the ball to see it.</p>
-    <div class="easing-item">
-      <span class="easing-name">in-out</span>
-      <code class="easing-variable">--ease-in-out</code>
-      <div class="easing-demo" title="Hover to see easing curve in action">
-        <div class="easing-ball" />
-      </div>
-    </div>
-
-    <h4>Shadows</h4>
-    <p>Drop shadows for creating depth and elevation. Use sparingly to draw attention to raised elements.</p>
-    <div class="shadows">
-      {shadows.map((name) => {
-        const variable = `--shadow-${name}`;
-        return (
-          <div class="shadow-item">
-            <div class="shadow-preview" style={`filter: var(${variable})`}>
-              <span>{name}</span>
-            </div>
-            <code class="shadow-variable">{variable}</code>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-</section>
+      })
+    }
+  </tbody>
+</table>
 
 <style>
-  /* Font families */
-  .font-families {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-m);
-  }
-
-  .font-family-item {
-    padding: var(--space-s);
-    background-color: var(--color-background-secondary);
-    border-radius: var(--radius-sm);
-  }
-
-  .font-preview {
-    display: block;
-    font-size: var(--font-size-lg);
-    margin-bottom: var(--space-xs);
-  }
-
-  .font-meta {
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-
-    & strong {
-      color: var(--color-text);
-    }
-
-    & code {
-      font-size: var(--font-size-xs);
-    }
-  }
-
-  /* Font sizes table */
-  .font-sizes-table {
-    font-family: var(--font-ui);
-
-    & .size-preview {
-      font-family: var(--font-prose);
-      white-space: nowrap;
-    }
-
-    & .size-usage {
-      font-size: var(--font-size-sm);
-      color: var(--color-text-secondary);
-    }
-
-    & code {
-      font-size: var(--font-size-xs);
-    }
-  }
-
-  /* Line heights */
-  .line-heights {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
-    gap: var(--space-m);
-  }
-
-  .line-height-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3xs);
-    font-family: var(--font-ui);
-  }
-
-  .lh-name {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .lh-preview {
-    font-size: var(--font-size-sm);
-    padding: var(--space-xs);
-    background-color: var(--color-background-secondary);
+  /* Spacing scale */
+  .spacing-bar {
+    height: var(--space-s);
+    background-color: var(--color-accent);
     border-radius: var(--radius-xs);
   }
 
-  .lh-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Letter spacing */
-  .letter-spacings {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-    gap: var(--space-m);
-  }
-
-  .tracking-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3xs);
-    font-family: var(--font-ui);
-  }
-
-  .tracking-name {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .tracking-preview {
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .tracking-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Font weights */
-  .font-weights {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-    gap: var(--space-m);
-  }
-
-  .weight-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3xs);
-    font-family: var(--font-ui);
-  }
-
-  .weight-name {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .weight-preview {
-    font-size: var(--font-size-xl);
-    font-family: var(--font-prose);
-  }
-
-  .weight-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Border widths */
-  .border-widths {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
-  }
-
-  .border-item {
-    display: grid;
-    grid-template-columns: 5rem 1fr auto;
-    align-items: center;
-    gap: var(--space-s);
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
-  }
-
-  .border-name {
-    font-weight: var(--font-weight-medium);
-  }
-
-  .border-preview {
-    padding: var(--space-2xs) 0;
-  }
-
-  .border-line {
+  /* Border widths table */
+  .border-width-preview {
     border-bottom-style: solid;
     border-bottom-color: var(--color-accent);
   }
 
-  .border-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Border radii */
-  .border-radii {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
-    gap: var(--space-m);
-  }
-
-  .radius-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3xs);
-    font-family: var(--font-ui);
-  }
-
-  .radius-name {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .radius-preview {
+  /* Border radii table */
+  .border-radius-preview {
     width: 4rem;
     height: 4rem;
     background-color: var(--color-accent);
-  }
-
-  .radius-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Durations */
-  .durations {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
-  }
-
-  .duration-item {
-    display: grid;
-    grid-template-columns: 4rem 8rem auto;
-    align-items: center;
-    gap: var(--space-s);
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
-  }
-
-  .duration-name {
-    font-weight: var(--font-weight-medium);
-  }
-
-  .duration-preview {
-    height: var(--space-s);
-    background-color: var(--color-background-secondary);
-    border-radius: var(--radius-xs);
-    overflow: hidden;
-  }
-
-  .duration-bar {
-    width: 20%;
-    height: 100%;
-    background-color: var(--color-accent);
-    transition-property: width;
-    transition-timing-function: var(--ease-in-out);
-  }
-
-  .duration-preview:hover .duration-bar {
-    width: 100%;
-  }
-
-  .duration-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  /* Easing */
-  .easing-item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-m);
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
-    padding: var(--space-s);
-    background-color: var(--color-background-secondary);
-    border-radius: var(--radius-sm);
-  }
-
-  .easing-name {
-    font-weight: var(--font-weight-medium);
-  }
-
-  .easing-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-  }
-
-  .easing-demo {
-    width: 8rem;
-    height: var(--space-s);
-    background-color: var(--color-background);
-    border-radius: var(--radius-xs);
-    overflow: hidden;
-    position: relative;
-  }
-
-  .easing-ball {
-    position: absolute;
-    left: 0;
-    width: var(--space-s);
-    height: var(--space-s);
-    background-color: var(--color-accent);
     border-radius: var(--radius-full);
-    transition: left var(--duration-slow) var(--ease-in-out);
   }
 
-  .easing-demo:hover .easing-ball {
-    left: calc(100% - var(--space-s));
+  /* Shadows table */
+  .shadow-preview-container {
+    background-color: var(--color-background);
+    padding: var(--space-2xs);
   }
-
-  /* Shadows */
-  .shadows {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-    gap: var(--space-l);
-  }
-
-  .shadow-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-
   .shadow-preview {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    aspect-ratio: 2 / 1;
-    background-color: var(--surface-raised);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-ui);
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--color-background);
+  }
+
+  /* Font preview table */
+  .font-preview {
+    font-size: var(--font-size-lg);
+    color: var(--color-accent);
+  }
+
+  .font-meta {
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
   }
 
-  .shadow-variable {
-    font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
+  /* Font sizes table */
+  .font-size-preview {
+    color: var(--color-accent);
+    font-family: var(--font-prose);
+    white-space: nowrap;
   }
 
-  /* Responsive adjustments */
-  @media (max-width: 640px) {
-    .font-size-item,
-    .border-item,
-    .duration-item {
-      grid-template-columns: 1fr;
-      gap: var(--space-2xs);
-    }
+  /* Letter spacing table */
+  .letter-spacing-preview {
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    font-variant: small-caps;
+  }
+
+  /* Font weights table */
+  .font-weight-preview {
+    font-size: var(--font-size-lg);
+    font-family: var(--font-prose);
+    white-space: nowrap;
   }
 </style>
