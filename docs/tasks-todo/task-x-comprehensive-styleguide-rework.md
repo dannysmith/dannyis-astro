@@ -324,26 +324,35 @@ Most components should be wrapped in `SGTypographySwitcher` to show how they app
 
 ### 6. HTML Elements
 
-We have already included a number of plain HTML elements in the earlier sections, but these were mostly confined to typography-related stuff. This section should include any other HTML elements which we may find ourselves using in the site. We should show how these look in all three type systems (ie wrap in SGTypographySwitcher) and for block elements we should also wrap that in a ResizableContainer. We should do our best to group these elements together into logical, realistic demos. For example, the demo of the form elements should probably be an actual `<form>` with `<fieldset>`, labels and all common form controls.
+We have already included a number of plain HTML elements in the earlier sections, but these were mostly confined to typography-related stuff. This section covers remaining HTML elements that might be used on the site, providing sensible base styles for future use.
 
-#### Form Elements
-- `<button>` - Default button styling
-- `<input type="text">` - Text input
-- `<input type="checkbox">` - Checkbox
-- `<input type="radio">` - Radio button
-- `<select>` - Dropdown
-- `<textarea>` - Multi-line input
+Wrap in `SGTypographySwitcher` to see how elements render in different type contexts. Block elements should also be in `ResizableContainer`.
 
-#### Interactive Elements
-- `<details>` / `<summary>` - Native disclosure
-- `<dialog>` - Native dialog (if styled)
+**Not included:** `<img>` (covered by BasicImage in Section 4), `<iframe>` (covered by Embed in Section 4), `<dialog>` (not currently used), `<address>` (unlikely to use).
 
-#### Other Elements
-- `<img>` - Basic image
-- `<figure>` / `<figcaption>` - Image with caption
-- `<video>` - Native video (if used)
-- `<iframe>` - Embedded content
-- `<dl>` / `<dt>` / `<dd>`
+#### Checklist
+
+- [ ] **Forms**
+      One realistic form demo with `<fieldset>`, `<legend>`, `<label>`, and common form controls:
+      - Text inputs: text, email, password, search, url, number
+      - File and color pickers: file, color
+      - Checkboxes and radios: checkbox, radio
+      - Dropdowns: select, datalist
+      - Multi-line: textarea
+      - Button: button
+      - Progress indicators: meter, progress
+
+- [ ] **Details/Summary**
+      Native HTML disclosure widget.
+
+- [ ] **Definition Lists**
+      `<dl>`, `<dt>`, `<dd>` demo.
+
+- [ ] **Figure/Figcaption**
+      Simple demo to see inherited base styles (distinct from BasicImage's enhancements).
+
+- [ ] **Audio/Video**
+      Native HTML `<audio>` and `<video>` elements for future use.
 
 ### 7. Other Stuff
 
