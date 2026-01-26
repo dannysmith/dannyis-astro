@@ -1,0 +1,37 @@
+---
+/**
+ * SGTypographySwitcher - Renders slot content in tabs with different typography systems
+ * Useful for comparing how content looks across different typographic contexts.
+ */
+import { Tabs, TabItem } from '@components/mdx/index';
+import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
+
+type TypographySystem =
+  | { name: string; type: 'none' }
+  | { name: string; type: 'component'; component: 'LongFormProseTypography' }
+  | { name: string; type: 'class'; className: string };
+
+const typographySystems: TypographySystem[] = [
+  { name: 'Default', type: 'none' },
+  { name: 'Long Form Prose', type: 'component', component: 'LongFormProseTypography' },
+  { name: 'UI Style', type: 'class', className: 'ui-style' },
+];
+
+const content = await Astro.slots.render('default');
+---
+
+<Tabs>
+  {typographySystems.map((system) => (
+    <TabItem label={system.name}>
+      {system.type === 'none' && <Fragment set:html={content} />}
+      {system.type === 'component' && system.component === 'LongFormProseTypography' && (
+        <LongFormProseTypography>
+          <Fragment set:html={content} />
+        </LongFormProseTypography>
+      )}
+      {system.type === 'class' && (
+        <div class={system.className} set:html={content} />
+      )}
+    </TabItem>
+  ))}
+</Tabs>
