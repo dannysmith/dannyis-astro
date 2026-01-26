@@ -6,6 +6,8 @@
  */
 import ColorSwatch from '@components/mdx/ColorSwatch.astro';
 
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 // Color names mapped to their CSS variables
 const adaptiveColors = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
 const absoluteColors = ['white', 'black', 'ink', 'charcoal', 'beige'];
@@ -59,26 +61,17 @@ const semanticColorGroups = [
   </p>
 
   <div class="sg-theme-comparison">
-    <div class="sg-theme-column" data-theme="light">
-      <div class="sg-grid">
-        {
-          adaptiveColors.map(color => {
-            const name = color.charAt(0).toUpperCase() + color.slice(1);
-            return <ColorSwatch color={`var(--color-${color})`} name={name} />;
-          })
-        }
-      </div>
-    </div>
-    <div class="sg-theme-column" data-theme="dark">
-      <div class="sg-grid">
-        {
-          adaptiveColors.map(color => {
-            const name = color.charAt(0).toUpperCase() + color.slice(1);
-            return <ColorSwatch color={`var(--color-${color})`} name={name} />;
-          })
-        }
-      </div>
-    </div>
+    {
+      ['light', 'dark'].map(theme => (
+        <div class="sg-theme-column" data-theme={theme}>
+          <div class="sg-grid">
+            {adaptiveColors.map(color => (
+              <ColorSwatch color={`var(--color-${color})`} name={capitalize(color)} />
+            ))}
+          </div>
+        </div>
+      ))
+    }
   </div>
 
   <!-- Absolute Colors -->
@@ -86,12 +79,9 @@ const semanticColorGroups = [
   <p>Static colors that don't change between themes. Used for specific design elements.</p>
   <div class="sg-panel">
     <div class="sg-grid" style="--sg-grid-min: 8rem">
-      {
-        absoluteColors.map(color => {
-          const name = color.charAt(0).toUpperCase() + color.slice(1);
-          return <ColorSwatch color={`var(--color-${color})`} name={name} />;
-        })
-      }
+      {absoluteColors.map(color => (
+        <ColorSwatch color={`var(--color-${color})`} name={capitalize(color)} />
+      ))}
     </div>
   </div>
 
@@ -121,12 +111,12 @@ const semanticColorGroups = [
             <tr>
               <td>{name}</td>
               <td class="center" data-theme="light">
-                <span class="mini-swatch" data-theme="light">
+                <span class="mini-swatch">
                   <ColorSwatch color={`var(${variable})`} />
                 </span>
               </td>
               <td class="center" data-theme="dark">
-                <span class="mini-swatch" data-theme="dark">
+                <span class="mini-swatch">
                   <ColorSwatch color={`var(${variable})`} />
                 </span>
               </td>
@@ -149,8 +139,7 @@ const semanticColorGroups = [
   }
 
   table {
-    th,
-    td.center {
+    :is(th, td.center) {
       text-align: center;
     }
     td {
