@@ -1,0 +1,63 @@
+---
+/**
+ * Styleguide Table of Contents component
+ * Takes an array of sections and creates a floating table of contents for the styleguide. Eg.
+ *
+ * <SGTOC sections={[{ id: 'colors', label: 'Colors' }, { id: 'typography', label: 'Typography' }]} />
+ *
+ */
+
+export interface Props {
+  sections: Array<{ id: string; label: string }>;
+}
+
+const { sections } = Astro.props;
+---
+
+<nav class="sgtoc ui-style" aria-label="Styleguide navigation">
+  <ul class="list-reset">
+    {sections.map(({ id, label }) => <li><a href={`#${id}`}>{label}</a></li>)}
+  </ul>
+</nav>
+
+<script>
+  const links = document.querySelectorAll('.sgtoc a');
+  const sections = document.querySelectorAll('.styleguide-section');
+
+  function updateActive() {
+    const scrollY = window.scrollY + 100;
+    sections.forEach((section) => {
+      const top = (section as HTMLElement).offsetTop;
+      const bottom = top + (section as HTMLElement).offsetHeight;
+      const id = section.id;
+      if (scrollY >= top && scrollY < bottom) {
+        links.forEach((link) => {
+          link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
+        });
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+</script>
+
+<style>
+  .sgtoc {
+    position: sticky;
+    inset-block-start: var(--space-m);
+    align-self: start;
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-sm);
+    padding: var(--space-m);
+    text-transform: uppercase;
+
+    li:not(:last-child) {
+      margin-block-end: var(--space-3xs);
+    }
+
+    .is-active {
+      color: var(--color-accent);
+    }
+  }
+</style>

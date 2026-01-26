@@ -2,6 +2,6 @@
 // These are helpers for the styleguide that aren't useful elsewhere
 
 import SGTypographySwitcher from './SGTypographySwitcher.astro';
-import StyleguideTOC from './StyleguideTOC.astro';
+import SGTOC from './SGTOC.astro';
 
-export { SGTypographySwitcher, StyleguideTOC };
+export { SGTypographySwitcher, SGTOC };

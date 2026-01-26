@@ -2,7 +2,7 @@
 import BaseHead from '@components/layout/BaseHead.astro';
 import MainNavigation from '@components/layout/MainNavigation.astro';
 import Footer from '@components/layout/Footer.astro';
-import { StyleguideTOC } from '@components/styleguide';
+import { SGTOC } from '@components/styleguide';
 
 // Styleguide-specific styles (only loaded on this page)
 import '../../styles/styleguide.css';
@@ -40,7 +40,7 @@ const sections = [
   <body>
     <MainNavigation />
     <div class="styleguide-layout">
-      <StyleguideTOC sections={sections} />
+      <SGTOC sections={sections} />
       <main class="styleguide-content flow">
         <header>
           <h1>Design System</h1>

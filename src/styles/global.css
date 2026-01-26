@@ -822,11 +822,6 @@
     & li::marker {
       color: inherit;
     }
-
-    /* Tighter prose spacing */
-    & :where(p, ul, ol, blockquote) {
-      margin-top: var(--space-m);
-    }
   }
 
   /* ----------------------------------------
