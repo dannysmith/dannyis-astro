@@ -20,11 +20,23 @@ const { initialWidth = '100%', minWidth = '200px', maxWidth = '100%' } = Astro.p
 
 <style>
   .resizable-container {
+    position: relative;
     resize: horizontal;
     overflow: hidden;
-    padding: var(--space-s);
+    padding: var(--space-xs);
     border: var(--border-width-hairline) dashed var(--color-border);
-    border-right: 3px solid var(--color-border);
     border-radius: var(--radius-sm);
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline-end: 0;
+      inset-block-end: 0;
+      width: var(--space-s);
+      height: var(--space-s);
+      border-right: var(--border-width-base) solid var(--color-accent);
+      border-bottom: var(--border-width-base) solid var(--color-accent);
+    }
+
   }
 </style>
