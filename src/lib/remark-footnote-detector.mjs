@@ -52,6 +52,9 @@ export function remarkFootnoteDetector() {
   return function (tree, { data }) {
     // Check for footnoteDefinition nodes (the [^label]: content part)
     // If these exist, the content has footnotes
-    data.astro.frontmatter.hasFootnotes = hasNodeType(tree, 'footnoteDefinition');
+    const frontmatter = data.astro?.frontmatter;
+    if (frontmatter) {
+      frontmatter.hasFootnotes = hasNodeType(tree, 'footnoteDefinition');
+    }
   };
 }
