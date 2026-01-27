@@ -236,33 +236,33 @@ Each chunk is wrapped in `SGTypographySwitcher`. Most block-level components sho
 - [x] **BookmarkCard**
       Various real URLs to test link preview functionality. Show responsive behaviour.
 
-- [ ] **ButtonLink**
+- [x] **ButtonLink**
       Own chunk (expecting more variants in future).
       Show: primary, secondary, inline variants.
 
-- [ ] **Callout**
+- [x] **Callout**
       Be smart about combinations - demo various prop permutations overlapping with color demos:
       - All 7 colors (default, red, blue, green, orange, yellow, purple)
       - With/without title, icon vs emoji vs neither
       At least one callout with complex content: code block, headings, lists, inline styling (code, links, bold, italic).
 
-- [ ] **Accordion**
+- [x] **Accordion**
       - Standard and plain variants
       - At least one with complex content: lists, headings, code block, longer paragraphs
       - No need to separately demo open/closed prop
 
-- [ ] **Tabs & TabItem**
+- [x] **Tabs & TabItem**
       Demo tabbed content with multiple tabs.
 
-- [ ] **Layout Utilities**
+- [x] **Layout Utilities**
       Group `Center`, `Grid`, `Spacer`, and `ResizableContainer` together.
       - `Center`: simple demo
       - `Grid`: various columns/rows/gaps configurations. Try putting inside ResizableContainer to test responsiveness.
       - `Spacer`: multiple sizes
       - `ResizableContainer`: demo the component itself (meta - we use it throughout!)
 
-- [ ] **ColorSwatch**
-      Demo the ColorSwatch component with various colors.
+- [x] **ColorSwatch**
+      Demo the ColorSwatch component.
 
 - [ ] **Code Blocks (astro-expressive-code)**
       May need multiple SGTypographySwitchers under this heading depending on number of examples.

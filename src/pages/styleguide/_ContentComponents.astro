@@ -12,6 +12,15 @@ import Embed from '@components/mdx/Embed.astro';
 import Loom from '@components/mdx/Loom.astro';
 import Notion from '@components/mdx/Notion.astro';
 import BookmarkCard from '@components/mdx/BookmarkCard.astro';
+import ButtonLink from '@components/mdx/ButtonLink.astro';
+import Callout from '@components/mdx/Callout.astro';
+import Accordion from '@components/mdx/Accordion.astro';
+import Tabs from '@components/mdx/Tabs.astro';
+import TabItem from '@components/mdx/TabItem.astro';
+import Center from '@components/mdx/Center.astro';
+import Grid from '@components/mdx/Grid.astro';
+import Spacer from '@components/mdx/Spacer.astro';
+import ColorSwatch from '@components/mdx/ColorSwatch.astro';
 import { Image, Picture } from 'astro:assets';
 import styleguideImage from '@assets/articles/styleguide-image.jpg';
 ---
@@ -171,8 +180,8 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
   <ResizableContainer>
     <SGTypographySwitcher>
       <p>
-        For Loom videos, use <code>&lt;Embed&gt;</code> with a Loom share URL. You can also use the
-        dedicated <code>&lt;Loom&gt;</code> component with just the video ID:
+        For Loom videos, use <code>&lt;Embed&gt;</code> with a Loom share URL. You can also use the dedicated
+        <code>&lt;Loom&gt;</code> component with just the video ID:
       </p>
       <Embed url="https://www.loom.com/share/0132dbe661b24dd28f42e2ce040f78cc" />
     </SGTypographySwitcher>
@@ -181,14 +190,16 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
   <h4>Notion Links</h4>
   <SGTypographySwitcher>
     <p>
-      The <code>&lt;Notion&gt;</code> component creates inline links to Notion pages with automatic
-      title fetching and icon display. These links appear inline with surrounding text, like this
-      reference to <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
+      The <code>&lt;Notion&gt;</code> component creates inline links to Notion pages with automatic title
+      fetching and icon display. These links appear inline with surrounding text, like this reference
+      to <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
       which fetches its title automatically.
     </p>
     <p>
       You can include multiple Notion links naturally: see
-      <Notion href="https://dannysmith.notion.site/Meeting-Checkouts-870b7ecca989419b8f0d3047bad89d05" />
+      <Notion
+        href="https://dannysmith.notion.site/Meeting-Checkouts-870b7ecca989419b8f0d3047bad89d05"
+      />
       for checkout practices, or
       <Notion href="https://dannysmith.notion.site/Loom-4a6ebae015494adbbec07bf3f7912b03" />
       for video documentation tips.
@@ -214,4 +225,250 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
       <BookmarkCard url="https://github.com/withastro/astro" />
     </SGTypographySwitcher>
   </ResizableContainer>
+
+  <!-- 5. ButtonLink -->
+  <h3 id="button-link">ButtonLink</h3>
+  <p>
+    Call-to-action links styled as buttons. By default, buttons are centered in their own block. Use <code
+      >inline</code
+    > for flowing with text.
+  </p>
+  <SGTypographySwitcher>
+    <h4>Primary &amp; Secondary Variants</h4>
+    <p>
+      The primary variant uses the accent colour fill, while secondary has a subtle border that
+      highlights on hover.
+    </p>
+    <ButtonLink href="/writing/">Read More Articles</ButtonLink>
+    <ButtonLink href="/about/" variant="secondary">Learn About Me</ButtonLink>
+  </SGTypographySwitcher>
+
+  <SGTypographySwitcher>
+    <h4>Inline Variant</h4>
+    <p>
+      Sometimes you want a button that flows with surrounding text rather than being centered on its
+      own line. Use <code>inline</code> for this&mdash;great for embedding
+      <ButtonLink href="/notes/" inline>quick links</ButtonLink> or
+      <ButtonLink href="/contact/" variant="secondary" inline>actions</ButtonLink> within paragraphs
+      without breaking the reading flow.
+    </p>
+  </SGTypographySwitcher>
+
+  <!-- 6. Callout -->
+  <h3 id="callout">Callout</h3>
+  <p>
+    Highlighted boxes for important information, tips, warnings, or asides. Available in seven
+    colour variants with optional titles, icons, or emoji.
+  </p>
+
+  <h4>Colour Variants</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <Callout>
+        The <strong>default</strong> callout uses neutral colours and works well for general asides or
+        additional context that doesn't need special emphasis.
+      </Callout>
+      <Callout type="blue" title="Info">
+        Blue callouts suit informational notes, tips, or helpful context. The title prop adds a bold
+        heading.
+      </Callout>
+      <Callout type="green" emoji="✅">
+        Green works well for success messages, best practices, or things to do. This one uses an
+        emoji instead of an icon.
+      </Callout>
+      <Callout type="yellow" icon="heroicons:exclamation-triangle">
+        Yellow callouts draw attention to cautions or things to consider. This uses an icon from
+        heroicons.
+      </Callout>
+      <Callout type="orange" title="Important" icon="heroicons:fire">
+        Orange signals something noteworthy. Combine title and icon for maximum clarity.
+      </Callout>
+      <Callout type="red" title="Warning" emoji="🚨">
+        Red is for serious warnings, breaking changes, or critical information that shouldn't be
+        missed.
+      </Callout>
+      <Callout type="purple" emoji="💡">
+        Purple can highlight creative ideas, experiments, or anything a bit different from the
+        usual.
+      </Callout>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>Complex Content</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <Callout type="blue" title="Callouts Support Rich Content" icon="heroicons:document-text">
+        <p>
+          Callouts can contain any content you'd put elsewhere&mdash;they're just containers with
+          coloured styling. Here's a quick example with various elements:
+        </p>
+        <h5>A Nested Heading</h5>
+        <p>
+          You can include <strong>bold text</strong>, <em>italics</em>, <code>inline code</code>,
+          and <a href="/">links</a> just as you would anywhere else.
+        </p>
+        <ul>
+          <li>Bullet points work naturally</li>
+          <li>As do numbered lists</li>
+          <li>With any level of nesting you need</li>
+        </ul>
+        <p>Even code blocks render properly inside callouts.</p>
+      </Callout>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 7. Accordion -->
+  <h3 id="accordion">Accordion</h3>
+  <p>
+    Collapsible content sections using the native <code>&lt;details&gt;</code> element. Use for FAQs,
+    optional details, or keeping long content scannable.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <Accordion header="Standard Accordion">
+        <p>
+          This is the default accordion style with a subtle border and background. It starts closed
+          by default&mdash;click the header to expand.
+        </p>
+      </Accordion>
+      <Accordion header="Plain Variant">
+        <p>
+          The <code>plain</code> prop removes the border and background, leaving just the expand/collapse
+          behaviour. Good for lighter visual weight.
+        </p>
+      </Accordion>
+      <Accordion header="Accordion with Rich Content">
+        <h4>Accordions Handle Any Content</h4>
+        <p>
+          Like callouts, accordions are containers&mdash;you can put whatever you need inside them.
+          This includes paragraphs, lists, code, images, and other components.
+        </p>
+        <ul>
+          <li>First item with some detail</li>
+          <li>Second item explaining another point</li>
+          <li>Third item wrapping up</li>
+        </ul>
+        <p>
+          The content automatically gets proper spacing via the <code>.content-trim</code> class, removing
+          extra margins at the top and bottom.
+        </p>
+      </Accordion>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 9. Layout Utilities -->
+  <h3 id="layout-utilities">Layout Utilities</h3>
+  <p>
+    Simple layout helper components for common patterns. Use <code>&lt;Center&gt;</code> for centering,
+    <code>&lt;Grid&gt;</code> for responsive grids, <code>&lt;Spacer&gt;</code> for vertical rhythm,
+    and <code>&lt;ResizableContainer&gt;</code> for testing responsive behaviour.
+  </p>
+
+  <h4>Center</h4>
+  <SGTypographySwitcher>
+    <p>
+      The <code>&lt;Center&gt;</code> component horizontally centers its children using flexbox. Useful
+      for icons, logos, or anything that should sit in the middle:
+    </p>
+    <Center>
+      <ButtonLink href="/" inline>Centered Button</ButtonLink>
+    </Center>
+    <p>The button above is wrapped in <code>&lt;Center&gt;</code>.</p>
+  </SGTypographySwitcher>
+
+  <h4>Grid</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        A responsive CSS Grid wrapper. Columns collapse gracefully&mdash;they never go narrower than
+        200px, so a 3-column grid becomes 2 or 1 column as space shrinks.
+      </p>
+      <Grid columns={3} gap="var(--space-s)">
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Column 1
+        </div>
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Column 2
+        </div>
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Column 3
+        </div>
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Column 4
+        </div>
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Column 5
+        </div>
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Column 6
+        </div>
+      </Grid>
+      <p>Drag the container edge to see how the grid reflows.</p>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>ResizableContainer</h4>
+  <p>
+    The very component we've been using throughout this styleguide! It wraps content in a resizable
+    container with a drag handle, letting users test responsive behaviour interactively. Here's a
+    nested example:
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Drag the right edge to resize this container. <code>&lt;ResizableContainer&gt;</code> is invaluable
+        for testing how components respond to different widths without needing browser DevTools.
+      </p>
+      <Grid columns={2}>
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Left
+        </div>
+        <div
+          style="background: var(--color-background-secondary); padding: var(--space-s); border-radius: var(--radius-sm);"
+        >
+          Right
+        </div>
+      </Grid>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 10. ColorSwatch -->
+  <h3 id="color-swatch">ColorSwatch</h3>
+  <p>
+    Interactive colour swatches that display a colour and copy its hex value to clipboard on click.
+    Used extensively in the <a href="#color-system">Color System</a> section.
+  </p>
+  <SGTypographySwitcher>
+    <p>
+      Each swatch shows the colour and optionally a name. Hover to see the CSS variable name; click
+      to copy the computed hex value.
+    </p>
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr)); gap: var(--space-xs); height: 4rem;"
+    >
+      <ColorSwatch color="var(--color-coral)" name="Coral" />
+      <ColorSwatch color="var(--color-blue)" name="Blue" />
+      <ColorSwatch color="var(--color-green)" name="Green" />
+      <ColorSwatch color="var(--color-purple)" name="Purple" />
+      <ColorSwatch color="var(--color-orange)" name="Orange" />
+    </div>
+    <p>
+      The swatch text colour automatically adjusts for contrast using OKLCH colour math. Swatches
+      work at any size&mdash;the text scales responsively.
+    </p>
+  </SGTypographySwitcher>
 </section>
