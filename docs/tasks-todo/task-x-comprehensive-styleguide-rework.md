@@ -285,47 +285,47 @@ Most components should be wrapped in `SGTypographySwitcher` to show how they app
 
 #### Checklist
 
-- [ ] **PersonalLogo**
+- [x] **PersonalLogo**
       Simple component showing circle + "Danny Smith" text.
       Wrap in SGTypographySwitcher.
 
-- [ ] **Pill**
+- [x] **Pill**
       Show various colors (default, custom colors via props).
       Wrap in SGTypographySwitcher.
 
-- [ ] **Spinner**
+- [x] **Spinner**
       Show default and various custom sizes.
       Wrap in SGTypographySwitcher.
 
-- [ ] **SocialLinks**
+- [x] **SocialLinks**
       Social media icon links.
       Wrap in SGTypographySwitcher.
 
-- [ ] **ThemeToggle**
+- [x] **ThemeToggle**
       Interactive light/auto/dark toggle.
       Wrap in SGTypographySwitcher for consistency.
 
-- [ ] **MarkdownContentActions**
+- [x] **MarkdownContentActions**
       Shows "share / copy / view as markdown" links.
       Use fake URL for visual appearance only (functionality won't work in demo).
       Wrap in SGTypographySwitcher.
 
-- [ ] **ContentCard: Articles**
+- [x] **ContentCard: Articles**
       Show article-type cards with various prop permutations (standard/compact, with/without image, etc.).
       Wrap in SGTypographySwitcher and ResizableContainer.
 
-- [ ] **ContentCard: Notes**
+- [x] **ContentCard: Notes**
       Show note-type cards with various prop permutations.
       Wrap in SGTypographySwitcher and ResizableContainer.
 
-- [ ] **Footer**
+- [x] **Footer**
       Self-contained footer component. Uses PersonalLogo, NavLink, SocialLinks internally.
       **Do NOT wrap in SGTypographySwitcher** (has fixed `dark-surface` styling).
       Wrap in ResizableContainer to test responsive behaviour.
 
 #### NoteCard
 
-- [ ] **NoteCard**
+- [x] **NoteCard**
       Card component for notes with title, date, optional tags, optional sourceURL.
       Approach TBD - needs slot content and may require special handling.
 
@@ -340,7 +340,7 @@ Wrap in `SGTypographySwitcher` to see how elements render in different type cont
 
 #### Checklist
 
-- [ ] **Forms**
+- [x] **Forms**
       One realistic form demo with `<fieldset>`, `<legend>`, `<label>`, and common form controls:
       - Text inputs: text, email, password, search, url, number
       - File and color pickers: file, color
@@ -350,16 +350,16 @@ Wrap in `SGTypographySwitcher` to see how elements render in different type cont
       - Button: button
       - Progress indicators: meter, progress
 
-- [ ] **Details/Summary**
+- [x] **Details/Summary**
       Native HTML disclosure widget.
 
-- [ ] **Definition Lists**
+- [x] **Definition Lists**
       `<dl>`, `<dt>`, `<dd>` demo.
 
-- [ ] **Figure/Figcaption**
+- [x] **Figure/Figcaption**
       Simple demo to see inherited base styles (distinct from BasicImage's enhancements).
 
-- [ ] **Audio/Video**
+- [x] **Audio/Video**
       Native HTML `<audio>` and `<video>` elements for future use.
 
 ### 7. Other Stuff
