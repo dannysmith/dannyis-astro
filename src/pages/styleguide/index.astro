@@ -9,21 +9,21 @@ import { SGTOC } from '@components/styleguide';
 import ColorSystem from './_ColorSystem.astro';
 import DesignTokens from './_DesignTokens.astro';
 import Typography from './_Typography.astro';
-import HtmlElements from './_HtmlElements.astro';
-import LayoutComponents from './_LayoutComponents.astro';
+import ContentComponents from './_ContentComponents.astro';
 import UiComponents from './_UiComponents.astro';
-import MdxComponents from './_MdxComponents.astro';
-import Utilities from './_Utilities.astro';
+import HtmlElements from './_HtmlElements.astro';
+import OtherStuff from './_OtherStuff.astro';
+import UtilityClasses from './_UtilityClasses.astro';
 
 const sections = [
   { id: 'colors', label: 'Colors' },
   { id: 'design-tokens', label: 'Design Tokens' },
   { id: 'typography', label: 'Typography' },
-  { id: 'html-elements', label: 'HTML Elements' },
-  { id: 'layout-components', label: 'Layout' },
+  { id: 'content-components', label: 'Content' },
   { id: 'ui-components', label: 'UI' },
-  { id: 'mdx-components', label: 'MDX' },
-  { id: 'utilities', label: 'Utilities' },
+  { id: 'html-elements', label: 'HTML' },
+  { id: 'other-stuff', label: 'Other' },
+  { id: 'utility-classes', label: 'Utilities' },
 ];
 ---
 
@@ -55,11 +55,11 @@ const sections = [
         <ColorSystem />
         <DesignTokens />
         <Typography />
-        <HtmlElements />
-        <LayoutComponents />
+        <ContentComponents />
         <UiComponents />
-        <MdxComponents />
-        <Utilities />
+        <HtmlElements />
+        <OtherStuff />
+        <UtilityClasses />
       </main>
     </div>
     <Footer />
