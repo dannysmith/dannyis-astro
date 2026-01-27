@@ -9,17 +9,13 @@ import ResizableContainer from '@components/mdx/ResizableContainer.astro';
 import IntroParagraph from '@components/mdx/IntroParagraph.astro';
 import BasicImage from '@components/mdx/BasicImage.astro';
 import Embed from '@components/mdx/Embed.astro';
-import Loom from '@components/mdx/Loom.astro';
 import Notion from '@components/mdx/Notion.astro';
 import BookmarkCard from '@components/mdx/BookmarkCard.astro';
 import ButtonLink from '@components/mdx/ButtonLink.astro';
 import Callout from '@components/mdx/Callout.astro';
 import Accordion from '@components/mdx/Accordion.astro';
-import Tabs from '@components/mdx/Tabs.astro';
-import TabItem from '@components/mdx/TabItem.astro';
 import Center from '@components/mdx/Center.astro';
 import Grid from '@components/mdx/Grid.astro';
-import Spacer from '@components/mdx/Spacer.astro';
 import ColorSwatch from '@components/mdx/ColorSwatch.astro';
 import { Image, Picture } from 'astro:assets';
 import styleguideImage from '@assets/articles/styleguide-image.jpg';
@@ -331,7 +327,7 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
           by default&mdash;click the header to expand.
         </p>
       </Accordion>
-      <Accordion header="Plain Variant">
+      <Accordion header="Plain Variant" plain>
         <p>
           The <code>plain</code> prop removes the border and background, leaving just the expand/collapse
           behaviour. Good for lighter visual weight.
@@ -356,12 +352,12 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
     </SGTypographySwitcher>
   </ResizableContainer>
 
-  <!-- 9. Layout Utilities -->
+  <!-- 8. Layout Utilities -->
   <h3 id="layout-utilities">Layout Utilities</h3>
   <p>
     Simple layout helper components for common patterns. Use <code>&lt;Center&gt;</code> for centering,
-    <code>&lt;Grid&gt;</code> for responsive grids, <code>&lt;Spacer&gt;</code> for vertical rhythm,
-    and <code>&lt;ResizableContainer&gt;</code> for testing responsive behaviour.
+    <code>&lt;Grid&gt;</code> for responsive grids, and <code>&lt;ResizableContainer&gt;</code> for
+    testing responsive behaviour.
   </p>
 
   <h4>Center</h4>
@@ -446,7 +442,7 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
     </SGTypographySwitcher>
   </ResizableContainer>
 
-  <!-- 10. ColorSwatch -->
+  <!-- 9. ColorSwatch -->
   <h3 id="color-swatch">ColorSwatch</h3>
   <p>
     Interactive colour swatches that display a colour and copy its hex value to clipboard on click.
