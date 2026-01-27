@@ -108,12 +108,21 @@ Investigate whether we can:
 1. Detect at build time if a page has footnotes and conditionally include the component
 2. Or make the JS even more lightweight (it already no-ops if no footnotes exist)
 
-This may not be necessary - the JS is small and gracefully handles the no-footnotes case. Evaluate whether the complexity is worth it.
+### Solution Implemented
+
+Created a new remark plugin (`src/lib/remark-footnote-detector.mjs`) that:
+- Traverses the MDAST (markdown AST) at build time
+- Detects `footnoteDefinition` nodes (the actual parsed footnotes)
+- Sets `remarkPluginFrontmatter.hasFootnotes` boolean
+- Correctly ignores footnote-like syntax in code blocks (AST-based detection)
+
+This is passed through to `Article.astro` which conditionally renders `<InlineFootnotes />`.
 
 ### Acceptance Criteria
-- [ ] Evaluate whether optimization is needed
-- [ ] If yes: implement conditional inclusion
-- [ ] If no: document decision and close phase
+- [x] Evaluate whether optimization is needed
+- [x] Implement conditional inclusion via remark plugin
+- [x] Verify articles with footnotes still work
+- [x] Verify articles without footnotes don't load the JS (CSS is bundled globally, JS is conditional)
 
 ---
 
