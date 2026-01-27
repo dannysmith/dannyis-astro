@@ -5,12 +5,12 @@ import { Image } from 'astro:assets';
 import {
   BaseHead,
   Footer,
+  InlineFootnotes,
   Lightbox,
   LongFormProseTypography,
   MainNavigation,
   TableOfContents,
 } from '@components/layout/index';
-import InlineFootnotes from '@components/layout/InlineFootnotes.astro';
 import { FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index';
 
 type Props = CollectionEntry<'articles'>['data'] & {

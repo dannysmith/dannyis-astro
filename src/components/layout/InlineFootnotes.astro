@@ -48,39 +48,61 @@
 </style>
 
 <script>
-  document.querySelectorAll('a[data-footnote-ref]').forEach(el => {
-    const elm = el as HTMLAnchorElement;
-    const footnoteId = elm.getAttribute('href')?.slice(1);
-    if (!footnoteId) return;
-    const footnoteElement = document.getElementById(footnoteId);
+  function initInlineFootnotes() {
+    document
+      .querySelectorAll<HTMLAnchorElement>('a[data-footnote-ref]:not([data-inline-footnote-init])')
+      .forEach(elm => {
+        // Mark as initialized to avoid re-processing after view transitions
+        elm.setAttribute('data-inline-footnote-init', '');
 
-    // Find the closest block-level parent (p, div, li, etc.)
-    const closestBlock = elm.closest(
-      'p, .intro-paragraph, li, blockquote, div.longform-prose > *'
-    );
-    if (!closestBlock || !footnoteElement?.firstElementChild) return;
+        const footnoteId = elm.getAttribute('href')?.slice(1);
+        if (!footnoteId) return;
+        const footnoteElement = document.getElementById(footnoteId);
 
-    const inlineFootNoteContainer = document.createElement('div');
-    inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
-    inlineFootNoteContainer.style.display = 'none';
+        // Find the closest block-level parent (p, div, li, etc.)
+        const closestBlock = elm.closest(
+          'p, .intro-paragraph, li, blockquote, div.longform-prose > *'
+        );
+        if (!closestBlock || !footnoteElement?.children.length) return;
 
-    // Close button
-    const closeBtn = document.createElement('button');
-    closeBtn.classList.add('inline-footnote-close');
-    closeBtn.innerHTML = '×';
-    closeBtn.setAttribute('aria-label', 'Close footnote');
-    closeBtn.addEventListener('click', () => {
-      inlineFootNoteContainer.style.display = 'none';
-    });
+        const inlineFootNoteContainer = document.createElement('div');
+        inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
+        inlineFootNoteContainer.style.display = 'none';
 
-    inlineFootNoteContainer.appendChild(closeBtn);
-    inlineFootNoteContainer.appendChild(footnoteElement.firstElementChild.cloneNode(true));
-    closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
+        // Close button
+        const closeBtn = document.createElement('button');
+        closeBtn.classList.add('inline-footnote-close');
+        closeBtn.innerHTML = '×';
+        closeBtn.setAttribute('aria-label', 'Close footnote');
+        closeBtn.addEventListener('click', () => {
+          inlineFootNoteContainer.style.display = 'none';
+        });
 
-    elm.addEventListener('click', e => {
-      e.preventDefault();
-      inlineFootNoteContainer.style.display =
-        inlineFootNoteContainer.style.display === 'none' ? 'block' : 'none';
-    });
-  });
+        inlineFootNoteContainer.appendChild(closeBtn);
+
+        // Clone all child elements (supports multi-paragraph footnotes)
+        Array.from(footnoteElement.children).forEach(child => {
+          inlineFootNoteContainer.appendChild(child.cloneNode(true));
+        });
+
+        // Insert inside LI elements to preserve list structure, otherwise after the block
+        if (closestBlock.tagName === 'LI') {
+          closestBlock.appendChild(inlineFootNoteContainer);
+        } else {
+          closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
+        }
+
+        elm.addEventListener('click', e => {
+          e.preventDefault();
+          inlineFootNoteContainer.style.display =
+            inlineFootNoteContainer.style.display === 'none' ? 'block' : 'none';
+        });
+      });
+  }
+
+  // Run on initial load
+  initInlineFootnotes();
+
+  // Re-run after Astro view transitions
+  document.addEventListener('astro:page-load', initInlineFootnotes);
 </script>
