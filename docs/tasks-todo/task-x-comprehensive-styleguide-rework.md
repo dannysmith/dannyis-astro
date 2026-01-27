@@ -264,7 +264,7 @@ Each chunk is wrapped in `SGTypographySwitcher`. Most block-level components sho
 - [x] **ColorSwatch**
       Demo the ColorSwatch component.
 
-- [ ] **Code Blocks (astro-expressive-code)**
+- [x] **Code Blocks (astro-expressive-code)**
       May need multiple SGTypographySwitchers under this heading depending on number of examples.
       Demonstrate all expressive-code features:
       - `title="filename.js"` - File name/title in frame header
