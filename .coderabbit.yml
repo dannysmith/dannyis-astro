@@ -1,0 +1,18 @@
+# CodeRabbit Configuration
+# https://docs.coderabbit.ai/reference/configuration
+
+reviews:
+  collapse_walkthrough: true
+  sequence_diagrams: false
+  path_filters:
+    # Ignore markdown/content files (noisy spelling/grammar feedback)
+    - "!**/*.md"
+    - "!**/*.mdx"
+    # Ignore lockfiles
+    - "!pnpm-lock.yaml"
+    # Ignore static assets
+    - "!public/**"
+
+issue_enrichment:
+  auto_enrich:
+    enabled: false
