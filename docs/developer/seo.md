@@ -114,7 +114,7 @@ Unified HTML head management with SEO integration.
 **File:** `src/components/layout/BaseHead.astro`
 
 ```astro
-import { BaseHead } from '@components/layout';
+import { BaseHead } from '@components/layout/index';
 
 <BaseHead
   title="Page Title"

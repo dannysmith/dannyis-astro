@@ -245,14 +245,17 @@ const { title, description } = Astro.props;
 **ALWAYS use path aliases** - Relative imports will cause build failures.
 
 ```typescript
-// Component barrel imports (preferred)
-import { BaseHead, Footer } from '@components/layout';
-import { FormattedDate, Pill } from '@components/ui';
-import { NavLink, ThemeToggle } from '@components/navigation';
+// In .astro files - barrel imports require explicit /index suffix
+import { BaseHead, Footer } from '@components/layout/index';
+import { FormattedDate, Pill } from '@components/ui/index';
+import { NavLink, ThemeToggle } from '@components/navigation/index';
+import { Callout, Embed } from '@components/mdx/index';
+
+// In .mdx files - /index suffix is optional
 import { Callout, Embed } from '@components/mdx';
 
 // Direct imports (when not in barrel export)
-import BaseHead from '@components/layout/BaseHead.astro';
+import InlineFootnotes from '@components/layout/InlineFootnotes.astro';
 
 // Config, utilities, layouts, assets
 import { AUTHOR } from '@config/seo';
@@ -264,17 +267,22 @@ import coverImage from '@assets/articles/my-article/cover.jpg';
 See `tsconfig.json` for complete list.
 
 1. Always use aliases, never relative imports (`../../components/`)
-2. Prefer barrel exports (`@components/ui`) over direct paths
-3. Use direct imports only when component isn't exported from barrel
+2. Prefer barrel exports over direct paths
+3. In `.astro` files, barrel imports require `/index` suffix (e.g., `@components/layout/index`)
+4. In `.mdx` files, `/index` suffix is optional
+5. Use direct imports only when component isn't exported from barrel
 
 **Common mistake:**
 
 ```typescript
-// ❌ Wrong - will break builds
+// ❌ Wrong - relative imports will break builds
 import BaseHead from '../../components/layout/BaseHead.astro';
 
-// ✅ Correct
+// ❌ Wrong in .astro files - missing /index suffix
 import { BaseHead } from '@components/layout';
+
+// ✅ Correct in .astro files
+import { BaseHead } from '@components/layout/index';
 ```
 
 ### Redirects
