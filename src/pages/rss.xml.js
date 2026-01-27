@@ -8,6 +8,7 @@ import { filterContentForListing } from '@utils/content';
 
 export async function GET(context) {
   // Initialize Container API for MDX rendering
+  // Note: React components in MDX will be skipped (caught by try/catch below)
   const renderers = await loadRenderers([getMDXRenderer()]);
   const container = await AstroContainer.create({ renderers });
 
