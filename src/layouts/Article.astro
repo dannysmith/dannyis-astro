@@ -11,6 +11,7 @@ import MainNavigation from '@components/layout/MainNavigation.astro';
 import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
 import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
 import TableOfContents from '@components/layout/TableOfContents.astro';
+import InlineFootnotes from '@components/layout/InlineFootnotes.astro';
 
 type Props = CollectionEntry<'articles'>['data'] & {
   readingTime: string;
@@ -100,6 +101,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 
     <Footer />
     <Lightbox />
+    <InlineFootnotes />
     <style>
       /* Article needs position context for TOC */
       article {
@@ -168,75 +170,6 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
         float: right;
       }
 
-      /* Inline footnotes - toggled by JS below */
-      /* Use :global() so styles apply to dynamically created elements */
-      :global(.inline-footnote-container) {
-        font-size: var(--font-size-sm);
-        padding: var(--space-s);
-        margin-top: var(--space-xs);
-        position: relative;
-
-        /* Hide the return link - not needed for inline footnotes */
-        [data-footnote-backref] {
-          display: none;
-        }
-      }
-
-      :global(.inline-footnote-close) {
-        position: absolute;
-        top: var(--space-2xs);
-        right: var(--space-2xs);
-        border: none;
-        background: transparent;
-        color: var(--color-text-secondary);
-        font-size: 1.2rem;
-        line-height: 1;
-        padding: 0.25rem;
-        opacity: 0.6;
-        transition: opacity var(--duration-fast);
-
-        &:hover {
-          opacity: 1;
-        }
-      }
     </style>
-
-    <script>
-      document.querySelectorAll('a[data-footnote-ref]').forEach(el => {
-        const elm = el as HTMLAnchorElement;
-        const footnoteId = elm.getAttribute('href')?.slice(1);
-        if (!footnoteId) return;
-        const footnoteElement = document.getElementById(footnoteId);
-
-        // Find the closest block-level parent (p, div, li, etc.)
-        const closestBlock = elm.closest(
-          'p, .intro-paragraph, li, blockquote, div.longform-prose > *'
-        );
-        if (!closestBlock || !footnoteElement?.firstElementChild) return;
-
-        const inlineFootNoteContainer = document.createElement('div');
-        inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
-        inlineFootNoteContainer.style.display = 'none';
-
-        // Close button
-        const closeBtn = document.createElement('button');
-        closeBtn.classList.add('inline-footnote-close');
-        closeBtn.innerHTML = '×';
-        closeBtn.setAttribute('aria-label', 'Close footnote');
-        closeBtn.addEventListener('click', () => {
-          inlineFootNoteContainer.style.display = 'none';
-        });
-
-        inlineFootNoteContainer.appendChild(closeBtn);
-        inlineFootNoteContainer.appendChild(footnoteElement.firstElementChild.cloneNode(true));
-        closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
-
-        elm.addEventListener('click', e => {
-          e.preventDefault();
-          inlineFootNoteContainer.style.display =
-            inlineFootNoteContainer.style.display === 'none' ? 'block' : 'none';
-        });
-      });
-    </script>
   </body>
 </html>
