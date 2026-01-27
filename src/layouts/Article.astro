@@ -2,16 +2,16 @@
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import { Image } from 'astro:assets';
-import Spinner from '@components/ui/Spinner.astro';
-import BaseHead from '@components/layout/BaseHead.astro';
-import Footer from '@components/layout/Footer.astro';
-import FormattedDate from '@components/ui/FormattedDate.astro';
-import Lightbox from '@components/layout/Lightbox.astro';
-import MainNavigation from '@components/layout/MainNavigation.astro';
-import LongFormProseTypography from '@components/layout/LongFormProseTypography.astro';
-import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
-import TableOfContents from '@components/layout/TableOfContents.astro';
+import {
+  BaseHead,
+  Footer,
+  Lightbox,
+  LongFormProseTypography,
+  MainNavigation,
+  TableOfContents,
+} from '@components/layout/index';
 import InlineFootnotes from '@components/layout/InlineFootnotes.astro';
+import { FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index';
 
 type Props = CollectionEntry<'articles'>['data'] & {
   readingTime: string;

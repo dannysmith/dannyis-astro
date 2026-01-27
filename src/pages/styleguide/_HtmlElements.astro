@@ -5,7 +5,7 @@
  * Forms, disclosure widgets, definition lists, figures, and media elements.
  */
 import { SGTypographySwitcher } from '@components/styleguide';
-import ResizableContainer from '@components/mdx/ResizableContainer.astro';
+import { ResizableContainer } from '@components/mdx/index';
 import styleguideImage from '@assets/articles/styleguide-image.jpg';
 ---
 
@@ -17,6 +17,9 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
   </p>
 
   <!-- 1. Forms -->
+  <!-- Note: SGTypographySwitcher duplicates content 3x, creating duplicate IDs.
+       This is invalid HTML but acceptable for a styleguide demo since we're
+       showing visual styling, not functional forms. -->
   <h3 id="forms">Forms</h3>
   <p>
     Form controls with proper <code>&lt;fieldset&gt;</code>, <code>&lt;legend&gt;</code>, and

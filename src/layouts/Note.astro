@@ -1,10 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '@components/layout/BaseHead.astro';
-import Footer from '@components/layout/Footer.astro';
-import NoteCard from '@components/layout/NoteCard.astro';
-import MainNavigation from '@components/layout/MainNavigation.astro';
-import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
+import { BaseHead, Footer, MainNavigation, NoteCard } from '@components/layout/index';
+import { MarkdownContentActions } from '@components/ui/index';
 
 type Props = CollectionEntry<'notes'>['data'];
 

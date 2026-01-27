@@ -1,10 +1,7 @@
 ---
-import BaseHead from '@components/layout/BaseHead.astro';
 import { getCollection } from 'astro:content';
-import FormattedDate from '@components/ui/FormattedDate.astro';
-import Footer from '@components/layout/Footer.astro';
-import MainNavigation from '@components/layout/MainNavigation.astro';
-import Pill from '@components/ui/Pill.astro';
+import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
+import { FormattedDate, Pill } from '@components/ui/index';
 import { filterContentForListing } from '@utils/content';
 
 const posts = filterContentForListing(await getCollection('articles')).sort(
