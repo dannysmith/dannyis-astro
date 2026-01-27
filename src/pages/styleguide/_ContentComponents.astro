@@ -17,8 +17,53 @@ import Accordion from '@components/mdx/Accordion.astro';
 import Center from '@components/mdx/Center.astro';
 import Grid from '@components/mdx/Grid.astro';
 import ColorSwatch from '@components/mdx/ColorSwatch.astro';
+import { Code } from 'astro-expressive-code/components';
 import { Image, Picture } from 'astro:assets';
 import styleguideImage from '@assets/articles/styleguide-image.jpg';
+
+// Code block examples (defined here to avoid template literal escaping issues)
+const codeExamples = {
+  basic: `const colors = ['coral', 'blue', 'green'];
+colors.forEach(c => console.log(c));`,
+
+  withTitle: `function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+
+console.log(greet('World'));`,
+
+  highlight: `export const config = {
+  siteName: 'My Site',        // highlighted
+  baseUrl: 'https://example.com',
+  theme: 'dark',              // highlighted
+  language: 'en',             // highlighted
+  version: '1.0.0',
+};`,
+
+  insDel: `async function fetchData(url) {
+  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: { 'Accept': 'application/json' }
+  });
+  return response.json();
+}`,
+
+  diff: `- const API_VERSION = 'v1';
++ const API_VERSION = 'v2';
+
+  function getEndpoint(path) {
+-   return \`/api/\${API_VERSION}/\${path}\`;
++   return \`/api/\${API_VERSION}/\${path}?format=json\`;
+  }`,
+
+  terminal: `npm create astro@latest my-project
+cd my-project
+npm install
+npm run dev`,
+
+  wrap: `// This is a very long comment that demonstrates how word wrapping works in code blocks when the content exceeds the available width of the container
+const message = 'Long strings will also wrap nicely to the next line while preserving the indentation level of the original line';`,
+};
 ---
 
 <section id="content-components" class="styleguide-section flow">
@@ -467,4 +512,74 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
       work at any size&mdash;the text scales responsively.
     </p>
   </SGTypographySwitcher>
+
+  <!-- 10. Code Blocks -->
+  <h3 id="code-blocks">Code Blocks</h3>
+  <p>
+    Syntax-highlighted code blocks powered by
+    <a href="https://expressive-code.com/">Expressive Code</a>. Supports titles, line highlighting,
+    diff markers, and more.
+  </p>
+
+  <h4>Basic Code Block</h4>
+  <SGTypographySwitcher>
+    <p>Code blocks without a title show just the syntax-highlighted code:</p>
+    <Code lang="js" code={codeExamples.basic} />
+  </SGTypographySwitcher>
+
+  <h4>With Title</h4>
+  <SGTypographySwitcher>
+    <p>
+      Add <code>title="filename.js"</code> to display a file name in the frame header, mimicking
+      an editor tab:
+    </p>
+    <Code lang="js" title="greet.js" code={codeExamples.withTitle} />
+  </SGTypographySwitcher>
+
+  <h4>Terminal Frame</h4>
+  <SGTypographySwitcher>
+    <p>
+      Use <code>frame="terminal"</code> for shell commands. Terminal frames get a different
+      visual treatment:
+    </p>
+    <Code lang="bash" frame="terminal" code={codeExamples.terminal} />
+  </SGTypographySwitcher>
+
+  <h4>Line Highlighting</h4>
+  <SGTypographySwitcher>
+    <p>
+      Use <code>{'{2,4-5}'}</code> to highlight specific lines with a neutral marker. Line numbers
+      and ranges work:
+    </p>
+    <Code lang="ts" title="config.ts" meta="{2,4-5}" code={codeExamples.highlight} />
+  </SGTypographySwitcher>
+
+  <h4>Inserted &amp; Deleted Lines</h4>
+  <SGTypographySwitcher>
+    <p>
+      Use <code>ins={'{3-4}'}</code> for additions (green) and <code>del={'{2}'}</code> for
+      removals (red). Great for showing code changes:
+    </p>
+    <Code lang="js" title="api.js" meta="del={2} ins={3-4}" code={codeExamples.insDel} />
+  </SGTypographySwitcher>
+
+  <h4>Diff Syntax</h4>
+  <SGTypographySwitcher>
+    <p>
+      Use the <code>diff</code> language with <code>+</code> and <code>-</code> prefixes for a
+      familiar diff view:
+    </p>
+    <Code lang="diff" code={codeExamples.diff} />
+  </SGTypographySwitcher>
+
+  <h4>Word Wrap</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Use <code>wrap</code> to wrap long lines instead of horizontal scrolling. Wrapped lines
+        preserve their indentation level:
+      </p>
+      <Code lang="js" wrap code={codeExamples.wrap} />
+    </SGTypographySwitcher>
+  </ResizableContainer>
 </section>
