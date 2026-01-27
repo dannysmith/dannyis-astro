@@ -109,7 +109,7 @@ export const templates = {
                 props: {
                   style: {
                     fontFamily: 'League Spartan',
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '84px',
                     color: '#fff',
                     lineHeight: '1.1',
@@ -269,7 +269,7 @@ export const templates = {
                 props: {
                   style: {
                     fontFamily: 'League Spartan',
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '72px',
                     color: '#fff',
                     lineHeight: '1.1',
@@ -410,7 +410,7 @@ export const templates = {
                   props: {
                     style: {
                       fontFamily: 'League Spartan',
-                      fontWeight: 800,
+                      fontWeight: 700,
                       fontSize: '84px',
                       color: '#fff',
                       lineHeight: '1.1',

@@ -273,9 +273,13 @@ A bold, geometric sans-serif inspired by American sign painting.
 | Version | 2.220 |
 | Repository | [theleagueof/league-spartan](https://github.com/theleagueof/league-spartan) |
 | Download date | January 2026 |
-| Files | `LeagueSpartan-v2.220-2026-01-19.woff2` |
+| Files | `LeagueSpartan-v2.220-2026-01-19.woff2` (web), `LeagueSpartan-Regular.ttf`, `LeagueSpartan-Bold.ttf` (OG images) |
 
 Downloaded from the [GitHub releases](https://github.com/theleagueof/league-spartan/releases/tag/2.220).
+
+### Static TTF Files for OG Image Generation
+
+The static TTF files (`LeagueSpartan-Regular.ttf` and `LeagueSpartan-Bold.ttf`) are required for build-time OG image generation. [Satori](https://github.com/vercel/satori), the library that renders JSX to images, does not support woff2 fonts—it requires TTF format. These files are loaded by `src/utils/og-image-generator.ts` and should not be removed.
 
 ### Variable Axes
 
