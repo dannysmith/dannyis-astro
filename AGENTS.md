@@ -32,7 +32,7 @@ Review `docs/developer/architecture-guide.md` for essential patterns
 
 1. **Follow Established Patterns**: Reference `docs/developer` guides
 2. **No Runtime JavaScript** - Static HTML/CSS unless absolutely required
-3. **Use path aliases** - `@components/*`, `@utils/*` etc, never relative imports
+3. **Use path aliases** - `@components/*`, `@utils/*` etc, never relative imports. Prefer barrel imports (e.g., `from '@components/layout/index'`). Note: `.astro` files require the explicit `/index` suffix for barrel imports to work with `astro check`.
 4. **Typography first** - Let type drive design decisions
 5. **Test both themes** - Verify light and dark mode for visual changes
 6. **CSS patterns** - Follow `docs/developer/design.md`
