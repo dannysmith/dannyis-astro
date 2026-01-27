@@ -55,7 +55,7 @@ Update `Article.astro` to import and use `<InlineFootnotes />` instead of having
 ### Acceptance Criteria
 - [x] New component created at `src/components/layout/InlineFootnotes.astro`
 - [x] Article.astro imports and uses the component
-- [ ] Inline footnotes still work on articles (test on `/writing/article-styleguide/`)
+- [x] Inline footnotes still work on articles (test on `/writing/article-styleguide/`)
 - [x] No duplicate code
 
 ---
@@ -71,10 +71,10 @@ Update `src/pages/styleguide/_OtherStuff.astro` to:
 - Include explanatory text about the three footnote elements
 
 ### Acceptance Criteria
-- [ ] `_snippets/footnotes.mdx` created with realistic footnote content
-- [ ] `_OtherStuff.astro` shows footnotes in all three typography contexts
-- [ ] Inline footnote behaviour works in the styleguide demo
-- [ ] Documentation explains the three elements (ref link, inline popup, section)
+- [x] `_snippets/footnotes.mdx` created with realistic footnote content
+- [x] `_OtherStuff.astro` shows footnotes in all three typography contexts
+- [x] Inline footnote behaviour works in the styleguide demo
+- [x] Documentation explains the three elements (ref link, inline popup, section)
 
 ---
 

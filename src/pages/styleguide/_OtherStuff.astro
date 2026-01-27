@@ -1,9 +1,54 @@
 ---
-// Other Stuff partial - footnotes, special treatments, etc.
-// TODO: Implement Section 7
+/**
+ * Other Stuff partial - footnotes, special treatments, etc.
+ */
+import { SGTypographySwitcher } from '@components/styleguide';
+import ResizableContainer from '@components/mdx/ResizableContainer.astro';
+import InlineFootnotes from '@components/layout/InlineFootnotes.astro';
+import { Content as FootnotesContent } from './_snippets/footnotes.mdx';
 ---
 
 <section id="other-stuff" class="styleguide-section flow">
   <h2>Other Stuff</h2>
-  <p>Footnotes, inline footnotes, and other special treatments - coming soon.</p>
+  <p>
+    Footnotes, inline footnotes, and other special treatments that don't fit neatly into other
+    categories.
+  </p>
+
+  <!-- 1. Footnotes -->
+  <h3 id="footnotes">Footnotes</h3>
+  <p>
+    Footnotes are generated automatically from markdown syntax using <code>[^label]</code> for
+    references and <code>[^label]: content</code> for definitions. Three elements work together:
+  </p>
+
+  <h4>Footnote Reference</h4>
+  <p>
+    The superscript number in the text that links to the footnote. Styled with small caps and the
+    accent colour. In the demo below, click any footnote reference to see the inline footnote
+    behaviour.
+  </p>
+
+  <h4>Inline Footnote (Progressive Enhancement)</h4>
+  <p>
+    When JavaScript is available, clicking a footnote reference shows the footnote content inline
+    below the current paragraph instead of jumping to the bottom. A close button dismisses the
+    popup. This is handled by the <code>&lt;InlineFootnotes&gt;</code> component.
+  </p>
+
+  <h4>Footnotes Section</h4>
+  <p>
+    A section at the bottom of the content containing all footnotes with back-reference arrows.
+    This is the standard footnote behaviour and works without JavaScript.
+  </p>
+
+  <h4>Demo</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <FootnotesContent />
+    </SGTypographySwitcher>
+  </ResizableContainer>
 </section>
+
+<!-- Include InlineFootnotes for the interactive demo -->
+<InlineFootnotes />
