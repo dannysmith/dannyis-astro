@@ -218,22 +218,22 @@ Some of these components are configured to replace the default components when m
 
 Each chunk is wrapped in `SGTypographySwitcher`. Most block-level components should also be wrapped in `ResizableContainer`. Include realistic context (paragraphs before/after) where appropriate.
 
-- [ ] **IntroParagraph**
+- [x] **IntroParagraph**
       Realistic long paragraph with drop cap. Include a link and precede with a normal paragraph or two for context.
 
-- [ ] **Images**
+- [x] **Images**
       Group `BasicImage`, `<Image>`, and `<Picture>` together.
       - `BasicImage` variants: normal, framed, bleed, showAlt, source
       - Note that BasicImage auto-replaces markdown images
       - `<Image>` and `<Picture>` from astro:assets
 
-- [ ] **Embeds**
+- [x] **Embeds**
       Group `Embed`, `Loom`, and `Notion` together. Use real URLs to test actual functionality.
       - `Embed`: YouTube, Vimeo, Twitter examples
       - `Loom`: embedded Loom video
       - `Notion`: auto title and manual title variants
 
-- [ ] **BookmarkCard**
+- [x] **BookmarkCard**
       Various real URLs to test link preview functionality. Show responsive behaviour.
 
 - [ ] **ButtonLink**
