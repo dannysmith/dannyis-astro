@@ -179,23 +179,23 @@ Each item below is a "chunk" wrapped in `SGTypographySwitcher`. OpenType feature
       Full heading hierarchy with realistic paragraphs between them (varying lengths, not all super short).
       Include ligatures naturally in heading text (words with fi, fl, ff).
 
-- [ ] **Blockquotes**
+- [x] **Blockquotes**
       Include headings/paragraphs between blockquotes for realistic context.
       Demo both:
       - Plain HTML `<blockquote>` (what markdown produces)
       - `<BlockQuoteCitation>` variants: author only, +title, +url, small
 
-- [ ] **Lists: Unordered**
+- [x] **Lists: Unordered**
       `<ul>` with nesting, realistic content. Can include inline elements within list items.
 
-- [ ] **Lists: Ordered**
+- [x] **Lists: Ordered**
       `<ol>` with nesting, realistic content.
 
-- [ ] **Lists: Checklists**
+- [x] **Lists: Checklists**
       Render via MDX snippet import (e.g., `import { Content } from './_snippets/checklist.mdx'`)
       to ensure output matches actual MDX processing. Include nesting.
 
-- [ ] **Tables**
+- [x] **Tables**
       Two tables to cover common use cases:
       1. Numeric/tabular data - demonstrates lining numerals, tabular figures
       2. Mixed content - with `<code>`, images, or `<ColorSwatch>` in columns

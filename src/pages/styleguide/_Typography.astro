@@ -7,6 +7,8 @@ import { SGTypographySwitcher } from '@components/styleguide';
 import SmartLink from '@components/mdx/SmartLink.astro';
 import SmallCaps from '@components/mdx/typography/SmallCaps.astro';
 import Highlight from '@components/mdx/typography/highlight.astro';
+import BlockQuoteCitation from '@components/mdx/BlockQuoteCitation.astro';
+import { Content as ChecklistContent } from './_snippets/checklist.mdx';
 ---
 
 <section id="typography" class="styleguide-section flow">
@@ -153,5 +155,205 @@ import Highlight from '@components/mdx/typography/highlight.astro';
       Sixth-level headings exist for completeness but suggest your document structure may be
       overly complex. Most content works well with three or four heading levels at most.
     </p>
+  </SGTypographySwitcher>
+
+  <!-- 4. Blockquotes -->
+  <h3 id="blockquotes">Blockquotes</h3>
+  <SGTypographySwitcher>
+    <h2>Words Worth Quoting</h2>
+    <p>
+      Sometimes the best way to make a point is to let someone else make it for you. Blockquotes
+      set quoted material apart from your own words, giving proper weight to borrowed wisdom.
+    </p>
+    <blockquote>
+      <p>
+        The details are not the details. They make the design. This principle guides everything
+        from typography to interface design&mdash;the small decisions accumulate into the
+        overall experience.
+      </p>
+    </blockquote>
+    <p>
+      The plain HTML <code>&lt;blockquote&gt;</code> above is what markdown produces. For
+      attributed quotes with citations, use the <code>&lt;BlockQuoteCitation&gt;</code> component.
+    </p>
+    <BlockQuoteCitation author="Charles Eames">
+      <p>
+        Design is a plan for arranging elements in such a way as best to accomplish a particular purpose.
+      </p>
+    </BlockQuoteCitation>
+    <p>
+      You can add a source title and URL for proper attribution:
+    </p>
+    <BlockQuoteCitation author="Steve Jobs" title="Stanford Commencement Address" url="https://news.stanford.edu/2005/06/12/youve-got-find-love-jobs-says/">
+      <p>
+        Your work is going to fill a large part of your life, and the only way to be truly
+        satisfied is to do what you believe is great work. And the only way to do great work
+        is to love what you do.
+      </p>
+    </BlockQuoteCitation>
+    <p>
+      For less prominent quotes, use the <code>small</code> prop:
+    </p>
+    <BlockQuoteCitation author="Anonymous" small>
+      <p>The best time to plant a tree was twenty years ago. The second best time is now.</p>
+    </BlockQuoteCitation>
+  </SGTypographySwitcher>
+
+  <!-- 5. Lists: Unordered -->
+  <h3 id="lists-unordered">Unordered Lists</h3>
+  <SGTypographySwitcher>
+    <h2>Getting Things Done</h2>
+    <p>
+      Unordered lists work well for items without inherent sequence. Here's a workflow
+      checklist for publishing content:
+    </p>
+    <ul>
+      <li>Write the first draft without editing</li>
+      <li>Let it rest for at least a day before revising</li>
+      <li>Read aloud to catch awkward phrasing</li>
+      <li>Check all links and references
+        <ul>
+          <li>Verify internal links point to existing pages</li>
+          <li>Confirm external links are still valid</li>
+          <li>Update any outdated citations</li>
+        </ul>
+      </li>
+      <li>Run spell check and grammar tools</li>
+      <li>Preview in both light and dark modes</li>
+      <li>Publish and share on social media</li>
+    </ul>
+    <p>
+      Lists with inline formatting help clarify complex items:
+    </p>
+    <ul>
+      <li><strong>Semantic HTML</strong> &ndash; use elements for their meaning, not appearance</li>
+      <li><em>Progressive enhancement</em> &ndash; start with content, layer on interactivity</li>
+      <li>Efficient <code>CSS</code> &ndash; leverage the cascade, avoid unnecessary specificity</li>
+    </ul>
+  </SGTypographySwitcher>
+
+  <!-- 6. Lists: Ordered -->
+  <h3 id="lists-ordered">Ordered Lists</h3>
+  <SGTypographySwitcher>
+    <h2>A Recipe for Success</h2>
+    <p>
+      Ordered lists suit sequential steps or ranked items. Here's how to approach a
+      complex refactoring project:
+    </p>
+    <ol>
+      <li>Understand the existing code thoroughly before changing anything</li>
+      <li>Write tests that verify current behaviour</li>
+      <li>Make small, incremental changes
+        <ol>
+          <li>Extract methods for repeated logic</li>
+          <li>Rename unclear variables and functions</li>
+          <li>Simplify complex conditionals</li>
+        </ol>
+      </li>
+      <li>Run tests after each change to catch regressions early</li>
+      <li>Document significant architectural decisions</li>
+      <li>Review with colleagues before merging</li>
+    </ol>
+    <p>
+      Ordered lists also work for rankings, like the most common typography mistakes:
+    </p>
+    <ol>
+      <li>Using straight quotes instead of curly quotes</li>
+      <li>Confusing hyphens, en-dashes, and em-dashes</li>
+      <li>Forgetting to kern display type</li>
+    </ol>
+  </SGTypographySwitcher>
+
+  <!-- 7. Lists: Checklists -->
+  <h3 id="lists-checklists">Checklists</h3>
+  <SGTypographySwitcher>
+    <h2>Task Lists from MDX</h2>
+    <p>
+      Checklists use GitHub-flavoured markdown syntax. This is rendered from an actual
+      MDX file to ensure styling matches real content:
+    </p>
+    <ChecklistContent />
+  </SGTypographySwitcher>
+
+  <!-- 8. Tables -->
+  <h3 id="tables">Tables</h3>
+  <SGTypographySwitcher>
+    <h2>Tabular Data</h2>
+    <p>
+      Tables organize data into rows and columns. In running text, numerals typically
+      use old-style figures (like 1984 or 2024), but tables benefit from lining numerals
+      that align vertically for easy scanning.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Quarter</th>
+          <th>Revenue</th>
+          <th>Expenses</th>
+          <th>Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Q1 2024</td>
+          <td>$124,500</td>
+          <td>$98,200</td>
+          <td>$26,300</td>
+        </tr>
+        <tr>
+          <td>Q2 2024</td>
+          <td>$156,800</td>
+          <td>$112,400</td>
+          <td>$44,400</td>
+        </tr>
+        <tr>
+          <td>Q3 2024</td>
+          <td>$189,200</td>
+          <td>$134,600</td>
+          <td>$54,600</td>
+        </tr>
+        <tr>
+          <td>Q4 2024</td>
+          <td>$203,100</td>
+          <td>$145,800</td>
+          <td>$57,300</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Mixed Content Tables</h2>
+    <p>
+      Tables can contain various content types including code, formatted text, and components:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>font-size</code></td>
+          <td><code>var(--font-size-base)</code></td>
+          <td>Base text size for body copy</td>
+        </tr>
+        <tr>
+          <td><code>line-height</code></td>
+          <td><code>var(--leading-normal)</code></td>
+          <td>Comfortable reading rhythm</td>
+        </tr>
+        <tr>
+          <td><code>font-weight</code></td>
+          <td><code>var(--font-weight-normal)</code></td>
+          <td>Regular weight for <em>most</em> text</td>
+        </tr>
+        <tr>
+          <td><code>letter-spacing</code></td>
+          <td><code>var(--tracking-normal)</code></td>
+          <td>Default tracking for body text</td>
+        </tr>
+      </tbody>
+    </table>
   </SGTypographySwitcher>
 </section>
