@@ -431,4 +431,4 @@ This provides access to 2400+ code snippets and comprehensive Astro documentatio
 4. **Consult** specialized guides when working on specific features
 5. **Follow** established patterns - don't reinvent
 6. **Test** changes thoroughly
-7. **Run** `pnpm run check:all` before committing
+7. **Run** `bun run check:all` before committing

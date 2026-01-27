@@ -108,13 +108,13 @@ function showHelp() {
 Task Completion Script
 
 Usage:
-  pnpm task:complete TASK_NAME       Complete a task
-  pnpm task:rename-done              Rename all existing completed tasks
+  bun task:complete TASK_NAME       Complete a task
+  bun task:rename-done              Rename all existing completed tasks
 
 Examples:
-  pnpm task:complete frontend-performance
-  pnpm task:complete 2
-  pnpm task:rename-done
+  bun task:complete frontend-performance
+  bun task:complete 2
+  bun task:rename-done
 
 Notes:
   - Task name can be partial

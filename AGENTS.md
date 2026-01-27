@@ -37,7 +37,7 @@ Review `docs/developer/architecture-guide.md` for essential patterns
 5. **Test both themes** - Verify light and dark mode for visual changes
 6. **CSS patterns** - Follow `docs/developer/design.md`
 7. **Update styleguides** - Add examples when creating visual components
-8. **Quality Gates**: Run `pnpm run check:all` after significant changes
+8. **Quality Gates**: Run `bun run check:all` after significant changes
 9. **Documentation**: Update `docs/developer/` for new patterns
 
 
@@ -45,17 +45,17 @@ Review `docs/developer/architecture-guide.md` for essential patterns
 ## Commands
 
 ```bash
-pnpm run dev           # Dev server at localhost:4321
-pnpm run build         # Production build
-pnpm run check:all     # Types → Format → Lint → Tests (unit + e2e)
-pnpm run check:lint    # ESLint only
-pnpm run check:types   # TypeScript + Astro check only
-pnpm run check:format  # Prettier check only
-pnpm run check:knip    # Check for unused code with Knip
-pnpm run check:dupes   # Check for duplicate code with jscpd
-pnpm run test:unit     # Unit tests only
-pnpm run test:e2e      # E2E tests only
-pnpm run newnote       # Create new note with proper frontmatter
+bun run dev           # Dev server at localhost:4321
+bun run build         # Production build
+bun run check:all     # Types → Format → Lint → Tests (unit + e2e)
+bun run check:lint    # ESLint only
+bun run check:types   # TypeScript + Astro check only
+bun run check:format  # Prettier check only
+bun run check:knip    # Check for unused code with Knip
+bun run check:dupes   # Check for duplicate code with jscpd
+bun run test:unit     # Unit tests only
+bun run test:e2e      # E2E tests only
+bun run newnote       # Create new note with proper frontmatter
 ```
 
 ## Tech Stack

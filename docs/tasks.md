@@ -13,9 +13,9 @@
 
 When you finish a task, use the completion script.
 
-Usage: pnpm task:complete TASK_NAME_OR_NUMBER
+Usage: bun task:complete TASK_NAME_OR_NUMBER
 
-Examples: pnpm task:complete frontend-performance pnpm task:complete 2 pnpm task:complete awesome-feature
+Examples: bun task:complete frontend-performance bun task:complete 2 bun task:complete awesome-feature
 
 The script will:
 
@@ -30,4 +30,4 @@ Example transformation: tasks-todo/task-2-frontend-performance-optimization.md b
 
 If you have existing completed tasks without dates, rename them using their last modified date:
 
-Usage: pnpm task:rename-done
+Usage: bun task:rename-done

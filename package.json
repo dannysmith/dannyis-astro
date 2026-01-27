@@ -14,12 +14,12 @@
     "check:types": "tsc --noEmit && astro check",
     "check:knip": "knip",
     "check:dupes": "jscpd src",
-    "check:all": "pnpm run check:types && pnpm run check:format && pnpm run check:lint && pnpm run test:all",
+    "check:all": "bun run check:types && bun run check:format && bun run check:lint && bun run test:all",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:unit": "vitest run tests/unit",
     "test:e2e": "playwright test",
-    "test:all": "pnpm run test:unit && pnpm run test:e2e",
+    "test:all": "bun run test:unit && bun run test:e2e",
     "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
     "newnote": "tsx scripts/create-note.ts",
     "task:complete": "node scripts/complete-task.js",
@@ -76,12 +76,5 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.12",
     "zod": "^4.1.12"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "puppeteer",
-      "sharp"
-    ]
   }
 }

@@ -212,8 +212,8 @@ coverAlt: 'Descriptive alt text for accessibility'
 3. **Set `draft: true`** initially
 4. **Write content** using MDX components
 5. **Add images** to assets directory
-6. **Test locally** with `pnpm run dev`
-7. **Run quality checks** with `pnpm run check:all`
+6. **Test locally** with `bun run dev`
+7. **Run quality checks** with `bun run check:all`
 8. **Set `draft: false`** to publish
 9. **Commit and push** to deploy
 
@@ -240,7 +240,7 @@ coverAlt: 'Descriptive alt text for accessibility'
 
 **All Content:**
 
-- [ ] `pnpm run check:all` passes (types, format, lint, tests)
+- [ ] `bun run check:all` passes (types, format, lint, tests)
 - [ ] Content renders correctly in dev mode
 - [ ] Links work as expected
 - [ ] MDX components render properly
@@ -248,10 +248,10 @@ coverAlt: 'Descriptive alt text for accessibility'
 ### Creating Notes via CLI
 
 ```bash
-pnpm run newnote "Note Title"
+bun run newnote "Note Title"
 # Creates note with today's date and proper frontmatter
 
-pnpm run newnote "https://example.com/article"
+bun run newnote "https://example.com/article"
 # Creates note with sourceURL set
 ```
 

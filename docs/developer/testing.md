@@ -8,9 +8,9 @@ This project uses **Vitest** for unit tests of pure business logic and utility f
 
 **Commands:**
 
-- `pnpm run test:unit` - Run Vitest unit tests
-- `pnpm run test:e2e` - Run Playwright E2E tests
-- `pnpm run test:all` - Run both test suites
+- `bun run test:unit` - Run Vitest unit tests
+- `bun run test:e2e` - Run Playwright E2E tests
+- `bun run test:all` - Run both test suites
 
 ## What to Test
 

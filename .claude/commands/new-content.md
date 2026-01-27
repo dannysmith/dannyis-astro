@@ -11,14 +11,14 @@ Creates new notes and articles with proper structure and frontmatter.
 
 When asked to create a new note:
 
-- If given a title, run `pnpm run newnote "<title>"`
-- If given a URL, run `pnpm run newnote "<url>"`
+- If given a title, run `bun run newnote "<title>"`
+- If given a URL, run `bun run newnote "<url>"`
 - If given a longer sentence, extract a suitable title and run the command
-- Otherwise, run `pnpm run newnote "new-note"`
+- Otherwise, run `bun run newnote "new-note"`
 
 ### Example
 
-**Request:** "make new note about changing my desk setup" **Action:** `pnpm run newnote "New Desk Setup"`
+**Request:** "make new note about changing my desk setup" **Action:** `bun run newnote "New Desk Setup"`
 
 ## Create New Article
 

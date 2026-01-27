@@ -20,7 +20,7 @@ Check recent work for adherance with architecture & patterns, and run checks.
 1. Check all work in this session for adherance with `docs/developer/architecture-guide.md` and the common issues in `docs/developer/code-quality.md`. (Only run specialised code quality tools if you really thing it nececarry).
 2. If any design/CSS -> check for adhernece with `docs/developer/design.md` and `docs/developer/design-tokens.md` and the modern CSS best practice.
 3. Check for any leftovers from recent work: `console.logs`, code from failed approaches, unhelpful AI-slop "moved X to X because Z" comments etc.
-4. ALWAYS Run `pnpm check:all` and IMMEDIATLY fix any errors.
+4. ALWAYS Run `bun check:all` and IMMEDIATLY fix any errors.
 
 ## Additional Guidance
 

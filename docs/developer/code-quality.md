@@ -4,7 +4,7 @@ Guidance and rules for keeping code quality high.
 
 ## Quality Mindset
 
-- **Automated checks catch errors** - Run `pnpm run check:all` frequently
+- **Automated checks catch errors** - Run `bun run check:all` frequently
 - **Test in production builds** - Dev mode hides issues
 - **Review before committing** - Quick scan prevents issues
 - **Update docs when patterns change** - Keep documentation current
@@ -23,7 +23,7 @@ We have various tools available to help with maintaining code quality:
 5. **Vitest** - Unit tests
 6. **Playwright** - E2E tests
 
-These can be run together with `pnpm run check:all`.
+These can be run together with `bun run check:all`.
 
 ## Common Patterns Reference
 
@@ -44,7 +44,7 @@ Knip automatically detects unused code in the project:
 - Unused exports and TypeScript types
 - Unused files
 
-Run: `pnpm run check:knip`
+Run: `bun run check:knip`
 
 #### Understanding Knip Results
 
@@ -101,7 +101,7 @@ ignoreExportsUsedInFile: true, // For utility files with multiple exports
 
 jscpd finds duplicate code blocks across the project using the Rabin-Karp algorithm.
 
-Run: `pnpm run check:dupes`
+Run: `bun run check:dupes`
 
 #### Understanding jscpd Results
 
@@ -135,7 +135,7 @@ Bad reasons for duplication:
 
 #### For AI Assistants
 
-When asked to find related code or understand patterns across the codebase, run `pnpm run check:dupes` to discover similar implementations. This helps with:
+When asked to find related code or understand patterns across the codebase, run `bun run check:dupes` to discover similar implementations. This helps with:
 - Finding all places where a pattern is used
 - Understanding consistency across the codebase
 - Identifying refactoring opportunities

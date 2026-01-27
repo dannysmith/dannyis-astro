@@ -9,7 +9,7 @@ reviews:
     - "!**/*.md"
     - "!**/*.mdx"
     # Ignore lockfiles
-    - "!pnpm-lock.yaml"
+    - "!bun.lock"
     # Ignore static assets
     - "!public/**"
 
