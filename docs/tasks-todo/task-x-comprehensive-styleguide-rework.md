@@ -88,6 +88,14 @@ We'll use this extensively in the styleguie to show how things are styled differ
 
 If it's ever nececarry to include user-facing code examples in the stylegude, remember we have `astro-expressive-code` available.
 
+### Implementation Notes (from planning session)
+
+- **MDX component remapping**: Auto-replacement of markdown elements is configured in `src/config/mdx-components.ts`. Currently only two remappings exist: `a` → `SmartLink` and `img` → `BasicImage`. Plain markdown blockquotes render as standard `<blockquote>` (not `BlockQuoteCitation`).
+
+- **Components demoed in Typography (Section 3)**: `highlight`, `BlockQuoteCitation`, and `SmallCaps` are MDX components (located in `src/components/mdx/`) but are demoed in Section 3 (Typography) rather than Section 4, because they're essentially inline/block text treatments rather than content-block components.
+
+- **Checklist HTML output**: Astro uses remark-gfm which outputs checklists as `<ul class="contains-task-list">` with `<li class="task-list-item"><input type="checkbox" disabled>` elements.
+
 ### Theme Display Approach
 
 - **Colour Palette Examples:** Show BOTH light and dark variants side-by-side, regardless of current theme. This allows quick visual comparison of what `--color-coral` maps to in each theme.
@@ -365,16 +373,68 @@ If this section ends up completely empty, that's fine. We'll still keep the sect
 
 ### 8. Utility Classes
 
-This section should simply include the details of the available utility classes. where there is no need for a visual demonstration. We should simply include a list explaining what each of them does. where a visual demonstration will make sense, we should include that with some realistic content. As ever, we should wrap these in SGTypographySwitcher Wherever they are a) likeley to be used in multiple systems and b) will potentially render differently in different systems (eg `.flow`, `.list-reset` etc.).
+This section documents available utility classes. Most only need a description (no visual demo). Present these in a table for easy scanning.
 
-Document and demonstrate:
-- `.dark-surface` - Always-dark areas
-- `.card-surface` - Raised card styling
-- `.cq` - Container query context
-- `.flow` - Vertical rhythm
-- `.list-reset` - Navigation lists
-- `.all-caps` - Label styling
-- `.content-trim` - Margin cleanup
-- `.img-cover` - Responsive images
-- `.sr-only` - Screen reader only
-- `.external-arrow` - External link indicator
+#### Utility Classes Table
+
+Include all utilities in a single table with Class and Purpose columns:
+
+| Class | Purpose |
+|-------|---------|
+| `.ui-style` | Opt-out of prose typography for nav, footer, UI-heavy areas. Already demoed extensively via SGTypographySwitcher throughout this styleguide. |
+| `.dark-surface` | Forces dark background (charcoal) with light text (beige). For always-dark areas regardless of theme. |
+| `.card-surface` | Raised card/panel styling with background, border, radius and shadow. |
+| `.cq` | Establishes container query context (`container-type: inline-size`). |
+| `.all-caps` | Uppercase text with wide letter-spacing. For labels and UI text. |
+| `.content-trim` | Removes top margin from first child, bottom margin from last child. Use inside padded containers with slotted content. |
+| `.img-cover` | Makes image fill container with `object-fit: cover`. |
+| `.sr-only` | Visually hidden but accessible to screen readers. |
+| `.external-arrow` | Subtle arrow indicator for external/offsite links in UI contexts. |
+| `.flow` | Vertical rhythm spacing between child elements. See demo below. |
+| `.list-reset` | Removes list styling for navigation/UI lists. See demo below. |
+
+#### Visual Demos
+
+##### `.flow`
+
+Side-by-side comparison wrapped in `SGTypographySwitcher` to show behaviour across typography contexts:
+
+```astro
+<SGTypographySwitcher>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-m);">
+    <div>
+      <strong>Without .flow</strong>
+      <!-- Content without .flow class -->
+    </div>
+    <div>
+      <strong>With .flow</strong>
+      <div class="flow">
+        <!-- Same content with .flow class -->
+      </div>
+    </div>
+  </div>
+</SGTypographySwitcher>
+```
+
+Demo content should include paragraphs and headings (h2, h3) to show how `.flow` adds proportionate spacing.
+
+##### `.list-reset`
+
+Same side-by-side pattern in `SGTypographySwitcher`:
+
+```astro
+<SGTypographySwitcher>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-m);">
+    <div>
+      <strong>Without .list-reset</strong>
+      <ul><!-- nav-style links --></ul>
+    </div>
+    <div>
+      <strong>With .list-reset</strong>
+      <ul class="list-reset"><!-- same nav-style links --></ul>
+    </div>
+  </div>
+</SGTypographySwitcher>
+```
+
+Demo content should be navigation-style links to show the intended use case.
