@@ -89,6 +89,7 @@ pnpm run newnote       # Create new note with proper frontmatter
     │   ├── navigation/# Nav-specific
     │   ├── ui/        # Reusable utilities (FormattedDate, Pill, etc.)
     │   ├── mdx/       # Available in MDX content (Callout, Embed, etc.)
+    │   ├── styleguide/# Styleguide page helpers (not for general use)
     │   └── demos/     # Interactive demos for articles/notes (React OK here)
     ├── config/        # Centralized config (SEO, constants)
     ├── content/

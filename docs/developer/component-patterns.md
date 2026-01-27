@@ -299,7 +299,7 @@ export { default as NoteCard } from './NoteCard.astro';
 2. Add TypeScript interface for props
 3. Export from subdirectory's `index.ts`
 4. Add to main `index.ts` if needed
-5. Add examples to `/styleguide`
+5. Add examples to the styleguide (`src/pages/styleguide/`, viewable at `/styleguide`)
 6. Document in `design.md` if visually significant
 7. Run `pnpm run check:all` to verify
 

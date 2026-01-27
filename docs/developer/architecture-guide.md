@@ -184,6 +184,7 @@ document.addEventListener('astro:after-swap', initComponent);
 - `navigation/` - Navigation-specific (NavLink, ThemeToggle)
 - `ui/` - Reusable utilities (ContentCard, FormattedDate, Pill)
 - `mdx/` - Available in MDX content (Callout, Embed, BasicImage)
+- `styleguide/` - Styleguide page helpers (not for general use)
 - `demos/` - One-off interactive demos for articles/notes (React allowed here)
 - Use barrel exports (`index.ts`) for clean imports
 
@@ -368,6 +369,7 @@ src/
 │   ├── navigation/  # Nav-specific
 │   ├── ui/          # Reusable utilities (FormattedDate, Pill, etc.)
 │   ├── mdx/         # Available in MDX content (Callout, Embed, etc.)
+│   ├── styleguide/  # Styleguide page helpers (not for general use)
 │   └── demos/       # One-off interactive demos (React OK here)
 ├── config/          # Constants and configuration (data only)
 ├── lib/             # Build-time plugins and scripts (runs independently)
