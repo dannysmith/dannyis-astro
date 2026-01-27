@@ -21,31 +21,36 @@ const { sections } = Astro.props;
 </nav>
 
 <script>
-  const links = document.querySelectorAll('.sgtoc a');
-  const sections = document.querySelectorAll('.styleguide-section');
+  function initSGTOC() {
+    const links = document.querySelectorAll('.sgtoc a');
+    const sections = document.querySelectorAll('.styleguide-section');
 
-  function updateActive() {
-    const scrollY = window.scrollY + 100;
-    sections.forEach((section) => {
-      const top = (section as HTMLElement).offsetTop;
-      const bottom = top + (section as HTMLElement).offsetHeight;
-      const id = section.id;
-      if (scrollY >= top && scrollY < bottom) {
-        links.forEach((link) => {
-          const isActive = link.getAttribute('href') === `#${id}`;
-          link.classList.toggle('is-active', isActive);
-          if (isActive) {
-            link.setAttribute('aria-current', 'location');
-          } else {
-            link.removeAttribute('aria-current');
-          }
-        });
-      }
-    });
+    function updateActive() {
+      const scrollY = window.scrollY + 100;
+      sections.forEach((section) => {
+        const top = (section as HTMLElement).offsetTop;
+        const bottom = top + (section as HTMLElement).offsetHeight;
+        const id = section.id;
+        if (scrollY >= top && scrollY < bottom) {
+          links.forEach((link) => {
+            const isActive = link.getAttribute('href') === `#${id}`;
+            link.classList.toggle('is-active', isActive);
+            if (isActive) {
+              link.setAttribute('aria-current', 'location');
+            } else {
+              link.removeAttribute('aria-current');
+            }
+          });
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateActive, { passive: true });
+    updateActive();
   }
 
-  window.addEventListener('scroll', updateActive, { passive: true });
-  updateActive();
+  initSGTOC();
+  document.addEventListener('astro:page-load', initSGTOC);
 </script>
 
 <style>
