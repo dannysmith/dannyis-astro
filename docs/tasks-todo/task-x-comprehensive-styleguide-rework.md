@@ -160,7 +160,7 @@ IMPORTANT: The example above deliberately has a load of filler words because wit
 
 Each item below is a "chunk" wrapped in `SGTypographySwitcher`. OpenType features (ligatures, numerals, fractions, small caps) should be woven naturally into the content rather than having a separate demo section.
 
-- [ ] **Paragraphs & Basic Inline Text**
+- [x] **Paragraphs & Basic Inline Text**
       Multiple paragraphs of varying lengths demonstrating common inline elements:
       `<a>` (internal/external), `<strong>`/`<b>`, `<em>`/`<i>`, `<code>`
       Include an H2 for context, plus an `<hr>` between sections.
@@ -169,13 +169,13 @@ Each item below is a "chunk" wrapped in `SGTypographySwitcher`. OpenType feature
       Also include a duplicate paragraph using `<SmartLink>` instead of `<a>` to show the difference
       (SmartLink auto-replaces markdown links via MDX remapping). Explain in the demo copy itself.
 
-- [ ] **Technical & Specialized Inline Elements**
+- [x] **Technical & Specialized Inline Elements**
       Paragraphs (optionally with headings) demonstrating less common inline elements:
       `<kbd>`, `<mark>`, `<del>`/`<s>`, `<sup>`, `<sub>`, `<small>`, `<cite>`, `<q>`, `<dfn>`, `<var>`, `<samp>`
       Also demo together: `<abbr>` (with/without title), `<SmallCaps>` component, `<highlight>` component.
       Can have a slightly "technical documentation" flavour to make these feel natural.
 
-- [ ] **Headings (H1-H6)**
+- [x] **Headings (H1-H6)**
       Full heading hierarchy with realistic paragraphs between them (varying lengths, not all super short).
       Include ligatures naturally in heading text (words with fi, fl, ff).
 
