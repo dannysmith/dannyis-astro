@@ -92,11 +92,11 @@ Currently all footnote CSS is in `LongFormProseTypography.astro` scoped to `.lon
 This ensures notes and other contexts get reasonable footnote styling by default.
 
 ### Acceptance Criteria
-- [ ] Basic footnote styles in `global.css` (in appropriate layer)
-- [ ] LongFormProseTypography only contains longform-specific overrides (if needed)
-- [ ] Footnotes look correct in articles
-- [ ] Footnotes look acceptable in notes (if used)
-- [ ] Styleguide shows correct styling in all typography tabs
+- [x] Basic footnote styles in `global.css` (in typography layer)
+- [x] LongFormProseTypography no longer contains footnote styles (none needed)
+- [x] Footnotes look correct in articles
+- [x] Footnotes look acceptable in notes (if used)
+- [x] Styleguide shows correct styling in all typography tabs
 
 ---
 
