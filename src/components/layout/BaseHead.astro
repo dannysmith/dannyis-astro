@@ -52,6 +52,7 @@ const articleMeta = generateArticleMeta(seoData);
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/icon.jpg" />
+<link rel="manifest" href="/site.webmanifest" />
 
 <!-- RSS Auto-Discovery -->
 <link
@@ -202,6 +203,29 @@ const articleMeta = generateArticleMeta(seoData);
     document.addEventListener('astro:after-swap', initTheme);
   })();
 </script>
+
+<!-- Speculation Rules for faster navigation -->
+<!-- Prefetch internal links, prerender article/note pages on user intent -->
+<script
+  is:inline
+  type="speculationrules"
+  set:html={JSON.stringify({
+    prefetch: [
+      {
+        where: { href_matches: '/*' },
+        eagerness: 'moderate',
+      },
+    ],
+    prerender: [
+      {
+        where: {
+          or: [{ href_matches: '/writing/*' }, { href_matches: '/notes/*' }],
+        },
+        eagerness: 'moderate',
+      },
+    ],
+  })}
+/>
 
 <!-- Simple Analytics -->
 <!-- 100% privacy-first analytics -->
