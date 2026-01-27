@@ -1,9 +1,217 @@
 ---
-// Content Components partial - Astro components for use in content
-// TODO: Implement Section 4
+/**
+ * Content Components partial - Astro components for use in content
+ * Each chunk is wrapped in SGTypographySwitcher. Block-level components
+ * are also wrapped in ResizableContainer to show responsive behaviour.
+ */
+import { SGTypographySwitcher } from '@components/styleguide';
+import ResizableContainer from '@components/mdx/ResizableContainer.astro';
+import IntroParagraph from '@components/mdx/IntroParagraph.astro';
+import BasicImage from '@components/mdx/BasicImage.astro';
+import Embed from '@components/mdx/Embed.astro';
+import Loom from '@components/mdx/Loom.astro';
+import Notion from '@components/mdx/Notion.astro';
+import BookmarkCard from '@components/mdx/BookmarkCard.astro';
+import { Image, Picture } from 'astro:assets';
+import styleguideImage from '@assets/articles/styleguide-image.jpg';
 ---
 
 <section id="content-components" class="styleguide-section flow">
   <h2>Content Components</h2>
-  <p>IntroParagraph, BasicImage, Embed, BookmarkCard, Callout, Accordion, Tabs, Layout Utilities, ColorSwatch, Code Blocks - coming soon.</p>
+  <p>
+    Astro components designed for use inside content&mdash;both <code>.astro</code> pages and <code
+      >.mdx</code
+    > content files. Most respond to their container width.
+  </p>
+
+  <!-- 1. IntroParagraph -->
+  <h3 id="intro-paragraph">IntroParagraph</h3>
+  <SGTypographySwitcher>
+    <IntroParagraph>
+      Every great piece of writing begins with a single word. That word carries the weight of
+      everything that follows&mdash;it sets the tone, establishes the voice, and invites the reader
+      into your world. The drop cap treatment has been used since medieval manuscripts to signal the
+      start of something significant. In digital typography, we continue this tradition while
+      adapting it for screens of all sizes. Whether you're writing about <a href="/writing/"
+        >software architecture</a
+      > or personal reflections, a strong opening paragraph can transform casual browsers into engaged
+      readers.
+    </IntroParagraph>
+    <p>
+      Articles often benefit from a distinctive opening that draws readers in. The
+      <code>&lt;IntroParagraph&gt;</code> component provides this by styling the first letter as a drop
+      cap and rendering the first line in small caps.
+    </p>
+    <p>
+      The component automatically normalises whitespace from indented MDX content and works best
+      with a substantial opening paragraph of 3&ndash;5 sentences.
+    </p>
+  </SGTypographySwitcher>
+
+  <!-- 2. Images -->
+  <h3 id="images">Images</h3>
+  <p>
+    In MDX content, markdown images (<code>![alt](src)</code>) automatically render as
+    <code>&lt;BasicImage&gt;</code> components. You can also use Astro's built-in
+    <code>&lt;Image&gt;</code> and <code>&lt;Picture&gt;</code> for more control.
+  </p>
+
+  <h4>BasicImage: Default</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        The default <code>&lt;BasicImage&gt;</code> centres the image and applies subtle border radius.
+        A pulsing placeholder shows while the image loads.
+      </p>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Architectural photograph showing wooden deck, striped columns, and glass panels"
+      />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>BasicImage: Framed</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        The <code>framed</code> prop adds a border and subtle shadow, useful for screenshots or images
+        that need visual separation from the content.
+      </p>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Architectural photograph with frame treatment"
+        framed
+      />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>BasicImage: With Caption</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Use <code>showAlt</code> to display the alt text as a visible caption. Add
+        <code>sourceUrl</code> and <code>sourceTitle</code> for attribution.
+      </p>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Modern architectural details with natural light"
+        showAlt
+        sourceUrl="https://unsplash.com"
+        sourceTitle="Unsplash"
+      />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>BasicImage: Bleed Variants</h4>
+  <SGTypographySwitcher>
+    <p>
+      The <code>bleed</code> prop extends images beyond the content column. Options are
+      <code>left</code>, <code>right</code>, or <code>full</code>. These work best in layouts with
+      defined grid columns.
+    </p>
+    <BasicImage
+      src="/src/assets/articles/styleguide-image.jpg"
+      alt="Image demonstrating bleed layout"
+      bleed="full"
+    />
+    <p>
+      Full-bleed images span the entire viewport width, creating dramatic visual breaks in long-form
+      content.
+    </p>
+  </SGTypographySwitcher>
+
+  <h4>Astro Image &amp; Picture</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        For direct control over image optimisation, use Astro's built-in components.
+        <code>&lt;Image&gt;</code> generates a single optimised format:
+      </p>
+      <Image src={styleguideImage} alt="Using Astro's Image component" width={600} />
+      <p>
+        <code>&lt;Picture&gt;</code> generates multiple formats (AVIF, WebP, JPEG) for better browser
+        compatibility:
+      </p>
+      <Picture
+        src={styleguideImage}
+        formats={['avif', 'webp', 'jpg']}
+        alt="Using Astro's Picture component"
+        width={600}
+      />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 3. Embeds -->
+  <h3 id="embeds">Embeds</h3>
+  <p>
+    The <code>&lt;Embed&gt;</code> component auto-detects URL types and renders the appropriate embed.
+    For specific platforms, dedicated components are also available.
+  </p>
+
+  <h4>YouTube (via Embed)</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Pass any YouTube URL to <code>&lt;Embed&gt;</code> for automatic embedding with the lite-youtube
+        player for better performance:
+      </p>
+      <Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>Vimeo (via Embed)</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>Vimeo URLs are automatically detected and embedded:</p>
+      <Embed url="https://vimeo.com/347119375" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>Loom</h4>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        For Loom videos, use <code>&lt;Embed&gt;</code> with a Loom share URL. You can also use the
+        dedicated <code>&lt;Loom&gt;</code> component with just the video ID:
+      </p>
+      <Embed url="https://www.loom.com/share/0132dbe661b24dd28f42e2ce040f78cc" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4>Notion Links</h4>
+  <SGTypographySwitcher>
+    <p>
+      The <code>&lt;Notion&gt;</code> component creates inline links to Notion pages with automatic
+      title fetching and icon display. These links appear inline with surrounding text, like this
+      reference to <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
+      which fetches its title automatically.
+    </p>
+    <p>
+      You can include multiple Notion links naturally: see
+      <Notion href="https://dannysmith.notion.site/Meeting-Checkouts-870b7ecca989419b8f0d3047bad89d05" />
+      for checkout practices, or
+      <Notion href="https://dannysmith.notion.site/Loom-4a6ebae015494adbbec07bf3f7912b03" />
+      for video documentation tips.
+    </p>
+    <p>
+      Provide a manual title to skip the fetch or override the page title:
+      <Notion href="https://www.notion.so/Example-Page-abc123" title="My Custom Title" />
+    </p>
+  </SGTypographySwitcher>
+
+  <!-- 4. BookmarkCard -->
+  <h3 id="bookmark-card">BookmarkCard</h3>
+  <p>
+    Rich link previews that fetch metadata at build time. Cards adapt their layout based on
+    container width&mdash;stacking vertically in narrow containers and displaying horizontally when
+    space permits.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>Drag the container edge to see the responsive behaviour:</p>
+      <BookmarkCard url="https://astro.build" />
+      <BookmarkCard url="https://developer.mozilla.org/en-US/docs/Web/CSS" />
+      <BookmarkCard url="https://github.com/withastro/astro" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
 </section>
