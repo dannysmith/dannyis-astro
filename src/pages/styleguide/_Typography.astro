@@ -4,10 +4,12 @@
  * Each chunk is wrapped in SGTypographySwitcher to compare across typography systems.
  */
 import { SGTypographySwitcher } from '@components/styleguide';
-import SmartLink from '@components/mdx/SmartLink.astro';
-import SmallCaps from '@components/mdx/typography/SmallCaps.astro';
-import Highlight from '@components/mdx/typography/highlight.astro';
-import BlockQuoteCitation from '@components/mdx/BlockQuoteCitation.astro';
+import {
+  BlockQuoteCitation,
+  SmallCaps,
+  SmartLink,
+  highlight as Highlight,
+} from '@components/mdx/index';
 import { Content as ChecklistContent } from './_snippets/checklist.mdx';
 ---
 

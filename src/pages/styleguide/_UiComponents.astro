@@ -6,16 +6,17 @@
  */
 import { getCollection } from 'astro:content';
 import { SGTypographySwitcher } from '@components/styleguide';
-import ResizableContainer from '@components/mdx/ResizableContainer.astro';
-import PersonalLogo from '@components/ui/PersonalLogo.astro';
-import Pill from '@components/ui/Pill.astro';
-import Spinner from '@components/ui/Spinner.astro';
-import SocialLinks from '@components/ui/SocialLinks.astro';
-import ThemeToggle from '@components/navigation/ThemeToggle.astro';
-import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
-import ContentCard from '@components/ui/ContentCard.astro';
-import NoteCard from '@components/layout/NoteCard.astro';
-import Footer from '@components/layout/Footer.astro';
+import { ResizableContainer } from '@components/mdx/index';
+import {
+  ContentCard,
+  MarkdownContentActions,
+  PersonalLogo,
+  Pill,
+  SocialLinks,
+  Spinner,
+} from '@components/ui/index';
+import { ThemeToggle } from '@components/navigation/index';
+import { Footer, NoteCard } from '@components/layout/index';
 
 // Get sample content for ContentCard demos
 // Prioritize articles with cover images for visual testing

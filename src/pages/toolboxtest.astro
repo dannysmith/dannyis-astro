@@ -1,9 +1,7 @@
 ---
-import BaseHead from '@components/layout/BaseHead.astro';
 import { getCollection } from 'astro:content';
-import Footer from '@components/layout/Footer.astro';
-import MainNavigation from '@components/layout/MainNavigation.astro';
-import ContentCard from '@components/ui/ContentCard.astro';
+import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
+import { ContentCard } from '@components/ui/index';
 
 const toolboxPages = await getCollection('toolboxPages');
 ---
