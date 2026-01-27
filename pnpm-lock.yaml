@@ -27,8 +27,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(astro@5.16.0(@types/node@24.6.2)(jiti@2.6.1)(rollup@4.53.2)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))
       '@dannysmith/datepicker':
-        specifier: ^0.1.5
-        version: 0.1.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^0.1.6
+        version: 0.1.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@fontsource-variable/fira-code':
         specifier: ^5.2.7
         version: 5.2.7
@@ -409,8 +409,8 @@ packages:
     resolution: {integrity: sha512-kzyuwOAQnXJNLS9PSyrk0CWk35nWJW/zl/6KvnTBMFK65gm7U1/Z5BqjxeapjZCIhQcM/DsrEmcbRwDyXyXK4A==}
     engines: {node: '>=14'}
 
-  '@dannysmith/datepicker@0.1.5':
-    resolution: {integrity: sha512-EcTkbEpgejZ9xLVMJd/DQnutSt0NntkVsVpjW+HsW22FQBvG40CkA9a0AE3C86KHfjBPtaKpgeh55jpxdHc7NQ==}
+  '@dannysmith/datepicker@0.1.6':
+    resolution: {integrity: sha512-VSpeqFItzgxzRFR6vv9Tq8gS5yDXEGsxHqi4YgZvZ1NpkvZLCZR4qMAMcfOPQTH291O3oEO9uslYqAsqbkmcPQ==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -5508,7 +5508,7 @@ snapshots:
 
   '@ctrl/tinycolor@4.2.0': {}
 
-  '@dannysmith/datepicker@0.1.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@dannysmith/datepicker@0.1.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@tanstack/react-virtual': 3.13.18(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       chrono-node: 2.9.0

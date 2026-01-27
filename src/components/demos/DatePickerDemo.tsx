@@ -32,7 +32,7 @@ export function DatePickerDemo() {
       <p style={styles.selectedDate}>
         {date ? format(date, 'EEEE, d MMMM yyyy') : 'No date selected'}
       </p>
-      <DatePicker value={date} onCommit={setDate} showClearButton />
+      <DatePicker value={date} onCommit={setDate} showClearButton autoFocus={false} />
     </div>
   );
 }

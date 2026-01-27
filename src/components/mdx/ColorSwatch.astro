@@ -36,7 +36,12 @@ const value = color.replace(/^var\((.+)\)$/, '$1');
 
     /* Copy the hex value to the clipboard */
     const copy = async () => {
-      await navigator.clipboard.writeText(getHex());
+      if (!navigator.clipboard?.writeText) return;
+      try {
+        await navigator.clipboard.writeText(getHex());
+      } catch {
+        /* Clipboard access denied - fail silently */
+      }
     };
 
     /* Add event listeners to the swatch */
