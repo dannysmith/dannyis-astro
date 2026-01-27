@@ -1,9 +1,150 @@
 ---
-// Utility Classes partial - documents available utility classes
-// TODO: Implement Section 8
+/**
+ * Utility Classes partial - Documents available utility classes
+ * Most utilities only need description (no visual demo).
+ * Visual demos for .flow and .list-reset at the end.
+ */
+import { SGTypographySwitcher } from '@components/styleguide';
 ---
 
 <section id="utility-classes" class="styleguide-section flow">
   <h2>Utility Classes</h2>
-  <p>.ui-style, .dark-surface, .flow, .card-surface, .list-reset, etc. - coming soon.</p>
+  <p>
+    Global utility classes available throughout the site. Most are documented here for reference;
+    <code>.flow</code> and <code>.list-reset</code> have visual demos below.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>.ui-style</code></td>
+        <td>
+          Opt-out of prose typography for nav, footer, UI-heavy areas. Already demoed extensively
+          via SGTypographySwitcher throughout this styleguide.
+        </td>
+      </tr>
+      <tr>
+        <td><code>.dark-surface</code></td>
+        <td>
+          Forces dark background (charcoal) with light text (beige). For always-dark areas
+          regardless of theme.
+        </td>
+      </tr>
+      <tr>
+        <td><code>.card-surface</code></td>
+        <td>Raised card/panel styling with background, border, radius and shadow.</td>
+      </tr>
+      <tr>
+        <td><code>.cq</code></td>
+        <td>
+          Establishes container query context (<code>container-type: inline-size</code>).
+        </td>
+      </tr>
+      <tr>
+        <td><code>.all-caps</code></td>
+        <td>Uppercase text with wide letter-spacing. For labels and UI text.</td>
+      </tr>
+      <tr>
+        <td><code>.content-trim</code></td>
+        <td>
+          Removes top margin from first child, bottom margin from last child. Use inside padded
+          containers with slotted content.
+        </td>
+      </tr>
+      <tr>
+        <td><code>.img-cover</code></td>
+        <td>
+          Makes image fill container with <code>object-fit: cover</code>.
+        </td>
+      </tr>
+      <tr>
+        <td><code>.sr-only</code></td>
+        <td>Visually hidden but accessible to screen readers.</td>
+      </tr>
+      <tr>
+        <td><code>.external-arrow</code></td>
+        <td>Subtle arrow indicator for external/offsite links in UI contexts.</td>
+      </tr>
+      <tr>
+        <td><code>.flow</code></td>
+        <td>Vertical rhythm spacing between child elements. See demo below.</td>
+      </tr>
+      <tr>
+        <td><code>.list-reset</code></td>
+        <td>Removes list styling for navigation/UI lists. See demo below.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Visual Demos -->
+  <h3 id="flow-demo">.flow</h3>
+  <p>
+    The <code>.flow</code> class adds vertical spacing between child elements. Headings get
+    proportionally larger margins: <code>h1</code>/<code>h2</code> get <code>--space-xl</code>,
+    <code>h3</code> gets <code>--space-l</code>, everything else gets <code>--space-m</code>.
+  </p>
+  <SGTypographySwitcher>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-l);">
+      <div>
+        <strong>Without .flow</strong>
+        <div>
+          <p>An opening paragraph.</p>
+          <h2>Section Heading (h2)</h2>
+          <p>Content after the h2.</p>
+          <h3>Subsection (h3)</h3>
+          <p>Content after the h3.</p>
+          <p>Another paragraph.</p>
+          <h2>Another Section (h2)</h2>
+          <p>Final paragraph.</p>
+        </div>
+      </div>
+      <div>
+        <strong>With .flow</strong>
+        <div class="flow">
+          <p>An opening paragraph.</p>
+          <h2>Section Heading (h2)</h2>
+          <p>Content after the h2.</p>
+          <h3>Subsection (h3)</h3>
+          <p>Content after the h3.</p>
+          <p>Another paragraph.</p>
+          <h2>Another Section (h2)</h2>
+          <p>Final paragraph.</p>
+        </div>
+      </div>
+    </div>
+  </SGTypographySwitcher>
+
+  <h3 id="list-reset-demo">.list-reset</h3>
+  <p>
+    The <code>.list-reset</code> class removes default list styling (bullets, padding) for
+    navigation-style lists:
+  </p>
+  <SGTypographySwitcher>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-m);">
+      <div>
+        <strong>Without .list-reset</strong>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Writing</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong>With .list-reset</strong>
+        <ul class="list-reset">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Writing</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </SGTypographySwitcher>
 </section>
