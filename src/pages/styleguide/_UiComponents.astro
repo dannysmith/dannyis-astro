@@ -1,9 +1,199 @@
 ---
-// UI Components partial - displays UI components
-// TODO: Implement in Phase 5
+/**
+ * UI Components partial - Components for site UI (nav, footer, etc.)
+ * Most wrapped in SGTypographySwitcher to show typography context differences.
+ * Footer uses fixed dark-surface styling so only wrapped in ResizableContainer.
+ */
+import { getCollection } from 'astro:content';
+import { SGTypographySwitcher } from '@components/styleguide';
+import ResizableContainer from '@components/mdx/ResizableContainer.astro';
+import PersonalLogo from '@components/ui/PersonalLogo.astro';
+import Pill from '@components/ui/Pill.astro';
+import Spinner from '@components/ui/Spinner.astro';
+import SocialLinks from '@components/ui/SocialLinks.astro';
+import ThemeToggle from '@components/navigation/ThemeToggle.astro';
+import MarkdownContentActions from '@components/ui/MarkdownContentActions.astro';
+import ContentCard from '@components/ui/ContentCard.astro';
+import NoteCard from '@components/layout/NoteCard.astro';
+import Footer from '@components/layout/Footer.astro';
+
+// Get sample content for ContentCard demos
+// Prioritize articles with cover images for visual testing
+const allArticles = await getCollection('articles', ({ data }) => !data.draft);
+const articlesWithCovers = allArticles.filter(a => 'cover' in a.data && a.data.cover);
+const articlesWithoutCovers = allArticles.filter(a => !('cover' in a.data && a.data.cover) && !a.data.styleguide);
+const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCovers.slice(0, 1)];
+
+const notes = await getCollection('notes', ({ data }) => !data.styleguide);
+const sampleNotes = notes.slice(0, 3);
 ---
 
 <section id="ui-components" class="styleguide-section flow">
   <h2>UI Components</h2>
-  <p>Pill, FormattedDate, ContentCard, Spinner, etc. - coming soon.</p>
+  <p>
+    Components for the site's UI&mdash;navigation, footer, and reusable primitives. These are
+    typically used outside of content areas.
+  </p>
+
+  <!-- 1. PersonalLogo -->
+  <h3 id="personal-logo">Personal Logo</h3>
+  <SGTypographySwitcher>
+    <PersonalLogo />
+  </SGTypographySwitcher>
+
+  <!-- 2. Pill -->
+  <h3 id="pill">Pill</h3>
+  <p>
+    Small label badges for tags, categories, or status indicators. Colours are derived automatically
+    from the background using <code>color-mix()</code>.
+  </p>
+  <SGTypographySwitcher>
+    <p>Default pill uses the secondary background colour:</p>
+    <p>
+      <Pill text="Default" />
+    </p>
+    <p>Custom colours via the <code>color</code> prop:</p>
+    <p>
+      <Pill text="Coral" color="var(--color-coral)" />
+      <Pill text="Blue" color="var(--color-blue)" />
+      <Pill text="Green" color="var(--color-green)" />
+      <Pill text="Purple" color="var(--color-purple)" />
+      <Pill text="Orange" color="var(--color-orange)" />
+    </p>
+    <p>Override text colour with <code>textColor</code> if needed:</p>
+    <p>
+      <Pill text="Custom Text" color="var(--color-charcoal)" textColor="var(--color-beige)" />
+    </p>
+  </SGTypographySwitcher>
+
+  <!-- 3. Spinner -->
+  <h3 id="spinner">Spinner</h3>
+  <p>
+    Animated loading indicator using the accent colour. The <code>size</code> prop accepts any CSS length
+    value:
+  </p>
+  <SGTypographySwitcher>
+    <div style="display: flex; align-items: center; gap: var(--space-m);">
+      <Spinner size="1.5rem" />
+      <Spinner size="2.5rem" />
+      <Spinner size="4rem" />
+    </div>
+  </SGTypographySwitcher>
+
+  <!-- 4. SocialLinks -->
+  <h3 id="social-links">SocialLinks</h3>
+  <SGTypographySwitcher>
+    <SocialLinks />
+  </SGTypographySwitcher>
+
+  <!-- 5. ThemeToggle -->
+  <h3 id="theme-toggle">ThemeToggle</h3>
+  <SGTypographySwitcher>
+    <div style="display: flex; justify-content: center;">
+      <ThemeToggle />
+    </div>
+  </SGTypographySwitcher>
+
+  <!-- 6. MarkdownContentActions -->
+  <h3 id="markdown-content-actions">MarkdownContentActions</h3>
+  <p>
+    Action links for sharing and copying content as markdown. The share link only appears on devices
+    that support the Web Share API:
+  </p>
+  <SGTypographySwitcher>
+    <MarkdownContentActions markdownUrl="/example.md" />
+  </SGTypographySwitcher>
+
+  <!-- 7. ContentCard: Articles -->
+  <h3 id="content-card-articles">ContentCard: Articles</h3>
+  <p>
+    Cards for displaying article previews. Pass a content collection entry to auto-extract metadata,
+    or use manual props for custom content.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.map(article => <ContentCard content={article} />)}
+      </div>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+  <p>
+    The <code>compact</code> prop hides the image and summary. Cards also compact automatically below
+    350px via container query:
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.slice(0, 2).map(article => <ContentCard content={article} compact />)}
+      </div>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 8. ContentCard: Notes -->
+  <h3 id="content-card-notes">ContentCard: Notes</h3>
+  <p>
+    Note cards should use a blue accent border to differentiate from articles. The border colour is
+    set via <code>--color-blue</code> in the component's <code>TYPE_CONFIG</code>.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleNotes.map(note => <ContentCard content={note} />)}
+      </div>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 9. NoteCard -->
+  <h3 id="note-card">NoteCard</h3>
+  <p>
+    Layout component for displaying full notes with their content. Used on the notes index page and
+    individual note pages. Unlike ContentCard (which shows previews), NoteCard renders the complete
+    note with its content via a slot.
+  </p>
+
+  <h4>With tags and source URL</h4>
+  <p>
+    When a note has a <code>sourceURL</code>, an embed is automatically displayed. Tags appear as
+    pills below the title.
+  </p>
+  <ResizableContainer>
+    <NoteCard
+      title="On the Nature of Remote Work"
+      pubDate={new Date('2024-03-15')}
+      slug="demo-note-1"
+      tags={['remote-work', 'culture', 'async']}
+      sourceURL="https://justinjackson.ca/calm-company"
+    >
+      <p>
+        Remote work isn't just about <em>where</em> you work—it's about <strong>how</strong> you
+        work. The best remote teams understand that asynchronous communication is the foundation,
+        not an afterthought.
+      </p>
+      <p>
+        When you default to async, you give people the gift of <a href="#">deep work</a>. Meetings
+        become the exception, not the rule. Documentation becomes a first-class citizen.
+      </p>
+    </NoteCard>
+  </ResizableContainer>
+
+  <p>Without tags or sourceURL—just title, date, and content:</p>
+
+  <ResizableContainer>
+    <NoteCard title="A Quick Thought on Defaults" pubDate={new Date('2024-06-22')} slug="demo-note-2">
+      <p>
+        Good defaults are invisible. Bad defaults create friction. The best software feels like it
+        was configured just for you, even when you've changed nothing.
+      </p>
+    </NoteCard>
+  </ResizableContainer>
+
+  <!-- 10. Footer -->
+  <h3 id="footer">Footer</h3>
+  <p>
+    The site footer uses fixed <code>.dark-surface</code> styling regardless of theme. Includes PersonalLogo,
+    navigation links, RSS feeds, and SocialLinks.
+  </p>
+  <ResizableContainer>
+    <Footer />
+  </ResizableContainer>
 </section>
