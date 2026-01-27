@@ -16,7 +16,8 @@ type Props = CollectionEntry<'articles'>;
 const post = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const readingTime = remarkPluginFrontmatter.minutesRead;
-const postData = { ...post.data, readingTime, headings };
+const hasFootnotes = remarkPluginFrontmatter.hasFootnotes ?? false;
+const postData = { ...post.data, readingTime, headings, hasFootnotes };
 ---
 
 <Article {...postData}>

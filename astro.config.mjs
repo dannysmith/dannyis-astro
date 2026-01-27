@@ -8,6 +8,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeMermaid from 'rehype-mermaid';
 import { mermaidConfig } from './src/config/mermaid.js';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
+import { remarkFootnoteDetector } from './src/lib/remark-footnote-detector.mjs';
 import icon from 'astro-icon';
 
 import { readFileSync } from 'fs';
@@ -68,7 +69,7 @@ export default defineConfig({
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
       [rehypeMermaid, { mermaidConfig }],
     ],
-    remarkPlugins: [remarkReadingTime],
+    remarkPlugins: [remarkReadingTime, remarkFootnoteDetector],
   },
   // Avoid using a trailing slash in redirect URLs
   redirects: {

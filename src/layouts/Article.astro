@@ -16,6 +16,7 @@ import InlineFootnotes from '@components/layout/InlineFootnotes.astro';
 type Props = CollectionEntry<'articles'>['data'] & {
   readingTime: string;
   headings: MarkdownHeading[];
+  hasFootnotes?: boolean;
 };
 const {
   title,
@@ -30,6 +31,7 @@ const {
   readingTime,
   headings,
   toc,
+  hasFootnotes,
 } = Astro.props;
 
 // Build OG image path for this article
@@ -101,7 +103,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 
     <Footer />
     <Lightbox />
-    <InlineFootnotes />
+    {hasFootnotes && <InlineFootnotes />}
     <style>
       /* Article needs position context for TOC */
       article {
