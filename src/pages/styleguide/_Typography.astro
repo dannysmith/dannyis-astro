@@ -1,8 +1,157 @@
 ---
-// Typography partial - displays basic typography and some typographic HTML elements
+/**
+ * Typography partial - displays typography elements in realistic settings
+ * Each chunk is wrapped in SGTypographySwitcher to compare across typography systems.
+ */
+import { SGTypographySwitcher } from '@components/styleguide';
+import SmartLink from '@components/mdx/SmartLink.astro';
+import SmallCaps from '@components/mdx/typography/SmallCaps.astro';
+import Highlight from '@components/mdx/typography/highlight.astro';
 ---
 
 <section id="typography" class="styleguide-section flow">
   <h2>Typography</h2>
-  <p>Basic typography and some typographic HTML elements.</p>
+  <p>
+    Typography elements shown in realistic settings. Use the tabs to compare how each renders
+    in the default context, long-form prose, and UI contexts.
+  </p>
+
+  <!-- 1. Paragraphs & Basic Inline Text -->
+  <h3 id="paragraphs-inline">Paragraphs & Basic Inline Text</h3>
+  <SGTypographySwitcher>
+    <h2>The Craft of Writing for the Web</h2>
+    <p>
+      Good writing finds its way to readers through <em>clarity</em> and <strong>purpose</strong>.
+      Whether you're crafting a technical specification or a personal reflection, the fundamentals
+      remain the same. A well-structured paragraph flows naturally, guiding the reader from one
+      idea to the next without friction. This is especially true when writing about complex topics
+      like <a href="/writing/">software development</a> or <a href="https://example.com">design systems</a>.
+    </p>
+    <p>
+      The difference between <b>bold</b> and <strong>strong</strong> is subtle but meaningful.
+      Bold (<code>&lt;b&gt;</code>) is purely stylistic, while strong (<code>&lt;strong&gt;</code>)
+      conveys semantic importance. Similarly, <i>italic</i> differs from <em>emphasis</em>&mdash;one
+      is a visual treatment, the other tells screen readers to stress the word. In 1984, these
+      distinctions didn't matter much. By 2024, they're essential for accessibility.
+    </p>
+    <p>
+      Consider the office filing cabinet: it organises information efficiently, but finding
+      specific files still requires effort. Digital systems offer the same trade-offs. A good
+      filing system might store 1/2 of your documents in frequently-accessed folders while
+      archiving the remaining 3/4 for occasional reference. Thefficacy of any system depends
+      on how well it fits your workflow.
+    </p>
+    <hr />
+    <h2>Links: Regular vs SmartLink</h2>
+    <p>
+      In MDX content, markdown links automatically become <code>&lt;SmartLink&gt;</code> components.
+      This paragraph uses regular <code>&lt;a&gt;</code> tags: here's an
+      <a href="/notes/">internal link</a> and an
+      <a href="https://github.com" target="_blank" rel="noopener noreferrer">external link</a>.
+      Notice you must manually add <code>target="_blank"</code> and <code>rel</code> for external links.
+    </p>
+    <p>
+      This paragraph uses the <code>&lt;SmartLink&gt;</code> component instead. Here's an
+      <SmartLink href="/notes/">internal link</SmartLink> and an
+      <SmartLink href="https://github.com">external link</SmartLink>. SmartLink automatically
+      detects external URLs, adds the arrow indicator, and handles <code>target</code>/<code>rel</code>
+      attributes. It makes authoring content significantly easier.
+    </p>
+  </SGTypographySwitcher>
+
+  <!-- 2. Technical & Specialized Inline Elements -->
+  <h3 id="technical-inline">Technical & Specialized Inline Elements</h3>
+  <SGTypographySwitcher>
+    <h2>Keyboard & Interface Patterns</h2>
+    <p>
+      Modern applications rely on keyboard shortcuts for efficient navigation. Press
+      <kbd>Ctrl</kbd> + <kbd>S</kbd> to save, or <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
+      to open the command palette. On macOS, the <kbd>Option</kbd> key often reveals hidden
+      functionality. These conventions emerged from the office software era and persist today.
+    </p>
+    <p>
+      When documenting changes, use <del>deleted text</del> to show what was removed and
+      <mark>highlighted text</mark> to draw attention to important updates. The <s>strikethrough</s>
+      element (<code>&lt;s&gt;</code>) indicates content that's no longer accurate but remains
+      for historical context, while <del>deletion</del> (<code>&lt;del&gt;</code>) marks actual
+      removed content.
+    </p>
+    <h2>Scientific & Technical Notation</h2>
+    <p>
+      In scientific writing, superscripts and subscripts are essential. Water is written as
+      H<sub>2</sub>O, while Einstein's famous equation is E = mc<sup>2</sup>. The <var>x</var>
+      variable in f(<var>x</var>) = <var>x</var><sup>2</sup> + 2<var>x</var> + 1 represents
+      any real number. When the command <samp>Build complete</samp> appears in your terminal,
+      you know the process finished successfully.
+    </p>
+    <p>
+      <small>Small print often contains legal disclaimers or supplementary information that
+      doesn't warrant full-size text.</small> The book <cite>The Elements of Typographic Style</cite>
+      by Robert Bringhurst remains the definitive reference for typography. As he notes,
+      <q>Typography exists to honor content.</q>
+    </p>
+    <h2>Definitions & Abbreviations</h2>
+    <p>
+      A <dfn>design token</dfn> is a named entity that stores a visual design attribute.
+      The <abbr title="World Wide Web Consortium">W3C</abbr> defines web standards, while
+      <abbr>CSS</abbr> (no title attribute) handles styling. Notice how abbreviations with
+      titles show a dotted underline indicating more information is available on hover.
+    </p>
+    <p>
+      For emphasis beyond italics, use the <Highlight>highlight component</Highlight> to make
+      text pop with a background colour. For formal titles and acronyms in running text,
+      <SmallCaps>Small Caps</SmallCaps> provides a distinguished appearance that doesn't
+      disrupt the flow of reading.
+    </p>
+  </SGTypographySwitcher>
+
+  <!-- 3. Headings (H1-H6) -->
+  <h3 id="headings">Headings</h3>
+  <SGTypographySwitcher>
+    <h1>Finding Flow in Creative Work H1</h1>
+    <p>
+      The first-level heading establishes the primary topic. It should be used sparingly&mdash;typically
+      once per page. In this example, we explore the art of finding flow in creative work,
+      a topic that affects writers, designers, and developers alike.
+    </p>
+
+    <h2>The Office Environment H2</h2>
+    <p>
+      Second-level headings divide major sections. They're the workhorses of content structure,
+      appearing frequently throughout longer documents. A good heading hierarchy helps readers
+      navigate efficiently and understand the relationships between ideas.
+    </p>
+    <p>
+      The modern office has evolved significantly since the filing cabinet era. Open floor plans,
+      remote work, and digital-first workflows have transformed how we collaborate. Yet the
+      fundamental need for focused work time remains unchanged.
+    </p>
+
+    <h3>Efficient Filing Systems H3</h3>
+    <p>
+      Third-level headings break down subsections. They're useful for grouping related content
+      within a major section. Here we might discuss specific strategies for organizing digital
+      files or managing reference materials.
+    </p>
+
+    <h4>Configuring Default Folders H4</h4>
+    <p>
+      Fourth-level headings are less common but valuable for detailed technical content.
+      In documentation, they might describe specific configuration options or step-by-step
+      instructions within a larger procedure.
+    </p>
+
+    <h5>Affiliate Programme Details H5</h5>
+    <p>
+      Fifth-level headings rarely appear outside deeply nested documentation. When you find
+      yourself reaching for <code>&lt;h5&gt;</code>, consider whether your content structure
+      might benefit from reorganisation.
+    </p>
+
+    <h6>Sufficiently Deep Nesting H6</h6>
+    <p>
+      Sixth-level headings exist for completeness but suggest your document structure may be
+      overly complex. Most content works well with three or four heading levels at most.
+    </p>
+  </SGTypographySwitcher>
 </section>
