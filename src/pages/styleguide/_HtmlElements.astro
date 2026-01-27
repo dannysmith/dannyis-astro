@@ -1,9 +1,275 @@
 ---
-// HTML Elements partial - displays native HTML element styling
-// TODO: Implement in Phase 4
+/**
+ * HTML Elements partial - Native HTML element styling
+ * Covers elements not already demoed in Typography (which handles text elements).
+ * Forms, disclosure widgets, definition lists, figures, and media elements.
+ */
+import { SGTypographySwitcher } from '@components/styleguide';
+import ResizableContainer from '@components/mdx/ResizableContainer.astro';
+import styleguideImage from '@assets/articles/styleguide-image.jpg';
 ---
 
 <section id="html-elements" class="styleguide-section flow">
   <h2>HTML Elements</h2>
-  <p>Form elements, tables, media, and semantic elements - coming soon.</p>
+  <p>
+    Native HTML elements that aren't covered in Typography. These provide sensible base styles for
+    forms, disclosure widgets, definition lists, figures, and media elements.
+  </p>
+
+  <!-- 1. Forms -->
+  <h3 id="forms">Forms</h3>
+  <p>
+    Form controls with proper <code>&lt;fieldset&gt;</code>, <code>&lt;legend&gt;</code>, and
+    <code>&lt;label&gt;</code> structure. Most forms on this site will be minimal, but having
+    sensible defaults ensures consistency.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <form onsubmit="return false;">
+        <fieldset>
+          <legend>Contact Information</legend>
+          <p>
+            <label for="name">Name</label><br />
+            <input type="text" id="name" name="name" placeholder="Your name" />
+          </p>
+          <p>
+            <label for="email">Email</label><br />
+            <input type="email" id="email" name="email" placeholder="you@example.com" />
+          </p>
+          <p>
+            <label for="password">Password</label><br />
+            <input type="password" id="password" name="password" placeholder="Enter password" />
+          </p>
+          <p>
+            <label for="search">Search</label><br />
+            <input type="search" id="search" name="search" placeholder="Search..." />
+          </p>
+          <p>
+            <label for="url">Website</label><br />
+            <input type="url" id="url" name="url" placeholder="https://example.com" />
+          </p>
+          <p>
+            <label for="number">Quantity</label><br />
+            <input type="number" id="number" name="number" min="0" max="100" value="1" />
+          </p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Additional Options</legend>
+          <p>
+            <label for="file">Upload File</label><br />
+            <input type="file" id="file" name="file" />
+          </p>
+          <p>
+            <label for="color">Favourite Colour</label><br />
+            <input type="color" id="color" name="color" value="#E07A5F" />
+          </p>
+          <p>
+            <label for="date">Date</label><br />
+            <input type="date" id="date" name="date" />
+          </p>
+          <p>
+            <label for="range">Volume</label><br />
+            <input type="range" id="range" name="range" min="0" max="100" value="50" />
+          </p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Preferences</legend>
+          <p>
+            <label>
+              <input type="checkbox" name="newsletter" checked />
+              Subscribe to newsletter
+            </label><br />
+            <label>
+              <input type="checkbox" name="updates" />
+              Receive product updates
+            </label>
+          </p>
+          <p>
+            Contact preference:<br />
+            <label>
+              <input type="radio" name="contact" value="email" checked />
+              Email
+            </label><br />
+            <label>
+              <input type="radio" name="contact" value="phone" />
+              Phone
+            </label><br />
+            <label>
+              <input type="radio" name="contact" value="none" />
+              No contact
+            </label>
+          </p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Selection &amp; Text</legend>
+          <p>
+            <label for="select">Country</label><br />
+            <select id="select" name="country">
+              <option value="">Select a country...</option>
+              <option value="uk">United Kingdom</option>
+              <option value="us">United States</option>
+              <option value="ca">Canada</option>
+              <option value="au">Australia</option>
+            </select>
+          </p>
+          <p>
+            <label for="datalist-input">Browser</label><br />
+            <input type="text" id="datalist-input" name="browser" list="browsers" placeholder="Type to search..." />
+            <datalist id="browsers">
+              <option value="Chrome" />
+              <option value="Firefox" />
+              <option value="Safari" />
+              <option value="Edge" />
+            </datalist>
+          </p>
+          <p>
+            <label for="textarea">Message</label><br />
+            <textarea id="textarea" name="message" rows="4" placeholder="Your message here..."></textarea>
+          </p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Progress Indicators</legend>
+          <p>
+            <label for="progress">Download Progress</label><br />
+            <progress id="progress" value="65" max="100">65%</progress>
+          </p>
+          <p>
+            <label for="meter">Disk Usage</label><br />
+            <meter id="meter" value="0.7" min="0" max="1" low="0.3" high="0.7" optimum="0.5">70%</meter>
+          </p>
+        </fieldset>
+
+        <p>
+          <button type="submit">Submit</button>
+          <button type="reset">Reset</button>
+          <button type="button" disabled>Disabled</button>
+        </p>
+      </form>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 2. Details/Summary -->
+  <h3 id="details-summary">Details/Summary</h3>
+  <p>
+    Native HTML disclosure widget. Unlike our Accordion component, this uses no JavaScript and has
+    built-in accessibility. The browser handles open/close animation.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <details>
+        <summary>What is the difference between details/summary and Accordion?</summary>
+        <p>
+          The native <code>&lt;details&gt;</code> element provides disclosure functionality without
+          JavaScript. It's more accessible by default and works even when scripts fail to load. Our
+          Accordion component offers more styling control and animation options, but this native
+          element is perfect for simple use cases.
+        </p>
+      </details>
+
+      <details>
+        <summary>Can details contain complex content?</summary>
+        <p>Yes! You can include any block content inside:</p>
+        <ul>
+          <li>Lists like this one</li>
+          <li>Multiple paragraphs</li>
+          <li>Even nested details elements</li>
+        </ul>
+        <p>
+          The summary acts as the clickable header, and everything else becomes the expandable
+          content.
+        </p>
+      </details>
+
+      <details open>
+        <summary>This one starts open</summary>
+        <p>
+          Adding the <code>open</code> attribute makes the details element expanded by default. Users
+          can still close it by clicking the summary.
+        </p>
+      </details>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 3. Definition Lists -->
+  <h3 id="definition-lists">Definition Lists</h3>
+  <p>
+    The <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code> elements for
+    term-definition pairs. Useful for glossaries, metadata displays, or FAQ-style content.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <dl>
+        <dt>Async-first</dt>
+        <dd>
+          A communication approach where asynchronous methods (written documentation, recorded
+          videos) are the default, with synchronous meetings used sparingly for high-bandwidth
+          discussions.
+        </dd>
+
+        <dt>Deep work</dt>
+        <dd>
+          Professional activities performed in a state of distraction-free concentration that push
+          cognitive capabilities to their limit. Coined by Cal Newport.
+        </dd>
+
+        <dt>Calm company</dt>
+        <dd>A business that prioritises sustainable growth, employee well-being, and profitability
+          over hypergrowth and external funding.</dd>
+        <dd>Often characterised by remote-first policies, async communication, and reasonable
+          working hours.</dd>
+      </dl>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 4. Figure/Figcaption -->
+  <h3 id="figure-figcaption">Figure/Figcaption</h3>
+  <p>
+    The <code>&lt;figure&gt;</code> element with <code>&lt;figcaption&gt;</code> for self-contained
+    content with a caption. Distinct from BasicImage—this shows the raw HTML element styling.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <figure>
+        <img src={styleguideImage.src} alt="Modern architectural terrace with wooden decking" />
+        <figcaption>
+          Figure 1: A modern architectural space demonstrating the figure/figcaption structure. The
+          caption appears below the content.
+        </figcaption>
+      </figure>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 5. Audio/Video -->
+  <h3 id="audio-video">Audio/Video</h3>
+  <p>
+    Native HTML5 media elements. While most embedded media uses the Embed component (for YouTube,
+    Vimeo, etc.), these native elements are useful for self-hosted content.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <h4>Audio</h4>
+      <p>
+        The native <code>&lt;audio&gt;</code> element with controls. Browser styling varies, but
+        basic functionality is consistent.
+      </p>
+      <audio controls>
+        <source src="/placeholder-audio.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      <h4>Video</h4>
+      <p>
+        The native <code>&lt;video&gt;</code> element. For actual video hosting, consider using the
+        Embed component with YouTube/Vimeo for better performance and features.
+      </p>
+      <video controls>
+        <source src="/placeholder-video.mp4" type="video/mp4" />
+        Your browser does not support the video element.
+      </video>
+    </SGTypographySwitcher>
+  </ResizableContainer>
 </section>
