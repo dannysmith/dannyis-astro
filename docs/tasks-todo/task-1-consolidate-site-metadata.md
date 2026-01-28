@@ -235,26 +235,76 @@ src/pages/now/
 
 ---
 
-## Future Phases (to be detailed after Phase 1 & 2)
+## Remaining Phases
 
 ### Phase 3: Improve llms.txt
-- Auto-generate "Other Pages" by scanning actual pages
-- Use CONFIG.socialProfiles and CONFIG.externalLinks
+
+Currently `llms.txt.ts` has hardcoded `AI_SUMMARY` and `ABOUT_CONTENT` strings, and the "Other Pages" section is manual.
+
+**Changes:**
+- Use `CONFIG.externalLinks` array to generate external links section
+- Consider auto-generating "Other Pages" by scanning `src/pages/` (may be overkill)
+
+**Files:** `src/pages/llms.txt.ts`
+
+---
 
 ### Phase 4: Update SocialLinks Component
-- `SocialLinks.astro` - iterate over `CONFIG.socialProfiles.filter(p => p.showInFooter)`
+
+Currently `src/components/ui/SocialLinks.astro` has 5 hardcoded social links. Should use config.
+
+**Changes:**
+- Import `getConfig()`
+- Filter profiles: `config.socialProfiles.filter(p => p.showInFooter)`
+- Iterate to generate `<li>` elements with `<Icon name={profile.icon} />`
+
+**Files:** `src/components/ui/SocialLinks.astro`
+
+---
 
 ### Phase 5: Generate site.webmanifest
-- Create `src/pages/site.webmanifest.ts`
+
+Currently `public/site.webmanifest` is a static JSON file with hardcoded values that duplicate config.
+
+**Changes:**
+- Create `src/pages/site.webmanifest.ts` as an API route
+- Use `getConfig()` for `name`, `short_name`, `description`, `theme_color`, `background_color`
+- Keep `icons` array hardcoded (rarely changes)
 - Delete `public/site.webmanifest`
 
+**Files:**
+- `src/pages/site.webmanifest.ts` (new)
+- `public/site.webmanifest` (delete)
+
+---
+
 ### Phase 6: Generate humans.txt (optional)
-- Create `src/pages/humans.txt.ts`
+
+Currently `public/humans.txt` is static with hardcoded author info.
+
+**Changes:**
+- Create `src/pages/humans.txt.ts` as an API route
+- Use `getConfig()` for author name, location, site URL
 - Delete `public/humans.txt`
 
-### Phase 7: Extract Redirects (optional, separate concern)
-- Create `redirects.js` in project root
+**Files:**
+- `src/pages/humans.txt.ts` (new)
+- `public/humans.txt` (delete)
+
+---
+
+### Phase 7: Extract Redirects (independent)
+
+Unrelated to config consolidation. The redirects in `astro.config.mjs` are getting long.
+
+**Changes:**
+- Create `redirects.js` or `redirects.ts` in project root
+- Export redirects object
 - Import into `astro.config.mjs`
+
+**Files:**
+- `redirects.js` (new)
+- `astro.config.mjs` (simplify)
 
 ---
 
