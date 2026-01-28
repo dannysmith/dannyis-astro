@@ -1,43 +1,25 @@
 ---
 import { Icon } from 'astro-icon/components';
+import { getConfig } from '@config/config';
+
+const config = getConfig();
+const footerProfiles = config.socialProfiles.filter(p => 'showInFooter' in p && p.showInFooter);
 ---
 
 <section class="social-links">
   <ul class="list-reset">
-    <li>
-      <a
-        href="https://bsky.app/profile/danny.is"
-        title="BlueSky Profile"
-        target="_blank"
-        rel="noopener noreferrer"><Icon name="social/bluesky" /></a
-      >
-    </li>
-    <li>
-      <a href="/linkedin" title="LinkedIn Profile" target="_blank" rel="noopener noreferrer"
-        ><Icon name="social/linkedin" /></a
-      >
-    </li>
-    <li>
-      <a href="/youtube" title="Youtube Channel" target="_blank" rel="noopener noreferrer"
-        ><Icon name="social/youtube" /></a
-      >
-    </li>
-    <li>
-      <a
-        href="https://instagram.com/dannysmith"
-        title="Instagram Profile"
-        target="_blank"
-        rel="noopener noreferrer"><Icon name="social/instagram" /></a
-      >
-    </li>
-    <li>
-      <a
-        href="https://github.com/dannysmith"
-        title="GitHub Profile"
-        target="_blank"
-        rel="noopener noreferrer"><Icon name="social/github" /></a
-      >
-    </li>
+    {footerProfiles.map(profile => (
+      <li>
+        <a
+          href={profile.url}
+          title={`${profile.name} Profile`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name={profile.icon} />
+        </a>
+      </li>
+    ))}
   </ul>
 </section>
 

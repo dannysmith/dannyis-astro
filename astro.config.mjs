@@ -10,6 +10,7 @@ import { mermaidConfig } from './src/config/mermaid.js';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import { remarkFootnoteDetector } from './src/lib/remark-footnote-detector.mjs';
 import icon from 'astro-icon';
+import { redirects } from './src/config/redirects.ts';
 
 import { readFileSync } from 'fs';
 import expressiveCode, { ExpressiveCodeTheme } from 'astro-expressive-code';
@@ -71,19 +72,5 @@ export default defineConfig({
     ],
     remarkPlugins: [remarkReadingTime, remarkFootnoteDetector],
   },
-  // Avoid using a trailing slash in redirect URLs
-  redirects: {
-    '/meeting': 'https://cal.com/dannysmith',
-    '/toolbox': 'https://betterat.work/toolbox',
-    '/linkedin': 'https://www.linkedin.com/in/dannyasmith',
-    '/cv': '/cv-danny-smith.pdf',
-    '/working': 'https://betterat.work',
-    '/remote':
-      'https://dannysmith.notion.site/Remote-Working-Tips-821f025d73cb4d93a661abc93822fb14',
-    '/rtotd': 'https://dannysmith.notion.site/Remote-Working-Tips-821f025d73cb4d93a661abc93822fb14',
-    '/using': 'https://www.notion.so/dannysmith/Danny-Uses-72544bdecd144ca5ab3864d92dcd119b',
-    '/music': 'https://youtube.com/dannysmithblues',
-    '/singing': 'https://youtube.com/dannysmithblues',
-    '/youtube': 'https://www.youtube.com/channel/UCp0vO-4tetByUhsVijyt2jA',
-  },
+  redirects,
 });

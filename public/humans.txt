@@ -1,9 +1,0 @@
-/* AUTHOR */
-
-	Name:        Danny Smith
-	Location:    London, UK
-	Site:        https://danny.is
-
-/* META */
-
-	Built with: AstroJS & CSS.

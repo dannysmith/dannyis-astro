@@ -1,2 +1,6 @@
-export const OG_AUTHOR_NAME = 'Danny Smith';
-export const OG_PROFILE_IMAGE = 'https://danny.is/avatar-circle.png';
+import { getConfig } from '@config/config';
+
+const config = getConfig();
+
+export const OG_AUTHOR_NAME = config.author.fullName;
+export const OG_PROFILE_IMAGE = config.author.avatarCircleUrl;

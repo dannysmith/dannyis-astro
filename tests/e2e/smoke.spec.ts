@@ -38,6 +38,50 @@ test.describe('Critical Path Tests', () => {
     const pageContent = await page.textContent('body');
     expect(pageContent).toMatch(/404|not found/i);
   });
+
+  test('styleguide page loads successfully', async ({ page }) => {
+    const response = await page.goto('/styleguide/');
+    expect(response?.status()).toBe(200);
+  });
+});
+
+test.describe('Generated Files', () => {
+  test('llms.txt has expected sections', async ({ page }) => {
+    const response = await page.goto('/llms.txt');
+    expect(response?.status()).toBe(200);
+
+    const content = await response?.text();
+    expect(content).toContain('# Danny Smith');
+    expect(content).toContain('## Articles');
+    expect(content).toContain('## Notes');
+    expect(content).toContain('## Other Pages');
+    expect(content).toContain('## External');
+  });
+
+  test('site.webmanifest returns valid JSON', async ({ page }) => {
+    const response = await page.goto('/site.webmanifest');
+    expect(response?.status()).toBe(200);
+
+    const contentType = response?.headers()['content-type'];
+    expect(contentType).toContain('application/manifest+json');
+
+    const content = await response?.text();
+    const manifest = JSON.parse(content || '{}');
+    expect(manifest.name).toBe('Danny Smith');
+    expect(manifest.short_name).toBe('danny.is');
+    expect(manifest.icons).toBeInstanceOf(Array);
+    expect(manifest.icons.length).toBeGreaterThan(0);
+  });
+
+  test('humans.txt contains author info', async ({ page }) => {
+    const response = await page.goto('/humans.txt');
+    expect(response?.status()).toBe(200);
+
+    const content = await response?.text();
+    expect(content).toContain('Danny Smith');
+    expect(content).toContain('London');
+    expect(content).toContain('https://danny.is');
+  });
 });
 
 test.describe('Content Filtering Tests', () => {
@@ -58,7 +102,7 @@ test.describe('Content Filtering Tests', () => {
 
     // Even in development, styleguide content is excluded from listings
     // Just verify there are articles shown
-    const articles = page.locator('li');
+    const articles = page.locator('main li');
     expect(await articles.count()).toBeGreaterThan(0);
 
     // Check that styleguide content is NOT in the listing

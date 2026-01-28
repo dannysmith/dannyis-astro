@@ -1,31 +1,39 @@
 /**
  * SEO Utility Functions
  *
- * Clean, testable functions for generating SEO metadata.
- * All complex logic extracted from components for better maintainability.
+ * Pure functions for generating SEO metadata.
+ * All configuration comes from getConfig().
  */
 
-import {
-  TITLE_TEMPLATES,
-  AUTHOR,
-  SITE_CONFIG,
-  SCHEMA_CONFIG,
-  ARTICLE_CONFIG,
-  type PageType,
-  type SEOData,
-} from '@config/seo';
+import { getConfig } from '@config/config';
 
-/**
- * Generate page title using configured templates
- */
+// Types
+
+export type PageType = 'article' | 'note' | 'page';
+
+export interface SEOData {
+  title: string;
+  description?: string;
+  image?: string;
+  type: 'website' | 'article';
+  pageType?: PageType;
+  pubDate?: Date;
+  updatedDate?: Date;
+  tags?: string[];
+}
+
+// Public Functions
+
 export function generatePageTitle(title: string, pageType?: PageType): string {
+  const config = getConfig();
+
   // Don't modify the homepage title or if no pageType is specified
-  if (!pageType || title === AUTHOR.name) {
+  if (!pageType || title === config.site.name) {
     return title;
   }
 
-  const template = TITLE_TEMPLATES[pageType] || TITLE_TEMPLATES.default;
-  return template(title);
+  const template = config.pageTitleTemplates[pageType] || config.pageTitleTemplates.default;
+  return template.replace('{title}', title);
 }
 
 /**
@@ -33,7 +41,8 @@ export function generatePageTitle(title: string, pageType?: PageType): string {
  */
 export function generateMetaDescription(description?: string): string | undefined {
   if (!description) return undefined;
-  return `${description} | ${AUTHOR.name}`;
+  const config = getConfig();
+  return `${description} | ${config.author.fullName}`;
 }
 
 /**
@@ -44,44 +53,64 @@ export function generateJSONLD(
   canonicalUrl: string,
   ogImageUrl: string
 ): Record<string, unknown> {
-  const baseGraph = [
-    // Person Schema
-    {
-      ...SCHEMA_CONFIG.person,
-      worksFor: {
-        '@type': 'Organization',
-        '@id': `${AUTHOR.website}/#organization`,
-      },
+  const config = getConfig();
+  const siteUrl = config.site.url;
+
+  const personSchema = {
+    '@type': 'Person' as const,
+    '@id': `${siteUrl}/#person`,
+    name: config.author.fullName,
+    givenName: config.author.givenName,
+    familyName: config.author.familyName,
+    url: siteUrl,
+    image: config.author.avatarUrl,
+    sameAs: config.socialProfiles.map(p => p.url),
+    jobTitle: config.author.jobTitle,
+    description: config.descriptions.author,
+    worksFor: {
+      '@type': 'Organization',
+      '@id': `${siteUrl}/#organization`,
     },
-    // Organization Schema
-    {
-      ...SCHEMA_CONFIG.organization,
-      founder: {
-        '@type': 'Person',
-        '@id': `${AUTHOR.website}/#person`,
-      },
+  };
+
+  const organizationSchema = {
+    '@type': 'Organization' as const,
+    '@id': `${siteUrl}/#organization`,
+    name: config.organization.name,
+    url: siteUrl,
+    logo: config.author.avatarUrl,
+    description: config.descriptions.organization,
+    founder: {
+      '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
     },
-    // Website Schema
-    {
-      ...SCHEMA_CONFIG.website,
-      publisher: {
-        '@type': 'Person',
-        '@id': `${AUTHOR.website}/#person`,
-      },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: SITE_CONFIG.searchAction.target,
-        },
-        'query-input': SITE_CONFIG.searchAction.queryInput,
-      },
+  };
+
+  const websiteSchema = {
+    '@type': 'WebSite' as const,
+    '@id': `${siteUrl}/#website`,
+    url: siteUrl,
+    name: config.author.fullName,
+    description: config.descriptions.site,
+    publisher: {
+      '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
     },
-  ];
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: config.seo.searchAction.target,
+      },
+      'query-input': config.seo.searchAction.queryInput,
+    },
+  };
+
+  const baseGraph: Record<string, unknown>[] = [personSchema, organizationSchema, websiteSchema];
 
   // Add article/blog posting schema for content pages
   if (pageData.pageType === 'article' || pageData.pageType === 'note') {
-    baseGraph.push(generateArticleSchema(pageData, canonicalUrl, ogImageUrl) as never);
+    baseGraph.push(generateArticleSchema(pageData, canonicalUrl, ogImageUrl));
   }
 
   return {
@@ -98,6 +127,9 @@ function generateArticleSchema(
   canonicalUrl: string,
   ogImageUrl: string
 ): Record<string, unknown> {
+  const config = getConfig();
+  const siteUrl = config.site.url;
+
   const articleSchema: Record<string, unknown> = {
     '@type': 'BlogPosting',
     headline: pageData.title,
@@ -106,17 +138,17 @@ function generateArticleSchema(
     image: ogImageUrl,
     author: {
       '@type': 'Person',
-      '@id': `${AUTHOR.website}/#person`,
+      '@id': `${siteUrl}/#person`,
     },
     publisher: {
       '@type': 'Organization',
-      '@id': `${AUTHOR.website}/#organization`,
+      '@id': `${siteUrl}/#organization`,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': canonicalUrl,
     },
-    inLanguage: SITE_CONFIG.locale.replace('_', '-'), // Convert en_GB to en-GB
+    inLanguage: config.site.locale.replace('_', '-'), // Convert en_GB to en-GB
   };
 
   // Add publication date if available
@@ -147,9 +179,11 @@ export function generateArticleMeta(
 ): Array<{ property: string; content: string }> {
   if (pageData.type !== 'article') return [];
 
+  const config = getConfig();
+
   const metaTags: Array<{ property: string; content: string }> = [
-    { property: 'article:author', content: ARTICLE_CONFIG.author },
-    { property: 'article:section', content: ARTICLE_CONFIG.section },
+    { property: 'article:author', content: config.author.fullName },
+    { property: 'article:section', content: config.seo.articleSection },
   ];
 
   // Add publication date
@@ -182,10 +216,12 @@ export function generateArticleMeta(
  * Generate OpenGraph image URL
  */
 export function generateOGImageUrl(image: string | undefined, baseUrl: string): string {
+  const config = getConfig();
+
   if (image) {
     return new URL(image, baseUrl).toString();
   }
-  return new URL('/og-default.png', baseUrl).toString();
+  return new URL(config.seo.defaultOgImage, baseUrl).toString();
 }
 
 /**
@@ -201,18 +237,5 @@ export function validateSEOData(data: Partial<SEOData>): SEOData {
     pubDate: data.pubDate,
     updatedDate: data.updatedDate,
     tags: data.tags || [],
-  };
-}
-
-/**
- * Get site configuration values
- */
-export function getSiteConfig() {
-  return {
-    name: SITE_CONFIG.name,
-    locale: SITE_CONFIG.locale,
-    themeColor: SITE_CONFIG.themeColor,
-    robotsDirective: SITE_CONFIG.robotsDirective,
-    author: AUTHOR.name,
   };
 }

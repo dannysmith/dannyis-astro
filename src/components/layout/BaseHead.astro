@@ -4,7 +4,7 @@
 import '@fontsource-variable/fira-code';
 import '../../styles/global.css';
 
-// Import our new SEO utilities and configuration
+// Import SEO utilities and configuration
 import {
   generatePageTitle,
   generateMetaDescription,
@@ -12,9 +12,8 @@ import {
   generateArticleMeta,
   generateOGImageUrl,
   validateSEOData,
-  getSiteConfig,
 } from '@utils/seo';
-import { OG_CONFIG, TWITTER_CONFIG } from '@config/seo';
+import { getConfig } from '@config/config';
 
 interface Props {
   title: string;
@@ -28,11 +27,11 @@ interface Props {
   tags?: string[];
 }
 
+const config = getConfig();
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 // Validate and extract props
 const seoData = validateSEOData(Astro.props);
-const siteConfig = getSiteConfig();
 
 // Generate all SEO values using utilities
 const pageTitle = generatePageTitle(seoData.title, seoData.pageType);
@@ -58,19 +57,19 @@ const articleMeta = generateArticleMeta(seoData);
 <link
   rel="alternate"
   type="application/rss+xml"
-  title="Danny Smith - Articles & Notes"
+  title={`${config.site.name} - Articles & Notes`}
   href="/rss.xml"
 />
 <link
   rel="alternate"
   type="application/rss+xml"
-  title="Danny Smith - Articles"
+  title={`${config.site.name} - Articles`}
   href="/rss/articles.xml"
 />
 <link
   rel="alternate"
   type="application/rss+xml"
-  title="Danny Smith - Notes"
+  title={`${config.site.name} - Notes`}
   href="/rss/notes.xml"
 />
 
@@ -84,14 +83,14 @@ const articleMeta = generateArticleMeta(seoData);
 <title>{pageTitle}</title>
 <meta name="title" content={pageTitle} />
 <meta name="description" content={metaDescription} />
-<meta name="author" content={siteConfig.author} />
-<meta name="robots" content={siteConfig.robotsDirective} />
-<meta name="theme-color" content={siteConfig.themeColor} />
+<meta name="author" content={config.author.fullName} />
+<meta name="robots" content={config.seo.robotsDirective} />
+<meta name="theme-color" content={config.site.themeColor} />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={seoData.type} />
-<meta property="og:site_name" content={OG_CONFIG.siteName} />
-<meta property="og:locale" content={OG_CONFIG.locale} />
+<meta property="og:site_name" content={config.site.shortName} />
+<meta property="og:locale" content={config.site.locale} />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={metaDescription} />
@@ -101,14 +100,14 @@ const articleMeta = generateArticleMeta(seoData);
 {articleMeta.map(meta => <meta property={meta.property} content={meta.content} />)}
 
 <!-- Twitter -->
-<meta property="twitter:card" content={TWITTER_CONFIG.card} />
+<meta property="twitter:card" content={config.seo.twitterCardType} />
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={pageTitle} />
 <meta property="twitter:description" content={metaDescription} />
 <meta property="twitter:image" content={ogImageUrl} />
 
-<!-- Mastadon etc -->
-<meta name="fediverse:creator" content="@dannysmith@indieweb.social" />
+<!-- Mastodon etc -->
+<meta name="fediverse:creator" content={config.author.fediverse} />
 
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLD)} />
