@@ -1,60 +1,46 @@
-// =============================================================================
-// SITE CONFIGURATION
-// Edit this object - everything else derives from it
-// =============================================================================
+/**
+ * Site Configuration (Raw Data)
+ *
+ * Edit this file to update site metadata.
+ * Consuming code should use getConfig() from @config/config.
+ */
 
 export const CONFIG = {
-  // -------------------------------------------------------------------------
   // Site Identity
-  // -------------------------------------------------------------------------
   site: {
-    name: 'Danny Smith', // Full display name (also author name)
-    shortName: 'danny.is', // Used in manifest, OG
+    name: 'Danny Smith',
+    shortName: 'danny.is',
     url: 'https://danny.is',
     locale: 'en_GB',
     themeColor: '#1a1a1a',
   },
 
-  // -------------------------------------------------------------------------
   // Author Identity
-  // -------------------------------------------------------------------------
   author: {
     givenName: 'Danny',
     familyName: 'Smith',
-    email: 'hi@danny.is', // Identity email (schema, metadata)
-    contactEmail: 'hi+website@danny.is', // For mailto links (tracking)
+    email: 'hi@danny.is',
+    contactEmail: 'hi+website@danny.is', // For mailto links (tracking suffix)
     location: 'London, UK',
     jobTitle: 'Remote Work Consultant',
     extendedTitle: 'Operations & Leadership Expert',
     fediverse: '@dannysmith@indieweb.social',
     twitter: 'dannysmith',
     avatar: '/avatar.jpg',
-    avatarCircle: '/avatar-circle.png', // Pre-cropped for OG images
+    avatarCircle: '/avatar-circle.png',
   },
 
-  // -------------------------------------------------------------------------
-  // Descriptions (used in different contexts)
-  // -------------------------------------------------------------------------
+  // Descriptions for different contexts
   descriptions: {
-    // Short one-liner (meta tags, manifest, Twitter bio style)
     short: 'Remote work consultant and organizational health expert.',
-
-    // Medium - site description (RSS feeds, schema.org Website)
     site: 'Remote work consultant and organizational health expert. Articles and insights on leadership, remote work, and business operations.',
-
-    // Author bio (schema.org Person, llms.txt about section)
     author:
       'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.',
-
-    // Organization (schema.org Organization - consulting business)
     organization:
       'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
   },
 
-  // -------------------------------------------------------------------------
-  // Page Title Templates
-  // Use {title} as placeholder - replaced at runtime
-  // -------------------------------------------------------------------------
+  // Page title templates ({title} replaced at runtime)
   pageTitleTemplates: {
     article: '{title} | Danny Smith - Operations & Leadership Expert',
     note: '{title} | Quick Note by Danny Smith',
@@ -62,9 +48,7 @@ export const CONFIG = {
     default: '{title} | Danny Smith',
   },
 
-  // -------------------------------------------------------------------------
-  // Page-specific descriptions (for index pages)
-  // -------------------------------------------------------------------------
+  // Default descriptions for index pages
   pageDescriptions: {
     articles:
       'In-depth articles on remote work, organizational health, leadership, and business operations.',
@@ -73,10 +57,7 @@ export const CONFIG = {
     now: 'Current projects and focus areas.',
   },
 
-  // -------------------------------------------------------------------------
-  // Social Profiles
-  // All external profiles - used by SocialLinks, llms.txt, schema.org sameAs
-  // -------------------------------------------------------------------------
+  // Social profiles (used by SocialLinks, llms.txt, schema.org sameAs)
   socialProfiles: [
     {
       id: 'bluesky',
@@ -127,9 +108,7 @@ export const CONFIG = {
     },
   ],
 
-  // -------------------------------------------------------------------------
-  // External Links (non-social, for llms.txt and elsewhere)
-  // -------------------------------------------------------------------------
+  // External links (for llms.txt, etc.)
   externalLinks: [
     {
       id: 'consulting',
@@ -145,15 +124,8 @@ export const CONFIG = {
     },
   ],
 
-  // -------------------------------------------------------------------------
-  // Organization (for schema.org - the consulting business, separate from personal)
-  // -------------------------------------------------------------------------
+  // Organization (for schema.org - the consulting business)
   organization: {
     name: 'Danny Smith Consulting',
-    // URL and logo derived from site.url and author.avatar
-    // Description in descriptions.organization
   },
 } as const;
-
-// Raw config only - consuming code should use getConfig() from @config/config
-// which provides derived values (fullName, avatarUrl, etc.) plus technical constants.

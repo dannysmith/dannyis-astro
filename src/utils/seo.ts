@@ -7,9 +7,7 @@
 
 import { getConfig } from '@config/config';
 
-// ============================================================================
 // Types
-// ============================================================================
 
 export type PageType = 'article' | 'note' | 'page';
 
@@ -24,13 +22,8 @@ export interface SEOData {
   tags?: string[];
 }
 
-// ============================================================================
 // Public Functions
-// ============================================================================
 
-/**
- * Generate page title using configured templates
- */
 export function generatePageTitle(title: string, pageType?: PageType): string {
   const config = getConfig();
 

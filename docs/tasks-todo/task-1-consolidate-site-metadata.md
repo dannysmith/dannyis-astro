@@ -144,214 +144,67 @@ After this work:
 
 ---
 
-## Phase 1a: Create Unified Site Config
+## Phase 1: Unified Site Config ✅ COMPLETE
 
-### Create `src/config/site.ts`
+### Architecture
 
-Single CONFIG object - this is the only thing exported. All consuming code imports CONFIG and accesses the keys it needs.
+Three-file structure with clear responsibilities:
 
-```typescript
-// =============================================================================
-// SITE CONFIGURATION
-// Edit this object - everything else derives from it
-// =============================================================================
-
-export const CONFIG = {
-  // -------------------------------------------------------------------------
-  // Site Identity
-  // -------------------------------------------------------------------------
-  site: {
-    name: 'Danny Smith',              // Full display name (also author name)
-    shortName: 'danny.is',            // Used in manifest, OG
-    url: 'https://danny.is',
-    locale: 'en_GB',
-    themeColor: '#1a1a1a',
-  },
-
-  // -------------------------------------------------------------------------
-  // Author Identity
-  // -------------------------------------------------------------------------
-  author: {
-    givenName: 'Danny',
-    familyName: 'Smith',
-    email: 'hi@danny.is',              // Identity email (schema, metadata)
-    contactEmail: 'hi+website@danny.is', // For mailto links (tracking)
-    location: 'London, UK',
-    jobTitle: 'Remote Work Consultant',
-    extendedTitle: 'Operations & Leadership Expert',
-    fediverse: '@dannysmith@indieweb.social',
-    twitter: 'dannysmith',
-    avatar: '/avatar.jpg',
-    avatarCircle: '/avatar-circle.png',  // Pre-cropped for OG images
-  },
-
-  // -------------------------------------------------------------------------
-  // Descriptions (used in different contexts)
-  // -------------------------------------------------------------------------
-  descriptions: {
-    // Short one-liner (meta tags, manifest, Twitter bio style)
-    short: 'Remote work consultant and organizational health expert.',
-
-    // Medium - site description (RSS feeds, schema.org Website)
-    site: 'Remote work consultant and organizational health expert. Articles and insights on leadership, remote work, and business operations.',
-
-    // Author bio (schema.org Person, llms.txt about section)
-    author: 'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.',
-
-    // Organization (schema.org Organization - consulting business)
-    organization: 'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
-  },
-
-  // -------------------------------------------------------------------------
-  // Page Title Templates
-  // Use {title} as placeholder - replaced at runtime
-  // -------------------------------------------------------------------------
-  pageTitleTemplates: {
-    article: '{title} | Danny Smith - Operations & Leadership Expert',
-    note: '{title} | Quick Note by Danny Smith',
-    page: '{title} | Danny Smith - Operations & Leadership Expert',
-    default: '{title} | Danny Smith',
-  },
-
-  // -------------------------------------------------------------------------
-  // Page-specific descriptions (for index pages)
-  // -------------------------------------------------------------------------
-  pageDescriptions: {
-    articles: 'In-depth articles on remote work, organizational health, leadership, and business operations.',
-    notes: 'Short-form thoughts and observations on remote work, technology, and business operations.',
-    now: 'Current projects and focus areas.',
-  },
-
-  // -------------------------------------------------------------------------
-  // Social Profiles
-  // All external profiles - used by SocialLinks, llms.txt, schema.org sameAs
-  // -------------------------------------------------------------------------
-  socialProfiles: [
-    { id: 'bluesky', name: 'BlueSky', url: 'https://bsky.app/profile/danny.is', icon: 'social/bluesky', showInFooter: true },
-    { id: 'linkedin', name: 'LinkedIn', url: 'https://linkedin.com/in/dannyasmith', icon: 'social/linkedin', showInFooter: true },
-    { id: 'github', name: 'GitHub', url: 'https://github.com/dannysmith', icon: 'social/github', showInFooter: true },
-    { id: 'youtube', name: 'YouTube', url: 'https://youtube.com/channel/UCp0vO-4tetByUhsVijyt2jA', icon: 'social/youtube', showInFooter: true },
-    { id: 'instagram', name: 'Instagram', url: 'https://instagram.com/dannysmith', icon: 'social/instagram', showInFooter: true },
-    { id: 'mastodon', name: 'Mastodon', url: 'https://indieweb.social/@dannysmith', icon: 'social/mastodon' },
-    { id: 'twitter', name: 'Twitter', url: 'https://twitter.com/dannysmith', icon: 'social/twitter' },
-  ],
-
-  // -------------------------------------------------------------------------
-  // External Links (non-social, for llms.txt and elsewhere)
-  // -------------------------------------------------------------------------
-  externalLinks: [
-    { id: 'consulting', name: 'Better at Work', url: 'https://betterat.work', description: 'Consulting practice' },
-    { id: 'toolbox', name: 'Toolbox', url: 'https://betterat.work/toolbox', description: 'Collection of tools and frameworks' },
-  ],
-
-  // -------------------------------------------------------------------------
-  // Organization (for schema.org - the consulting business, separate from personal)
-  // -------------------------------------------------------------------------
-  organization: {
-    name: 'Danny Smith Consulting',
-    // URL and logo derived from site.url and author.avatar
-    // Description in descriptions.organization
-  },
-} as const;
-
-// That's it. No derived exports.
-// Consuming code does: import { CONFIG } from '@config/site'
-// Then accesses: CONFIG.site.name, CONFIG.author.email, etc.
+```
+src/config/site.ts     # Raw CONFIG object - edit this file
+src/config/config.ts   # Re-exports CONFIG + adds derived values & SEO constants
+src/utils/seo.ts       # Pure functions for generating SEO metadata
 ```
 
-**Note:** `robotsDirective` and `articleSection` are hardcoded in `utils/seo.ts` - they're technical values that rarely change.
+**`site.ts`** - The single source of truth you edit:
+- Site identity (name, shortName, url, locale, themeColor)
+- Author identity (names, email, location, jobTitle, social handles, avatars)
+- Descriptions (short, site, author, organization)
+- Page title templates (with `{title}` placeholder)
+- Page descriptions for index pages
+- Social profiles array (with `showInFooter` flag)
+- External links
+- Organization name
 
----
+**`config.ts`** - Adds computed values via `getConfig()`:
+- Derived: `fullName`, `avatarUrl`, `avatarCircleUrl`, `twitterHandle`
+- Technical SEO: `robotsDirective`, `twitterCardType`, `defaultOgImage`, `articleSection`, `searchAction`
 
-### Implementation Notes & Gotchas
+**`seo.ts`** - Pure functions that call `getConfig()`:
+- `generatePageTitle()` - applies page title templates
+- `generateMetaDescription()` - adds author branding
+- `generateJSONLD()` - builds schema.org graph
+- `generateArticleMeta()` - OpenGraph article tags
+- `generateOGImageUrl()` - resolves OG image paths
+- `validateSEOData()` - sanitizes SEO input
 
-**Things to hardcode in utils/seo.ts (not in CONFIG):**
-- `robotsDirective` - technical SEO directive
-- `articleSection` - OpenGraph article categorization ('Remote Work & Leadership')
-- `searchAction` - JSON-LD site search config (URL pattern + query input)
-- `defaultOgImage` - '/og-default.png'
-- `twitterCardType` - 'summary_large_image'
+### Consuming Code Pattern
 
-**Types to define in utils/seo.ts:**
-- `PageType = 'article' | 'note' | 'page'`
-- `SEOData` interface (title, description, image, type, pageType, pubDate, updatedDate, tags)
-
-**SCHEMA_CONFIG reconstruction:**
-The current `SCHEMA_CONFIG` is a pre-built object with `@type`, `@id`, etc. This needs to be reconstructed in `utils/seo.ts` from CONFIG values. The `generateJSONLD()` function already does most of this work - it just needs updating to use CONFIG directly instead of importing pre-built objects.
-
-**CONTENT_PATHS:**
-Currently exported but never used anywhere. Can be safely ignored/removed.
-
-**Organization vs Author:**
-- `CONFIG.organization.name` = 'Danny Smith Consulting' (the business)
-- `CONFIG.site.name` = 'Danny Smith' (the person/site)
-These are intentionally different. The organization schema.org data uses the business name.
-
-**Tests exist:**
-`tests/unit/seo.test.ts` tests the utility functions. These import from `utils/seo.ts` (not config), so they should continue working. Run `bun run test:unit` after Phase 1a to verify nothing breaks.
-
-**RSS feed titles:**
-The RSS autodiscovery links in BaseHead have hardcoded titles like "Danny Smith - Articles & Notes". The actual RSS feed files use `${SITE_TITLE} - Articles & Notes`. These currently match, which is good.
-
-Options:
-- Keep BaseHead hardcoded (simpler, titles rarely change)
-- Interpolate just the name: `` `${CONFIG.site.name} - Articles & Notes` `` (consistent with feeds)
-
-Either is fine - the suffix part ("- Articles & Notes") should stay near where it's used regardless. This is low priority and could be left as-is.
-
----
-
-### Refactor `src/utils/seo.ts`
-
-- Import `CONFIG` from `site.ts`
-- Update all functions to use `CONFIG.x.y` syntax
-- Add helper for full author name: `const authorName = \`${CONFIG.author.givenName} ${CONFIG.author.familyName}\``
-- Update `generatePageTitle()` to use template string replacement:
+All files import via `getConfig()`:
 
 ```typescript
-export function generatePageTitle(title: string, pageType?: PageType): string {
-  if (!pageType || title === CONFIG.site.name) return title;
-  const template = CONFIG.pageTitleTemplates[pageType] || CONFIG.pageTitleTemplates.default;
-  return template.replace('{title}', title);
-}
+import { getConfig } from '@config/config';
+const config = getConfig();
+// Access: config.site.name, config.author.fullName, config.descriptions.site, etc.
 ```
 
-- Hardcode `robotsDirective` and `articleSection` values directly in the functions that use them
+### Files Updated
 
-### Delete `src/config/seo.ts`
-
-No longer needed - config is in `site.ts`, utilities stay in `utils/seo.ts`.
-
-### Update `src/utils/og-branding.ts`
-
-```typescript
-import { CONFIG } from '@config/site';
-
-const authorName = `${CONFIG.author.givenName} ${CONFIG.author.familyName}`;
-export const OG_AUTHOR_NAME = authorName;
-export const OG_PROFILE_IMAGE = `${CONFIG.site.url}${CONFIG.author.avatarCircle}`;
-```
-
----
-
-## Phase 1b: Update All Consuming Code
-
-After Phase 1a works, refactor all files that currently import from `@config/seo` to import `CONFIG` from `@config/site` instead.
-
-**Files to update:**
-
-| File | Current Import | Change To |
-|------|----------------|-----------|
-| `src/components/layout/BaseHead.astro` | `OG_CONFIG`, `TWITTER_CONFIG` | `CONFIG` (access `CONFIG.site.shortName`, `CONFIG.site.locale`, `CONFIG.author.twitter`) |
-| `src/pages/index.astro` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` (access `CONFIG.site.name`, `CONFIG.descriptions.site`) |
-| `src/pages/rss.xml.js` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` |
-| `src/pages/rss/articles.xml.js` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` |
-| `src/pages/rss/notes.xml.js` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` |
-| `src/pages/llms.txt.ts` | `SITE_TITLE`, `SITE_URL`, `AUTHOR`, `SOCIAL_PROFILES` | `CONFIG` |
-| `src/pages/writing/[...slug]/og-image.png.ts` | `SITE_URL` | `CONFIG` |
-| `src/pages/notes/[...slug]/og-image.png.ts` | `SITE_URL` | `CONFIG` |
-
-This is a straightforward find-and-replace refactor. Each file imports `CONFIG` and accesses the specific keys it needs.
+| File | Status |
+|------|--------|
+| `src/config/site.ts` | Created - raw CONFIG |
+| `src/config/config.ts` | Created - getConfig() with derived values |
+| `src/config/seo.ts` | Deleted - merged into above |
+| `src/utils/seo.ts` | Refactored - uses getConfig() |
+| `src/utils/og-branding.ts` | Refactored - uses getConfig() |
+| `src/components/layout/BaseHead.astro` | Refactored |
+| `src/pages/index.astro` | Refactored |
+| `src/pages/rss.xml.js` | Refactored |
+| `src/pages/rss/articles.xml.js` | Refactored |
+| `src/pages/rss/notes.xml.js` | Refactored |
+| `src/pages/llms.txt.ts` | Refactored |
+| `src/pages/writing/[...slug]/og-image.png.ts` | Refactored |
+| `src/pages/notes/[...slug]/og-image.png.ts` | Refactored |
 
 ---
 
@@ -462,25 +315,8 @@ lines.push(nowMarkdown.trim());
 
 ## Files Changed Summary
 
-### Phase 1a
-| File | Action |
-|------|--------|
-| `src/config/site.ts` | **NEW** - Single source of truth (exports only CONFIG) |
-| `src/config/seo.ts` | **DELETE** - Merged into site.ts + utils/seo.ts |
-| `src/utils/seo.ts` | Refactor - Import CONFIG, update all functions |
-| `src/utils/og-branding.ts` | Refactor - Import CONFIG |
-
-### Phase 1b
-| File | Action |
-|------|--------|
-| `src/components/layout/BaseHead.astro` | Refactor - Use CONFIG directly |
-| `src/pages/index.astro` | Refactor - Use CONFIG directly |
-| `src/pages/rss.xml.js` | Refactor - Use CONFIG directly |
-| `src/pages/rss/articles.xml.js` | Refactor - Use CONFIG directly |
-| `src/pages/rss/notes.xml.js` | Refactor - Use CONFIG directly |
-| `src/pages/llms.txt.ts` | Refactor - Use CONFIG directly |
-| `src/pages/writing/[...slug]/og-image.png.ts` | Refactor - Use CONFIG directly |
-| `src/pages/notes/[...slug]/og-image.png.ts` | Refactor - Use CONFIG directly |
+### Phase 1 ✅
+See table in Phase 1 section above.
 
 ### Phase 2
 | File | Action |
