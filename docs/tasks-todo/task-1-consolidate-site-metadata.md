@@ -263,19 +263,17 @@ Currently `src/components/ui/SocialLinks.astro` has 5 hardcoded social links. Sh
 
 ---
 
-### Phase 5: Generate site.webmanifest
+### Phase 5: Generate site.webmanifest ✅ COMPLETE
 
-Currently `public/site.webmanifest` is a static JSON file with hardcoded values that duplicate config.
-
-**Changes:**
-- Create `src/pages/site.webmanifest.ts` as an API route
-- Use `getConfig()` for `name`, `short_name`, `description`, `theme_color`, `background_color`
-- Keep `icons` array hardcoded (rarely changes)
-- Delete `public/site.webmanifest`
+**What was done:**
+- Created `src/pages/site.webmanifest.ts` API route
+- Uses `getConfig()` for `name`, `short_name`, `description`, `theme_color`, `background_color`
+- Icons array kept hardcoded (rarely changes)
+- Deleted `public/site.webmanifest`
 
 **Files:**
 - `src/pages/site.webmanifest.ts` (new)
-- `public/site.webmanifest` (delete)
+- `public/site.webmanifest` (deleted)
 
 ---
 
