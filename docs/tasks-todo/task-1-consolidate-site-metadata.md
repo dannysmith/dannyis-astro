@@ -237,13 +237,14 @@ src/pages/now/
 
 ## Remaining Phases
 
-### Phase 3: Improve llms.txt
+### Phase 3: Improve llms.txt ✅ COMPLETE
 
-Currently `llms.txt.ts` has hardcoded `AI_SUMMARY` and `ABOUT_CONTENT` strings, and the "Other Pages" section is manual.
-
-**Changes:**
-- Use `CONFIG.externalLinks` array to generate external links section
-- Consider auto-generating "Other Pages" by scanning `src/pages/` (may be overkill)
+**What was done:**
+- Auto-discovers static pages using `import.meta.glob('./**/*.astro')`
+- Filters out dynamic routes (`[...]`), partials (`_*.astro`), homepage, and excluded pages
+- `EXCLUDED_PAGES` array at top of file for easy maintenance (`/scratchpad/`, `/toolboxtest/`, `/404/`)
+- Derives page titles from URL paths (e.g., `/foo-bar/` → `Foo Bar`)
+- Added "External" section using `config.externalLinks`
 
 **Files:** `src/pages/llms.txt.ts`
 

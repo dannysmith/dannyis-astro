@@ -17,6 +17,50 @@ const ABOUT_CONTENT = `Danny helps companies build healthy remote teams and opti
 
 This site serves as Danny's corner of the web - a place to share thoughts, experiences, and work, as well as a creative playground for experimenting with CSS, HTML, and AI-assisted development.`;
 
+// Pages to exclude from "Other Pages" (matched against URL path)
+const EXCLUDED_PAGES = ['/scratchpad/', '/toolboxtest/', '/404/'];
+
+// =============================================================================
+// PAGE DISCOVERY
+// Auto-discovers static pages from src/pages/, excluding dynamic routes and partials
+// =============================================================================
+
+function discoverStaticPages(): Array<{ path: string; title: string }> {
+  // Glob all .astro page files (eager: false since we only need paths)
+  const pageFiles = import.meta.glob('./**/*.astro', { eager: false });
+
+  return Object.keys(pageFiles)
+    .filter(file => {
+      // Exclude dynamic routes (contain [...])
+      if (file.includes('[')) return false;
+      // Exclude partials (start with _)
+      if (file.includes('/_')) return false;
+      // Exclude the homepage
+      if (file === './index.astro') return false;
+      return true;
+    })
+    .map(file => {
+      // Convert file path to URL path: ./foo/index.astro -> /foo/
+      const path =
+        '/' +
+        file
+          .replace(/^\.\//, '') // Remove leading ./
+          .replace(/\/index\.astro$/, '/') // /foo/index.astro -> /foo/
+          .replace(/\.astro$/, '/'); // /foo.astro -> /foo/
+
+      // Derive title from path: /foo-bar/ -> Foo Bar
+      const title = path
+        .replace(/^\/|\/$/g, '') // Remove leading/trailing slashes
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      return { path, title };
+    })
+    .filter(({ path }) => !EXCLUDED_PAGES.includes(path))
+    .sort((a, b) => a.title.localeCompare(b.title));
+}
+
 // =============================================================================
 // GENERATION LOGIC
 // =============================================================================
@@ -84,12 +128,24 @@ export const GET: APIRoute = async () => {
   }
   lines.push('');
 
-  // Other pages
+  // Other pages (auto-discovered)
+  const staticPages = discoverStaticPages();
   lines.push('## Other Pages');
   lines.push('');
-  lines.push(`- [Now](${config.site.url}/now/): What Danny is currently doing`);
-  lines.push(`- [Writing](${config.site.url}/writing/): All articles`);
-  lines.push(`- [Notes](${config.site.url}/notes/): All notes`);
+  for (const page of staticPages) {
+    lines.push(`- [${page.title}](${config.site.url}${page.path})`);
+  }
+  lines.push('');
+
+  // External links from config
+  if (config.externalLinks.length > 0) {
+    lines.push('## External');
+    lines.push('');
+    for (const link of config.externalLinks) {
+      const desc = link.description ? `: ${link.description}` : '';
+      lines.push(`- [${link.name}](${link.url})${desc}`);
+    }
+  }
 
   const content = lines.join('\n');
 
