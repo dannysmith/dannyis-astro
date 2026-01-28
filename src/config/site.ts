@@ -155,6 +155,5 @@ export const CONFIG = {
   },
 } as const;
 
-// That's it. No derived exports.
-// Consuming code does: import { CONFIG } from '@config/site'
-// Then accesses: CONFIG.site.name, CONFIG.author.email, etc.
+// Raw config only - consuming code should use getConfig() from @config/config
+// which provides derived values (fullName, avatarUrl, etc.) plus technical constants.

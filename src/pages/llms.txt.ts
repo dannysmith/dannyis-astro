@@ -1,21 +1,16 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { CONFIG } from '@config/site';
+import { getConfig } from '@config/config';
 import { filterContentForListing } from '@utils/content';
-
-// =============================================================================
-// DERIVED HELPERS
-// =============================================================================
-
-const authorName = `${CONFIG.author.givenName} ${CONFIG.author.familyName}`;
-const siteUrl = CONFIG.site.url;
 
 // =============================================================================
 // CUSTOMIZABLE CONTENT
 // Update these sections as needed. The rest is auto-generated.
 // =============================================================================
 
-const AI_SUMMARY = `${authorName} is a ${CONFIG.author.jobTitle.toLowerCase()} based in London. This is his personal website where he shares articles and notes on remote work, leadership, and technology.`;
+const config = getConfig();
+
+const AI_SUMMARY = `${config.author.fullName} is a ${config.author.jobTitle.toLowerCase()} based in London. This is his personal website where he shares articles and notes on remote work, leadership, and technology.`;
 
 const ABOUT_CONTENT = `Danny helps companies build healthy remote teams and optimize operations. He writes about remote work practices, organizational health, leadership, and occasionally technology and design.
 
@@ -43,7 +38,7 @@ export const GET: APIRoute = async () => {
   const lines: string[] = [];
 
   // Title
-  lines.push(`# ${CONFIG.site.name}`);
+  lines.push(`# ${config.site.name}`);
   lines.push('');
 
   // AI Summary
@@ -57,10 +52,10 @@ export const GET: APIRoute = async () => {
   // External links
   lines.push('## Links');
   lines.push('');
-  lines.push(`- [Website](${siteUrl})`);
-  lines.push(`- [Avatar](${siteUrl}${CONFIG.author.avatar})`);
-  lines.push(`- [Email](mailto:${CONFIG.author.email})`);
-  for (const profile of CONFIG.socialProfiles) {
+  lines.push(`- [Website](${config.site.url})`);
+  lines.push(`- [Avatar](${config.author.avatarUrl})`);
+  lines.push(`- [Email](mailto:${config.author.email})`);
+  for (const profile of config.socialProfiles) {
     lines.push(`- [${profile.name}](${profile.url})`);
   }
   lines.push('');
@@ -77,7 +72,7 @@ export const GET: APIRoute = async () => {
   lines.push('Long-form articles by Danny.');
   lines.push('');
   for (const article of articles) {
-    const url = `${siteUrl}/writing/${article.id}/`;
+    const url = `${config.site.url}/writing/${article.id}/`;
     const description = article.data.description ? `: ${article.data.description}` : '';
     lines.push(`- [${article.data.title}](${url})${description}`);
   }
@@ -89,7 +84,7 @@ export const GET: APIRoute = async () => {
   lines.push('Short-form thoughts and observations.');
   lines.push('');
   for (const note of notes) {
-    const url = `${siteUrl}/notes/${note.id}/`;
+    const url = `${config.site.url}/notes/${note.id}/`;
     lines.push(`- [${note.data.title}](${url})`);
   }
   lines.push('');
@@ -97,9 +92,9 @@ export const GET: APIRoute = async () => {
   // Other pages
   lines.push('## Other Pages');
   lines.push('');
-  lines.push(`- [Now](${siteUrl}/now/): What Danny is currently doing`);
-  lines.push(`- [Writing](${siteUrl}/writing/): All articles`);
-  lines.push(`- [Notes](${siteUrl}/notes/): All notes`);
+  lines.push(`- [Now](${config.site.url}/now/): What Danny is currently doing`);
+  lines.push(`- [Writing](${config.site.url}/writing/): All articles`);
+  lines.push(`- [Notes](${config.site.url}/notes/): All notes`);
 
   const content = lines.join('\n');
 

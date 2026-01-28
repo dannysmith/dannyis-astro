@@ -1,5 +1,6 @@
-import { CONFIG } from '@config/site';
+import { getConfig } from '@config/config';
 
-const authorName = `${CONFIG.author.givenName} ${CONFIG.author.familyName}`;
-export const OG_AUTHOR_NAME = authorName;
-export const OG_PROFILE_IMAGE = `${CONFIG.site.url}${CONFIG.author.avatarCircle}`;
+const config = getConfig();
+
+export const OG_AUTHOR_NAME = config.author.fullName;
+export const OG_PROFILE_IMAGE = config.author.avatarCircleUrl;

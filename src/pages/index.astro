@@ -1,13 +1,15 @@
 ---
 import { Image } from 'astro:assets';
 import { BaseHead, MainNavigation } from '@components/layout/index';
-import { CONFIG } from '@config/site';
+import { getConfig } from '@config/config';
+
+const config = getConfig();
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={CONFIG.site.name} description={CONFIG.descriptions.site} />
+    <BaseHead title={config.site.name} description={config.descriptions.site} />
   </head>
   <body itemtype="https://schema.org/ProfilePage" itemscope>
     <MainNavigation />
