@@ -144,11 +144,11 @@ After this work:
 
 ---
 
-## Phase 1: Unified Site Config
+## Phase 1a: Create Unified Site Config
 
 ### Create `src/config/site.ts`
 
-Single CONFIG object at top, derived exports below. The object should be comprehensive but not over-abstracted:
+Single CONFIG object - this is the only thing exported. All consuming code imports CONFIG and accesses the keys it needs.
 
 ```typescript
 // =============================================================================
@@ -156,7 +156,7 @@ Single CONFIG object at top, derived exports below. The object should be compreh
 // Edit this object - everything else derives from it
 // =============================================================================
 
-const CONFIG = {
+export const CONFIG = {
   // -------------------------------------------------------------------------
   // Site Identity
   // -------------------------------------------------------------------------
@@ -180,6 +180,7 @@ const CONFIG = {
     jobTitle: 'Remote Work Consultant',
     extendedTitle: 'Operations & Leadership Expert',
     fediverse: '@dannysmith@indieweb.social',
+    twitter: 'dannysmith',
     avatar: '/avatar.jpg',
     avatarCircle: '/avatar-circle.png',  // Pre-cropped for OG images
   },
@@ -199,6 +200,17 @@ const CONFIG = {
 
     // Organization (schema.org Organization - consulting business)
     organization: 'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
+  },
+
+  // -------------------------------------------------------------------------
+  // Page Title Templates
+  // Use {title} as placeholder - replaced at runtime
+  // -------------------------------------------------------------------------
+  pageTitleTemplates: {
+    article: '{title} | Danny Smith - Operations & Leadership Expert',
+    note: '{title} | Quick Note by Danny Smith',
+    page: '{title} | Danny Smith - Operations & Leadership Expert',
+    default: '{title} | Danny Smith',
   },
 
   // -------------------------------------------------------------------------
@@ -231,66 +243,66 @@ const CONFIG = {
     { id: 'consulting', name: 'Better at Work', url: 'https://betterat.work', description: 'Consulting practice' },
     { id: 'toolbox', name: 'Toolbox', url: 'https://betterat.work/toolbox', description: 'Collection of tools and frameworks' },
   ],
-
-  // -------------------------------------------------------------------------
-  // SEO & Technical
-  // -------------------------------------------------------------------------
-  seo: {
-    articleSection: 'Remote Work & Leadership',
-    robotsDirective: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
-    twitterHandle: 'dannysmith',
-  },
 } as const;
 
-// =============================================================================
-// DERIVED EXPORTS
-// Import CONFIG and use directly where possible.
-// These exports exist for compatibility with existing code.
-// =============================================================================
-
-// Full author name (derived)
-export const AUTHOR_NAME = `${CONFIG.author.givenName} ${CONFIG.author.familyName}`;
-
-// Re-export the whole config for direct access
-export { CONFIG };
-
-// Convenience exports for frequently accessed values
-export const SITE_URL = CONFIG.site.url;
-export const SITE_TITLE = CONFIG.site.name;
-export const SITE_DESCRIPTION = CONFIG.descriptions.site;
-
-// Social profile URLs array (for schema.org sameAs)
-export const SOCIAL_PROFILE_URLS = CONFIG.socialProfiles.map(p => p.url);
-
-// Title template functions
-export const TITLE_TEMPLATES = {
-  article: (title: string) => `${title} | ${AUTHOR_NAME} - ${CONFIG.author.extendedTitle}`,
-  note: (title: string) => `${title} | Quick Note by ${AUTHOR_NAME}`,
-  page: (title: string) => `${title} | ${AUTHOR_NAME} - ${CONFIG.author.extendedTitle}`,
-  default: (title: string) => `${title} | ${AUTHOR_NAME}`,
-} as const;
+// That's it. No derived exports.
+// Consuming code does: import { CONFIG } from '@config/site'
+// Then accesses: CONFIG.site.name, CONFIG.author.email, etc.
 ```
+
+**Note:** `robotsDirective` and `articleSection` are hardcoded in `utils/seo.ts` - they're technical values that rarely change.
 
 ### Refactor `src/utils/seo.ts`
 
-- Import from `site.ts` instead of `config/seo.ts`
-- Keep the utility functions (generatePageTitle, generateJSONLD, etc.)
-- Update to use new CONFIG structure
+- Import `CONFIG` from `site.ts`
+- Update all functions to use `CONFIG.x.y` syntax
+- Add helper for full author name: `const authorName = \`${CONFIG.author.givenName} ${CONFIG.author.familyName}\``
+- Update `generatePageTitle()` to use template string replacement:
+
+```typescript
+export function generatePageTitle(title: string, pageType?: PageType): string {
+  if (!pageType || title === CONFIG.site.name) return title;
+  const template = CONFIG.pageTitleTemplates[pageType] || CONFIG.pageTitleTemplates.default;
+  return template.replace('{title}', title);
+}
+```
+
+- Hardcode `robotsDirective` and `articleSection` values directly in the functions that use them
 
 ### Delete `src/config/seo.ts`
 
-No longer needed - everything moves to `site.ts` (config) and `utils/seo.ts` (utilities).
+No longer needed - config is in `site.ts`, utilities stay in `utils/seo.ts`.
 
 ### Update `src/utils/og-branding.ts`
 
-Import author name and avatar from `site.ts`:
-
 ```typescript
-import { CONFIG, AUTHOR_NAME } from '@config/site';
+import { CONFIG } from '@config/site';
 
-export const OG_AUTHOR_NAME = AUTHOR_NAME;
+const authorName = `${CONFIG.author.givenName} ${CONFIG.author.familyName}`;
+export const OG_AUTHOR_NAME = authorName;
 export const OG_PROFILE_IMAGE = `${CONFIG.site.url}${CONFIG.author.avatarCircle}`;
 ```
+
+---
+
+## Phase 1b: Update All Consuming Code
+
+After Phase 1a works, refactor all files that currently import from `@config/seo` to import `CONFIG` from `@config/site` instead.
+
+**Files to update:**
+
+| File | Current Import | Change To |
+|------|----------------|-----------|
+| `src/components/layout/BaseHead.astro` | `OG_CONFIG`, `TWITTER_CONFIG` | `CONFIG` (access `CONFIG.site.shortName`, `CONFIG.site.locale`, `CONFIG.author.twitter`) |
+| `src/pages/index.astro` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` (access `CONFIG.site.name`, `CONFIG.descriptions.site`) |
+| `src/pages/rss.xml.js` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` |
+| `src/pages/rss/articles.xml.js` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` |
+| `src/pages/rss/notes.xml.js` | `SITE_TITLE`, `SITE_DESCRIPTION` | `CONFIG` |
+| `src/pages/llms.txt.ts` | `SITE_TITLE`, `SITE_URL`, `AUTHOR`, `SOCIAL_PROFILES` | `CONFIG` |
+| `src/pages/writing/[...slug]/og-image.png.ts` | `SITE_URL` | `CONFIG` |
+| `src/pages/notes/[...slug]/og-image.png.ts` | `SITE_URL` | `CONFIG` |
+
+This is a straightforward find-and-replace refactor. Each file imports `CONFIG` and accesses the specific keys it needs.
 
 ---
 
@@ -378,21 +390,20 @@ lines.push(nowMarkdown.trim());
 ## Future Phases (to be detailed after Phase 1 & 2)
 
 ### Phase 3: Improve llms.txt
-- Use CONFIG for all metadata
-- Auto-generate "Other Pages" from actual pages
-- Import Now content from markdown
+- Auto-generate "Other Pages" by scanning actual pages
+- Use CONFIG.socialProfiles and CONFIG.externalLinks
+- Import Now content from `_now.md`
 
-### Phase 4: Generate site.webmanifest
+### Phase 4: Update SocialLinks Component
+- `SocialLinks.astro` - iterate over `CONFIG.socialProfiles.filter(p => p.showInFooter)`
+
+### Phase 5: Generate site.webmanifest
 - Create `src/pages/site.webmanifest.ts`
 - Delete `public/site.webmanifest`
 
-### Phase 5: Generate humans.txt (optional)
+### Phase 6: Generate humans.txt (optional)
 - Create `src/pages/humans.txt.ts`
 - Delete `public/humans.txt`
-
-### Phase 6: Update Components
-- `SocialLinks.astro` - use CONFIG.socialProfiles
-- `BaseHead.astro` - use CONFIG for fediverse, RSS titles
 
 ### Phase 7: Extract Redirects (optional, separate concern)
 - Create `redirects.js` in project root
@@ -402,15 +413,32 @@ lines.push(nowMarkdown.trim());
 
 ## Files Changed Summary
 
+### Phase 1a
 | File | Action |
 |------|--------|
-| `src/config/site.ts` | **NEW** - Single source of truth |
-| `src/config/seo.ts` | **DELETE** - Merged into site.ts |
-| `src/utils/seo.ts` | Refactor - Import from site.ts |
-| `src/utils/og-branding.ts` | Refactor - Import from site.ts |
+| `src/config/site.ts` | **NEW** - Single source of truth (exports only CONFIG) |
+| `src/config/seo.ts` | **DELETE** - Merged into site.ts + utils/seo.ts |
+| `src/utils/seo.ts` | Refactor - Import CONFIG, update all functions |
+| `src/utils/og-branding.ts` | Refactor - Import CONFIG |
+
+### Phase 1b
+| File | Action |
+|------|--------|
+| `src/components/layout/BaseHead.astro` | Refactor - Use CONFIG directly |
+| `src/pages/index.astro` | Refactor - Use CONFIG directly |
+| `src/pages/rss.xml.js` | Refactor - Use CONFIG directly |
+| `src/pages/rss/articles.xml.js` | Refactor - Use CONFIG directly |
+| `src/pages/rss/notes.xml.js` | Refactor - Use CONFIG directly |
+| `src/pages/llms.txt.ts` | Refactor - Use CONFIG directly |
+| `src/pages/writing/[...slug]/og-image.png.ts` | Refactor - Use CONFIG directly |
+| `src/pages/notes/[...slug]/og-image.png.ts` | Refactor - Use CONFIG directly |
+
+### Phase 2
+| File | Action |
+|------|--------|
 | `src/pages/now.astro` | **MOVE** → `src/pages/now/index.astro` |
 | `src/pages/now/_now.md` | **NEW** - Now page content |
-| `src/pages/llms.txt.ts` | Refactor - Use config + import now.md |
+| `src/pages/llms.txt.ts` | Update - Import now.md raw content |
 
 ---
 
