@@ -32,22 +32,30 @@ Centralized SEO configuration prevents inconsistencies and simplifies updates.
 
 ### Configuration Files
 
-**Personal branding and templates:** `src/config/seo.ts`
+**Base configuration:** `src/config/site.ts`
 
-- `AUTHOR` - Name, job title, email, website, image, description
-- `ORGANIZATION` - Business info
-- `SOCIAL_PROFILES` - Social media URLs
-- `TITLE_TEMPLATES` - Page title formatting by page type
-- `PAGE_DESCRIPTIONS` - Default descriptions
-- Schema.org configuration
+- `author` - Name, job title, email, social handles, avatar paths
+- `organization` - Business info
+- `socialProfiles` - Social media URLs with icons
+- `pageTitleTemplates` - Page title formatting by page type
+- `pageDescriptions` - Default descriptions
+- `descriptions` - Site, author, and organization descriptions
 
-**Site constants:** `src/consts.ts`
+**Resolved configuration:** `src/config/config.ts`
 
-- `SITE_TITLE`
-- `SITE_DESCRIPTION`
-- `SITE_URL`
+- Spreads `CONFIG` from `site.ts`
+- Adds derived values (`fullName`, `avatarUrl`, `avatarCircleUrl`, `twitterHandle`)
+- Adds technical SEO constants (`robotsDirective`, `twitterCardType`, `defaultOgImage`, etc.)
 
-**Note:** Personal branding in `seo.ts`, generic strings in `consts.ts`.
+**Usage:**
+
+```typescript
+import { getConfig } from '@config/config';
+
+const config = getConfig();
+console.log(config.author.fullName); // "Danny Smith"
+console.log(config.seo.defaultOgImage); // "/og-default.png"
+```
 
 ### SEO Utility Functions
 
@@ -144,6 +152,6 @@ import { BaseHead } from '@components/layout/index';
 - Person schema (author information)
 - Organization schema (business/brand)
 - Website schema (site metadata)
-- BlogPosting schema (for articles only)
+- BlogPosting schema (for articles and notes)
 
-All schemas pull from `src/config/seo.ts` for consistency.
+All schemas pull from `getConfig()` for consistency.

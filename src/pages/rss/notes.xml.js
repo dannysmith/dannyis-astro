@@ -40,7 +40,7 @@ export async function GET(context) {
 
   return rss({
     title: `${config.site.name} - Notes`,
-    description: `Notes from ${config.descriptions.site}`,
+    description: `Latest notes from ${config.site.name}`,
     site: context.site,
     items,
   });
