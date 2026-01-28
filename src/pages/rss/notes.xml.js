@@ -3,7 +3,7 @@ import { getContainerRenderer as getMDXRenderer } from '@astrojs/mdx';
 import { loadRenderers } from 'astro:container';
 import { getCollection, render } from 'astro:content';
 import rss from '@astrojs/rss';
-import { SITE_TITLE, SITE_DESCRIPTION } from '@config/seo';
+import { CONFIG } from '@config/site';
 import { filterContentForListing } from '@utils/content';
 
 export async function GET(context) {
@@ -37,8 +37,8 @@ export async function GET(context) {
   }
 
   return rss({
-    title: `${SITE_TITLE} - Notes`,
-    description: `Notes from ${SITE_DESCRIPTION}`,
+    title: `${CONFIG.site.name} - Notes`,
+    description: `Notes from ${CONFIG.descriptions.site}`,
     site: context.site,
     items,
   });

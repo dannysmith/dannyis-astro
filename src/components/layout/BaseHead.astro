@@ -14,7 +14,7 @@ import {
   validateSEOData,
   getSiteConfig,
 } from '@utils/seo';
-import { OG_CONFIG, TWITTER_CONFIG } from '@config/seo';
+import { CONFIG } from '@config/site';
 
 interface Props {
   title: string;
@@ -90,8 +90,8 @@ const articleMeta = generateArticleMeta(seoData);
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={seoData.type} />
-<meta property="og:site_name" content={OG_CONFIG.siteName} />
-<meta property="og:locale" content={OG_CONFIG.locale} />
+<meta property="og:site_name" content={CONFIG.site.shortName} />
+<meta property="og:locale" content={CONFIG.site.locale} />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={metaDescription} />
@@ -101,14 +101,14 @@ const articleMeta = generateArticleMeta(seoData);
 {articleMeta.map(meta => <meta property={meta.property} content={meta.content} />)}
 
 <!-- Twitter -->
-<meta property="twitter:card" content={TWITTER_CONFIG.card} />
+<meta property="twitter:card" content={siteConfig.twitterCardType} />
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={pageTitle} />
 <meta property="twitter:description" content={metaDescription} />
 <meta property="twitter:image" content={ogImageUrl} />
 
 <!-- Mastadon etc -->
-<meta name="fediverse:creator" content="@dannysmith@indieweb.social" />
+<meta name="fediverse:creator" content={CONFIG.author.fediverse} />
 
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLD)} />

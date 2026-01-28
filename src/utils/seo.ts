@@ -5,27 +5,61 @@
  * All complex logic extracted from components for better maintainability.
  */
 
-import {
-  TITLE_TEMPLATES,
-  AUTHOR,
-  SITE_CONFIG,
-  SCHEMA_CONFIG,
-  ARTICLE_CONFIG,
-  type PageType,
-  type SEOData,
-} from '@config/seo';
+import { CONFIG } from '@config/site';
+
+// ============================================================================
+// Types
+// ============================================================================
+
+export type PageType = 'article' | 'note' | 'page';
+
+export interface SEOData {
+  title: string;
+  description?: string;
+  image?: string;
+  type: 'website' | 'article';
+  pageType?: PageType;
+  pubDate?: Date;
+  updatedDate?: Date;
+  tags?: string[];
+}
+
+// ============================================================================
+// Technical SEO Constants (rarely change, hardcoded here)
+// ============================================================================
+
+const ROBOTS_DIRECTIVE =
+  'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+const ARTICLE_SECTION = 'Remote Work & Leadership';
+const DEFAULT_OG_IMAGE = '/og-default.png';
+const TWITTER_CARD_TYPE = 'summary_large_image';
+const SEARCH_ACTION = {
+  target: 'https://danny.is/search?q={search_term_string}',
+  queryInput: 'required name=search_term_string',
+} as const;
+
+// ============================================================================
+// Derived Helpers
+// ============================================================================
+
+const authorName = `${CONFIG.author.givenName} ${CONFIG.author.familyName}`;
+const siteUrl = CONFIG.site.url;
+
+// ============================================================================
+// Public Functions
+// ============================================================================
 
 /**
  * Generate page title using configured templates
  */
 export function generatePageTitle(title: string, pageType?: PageType): string {
   // Don't modify the homepage title or if no pageType is specified
-  if (!pageType || title === AUTHOR.name) {
+  if (!pageType || title === CONFIG.site.name) {
     return title;
   }
 
-  const template = TITLE_TEMPLATES[pageType] || TITLE_TEMPLATES.default;
-  return template(title);
+  const template = CONFIG.pageTitleTemplates[pageType] || CONFIG.pageTitleTemplates.default;
+  return template.replace('{title}', title);
 }
 
 /**
@@ -33,7 +67,7 @@ export function generatePageTitle(title: string, pageType?: PageType): string {
  */
 export function generateMetaDescription(description?: string): string | undefined {
   if (!description) return undefined;
-  return `${description} | ${AUTHOR.name}`;
+  return `${description} | ${authorName}`;
 }
 
 /**
@@ -44,44 +78,61 @@ export function generateJSONLD(
   canonicalUrl: string,
   ogImageUrl: string
 ): Record<string, unknown> {
-  const baseGraph = [
-    // Person Schema
-    {
-      ...SCHEMA_CONFIG.person,
-      worksFor: {
-        '@type': 'Organization',
-        '@id': `${AUTHOR.website}/#organization`,
-      },
+  const personSchema = {
+    '@type': 'Person' as const,
+    '@id': `${siteUrl}/#person`,
+    name: authorName,
+    givenName: CONFIG.author.givenName,
+    familyName: CONFIG.author.familyName,
+    url: siteUrl,
+    image: `${siteUrl}${CONFIG.author.avatar}`,
+    sameAs: CONFIG.socialProfiles.map(p => p.url),
+    jobTitle: CONFIG.author.jobTitle,
+    description: CONFIG.descriptions.author,
+    worksFor: {
+      '@type': 'Organization',
+      '@id': `${siteUrl}/#organization`,
     },
-    // Organization Schema
-    {
-      ...SCHEMA_CONFIG.organization,
-      founder: {
-        '@type': 'Person',
-        '@id': `${AUTHOR.website}/#person`,
-      },
+  };
+
+  const organizationSchema = {
+    '@type': 'Organization' as const,
+    '@id': `${siteUrl}/#organization`,
+    name: CONFIG.organization.name,
+    url: siteUrl,
+    logo: `${siteUrl}${CONFIG.author.avatar}`,
+    description: CONFIG.descriptions.organization,
+    founder: {
+      '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
     },
-    // Website Schema
-    {
-      ...SCHEMA_CONFIG.website,
-      publisher: {
-        '@type': 'Person',
-        '@id': `${AUTHOR.website}/#person`,
-      },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: SITE_CONFIG.searchAction.target,
-        },
-        'query-input': SITE_CONFIG.searchAction.queryInput,
-      },
+  };
+
+  const websiteSchema = {
+    '@type': 'WebSite' as const,
+    '@id': `${siteUrl}/#website`,
+    url: siteUrl,
+    name: authorName,
+    description: CONFIG.descriptions.site,
+    publisher: {
+      '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
     },
-  ];
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: SEARCH_ACTION.target,
+      },
+      'query-input': SEARCH_ACTION.queryInput,
+    },
+  };
+
+  const baseGraph: Record<string, unknown>[] = [personSchema, organizationSchema, websiteSchema];
 
   // Add article/blog posting schema for content pages
   if (pageData.pageType === 'article' || pageData.pageType === 'note') {
-    baseGraph.push(generateArticleSchema(pageData, canonicalUrl, ogImageUrl) as never);
+    baseGraph.push(generateArticleSchema(pageData, canonicalUrl, ogImageUrl));
   }
 
   return {
@@ -106,17 +157,17 @@ function generateArticleSchema(
     image: ogImageUrl,
     author: {
       '@type': 'Person',
-      '@id': `${AUTHOR.website}/#person`,
+      '@id': `${siteUrl}/#person`,
     },
     publisher: {
       '@type': 'Organization',
-      '@id': `${AUTHOR.website}/#organization`,
+      '@id': `${siteUrl}/#organization`,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': canonicalUrl,
     },
-    inLanguage: SITE_CONFIG.locale.replace('_', '-'), // Convert en_GB to en-GB
+    inLanguage: CONFIG.site.locale.replace('_', '-'), // Convert en_GB to en-GB
   };
 
   // Add publication date if available
@@ -148,8 +199,8 @@ export function generateArticleMeta(
   if (pageData.type !== 'article') return [];
 
   const metaTags: Array<{ property: string; content: string }> = [
-    { property: 'article:author', content: ARTICLE_CONFIG.author },
-    { property: 'article:section', content: ARTICLE_CONFIG.section },
+    { property: 'article:author', content: authorName },
+    { property: 'article:section', content: ARTICLE_SECTION },
   ];
 
   // Add publication date
@@ -185,7 +236,7 @@ export function generateOGImageUrl(image: string | undefined, baseUrl: string): 
   if (image) {
     return new URL(image, baseUrl).toString();
   }
-  return new URL('/og-default.png', baseUrl).toString();
+  return new URL(DEFAULT_OG_IMAGE, baseUrl).toString();
 }
 
 /**
@@ -209,10 +260,13 @@ export function validateSEOData(data: Partial<SEOData>): SEOData {
  */
 export function getSiteConfig() {
   return {
-    name: SITE_CONFIG.name,
-    locale: SITE_CONFIG.locale,
-    themeColor: SITE_CONFIG.themeColor,
-    robotsDirective: SITE_CONFIG.robotsDirective,
-    author: AUTHOR.name,
+    name: CONFIG.site.shortName,
+    locale: CONFIG.site.locale,
+    themeColor: CONFIG.site.themeColor,
+    robotsDirective: ROBOTS_DIRECTIVE,
+    author: authorName,
+    twitterHandle: `@${CONFIG.author.twitter}`,
+    twitterCardType: TWITTER_CARD_TYPE,
+    defaultOgImage: DEFAULT_OG_IMAGE,
   };
 }

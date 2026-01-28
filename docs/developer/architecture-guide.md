@@ -259,7 +259,7 @@ import { Callout, Embed } from '@components/mdx';
 import InlineFootnotes from '@components/layout/InlineFootnotes.astro';
 
 // Config, utilities, layouts, assets
-import { AUTHOR } from '@config/seo';
+import { CONFIG } from '@config/site';
 import { generatePageTitle } from '@utils/seo';
 import Article from '@layouts/Article.astro';
 import coverImage from '@assets/articles/my-article/cover.jpg';
