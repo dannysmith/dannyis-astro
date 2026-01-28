@@ -277,18 +277,16 @@ Currently `src/components/ui/SocialLinks.astro` has 5 hardcoded social links. Sh
 
 ---
 
-### Phase 6: Generate humans.txt (optional)
+### Phase 6: Generate humans.txt ✅ COMPLETE
 
-Currently `public/humans.txt` is static with hardcoded author info.
-
-**Changes:**
-- Create `src/pages/humans.txt.ts` as an API route
-- Use `getConfig()` for author name, location, site URL
-- Delete `public/humans.txt`
+**What was done:**
+- Created `src/pages/humans.txt.ts` API route
+- Uses `config.author.fullName`, `config.author.location`, `config.site.url`
+- Deleted `public/humans.txt`
 
 **Files:**
 - `src/pages/humans.txt.ts` (new)
-- `public/humans.txt` (delete)
+- `public/humans.txt` (deleted)
 
 ---
 
