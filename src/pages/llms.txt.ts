@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import { getConfig } from '@config/config';
 import { filterContentForListing } from '@utils/content';
@@ -66,13 +67,13 @@ function discoverStaticPages(): Array<{ path: string; title: string }> {
 // =============================================================================
 
 export const GET: APIRoute = async () => {
-  const articles = filterContentForListing(await getCollection('articles')).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
+  const articles = filterContentForListing(
+    await getCollection('articles')
+  ) as CollectionEntry<'articles'>[];
+  articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-  const notes = filterContentForListing(await getCollection('notes')).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
+  const notes = filterContentForListing(await getCollection('notes')) as CollectionEntry<'notes'>[];
+  notes.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   const lines: string[] = [];
 
