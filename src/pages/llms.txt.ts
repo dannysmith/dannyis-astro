@@ -49,10 +49,10 @@ function discoverStaticPages(): Array<{ path: string; title: string }> {
           .replace(/\/index\.astro$/, '/') // /foo/index.astro -> /foo/
           .replace(/\.astro$/, '/'); // /foo.astro -> /foo/
 
-      // Derive title from path: /foo-bar/ -> Foo Bar
+      // Derive title from path: /foo-bar/ -> Foo Bar, /about/team/ -> About Team
       const title = path
         .replace(/^\/|\/$/g, '') // Remove leading/trailing slashes
-        .split('-')
+        .split(/[-/]/) // Split on both hyphens and slashes
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getConfig } from '../../src/config/config';
+import { getConfig } from '@config/config';
 
 describe('Site Config', () => {
   const config = getConfig();

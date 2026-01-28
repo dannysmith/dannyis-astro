@@ -102,7 +102,7 @@ test.describe('Content Filtering Tests', () => {
 
     // Even in development, styleguide content is excluded from listings
     // Just verify there are articles shown
-    const articles = page.locator('li');
+    const articles = page.locator('main li');
     expect(await articles.count()).toBeGreaterThan(0);
 
     // Check that styleguide content is NOT in the listing
