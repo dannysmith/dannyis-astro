@@ -288,18 +288,16 @@ src/pages/now/
 
 ---
 
-### Phase 7: Extract Redirects (independent)
+### Phase 7: Extract Redirects ✅ COMPLETE
 
-Unrelated to config consolidation. The redirects in `astro.config.mjs` are getting long.
-
-**Changes:**
-- Create `redirects.js` or `redirects.ts` in project root
-- Export redirects object
-- Import into `astro.config.mjs`
+**What was done:**
+- Created `src/config/redirects.ts` with all redirects
+- Imported into `astro.config.mjs` - now just `redirects,`
+- Redirects organized by category (booking, professional, content, media)
 
 **Files:**
-- `redirects.js` (new)
-- `astro.config.mjs` (simplify)
+- `src/config/redirects.ts` (new)
+- `astro.config.mjs` (simplified)
 
 ---
 
