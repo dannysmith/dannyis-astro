@@ -1,0 +1,49 @@
+---
+import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
+import { Callout } from '@components/mdx/index';
+import { Content as NowContent } from './_now.md';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Danny's Now Page"
+      description="Current projects and focus areas for remote work & operations consultant Danny Smith"
+      pageType="page"
+    />
+  </head>
+  <body>
+    <MainNavigation />
+    <main class="content">
+      <h1 class="ui-style">What I'm doing now</h1>
+
+      <Callout emoji="💡">
+        This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer"
+          >Now Page</a
+        >. Thanks to Derek Sivers for the <a
+          href="https://sive.rs/nowff"
+          target="_blank"
+          rel="noopener noreferrer">idea</a
+        >.
+      </Callout>
+
+      <NowContent />
+    </main>
+    <Footer />
+
+    <style>
+      .content {
+        max-width: var(--measure-standard);
+        margin-inline: auto;
+        padding: var(--space-2xl) var(--space-s);
+      }
+
+      h1 {
+        font-weight: var(--font-weight-bold);
+        margin-top: 0;
+        margin-bottom: var(--space-m);
+      }
+    </style>
+  </body>
+</html>

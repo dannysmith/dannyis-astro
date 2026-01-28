@@ -208,84 +208,30 @@ const config = getConfig();
 
 ---
 
-## Phase 2: Now Page as Markdown Partial
+## Phase 2: Now Page as Markdown Partial ✅ COMPLETE
 
-### Pattern: Colocated MDX partial
-
-Based on [Astro's markdown import pattern](https://docs.astro.build/en/guides/markdown-content/), we can import markdown directly and render its `Content` component:
+### Structure
 
 ```
 src/pages/now/
-├── index.astro    # Page wrapper with Callout
+├── index.astro    # Page wrapper with Callout, imports Content from _now.md
 └── _now.md        # Editable content (underscore = not a route)
 ```
 
-### Create `src/pages/now/_now.md`
+### How It Works
 
-Simple markdown with the Now page content:
+- **`_now.md`** - Simple markdown file with Now page content. Edit this to update what you're doing.
+- **`index.astro`** - Imports `{ Content as NowContent }` from `./_now.md` and renders it.
+- **`llms.txt.ts`** - Imports `nowMarkdown from './now/_now.md?raw'` and includes it directly.
 
-```markdown
-- [Consulting](https://betterat.work) on leadership, remote working and operations with a few companies.
-- Working on [Taskdn](https://tdn.danny.is), a system for managing tasks and projects as plain markdown files.
-- Working on [Astro Editor](https://astroeditor.danny.is), a markdown editor for Astro content collections.
-- Learning a shit ton about how to work with AI to build stuff fast **and well**.
-- Occasionally adding to my [collection of tools and frameworks](https://betterat.work/toolbox).
-- Playing at Open Mic nights in my local pub.
-- Living in a lovely little mews in Islington, North London.
+### Files Changed
 
-Updated: 2025-10-04
-```
-
-### Move `src/pages/now.astro` → `src/pages/now/index.astro`
-
-Update to import and render the markdown:
-
-```astro
----
-import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
-import { Callout } from '@components/mdx/index';
-import { Content as NowContent } from './_now.md';
----
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="Danny's Now Page"
-      description="Current projects and focus areas"
-      pageType="page"
-    />
-  </head>
-  <body>
-    <MainNavigation />
-    <main class="content">
-      <h1 class="ui-style">What I'm doing now</h1>
-
-      <Callout emoji="💡">
-        This is a <a href="https://nownownow.com/about">Now Page</a>.
-        Thanks to Derek Sivers for the <a href="https://sive.rs/nowff">idea</a>.
-      </Callout>
-
-      <NowContent />
-    </main>
-    <Footer />
-  </body>
-</html>
-```
-
-### Update `llms.txt.ts`
-
-Import the raw markdown content for the Now section:
-
-```typescript
-// Import raw markdown content
-import nowMarkdown from './now/_now.md?raw';
-
-// In the generation logic:
-lines.push('## Now');
-lines.push('');
-lines.push(nowMarkdown.trim());
-```
+| File | Action |
+|------|--------|
+| `src/pages/now/_now.md` | **NEW** - Now page content |
+| `src/pages/now/index.astro` | **NEW** - Page wrapper |
+| `src/pages/now.astro` | **DELETED** - Replaced by above |
+| `src/pages/llms.txt.ts` | Updated - imports `_now.md?raw` |
 
 ---
 
@@ -294,7 +240,6 @@ lines.push(nowMarkdown.trim());
 ### Phase 3: Improve llms.txt
 - Auto-generate "Other Pages" by scanning actual pages
 - Use CONFIG.socialProfiles and CONFIG.externalLinks
-- Import Now content from `_now.md`
 
 ### Phase 4: Update SocialLinks Component
 - `SocialLinks.astro` - iterate over `CONFIG.socialProfiles.filter(p => p.showInFooter)`
@@ -318,12 +263,8 @@ lines.push(nowMarkdown.trim());
 ### Phase 1 ✅
 See table in Phase 1 section above.
 
-### Phase 2
-| File | Action |
-|------|--------|
-| `src/pages/now.astro` | **MOVE** → `src/pages/now/index.astro` |
-| `src/pages/now/_now.md` | **NEW** - Now page content |
-| `src/pages/llms.txt.ts` | Update - Import now.md raw content |
+### Phase 2 ✅
+See table in Phase 2 section above.
 
 ---
 

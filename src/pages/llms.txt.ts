@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { getConfig } from '@config/config';
 import { filterContentForListing } from '@utils/content';
+import nowMarkdown from './now/_now.md?raw';
 
 // =============================================================================
 // CUSTOMIZABLE CONTENT
@@ -15,12 +16,6 @@ const AI_SUMMARY = `${config.author.fullName} is a ${config.author.jobTitle.toLo
 const ABOUT_CONTENT = `Danny helps companies build healthy remote teams and optimize operations. He writes about remote work practices, organizational health, leadership, and occasionally technology and design.
 
 This site serves as Danny's corner of the web - a place to share thoughts, experiences, and work, as well as a creative playground for experimenting with CSS, HTML, and AI-assisted development.`;
-
-const NOW_CONTENT = `- Consulting on leadership, remote working and operations
-- Building Taskdn, a system for managing tasks and projects as plain markdown files
-- Building Astro Editor, a markdown editor for Astro content collections
-- Learning how to work effectively with AI to build things fast and well
-- Playing at Open Mic nights in Islington, North London`;
 
 // =============================================================================
 // GENERATION LOGIC
@@ -60,10 +55,10 @@ export const GET: APIRoute = async () => {
   }
   lines.push('');
 
-  // Now
+  // Now (imported from src/pages/now/_now.md)
   lines.push('## Now');
   lines.push('');
-  lines.push(NOW_CONTENT);
+  lines.push(nowMarkdown.trim());
   lines.push('');
 
   // Articles
