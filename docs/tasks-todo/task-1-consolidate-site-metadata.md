@@ -250,14 +250,12 @@ src/pages/now/
 
 ---
 
-### Phase 4: Update SocialLinks Component
+### Phase 4: Update SocialLinks Component ✅ COMPLETE
 
-Currently `src/components/ui/SocialLinks.astro` has 5 hardcoded social links. Should use config.
-
-**Changes:**
-- Import `getConfig()`
-- Filter profiles: `config.socialProfiles.filter(p => p.showInFooter)`
-- Iterate to generate `<li>` elements with `<Icon name={profile.icon} />`
+**What was done:**
+- Imports `getConfig()` and filters `config.socialProfiles` by `showInFooter`
+- Iterates to generate `<li>` elements dynamically
+- Add/remove footer links by editing `showInFooter` in `src/config/site.ts`
 
 **Files:** `src/components/ui/SocialLinks.astro`
 
