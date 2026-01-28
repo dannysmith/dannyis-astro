@@ -243,6 +243,15 @@ export const CONFIG = {
     { id: 'consulting', name: 'Better at Work', url: 'https://betterat.work', description: 'Consulting practice' },
     { id: 'toolbox', name: 'Toolbox', url: 'https://betterat.work/toolbox', description: 'Collection of tools and frameworks' },
   ],
+
+  // -------------------------------------------------------------------------
+  // Organization (for schema.org - the consulting business, separate from personal)
+  // -------------------------------------------------------------------------
+  organization: {
+    name: 'Danny Smith Consulting',
+    // URL and logo derived from site.url and author.avatar
+    // Description in descriptions.organization
+  },
 } as const;
 
 // That's it. No derived exports.
@@ -251,6 +260,46 @@ export const CONFIG = {
 ```
 
 **Note:** `robotsDirective` and `articleSection` are hardcoded in `utils/seo.ts` - they're technical values that rarely change.
+
+---
+
+### Implementation Notes & Gotchas
+
+**Things to hardcode in utils/seo.ts (not in CONFIG):**
+- `robotsDirective` - technical SEO directive
+- `articleSection` - OpenGraph article categorization ('Remote Work & Leadership')
+- `searchAction` - JSON-LD site search config (URL pattern + query input)
+- `defaultOgImage` - '/og-default.png'
+- `twitterCardType` - 'summary_large_image'
+
+**Types to define in utils/seo.ts:**
+- `PageType = 'article' | 'note' | 'page'`
+- `SEOData` interface (title, description, image, type, pageType, pubDate, updatedDate, tags)
+
+**SCHEMA_CONFIG reconstruction:**
+The current `SCHEMA_CONFIG` is a pre-built object with `@type`, `@id`, etc. This needs to be reconstructed in `utils/seo.ts` from CONFIG values. The `generateJSONLD()` function already does most of this work - it just needs updating to use CONFIG directly instead of importing pre-built objects.
+
+**CONTENT_PATHS:**
+Currently exported but never used anywhere. Can be safely ignored/removed.
+
+**Organization vs Author:**
+- `CONFIG.organization.name` = 'Danny Smith Consulting' (the business)
+- `CONFIG.site.name` = 'Danny Smith' (the person/site)
+These are intentionally different. The organization schema.org data uses the business name.
+
+**Tests exist:**
+`tests/unit/seo.test.ts` tests the utility functions. These import from `utils/seo.ts` (not config), so they should continue working. Run `bun run test:unit` after Phase 1a to verify nothing breaks.
+
+**RSS feed titles:**
+The RSS autodiscovery links in BaseHead have hardcoded titles like "Danny Smith - Articles & Notes". The actual RSS feed files use `${SITE_TITLE} - Articles & Notes`. These currently match, which is good.
+
+Options:
+- Keep BaseHead hardcoded (simpler, titles rarely change)
+- Interpolate just the name: `` `${CONFIG.site.name} - Articles & Notes` `` (consistent with feeds)
+
+Either is fine - the suffix part ("- Articles & Notes") should stay near where it's used regardless. This is low priority and could be left as-is.
+
+---
 
 ### Refactor `src/utils/seo.ts`
 
