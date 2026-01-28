@@ -10,7 +10,6 @@ This project follows industry-standard accessibility and performance benchmarks 
 
 - **WCAG 2.1 AA** - Minimum standard for all features and content
 - **Keyboard navigation** - All interactive elements must be keyboard accessible
-- **Color contrast ratios** - Meet or exceed WCAG requirements (4.5:1 for normal text, 3:1 for large text)
 
 Detailed WCAG guidelines are available in the [official WCAG 2.1 documentation](https://www.w3.org/WAI/WCAG21/quickref/). Focus here is on site-specific implementation patterns.
 
