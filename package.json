@@ -40,7 +40,7 @@
     "@types/react-dom": "^19.2.3",
     "@vercel/og": "^0.8.5",
     "astro": "^5.16.0",
-    "astro-embed": "^0.9.2",
+    "astro-embed": "^0.12.0",
     "astro-expressive-code": "^0.41.3",
     "astro-icon": "^1.1.5",
     "inquirer": "^12.11.1",

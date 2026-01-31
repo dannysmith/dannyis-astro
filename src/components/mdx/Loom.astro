@@ -8,7 +8,7 @@ const { id, className = '' } = Astro.props;
 ---
 
 <div class={`loom-embed ${className}`}>
-  <iframe src={`https://www.loom.com/embed/${id}`} allowfullscreen title="Loom video"></iframe>
+  <iframe src={`https://www.loom.com/embed/${id}`} loading="lazy" allowfullscreen title="Loom video"></iframe>
 </div>
 
 <style>
