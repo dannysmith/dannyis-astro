@@ -702,6 +702,11 @@
     list-style-type: '•';
   }
 
+  /* Long list items */
+  .long-list-items {
+    /* TODO: Improve spacing between long list items */
+  }
+
   /* Blockquotes */
   blockquote {
     border-left: var(--border-width-thick) solid var(--color-accent);

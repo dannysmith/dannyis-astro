@@ -11,6 +11,7 @@ import {
   highlight as Highlight,
 } from '@components/mdx/index';
 import { Content as ChecklistContent } from './_snippets/checklist.mdx';
+import { Content as ListDensityContent } from './_snippets/list-density.mdx';
 ---
 
 <section id="typography" class="styleguide-section flow">
@@ -277,7 +278,20 @@ import { Content as ChecklistContent } from './_snippets/checklist.mdx';
     <ChecklistContent />
   </SGTypographySwitcher>
 
-  <!-- 8. Tables -->
+  <!-- 8. Lists: Density-Based Spacing -->
+  <h3 id="lists-density">List Density</h3>
+  <SGTypographySwitcher>
+    <h2>Automatic Spacing for Long List Items</h2>
+    <p>
+      Lists with short items use tight spacing, while lists with paragraph-like items
+      automatically receive more generous spacing. The <code>.long-list-items</code> class
+      is added by a rehype plugin when the average text length per item exceeds a threshold.
+      This is rendered from MDX to test the plugin:
+    </p>
+    <ListDensityContent />
+  </SGTypographySwitcher>
+
+  <!-- 9. Tables -->
   <h3 id="tables">Tables</h3>
   <SGTypographySwitcher>
     <h2>Tabular Data</h2>
