@@ -69,6 +69,31 @@ describe('rehypeListDensity', () => {
       expect(ul.properties?.className).toContain('existing-class');
       expect(ul.properties?.className).toContain('long-list-items');
     });
+
+    it('handles className as string (non-standard but possible)', () => {
+      const longText =
+        'This is a much longer list item that contains enough text to exceed the default threshold of 120 characters when averaged across all items.';
+      const tree: Root = {
+        type: 'root',
+        children: [
+          {
+            type: 'element',
+            tagName: 'ul',
+            properties: { className: 'existing-class another-class' as unknown as string[] },
+            children: [li(longText), li(longText)],
+          },
+        ],
+      };
+
+      transform(tree);
+
+      const ul = tree.children[0] as Element;
+      const classes = ul.properties?.className as string[];
+      expect(classes).toContain('existing-class');
+      expect(classes).toContain('another-class');
+      expect(classes).toContain('long-list-items');
+      expect(classes).toHaveLength(3);
+    });
   });
 
   describe('nested list handling', () => {

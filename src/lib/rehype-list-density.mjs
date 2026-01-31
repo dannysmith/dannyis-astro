@@ -66,7 +66,9 @@ export function rehypeListDensity(options = {}) {
 
       if (avgChars > threshold) {
         node.properties = node.properties || {};
-        node.properties.className = [...(node.properties.className || []), 'long-list-items'];
+        const existing = node.properties.className;
+        const classes = Array.isArray(existing) ? existing : existing ? existing.split(/\s+/) : [];
+        node.properties.className = [...classes, 'long-list-items'];
       }
     });
   };
