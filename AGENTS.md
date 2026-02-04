@@ -99,7 +99,15 @@ bun run newnote       # Create new note with proper frontmatter
     ├── layouts/       # Page templates (Article, Note)
     ├── lib/           # Build-time plugins (runs independently)
     ├── pages/         # Routes and API endpoints
-    ├── styles/        # Global CSS and theme
+    │   └── styleguide/# Visual styleguide (partials prefixed with _)
+    ├── styles/        # CSS architecture (one file per layer)
+    │   ├── global.css      # Entry point: layer order & imports
+    │   ├── _foundation.css # Design tokens, fonts, @property
+    │   ├── _reset.css      # Reset layer
+    │   ├── _base.css       # Base layer (forms, tables, etc.)
+    │   ├── _typography.css # Typography layer
+    │   ├── _layout.css     # Layout utilities (.flow, .list-reset)
+    │   └── _utilities.css  # Utility classes
     ├── types/         # TypeScript type declarations
     └── utils/         # Shared helper functions
 ```

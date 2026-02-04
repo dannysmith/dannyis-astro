@@ -13,5 +13,4 @@
 | [seo.md](./developer/seo.md)                                                     | SEO utilities and patterns                      | Specialized |
 | [code-quality.md](./developer/code-quality.md)                                   | Quality checks and standards                    | Specialized |
 | [testing.md](./developer/testing.md)                                             | Testing strategy and patterns                   | Specialized |
-| [mcp-chrome-devtools.md](./developer/mcp-chrome-devtools.md)                     | Using Chrome DevTools MCP for visual debugging  | Specialized |
 | [tasks.md](./tasks.md)                                                           | Task management system                          | Operations  |

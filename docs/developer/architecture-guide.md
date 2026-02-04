@@ -76,11 +76,16 @@ const components = {
 
 **CSS Layers Architecture:**
 
-- Seven-layer cascade system: `reset` → `base` → `typography` → `layout` → `utilities` → `longform` → `theme`
+- Six-layer cascade: `reset` → `base` → `typography` → `layout` → `utilities` → `longform`
 - Prose typography is the **default** - use `.ui-style` to opt-out for UI areas
 - `.dark-surface` utility for always-dark components (nav, footer)
 - Eliminates need for `!important` or complex specificity battles
-- Location: `src/styles/global.css:2`
+
+**File Structure (`src/styles/`):**
+
+- `global.css` — Entry point: layer order declaration and imports
+- `_foundation.css` — Design tokens, font faces, `@property` declarations
+- `_reset.css` through `_utilities.css` — One file per layer
 
 **Color System with `light-dark()`:**
 
