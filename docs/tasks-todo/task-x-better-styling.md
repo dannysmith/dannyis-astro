@@ -1,18 +1,39 @@
 # Task: Better Styling
 
-Once we have experimenting with and decided on any typeface changes, we should work over the styleguide and deal with each element to ensure it's well styled. The check list below includes those which are not as good as they should be right now.
+## Overview
+
+We're systematically working through the styleguide (`/styleguide`) and all CSS to ensure everything is as clean, robust, and as beautiful as possible. The approach is **general → specific**: foundations and resets first, then base element styles, then typography, then layout utilities, then specific components etc.
+
+### Goals
+
+1. **Visual quality** — Everything visible at `/styleguide` should look polished & intentional, and Just Work.
+2. **Robustness** — Styles should work whether elements are rendered normally, inside `LongformProseTypography`, or in a `.ui-style` container. Likewise they should work in light/dark mode, and in containers of any size. The CSS generally shouldn't care what context it's used in. The `SGTypographySwitched` and `ResizablePanel` used throughout the styleguide helps us test this.
+3. **Simplicity** — Modernise, consolidate, and remove unnecessary CSS. Use modern CSS features (nesting, `:has()`, `light-dark()`, logical properties) to keep things concise. Lean into inheritance and the cascade.
+4. **Typeface independence** — Once complete, swapping typefaces should "just work" without extensive tweaks, because our spacing, sizing & structure are set up sensibly.
+
+**Before starting work, read:**
+
+- `src/styles/_foundation.css` — Design tokens
+- `src/styles/_reset.css` — Reset layer
+- `src/styles/_base.css` — Base element styles
+- `src/styles/_typography.css` — Typography layer
+- `src/styles/_layout.css` — Layout utilities
+- `src/styles/_utilities.css` — Utility classes
+- `src/styles/global.css` — Entry point and layer order
+- `src/pages/styleguide/` — The styleguide partials (especially whichever section you're working on)
+
+---
+
+# Progress Checklist
 
 - [x] Split CSS out into multiple files
-- [x] Clean out unised CSS
+- [x] Clean out unused CSS
 
 ## Base Layer
 
 - [x] Tables
 - [x] Details & Summary
 - [x] Buttons
-
-### New
-
 - [x] HR
 - [x] Fieldset & Legend
 - [x] Inputs & Labels
@@ -24,19 +45,41 @@ Once we have experimenting with and decided on any typeface changes, we should w
 
 ## Typography Layer
 
-- [ ] Inline Code
+- [x] Inline Code/Samp
+- [x] Basics
+- [x] Headings
+- [x] Links
+- [x] Strong, mark/highlight, var, small
+- [x] Del/Strike
+- [x] Kbd
+- [x] Footnotes
 - [ ] Blockquotes
+  - [ ] Basic
+  - [ ] `BlockQuoteCitation.astro` 
 - [ ] Lists
-- [ ] Lists with .long-list-items
-- [ ] Checklists
+  - [ ] General
+  - [ ] UL
+  - [ ] OL
+  - [ ] Nested Lists
+  - [ ] Lists with .long-list-items
+  - [ ] Checklists/Task Lists
+- [ ] Review `LongFormTypography.astro` for anything to "pull up" into default typography.
 
-## Layout Helpers
+## Layout & Utility Helpers
 
-- [ ] Basic Flow
-- [ ] UI Style Resets
+- [ ] UI Style Reset
+  - [ ] Unset/reset stuff introduced by `@typography` as appropriate
+  - [ ] Check whole styleguide for anything else which should be unset and/or overridden
+- [ ] Small utilities
+  - [ ] layout.css - list-reset
+  - [ ] utilities.css - test all utility classes work in all contexts
+- [ ] FLOW - Rework in a sensble way alongside `@typography` and `LongformProseTypography` and decide if we should keep it.
 
 ## Content Components
 
+These ones **clearly** need work:
+
+- [ ] InlineFootnotes.astro - style the popup thing
 - [ ] BasicImage
   - [ ] Framed
   - [ ] Framed with Caption
@@ -48,9 +91,22 @@ Once we have experimenting with and decided on any typeface changes, we should w
 - [ ] Accordian
 - [ ] Grid
 
+- [ ] Double-check all other components for opportunities to clean up CSS etc
+
 ## UI Components
+
+These ones **clearly** need work:
+
 
 - [ ] Pill
 - [ ] ContentCard
   - [ ] Articles
   - [ ] Notes
+
+- [ ] Double-check all other components for opportunities to clean up CSS etc
+
+## Docs
+
+- [ ] Update dev docs as needed
+
+# Notes - Scratchpad
