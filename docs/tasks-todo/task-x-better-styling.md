@@ -13,8 +13,8 @@ Once we have experimenting with and decided on any typeface changes, we should w
 
 ### New
 
-- [ ] HR
-- [ ] Fieldset & Legend
+- [x] HR
+- [x] Fieldset & Legend
 - [ ] Inputs & Labels
 - [ ] Selects
 - [ ] Textareas

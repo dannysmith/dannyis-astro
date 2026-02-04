@@ -161,4 +161,19 @@
     margin: var(--space-l) 0;
     border: var(--border-width-hairline) solid var(--color-border);
   }
+
+  /* ======== FIELDSET & LEGEND ======== */
+  fieldset {
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  legend {
+    font-weight: var(--font-weight-bold);
+    padding: 0 var(--space-2xs);
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+  }
+
+
 }
