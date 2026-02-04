@@ -83,6 +83,28 @@
     padding-top: var(--space-s);
   }
 
+  /* ======== DETAILS ======== */
+  details {
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2xs) var(--space-s);
+
+    summary {
+      cursor: pointer;
+      &::marker {
+        color: var(--color-accent);
+      }
+    }
+    &[open] {
+      summary {
+        padding-bottom: var(--space-2xs);
+        margin-bottom: var(--space-2xs);
+        border-bottom: var(--border-width-hairline) solid var(--color-border);
+      }
+    }
+  }
+
+  /* ======== BUTTONS ======== */
   button,
   input[type='button'],
   input[type='submit'],

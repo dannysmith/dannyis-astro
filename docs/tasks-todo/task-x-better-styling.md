@@ -8,6 +8,7 @@ Once we have experimenting with and decided on any typeface changes, we should w
 ## Base Layer
 
 - [x] Tables
+- [x] Details & Summary
 - [ ] Buttons
 
 ### New
@@ -18,8 +19,6 @@ Once we have experimenting with and decided on any typeface changes, we should w
 - [ ] Selects
 - [ ] Textareas
 - [ ] Progress
-- [ ] Buttons
-- [ ] Details
 - [ ] Definition Lists
 - [ ] Audio & Video
 
