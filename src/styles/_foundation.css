@@ -1,0 +1,289 @@
+/* ============================================
+   FOUNDATION
+   Font faces, @property declarations, and design tokens
+   ============================================ */
+
+/* ============================================
+   FONT FACES
+   ============================================ */
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/Literata-v3.103-2026-01-19.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/Literata-Italic-v3.103-2026-01-19.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 200 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'League Spartan';
+  src: url('/fonts/LeagueSpartan-v2.220-2026-01-19.woff2') format('woff2');
+  font-weight: 200 900;
+  font-display: swap;
+}
+
+/* ============================================
+   @PROPERTY DECLARATIONS
+   ============================================ */
+
+/* Color properties - enable smooth color transitions */
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: oklch(70% 0.18 25);
+}
+
+@property --surface-raised {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+/* Hue values - enable smooth hue interpolation in color calculations */
+@property --hue-coral {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 25;
+}
+
+@property --hue-pink {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 350;
+}
+
+@property --hue-orange {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 55;
+}
+
+@property --hue-purple {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 300;
+}
+
+@property --hue-yellow {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 95;
+}
+
+@property --hue-green {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 165;
+}
+
+@property --hue-blue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 250;
+}
+
+@property --hue-grey {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 210;
+}
+
+/* Duration/timing properties - ensure valid time values in transitions */
+@property --duration-fast {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 150ms;
+}
+
+@property --duration-normal {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 200ms;
+}
+
+@property --duration-slow {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 300ms;
+}
+
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
+:root {
+  /* ======= COLOURS ======= */
+
+  /* Core Hues - shared across modes */
+  --hue-coral: 25;
+  --hue-pink: 350;
+  --hue-orange: 55;
+  --hue-purple: 300;
+  --hue-yellow: 95;
+  --hue-green: 165;
+  --hue-blue: 250;
+  --hue-grey: 210;
+
+  /* Absolute colors - no mode switching needed */
+  --color-white: oklch(100% 0 0);
+  --color-black: oklch(0% 0 0);
+
+  /* Adaptive Color Palette
+    Each color auto-adapts for light/dark mode.
+    Dark mode: increase lightness for visibility, reduce chroma to avoid harshness */
+
+  --color-coral: light-dark(oklch(70% 0.18 var(--hue-coral)), oklch(80% 0.14 var(--hue-coral)));
+
+  --color-pink: light-dark(oklch(55% 0.15 var(--hue-pink)), oklch(70% 0.13 var(--hue-pink)));
+
+  --color-orange: light-dark(oklch(78% 0.16 var(--hue-orange)), oklch(80% 0.14 var(--hue-orange)));
+
+  --color-purple: light-dark(oklch(60% 0.14 var(--hue-purple)), oklch(72% 0.12 var(--hue-purple)));
+
+  --color-yellow: light-dark(oklch(90% 0.16 var(--hue-yellow)), oklch(82% 0.12 var(--hue-yellow)));
+
+  --color-green: light-dark(oklch(65% 0.12 var(--hue-green)), oklch(72% 0.1 var(--hue-green)));
+
+  --color-blue: light-dark(oklch(62% 0.15 var(--hue-blue)), oklch(70% 0.13 var(--hue-blue)));
+
+  /* Neutrals - structural colors for backgrounds/text */
+  --color-ink: oklch(28% 0.01 var(--hue-grey));
+  --color-charcoal: oklch(24.35% 0 0); /* #202020 */
+  --color-beige: oklch(96% 0.02 85);
+
+  /* ======= SEMANTIC COLOURS ======= */
+  /* Role-based tokens that reference the adaptive palette */
+
+  --color-accent: var(--color-coral);
+  --color-visited: var(--color-purple);
+  --color-highlight: var(--color-yellow);
+
+  --color-background: light-dark(var(--color-beige), var(--color-charcoal));
+  --color-background-secondary: light-dark(
+    oklch(from var(--color-beige) calc(l + 0.02) c h),
+    oklch(from var(--color-charcoal) calc(l - 0.04) c h)
+  );
+  --color-background-code: light-dark(
+    oklch(from var(--color-beige) calc(l - 0.025) 0.01 var(--hue-grey)),
+    oklch(from var(--color-charcoal) calc(l - 0.04) c h)
+  );
+  --color-text: light-dark(var(--color-ink), var(--color-beige));
+  --color-text-secondary: light-dark(
+    oklch(55% 0.01 var(--hue-grey)),
+    oklch(75% 0.01 var(--hue-grey))
+  );
+  --color-border: light-dark(
+    oklch(from var(--color-black) l c h / 0.1),
+    oklch(from var(--color-white) l c h / 0.1)
+  );
+
+  /* Surface for raised cards/panels - white in light mode, dark grey in dark mode */
+  --surface-raised: light-dark(var(--color-white), oklch(16% 0 0));
+
+  /* ======= FONTS ======= */
+
+  --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
+  --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
+
+  /* ======= SPACING ======= */
+  /* @link https://utopia.fyi/space/calculator?c=375,16,1.2,1280,20,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+  --space-3xs: clamp(0.25rem, 0.2241rem + 0.1105vw, 0.3125rem);
+  --space-2xs: clamp(0.5rem, 0.4482rem + 0.221vw, 0.625rem);
+  --space-xs: clamp(0.75rem, 0.6723rem + 0.3315vw, 0.9375rem);
+  --space-s: clamp(1rem, 0.8964rem + 0.442vw, 1.25rem);
+  --space-m: clamp(1.5rem, 1.3446rem + 0.663vw, 1.875rem);
+  --space-l: clamp(2rem, 1.7928rem + 0.884vw, 2.5rem);
+  --space-xl: clamp(3rem, 2.6892rem + 1.326vw, 3.75rem);
+  --space-2xl: clamp(4rem, 3.5856rem + 1.768vw, 5rem);
+  --space-3xl: clamp(6rem, 5.3785rem + 2.6519vw, 7.5rem);
+
+  /* One-up pairs */
+  --space-3xs-2xs: clamp(0.25rem, 0.0946rem + 0.663vw, 0.625rem);
+  --space-2xs-xs: clamp(0.5rem, 0.3187rem + 0.7735vw, 0.9375rem);
+  --space-xs-s: clamp(0.75rem, 0.5428rem + 0.884vw, 1.25rem);
+  --space-s-m: clamp(1rem, 0.6374rem + 1.547vw, 1.875rem);
+  --space-m-l: clamp(1.5rem, 1.0856rem + 1.768vw, 2.5rem);
+  --space-l-xl: clamp(2rem, 1.2749rem + 3.0939vw, 3.75rem);
+  --space-xl-2xl: clamp(3rem, 2.1713rem + 3.5359vw, 5rem);
+  --space-2xl-3xl: clamp(4rem, 2.5497rem + 6.1878vw, 7.5rem);
+
+  /* ======= TYPOGRAPHY ======= */
+  /* @link https://utopia.fyi/type/calculator?c=375,16,1.2,1280,20,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+
+  --step--2: clamp(0.6944rem, 0.6907rem + 0.016vw, 0.7035rem);
+  --step--1: clamp(0.8333rem, 0.7901rem + 0.1846vw, 0.9377rem);
+  --step-0: clamp(1rem, 0.8964rem + 0.442vw, 1.25rem);
+  --step-1: clamp(1.2rem, 1.0068rem + 0.8243vw, 1.6663rem);
+  --step-2: clamp(1.44rem, 1.1163rem + 1.381vw, 2.2211rem);
+  --step-3: clamp(1.728rem, 1.2172rem + 2.1794vw, 2.9607rem);
+  --step-4: clamp(2.0736rem, 1.2975rem + 3.3115vw, 3.9467rem);
+  --step-5: clamp(2.4883rem, 1.3395rem + 4.9018vw, 5.2609rem);
+
+  /* Semantic aliases */
+  --font-size-xs: var(--step--2);
+  --font-size-sm: var(--step--1);
+  --font-size-base: var(--step-0);
+  --font-size-md: var(--step-1);
+  --font-size-lg: var(--step-2);
+  --font-size-xl: var(--step-3);
+  --font-size-2xl: var(--step-4);
+  --font-size-3xl: var(--step-5);
+
+  /* Line Heights */
+  --leading-none: 0.9;
+  --leading-tight: 1.1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.5;
+  --leading-loose: 1.7;
+
+  /* Letter Spacing */
+  --tracking-tight: -0.02ch;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05ch;
+  --tracking-wider: 0.1ch;
+
+  /* Measure - standard line length for readability */
+  --measure-standard: 80ch;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 350;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ----- BORDERS ----- */
+  --border-width-hairline: 1px;
+  --border-width-base: 2px;
+  --border-width-thick: 4px;
+  --border-width-heavy: 6px;
+  --border-width-accent: 1rem;
+
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+
+  /* ----- MOTION ----- */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ----- SHADOWS ----- */
+  --shadow-small: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
+    drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.1));
+  --shadow-medium: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
+    drop-shadow(0px 4px 6px rgba(16, 24, 40, 0.1));
+}

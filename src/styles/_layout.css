@@ -1,0 +1,37 @@
+/* ============================================
+   LAYOUT LAYER - Reusable layout patterns
+   ============================================ */
+@layer layout {
+  /* Flow utility - consistent vertical spacing */
+  .flow > * + * {
+    margin-top: var(--space-m);
+  }
+
+  /* Headings get larger, proportionate top margins for clear section breaks */
+  .flow > * + :is(h1, h2) {
+    margin-top: var(--space-xl);
+  }
+
+  .flow > * + h3 {
+    margin-top: var(--space-l);
+  }
+
+  /* List reset - for navigation and UI lists */
+  .list-reset {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: var(--space-xs);
+
+    & li {
+      padding-left: 0;
+      margin-top: 0;
+    }
+  }
+
+  /* All caps utility - for labels and UI text */
+  .all-caps {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+}

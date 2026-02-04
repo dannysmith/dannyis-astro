@@ -1,0 +1,106 @@
+/* ============================================
+   BASE LAYER
+   ============================================ */
+@layer base {
+  html {
+    /* Colors - support both light/dark */
+    color-scheme: light dark;
+    accent-color: var(--color-accent);
+    color: var(--color-text);
+
+    /* Smooth Scrolling */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    /* Background color - global default so pages don't need to set it */
+    background-color: var(--color-background);
+  }
+
+  /* Highlight */
+  mark,
+  .highlight {
+    background: var(--color-yellow);
+    padding-inline: 0.1em;
+    border-radius: 0.1em;
+    color: marktext;
+  }
+
+  /* Variable */
+  var {
+    color: var(--color-accent);
+    font-style: italic;
+  }
+
+  /* Small */
+  small {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Strikethrough */
+  del,
+  s {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 0.1em;
+    text-decoration-style: wavy;
+    text-underline-offset: -0.4em;
+    text-decoration-skip-ink: none;
+    cursor: not-allowed;
+  }
+
+  /* Simple, attractive global table styles */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 2em 0;
+    font-size: 1em;
+    background-color: var(--color-background-secondary);
+    caption-side: bottom;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--color-border);
+    padding: 0.2em 0.5em;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: var(--color-background-secondary);
+    border-bottom-width: 2px;
+  }
+
+  /* Better cursor for summary */
+  summary {
+    cursor: default;
+  }
+
+  /* Button default */
+  button,
+  input[type='button'],
+  input[type='submit'],
+  input[type='reset'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5cap;
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    cursor: pointer;
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.4em 0.75em;
+    background-color: var(--color-background-secondary);
+    color: inherit;
+    text-box: trim-both cap alphabetic;
+    svg {
+      width: 1.25cap;
+      height: 1.25cap;
+      flex-shrink: 0;
+    }
+  }
+}
