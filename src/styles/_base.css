@@ -15,7 +15,6 @@
   /* ======== TABLES ======== */
 
   table {
-    /* font-family: system-ui; */
     border-collapse: collapse;
     width: 100%;
     font-size: 1rem; /* rem-based font-size for consistency wherever used*/
@@ -82,10 +81,6 @@
     border-bottom-width: var(--border-width-base);
     text-align: left;
     padding-top: var(--space-s);
-  }
-
-  summary {
-    cursor: default;
   }
 
   button,
