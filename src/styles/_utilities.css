@@ -103,6 +103,32 @@
     letter-spacing: var(--tracking-wide);
   }
 
+  /* Text alignment utilities */
+  .center {
+    text-align: center;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .left {
+    text-align: left;
+  }
+
+  /* Vertical alignment utilities */
+  .top {
+    vertical-align: top;
+  }
+
+  .middle {
+    vertical-align: middle;
+  }
+
+  .bottom {
+    vertical-align: bottom;
+  }
+
   /* Hidden utility for screen readers and microformats */
   .sr-only,
   .hidden-microformat {

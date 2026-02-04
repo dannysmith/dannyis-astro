@@ -20,7 +20,7 @@ Once we have experimenting with and decided on any typeface changes, we should w
 - [x] Textareas
 - [x] Progress
 - [x] Definition Lists
-- [ ] Audio & Video
+- [x] Audio & Video
 
 ## Typography Layer
 
