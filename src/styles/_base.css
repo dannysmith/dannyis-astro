@@ -269,4 +269,16 @@
   dd {
     margin-inline-start: var(--space-m);
   }
+
+  /* ======== AUDIO & VIDEO ======== */
+
+  audio,
+  video {
+    inline-size: 100%;
+    border-radius: var(--radius-sm);
+  }
+
+  audio::-webkit-media-controls-panel {
+    background: var(--color-background-secondary);
+  }
 }
