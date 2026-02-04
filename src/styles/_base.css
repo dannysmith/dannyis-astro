@@ -171,14 +171,15 @@
 
   legend {
     font-weight: var(--font-weight-bold);
-    padding: 0 var(--space-2xs);
+    padding-inline: var(--space-2xs);
     text-box-trim: trim-both;
     text-box-edge: cap alphabetic;
   }
 
   /* ======== LABELS ======== */
 
-  label {
+  /* Block labels only (not inline labels wrapping checkboxes/radios) */
+  label:not(:has(input)) {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     transition: color var(--duration-fast) var(--ease-in-out);
@@ -191,7 +192,15 @@
 
   /* ======== INPUTS, SELECTS, TEXTAREAS ======== */
 
-  input:not([type='button'], [type='submit'], [type='reset'], [type='image'], [type='file']),
+  input:not(
+    [type='button'],
+    [type='submit'],
+    [type='reset'],
+    [type='image'],
+    [type='file'],
+    [type='checkbox'],
+    [type='radio']
+  ),
   select,
   textarea {
     background: var(--color-background-secondary);
@@ -228,7 +237,7 @@
 
   textarea {
     inline-size: 100%;
-    resize: vertical;
+    resize: block;
 
     /* set minimum height to 3 lines if no rows attribute is specified */
     &:not([rows]) {
@@ -242,5 +251,12 @@
     &::picker-icon {
       color: var(--color-accent);
     }
+  }
+
+  /* ======== PROGRESS & METER ======== */
+
+  progress,
+  meter {
+    inline-size: 100%;
   }
 }
