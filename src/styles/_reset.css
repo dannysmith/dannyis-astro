@@ -81,7 +81,7 @@
   }
 
   /* Auto-growing textarea */
-  :where(textarea) {
+  :where(textarea:not([rows])) {
     field-sizing: content;
   }
 

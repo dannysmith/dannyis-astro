@@ -17,8 +17,8 @@ Once we have experimenting with and decided on any typeface changes, we should w
 - [x] Fieldset & Legend
 - [ ] Inputs & Labels
 - [ ] Selects
-- [ ] Textareas
-- [ ] Progress
+- [x] Textareas
+- [x] Progress
 - [ ] Definition Lists
 - [ ] Audio & Video
 

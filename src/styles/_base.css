@@ -112,13 +112,13 @@
     border: none;
     border-radius: var(--radius-sm);
 
-    font-family: var(--font-ui);
     font-weight: var(--font-weight-medium);
     text-box-trim: trim-both;
     text-box-edge: cap alphabetic;
 
     cursor: pointer;
     transition: background var(--duration-fast) var(--ease-in-out);
+    outline-offset: 0; /* Focus ring tight to border */
 
     /* Colors: muted accent by default, full accent on hover */
     color: inherit;
@@ -162,7 +162,8 @@
     border: var(--border-width-hairline) solid var(--color-border);
   }
 
-  /* ======== FIELDSET & LEGEND ======== */
+  /* ======== FORMS ======== */
+
   fieldset {
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
@@ -175,5 +176,56 @@
     text-box-edge: cap alphabetic;
   }
 
+  /* ======== INPUTS, SELECTS, TEXTAREAS ======== */
 
+  input:not([type='button'], [type='submit'], [type='reset'], [type='image'], [type='file']),
+  select,
+  textarea {
+    background: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  input:not(
+    [type='checkbox'],
+    [type='radio'],
+    [type='file'],
+    [type='color'],
+    [type='range'],
+    [type='hidden'],
+    [type='button'],
+    [type='submit'],
+    [type='reset'],
+    [type='image']
+  ),
+  select,
+  textarea {
+    padding-block: 0.4em;
+    padding-inline: 0.75em;
+    line-height: var(--leading-normal); /* Preent clipping of text */
+    outline-offset: 0; /* Focus ring tight to border */
+  }
+
+  /* Placeholder styling */
+  ::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.5;
+  }
+
+  textarea {
+    inline-size: 100%;
+    resize: vertical;
+
+    &:not([rows]) {
+      min-block-size: 3lh;
+    }
+  }
+
+  select {
+    appearance: base-select;
+
+    &::picker-icon {
+      color: var(--color-accent);
+    }
+  }
 }

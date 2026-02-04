@@ -23,8 +23,8 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
   <h3 id="forms">Forms</h3>
   <p>
     Form controls with proper <code>&lt;fieldset&gt;</code>, <code>&lt;legend&gt;</code>, and
-    <code>&lt;label&gt;</code> structure. Most forms on this site will be minimal, but having
-    sensible defaults ensures consistency.
+    <code>&lt;label&gt;</code> structure. Most forms on this site will be minimal, but having sensible
+    defaults ensures consistency.
   </p>
   <ResizableContainer>
     <SGTypographySwitcher>
@@ -37,11 +37,23 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
           </p>
           <p>
             <label for="email">Email</label><br />
-            <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
           </p>
           <p>
             <label for="password">Password</label><br />
-            <input type="password" id="password" name="password" placeholder="Enter password" autocomplete="current-password" />
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter password"
+              autocomplete="current-password"
+            />
           </p>
           <p>
             <label for="search">Search</label><br />
@@ -120,17 +132,29 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
           </p>
           <p>
             <label for="datalist-input">Browser</label><br />
-            <input type="text" id="datalist-input" name="browser" list="browsers" placeholder="Type to search..." />
+            <input
+              type="text"
+              id="datalist-input"
+              name="browser"
+              list="browsers"
+              placeholder="Type to search..."
+            />
             <datalist id="browsers">
-              <option value="Chrome" />
-              <option value="Firefox" />
-              <option value="Safari" />
-              <option value="Edge" />
+              <option value="Chrome"></option>
+              <option value="Firefox"></option>
+              <option value="Safari"></option>
+              <option value="Edge"></option>
             </datalist>
           </p>
           <p>
             <label for="textarea">Message</label><br />
-            <textarea id="textarea" name="message" rows="4" placeholder="Your message here..."></textarea>
+            <textarea id="textarea" name="message" rows="4" placeholder="Your message here..."
+            ></textarea>
+          </p>
+          <p>
+            <label for="textarea">Textarea without rows attribute</label><br />
+            <textarea id="textarea-without-rows" name="textarea-without-rows" placeholder="Your message here..."
+            ></textarea>
           </p>
         </fieldset>
 
@@ -142,7 +166,9 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
           </p>
           <p>
             <label for="meter">Disk Usage</label><br />
-            <meter id="meter" value="0.7" min="0" max="1" low="0.3" high="0.7" optimum="0.5">70%</meter>
+            <meter id="meter" value="0.7" min="0" max="1" low="0.3" high="0.7" optimum="0.5"
+              >70%</meter
+            >
           </p>
         </fieldset>
 
@@ -166,10 +192,10 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
       <details>
         <summary>What is the difference between details/summary and Accordion?</summary>
         <p>
-          The native <code>&lt;details&gt;</code> element provides disclosure functionality without
-          JavaScript. It's more accessible by default and works even when scripts fail to load. Our
-          Accordion component offers more styling control and animation options, but this native
-          element is perfect for simple use cases.
+          The native <code>&lt;details&gt;</code> element provides disclosure functionality without JavaScript.
+          It's more accessible by default and works even when scripts fail to load. Our Accordion component
+          offers more styling control and animation options, but this native element is perfect for simple
+          use cases.
         </p>
       </details>
 
@@ -200,8 +226,8 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
   <!-- 3. Definition Lists -->
   <h3 id="definition-lists">Definition Lists</h3>
   <p>
-    The <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code> elements for
-    term-definition pairs. Useful for glossaries, metadata displays, or FAQ-style content.
+    The <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code> elements for term-definition
+    pairs. Useful for glossaries, metadata displays, or FAQ-style content.
   </p>
   <ResizableContainer>
     <SGTypographySwitcher>
@@ -220,10 +246,14 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
         </dd>
 
         <dt>Calm company</dt>
-        <dd>A business that prioritises sustainable growth, employee well-being, and profitability
-          over hypergrowth and external funding.</dd>
-        <dd>Often characterised by remote-first policies, async communication, and reasonable
-          working hours.</dd>
+        <dd>
+          A business that prioritises sustainable growth, employee well-being, and profitability
+          over hypergrowth and external funding.
+        </dd>
+        <dd>
+          Often characterised by remote-first policies, async communication, and reasonable working
+          hours.
+        </dd>
       </dl>
     </SGTypographySwitcher>
   </ResizableContainer>
@@ -231,8 +261,8 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
   <!-- 4. Figure/Figcaption -->
   <h3 id="figure-figcaption">Figure/Figcaption</h3>
   <p>
-    The <code>&lt;figure&gt;</code> element with <code>&lt;figcaption&gt;</code> for self-contained
-    content with a caption. Distinct from BasicImage—this shows the raw HTML element styling.
+    The <code>&lt;figure&gt;</code> element with <code>&lt;figcaption&gt;</code> for self-contained content
+    with a caption. Distinct from BasicImage—this shows the raw HTML element styling.
   </p>
   <ResizableContainer>
     <SGTypographySwitcher>
@@ -256,8 +286,8 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
     <SGTypographySwitcher>
       <h4>Audio</h4>
       <p>
-        The native <code>&lt;audio&gt;</code> element with controls. Browser styling varies, but
-        basic functionality is consistent.
+        The native <code>&lt;audio&gt;</code> element with controls. Browser styling varies, but basic
+        functionality is consistent.
       </p>
       <audio controls>
         <source src="/styleguide/placeholder.mp3" type="audio/mpeg" />
@@ -266,8 +296,8 @@ import styleguideImage from '@assets/articles/styleguide-image.jpg';
 
       <h4>Video</h4>
       <p>
-        The native <code>&lt;video&gt;</code> element. For actual video hosting, consider using the
-        Embed component with YouTube/Vimeo for better performance and features.
+        The native <code>&lt;video&gt;</code> element. For actual video hosting, consider using the Embed
+        component with YouTube/Vimeo for better performance and features.
       </p>
       <video controls>
         <source src="/styleguide/placeholder.mp4" type="video/mp4" />
