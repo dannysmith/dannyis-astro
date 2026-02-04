@@ -28,10 +28,4 @@
       margin-top: 0;
     }
   }
-
-  /* All caps utility - for labels and UI text */
-  .all-caps {
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-  }
 }

@@ -160,7 +160,39 @@
     font-weight: var(--font-weight-bold);
   }
 
-  /* Keyboard input - styled like physical keys */
+  /* Highlights and Marked Text */
+  mark,
+  .highlight {
+    background: var(--color-yellow);
+    padding-inline: 0.1em;
+    border-radius: 0.1em;
+    color: marktext;
+  }
+
+  /* Variable Text */
+  var {
+    color: var(--color-accent);
+    font-style: italic;
+  }
+
+  /* Small Text */
+  small {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Strikethrough and Deleted Text */
+  del,
+  s {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 0.1em;
+    text-decoration-style: wavy;
+    text-underline-offset: -0.4em;
+    text-decoration-skip-ink: none;
+    cursor: not-allowed;
+  }
+
+  /* Keyboard input (styled like physical keys) */
   kbd {
     display: inline-block;
     position: relative;

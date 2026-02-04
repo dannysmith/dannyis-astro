@@ -84,12 +84,7 @@
     }
   }
 
-  /* ----------------------------------------
-     .external-arrow - Subtle indicator for external/offsite links
-     Usage: <a href="...">Link text <span class="external-arrow">↗</span></a>
-     Note: This is for UI contexts (nav, footer). Prose external links
-     use a different mechanism in the longform layer.
-     ---------------------------------------- */
+  /* Arrow indicator for external links */
   .external-arrow {
     font-family:
       system-ui,
@@ -100,6 +95,12 @@
     opacity: 0.5;
     font-weight: 600;
     margin-left: 0.18em;
+  }
+
+  /* All caps utility - for labels and UI text */
+  .all-caps {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
   }
 
   /* Hidden utility for screen readers and microformats */

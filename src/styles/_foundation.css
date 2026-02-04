@@ -3,9 +3,8 @@
    Font faces, @property declarations, and design tokens
    ============================================ */
 
-/* ============================================
-   FONT FACES
-   ============================================ */
+/* FONT FACES */
+
 @font-face {
   font-family: 'Literata';
   src: url('/fonts/Literata-v3.103-2026-01-19.woff2') format('woff2');
@@ -29,24 +28,14 @@
   font-display: swap;
 }
 
-/* ============================================
-   @PROPERTY DECLARATIONS
-   ============================================ */
+/* COLOR PROPERTIES */
 
-/* Color properties - enable smooth color transitions */
 @property --color-accent {
   syntax: '<color>';
   inherits: true;
   initial-value: oklch(70% 0.18 25);
 }
 
-@property --surface-raised {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: #ffffff;
-}
-
-/* Hue values - enable smooth hue interpolation in color calculations */
 @property --hue-coral {
   syntax: '<number>';
   inherits: true;
@@ -95,29 +84,16 @@
   initial-value: 210;
 }
 
-/* Duration/timing properties - ensure valid time values in transitions */
-@property --duration-fast {
-  syntax: '<time>';
-  inherits: true;
-  initial-value: 150ms;
-}
-
-@property --duration-normal {
-  syntax: '<time>';
-  inherits: true;
-  initial-value: 200ms;
-}
-
-@property --duration-slow {
-  syntax: '<time>';
-  inherits: true;
-  initial-value: 300ms;
-}
-
 /* ============================================
    DESIGN TOKENS
    ============================================ */
 :root {
+  /* ======= FONTS ======= */
+
+  --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
+  --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
+
   /* ======= COLOURS ======= */
 
   /* Core Hues - shared across modes */
@@ -163,6 +139,7 @@
   --color-accent: var(--color-coral);
   --color-visited: var(--color-purple);
   --color-highlight: var(--color-yellow);
+  --color-focus-ring: var(--color-blue);
 
   --color-background: light-dark(var(--color-beige), var(--color-charcoal));
   --color-background-secondary: light-dark(
@@ -186,11 +163,6 @@
   /* Surface for raised cards/panels - white in light mode, dark grey in dark mode */
   --surface-raised: light-dark(var(--color-white), oklch(16% 0 0));
 
-  /* ======= FONTS ======= */
-
-  --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
-  --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
   /* ======= SPACING ======= */
   /* @link https://utopia.fyi/space/calculator?c=375,16,1.2,1280,20,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
@@ -204,16 +176,6 @@
   --space-xl: clamp(3rem, 2.6892rem + 1.326vw, 3.75rem);
   --space-2xl: clamp(4rem, 3.5856rem + 1.768vw, 5rem);
   --space-3xl: clamp(6rem, 5.3785rem + 2.6519vw, 7.5rem);
-
-  /* One-up pairs */
-  --space-3xs-2xs: clamp(0.25rem, 0.0946rem + 0.663vw, 0.625rem);
-  --space-2xs-xs: clamp(0.5rem, 0.3187rem + 0.7735vw, 0.9375rem);
-  --space-xs-s: clamp(0.75rem, 0.5428rem + 0.884vw, 1.25rem);
-  --space-s-m: clamp(1rem, 0.6374rem + 1.547vw, 1.875rem);
-  --space-m-l: clamp(1.5rem, 1.0856rem + 1.768vw, 2.5rem);
-  --space-l-xl: clamp(2rem, 1.2749rem + 3.0939vw, 3.75rem);
-  --space-xl-2xl: clamp(3rem, 2.1713rem + 3.5359vw, 5rem);
-  --space-2xl-3xl: clamp(4rem, 2.5497rem + 6.1878vw, 7.5rem);
 
   /* ======= TYPOGRAPHY ======= */
   /* @link https://utopia.fyi/type/calculator?c=375,16,1.2,1280,20,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
@@ -261,7 +223,7 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* ----- BORDERS ----- */
+  /* ======= BORDERS ======= */
   --border-width-hairline: 1px;
   --border-width-base: 2px;
   --border-width-thick: 4px;
@@ -274,14 +236,14 @@
   --radius-lg: 0.75rem;
   --radius-full: 9999px;
 
-  /* ----- MOTION ----- */
+  /* ======= MOTION ======= */
   --duration-fast: 150ms;
   --duration-normal: 200ms;
   --duration-slow: 300ms;
 
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ----- SHADOWS ----- */
+  /* ======= SHADOWS ======= */
   --shadow-small: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
     drop-shadow(0px 1px 2px rgba(16, 24, 40, 0.1));
   --shadow-medium: drop-shadow(0px 1px 3px rgba(16, 24, 40, 0.1))
