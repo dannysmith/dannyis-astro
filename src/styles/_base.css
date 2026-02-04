@@ -259,4 +259,14 @@
   meter {
     inline-size: 100%;
   }
+
+  /* ======== DEFINITION LISTS ======== */
+
+  dt {
+    font-weight: var(--font-weight-bold);
+  }
+
+  dd {
+    margin-inline-start: var(--space-m);
+  }
 }
