@@ -29,7 +29,8 @@ const { header, open = false, plain = false } = Astro.props;
     background-color: transparent;
     border: none;
 
-    .accordion-header, .accordion-content {
+    .accordion-header,
+    .accordion-content {
       padding-inline: 0;
     }
   }
@@ -63,7 +64,8 @@ const { header, open = false, plain = false } = Astro.props;
 
   /* text-box must be on inline box inside flex item, not the flex item itself */
   .accordion-title-text {
-    text-box: trim-both cap alphabetic;
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
   }
 
   .accordion-icon {

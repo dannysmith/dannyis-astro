@@ -159,8 +159,8 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <ResizableContainer>
     <SGTypographySwitcher>
       <p>
-        Combine <code>framed</code> with <code>showAlt</code> for images that need both visual
-        separation and attribution:
+        Combine <code>framed</code> with <code>showAlt</code> for images that need both visual separation
+        and attribution:
       </p>
       <BasicImage
         src="/src/assets/articles/styleguide-image.jpg"
@@ -314,6 +314,39 @@ const message = 'Long strings will also wrap nicely to the next line while prese
     </p>
   </SGTypographySwitcher>
 
+  <SGTypographySwitcher>
+    <h4>Standard HTML Buttons</h4>
+    <p>
+      Standard HTML buttons and button-like inputs.
+    </p>
+    <p>
+      <button type="submit">Submit Button</button>
+      <button type="reset">Reset Button</button>
+      <button type="button" disabled>Disabled Button</button>
+      <input type="submit" value="Submit Input" />
+      <input type="reset" value="Reset Input" />
+      <input type="button" value="Button Input" />
+      <input type="button" value="Disabled Input" disabled />
+    </p>
+    <p>
+      Buttons with SVG icons automatically size the icon to match the text:
+    </p>
+    <p>
+      <button type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+        </svg>
+        Icon First
+      </button>
+      <button type="button">
+        Continue
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </p>
+  </SGTypographySwitcher>
+
   <!-- 6. Callout -->
   <h3 id="callout">Callout</h3>
   <p>
@@ -420,8 +453,8 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <h3 id="layout-utilities">Layout Utilities</h3>
   <p>
     Simple layout helper components for common patterns. Use <code>&lt;Center&gt;</code> for centering,
-    <code>&lt;Grid&gt;</code> for responsive grids, and <code>&lt;ResizableContainer&gt;</code> for
-    testing responsive behaviour.
+    <code>&lt;Grid&gt;</code> for responsive grids, and <code>&lt;ResizableContainer&gt;</code> for testing
+    responsive behaviour.
   </p>
 
   <h4>Center</h4>
@@ -549,8 +582,8 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <h4>With Title</h4>
   <SGTypographySwitcher>
     <p>
-      Add <code>title="filename.js"</code> to display a file name in the frame header, mimicking
-      an editor tab:
+      Add <code>title="filename.js"</code> to display a file name in the frame header, mimicking an editor
+      tab:
     </p>
     <Code lang="js" title="greet.js" code={codeExamples.withTitle} />
   </SGTypographySwitcher>
@@ -558,8 +591,7 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <h4>Terminal Frame</h4>
   <SGTypographySwitcher>
     <p>
-      Use <code>frame="terminal"</code> for shell commands. Terminal frames get a different
-      visual treatment:
+      Use <code>frame="terminal"</code> for shell commands. Terminal frames get a different visual treatment:
     </p>
     <Code lang="bash" frame="terminal" code={codeExamples.terminal} />
   </SGTypographySwitcher>
@@ -567,8 +599,8 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <h4>Line Highlighting</h4>
   <SGTypographySwitcher>
     <p>
-      Use <code>{'{2,4-5}'}</code> to highlight specific lines with a neutral marker. Line numbers
-      and ranges work:
+      Use <code>{'{2,4-5}'}</code> to highlight specific lines with a neutral marker. Line numbers and
+      ranges work:
     </p>
     <Code lang="ts" title="config.ts" meta="{2,4-5}" code={codeExamples.highlight} />
   </SGTypographySwitcher>
@@ -576,8 +608,8 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <h4>Inserted &amp; Deleted Lines</h4>
   <SGTypographySwitcher>
     <p>
-      Use <code>ins={'{3-4}'}</code> for additions (green) and <code>del={'{2}'}</code> for
-      removals (red). Great for showing code changes:
+      Use <code>ins={'{3-4}'}</code> for additions (green) and <code>del={'{2}'}</code> for removals
+      (red). Great for showing code changes:
     </p>
     <Code lang="js" title="api.js" meta="del={2} ins={3-4}" code={codeExamples.insDel} />
   </SGTypographySwitcher>
@@ -585,8 +617,8 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <h4>Diff Syntax</h4>
   <SGTypographySwitcher>
     <p>
-      Use the <code>diff</code> language with <code>+</code> and <code>-</code> prefixes for a
-      familiar diff view:
+      Use the <code>diff</code> language with <code>+</code> and <code>-</code> prefixes for a familiar
+      diff view:
     </p>
     <Code lang="diff" code={codeExamples.diff} />
   </SGTypographySwitcher>
@@ -595,8 +627,8 @@ const message = 'Long strings will also wrap nicely to the next line while prese
   <ResizableContainer>
     <SGTypographySwitcher>
       <p>
-        Use <code>wrap</code> to wrap long lines instead of horizontal scrolling. Wrapped lines
-        preserve their indentation level:
+        Use <code>wrap</code> to wrap long lines instead of horizontal scrolling. Wrapped lines preserve
+        their indentation level:
       </p>
       <Code lang="js" wrap code={codeExamples.wrap} />
     </SGTypographySwitcher>

@@ -11,12 +11,16 @@ const { href, variant = 'primary', inline = false } = Astro.props;
 {
   inline ? (
     <a href={href} class="button-link" data-variant={variant}>
-      <span class="button-link-text"><slot /></span>
+      <span class="button-link-text">
+        <slot />
+      </span>
     </a>
   ) : (
     <div class="button-link-container">
       <a href={href} class="button-link" data-variant={variant}>
-        <span class="button-link-text"><slot /></span>
+        <span class="button-link-text">
+          <slot />
+        </span>
       </a>
     </div>
   )
@@ -32,14 +36,17 @@ const { href, variant = 'primary', inline = false } = Astro.props;
     align-items: center;
     justify-content: center;
     gap: 0.5ch;
-    padding: .8em 1.2em;
+    padding: 0.8em 1.2em;
     font-family: var(--font-ui);
     font-weight: var(--font-weight-bold);
     text-decoration: none;
     text-transform: uppercase;
     border-radius: var(--radius-sm);
     border: var(--border-width-base) solid var(--color-accent);
-    transition: background-color var(--duration-normal) var(--ease-in-out), border-color var(--duration-normal) var(--ease-in-out), color var(--duration-normal) var(--ease-in-out);
+    transition:
+      background-color var(--duration-normal) var(--ease-in-out),
+      border-color var(--duration-normal) var(--ease-in-out),
+      color var(--duration-normal) var(--ease-in-out);
     line-height: var(--leading-none);
 
     &:visited {
@@ -49,7 +56,8 @@ const { href, variant = 'primary', inline = false } = Astro.props;
 
   /* text-box must be on inline box inside flex container, not the flex container itself */
   .button-link-text {
-    text-box: trim-both cap alphabetic;
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
   }
 
   .button-link[data-variant='primary'] {
