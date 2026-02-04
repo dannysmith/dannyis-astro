@@ -3,34 +3,85 @@
    ============================================ */
 @layer base {
   html {
-    color-scheme: light dark;
-    accent-color: var(--color-accent);
-    color: var(--color-text);
+    color-scheme: light dark; /* support light and dark modes */
+    accent-color: var(--color-accent); /* set accent color */
+    color: var(--color-text); /* set text color */
   }
 
   body {
     background-color: var(--color-background);
   }
 
+  /* ======== TABLES ======== */
+
   table {
+    /* font-family: system-ui; */
     border-collapse: collapse;
     width: 100%;
-    margin: 2em 0;
-    font-size: 1em;
+    font-size: 1rem; /* rem-based font-size for consistency wherever used*/
     caption-side: bottom;
+    font-variant-numeric: tabular-nums;
+
+    caption {
+      font-weight: var(--font-weight-semibold);
+      padding: 0.5em 1em;
+    }
   }
 
   th,
   td {
-    border: 1px solid var(--color-border);
-    padding: 0.2em 0.5em;
+    border-bottom: 1px solid var(--color-border); /* border between rows */
     text-align: left;
+    vertical-align: middle;
+    padding: 0.5em 1em;
+
+    /* No leading padding for the first cell in a row */
+    &:first-child {
+      padding-inline-start: 0;
+    }
+
+    /* No trailing padding for the last cell in a row */
+    &:last-child {
+      padding-inline-end: 0;
+    }
+
+    /* Center-align cells with a colspan attribute */
+    &[colspan] {
+      text-align: center;
+    }
+
+    /* Utility classes for text alignment */
+    &.center {
+      text-align: center;
+    }
+
+    &.right {
+      text-align: right;
+    }
+
+    &.left {
+      text-align: left;
+    }
+
+    &.top {
+      vertical-align: top;
+    }
   }
 
   th {
-    font-weight: 600;
-    text-transform: uppercase;
-    border-bottom-width: 2px;
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Thicker border for header row */
+  thead th {
+    border-bottom-width: var(--border-width-base);
+  }
+
+  /* In-tbody header cells with a colspan attribute are styled as header rows */
+  tbody th[colspan] {
+    border-bottom-width: var(--border-width-base);
+    text-align: left;
+    padding-top: var(--space-s);
   }
 
   summary {
