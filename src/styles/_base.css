@@ -176,6 +176,19 @@
     text-box-edge: cap alphabetic;
   }
 
+  /* ======== LABELS ======== */
+
+  label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: color var(--duration-fast) var(--ease-in-out);
+
+    /* Highlight label when input is focused (with possible <br> in between) */
+    &:has(~ :is(input, select, textarea):focus) {
+      color: var(--color-accent);
+    }
+  }
+
   /* ======== INPUTS, SELECTS, TEXTAREAS ======== */
 
   input:not([type='button'], [type='submit'], [type='reset'], [type='image'], [type='file']),
@@ -186,6 +199,7 @@
     border-radius: var(--radius-sm);
   }
 
+  /* Text-like input elements */
   input:not(
     [type='checkbox'],
     [type='radio'],
@@ -216,6 +230,7 @@
     inline-size: 100%;
     resize: vertical;
 
+    /* set minimum height to 3 lines if no rows attribute is specified */
     &:not([rows]) {
       min-block-size: 3lh;
     }
