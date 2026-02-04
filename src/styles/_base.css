@@ -155,4 +155,10 @@
       }
     }
   }
+
+  /* ======== HR ======== */
+  hr {
+    margin: var(--space-l) 0;
+    border: var(--border-width-hairline) solid var(--color-border);
+  }
 }

@@ -9,7 +9,7 @@ Once we have experimenting with and decided on any typeface changes, we should w
 
 - [x] Tables
 - [x] Details & Summary
-- [ ] Buttons
+- [x] Buttons
 
 ### New
 
