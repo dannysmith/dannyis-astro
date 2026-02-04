@@ -3,22 +3,30 @@
    ============================================ */
 @layer typography {
   html {
-    /* Font variant ligatures */
     font-variant-ligatures: common-ligatures;
-
-    /* Hanging punctuation */
     hanging-punctuation: first allow-end last;
   }
 
   body {
-    /* Defaults for font family, size, weight and line height */
     font-family: var(--font-prose);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-normal);
     line-height: var(--leading-normal);
   }
 
-  /* Headings - scaled for article content, semibold weight */
+  /* ----------- Prose Spacing Rhythm ----------- */
+
+  :where(p, ul, ol, blockquote, pre, figure, table) {
+    margin-top: 1.25em;
+  }
+
+  /* Remove top margin from first children */
+  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
+    margin-top: 0;
+  }
+
+  /* ----------- Headings ----------- */
+
   h1,
   h2,
   h3,
@@ -50,7 +58,9 @@
     font-size: var(--font-size-base);
   }
 
-  /* Links - nice underlines for prose */
+
+  /* ----------- Links ----------- */
+
   a {
     color: var(--color-accent);
     text-decoration: underline;
@@ -76,7 +86,9 @@
     text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
   }
 
-  /* Lists with colored markers */
+
+  /* ----------- Lists ----------- */
+
   ul,
   ol {
     padding-left: var(--space-m);
@@ -110,7 +122,9 @@
     /* TODO: Improve spacing between long list items */
   }
 
-  /* Blockquotes */
+
+  /* ----------- Blockquotes ----------- */
+
   blockquote {
     border-left: var(--border-width-thick) solid var(--color-accent);
     padding-left: var(--space-m);
@@ -118,14 +132,12 @@
     margin-left: 0;
   }
 
-  /* Blockquote citations - figcaption within blockquote */
   blockquote figcaption {
     margin-top: var(--space-2xs);
     text-align: right;
     padding-left: var(--space-m);
   }
 
-  /* Citation element - counteract italic from blockquote */
   blockquote cite {
     font-family: var(--font-ui);
     font-size: var(--font-size-sm);
@@ -133,15 +145,8 @@
     color: var(--color-text-secondary);
   }
 
-  /* Prose spacing rhythm */
-  :where(p, ul, ol, blockquote, pre, figure, table) {
-    margin-top: 1.25em;
-  }
 
-  /* Remove top margin from first children */
-  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
-    margin-top: 0;
-  }
+  /* ----------- Inline Text Elements ----------- */
 
   /* Inline code */
   samp,
@@ -192,7 +197,8 @@
     cursor: not-allowed;
   }
 
-  /* Keyboard input (styled like physical keys) */
+
+  /* ----------- Keyboard Input ----------- */
   kbd {
     display: inline-block;
     position: relative;
@@ -221,10 +227,6 @@
       box-shadow: 0 1px 0 0.5px var(--color-border);
       top: 1px;
     }
-  }
-
-  table :not(pre) > code {
-    line-height: 2;
   }
 
   /* ----------- Footnotes ----------- */

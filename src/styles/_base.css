@@ -66,6 +66,11 @@
     padding-top: var(--space-s);
   }
 
+  /* Tables with code inside cells need a line-height of 2 so they can breathe */
+  table :not(pre) > code {
+    line-height: 2;
+  }
+
   /* ======== DETAILS ======== */
   details {
     background-color: var(--color-background-secondary);
