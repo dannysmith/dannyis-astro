@@ -56,12 +56,12 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 - [x] Blockquotes
   - [x] Basic
   - [x] `BlockQuoteCitation.astro` 
-- [ ] Lists
-  - [ ] General
-  - [ ] UL
-  - [ ] OL
-  - [ ] Nested Lists
-  - [ ] Lists with .long-list-items
+- [x] Lists
+  - [x] General
+  - [x] UL
+  - [x] OL
+  - [x] Nested Lists
+  - [x] Lists with .long-list-items
   - [ ] Checklists/Task Lists
 - [ ] Review `LongFormTypography.astro` for anything to "pull up" into default typography.
 

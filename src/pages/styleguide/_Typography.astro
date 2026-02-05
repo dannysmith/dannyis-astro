@@ -9,6 +9,7 @@ import {
   SmallCaps,
   SmartLink,
   highlight as Highlight,
+  ResizableContainer,
 } from '@components/mdx/index';
 import { Content as ChecklistContent } from './_snippets/checklist.mdx';
 import { Content as ListDensityContent } from './_snippets/list-density.mdx';
@@ -239,6 +240,7 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
 
   <!-- 5. Lists: Unordered -->
   <h3 id="lists-unordered">Unordered Lists</h3>
+  <ResizableContainer>
   <SGTypographySwitcher>
     <h2>Getting Things Done</h2>
     <p>
@@ -270,9 +272,11 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
       </li>
     </ul>
   </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 6. Lists: Ordered -->
   <h3 id="lists-ordered">Ordered Lists</h3>
+  <ResizableContainer>
   <SGTypographySwitcher>
     <h2>A Recipe for Success</h2>
     <p>
@@ -301,9 +305,11 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
       <li>Forgetting to kern display type</li>
     </ol>
   </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 7. Lists: Checklists -->
   <h3 id="lists-checklists">Checklists</h3>
+  <ResizableContainer>
   <SGTypographySwitcher>
     <h2>Task Lists from MDX</h2>
     <p>
@@ -312,9 +318,11 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
     </p>
     <ChecklistContent />
   </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 8. Lists: Density-Based Spacing -->
   <h3 id="lists-density">List Density</h3>
+  <ResizableContainer>
   <SGTypographySwitcher>
     <h2>Automatic Spacing for Long List Items</h2>
     <p>
@@ -325,6 +333,7 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
     </p>
     <ListDensityContent />
   </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 9. Tables -->
   <h3 id="tables">Tables</h3>
