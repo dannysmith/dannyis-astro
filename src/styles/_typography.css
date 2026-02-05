@@ -130,19 +130,7 @@
     padding-left: var(--space-m);
     font-style: italic;
     margin-left: 0;
-  }
-
-  blockquote figcaption {
-    margin-top: var(--space-2xs);
-    text-align: right;
-    padding-left: var(--space-m);
-  }
-
-  blockquote cite {
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
-    font-style: normal;
-    color: var(--color-text-secondary);
+    font-variant-numeric: oldstyle-nums;
   }
 
 

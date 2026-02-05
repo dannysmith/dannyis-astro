@@ -53,9 +53,9 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 - [x] Del/Strike
 - [x] Kbd
 - [x] Footnotes
-- [ ] Blockquotes
-  - [ ] Basic
-  - [ ] `BlockQuoteCitation.astro` 
+- [x] Blockquotes
+  - [x] Basic
+  - [x] `BlockQuoteCitation.astro` 
 - [ ] Lists
   - [ ] General
   - [ ] UL
