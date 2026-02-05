@@ -123,48 +123,6 @@ const { class: className, ...props } = Astro.props;
       color: inherit;
     }
 
-    /* ----------- Task Lists ------------ */
-
-    .longform-prose .contains-task-list {
-      list-style-type: none;
-      padding-left: 0;
-    }
-
-    .longform-prose .task-list-item {
-      padding-left: 0;
-    }
-
-    .longform-prose .task-list-item input {
-      position: relative;
-      height: 0.7em;
-      width: 0.7em;
-      margin-bottom: 0;
-      appearance: none;
-      outline: none;
-      border-radius: var(--radius-xs);
-      border: var(--border-width-hairline) solid var(--color-border);
-    }
-
-    .longform-prose .task-list-item input:checked {
-      color: var(--color-accent);
-      background: transparent;
-      border-color: var(--color-accent);
-    }
-
-    .longform-prose .task-list-item input:checked:before {
-      content: '\2713';
-      position: absolute;
-      top: -0.1em;
-      left: 0.05em;
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-accent);
-    }
-
-    .longform-prose .task-list-item input[disabled] {
-      opacity: 1;
-    }
-
     /* ----------- HR ----------- */
     .longform-prose hr {
       display: flex;
@@ -174,7 +132,6 @@ const { class: className, ...props } = Astro.props;
       height: 0;
       overflow: visible;
       margin: var(--space-xl) 0;
-
       border: var(--border-width-hairline) solid var(--color-border);
     }
 
