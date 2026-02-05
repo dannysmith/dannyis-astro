@@ -123,22 +123,6 @@ const { class: className, ...props } = Astro.props;
       color: inherit;
     }
 
-    /* ----------- Lists ----------- */
-
-    .longform-prose li {
-      margin-top: var(--space-2xs);
-    }
-
-    .longform-prose :is(ul, ol) {
-      padding-left: 0.4em;
-    }
-
-    .longform-prose ol ::marker {
-      font-size: 1.4ex;
-      font-variation-settings: 'opsz' 10;
-      font-weight: var(--font-weight-medium);
-    }
-
     /* ----------- Task Lists ------------ */
 
     .longform-prose .contains-task-list {

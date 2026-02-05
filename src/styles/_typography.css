@@ -89,37 +89,31 @@
 
   /* ----------- Lists ----------- */
 
-  ul,
+  ul {
+    padding-left: 0.4em;
+    list-style-type: '•';
+  }
+
   ol {
-    padding-left: var(--space-m);
+    padding-left: 0.9em;
+    & ::marker {
+      font-size: 1.4ex;
+      font-variation-settings: 'opsz' 10;
+      font-weight: var(--font-weight-medium);
+    }
   }
 
   li {
     padding-left: var(--space-xs);
-    margin-top: var(--space-xs);
+    margin-top: var(--space-2xs);
+    &::marker {
+      color: var(--color-accent);
+    }
   }
 
-  li:first-child {
-    margin-top: 0;
-  }
-
-  /* Nested lists need space from parent li content */
-  li > ul,
-  li > ol {
-    margin-top: var(--space-xs);
-  }
-
-  li::marker {
-    color: var(--color-accent);
-  }
-
-  ul {
-    list-style-type: '•';
-  }
-
-  /* Long list items */
-  .long-list-items {
-    /* TODO: Improve spacing between long list items */
+  /* Long list items - slightly more spacing between items */
+  .long-list-items li:not(:first-child) {
+    margin-top: var(--space-s);
   }
 
 
