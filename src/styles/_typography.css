@@ -116,6 +116,41 @@
     margin-top: var(--space-s);
   }
 
+  /* ----------- Task Lists ----------- */
+
+  .contains-task-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .task-list-item {
+    padding-left: 0;
+
+    & .contains-task-list {
+      /* indent nested task lists */
+      padding-left: calc(0.4em + var(--space-xs));
+
+      /* Reset margin on nested ul so the first li's top margin is used */
+      margin-top: 0;
+    }
+
+    input[type="checkbox"] {
+      width: 0.85em;
+      height: 0.85em;
+      margin-right: 0.3em;
+      vertical-align: -0.1em;
+
+      &[checked] {
+        background-color: teal;
+      }
+
+      &[disabled] {
+        background-color: teal;
+        opacity: 1;
+      }
+    }
+  }
+
 
   /* ----------- Blockquotes ----------- */
 
