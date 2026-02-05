@@ -58,7 +58,6 @@
     font-size: var(--font-size-base);
   }
 
-
   /* ----------- Links ----------- */
 
   a {
@@ -86,7 +85,6 @@
     text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
   }
 
-
   /* ----------- Lists ----------- */
 
   ul {
@@ -103,8 +101,12 @@
     }
   }
 
-  ol ol { list-style-type: lower-alpha; }
-  ol ol ol { list-style-type: lower-roman; }
+  ol ol {
+    list-style-type: lower-alpha;
+  }
+  ol ol ol {
+    list-style-type: lower-roman;
+  }
 
   li {
     padding-left: var(--space-xs);
@@ -137,7 +139,7 @@
       margin-top: 0;
     }
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       appearance: none;
       -webkit-appearance: none;
       width: 0.85em;
@@ -171,7 +173,6 @@
     }
   }
 
-
   /* ----------- Blockquotes ----------- */
 
   blockquote {
@@ -181,7 +182,6 @@
     margin-left: 0;
     font-variant-numeric: oldstyle-nums;
   }
-
 
   /* ----------- Inline Text Elements ----------- */
 
@@ -233,7 +233,6 @@
     text-decoration-skip-ink: none;
     cursor: not-allowed;
   }
-
 
   /* ----------- Keyboard Input ----------- */
   kbd {
