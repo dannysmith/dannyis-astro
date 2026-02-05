@@ -103,6 +103,9 @@
     }
   }
 
+  ol ol { list-style-type: lower-alpha; }
+  ol ol ol { list-style-type: lower-roman; }
+
   li {
     padding-left: var(--space-xs);
     margin-top: var(--space-2xs);

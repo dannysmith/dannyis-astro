@@ -63,7 +63,7 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
   - [x] Nested Lists
   - [x] Lists with .long-list-items
   - [x] Checklists/Task Lists
-- [ ] Review `LongFormTypography.astro` for anything to "pull up" into default typography.
+- [x] Review `LongFormTypography.astro` for anything to "pull up" into default typography.
 
 ## Layout & Utility Helpers
 
