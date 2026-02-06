@@ -13,19 +13,19 @@ const { author, title, url, small } = Astro.props;
   <blockquote class:list={['blockquote', { small }]}>
     <slot />
   </blockquote>
-  <figcaption class="citation">
-    — <span class="author">{author}</span>
-    {
-      title && (
-        <>
-          {' - '}
-          <cite>
-            <a href={url}>{title}</a>
-          </cite>
-        </>
-      )
-    }
-  </figcaption>
+  {
+    (author || title) && (
+      <figcaption class="citation">
+        {author && <>— <span class="author">{author}</span></>}
+        {title && (
+          <>
+            {author && ' - '}
+            <cite>{url ? <a href={url}>{title}</a> : title}</cite>
+          </>
+        )}
+      </figcaption>
+    )
+  }
 </figure>
 
 <style>
