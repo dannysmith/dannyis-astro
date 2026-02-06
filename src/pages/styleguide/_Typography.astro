@@ -186,8 +186,8 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
       <p>
         In 1958, when we first began working on the <em>Eames Lounge Chair</em>, we understood that
         <strong>every joint, every angle, every material choice</strong> would compound. By 1972, we
-        had produced over 150,000 units. Each one a testament to the idea that craft lies in the
-        accumulation of <a href="https://example.com">countless small decisions</a>.
+        had produced over 150,000 units. Each one a testament to the idea that craft lies in the accumulation
+        of <a href="https://example.com">countless small decisions</a>.
       </p>
     </blockquote>
     <p>
@@ -212,11 +212,12 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
         you do.
       </p>
       <p>
-        When I was 17, I read a quote that went something like: <em>"If you live each day as if it
-        was your last, someday you'll most certainly be right."</em> It made an impression on me,
-        and since then, for the past 33 years, I have looked in the mirror every morning. The
-        <strong>3 questions</strong> I ask myself are always the same. You can read more about this
-        in <a href="https://example.com">my biography</a>.
+        When I was 17, I read a quote that went something like: <em
+          >"If you live each day as if it was your last, someday you'll most certainly be right."</em
+        > It made an impression on me, and since then, for the past 33 years, I have looked in the mirror
+        every morning. The
+        <strong>3 questions</strong> I ask myself are always the same. You can read more about this in
+        <a href="https://example.com">my biography</a>.
       </p>
     </BlockQuoteCitation>
     <p>
@@ -225,10 +226,11 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
     <BlockQuoteCitation author="Anonymous" small>
       <p>The best time to plant a tree was twenty years ago. The second best time is now.</p>
       <p>
-        This proverb, often attributed to Chinese wisdom, speaks to the <strong>power of starting
-        now</strong> rather than lamenting missed opportunities. Whether you're learning to code at
-        45, starting a business after retirement, or finally writing that novel you've been putting
-        off since 1987&mdash;the principle remains the same.
+        This proverb, often attributed to Chinese wisdom, speaks to the <strong
+          >power of starting now</strong
+        > rather than lamenting missed opportunities. Whether you're learning to code at 45, starting
+        a business after retirement, or finally writing that novel you've been putting off since 1987&mdash;the
+        principle remains the same.
       </p>
       <p>
         The <em>second best time</em> is always <a href="https://example.com">right now</a>. Not
@@ -241,115 +243,117 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
   <!-- 5. Lists: Unordered -->
   <h3 id="lists-unordered">Unordered Lists</h3>
   <ResizableContainer>
-  <SGTypographySwitcher>
-    <h2>Getting Things Done</h2>
-    <p>
-      Unordered lists work well for items without inherent sequence. Here's a workflow checklist for
-      publishing content:
-    </p>
-    <ul>
-      <li>Write the first draft without editing</li>
-      <li>Let it rest for at least a day before revising</li>
-      <li>Read aloud to catch awkward phrasing</li>
-      <li>
-        Check all links and references
-        <ul>
-          <li>Verify internal links point to existing pages</li>
-          <li>Confirm external links are still valid</li>
-          <li>Update any outdated citations</li>
-        </ul>
-      </li>
-      <li>Run spell check and grammar tools</li>
-      <li>Preview in both light and dark modes</li>
-      <li>Publish and share on social media</li>
-    </ul>
-    <p>Lists with inline formatting help clarify complex items:</p>
-    <ul>
-      <li><strong>Semantic HTML</strong> &ndash; use elements for their meaning, not appearance</li>
-      <li><em>Progressive enhancement</em> &ndash; start with content, layer on interactivity</li>
-      <li>
-        Efficient <code>CSS</code> &ndash; leverage the cascade, avoid unnecessary specificity
-      </li>
-    </ul>
-  </SGTypographySwitcher>
+    <SGTypographySwitcher>
+      <h2>Getting Things Done</h2>
+      <p>
+        Unordered lists work well for items without inherent sequence. Here's a workflow checklist
+        for publishing content:
+      </p>
+      <ul>
+        <li>Write the first draft without editing</li>
+        <li>Let it rest for at least a day before revising</li>
+        <li>Read aloud to catch awkward phrasing</li>
+        <li>
+          Check all links and references
+          <ul>
+            <li>Verify internal links point to existing pages</li>
+            <li>Confirm external links are still valid</li>
+            <li>Update any outdated citations</li>
+          </ul>
+        </li>
+        <li>Run spell check and grammar tools</li>
+        <li>Preview in both light and dark modes</li>
+        <li>Publish and share on social media</li>
+      </ul>
+      <p>Lists with inline formatting help clarify complex items:</p>
+      <ul>
+        <li>
+          <strong>Semantic HTML</strong> &ndash; use elements for their meaning, not appearance
+        </li>
+        <li><em>Progressive enhancement</em> &ndash; start with content, layer on interactivity</li>
+        <li>
+          Efficient <code>CSS</code> &ndash; leverage the cascade, avoid unnecessary specificity
+        </li>
+      </ul>
+    </SGTypographySwitcher>
   </ResizableContainer>
 
   <!-- 6. Lists: Ordered -->
   <h3 id="lists-ordered">Ordered Lists</h3>
   <ResizableContainer>
-  <SGTypographySwitcher>
-    <h2>A Recipe for Success</h2>
-    <p>
-      Ordered lists suit sequential steps or ranked items. Here's how to approach a complex
-      refactoring project:
-    </p>
-    <ol>
-      <li>Understand the existing code thoroughly before changing anything</li>
-      <li>Write tests that verify current behaviour</li>
-      <li>
-        Make small, incremental changes
-        <ol>
-          <li>Extract methods for repeated logic</li>
-          <li>Rename unclear variables and functions</li>
-          <li>
-            Simplify complex conditionals
-            <ol>
-              <li>Replace nested ifs with guard clauses</li>
-              <li>Extract boolean expressions into named variables</li>
-              <li>Consider using polymorphism for type-based branching</li>
-            </ol>
-          </li>
-          <li>Remove dead code and unused imports</li>
-        </ol>
-      </li>
-      <li>Run tests after each change to catch regressions early</li>
-      <li>Document significant architectural decisions</li>
-      <li>Review with colleagues before merging</li>
-      <li>Address feedback promptly and thoroughly</li>
-      <li>Squash commits if appropriate for the project</li>
-      <li>Update changelog and version numbers</li>
-      <li>Verify CI pipeline passes all checks</li>
-      <li>Merge during low-traffic hours when possible</li>
-      <li>Monitor for issues after deployment</li>
-      <li>Communicate changes to affected teams</li>
-      <li>Schedule follow-up review if needed</li>
-      <li>Celebrate the successful refactor</li>
-    </ol>
-    <p>Ordered lists also work for rankings, like the most common typography mistakes:</p>
-    <ol>
-      <li>Using straight quotes instead of curly quotes</li>
-      <li>Confusing hyphens, en-dashes, and em-dashes</li>
-      <li>Forgetting to kern display type</li>
-    </ol>
-  </SGTypographySwitcher>
+    <SGTypographySwitcher>
+      <h2>A Recipe for Success</h2>
+      <p>
+        Ordered lists suit sequential steps or ranked items. Here's how to approach a complex
+        refactoring project:
+      </p>
+      <ol>
+        <li>Understand the existing code thoroughly before changing anything</li>
+        <li>Write tests that verify current behaviour</li>
+        <li>
+          Make small, incremental changes
+          <ol>
+            <li>Extract methods for repeated logic</li>
+            <li>Rename unclear variables and functions</li>
+            <li>
+              Simplify complex conditionals
+              <ol>
+                <li>Replace nested ifs with guard clauses</li>
+                <li>Extract boolean expressions into named variables</li>
+                <li>Consider using polymorphism for type-based branching</li>
+              </ol>
+            </li>
+            <li>Remove dead code and unused imports</li>
+          </ol>
+        </li>
+        <li>Run tests after each change to catch regressions early</li>
+        <li>Document significant architectural decisions</li>
+        <li>Review with colleagues before merging</li>
+        <li>Address feedback promptly and thoroughly</li>
+        <li>Squash commits if appropriate for the project</li>
+        <li>Update changelog and version numbers</li>
+        <li>Verify CI pipeline passes all checks</li>
+        <li>Merge during low-traffic hours when possible</li>
+        <li>Monitor for issues after deployment</li>
+        <li>Communicate changes to affected teams</li>
+        <li>Schedule follow-up review if needed</li>
+        <li>Celebrate the successful refactor</li>
+      </ol>
+      <p>Ordered lists also work for rankings, like the most common typography mistakes:</p>
+      <ol>
+        <li>Using straight quotes instead of curly quotes</li>
+        <li>Confusing hyphens, en-dashes, and em-dashes</li>
+        <li>Forgetting to kern display type</li>
+      </ol>
+    </SGTypographySwitcher>
   </ResizableContainer>
 
   <!-- 7. Lists: Checklists -->
   <h3 id="lists-checklists">Checklists</h3>
   <ResizableContainer>
-  <SGTypographySwitcher>
-    <h2>Task Lists from MDX</h2>
-    <p>
-      Checklists use GitHub-flavoured markdown syntax. This is rendered from an actual MDX file to
-      ensure styling matches real content:
-    </p>
-    <ChecklistContent />
-  </SGTypographySwitcher>
+    <SGTypographySwitcher>
+      <h2>Task Lists from MDX</h2>
+      <p>
+        Checklists use GitHub-flavoured markdown syntax. This is rendered from an actual MDX file to
+        ensure styling matches real content:
+      </p>
+      <ChecklistContent />
+    </SGTypographySwitcher>
   </ResizableContainer>
 
   <!-- 8. Lists: Density-Based Spacing -->
   <h3 id="lists-density">List Density</h3>
   <ResizableContainer>
-  <SGTypographySwitcher>
-    <h2>Automatic Spacing for Long List Items</h2>
-    <p>
-      Lists with short items use tight spacing, while lists with paragraph-like items automatically
-      receive more generous spacing. The <code>.long-list-items</code> class is added by a rehype plugin
-      when the average text length per item exceeds a threshold. This is rendered from MDX to test the
-      plugin:
-    </p>
-    <ListDensityContent />
-  </SGTypographySwitcher>
+    <SGTypographySwitcher>
+      <h2>Automatic Spacing for Long List Items</h2>
+      <p>
+        Lists with short items use tight spacing, while lists with paragraph-like items
+        automatically receive more generous spacing. The <code>.long-list-items</code> class is added
+        by a rehype plugin when the average text length per item exceeds a threshold. This is rendered
+        from MDX to test the plugin:
+      </p>
+      <ListDensityContent />
+    </SGTypographySwitcher>
   </ResizableContainer>
 
   <!-- 9. Tables -->
@@ -438,7 +442,11 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
           <td>$54,600</td>
           <td>This is a note for March 2024 revenue and expenses data.</td>
         </tr>
-        <th colspan="5">This is a <code>&lt;th&gt;</code> element with a <code>colspan</code> attribute.</th>
+        <tr>
+          <th colspan="5"
+            >This is a <code>&lt;th&gt;</code> element with a <code>colspan</code> attribute.</th
+          >
+        </tr>
         <tr>
           <th>April</th>
           <td>$203,100</td>

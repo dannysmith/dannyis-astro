@@ -67,12 +67,9 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 
 ## Layout & Utility Helpers
 
-- [ ] UI Style Reset
-  - [ ] Unset/reset stuff introduced by `@typography` as appropriate
-  - [ ] Check whole styleguide for anything else which should be unset and/or overridden
-- [ ] Small utilities
-  - [ ] layout.css - list-reset
-  - [ ] utilities.css - test all utility classes work in all contexts
+- [x] UI Style Reset - Unset/reset stuff introduced by `@typography` as appropriate
+- [x] Small utilities
+  - [x] layout.css - list-reset
 - [ ] FLOW - Rework in a sensble way alongside `@typography` and `LongformProseTypography` and decide if we should keep it.
 
 ## Content Components
