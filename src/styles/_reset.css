@@ -19,7 +19,7 @@
   /* Consistent focus ring styling */
   :where(:focus-visible) {
     outline: 2px solid var(--color-focus-ring, currentColor);
-    outline-offset: max(0.125em, 5px);
+    outline-offset: 5px;
     border-radius: 1px;
   }
 
@@ -35,6 +35,10 @@
     -moz-text-size-adjust: none;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
+
+    /* Hyphenation defaults (applies when hyphens: auto is enabled) */
+    hyphenate-character: '‐'; /* U+2010 true hyphen, not ASCII hyphen-minus */
+    hyphenate-limit-chars: auto 2 3; /* min 2 chars before, 3 after break */
 
     /* Prevent layout shift when scrollbars appear */
     scrollbar-gutter: stable;
@@ -174,6 +178,11 @@
     text-decoration: line-through;
     text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
     text-decoration-thickness: 1px;
+  }
+
+  /* Nested italics become upright (typographic convention) */
+  :where(:is(em, i) > :is(em, i)) {
+    font-style: normal;
   }
 
   /* High contrast mode support for mark */

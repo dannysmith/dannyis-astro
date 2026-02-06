@@ -8,6 +8,11 @@
     color: var(--color-text); /* set text color */
   }
 
+  /* Style alt text when images fail to load */
+  img[alt] {
+    font-style: italic;
+  }
+
   body {
     background-color: var(--color-background);
   }

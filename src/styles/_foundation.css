@@ -223,7 +223,8 @@
   --font-weight-bold: 700;
 
   /* ======= BORDERS ======= */
-  --border-width-hairline: 1px;
+  /* Hairline: never subpixel, but scales with rem on high-DPI */
+  --border-width-hairline: max(0.0625rem, 1px);
   --border-width-base: 2px;
   --border-width-thick: 4px;
   --border-width-heavy: 6px;
@@ -233,7 +234,7 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --radius-full: 9999px;
+  --radius-full: calc(infinity * 1px);
 
   /* ======= MOTION ======= */
   --duration-fast: 150ms;

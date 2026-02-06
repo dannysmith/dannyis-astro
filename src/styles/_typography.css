@@ -117,8 +117,12 @@
   }
 
   /* Long list items - slightly more spacing between items */
-  .long-list-items li:not(:first-child) {
-    margin-top: var(--space-s);
+  .long-list-items li {
+    text-wrap: pretty;
+
+    &:not(:first-child) {
+      margin-top: var(--space-s);
+    }
   }
 
   /* ----------- Task Lists ----------- */
