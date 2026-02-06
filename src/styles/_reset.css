@@ -8,15 +8,18 @@
     box-sizing: border-box;
   }
 
-  /* Remove default margin */
   :where(*) {
+    /* Remove default margin */
     margin-block: 0;
+
+    /* Use font-based text decoration thickness */
+    text-decoration-thickness: from-font;
   }
 
   /* Consistent focus ring styling */
   :where(:focus-visible) {
     outline: 2px solid var(--color-focus-ring, currentColor);
-    outline-offset: 5px;
+    outline-offset: max(0.125em, 5px);
     border-radius: 1px;
   }
 
