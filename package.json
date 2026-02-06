@@ -1,7 +1,16 @@
 {
-  "name": "danny-is-astro",
+  "name": "dannyis-astro",
   "type": "module",
-  "version": "1.0.0",
+  "author": {
+    "name": "Danny Smith",
+    "email": "hi@danny.is",
+    "url": "https://danny.is"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dannysmith/dannyis-astro.git"
+  },
+  "license": "See LICENSE.md",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
