@@ -44,14 +44,14 @@
     scrollbar-gutter: stable;
 
     /* Prevent browser from faking bold/italic when font doesn't have them */
-    font-synthesis: none;
+    /* font-synthesis: none; */
 
     /* Let fonts define their preferred underline position */
     text-underline-position: from-font;
 
     /* Print typography: keep at least 2 lines together */
-    orphans: 2;
-    widows: 2;
+    /* orphans: 2; */
+    /* widows: 2; */
   }
 
   :where(body) {
@@ -62,7 +62,8 @@
     -webkit-font-smoothing: antialiased;
 
     /* Sensible min-height (vb = viewport block, i18n-friendly) */
-    min-block-size: 100vb;
+    /* min-block-size: 100vb; */
+    min-height: 100vh; /* TODO: switch to min-block-size: 100vb */
 
     /* Position relative for absolutely positioned children */
     position: relative;
@@ -76,7 +77,7 @@
   :where(img, picture, video, canvas, svg) {
     display: block;
     max-width: 100%;
-    vertical-align: middle; /* If display is overridden to inline */
+    /* vertical-align: middle; */ /* If display is overridden to inline */
   }
 
   :where(img, picture) {
@@ -85,21 +86,21 @@
 
   :where(img) {
     border: 0;
-    shape-margin: 1rem; /* If floated with shape-outside */
+    /* shape-margin: 1rem; */ /* If floated with shape-outside */
     /* Support LQIP (Low Quality Image Placeholder) pattern */
-    background-repeat: no-repeat;
-    background-size: cover;
+    /* background-repeat: no-repeat; */
+    /* background-size: cover; */
   }
 
   /* Picture wrapper disappears from layout, only img child matters */
   :where(picture) {
-    display: contents;
+    /* display: contents; */
   }
 
   /* Inherit fonts for form controls */
   :where(input, button, textarea, select) {
     font: inherit;
-    touch-action: manipulation; /* Disable double-tap zoom for faster response */
+    /* touch-action: manipulation; */ /* Disable double-tap zoom for faster response */
   }
 
   /* Set shorter line heights on interactive elements */
@@ -158,15 +159,15 @@
 
   /* Code elements: no hyphenation, consistent alignment */
   :where(code, kbd, pre, samp) {
-    hyphens: none;
-    text-align: start;
-    word-spacing: normal;
+    /* hyphens: none; */
+    /* text-align: start; */
+    /* word-spacing: normal; */
   }
 
   /* Sensible wrapping for code blocks */
   :where(pre) {
     white-space: pre-wrap;
-    tab-size: 2;
+    /* tab-size: 2; */
   }
 
   /* Strengthen hidden attribute */
@@ -215,7 +216,7 @@
 
   /* Bold uses relative weight (one step bolder than parent) */
   :where(b, strong) {
-    font-weight: bolder;
+    /* font-weight: bolder; */
   }
 
   /* High contrast mode support for mark */

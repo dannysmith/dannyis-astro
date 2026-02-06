@@ -64,7 +64,7 @@
     color: var(--color-accent);
     text-decoration: underline;
     text-decoration-thickness: max(0.08em, 1px);
-    text-underline-offset: 0.2em;
+    text-underline-offset: 0.1em;
     text-decoration-skip-ink: auto;
     transition:
       color var(--duration-fast) var(--ease-in-out),
@@ -233,7 +233,7 @@
     text-decoration-color: var(--color-accent);
     text-decoration-thickness: 0.1em;
     text-decoration-style: wavy;
-    text-underline-offset: -0.4em;
+    text-underline-offset: -0.5em;
     text-decoration-skip-ink: none;
     cursor: not-allowed;
   }
