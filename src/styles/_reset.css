@@ -42,6 +42,16 @@
 
     /* Prevent layout shift when scrollbars appear */
     scrollbar-gutter: stable;
+
+    /* Prevent browser from faking bold/italic when font doesn't have them */
+    font-synthesis: none;
+
+    /* Let fonts define their preferred underline position */
+    text-underline-position: from-font;
+
+    /* Print typography: keep at least 2 lines together */
+    orphans: 2;
+    widows: 2;
   }
 
   :where(body) {
@@ -51,8 +61,8 @@
     /* Improve text rendering */
     -webkit-font-smoothing: antialiased;
 
-    /* Sensible min-height */
-    min-height: 100vh;
+    /* Sensible min-height (vb = viewport block, i18n-friendly) */
+    min-block-size: 100vb;
 
     /* Position relative for absolutely positioned children */
     position: relative;
@@ -66,20 +76,30 @@
   :where(img, picture, video, canvas, svg) {
     display: block;
     max-width: 100%;
+    vertical-align: middle; /* If display is overridden to inline */
   }
 
   :where(img, picture) {
     height: auto;
   }
 
-  /* Remove default img border */
   :where(img) {
     border: 0;
+    shape-margin: 1rem; /* If floated with shape-outside */
+    /* Support LQIP (Low Quality Image Placeholder) pattern */
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  /* Picture wrapper disappears from layout, only img child matters */
+  :where(picture) {
+    display: contents;
   }
 
   /* Inherit fonts for form controls */
   :where(input, button, textarea, select) {
     font: inherit;
+    touch-action: manipulation; /* Disable double-tap zoom for faster response */
   }
 
   /* Set shorter line heights on interactive elements */
@@ -122,7 +142,7 @@
   }
 
   /* Improve line wrapping */
-  :where(h1, h2, h3, h4, h5, h6) {
+  :where(h1, h2, h3, h4, h5, h6, figcaption, legend) {
     text-wrap: balance;
   }
 
@@ -136,9 +156,17 @@
     scroll-margin-block: 5ex;
   }
 
+  /* Code elements: no hyphenation, consistent alignment */
+  :where(code, kbd, pre, samp) {
+    hyphens: none;
+    text-align: start;
+    word-spacing: normal;
+  }
+
   /* Sensible wrapping for code blocks */
   :where(pre) {
     white-space: pre-wrap;
+    tab-size: 2;
   }
 
   /* Strengthen hidden attribute */
@@ -183,6 +211,11 @@
   /* Nested italics become upright (typographic convention) */
   :where(:is(em, i) > :is(em, i)) {
     font-style: normal;
+  }
+
+  /* Bold uses relative weight (one step bolder than parent) */
+  :where(b, strong) {
+    font-weight: bolder;
   }
 
   /* High contrast mode support for mark */
