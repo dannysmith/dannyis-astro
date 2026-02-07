@@ -73,7 +73,7 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 - [x] FLOW - Rework in a sensble way alongside `@typography` and `LongformProseTypography` and decide if we should keep it.
 [x] Review `LongFormProseTypography` — pull up anything that should be default
 [x] Review `.ui-style` resets — may need to resetany vertical margins set in verticalflow.css?
-[ ] Apply `.content-trim` to components with slotted content (callouts, accordions, etc.) as needed.
+[x] Apply `.content-trim` to components with slotted content (callouts, accordions, etc.) as needed.
 
 ## Content Components
 
