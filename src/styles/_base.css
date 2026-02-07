@@ -17,6 +17,11 @@
     background-color: var(--color-background);
   }
 
+  /* ===== HR ===== */
+  hr {
+    border: var(--border-width-hairline) solid var(--color-border);
+  }
+
   /* ======== TABLES ======== */
 
   table {

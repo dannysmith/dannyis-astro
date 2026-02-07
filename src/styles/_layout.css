@@ -2,6 +2,20 @@
    LAYOUT LAYER - Reusable layout patterns
    ============================================ */
 @layer layout {
+  /* Flow utility - consistent vertical spacing */
+  .flow > * + * {
+    margin-top: var(--space-m);
+  }
+
+  /* Headings get larger, proportionate top margins for clear section breaks */
+  .flow > * + :is(h1, h2) {
+    margin-top: var(--space-xl);
+  }
+
+  .flow > * + h3 {
+    margin-top: var(--space-l);
+  }
+
   /* List reset - for navigation and UI lists */
   .list-reset {
     list-style: none;
