@@ -74,27 +74,32 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 
 ## Flow & Vertical Rhythm
 
-**Goal:** Consolidate vertical spacing logic into `@typography` layer, using `rlh` units for baseline-grid-aligned rhythm.
+**Goal:** Consolidate vertical spacing into `@typography` using `--space-*` tokens and adjacent sibling selectors.
 
 ### Plan
 
 1. [x] Move `.flow` rules into `@typography` (leave `.flow` classes in HTML for now)
-2. [ ] Audit vertical spacing for each block element:
-   - Elements: `p`, `h1-h6`, `ul`, `ol`, `blockquote`, `pre`, `hr`, `figure`, `table`, `details`
-   - For each: What `margin-top` does it have? Where does it come from?
-   - Test in: Default context, Longform (`@longform`), UI (`.ui-style`)
-3. [ ] Decide on `rlh` vs `em` units — ideally `rlh` everywhere, but need container-scoped solution for longform (where line-height is 1.7 not 1.5)
-4. [ ] Get spacing looking good in default `@typography` context
-5. [ ] Review what `LongFormProseTypography` adds — pull up anything that should be default
-6. [ ] Review `.ui-style` resets — should it reset vertical margins to `--space-*` tokens?
-7. [ ] Remove `.flow` class from HTML once consolidated (or repurpose for non-prose contexts)
+2. [x] Comment out all margin-top/bottom declarations to start fresh
+3. [ ] Add new spacing rules using `--space-*` tokens:
+   - Base prose elements: `margin-top: var(--space-s)`
+   - Headings: `margin-top: var(--space-m)`
+   - Section breaks (heading after content): `--space-xl` for h1/h2, `--space-l` for h3
+   - Consecutive headings: `--space-s` (subheading pattern)
+   - First-child: no top margin
+   - List items: `--space-2xs`
+   - HR: `margin-block: var(--space-l)`
+4. [ ] Test and tune spacing values visually
+5. [ ] Review `LongFormProseTypography` — pull up anything that should be default
+6. [ ] Review `.ui-style` resets — may need to reset vertical margins
+7. [ ] Apply `.content-trim` to components with slotted content (callouts, accordions, etc.)
+8. [ ] Remove `.flow` class from HTML once everything looks good
 
 ### Notes
 
-- `rlh` = root line-height (stable grid based on body text)
-- `lh` = element's own line-height (varies with headings etc)
-- Problem: In `.longform-prose` we want `rlh` relative to that container's 1.7 line-height, not root's 1.5
-- Investigate: Recent CSS features for container-scoped relative units?
+- Using `--space-*` tokens (not `em` or `rlh`) for simplicity and design system consistency
+- Adjacent sibling selectors (`p + h2`) replace `.flow > * + *` pattern
+- `:where()` for zero specificity — components can easily override
+- Components with internal prose can override spacing or use `.content-trim`
 
 ## Content Components
 
