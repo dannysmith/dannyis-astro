@@ -2,8 +2,8 @@
 import { fetchLinkMetadata } from '@utils/fetchLinkMetadata';
 
 export interface Props {
-	url: string;
-	className?: string;
+  url: string;
+  className?: string;
 }
 
 const { url, className = '' } = Astro.props;
@@ -13,11 +13,11 @@ const metadata = await fetchLinkMetadata(url);
 
 // If metadata fetch fails, provide a minimal fallback
 const fallbackMetadata = {
-	url,
-	domain: new URL(url).hostname.replace('www.', ''),
-	title: url,
-	description: null,
-	image: null,
+  url,
+  domain: new URL(url).hostname.replace('www.', ''),
+  title: url,
+  description: null,
+  image: null,
 };
 
 const data = metadata || fallbackMetadata;
@@ -25,111 +25,97 @@ const isFallback = !metadata;
 ---
 
 <div class={`bookmark-card cq ${className}`}>
-	<a href={url} class="bookmark-link card-surface" target="_blank" rel="noopener noreferrer">
-		<div class="bookmark-content">
-			<span class="bookmark-domain">{data.domain}</span>
-			<span class="bookmark-title">{data.title}</span>
-			{data.description && <p class="bookmark-description">{data.description}</p>}
-			{isFallback && <p class="bookmark-fallback">Preview unavailable - click to visit</p>}
-		</div>
-		{data.image && <img src={data.image} alt="" loading="lazy" />}
-	</a>
+  <a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
+    <div class="bookmark-content">
+      <span class="bookmark-domain">{data.domain}</span>
+      <span class="bookmark-title">{data.title}</span>
+      {data.description && <p class="bookmark-description">{data.description}</p>}
+      {isFallback && <p class="bookmark-fallback">Preview unavailable - click to visit</p>}
+    </div>
+    {data.image && <img src={data.image} alt="" loading="lazy" />}
+  </a>
 </div>
 
 <style>
-	/* .card-surface applied via class for base card styles */
-	.bookmark-link {
-		display: block;
-		overflow: hidden;
-		text-decoration: none;
-		color: inherit;
-		transition:
-			filter var(--duration-normal) var(--ease-in-out),
-			border-color var(--duration-normal) var(--ease-in-out);
+  .bookmark-link {
+    display: block;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
 
-		&:hover {
-			border-color: var(--color-accent);
-			filter: var(--shadow-medium);
-		}
-	}
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--duration-normal) var(--ease-in-out);
 
-	.bookmark-content {
-		padding: var(--space-s);
-	}
+    &:hover {
+      border-color: var(--color-accent);
+    }
 
-	/* Shared: line clamping */
-	.bookmark-title,
-	.bookmark-description {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
+    img {
+      width: 100%;
+      object-fit: cover;
+    }
+  }
 
-	.bookmark-domain,
-	.bookmark-description,
-	.bookmark-fallback {
-		color: var(--color-text);
-	}
+  .bookmark-content {
+    padding: var(--space-s);
+  }
 
-	.bookmark-domain {
-		display: block;
-		font-family: var(--font-code);
-		font-size: var(--font-size-xs);
-		margin-block-end: var(--space-2xs);
-	}
+  .bookmark-domain {
+    display: block;
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+    margin-block-end: var(--space-2xs);
+  }
 
-	.bookmark-title {
-		font-size: var(--font-size-base);
-		font-weight: var(--font-weight-semibold);
-		line-height: var(--leading-snug);
-		color: var(--color-accent);
-		margin-block-end: var(--space-2xs);
-		/* Defensive: break very long unbreakable strings (e.g., long URLs as titles) */
-		word-break: break-word;
-	}
+  .bookmark-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-snug);
+    color: var(--color-accent);
+    margin-block-end: var(--space-2xs);
+    word-break: break-word;
+  }
 
-	.bookmark-description {
-		font-size: var(--font-size-sm);
-		line-height: var(--leading-normal);
-		margin: 0;
-	}
+  .bookmark-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+    margin: 0;
+  }
 
-	.bookmark-fallback {
-		font-size: var(--font-size-xs);
-		font-style: italic;
-		margin-block: var(--space-2xs) 0;
-	}
+  .bookmark-fallback {
+    font-size: var(--font-size-xs);
+    font-style: italic;
+    margin-block: var(--space-2xs) 0;
+  }
 
-	.bookmark-link img {
-		display: block;
-		width: 100%;
-		object-fit: cover;
-	}
+  /* Horizontal layout when container is wide enough */
+  @container (min-width: 400px) {
+    .bookmark-link {
+      display: flex;
+      align-items: stretch;
+      min-height: var(--space-2xl);
 
-	/* Horizontal layout when container is wide enough */
-	@container (min-width: 400px) {
-		.bookmark-link {
-			display: flex;
-			align-items: stretch;
-			min-height: var(--space-2xl);
-		}
+      img {
+        width: calc(var(--space-2xl) * 2);
+        flex-shrink: 0;
+        order: 2;
+      }
+    }
 
-		.bookmark-content {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-		}
-
-		.bookmark-description {
-			flex-grow: 1;
-		}
-
-		.bookmark-link img {
-			width: calc(var(--space-2xl) * 2);
-			flex-shrink: 0;
-			order: 2;
-		}
-	}
+    .bookmark-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
 </style>

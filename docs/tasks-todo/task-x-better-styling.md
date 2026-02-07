@@ -80,9 +80,7 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 These ones **clearly** need work:
 
 - [x] InlineFootnotes.astro - style the popup thing
-- [ ] BasicImage
-  - [ ] Framed
-  - [ ] Framed with Caption
+- [x] BasicImage
 - [ ] BookmarkCard
 - [ ] ButtonLink
   - [ ] Block
