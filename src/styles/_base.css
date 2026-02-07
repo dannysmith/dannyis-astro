@@ -184,6 +184,7 @@
 
   /* ======== INPUTS, SELECTS, TEXTAREAS ======== */
 
+  /* Background/border/radius for most inputs (excludes buttons, checkboxes, radios, file) */
   input:not(
     [type='button'],
     [type='submit'],
@@ -200,7 +201,7 @@
     border-radius: var(--radius-sm);
   }
 
-  /* Text-like input elements */
+  /* Padding/line-height for text-like inputs (also excludes color, range, hidden) */
   input:not(
     [type='checkbox'],
     [type='radio'],

@@ -1,6 +1,6 @@
 /* ============================================
     RESET LAYER
-    Uses :where() for zero specificity
+    Primarily uses :where() for zero specificity
    ============================================ */
 @layer reset {
   /* Use a more-intuitive box-sizing model with :where() for zero specificity */
@@ -85,7 +85,7 @@
 
   :where(img) {
     border: 0;
-    shape-margin: 1rem;  /* If floated with shape-outside */
+    shape-margin: 1rem; /* If floated with shape-outside */
     /* Support LQIP (Low Quality Image Placeholder) pattern */
     background-repeat: no-repeat;
     background-size: cover;
