@@ -105,7 +105,8 @@ const isFallback = !metadata;
       min-height: var(--space-2xl);
 
       img {
-        width: calc(var(--space-2xl) * 2);
+        width: max(25cqi, calc(var(--space-2xl) * 2));
+        aspect-ratio: 16 / 9;
         flex-shrink: 0;
         order: 2;
       }
