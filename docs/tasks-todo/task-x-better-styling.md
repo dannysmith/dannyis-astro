@@ -79,7 +79,7 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 
 These ones **clearly** need work:
 
-- [ ] InlineFootnotes.astro - style the popup thing
+- [x] InlineFootnotes.astro - style the popup thing
 - [ ] BasicImage
   - [ ] Framed
   - [ ] Framed with Caption

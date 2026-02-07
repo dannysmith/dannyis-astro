@@ -120,11 +120,15 @@
           paragraphs[paragraphs.length - 1].append(jumpLink);
         }
 
-        // Insert inside LI elements to preserve list structure, otherwise after the block
+        // Insert after the block (or after any existing inline footnotes to preserve order)
         if (closestBlock.tagName === 'LI') {
           closestBlock.appendChild(inlineFootNoteContainer);
         } else {
-          closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
+          let insertAfter: Element = closestBlock;
+          while (insertAfter.nextElementSibling?.classList.contains('inline-footnote-container')) {
+            insertAfter = insertAfter.nextElementSibling;
+          }
+          insertAfter.insertAdjacentElement('afterend', inlineFootNoteContainer);
         }
 
         elm.addEventListener('click', e => {
