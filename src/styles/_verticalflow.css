@@ -1,19 +1,33 @@
 /* ============================================
    VERTICAL FLOW
-   Margins between block elements and .flow utility.
-   Uses @layer typography for same cascade position.
+   ============================================
+
+   Vertical rhythm for prose content. Most spacing is applied globally
+   to block elements, so content looks good anywhere. The .flow utility
+   class adds enhanced heading spacing for long-form prose containers.
+
+   Uses em units so spacing scales with the element's font-size.
+   Uses :where() for zero specificity - easy to override when needed.
+
    ============================================ */
 
 @layer typography {
 
-    /* ----------- Heading Spacing ----------- */
+  /* -------------------------------------------
+     GLOBAL BLOCK SPACING
+     Applied everywhere, not just in .flow containers.
+     ------------------------------------------- */
 
+  /* Headings get more breathing room above them */
   :where(:is(h1, h2, h3, h4, h5, h6)) {
     margin-top: 1.5em;
+
+    &:first-child {
+      margin-top: 0;
+    }
   }
 
-  /* ----------- Base Prose Element Spacing ----------- */
-
+  /* Standard prose elements - paragraphs, lists, etc. */
   :where(p, ul, ol, blockquote, pre, figure, table) {
     margin-top: 1.25em;
 
@@ -22,34 +36,30 @@
     }
   }
 
-  /* ----------- HR ----------- */
-
+  /* Horizontal rules create larger visual breaks */
   :where(hr) {
     margin-block: var(--space-l);
   }
 
-  /* ----------- Footnotes ----------- */
-
+  /* Footnotes section sits well below the main content */
   :where(.footnotes) {
     margin-top: var(--space-2xl);
   }
 
-  /* ----------- Flow Utility ----------- */
-  /* Consistent vertical spacing for prose containers */
+  /* -------------------------------------------
+     .flow UTILITY
+     Apply to prose containers for consistent spacing on
+     elements not covered by the global rules above.
+     ------------------------------------------- */
 
   .flow {
-    & > * + * {
-      /* margin-top: 1.25em; */
-    }
-
-    & > * + :is(h1, h2) {
-      /* margin-top: 3em; */
-      background-color: red;
-    }
-
-    & > * + h3 {
-      /* margin-top: 2em; */
-      background-color: blue;
+    /*
+     * Catch-all for elements not handled globally above
+     * `* + X` = X that follows a sibling (not first-child).
+     * Catches <details>, <aside>, <div>, custom elements, etc.
+     */
+    & > * + *:not(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, figure, table, hr) {
+      margin-top: 1.25em;
     }
   }
 }
