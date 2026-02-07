@@ -3,9 +3,9 @@
    ============================================ */
 @layer base {
   html {
-    color-scheme: light dark; /* support light and dark modes */
-    accent-color: var(--color-accent); /* set accent color */
-    color: var(--color-text); /* set text color */
+    color-scheme: light dark;
+    accent-color: var(--color-accent);
+    color: var(--color-text);
   }
 
   /* Style alt text when images fail to load */
@@ -116,9 +116,8 @@
 
     cursor: pointer;
     transition: background var(--duration-fast) var(--ease-in-out);
-    outline-offset: 0; /* Focus ring tight to border */
+    outline-offset: 0;
 
-    /* Colors: muted accent by default, full accent on hover */
     color: inherit;
     background: light-dark(
       color-mix(in oklch, var(--color-accent) 85%, white),
@@ -184,7 +183,6 @@
 
   /* ======== INPUTS, SELECTS, TEXTAREAS ======== */
 
-  /* Background/border/radius for most inputs (excludes buttons, checkboxes, radios, file) */
   input:not(
     [type='button'],
     [type='submit'],
@@ -201,7 +199,6 @@
     border-radius: var(--radius-sm);
   }
 
-  /* Padding/line-height for text-like inputs (also excludes color, range, hidden) */
   input:not(
     [type='checkbox'],
     [type='radio'],
@@ -218,8 +215,8 @@
   textarea {
     padding-block: 0.4em;
     padding-inline: 0.75em;
-    line-height: var(--leading-normal); /* Prevent clipping of text */
-    outline-offset: 0; /* Focus ring tight to border */
+    line-height: var(--leading-normal);
+    outline-offset: 0;
   }
 
   /* Placeholder styling */
@@ -232,7 +229,6 @@
     inline-size: 100%;
     resize: block;
 
-    /* set minimum height to 3 lines if no rows attribute is specified */
     &:not([rows]) {
       min-block-size: 3lh;
     }

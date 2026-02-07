@@ -1,12 +1,30 @@
 ---
+/**
+ * Grid - A responsive CSS Grid wrapper for MDX content.
+ *
+ * Props:
+ *   columns - Target number of columns (default: 2)
+ *   rows    - Number of rows with equal height (default: 1, usually auto)
+ *   gap     - Gap between items (default: var(--space-s))
+ *
+ * Responsive behavior:
+ *   Columns automatically collapse when the container gets narrow.
+ *   The formula `minmax(min(200px, 100% / columns), 1fr)` means:
+ *   - Columns are never narrower than 200px
+ *   - But if 200px would exceed the target column width (100% / columns),
+ *     use that instead — this prevents creating MORE columns than requested
+ *   - In wide containers: you get exactly `columns` columns
+ *   - In narrow containers: columns wrap to 2, then 1, as space shrinks
+ *
+ * Example: <Grid columns={3} gap="var(--space-m)">...</Grid>
+ */
 export interface Props {
-  columns?: number
-  rows?: number
-  gap?: string
+  columns?: number;
+  rows?: number;
+  gap?: string;
 }
-const columns = Astro.props.columns || 2
-const rows = Astro.props.rows || 1
-const gap = Astro.props.gap || 'var(--space-s)'
+
+const { columns = 2, rows = 1, gap = 'var(--space-s)' } = Astro.props;
 ---
 
 <div class="grid-wrapper">
@@ -16,9 +34,8 @@ const gap = Astro.props.gap || 'var(--space-s)'
 <style define:vars={{ columns, rows, gap }}>
   .grid-wrapper {
     display: grid;
-    /* Responsive: never create columns narrower than 200px */
     grid-template-columns: repeat(auto-fit, minmax(min(200px, 100% / var(--columns)), 1fr));
     grid-template-rows: repeat(var(--rows), 1fr);
-    grid-gap: var(--gap);
+    gap: var(--gap);
   }
 </style>

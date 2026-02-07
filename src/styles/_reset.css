@@ -1,22 +1,20 @@
 /* ============================================
     RESET LAYER
-    Primarily uses :where() for zero specificity
    ============================================ */
+
 @layer reset {
-  /* Use a more-intuitive box-sizing model with :where() for zero specificity */
   :where(*, *::before, *::after) {
     box-sizing: border-box;
   }
 
   :where(*) {
-    /* Remove default margin */
     margin-block: 0;
 
-    /* Use font-based text decoration thickness */
+    /* Let fonts define their preferred text decoration thickness */
     text-decoration-thickness: from-font;
   }
 
-  /* Consistent focus ring styling */
+  /* Focus ring styling */
   :where(:focus-visible) {
     outline: 2px solid var(--color-focus-ring, currentColor);
     outline-offset: 5px;
@@ -36,7 +34,7 @@
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
 
-    /* Hyphenation defaults (applies when hyphens: auto is enabled) */
+    /* Hyphenation defaults (applied when hyphens: auto is enabled) */
     hyphenate-character: '‐'; /* U+2010 true hyphen, not ASCII hyphen-minus */
     hyphenate-limit-chars: auto 2 3; /* min 2 chars before, 3 after break */
 
@@ -49,7 +47,7 @@
     /* Let fonts define their preferred underline position */
     text-underline-position: from-font;
 
-    /* Print typography: keep at least 2 lines together */
+    /* Print: keep at least 2 lines together */
     orphans: 2;
     widows: 2;
   }
@@ -86,23 +84,23 @@
   :where(img) {
     border: 0;
     shape-margin: 1rem; /* If floated with shape-outside */
-    /* Support LQIP (Low Quality Image Placeholder) pattern */
+
+    /* Support LQIP (Low Quality Image Placeholder) via style="background-image:<lores>" */
     background-repeat: no-repeat;
     background-size: cover;
   }
 
-  /* Picture wrapper disappears from layout, only img child matters */
+  /* Remove picture wrapper from layou */
   :where(picture) {
     display: contents;
   }
 
-  /* Inherit fonts for form controls */
   :where(input, button, textarea, select) {
-    font: inherit;
+    font: inherit; /* Inherit fonts for form controls */
     touch-action: manipulation; /* Disable double-tap zoom for faster response */
   }
 
-  /* Set shorter line heights on interactive elements */
+  /* Shorter line heights on interactive elements */
   :where(button, input, label) {
     line-height: 1.1;
   }
@@ -207,7 +205,7 @@
     text-decoration-thickness: 1px;
   }
 
-  /* Nested italics become upright (typographic convention) */
+  /* Nested italics become upright */
   :where(:is(em, i) > :is(em, i)) {
     font-style: normal;
   }

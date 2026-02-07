@@ -4,10 +4,9 @@
 @layer utilities {
   /* ----------------------------------------
      .ui-style - Opt-out of prose typography
-     Apply to navigation, footers, page titles, and UI-heavy areas
+     Apply to navigation, footers, page titles etc
      ---------------------------------------- */
   .ui-style {
-    /* Switch to UI font */
     font-family: var(--font-ui);
     font-weight: var(--font-weight-normal);
     line-height: var(--leading-snug);

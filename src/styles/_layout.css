@@ -2,7 +2,6 @@
    LAYOUT LAYER - Reusable layout patterns
    ============================================ */
 @layer layout {
-  /* List reset - for navigation and UI lists */
   .list-reset {
     list-style: none;
     margin: 0;

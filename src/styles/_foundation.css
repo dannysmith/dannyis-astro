@@ -1,6 +1,6 @@
 /* ============================================
    FOUNDATION
-   Font faces, @property declarations, and design tokens
+   Font faces, @property declarations and design tokens
    ============================================ */
 
 /* FONT FACES */
@@ -96,7 +96,7 @@
 
   /* ======= COLOURS ======= */
 
-  /* Core Hues - shared across modes */
+  /* Core Hues */
   --hue-coral: 25;
   --hue-pink: 350;
   --hue-orange: 55;
@@ -106,13 +106,14 @@
   --hue-blue: 250;
   --hue-grey: 210;
 
-  /* Absolute colors - no mode switching needed */
+  /* Absolute colors */
   --color-white: oklch(100% 0 0);
   --color-black: oklch(0% 0 0);
+  --color-ink: oklch(28% 0.01 var(--hue-grey));
+  --color-charcoal: oklch(24.35% 0 0); /* #202020 */
+  --color-beige: oklch(96% 0.02 85);
 
-  /* Adaptive Color Palette
-    Each color auto-adapts for light/dark mode.
-    Dark mode: increase lightness for visibility, reduce chroma to avoid harshness */
+  /* Adaptive Color Palette */
 
   --color-coral: light-dark(oklch(70% 0.18 var(--hue-coral)), oklch(80% 0.14 var(--hue-coral)));
 
@@ -128,13 +129,8 @@
 
   --color-blue: light-dark(oklch(62% 0.15 var(--hue-blue)), oklch(70% 0.13 var(--hue-blue)));
 
-  /* Neutrals - structural colors for backgrounds/text */
-  --color-ink: oklch(28% 0.01 var(--hue-grey));
-  --color-charcoal: oklch(24.35% 0 0); /* #202020 */
-  --color-beige: oklch(96% 0.02 85);
 
   /* ======= SEMANTIC COLOURS ======= */
-  /* Role-based tokens that reference the adaptive palette */
 
   --color-accent: var(--color-coral);
   --color-visited: var(--color-purple);
@@ -160,7 +156,6 @@
     oklch(from var(--color-white) l c h / 0.1)
   );
 
-  /* Surface for raised cards/panels - white in light mode, dark grey in dark mode */
   --surface-raised: light-dark(var(--color-white), oklch(16% 0 0));
 
   /* ======= SPACING ======= */
@@ -211,8 +206,8 @@
   --tracking-wide: 0.05ch;
   --tracking-wider: 0.1ch;
 
-  /* Measure - standard line length for readability */
-  --measure-standard: 80ch;
+  /* Measure  */
+  --measure-standard: 85ch;
 
   /* Font Weights */
   --font-weight-light: 300;

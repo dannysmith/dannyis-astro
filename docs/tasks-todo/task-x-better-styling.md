@@ -84,8 +84,8 @@ These ones **clearly** need work:
 - [x] BookmarkCard
 - [x] ButtonLink
 - [x] Callout
-- [ ] Accordian
-- [ ] Grid
+- [x] Accordian
+- [x] Grid
 
 - [ ] Double-check all other components for opportunities to clean up CSS etc
 
