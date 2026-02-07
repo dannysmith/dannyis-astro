@@ -16,32 +16,33 @@
 
   /* ----------- Prose Spacing Rhythm ----------- */
 
-  :where(p, ul, ol, blockquote, pre, figure, table) {
-    /* margin-top: 1.25em; */
+  /* Base prose elements */
+  :where(p, ul, ol, blockquote, pre, figure, table, details) {
+    margin-top: var(--space-s);
   }
 
-  /* Remove top margin from first children */
-  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
-    /* margin-top: 0; */
+  /* First children: no top margin */
+  :where(p, ul, ol, blockquote, pre, figure, table, details, h1, h2, h3, h4, h5, h6):first-child {
+    margin-top: 0;
   }
 
-  /* Flow utility - consistent vertical spacing (TODO: consolidate with above) */
-  .flow > * + * {
-    /* margin-top: var(--space-m); */
+  /* Section breaks: extra space when heading follows content */
+  :where(p, ul, ol, blockquote, pre, figure, table, hr, details) + :is(h1, h2) {
+    margin-top: var(--space-xl);
   }
 
-  /* Headings get larger top margins for clear section breaks */
-  .flow > * + :is(h1, h2) {
-    /* margin-top: var(--space-xl); */
+  :where(p, ul, ol, blockquote, pre, figure, table, hr, details) + h3 {
+    margin-top: var(--space-l);
   }
 
-  .flow > * + h3 {
-    /* margin-top: var(--space-l); */
+  /* Consecutive headings: tighter spacing (subheading pattern) */
+  :where(h1, h2, h3, h4, h5, h6) + :is(h1, h2, h3, h4, h5, h6) {
+    margin-top: var(--space-s);
   }
 
   /* ----------- HR ----------- */
   hr {
-    /* margin-block: var(--space-l); */
+    margin-block: var(--space-l);
     border: var(--border-width-hairline) solid var(--color-border);
   }
 
@@ -55,7 +56,7 @@
   h6 {
     font-weight: var(--font-weight-semibold);
     line-height: var(--leading-snug);
-    /* margin-top: 1.5em; */
+    margin-top: var(--space-m);
     border-bottom: var(--border-width-hairline) solid var(--color-border);
     padding-bottom: 0.3em;
   }
@@ -141,7 +142,7 @@
     text-wrap: pretty;
 
     &:not(:first-child) {
-      /* margin-top: var(--space-s); */
+      margin-top: var(--space-s);
     }
   }
 
@@ -306,7 +307,7 @@
   /* Footnotes section at bottom of content */
   .footnotes {
     border-top: var(--border-width-hairline) solid var(--color-accent);
-    /* margin-top: var(--space-m); */
+    margin-top: var(--space-l);
     padding-top: var(--space-s);
     font-size: var(--font-size-sm);
 
