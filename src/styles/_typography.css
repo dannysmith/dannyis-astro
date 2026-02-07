@@ -14,17 +14,6 @@
     line-height: var(--leading-normal);
   }
 
-  /* ----------- Prose Spacing Rhythm ----------- */
-
-  :where(p, ul, ol, blockquote, pre, figure, table) {
-    margin-top: 1.25em;
-  }
-
-  /* Remove top margin from first children */
-  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
-    margin-top: 0;
-  }
-
   /* ----------- Headings ----------- */
 
   h1,
@@ -35,7 +24,6 @@
   h6 {
     font-weight: var(--font-weight-semibold);
     line-height: var(--leading-snug);
-    margin-top: 1.5em;
     border-bottom: var(--border-width-hairline) solid var(--color-border);
     padding-bottom: 0.3em;
   }
@@ -286,7 +274,6 @@
   /* Footnotes section at bottom of content */
   .footnotes {
     border-top: var(--border-width-hairline) solid var(--color-accent);
-    margin-top: var(--space-m);
     padding-top: var(--space-s);
     font-size: var(--font-size-sm);
 

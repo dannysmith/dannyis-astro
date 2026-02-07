@@ -1,10 +1,57 @@
 /* ============================================
    VERTICAL FLOW
+   Margins between block elements and .flow utility.
+   Uses @layer typography for same cascade position.
    ============================================ */
 
 @layer typography {
-    /* ----------- HR ----------- */
+  /* ----------- Base Prose Element Spacing ----------- */
+
+  :where(p, ul, ol, blockquote, pre, figure, table) {
+    margin-top: 1.25em;
+  }
+
+  /* Remove top margin from first children */
+  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
+    margin-top: 0;
+  }
+
+  /* ----------- Heading Spacing ----------- */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 1.5em;
+  }
+
+  /* ----------- HR ----------- */
+
   hr {
     margin-block: var(--space-l);
+  }
+
+  /* ----------- Footnotes ----------- */
+
+  .footnotes {
+    margin-top: var(--space-m);
+  }
+
+  /* ----------- Flow Utility ----------- */
+  /* Consistent vertical spacing for prose containers */
+
+  .flow > * + * {
+    margin-top: var(--space-m);
+  }
+
+  /* Headings get larger, proportionate top margins for clear section breaks */
+  .flow > * + :is(h1, h2) {
+    margin-top: var(--space-xl);
+  }
+
+  .flow > * + h3 {
+    margin-top: var(--space-l);
   }
 }
