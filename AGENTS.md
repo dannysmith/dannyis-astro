@@ -101,13 +101,14 @@ bun run newnote       # Create new note with proper frontmatter
     ├── pages/         # Routes and API endpoints
     │   └── styleguide/# Visual styleguide (partials prefixed with _)
     ├── styles/        # CSS architecture (one file per layer)
-    │   ├── global.css      # Entry point: layer order & imports
-    │   ├── _foundation.css # Design tokens, fonts, @property
-    │   ├── _reset.css      # Reset layer
-    │   ├── _base.css       # Base layer (forms, tables, etc.)
-    │   ├── _typography.css # Typography layer
-    │   ├── _layout.css     # Layout utilities (.flow, .list-reset)
-    │   └── _utilities.css  # Utility classes
+    │   ├── global.css       # Entry point: layer order & imports
+    │   ├── _foundation.css  # Design tokens, fonts, @property
+    │   ├── _reset.css       # Reset layer
+    │   ├── _base.css        # Base layer (forms, tables, etc.)
+    │   ├── _typography.css  # Typography layer
+    │   ├── _verticalflow.css# Vertical rhythm (part of typography layer)
+    │   ├── _layout.css      # Layout utilities (.list-reset)
+    │   └── _utilities.css   # Utility classes
     ├── types/         # TypeScript type declarations
     └── utils/         # Shared helper functions
 ```

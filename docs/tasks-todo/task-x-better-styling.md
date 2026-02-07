@@ -104,8 +104,4 @@ These ones **clearly** need work:
 
 - [ ] Double-check all other components for opportunities to clean up CSS etc
 
-## Docs
-
-- [ ] Update dev docs as needed
-
 # Notes - Scratchpad

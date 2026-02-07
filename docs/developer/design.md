@@ -110,13 +110,15 @@ Never modify directly without asking the user first. These are foundational defa
 
 **Purpose:** Default global typography.
 
-Everything inherits these styles but UI areascan opt out of most of it using `.ui-style`.
+Includes `_typography.css` (fonts, headings, links, inline elements) and `_verticalflow.css` (vertical rhythm/margins). Separated into two files for maintainability.
+
+Everything inherits these styles but UI areas can opt out of most of it using `.ui-style`.
 
 #### 4. Layout Layer (`@layer layout`)
 
 **Purpose:** Reusable layout utilities.
 
-**Contains:** `.flow`, `.list-reset`
+**Contains:** `.list-reset`
 
 **When to add here:** Only for layout patterns used in 3+ places across the site.
 
@@ -201,7 +203,7 @@ Only for styles specific to long-form reading that shouldn't apply elsewhere. St
 
 ## Utility Classes
 
-Utilities are defined in `_utilities.css` and `_layout.css`. See the styleguide at `/styleguide` for the full list. Key utilities:
+Utilities are defined in `_utilities.css` and `_layout.css`. The `.flow` utility lives in `_verticalflow.css` (part of the typography layer). See the styleguide at `/styleguide` for the full list. Key utilities:
 
 ### `.ui-style` - Opt-Out of Prose Typography
 
@@ -223,9 +225,14 @@ Switches to `--font-ui`, removes link underlines, removes heading borders, reset
 
 Forces dark background (`--color-charcoal`) with light text (`--color-beige`). Combine with `.ui-style` for dark UI areas.
 
-### `.flow` - Vertical Rhythm (layout)
+### `.flow` - Vertical Rhythm
 
-Adds `--space-m` between siblings, with larger margins before headings. Use for content areas needing consistent vertical spacing.
+Ensures all block elements get proper vertical spacing. Most elements (headings, paragraphs, lists, etc.) already have global margins from `_verticalflow.css`. The `.flow` class adds:
+
+- **Catch-all spacing** for elements not covered globally (details, aside, divs, etc.)
+- **Reduced spacing** between adjacent headings (they form logical units)
+
+Uses `em` units (not the spacing scale) so margins scale with font-size. Apply to prose containers like articles and notes.
 
 ### `.list-reset` - Navigation Lists (layout)
 

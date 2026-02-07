@@ -86,6 +86,7 @@ const components = {
 - `global.css` — Entry point: layer order declaration and imports
 - `_foundation.css` — Design tokens, font faces, `@property` declarations
 - `_reset.css` through `_utilities.css` — One file per layer
+- `_verticalflow.css` — Vertical rhythm (part of typography layer, separate for maintainability)
 
 **Color System with `light-dark()`:**
 
