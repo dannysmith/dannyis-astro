@@ -5,53 +5,51 @@
    ============================================ */
 
 @layer typography {
+
+    /* ----------- Heading Spacing ----------- */
+
+  :where(:is(h1, h2, h3, h4, h5, h6)) {
+    margin-top: 1.5em;
+  }
+
   /* ----------- Base Prose Element Spacing ----------- */
 
   :where(p, ul, ol, blockquote, pre, figure, table) {
     margin-top: 1.25em;
-  }
 
-  /* Remove top margin from first children */
-  :where(p, ul, ol, blockquote, pre, figure, table):first-child {
-    margin-top: 0;
-  }
-
-  /* ----------- Heading Spacing ----------- */
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin-top: 1.5em;
+    &:first-child {
+      margin-top: 0;
+    }
   }
 
   /* ----------- HR ----------- */
 
-  hr {
-    margin-block: var(--space-l);
+  :where(hr) {
+    margin-block: var(--space-xl);
   }
 
   /* ----------- Footnotes ----------- */
 
-  .footnotes {
-    margin-top: var(--space-m);
+  :where(.footnotes) {
+    margin-top: var(--space-2xl);
   }
 
   /* ----------- Flow Utility ----------- */
   /* Consistent vertical spacing for prose containers */
 
-  .flow > * + * {
-    margin-top: var(--space-m);
-  }
+  .flow {
+    & > * + * {
+      margin-top: 1.25em;
+    }
 
-  /* Headings get larger, proportionate top margins for clear section breaks */
-  .flow > * + :is(h1, h2) {
-    margin-top: var(--space-xl);
-  }
+    & > * + :is(h1, h2) {
+      margin-top: 3em;
+      background-color: red;
+    }
 
-  .flow > * + h3 {
-    margin-top: var(--space-l);
+    & > * + h3 {
+      margin-top: 2em;
+      background-color: blue;
+    }
   }
 }
