@@ -18,9 +18,17 @@
   /* Inline footnotes - container for footnote content shown inline */
   .inline-footnote-container {
     font-size: var(--font-size-sm);
-    padding: var(--space-s);
-    margin-top: var(--space-xs);
+    padding: var(--space-xs);
+    padding-right: var(--space-xl); /* Space for close button */
+    margin-top: var(--space-s);
     position: relative;
+    background: transparent;
+    border: var(--border-width-hairline) solid var(--color-accent);
+    border-radius: var(--radius-sm);
+
+    p:first-of-type {
+      margin-top: 0;
+    }
 
     /* Hide the return link - not needed for inline footnotes */
     [data-footnote-backref] {
@@ -30,19 +38,18 @@
 
   .inline-footnote-close {
     position: absolute;
-    top: var(--space-2xs);
-    right: var(--space-2xs);
+    top: var(--space-xs);
+    right: var(--space-xs);
     border: none;
     background: transparent;
-    color: var(--color-text-secondary);
+    color: var(--color-accent);
     font-size: 1.2rem;
     line-height: 1;
-    padding: 0.25rem;
-    opacity: 0.6;
+    padding: 0;
     transition: opacity var(--duration-fast);
 
     &:hover {
-      opacity: 1;
+      opacity: 0.7;
     }
   }
 </style>
@@ -66,7 +73,7 @@
         if (!closestBlock || !footnoteElement?.children.length) return;
 
         const inlineFootNoteContainer = document.createElement('div');
-        inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
+        inlineFootNoteContainer.classList.add('inline-footnote-container');
         inlineFootNoteContainer.style.display = 'none';
 
         // Close button
