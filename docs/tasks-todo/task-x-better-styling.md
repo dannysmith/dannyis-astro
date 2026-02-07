@@ -81,10 +81,8 @@ These ones **clearly** need work:
 
 - [x] InlineFootnotes.astro - style the popup thing
 - [x] BasicImage
-- [ ] BookmarkCard
-- [ ] ButtonLink
-  - [ ] Block
-  - [ ] Inline
+- [x] BookmarkCard
+- [x] ButtonLink
 - [ ] Callout
 - [ ] Accordian
 - [ ] Grid
