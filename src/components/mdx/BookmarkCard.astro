@@ -27,9 +27,9 @@ const isFallback = !metadata;
 <div class={`bookmark-card cq ${className}`}>
   <a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
     <div class="bookmark-content">
-      <span class="bookmark-domain">{data.domain}</span>
       <span class="bookmark-title">{data.title}</span>
       {data.description && <p class="bookmark-description">{data.description}</p>}
+      <span class="bookmark-domain">{data.domain}</span>
       {isFallback && <p class="bookmark-fallback">Preview unavailable - click to visit</p>}
     </div>
     {data.image && <img src={data.image} alt="" loading="lazy" />}
@@ -43,6 +43,7 @@ const isFallback = !metadata;
     text-decoration: none;
     color: inherit;
 
+    background-color: var(--color-background-secondary);
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
     transition: border-color var(--duration-normal) var(--ease-in-out);
@@ -65,7 +66,7 @@ const isFallback = !metadata;
     display: block;
     font-family: var(--font-code);
     font-size: var(--font-size-xs);
-    margin-block-end: var(--space-2xs);
+    margin-block-start: var(--space-2xs);
   }
 
   .bookmark-title {
@@ -105,7 +106,7 @@ const isFallback = !metadata;
       min-height: var(--space-2xl);
 
       img {
-        width: max(25cqi, calc(var(--space-2xl) * 2));
+        width: max(30cqi, calc(var(--space-2xl) * 2));
         aspect-ratio: 16 / 9;
         flex-shrink: 0;
         order: 2;
