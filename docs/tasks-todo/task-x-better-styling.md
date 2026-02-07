@@ -72,6 +72,30 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
   - [x] layout.css - list-reset
 - [ ] FLOW - Rework in a sensble way alongside `@typography` and `LongformProseTypography` and decide if we should keep it.
 
+## Flow & Vertical Rhythm
+
+**Goal:** Consolidate vertical spacing logic into `@typography` layer, using `rlh` units for baseline-grid-aligned rhythm.
+
+### Plan
+
+1. [x] Move `.flow` rules into `@typography` (leave `.flow` classes in HTML for now)
+2. [ ] Audit vertical spacing for each block element:
+   - Elements: `p`, `h1-h6`, `ul`, `ol`, `blockquote`, `pre`, `hr`, `figure`, `table`, `details`
+   - For each: What `margin-top` does it have? Where does it come from?
+   - Test in: Default context, Longform (`@longform`), UI (`.ui-style`)
+3. [ ] Decide on `rlh` vs `em` units — ideally `rlh` everywhere, but need container-scoped solution for longform (where line-height is 1.7 not 1.5)
+4. [ ] Get spacing looking good in default `@typography` context
+5. [ ] Review what `LongFormProseTypography` adds — pull up anything that should be default
+6. [ ] Review `.ui-style` resets — should it reset vertical margins to `--space-*` tokens?
+7. [ ] Remove `.flow` class from HTML once consolidated (or repurpose for non-prose contexts)
+
+### Notes
+
+- `rlh` = root line-height (stable grid based on body text)
+- `lh` = element's own line-height (varies with headings etc)
+- Problem: In `.longform-prose` we want `rlh` relative to that container's 1.7 line-height, not root's 1.5
+- Investigate: Recent CSS features for container-scoped relative units?
+
 ## Content Components
 
 These ones **clearly** need work:

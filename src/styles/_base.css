@@ -149,12 +149,6 @@
     }
   }
 
-  /* ======== HR ======== */
-  hr {
-    margin-block: var(--space-l);
-    border: var(--border-width-hairline) solid var(--color-border);
-  }
-
   /* ======== FORMS ======== */
 
   fieldset {
