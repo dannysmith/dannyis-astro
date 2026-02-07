@@ -15,7 +15,7 @@ if (icon && emoji) {
 }
 ---
 
-<aside aria-label={title} class="callout" data-callout-color={type}>
+<aside aria-label={title || undefined} class="callout" data-callout-color={type}>
   {
     (icon || emoji) && (
       <div class="icon-wrapper">
