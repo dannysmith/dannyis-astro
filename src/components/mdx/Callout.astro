@@ -43,6 +43,40 @@ if (icon && emoji) {
     border-inline-start: var(--border-width-thick) solid var(--_border);
     padding: var(--space-s);
     border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+
+    /* Color variants - muted tinted backgrounds with accent borders
+       Light mode: Very high lightness + minimal chroma = barely-there tint
+       Dark mode: Mid-low lightness + low chroma = visible but muted */
+    &[data-callout-color='red'] {
+      --_bg: light-dark(oklch(94% 0.024 var(--hue-coral)), oklch(35% 0.036 var(--hue-coral)));
+      --_border: var(--color-coral);
+    }
+
+    &[data-callout-color='blue'] {
+      --_bg: light-dark(oklch(93.5% 0.016 var(--hue-blue)), oklch(35% 0.026 var(--hue-blue)));
+      --_border: var(--color-blue);
+    }
+
+    &[data-callout-color='green'] {
+      --_bg: light-dark(oklch(94% 0.014 var(--hue-green)), oklch(36% 0.022 var(--hue-green)));
+      --_border: var(--color-green);
+    }
+
+    &[data-callout-color='orange'] {
+      --_bg: light-dark(oklch(95% 0.035 var(--hue-orange)), oklch(38% 0.044 var(--hue-orange)));
+      --_border: var(--color-orange);
+    }
+
+    &[data-callout-color='yellow'] {
+      --_bg: light-dark(oklch(96.5% 0.038 var(--hue-yellow)), oklch(42% 0.052 var(--hue-yellow)));
+      --_border: var(--color-yellow);
+    }
+
+    &[data-callout-color='purple'] {
+      --_bg: light-dark(oklch(94% 0.02 var(--hue-purple)), oklch(35% 0.03 var(--hue-purple)));
+      --_border: var(--color-purple);
+    }
   }
 
   .icon-wrapper {
@@ -54,9 +88,15 @@ if (icon && emoji) {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
     line-height: 1;
-    margin-top: 0.3em;
+    margin-top: 0.05em;
+
+    svg {
+      width: 1em;
+      height: 1em;
+      color: oklch(from var(--_border) min(l, 0.6) c h);
+    }
   }
 
   .content-wrapper {
@@ -66,65 +106,10 @@ if (icon && emoji) {
 
   .title {
     margin: 0 0 var(--space-2xs) 0;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     line-height: var(--leading-snug);
     border-bottom: none;
     padding-bottom: 0;
-  }
-
-  /* .content-trim applied via class for first/last child margin reset */
-
-  /* Color variants - muted tinted backgrounds with accent borders
-     Philosophy: Subtle color hint without overwhelming content
-     Light mode: Very high lightness (93-96%) + minimal chroma (0.015-0.04) = barely-there tint
-     Dark mode: Mid-low lightness (35-42%) + low chroma (0.02-0.05) = visible but muted
-     Higher chroma values (yellow/orange) accommodate their naturally higher visibility */
-  [data-callout-color='red'] {
-    --_bg: light-dark(
-      oklch(94% 0.024 var(--hue-coral)),
-      oklch(35% 0.036 var(--hue-coral))
-    );
-    --_border: var(--color-coral);
-  }
-
-  [data-callout-color='blue'] {
-    --_bg: light-dark(
-      oklch(93.5% 0.016 var(--hue-blue)),
-      oklch(35% 0.026 var(--hue-blue))
-    );
-    --_border: var(--color-blue);
-  }
-
-  [data-callout-color='green'] {
-    --_bg: light-dark(
-      oklch(94% 0.014 var(--hue-green)),
-      oklch(36% 0.022 var(--hue-green))
-    );
-    --_border: var(--color-green);
-  }
-
-  [data-callout-color='orange'] {
-    --_bg: light-dark(
-      oklch(95% 0.035 var(--hue-orange)),
-      oklch(38% 0.044 var(--hue-orange))
-    );
-    --_border: var(--color-orange);
-  }
-
-  [data-callout-color='yellow'] {
-    --_bg: light-dark(
-      oklch(96.5% 0.038 var(--hue-yellow)),
-      oklch(42% 0.052 var(--hue-yellow))
-    );
-    --_border: var(--color-yellow);
-  }
-
-  [data-callout-color='purple'] {
-    --_bg: light-dark(
-      oklch(94% 0.02 var(--hue-purple)),
-      oklch(35% 0.03 var(--hue-purple))
-    );
-    --_border: var(--color-purple);
   }
 </style>
