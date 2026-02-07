@@ -7,7 +7,7 @@
    class adds enhanced heading spacing for long-form prose containers.
 
    Uses em units so spacing scales with the element's font-size.
-   Uses :where() for zero specificity - easy to override when needed.
+   Uses :where() for zero specificity.
 
    ============================================ */
 
@@ -60,6 +60,14 @@
      */
     & > * + *:not(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, figure, table, hr) {
       margin-top: 1.25em;
+    }
+
+    /*
+     * Reduce space between adjacent headings (e.g., h2 followed by h3).
+     * They form a logical unit so don't need the full heading margin.
+     */
+    & > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
+      margin-top: 0.5em;
     }
   }
 }

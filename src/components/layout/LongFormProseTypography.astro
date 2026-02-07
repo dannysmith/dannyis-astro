@@ -38,11 +38,6 @@ const { class: className, ...props } = Astro.props;
       font-weight: var(--font-weight-bold);
     }
 
-    /* Reduce top margin from adjacent headings */
-    .longform-prose > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
-      margin-top: var(--space-m);
-    }
-
     .longform-prose :is(p, li, blockquote, figcaption) {
       font-variant-numeric: oldstyle-nums;
     }
