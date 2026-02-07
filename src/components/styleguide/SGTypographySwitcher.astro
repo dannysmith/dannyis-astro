@@ -13,8 +13,10 @@ type TypographySystem =
 
 const typographySystems: TypographySystem[] = [
   { name: 'Default', type: 'none' },
+  { name: 'Default Flow', type: 'class', className: 'flow' },
   { name: 'Long Form Prose', type: 'component', component: 'LongFormProseTypography' },
-  { name: 'UI Style', type: 'class', className: 'ui-style' },
+  { name: 'UI', type: 'class', className: 'ui-style' },
+  { name: 'UI Flow', type: 'class', className: 'ui-style flow' },
 ];
 
 const content = await Astro.slots.render('default');
