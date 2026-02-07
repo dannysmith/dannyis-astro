@@ -70,36 +70,10 @@ We're systematically working through the styleguide (`/styleguide`) and all CSS 
 - [x] UI Style Reset - Unset/reset stuff introduced by `@typography` as appropriate
 - [x] Small utilities
   - [x] layout.css - list-reset
-- [ ] FLOW - Rework in a sensble way alongside `@typography` and `LongformProseTypography` and decide if we should keep it.
-
-## Flow & Vertical Rhythm
-
-**Goal:** Consolidate vertical spacing into `@typography` using `--space-*` tokens and adjacent sibling selectors.
-
-### Plan
-
-1. [x] Move `.flow` rules into `@typography` (leave `.flow` classes in HTML for now)
-2. [x] Comment out all margin-top/bottom declarations to start fresh
-3. [ ] Add new spacing rules using `--space-*` tokens:
-   - Base prose elements: `margin-top: var(--space-s)`
-   - Headings: `margin-top: var(--space-m)`
-   - Section breaks (heading after content): `--space-xl` for h1/h2, `--space-l` for h3
-   - Consecutive headings: `--space-s` (subheading pattern)
-   - First-child: no top margin
-   - List items: `--space-2xs`
-   - HR: `margin-block: var(--space-l)`
-4. [ ] Test and tune spacing values visually
-5. [ ] Review `LongFormProseTypography` — pull up anything that should be default
-6. [ ] Review `.ui-style` resets — may need to reset vertical margins
-7. [ ] Apply `.content-trim` to components with slotted content (callouts, accordions, etc.)
-8. [ ] Remove `.flow` class from HTML once everything looks good
-
-### Notes
-
-- Using `--space-*` tokens (not `em` or `rlh`) for simplicity and design system consistency
-- Adjacent sibling selectors (`p + h2`) replace `.flow > * + *` pattern
-- `:where()` for zero specificity — components can easily override
-- Components with internal prose can override spacing or use `.content-trim`
+- [x] FLOW - Rework in a sensble way alongside `@typography` and `LongformProseTypography` and decide if we should keep it.
+[x] Review `LongFormProseTypography` — pull up anything that should be default
+[x] Review `.ui-style` resets — may need to resetany vertical margins set in verticalflow.css?
+[ ] Apply `.content-trim` to components with slotted content (callouts, accordions, etc.) as needed.
 
 ## Content Components
 
@@ -122,7 +96,6 @@ These ones **clearly** need work:
 ## UI Components
 
 These ones **clearly** need work:
-
 
 - [ ] Pill
 - [ ] ContentCard
