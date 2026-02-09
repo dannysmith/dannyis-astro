@@ -144,7 +144,26 @@ const sampleNotes = notes.slice(0, 3);
     </SGTypographySwitcher>
   </ResizableContainer>
 
-  <!-- 9. NoteCard -->
+  <!-- 9. ContentCard: Custom -->
+  <h3 id="content-card-custom">ContentCard: Custom</h3>
+  <p>
+    Use manual props instead of a content collection entry for custom cards. The <code>type</code> prop
+    sets the label and defaults to <code>"custom"</code> with the accent border colour.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <div style="display: grid; gap: var(--space-s);">
+        <ContentCard
+          href="/example"
+          title="Custom Card Example"
+          date={new Date('2024-01-15')}
+          type="custom"
+        />
+      </div>
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <!-- 11. NoteCard -->
   <h3 id="note-card">NoteCard</h3>
   <p>
     Layout component for displaying full notes with their content. Used on the notes index page and
@@ -188,7 +207,7 @@ const sampleNotes = notes.slice(0, 3);
     </NoteCard>
   </ResizableContainer>
 
-  <!-- 10. Footer -->
+  <!-- 12. Footer -->
   <h3 id="footer">Footer</h3>
   <p>
     The site footer uses fixed <code>.dark-surface</code> styling regardless of theme. Includes PersonalLogo,

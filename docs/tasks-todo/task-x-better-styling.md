@@ -105,9 +105,9 @@ These ones **clearly** need work:
 These ones **clearly** need work:
 
 - [x] Pill
-- [ ] ContentCard
-  - [ ] Articles
-  - [ ] Notes
+- [x] ContentCard
+  - [x] Articles
+  - [x] Notes
 
 - [ ] Double-check all other components for opportunities to clean up CSS etc
 
