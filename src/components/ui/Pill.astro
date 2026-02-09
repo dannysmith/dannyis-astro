@@ -39,22 +39,22 @@ const style =
     border-radius: var(--radius-xs);
     max-width: 100%;
 
-    /* Colors - bg can be overridden via --local-pill-bg prop.
-       Border and text are derived from bg using color-mix.
-       Light mode: darken for contrast. Dark mode: lighten for contrast. */
-    --_pill-bg: var(--local-pill-bg, var(--color-background-secondary));
-    background-color: var(--_pill-bg);
-    color: var(
-      --local-pill-fg,
-      light-dark(
-        color-mix(in oklch, var(--_pill-bg) 30%, black),
-        color-mix(in oklch, var(--_pill-bg) 30%, white)
-      )
-    );
-    border: var(--border-width-hairline) solid
-      light-dark(
+    /* Default: ghost/outline style - subtle for tags */
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+
+    /* Filled style when color prop is passed.
+       Text always darkens toward black for universal readability on colored bgs.
+       Border adapts to light/dark mode for subtle definition. */
+    &[style*='--local-pill-bg'] {
+      --_pill-bg: var(--local-pill-bg);
+      background-color: var(--_pill-bg);
+      color: var(--local-pill-fg, color-mix(in oklch, var(--_pill-bg) 30%, black));
+      border-color: light-dark(
         color-mix(in oklch, var(--_pill-bg) 70%, black),
         color-mix(in oklch, var(--_pill-bg) 70%, white)
       );
+    }
   }
 </style>

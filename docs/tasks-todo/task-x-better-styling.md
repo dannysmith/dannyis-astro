@@ -104,7 +104,7 @@ These ones **clearly** need work:
 
 These ones **clearly** need work:
 
-- [ ] Pill
+- [x] Pill
 - [ ] ContentCard
   - [ ] Articles
   - [ ] Notes
