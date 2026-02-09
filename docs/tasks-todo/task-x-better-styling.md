@@ -109,6 +109,27 @@ These ones **clearly** need work:
   - [x] Articles
   - [x] Notes
 
-- [ ] Double-check all other components for opportunities to clean up CSS etc
+## Final Component Review
+
+Review remaining components for opportunities to simplify/remove CSS after global style changes.
+
+### Phase 1: Core Layout & Navigation
+- [x] `MainNavigation.astro` + `NavLink.astro`
+- [x] `Footer.astro`
+
+### Phase 2: UI Components
+- [x] `ThemeToggle.astro`
+- [x] `SocialLinks.astro`
+- [x] `PersonalLogo.astro`
+- [x] `Spinner.astro`
+- [x] `MarkdownContentActions.astro`
+
+### Phase 3: Content-Adjacent
+- [x] `TableOfContents.astro`
+- [x] `NoteCard.astro`
+- [x] `Lightbox.astro`
+
+### Phase 4: MDX Typography
+- [x] `SmallCaps.astro`
 
 # Notes - Scratchpad
