@@ -36,7 +36,7 @@ const isFallback = !metadata;
     <div class="bookmark-content">
       <span class="bookmark-title">{data.title}</span>
       {data.description && <p class="bookmark-description">{data.description}</p>}
-      <span class="bookmark-domain">{data.domain}</span>
+      {data.domain && <span class="bookmark-domain">{data.domain}</span>}
       {isFallback && <p class="bookmark-fallback">Preview unavailable - click to visit</p>}
     </div>
     {data.image && <img src={data.image} alt="" loading="lazy" />}
