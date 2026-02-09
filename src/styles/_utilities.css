@@ -60,14 +60,14 @@
   }
 
   /* ----------------------------------------
-     Card/panel surface styling
-     Apply to raised cards, panels, callouts etc
+     .surface-white - White/raised surface context
+     Sets background to white (light) or raised dark (dark mode)
+     and redefines --color-background-secondary for children
      ---------------------------------------- */
-  .card-surface {
-    background-color: var(--surface-raised);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    filter: var(--shadow-small);
+  .surface-white {
+    --_surface-bg: light-dark(var(--color-white), oklch(16% 0 0));
+    background-color: var(--_surface-bg);
+    --color-background-secondary: oklch(from var(--_surface-bg) calc(l - 0.04) c h);
   }
 
   /* Image cover - for responsive images that fill their container */

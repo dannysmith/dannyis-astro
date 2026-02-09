@@ -155,8 +155,6 @@
     oklch(from var(--color-white) l c h / 0.1)
   );
 
-  --surface-raised: light-dark(var(--color-white), oklch(16% 0 0));
-
   /* ======= SPACING ======= */
   /* @link https://utopia.fyi/space/calculator?c=375,16,1.2,1280,20,1.333,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
 
