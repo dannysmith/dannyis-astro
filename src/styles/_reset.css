@@ -90,7 +90,7 @@
     background-size: cover;
   }
 
-  /* Remove picture wrapper from layou */
+  /* Remove picture wrapper from layout */
   :where(picture) {
     display: contents;
   }

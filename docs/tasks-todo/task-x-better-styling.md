@@ -98,7 +98,7 @@ These ones **clearly** need work:
 - [x] Notion
 - [x] ResizableContainer
 - [x] SmartLink
-- [ ] Tabs / TabItem
+- [x] Tabs / TabItem
 
 ## UI Components
 

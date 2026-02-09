@@ -98,7 +98,7 @@
     vertical-align: 0.1em;
     opacity: 0.5;
     font-weight: 600;
-    margin-left: 0.18em;
+    margin-inline-start: 0.18em;
   }
 
   /* All caps utility - for labels and UI text */

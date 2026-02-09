@@ -12,9 +12,16 @@ const { url, className = '' } = Astro.props;
 const metadata = await fetchLinkMetadata(url);
 
 // If metadata fetch fails, provide a minimal fallback
+let domain: string | null = null;
+try {
+  domain = new URL(url).hostname.replace('www.', '');
+} catch {
+  // Malformed URL - leave domain as null
+}
+
 const fallbackMetadata = {
   url,
-  domain: new URL(url).hostname.replace('www.', ''),
+  domain,
   title: url,
   description: null,
   image: null,
