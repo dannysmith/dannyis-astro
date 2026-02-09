@@ -95,7 +95,7 @@ These ones **clearly** need work:
 - [x] IntroParagraph
 - [x] Embed
 - [x] Loom
-- [ ] Notion
+- [x] Notion
 - [ ] ResizableContainer
 - [ ] SmartLink
 - [ ] Tabs / TabItem
