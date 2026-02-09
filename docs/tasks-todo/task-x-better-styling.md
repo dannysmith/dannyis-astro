@@ -96,8 +96,8 @@ These ones **clearly** need work:
 - [x] Embed
 - [x] Loom
 - [x] Notion
-- [ ] ResizableContainer
-- [ ] SmartLink
+- [x] ResizableContainer
+- [x] SmartLink
 - [ ] Tabs / TabItem
 
 ## UI Components
