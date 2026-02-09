@@ -13,7 +13,7 @@ export interface Props {
 const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
 ---
 
-<article class="note h-entry cq">
+<article class="note h-entry cq surface-white">
   <header class="note-header ui-style">
     <a href={`/notes/${slug}/`} class="date-link">
       <time class="date" datetime={pubDate.toISOString()}>
@@ -50,7 +50,6 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
     border-radius: var(--radius-sm);
     border-top: var(--border-width-accent) solid light-dark(var(--color-black), var(--color-accent));
 
-    background-color: var(--surface-raised);
     background-image: radial-gradient(
       light-dark(color-mix(in oklch, var(--color-coral) 20%, transparent), transparent) 0.5px,
       transparent 0

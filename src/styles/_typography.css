@@ -1,0 +1,285 @@
+/* ============================================
+   TYPOGRAPHY LAYER
+   ============================================ */
+@layer typography {
+  html {
+    font-variant-ligatures: common-ligatures;
+    hanging-punctuation: first allow-end last;
+  }
+
+  body {
+    font-family: var(--font-prose);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-normal);
+  }
+
+  /* ----------- Headings ----------- */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-snug);
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    padding-bottom: 0.3em;
+  }
+
+  h1 {
+    font-size: var(--font-size-xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  h3 {
+    font-size: var(--font-size-md);
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: var(--font-size-base);
+  }
+
+  /* ----------- Links ----------- */
+
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: max(0.08em, 1px);
+    text-underline-offset: 0.1em;
+    text-decoration-skip-ink: auto;
+    transition:
+      color var(--duration-fast) var(--ease-in-out),
+      text-decoration-color var(--duration-fast) var(--ease-in-out);
+  }
+
+  a:visited {
+    color: var(--color-visited);
+  }
+
+  a:hover,
+  a:focus {
+    color: var(--color-accent);
+  }
+
+  /* Subtle underlines when not interacting */
+  a:not(:is(:hover, :focus)) {
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
+  }
+
+  /* ----------- Lists ----------- */
+
+  ul {
+    padding-left: 0.4em;
+    list-style-type: '•';
+  }
+
+  ol {
+    padding-left: 0.9em;
+    & ::marker {
+      font-size: 1.4ex;
+      font-variation-settings: 'opsz' 10;
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  ol ol {
+    list-style-type: lower-alpha;
+  }
+  ol ol ol {
+    list-style-type: lower-roman;
+  }
+
+  li {
+    padding-left: var(--space-xs);
+    margin-top: var(--space-2xs);
+    &::marker {
+      color: var(--color-accent);
+    }
+  }
+
+  /* Long list items - slightly more spacing between items */
+  .long-list-items li {
+    text-wrap: pretty;
+
+    &:not(:first-child) {
+      margin-top: var(--space-s);
+    }
+  }
+
+  /* ----------- Task Lists ----------- */
+
+  .contains-task-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .task-list-item {
+    padding-left: 0;
+
+    & .contains-task-list {
+      /* indent nested task lists */
+      padding-left: calc(0.4em + var(--space-xs));
+
+      /* Reset margin on nested ul so the first li's top margin is used */
+      margin-top: 0;
+    }
+
+    input[type='checkbox'] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 0.85em;
+      height: 0.85em;
+      margin-right: 0.3em;
+      vertical-align: -0.1em;
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-xs);
+      background-color: transparent;
+
+      &:checked {
+        background-color: var(--color-accent);
+        border-color: var(--color-accent);
+        vertical-align: 0.1em;
+
+        &::before {
+          content: '✓';
+          display: block;
+          color: var(--color-background);
+          font-size: 0.6em;
+          line-height: 1.2;
+          text-align: center;
+          font-weight: var(--font-weight-bold);
+        }
+      }
+
+      &:disabled {
+        opacity: 1;
+        cursor: default;
+      }
+    }
+  }
+
+  /* ----------- Blockquotes ----------- */
+
+  blockquote {
+    border-left: var(--border-width-thick) solid var(--color-accent);
+    padding-left: var(--space-m);
+    font-style: italic;
+    margin-left: 0;
+    font-variant-numeric: oldstyle-nums;
+  }
+
+  /* ----------- Inline Text Elements ----------- */
+
+  /* Inline code */
+  samp,
+  :not(pre) > code {
+    font-family: var(--font-code);
+    font-size: var(--font-size-sm);
+    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
+    background-color: var(--color-background-code);
+    border: var(--border-width-hairline) solid var(--color-border);
+    padding: 0.1em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Strong text */
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Highlights and Marked Text */
+  mark,
+  .highlight {
+    background: var(--color-yellow);
+    padding-inline: 0.1em;
+    border-radius: 0.1em;
+    color: marktext;
+  }
+
+  /* Variable Text */
+  var {
+    color: var(--color-accent);
+    font-style: italic;
+  }
+
+  /* Small Text */
+  small {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Strikethrough and Deleted Text */
+  del,
+  s {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 0.1em;
+    text-decoration-style: wavy;
+    text-underline-offset: -0.5em;
+    text-decoration-skip-ink: none;
+    cursor: not-allowed;
+  }
+
+  /* ----------- Keyboard Input ----------- */
+  kbd {
+    display: inline-block;
+    position: relative;
+    top: -1px;
+    min-width: 0.75em;
+    text-align: center;
+    padding: 0.3em 0.4em;
+    background-color: var(--color-background-secondary);
+    cursor: default;
+    line-height: 1;
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+
+    font-family: var(--font-code);
+    font-size: 0.65em;
+    text-transform: uppercase;
+    font-weight: var(--font-weight-medium);
+    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
+
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 0 1px var(--color-border);
+    white-space: nowrap;
+
+    &:hover {
+      box-shadow: 0 1px 0 0.5px var(--color-border);
+      top: 1px;
+    }
+  }
+
+  /* ----------- Footnotes ----------- */
+
+  /* Footnote reference link (the superscript number in text) */
+  [data-footnote-ref] {
+    display: inline-block;
+    padding-inline: 0.5ch;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    font-variant: small-caps;
+    letter-spacing: var(--tracking-wide);
+    text-decoration: none;
+    color: var(--color-accent);
+  }
+
+  /* Footnotes section at bottom of content */
+  .footnotes {
+    border-top: var(--border-width-hairline) solid var(--color-accent);
+    padding-top: var(--space-s);
+    font-size: var(--font-size-sm);
+
+    [data-footnote-backref] {
+      text-decoration: none;
+      color: var(--color-accent);
+    }
+  }
+}

@@ -4,7 +4,7 @@ Guidance and patterns for writing and maintaining tests.
 
 ## Testing Stack
 
-This project uses **Vitest** for unit tests of pure business logic and utility functions and **Playwright** for E2E tests for critical user journeys and integration points.
+This project uses **Vitest** for unit tests of pure business logic and utility functions and **Playwright CLI** for E2E tests for critical user journeys and integration points.
 
 **Commands:**
 

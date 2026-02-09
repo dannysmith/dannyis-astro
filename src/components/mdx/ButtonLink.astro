@@ -8,68 +8,73 @@ interface Props {
 const { href, variant = 'primary', inline = false } = Astro.props;
 ---
 
-{
-  inline ? (
-    <a href={href} class="button-link" data-variant={variant}>
-      <span class="button-link-text"><slot /></span>
-    </a>
-  ) : (
-    <div class="button-link-container">
-      <a href={href} class="button-link" data-variant={variant}>
-        <span class="button-link-text"><slot /></span>
-      </a>
-    </div>
-  )
-}
+<span class:list={[{ 'button-link-container': !inline }]}>
+  <a href={href} class="button-link" data-variant={variant}>
+    <span class="button-link-text"><slot /></span>
+  </a>
+</span>
 
 <style>
   .button-link-container {
+    display: block;
     text-align: center;
   }
 
   .button-link {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.5ch;
-    padding: .8em 1.2em;
-    font-family: var(--font-ui);
-    font-weight: var(--font-weight-bold);
+    gap: 0.5em;
+    padding: 0.5em 1em;
+    min-height: 44px;
+
+    font-weight: var(--font-weight-medium);
     text-decoration: none;
-    text-transform: uppercase;
+    line-height: var(--leading-tight);
+
     border-radius: var(--radius-sm);
-    border: var(--border-width-base) solid var(--color-accent);
-    transition: background-color var(--duration-normal) var(--ease-in-out), border-color var(--duration-normal) var(--ease-in-out), color var(--duration-normal) var(--ease-in-out);
-    line-height: var(--leading-none);
+    transition: all var(--duration-fast) var(--ease-in-out);
 
-    &:visited {
-      color: inherit;
+    &:focus-visible {
+      outline-offset: 0;
+    }
+
+    &:active {
+      scale: 0.98;
+    }
+
+    /* Primary: solid accent background, always dark text for contrast */
+    &[data-variant='primary'] {
+      background-color: var(--color-accent);
+      color: var(--color-ink);
+
+      &:visited {
+        color: var(--color-ink);
+      }
+
+      &:hover {
+        background-color: oklch(from var(--color-accent) calc(l - 0.1) c h);
+      }
+    }
+
+    /* Secondary: transparent with border */
+    &[data-variant='secondary'] {
+      background-color: transparent;
+      color: var(--color-text);
+      border: var(--border-width-hairline) solid var(--color-border);
+
+      &:visited {
+        color: var(--color-text);
+      }
+
+      &:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+      }
     }
   }
 
-  /* text-box must be on inline box inside flex container, not the flex container itself */
   .button-link-text {
-    text-box: trim-both cap alphabetic;
-  }
-
-  .button-link[data-variant='primary'] {
-    background-color: var(--color-accent);
-    color: var(--color-text);
-
-    &:hover {
-      background-color: oklch(from var(--color-accent) calc(l - 0.08) c h);
-      border-color: oklch(from var(--color-accent) calc(l - 0.08) c h);
-    }
-  }
-
-  .button-link[data-variant='secondary'] {
-    background-color: transparent;
-    color: var(--color-text);
-    border-color: color-mix(in oklch, var(--color-text) 20%, transparent);
-
-    &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent);
-    }
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
   }
 </style>

@@ -31,7 +31,10 @@ type ContentType = 'article' | 'note' | 'tool' | 'custom';
 
 interface Props {
   /** Content collection entry - auto-extracts all data */
-  content?: CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'toolboxPages'>;
+  content?:
+    | CollectionEntry<'articles'>
+    | CollectionEntry<'notes'>
+    | CollectionEntry<'toolboxPages'>;
 
   /** Manual props for custom/slot usage (when no content prop) */
   href?: string;
@@ -96,92 +99,96 @@ const hasSlot = Astro.slots.has('default');
   style={`--_border-color: ${borderColor}`}
 >
   <a href={href} class="card-link">
-    {image && (
-      <div class="card-image">
-        <Image
-          src={image}
-          alt={imageAlt || `Cover for ${title}`}
-          width={400}
-          height={200}
-          loading="lazy"
-        />
-      </div>
-    )}
+    {
+      image && (
+        <div class="card-image">
+          <Image
+            src={image}
+            alt={imageAlt || `Cover for ${title}`}
+            width={400}
+            height={200}
+            loading="lazy"
+          />
+        </div>
+      )
+    }
 
     <div class="card-content">
       <header class="card-header">
         <div class="card-meta">
           <span class="type-label">{typeLabel}</span>
-          {date && (
-            <time class="date" datetime={date.toISOString()}>
-              <FormattedDate date={date} />
-            </time>
-          )}
+          {
+            date && (
+              <time class="date" datetime={date.toISOString()}>
+                <FormattedDate date={date} />
+              </time>
+            )
+          }
         </div>
         <h2 class="card-title">{title}</h2>
       </header>
 
-      {hasSlot ? (
-        <div class="card-body">
-          <slot />
-        </div>
-      ) : (
-        summary && <p class="card-summary">{summary}</p>
-      )}
+      {
+        hasSlot ? (
+          <div class="card-body">
+            <slot />
+          </div>
+        ) : (
+          summary && <p class="card-summary">{summary}</p>
+        )
+      }
     </div>
   </a>
 </article>
 
 <style>
-  /* Component-scoped transitioning color - enables smooth interpolation */
+  /* Registered property enables smooth color interpolation during transitions.
+     inherits: true allows ::before to see the value set on parent article. */
   @property --_border-color {
     syntax: '<color>';
-    inherits: false;
+    inherits: true;
     initial-value: oklch(70% 0.18 25);
   }
 
-  /* Container query applied via .cq class */
   .content-card {
-    --_border-color: var(--color-accent);
-
     position: relative;
-    background: var(--surface-raised);
-    filter: var(--shadow-small);
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
     overflow: hidden;
-    transition: filter var(--duration-fast) var(--ease-in-out);
+    transition: border-color var(--duration-fast) var(--ease-in-out);
 
-    /* Left border as pseudo-element - grows on hover without shifting content */
+    /* Left accent border - pseudo-element grows on hover/focus */
     &::before {
       content: '';
       position: absolute;
       inset-block: 0;
-      left: 0;
+      inset-inline-start: 0;
       width: var(--border-width-thick);
       background: var(--_border-color);
       transition: width var(--duration-fast) var(--ease-in-out);
       z-index: 1;
     }
 
-    &:hover {
-      filter: var(--shadow-medium);
-    }
+    &:hover,
+    &:has(:focus-visible) {
+      border-color: var(--_border-color);
 
-    &:hover::before {
-      width: var(--border-width-heavy);
+      &::before {
+        width: var(--border-width-heavy);
+      }
     }
 
     /* Compact mode - forced via prop */
     &.compact {
-      & :is(.card-image, .card-summary, .card-body) {
+      :is(.card-image, .card-summary, .card-body) {
         display: none;
       }
-
-      & .card-content {
+      .card-content {
         padding: var(--space-xs);
       }
-
-      & .card-title {
-        font-size: var(--font-size-base);
+      .card-title {
+        font-size: var(--font-size-sm);
       }
     }
   }
@@ -202,7 +209,7 @@ const hasSlot = Astro.slots.has('default');
     max-height: 200px;
     overflow: hidden;
 
-    & img {
+    img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -245,7 +252,7 @@ const hasSlot = Astro.slots.has('default');
     line-height: var(--leading-normal);
   }
 
-  /* Container query - responsive compactness */
+  /* Responsive compact - matches .compact styles */
   @container (width < 350px) {
     :is(.card-image, .card-summary, .card-body) {
       display: none;

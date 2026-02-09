@@ -18,6 +18,7 @@ src/
 │   └── notes/        # Short-form notes
 ├── icons/            # Custom SVG icons
 ├── config/           # Centralized configuration
+├── styles/           # CSS architecture (layered partials)
 └── utils/            # Utility functions
 ```
 

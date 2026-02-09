@@ -2,17 +2,13 @@
 export interface Props {
   header: string;
   open?: boolean;
-  plain?: boolean;
 }
 
-const { header, open = false, plain = false } = Astro.props;
+const { header, open = false } = Astro.props;
 ---
 
-<details class="accordion" open={open} data-plain={plain || undefined}>
-  <summary class="accordion-header">
-    <span class="accordion-title"><span class="accordion-title-text">{header}</span></span>
-    <span class="accordion-icon" aria-hidden="true"></span>
-  </summary>
+<details class="accordion" open={open}>
+  <summary><span class="summary-text">{header}</span></summary>
   <div class="accordion-content content-trim">
     <slot />
   </div>
@@ -20,92 +16,14 @@ const { header, open = false, plain = false } = Astro.props;
 
 <style>
   .accordion {
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background-color: var(--surface-raised);
+    font-size: var(--font-size-sm);
   }
 
-  .accordion[data-plain] {
-    background-color: transparent;
-    border: none;
-
-    .accordion-header, .accordion-content {
-      padding-inline: 0;
-    }
+  .summary-text {
+    margin-inline-start: 0.5em;
   }
 
-  .accordion-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-s);
-    padding: var(--space-s) var(--space-m);
-    font-family: var(--font-ui);
-    font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-md);
-    cursor: pointer;
-    list-style: none; /* Remove default marker */
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-
-    &::marker {
-      display: none;
-    }
-  }
-
-  .accordion-title {
-    flex: 1;
-    /* Defensive: wrap long headers that lack natural break points */
-    overflow-wrap: break-word;
-  }
-
-  /* text-box must be on inline box inside flex item, not the flex item itself */
-  .accordion-title-text {
-    text-box: trim-both cap alphabetic;
-  }
-
-  .accordion-icon {
-    flex-shrink: 0;
-    width: 1em;
-    height: 1em;
-    position: relative;
-    color: var(--color-accent);
-
-    /* Horizontal bar */
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      background-color: currentColor;
-      transition: transform var(--duration-normal) var(--ease-in-out);
-    }
-
-    &::before {
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 2px;
-      transform: translateY(-50%);
-    }
-
-    /* Vertical bar - rotates to horizontal when open */
-    &::after {
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 2px;
-      transform: translateX(-50%);
-    }
-  }
-
-  .accordion[open] .accordion-icon::after {
-    transform: translateX(-50%) rotate(90deg);
-  }
-
-  /* .content-trim applied via class for first/last child margin reset */
   .accordion-content {
-    padding: 0 var(--space-m) var(--space-m);
+    padding-block-start: var(--space-2xs);
   }
 </style>

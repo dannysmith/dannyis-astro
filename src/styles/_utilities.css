@@ -1,0 +1,149 @@
+/* ============================================
+   UTILITIES LAYER - Single-purpose helpers
+   ============================================ */
+@layer utilities {
+  /* ----------------------------------------
+     .ui-style - Opt-out of prose typography
+     Apply to navigation, footers, page titles etc
+     ---------------------------------------- */
+  .ui-style {
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-snug);
+
+    /* Remove prose link styling */
+    & a {
+      text-decoration: none;
+      color: inherit;
+      transition: color var(--duration-fast) ease-in-out;
+    }
+
+    & a:visited {
+      color: inherit;
+    }
+
+    & a:hover,
+    & a:focus {
+      color: var(--color-accent);
+    }
+
+    /* Remove heading borders and reset spacing */
+    & :is(h1, h2, h3, h4, h5, h6) {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-top: var(--space-xs);
+    }
+
+    /* Reset prose element spacing to standard UI unit */
+    & :is(p, ul, ol, blockquote, pre, figure, table) {
+      margin-top: var(--space-xs);
+    }
+
+    /* Remove list marker colors */
+    & li::marker {
+      color: inherit;
+    }
+  }
+
+  /* ----------------------------------------
+     .dark-surface - Always-dark areas (nav, footer etc)
+     Combine with .ui-style for dark UI areas
+     ---------------------------------------- */
+  .dark-surface {
+    background-color: var(--color-charcoal);
+    color: var(--color-beige);
+  }
+
+  /* Container query utility */
+  .cq {
+    container-type: inline-size;
+  }
+
+  /* ----------------------------------------
+     .surface-white - White/raised surface context
+     Sets background to white (light) or raised dark (dark mode)
+     and redefines --color-background-secondary for children
+     ---------------------------------------- */
+  .surface-white {
+    --_surface-bg: light-dark(var(--color-white), oklch(16% 0 0));
+    background-color: var(--_surface-bg);
+    --color-background-secondary: oklch(from var(--_surface-bg) calc(l - 0.04) c h);
+  }
+
+  /* Image cover - for responsive images that fill their container */
+  .img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Content trim - removes top/bottom margins from first/last children
+     Use inside containers with padding where slotted content has margins */
+  .content-trim {
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* Arrow indicator for external links */
+  .external-arrow {
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif; /* System fonts have this glyph */
+    font-size: 0.7em;
+    vertical-align: 0.1em;
+    opacity: 0.5;
+    font-weight: 600;
+    margin-inline-start: 0.18em;
+  }
+
+  /* All caps utility - for labels and UI text */
+  .all-caps {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  /* Text alignment utilities */
+  .center {
+    text-align: center;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .left {
+    text-align: left;
+  }
+
+  /* Vertical alignment utilities */
+  .top {
+    vertical-align: top;
+  }
+
+  .middle {
+    vertical-align: middle;
+  }
+
+  .bottom {
+    vertical-align: bottom;
+  }
+
+  /* Hidden utility for screen readers and microformats */
+  .sr-only,
+  .hidden-microformat {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+}

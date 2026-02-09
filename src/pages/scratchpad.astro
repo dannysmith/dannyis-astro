@@ -1,7 +1,7 @@
 ---
 /**
- * Scratchpad - A minimal page for experimenting with components
- * No additional styles beyond the basics.
+ * Scratchpad - A minimal page for testing vertical rhythm and spacing
+ * Covers all the edge cases for prose spacing work.
  */
 import { BaseHead, MainNavigation } from '@components/layout/index';
 import { SGTypographySwitcher } from '@components/styleguide';
@@ -10,240 +10,286 @@ import { SGTypographySwitcher } from '@components/styleguide';
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title="Scratchpad" description="Component experimentation area" />
+    <BaseHead title="Scratchpad" description="Vertical rhythm testing" />
   </head>
   <body>
     <MainNavigation />
     <main>
-      <h1>Scratchpad</h1>
+      <h1>Vertical Rhythm Test Page</h1>
       <SGTypographySwitcher>
-        <h1>The Art of Web Typography</h1>
+        <!-- ========== FIRST CHILD TESTS ========== -->
+        <h2>First Child Tests</h2>
         <p>
-          Good typography is invisible. When text is set well, readers don't notice the typeface,
-          the line length, or the spacing—they simply absorb the content. This page demonstrates the
-          typographic elements available on this site.
-        </p>
-
-        <h2>Inline Text Styles</h2>
-        <p>
-          Text can be emphasised in several ways. Use <strong>strong text</strong> for importance and
-          <em>emphasis</em> for stress. You can also use <b>bold</b> and <i>italic</i> for stylistic
-          purposes without semantic weight. For keyboard shortcuts, use <kbd>Ctrl</kbd> + <kbd
-            >S</kbd
-          > to save, or <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> on macOS.
-        </p>
-        <p>
-          Inline <code>code snippets</code> appear in a monospace font. Links like
-          <a href="https://developer.mozilla.org">MDN Web Docs</a> provide navigation to other resources.
-          You can also mark text as <ins>inserted</ins> or <del>deleted</del>, which is useful for
-          showing edits. The <mark>mark element</mark> highlights text for reference.
-        </p>
-        <p>
-          Abbreviations can include titles: <abbr title="HyperText Markup Language">HTML</abbr> and
-          <abbr title="Cascading Style Sheets">CSS</abbr> are the building blocks of the web. Some abbreviations
-          like <abbr>NASA</abbr> or <abbr>ASAP</abbr> are common enough to stand alone.
-        </p>
-        <p>Short paragraph. Sometimes you need just a sentence or two.</p>
-        <p>
-          Scientific notation uses subscript and superscript: H<sub>2</sub>O is water, and
-          Einstein's famous equation is E = mc<sup>2</sup>. Footnotes often use superscript<sup
-            >1</sup
-          > as well.
-        </p>
-        <p>
-          The <u>underline element</u> should be used sparingly as it can be confused with links. The
-          <small>small element</small> represents side comments and small print.
+          This heading above is the first child of the container. It should have no top margin.
+          This paragraph follows it directly.
         </p>
 
         <hr />
 
-        <h2>Headings Hierarchy</h2>
+        <!-- ========== CONSECUTIVE HEADINGS ========== -->
+        <h2>Consecutive Headings</h2>
+        <h3>An H3 Immediately After H2</h3>
         <p>
-          Headings create document structure. Each level should be used semantically, not for
-          styling. Below is a demonstration of all heading levels in context.
+          The two headings above should have tighter spacing between them (subheading pattern).
+          This paragraph follows normally.
         </p>
 
-        <h3>Third-Level Heading</h3>
-        <p>
-          This is body text following an H3. Third-level headings work well for subsections within a
-          larger topic. They provide enough visual distinction without overwhelming the reader.
-        </p>
-
-        <h4>Fourth-Level Heading</h4>
-        <p>
-          Fourth-level headings are useful for detailed breakdowns. They're common in technical
-          documentation and long-form articles where deep nesting is necessary.
-        </p>
-
-        <h5>Fifth-Level Heading</h5>
-        <p>
-          At this level, headings become quite subtle. They're rarely needed but exist for
-          completeness.
-        </p>
-
-        <h6>Sixth-Level Heading</h6>
-        <p>
-          The smallest heading level. If you need this many levels of hierarchy, consider
-          restructuring your content.
-        </p>
+        <h3>Another Section</h3>
+        <h4>H4 After H3</h4>
+        <h5>H5 After H4</h5>
+        <h6>H6 After H5</h6>
+        <p>That was a cascade of consecutive headings. They should all be tightly spaced.</p>
 
         <hr />
 
+        <!-- ========== SECTION BREAKS ========== -->
+        <h2>Section Breaks</h2>
+        <p>
+          When a major heading (H1 or H2) follows content like this paragraph, there should be
+          extra space above it to create a clear section break.
+        </p>
+
+        <h2>New Major Section</h2>
+        <p>
+          The H2 above should have significant breathing room from the preceding paragraph.
+          This creates visual separation between major sections.
+        </p>
+
+        <p>Here is another paragraph of content before an H3.</p>
+
+        <h3>Minor Section Break</h3>
+        <p>
+          The H3 above should also have extra space, but less than an H2. It signals a
+          subsection rather than a new major topic.
+        </p>
+
+        <p>And one more paragraph before testing H4.</p>
+
+        <h4>H4 After Paragraph</h4>
+        <p>H4 headings should have standard heading margin, no special section break treatment.</p>
+
+        <hr />
+
+        <!-- ========== PROSE ELEMENTS ========== -->
+        <h2>Prose Element Spacing</h2>
+        <p>First paragraph after the heading. Standard spacing.</p>
+        <p>Second paragraph. There should be consistent spacing between paragraphs.</p>
+        <p>Third paragraph. Not too tight, not too loose.</p>
+
+        <blockquote>
+          <p>A blockquote should have appropriate spacing from the surrounding paragraphs.</p>
+        </blockquote>
+
+        <p>Paragraph after blockquote.</p>
+
+        <blockquote>
+          <p>A multi-paragraph blockquote starts here.</p>
+          <p>This is the second paragraph inside the blockquote.</p>
+        </blockquote>
+
+        <p>Paragraph after the multi-paragraph blockquote.</p>
+
+        <hr />
+
+        <!-- ========== LISTS ========== -->
         <h2>Lists</h2>
-        <p>Lists organise related items. They come in ordered and unordered varieties.</p>
+        <p>Lists should have appropriate spacing from surrounding content.</p>
 
-        <h3>Unordered Lists</h3>
+        <h3>Unordered List</h3>
         <ul>
-          <li>First item at the top level</li>
+          <li>First item</li>
+          <li>Second item</li>
           <li>
-            Second item with nested content
+            Third item with nested list
             <ul>
               <li>Nested item one</li>
+              <li>Nested item two</li>
               <li>
-                Nested item two with further nesting
+                Nested item with deeper nesting
                 <ul>
-                  <li>Deeply nested item</li>
-                  <li>Another deeply nested item</li>
+                  <li>Deeply nested</li>
+                  <li>Another deep item</li>
                 </ul>
               </li>
-              <li>Nested item three</li>
             </ul>
           </li>
-          <li>Third item back at the top level</li>
-          <li>
-            Fourth item with a longer description that might wrap to multiple lines depending on the
-            viewport width
-          </li>
+          <li>Fourth item back at top level</li>
         </ul>
 
-        <h3>Ordered Lists</h3>
+        <p>Paragraph after unordered list.</p>
+
+        <h3>Ordered List</h3>
         <ol>
-          <li>Preheat the oven to 180°C</li>
+          <li>Step one</li>
+          <li>Step two</li>
           <li>
-            Prepare the ingredients:
+            Step three with substeps
             <ol>
-              <li>Measure 200g of flour</li>
-              <li>Weigh 100g of butter</li>
+              <li>Substep A</li>
+              <li>Substep B</li>
               <li>
-                Gather the spices:
+                Substep C with more detail
                 <ol>
-                  <li>1 tsp cinnamon</li>
-                  <li>½ tsp nutmeg</li>
+                  <li>Detail i</li>
+                  <li>Detail ii</li>
                 </ol>
               </li>
             </ol>
           </li>
-          <li>Mix dry ingredients together</li>
-          <li>Add wet ingredients gradually</li>
-          <li>Bake for 25 minutes</li>
+          <li>Step four</li>
         </ol>
 
-        <hr />
-
-        <h2>Blockquotes</h2>
-        <p>Quotations deserve distinct styling to set them apart from the author's voice.</p>
-        <blockquote>
-          <p>
-            The details are not the details. They make the design. Good design is as little design
-            as possible—less, but better, because it concentrates on the essential aspects.
-          </p>
-        </blockquote>
-        <p>Longer quotations can span multiple paragraphs:</p>
-        <blockquote>
-          <p>
-            Typography is the craft of endowing human language with a durable visual form. It is a
-            craft with ancient roots, but one that has been transformed repeatedly by technological
-            change.
-          </p>
-          <p>
-            In the digital age, typography has become both more accessible and more complex. Anyone
-            can set type, but setting it well requires understanding principles developed over
-            centuries.
-          </p>
-        </blockquote>
+        <p>Paragraph after ordered list.</p>
 
         <hr />
 
-        <h2>Tables</h2>
-        <p>Tables present structured data in rows and columns.</p>
+        <!-- ========== HR SPACING ========== -->
+        <h2>Horizontal Rule Spacing</h2>
+        <p>This paragraph comes before a horizontal rule.</p>
+
+        <hr />
+
+        <p>This paragraph comes after a horizontal rule. The HR should have symmetrical spacing.</p>
+
+        <hr />
+
+        <h2>Heading After HR</h2>
+        <p>The heading above follows an HR. Should have appropriate section break spacing.</p>
+
+        <hr />
+
+        <!-- ========== TABLE ========== -->
+        <h2>Table Spacing</h2>
+        <p>Tables should integrate naturally with surrounding prose.</p>
+
         <table>
           <thead>
             <tr>
               <th>Element</th>
+              <th>Spacing Token</th>
               <th>Purpose</th>
-              <th>Example</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><code>&lt;strong&gt;</code></td>
-              <td>Important text</td>
-              <td><strong>Bold text</strong></td>
+              <td>Paragraph</td>
+              <td><code>--space-s</code></td>
+              <td>Base prose spacing</td>
             </tr>
             <tr>
-              <td><code>&lt;em&gt;</code></td>
-              <td>Emphasised text</td>
-              <td><em>Italic text</em></td>
+              <td>Heading</td>
+              <td><code>--space-m</code></td>
+              <td>Standard heading margin</td>
             </tr>
             <tr>
-              <td><code>&lt;code&gt;</code></td>
-              <td>Code fragments</td>
-              <td><code>const x = 1</code></td>
-            </tr>
-            <tr>
-              <td><code>&lt;kbd&gt;</code></td>
-              <td>Keyboard input</td>
-              <td><kbd>Enter</kbd></td>
-            </tr>
-            <tr>
-              <td><code>&lt;mark&gt;</code></td>
-              <td>Highlighted text</td>
-              <td><mark>Marked</mark></td>
+              <td>Section break</td>
+              <td><code>--space-xl</code></td>
+              <td>Major section separation</td>
             </tr>
           </tbody>
         </table>
 
-        <hr />
-
-        <h2>Code Blocks</h2>
-        <p>Longer code samples use preformatted blocks:</p>
-        <pre><code>function greet(name) &#123;
-  return `Hello, $&#123;name&#125;!`;
-&#125;
-
-console.log(greet('World'));</code></pre>
+        <p>Paragraph after table.</p>
 
         <hr />
 
-        <h2>Putting It Together</h2>
+        <!-- ========== DETAILS/SUMMARY ========== -->
+        <h2>Details Element</h2>
+        <p>The details element should space like other block elements.</p>
+
+        <details>
+          <summary>Click to expand</summary>
+          <p>This content is revealed when the details element is opened.</p>
+          <p>It can contain multiple paragraphs.</p>
+        </details>
+
+        <p>Paragraph after details.</p>
+
+        <details>
+          <summary>Another expandable section</summary>
+          <p>More hidden content here.</p>
+        </details>
+
+        <hr />
+
+        <!-- ========== FIGURE ========== -->
+        <h2>Figure Spacing</h2>
+        <p>Figures (images with captions) should integrate with prose rhythm.</p>
+
+        <figure>
+          <div style="background: var(--color-border); height: 100px; display: grid; place-items: center;">
+            [Placeholder for image]
+          </div>
+          <figcaption>A figure caption describing the image above.</figcaption>
+        </figure>
+
+        <p>Paragraph after figure.</p>
+
+        <hr />
+
+        <!-- ========== CODE BLOCKS ========== -->
+        <h2>Code Block Spacing</h2>
+        <p>Preformatted code blocks should have appropriate vertical spacing.</p>
+
+        <pre><code>function example() &#123;
+  // Returns a greeting
+  console.log('Hello, world!');
+&#125;</code></pre>
+
+        <p>Paragraph after code block.</p>
+
+        <pre><code>// Another code block
+const spacing = '--space-s';</code></pre>
+
+        <hr />
+
+        <!-- ========== MIXED REALISTIC CONTENT ========== -->
+        <h2>Realistic Mixed Content</h2>
         <p>
-          Real content rarely uses every element in isolation. A typical paragraph might mention
-          that the <abbr title="World Wide Web Consortium">W3C</abbr> published the
-          <a href="https://www.w3.org/TR/html52/">HTML5.2 specification</a> in 2017, note that browsers
-          render <code>&lt;article&gt;</code> as a block element, and remind readers to press
-          <kbd>F12</kbd> to open developer tools.
+          This section tests how various elements work together in realistic content. Good
+          typography is invisible—when text is set well, readers absorb content without
+          noticing the spacing.
+        </p>
+
+        <h3>A Subsection</h3>
+        <p>
+          Consider the following points about vertical rhythm:
+        </p>
+        <ul>
+          <li>Consistent spacing creates visual harmony</li>
+          <li>Section breaks guide the reader's eye</li>
+          <li>First-child handling prevents awkward gaps</li>
+        </ul>
+        <p>
+          These principles apply whether you're writing documentation, blog posts, or
+          technical specifications.
+        </p>
+
+        <blockquote>
+          <p>
+            "The details are not the details. They make the design."
+          </p>
+        </blockquote>
+
+        <p>
+          After this quote, we continue with normal prose. The blockquote should feel like
+          a natural pause in the text, not a jarring interruption.
+        </p>
+
+        <h3>Another Subsection</h3>
+        <h4>With a Sub-subsection</h4>
+        <p>
+          When headings follow each other, they form a hierarchy. The tighter spacing
+          between consecutive headings signals that they're related.
+        </p>
+
+        <h2>Final Section</h2>
+        <p>
+          This H2 follows a paragraph, so it should have full section break spacing.
+          It signals a major topic change.
         </p>
         <p>
-          Typography matters because it affects comprehension. Studies show that well-set text
-          improves reading speed by 10–20%. Bad typography, meanwhile, creates <em>friction</em
-          >—readers struggle without knowing why. The goal isn't decoration; it's <strong
-            >communication</strong
-          >. Consider how line length affects readability: too short and the eye jumps constantly,
-          breaking rhythm; too long and readers lose their place when moving to the next line. The
-          ideal measure sits somewhere between 45 and 75 characters, though context matters
-          enormously. A novel might push toward the upper end, while a mobile interface demands
-          brevity. Then there's line height, which must balance density against legibility. Cramped
-          lines blur together; overly loose ones fragment into isolated strips. The interplay
-          between typeface, size, weight, and spacing forms a complex system where changing one
-          variable ripples through all the others. A heavier weight might demand more line height. A
-          larger size might tolerate tighter tracking. These decisions compound across hundreds of
-          paragraphs, thousands of headings, and millions of characters. Consistency becomes
-          paramount—not rigid uniformity, but a coherent system that readers internalise without
-          conscious effort. When everything works, the typography disappears entirely. Readers see
-          only ideas, stories, arguments, instructions. They feel informed or moved or persuaded,
-          never once thinking about the letters on the screen. That invisibility is the highest
-          achievement of typographic craft, and it requires obsessive attention to details that most
-          people will never notice.
+          And we end with a normal paragraph to test the overall visual rhythm of the page.
         </p>
       </SGTypographySwitcher>
     </main>

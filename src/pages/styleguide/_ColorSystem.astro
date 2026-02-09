@@ -20,6 +20,7 @@ const semanticColorGroups = [
       { name: 'Accent', variable: '--color-accent', usage: 'Primary brand color, links' },
       { name: 'Visited', variable: '--color-visited', usage: 'Visited links' },
       { name: 'Highlight', variable: '--color-highlight', usage: 'Text highlights' },
+      { name: 'Focus Ring', variable: '--color-focus-ring', usage: 'Focus ring' },
     ],
   },
   {
@@ -32,7 +33,6 @@ const semanticColorGroups = [
         usage: 'Cards, panels',
       },
       { name: 'Background Code', variable: '--color-background-code', usage: 'Code blocks' },
-      { name: 'Surface Raised', variable: '--surface-raised', usage: 'Elevated surfaces' },
     ],
   },
   {
@@ -103,7 +103,7 @@ const semanticColorGroups = [
       semanticColorGroups.map(({ category, colors }) => (
         <tbody>
           <tr>
-            <th colspan="5" class="center">
+            <th colspan="5">
               {category}
             </th>
           </tr>
@@ -160,15 +160,6 @@ const semanticColorGroups = [
     padding: var(--space-s);
     border-radius: var(--radius-sm);
     border: var(--border-width-hairline) solid var(--color-border);
-  }
-
-  table {
-    :is(th, td.center) {
-      text-align: center;
-    }
-    td {
-      vertical-align: middle;
-    }
   }
 
   /* Mini swatches - sized wrapper for ColorSwatch */

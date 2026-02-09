@@ -9,6 +9,7 @@ import {
   SmallCaps,
   SmartLink,
   highlight as Highlight,
+  ResizableContainer,
 } from '@components/mdx/index';
 import { Content as ChecklistContent } from './_snippets/checklist.mdx';
 import { Content as ListDensityContent } from './_snippets/list-density.mdx';
@@ -17,8 +18,8 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
 <section id="typography" class="styleguide-section flow">
   <h2>Typography</h2>
   <p>
-    Typography elements shown in realistic settings. Use the tabs to compare how each renders
-    in the default context, long-form prose, and UI contexts.
+    Typography elements shown in realistic settings. Use the tabs to compare how each renders in the
+    default context, long-form prose, and UI contexts.
   </p>
 
   <!-- 1. Paragraphs & Basic Inline Text -->
@@ -28,23 +29,25 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
     <p>
       Good writing finds its way to readers through <em>clarity</em> and <strong>purpose</strong>.
       Whether you're crafting a technical specification or a personal reflection, the fundamentals
-      remain the same. A well-structured paragraph flows naturally, guiding the reader from one
-      idea to the next without friction. This is especially true when writing about complex topics
-      like <a href="/writing/">software development</a> or <a href="https://example.com">design systems</a>.
+      remain the same. A well-structured paragraph flows naturally, guiding the reader from one idea
+      to the next without friction. This is especially true when writing about complex topics like <a
+        href="/writing/">software development</a
+      > or <a href="https://example.com">design systems</a>.
     </p>
     <p>
-      The difference between <b>bold</b> and <strong>strong</strong> is subtle but meaningful.
-      Bold (<code>&lt;b&gt;</code>) is purely stylistic, while strong (<code>&lt;strong&gt;</code>)
-      conveys semantic importance. Similarly, <i>italic</i> differs from <em>emphasis</em>&mdash;one
-      is a visual treatment, the other tells screen readers to stress the word. In 1984, these
-      distinctions didn't matter much. By 2024, they're essential for accessibility.
+      The difference between <b>bold</b> and <strong>strong</strong> is subtle but meaningful. Bold (<code
+        >&lt;b&gt;</code
+      >) is purely stylistic, while strong (<code>&lt;strong&gt;</code>) conveys semantic
+      importance. Similarly, <i>italic</i> differs from <em>emphasis</em>&mdash;one is a visual
+      treatment, the other tells screen readers to stress the word. In 1984, these distinctions
+      didn't matter much. By 2024, they're essential for accessibility.
     </p>
     <p>
-      Consider the office filing cabinet: it organises information efficiently, but finding
-      specific files still requires effort. Digital systems offer the same trade-offs. A good
-      filing system might store 1/2 of your documents in frequently-accessed folders while
-      archiving the remaining 3/4 for occasional reference. The efficacy of any system depends
-      on how well it fits your workflow.
+      Consider the office filing cabinet: it organises information efficiently, but finding specific
+      files still requires effort. Digital systems offer the same trade-offs. A good filing system
+      might store 1/2 of your documents in frequently-accessed folders while archiving the remaining
+      3/4 for occasional reference. The efficacy of any system depends on how well it fits your
+      workflow.
     </p>
     <hr />
     <h2>Links: Regular vs SmartLink</h2>
@@ -59,7 +62,9 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
       This paragraph uses the <code>&lt;SmartLink&gt;</code> component instead. Here's an
       <SmartLink href="/notes/">internal link</SmartLink> and an
       <SmartLink href="https://github.com">external link</SmartLink>. SmartLink automatically
-      detects external URLs, adds the arrow indicator, and handles <code>target</code>/<code>rel</code>
+      detects external URLs, adds the arrow indicator, and handles <code>target</code>/<code
+        >rel</code
+      >
       attributes. It makes authoring content significantly easier.
     </p>
   </SGTypographySwitcher>
@@ -71,42 +76,46 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
     <p>
       Modern applications rely on keyboard shortcuts for efficient navigation. Press
       <kbd>Ctrl</kbd> + <kbd>S</kbd> to save, or <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
-      to open the command palette. On macOS, the <kbd>Option</kbd> key often reveals hidden
-      functionality. These conventions emerged from the office software era and persist today.
+      to open the command palette. On macOS, the <kbd>Option</kbd> key often reveals hidden functionality.
+      These conventions emerged from the office software era and persist today.
     </p>
     <p>
       When documenting changes, use <del>deleted text</del> to show what was removed and
       <mark>highlighted text</mark> to draw attention to important updates. The <s>strikethrough</s>
-      element (<code>&lt;s&gt;</code>) indicates content that's no longer accurate but remains
-      for historical context, while <del>deletion</del> (<code>&lt;del&gt;</code>) marks actual
-      removed content.
+      element (<code>&lt;s&gt;</code>) indicates content that's no longer accurate but remains for
+      historical context, while <del>deletion</del> (<code>&lt;del&gt;</code>) marks actual removed
+      content.
     </p>
     <h2>Scientific & Technical Notation</h2>
     <p>
-      In scientific writing, superscripts and subscripts are essential. Water is written as
-      H<sub>2</sub>O, while Einstein's famous equation is E = mc<sup>2</sup>. The <var>x</var>
-      variable in f(<var>x</var>) = <var>x</var><sup>2</sup> + 2<var>x</var> + 1 represents
-      any real number. When the command <samp>Build complete</samp> appears in your terminal,
-      you know the process finished successfully.
+      In scientific writing, superscripts and subscripts are essential. Water is written as H<sub
+        >2</sub
+      >O, while Einstein's famous equation is E = mc<sup>2</sup>. The <var>x</var>
+      variable in f(<var>x</var>) = <var>x</var><sup>2</sup> + 2<var>x</var> + 1 represents any real
+      number. When the command <samp>Build complete</samp> appears in your terminal, you know the process
+      finished successfully.
     </p>
     <p>
-      <small>Small print often contains legal disclaimers or supplementary information that
-      doesn't warrant full-size text.</small> The book <cite>The Elements of Typographic Style</cite>
+      <small
+        >Small print often contains legal disclaimers or supplementary information that doesn't
+        warrant full-size text.</small
+      > The book <cite>The Elements of Typographic Style</cite>
       by Robert Bringhurst remains the definitive reference for typography. As he notes,
       <q>Typography exists to honor content.</q>
     </p>
     <h2>Definitions & Abbreviations</h2>
     <p>
-      A <dfn>design token</dfn> is a named entity that stores a visual design attribute.
-      The <abbr title="World Wide Web Consortium">W3C</abbr> defines web standards, while
-      <abbr>CSS</abbr> (no title attribute) handles styling. Notice how abbreviations with
-      titles show a dotted underline indicating more information is available on hover.
+      A <dfn>design token</dfn> is a named entity that stores a visual design attribute. The <abbr
+        title="World Wide Web Consortium">W3C</abbr
+      > defines web standards, while
+      <abbr>CSS</abbr> (no title attribute) handles styling. Notice how abbreviations with titles show
+      a dotted underline indicating more information is available on hover.
     </p>
     <p>
-      For emphasis beyond italics, use the <Highlight>highlight component</Highlight> to make
-      text pop with a background colour. For formal titles and acronyms in running text,
-      <SmallCaps>Small Caps</SmallCaps> provides a distinguished appearance that doesn't
-      disrupt the flow of reading.
+      For emphasis beyond italics, use the <Highlight>highlight component</Highlight> to make text pop
+      with a background colour. For formal titles and acronyms in running text,
+      <SmallCaps>Small Caps</SmallCaps> provides a distinguished appearance that doesn't disrupt the
+      flow of reading.
     </p>
   </SGTypographySwitcher>
 
@@ -115,9 +124,9 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
   <SGTypographySwitcher>
     <h1>Finding Flow in Creative Work H1</h1>
     <p>
-      The first-level heading establishes the primary topic. It should be used sparingly&mdash;typically
-      once per page. In this example, we explore the art of finding flow in creative work,
-      a topic that affects writers, designers, and developers alike.
+      The first-level heading establishes the primary topic. It should be used
+      sparingly&mdash;typically once per page. In this example, we explore the art of finding flow
+      in creative work, a topic that affects writers, designers, and developers alike.
     </p>
 
     <h2>The Office Environment H2</h2>
@@ -135,28 +144,28 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
     <h3>Efficient Filing Systems H3</h3>
     <p>
       Third-level headings break down subsections. They're useful for grouping related content
-      within a major section. Here we might discuss specific strategies for organizing digital
-      files or managing reference materials.
+      within a major section. Here we might discuss specific strategies for organizing digital files
+      or managing reference materials.
     </p>
 
     <h4>Configuring Default Folders H4</h4>
     <p>
-      Fourth-level headings are less common but valuable for detailed technical content.
-      In documentation, they might describe specific configuration options or step-by-step
-      instructions within a larger procedure.
+      Fourth-level headings are less common but valuable for detailed technical content. In
+      documentation, they might describe specific configuration options or step-by-step instructions
+      within a larger procedure.
     </p>
 
     <h5>Affiliate Programme Details H5</h5>
     <p>
-      Fifth-level headings rarely appear outside deeply nested documentation. When you find
-      yourself reaching for <code>&lt;h5&gt;</code>, consider whether your content structure
-      might benefit from reorganisation.
+      Fifth-level headings rarely appear outside deeply nested documentation. When you find yourself
+      reaching for <code>&lt;h5&gt;</code>, consider whether your content structure might benefit
+      from reorganisation.
     </p>
 
     <h6>Sufficiently Deep Nesting H6</h6>
     <p>
-      Sixth-level headings exist for completeness but suggest your document structure may be
-      overly complex. Most content works well with three or four heading levels at most.
+      Sixth-level headings exist for completeness but suggest your document structure may be overly
+      complex. Most content works well with three or four heading levels at most.
     </p>
   </SGTypographySwitcher>
 
@@ -165,33 +174,50 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
   <SGTypographySwitcher>
     <h2>Words Worth Quoting</h2>
     <p>
-      Sometimes the best way to make a point is to let someone else make it for you. Blockquotes
-      set quoted material apart from your own words, giving proper weight to borrowed wisdom.
+      Sometimes the best way to make a point is to let someone else make it for you. Blockquotes set
+      quoted material apart from your own words, giving proper weight to borrowed wisdom.
     </p>
     <blockquote>
       <p>
-        The details are not the details. They make the design. This principle guides everything
-        from typography to interface design&mdash;the small decisions accumulate into the
-        overall experience.
+        The details are not the details. They make the design. This principle guides everything from
+        typography to interface design&mdash;the small decisions accumulate into the overall
+        experience.
+      </p>
+      <p>
+        In 1958, when we first began working on the <em>Eames Lounge Chair</em>, we understood that
+        <strong>every joint, every angle, every material choice</strong> would compound. By 1972, we
+        had produced over 150,000 units. Each one a testament to the idea that craft lies in the accumulation
+        of <a href="https://example.com">countless small decisions</a>.
       </p>
     </blockquote>
     <p>
-      The plain HTML <code>&lt;blockquote&gt;</code> above is what markdown produces. For
-      attributed quotes with citations, use the <code>&lt;BlockQuoteCitation&gt;</code> component.
+      The plain HTML <code>&lt;blockquote&gt;</code> above is what markdown produces. For attributed
+      quotes with citations, use the <code>&lt;BlockQuoteCitation&gt;</code> component.
     </p>
     <BlockQuoteCitation author="Charles Eames">
       <p>
-        Design is a plan for arranging elements in such a way as best to accomplish a particular purpose.
+        Design is a plan for arranging elements in such a way as best to accomplish a particular
+        purpose.
       </p>
     </BlockQuoteCitation>
-    <p>
-      You can add a source title and URL for proper attribution:
-    </p>
-    <BlockQuoteCitation author="Steve Jobs" title="Stanford Commencement Address" url="https://news.stanford.edu/2005/06/12/youve-got-find-love-jobs-says/">
+    <p>You can add a source title and URL for proper attribution:</p>
+    <BlockQuoteCitation
+      author="Steve Jobs"
+      title="Stanford Commencement Address"
+      url="https://news.stanford.edu/2005/06/12/youve-got-find-love-jobs-says/"
+    >
       <p>
-        Your work is going to fill a large part of your life, and the only way to be truly
-        satisfied is to do what you believe is great work. And the only way to do great work
-        is to love what you do.
+        Your work is going to fill a large part of your life, and the only way to be truly satisfied
+        is to do what you believe is great work. And the only way to do great work is to love what
+        you do.
+      </p>
+      <p>
+        When I was 17, I read a quote that went something like: <em
+          >"If you live each day as if it was your last, someday you'll most certainly be right."</em
+        > It made an impression on me, and since then, for the past 33 years, I have looked in the mirror
+        every morning. The
+        <strong>3 questions</strong> I ask myself are always the same. You can read more about this in
+        <a href="https://example.com">my biography</a>.
       </p>
     </BlockQuoteCitation>
     <p>
@@ -199,108 +225,148 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
     </p>
     <BlockQuoteCitation author="Anonymous" small>
       <p>The best time to plant a tree was twenty years ago. The second best time is now.</p>
+      <p>
+        This proverb, often attributed to Chinese wisdom, speaks to the <strong
+          >power of starting now</strong
+        > rather than lamenting missed opportunities. Whether you're learning to code at 45, starting
+        a business after retirement, or finally writing that novel you've been putting off since 1987&mdash;the
+        principle remains the same.
+      </p>
+      <p>
+        The <em>second best time</em> is always <a href="https://example.com">right now</a>. Not
+        tomorrow, not next week, not when conditions are perfect. Over 10,000 people have shared
+        this quote, and yet so few actually act on it.
+      </p>
     </BlockQuoteCitation>
   </SGTypographySwitcher>
 
   <!-- 5. Lists: Unordered -->
   <h3 id="lists-unordered">Unordered Lists</h3>
-  <SGTypographySwitcher>
-    <h2>Getting Things Done</h2>
-    <p>
-      Unordered lists work well for items without inherent sequence. Here's a workflow
-      checklist for publishing content:
-    </p>
-    <ul>
-      <li>Write the first draft without editing</li>
-      <li>Let it rest for at least a day before revising</li>
-      <li>Read aloud to catch awkward phrasing</li>
-      <li>Check all links and references
-        <ul>
-          <li>Verify internal links point to existing pages</li>
-          <li>Confirm external links are still valid</li>
-          <li>Update any outdated citations</li>
-        </ul>
-      </li>
-      <li>Run spell check and grammar tools</li>
-      <li>Preview in both light and dark modes</li>
-      <li>Publish and share on social media</li>
-    </ul>
-    <p>
-      Lists with inline formatting help clarify complex items:
-    </p>
-    <ul>
-      <li><strong>Semantic HTML</strong> &ndash; use elements for their meaning, not appearance</li>
-      <li><em>Progressive enhancement</em> &ndash; start with content, layer on interactivity</li>
-      <li>Efficient <code>CSS</code> &ndash; leverage the cascade, avoid unnecessary specificity</li>
-    </ul>
-  </SGTypographySwitcher>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <h2>Getting Things Done</h2>
+      <p>
+        Unordered lists work well for items without inherent sequence. Here's a workflow checklist
+        for publishing content:
+      </p>
+      <ul>
+        <li>Write the first draft without editing</li>
+        <li>Let it rest for at least a day before revising</li>
+        <li>Read aloud to catch awkward phrasing</li>
+        <li>
+          Check all links and references
+          <ul>
+            <li>Verify internal links point to existing pages</li>
+            <li>Confirm external links are still valid</li>
+            <li>Update any outdated citations</li>
+          </ul>
+        </li>
+        <li>Run spell check and grammar tools</li>
+        <li>Preview in both light and dark modes</li>
+        <li>Publish and share on social media</li>
+      </ul>
+      <p>Lists with inline formatting help clarify complex items:</p>
+      <ul>
+        <li>
+          <strong>Semantic HTML</strong> &ndash; use elements for their meaning, not appearance
+        </li>
+        <li><em>Progressive enhancement</em> &ndash; start with content, layer on interactivity</li>
+        <li>
+          Efficient <code>CSS</code> &ndash; leverage the cascade, avoid unnecessary specificity
+        </li>
+      </ul>
+    </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 6. Lists: Ordered -->
   <h3 id="lists-ordered">Ordered Lists</h3>
-  <SGTypographySwitcher>
-    <h2>A Recipe for Success</h2>
-    <p>
-      Ordered lists suit sequential steps or ranked items. Here's how to approach a
-      complex refactoring project:
-    </p>
-    <ol>
-      <li>Understand the existing code thoroughly before changing anything</li>
-      <li>Write tests that verify current behaviour</li>
-      <li>Make small, incremental changes
-        <ol>
-          <li>Extract methods for repeated logic</li>
-          <li>Rename unclear variables and functions</li>
-          <li>Simplify complex conditionals</li>
-        </ol>
-      </li>
-      <li>Run tests after each change to catch regressions early</li>
-      <li>Document significant architectural decisions</li>
-      <li>Review with colleagues before merging</li>
-    </ol>
-    <p>
-      Ordered lists also work for rankings, like the most common typography mistakes:
-    </p>
-    <ol>
-      <li>Using straight quotes instead of curly quotes</li>
-      <li>Confusing hyphens, en-dashes, and em-dashes</li>
-      <li>Forgetting to kern display type</li>
-    </ol>
-  </SGTypographySwitcher>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <h2>A Recipe for Success</h2>
+      <p>
+        Ordered lists suit sequential steps or ranked items. Here's how to approach a complex
+        refactoring project:
+      </p>
+      <ol>
+        <li>Understand the existing code thoroughly before changing anything</li>
+        <li>Write tests that verify current behaviour</li>
+        <li>
+          Make small, incremental changes
+          <ol>
+            <li>Extract methods for repeated logic</li>
+            <li>Rename unclear variables and functions</li>
+            <li>
+              Simplify complex conditionals
+              <ol>
+                <li>Replace nested ifs with guard clauses</li>
+                <li>Extract boolean expressions into named variables</li>
+                <li>Consider using polymorphism for type-based branching</li>
+              </ol>
+            </li>
+            <li>Remove dead code and unused imports</li>
+          </ol>
+        </li>
+        <li>Run tests after each change to catch regressions early</li>
+        <li>Document significant architectural decisions</li>
+        <li>Review with colleagues before merging</li>
+        <li>Address feedback promptly and thoroughly</li>
+        <li>Squash commits if appropriate for the project</li>
+        <li>Update changelog and version numbers</li>
+        <li>Verify CI pipeline passes all checks</li>
+        <li>Merge during low-traffic hours when possible</li>
+        <li>Monitor for issues after deployment</li>
+        <li>Communicate changes to affected teams</li>
+        <li>Schedule follow-up review if needed</li>
+        <li>Celebrate the successful refactor</li>
+      </ol>
+      <p>Ordered lists also work for rankings, like the most common typography mistakes:</p>
+      <ol>
+        <li>Using straight quotes instead of curly quotes</li>
+        <li>Confusing hyphens, en-dashes, and em-dashes</li>
+        <li>Forgetting to kern display type</li>
+      </ol>
+    </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 7. Lists: Checklists -->
   <h3 id="lists-checklists">Checklists</h3>
-  <SGTypographySwitcher>
-    <h2>Task Lists from MDX</h2>
-    <p>
-      Checklists use GitHub-flavoured markdown syntax. This is rendered from an actual
-      MDX file to ensure styling matches real content:
-    </p>
-    <ChecklistContent />
-  </SGTypographySwitcher>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <h2>Task Lists from MDX</h2>
+      <p>
+        Checklists use GitHub-flavoured markdown syntax. This is rendered from an actual MDX file to
+        ensure styling matches real content:
+      </p>
+      <ChecklistContent />
+    </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 8. Lists: Density-Based Spacing -->
   <h3 id="lists-density">List Density</h3>
-  <SGTypographySwitcher>
-    <h2>Automatic Spacing for Long List Items</h2>
-    <p>
-      Lists with short items use tight spacing, while lists with paragraph-like items
-      automatically receive more generous spacing. The <code>.long-list-items</code> class
-      is added by a rehype plugin when the average text length per item exceeds a threshold.
-      This is rendered from MDX to test the plugin:
-    </p>
-    <ListDensityContent />
-  </SGTypographySwitcher>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <h2>Automatic Spacing for Long List Items</h2>
+      <p>
+        Lists with short items use tight spacing, while lists with paragraph-like items
+        automatically receive more generous spacing. The <code>.long-list-items</code> class is added
+        by a rehype plugin when the average text length per item exceeds a threshold. This is rendered
+        from MDX to test the plugin:
+      </p>
+      <ListDensityContent />
+    </SGTypographySwitcher>
+  </ResizableContainer>
 
   <!-- 9. Tables -->
   <h3 id="tables">Tables</h3>
   <SGTypographySwitcher>
     <h2>Tabular Data</h2>
     <p>
-      Tables organize data into rows and columns. In running text, numerals typically
-      use old-style figures (like 1984 or 2024), but tables benefit from lining numerals
-      that align vertically for easy scanning.
+      Tables organize data into rows and columns. In running text, numerals typically use old-style
+      figures (like 1984 or 2024), but tables benefit from lining numerals that align vertically for
+      easy scanning.
     </p>
     <table>
+      <caption>This is a caption for the table.</caption>
       <thead>
         <tr>
           <th>Quarter</th>
@@ -336,10 +402,62 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
         </tr>
       </tbody>
     </table>
-    <h2>Mixed Content Tables</h2>
     <p>
-      Tables can contain various content types including code, formatted text, and components:
+      Tables can contain rows with <code>&lt;th&gt;</code> and <code>&lt;td&gt;</code> elements.
     </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Revenue</th>
+          <th>Expenses</th>
+          <th>Profit</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>January</th>
+          <td>$124,500</td>
+          <td>$98,200</td>
+          <td>$26,300</td>
+          <td>This is a note for January 2024 revenue and expenses data.</td>
+        </tr>
+        <tr>
+          <th>February</th>
+          <td>$156,800</td>
+          <td>$112,400</td>
+          <td>$44,400</td>
+          <td
+            >This is a note for February 2024 revenue and expenses data. Lorem ipsum dolor sit amet
+            consectetur adipisicing elit. Dolor in cupiditate hic similique tempora reprehenderit
+            atque omnis animi dignissimos? Ipsa dicta autem hic culpa sequi, quos quod provident
+            quasi nesciunt!</td
+          >
+        </tr>
+        <tr>
+          <th>March</th>
+          <td>$189,200</td>
+          <td>$134,600</td>
+          <td>$54,600</td>
+          <td>This is a note for March 2024 revenue and expenses data.</td>
+        </tr>
+        <tr>
+          <th colspan="5"
+            >This is a <code>&lt;th&gt;</code> element with a <code>colspan</code> attribute.</th
+          >
+        </tr>
+        <tr>
+          <th>April</th>
+          <td>$203,100</td>
+          <td>$145,800</td>
+          <td>$57,300</td>
+          <td>This is a note</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Mixed Content Tables</h2>
+    <p>Tables can contain various content types including code, formatted text, and components:</p>
     <table>
       <thead>
         <tr>

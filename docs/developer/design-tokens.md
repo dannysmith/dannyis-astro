@@ -1,6 +1,6 @@
 # Design Token System
 
-CSS custom properties defined in `src/styles/global.css`. Uses OKLCH colors with `light-dark()` for automatic theming, and Utopia-generated fluid scales for spacing and typography.
+CSS custom properties defined in `src/styles/_foundation.css`. Uses OKLCH colors with `light-dark()` for automatic theming, and Utopia-generated fluid scales for spacing and typography.
 
 ## Quick Reference
 

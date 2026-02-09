@@ -18,9 +18,17 @@
   /* Inline footnotes - container for footnote content shown inline */
   .inline-footnote-container {
     font-size: var(--font-size-sm);
-    padding: var(--space-s);
-    margin-top: var(--space-xs);
+    padding: var(--space-xs);
+    padding-right: var(--space-xl); /* Space for close button */
+    margin-top: var(--space-s);
     position: relative;
+    background: transparent;
+    border: var(--border-width-hairline) solid var(--color-accent);
+    border-radius: var(--radius-sm);
+
+    p:first-of-type {
+      margin-top: 0;
+    }
 
     /* Hide the return link - not needed for inline footnotes */
     [data-footnote-backref] {
@@ -28,22 +36,32 @@
     }
   }
 
+  .inline-footnote-label,
+  .inline-footnote-jump,
+  .inline-footnote-close {
+    color: var(--color-accent);
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .inline-footnote-label {
+    font-size: var(--font-size-xs);
+  }
+
+  .inline-footnote-jump {
+    text-decoration: none;
+  }
+
   .inline-footnote-close {
     position: absolute;
-    top: var(--space-2xs);
-    right: var(--space-2xs);
+    top: var(--space-xs);
+    right: var(--space-xs);
     border: none;
     background: transparent;
-    color: var(--color-text-secondary);
     font-size: 1.2rem;
     line-height: 1;
-    padding: 0.25rem;
-    opacity: 0.6;
-    transition: opacity var(--duration-fast);
-
-    &:hover {
-      opacity: 1;
-    }
+    padding: 0;
   }
 </style>
 
@@ -66,7 +84,7 @@
         if (!closestBlock || !footnoteElement?.children.length) return;
 
         const inlineFootNoteContainer = document.createElement('div');
-        inlineFootNoteContainer.classList.add('inline-footnote-container', 'card-surface');
+        inlineFootNoteContainer.classList.add('inline-footnote-container');
         inlineFootNoteContainer.style.display = 'none';
 
         // Close button
@@ -81,15 +99,36 @@
         inlineFootNoteContainer.appendChild(closeBtn);
 
         // Clone all child elements (supports multi-paragraph footnotes)
-        Array.from(footnoteElement.children).forEach(child => {
+        for (const child of footnoteElement.children) {
           inlineFootNoteContainer.appendChild(child.cloneNode(true));
-        });
+        }
 
-        // Insert inside LI elements to preserve list structure, otherwise after the block
+        // Insert label and jump link inline within paragraph content
+        const paragraphs = inlineFootNoteContainer.querySelectorAll('p');
+        if (paragraphs.length) {
+          const footnoteNum = elm.textContent || '';
+
+          const label = document.createElement('span');
+          label.className = 'inline-footnote-label';
+          label.textContent = `${footnoteNum}. `;
+          paragraphs[0].prepend(label);
+
+          const jumpLink = document.createElement('a');
+          jumpLink.className = 'inline-footnote-jump';
+          jumpLink.href = `#${footnoteId}`;
+          jumpLink.textContent = ' ↓';
+          paragraphs[paragraphs.length - 1].append(jumpLink);
+        }
+
+        // Insert after the block (or after any existing inline footnotes to preserve order)
         if (closestBlock.tagName === 'LI') {
           closestBlock.appendChild(inlineFootNoteContainer);
         } else {
-          closestBlock.insertAdjacentElement('afterend', inlineFootNoteContainer);
+          let insertAfter: Element = closestBlock;
+          while (insertAfter.nextElementSibling?.classList.contains('inline-footnote-container')) {
+            insertAfter = insertAfter.nextElementSibling;
+          }
+          insertAfter.insertAdjacentElement('afterend', inlineFootNoteContainer);
         }
 
         elm.addEventListener('click', e => {

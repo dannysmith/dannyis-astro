@@ -1,0 +1,242 @@
+/* ============================================
+    RESET LAYER
+   ============================================ */
+
+@layer reset {
+  :where(*, *::before, *::after) {
+    box-sizing: border-box;
+  }
+
+  :where(*) {
+    margin-block: 0;
+
+    /* Let fonts define their preferred text decoration thickness */
+    text-decoration-thickness: from-font;
+  }
+
+  /* Focus ring styling */
+  :where(:focus-visible) {
+    outline: 2px solid var(--color-focus-ring, currentColor);
+    outline-offset: 5px;
+    border-radius: 1px;
+  }
+
+  /* Enable keyword animations (animate to/from 'auto') */
+  @media (prefers-reduced-motion: no-preference) {
+    :where(html) {
+      interpolate-size: allow-keywords;
+    }
+  }
+
+  :where(html) {
+    /* Prevent font size inflation on mobile */
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+
+    /* Hyphenation defaults (applied when hyphens: auto is enabled) */
+    hyphenate-character: '‐'; /* U+2010 true hyphen, not ASCII hyphen-minus */
+    hyphenate-limit-chars: auto 2 3; /* min 2 chars before, 3 after break */
+
+    /* Prevent layout shift when scrollbars appear */
+    scrollbar-gutter: stable;
+
+    /* Prevent browser from faking bold/italic when font doesn't have them */
+    /* font-synthesis: none; */
+
+    /* Let fonts define their preferred underline position */
+    text-underline-position: from-font;
+
+    /* Print: keep at least 2 lines together */
+    orphans: 2;
+    widows: 2;
+  }
+
+  :where(body) {
+    /* Add accessible line-height */
+    line-height: 1.5;
+
+    /* Improve text rendering */
+    -webkit-font-smoothing: antialiased;
+
+    /* Sensible min-height (vb = viewport block, i18n-friendly) */
+    min-block-size: 100vb;
+
+    /* Position relative for absolutely positioned children */
+    position: relative;
+
+    /* Remove default padding and margin */
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Improve media defaults */
+  :where(img, picture, video, canvas, svg) {
+    display: block;
+    max-width: 100%;
+    vertical-align: middle; /* If display is overridden to inline */
+  }
+
+  :where(img, picture) {
+    height: auto;
+  }
+
+  :where(img) {
+    border: 0;
+    shape-margin: 1rem; /* If floated with shape-outside */
+
+    /* Support LQIP (Low Quality Image Placeholder) via style="background-image:<lores>" */
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  /* Remove picture wrapper from layout */
+  :where(picture) {
+    display: contents;
+  }
+
+  :where(input, button, textarea, select) {
+    font: inherit; /* Inherit fonts for form controls */
+    touch-action: manipulation; /* Disable double-tap zoom for faster response */
+  }
+
+  /* Shorter line heights on interactive elements */
+  :where(button, input, label) {
+    line-height: 1.1;
+  }
+
+  /* Auto-growing textarea */
+  :where(textarea:not([rows])) {
+    field-sizing: content;
+  }
+
+  /* Fix fieldset sizing in flexbox/grid */
+  :where(fieldset) {
+    min-inline-size: 0;
+  }
+
+  /* Normalize search input appearance */
+  :where([type='search']) {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+  }
+
+  /* Keep specific input types LTR in RTL layouts */
+  :where(
+    input:is([type='tel'], [type='url'], [type='email'], [type='number']):not(:placeholder-shown)
+  ) {
+    direction: ltr;
+  }
+
+  /* Sensible defaults for iframes */
+  :where(iframe) {
+    border: 0;
+    overflow: hidden;
+  }
+
+  /* Avoid text overflows */
+  :where(p, h1, h2, h3, h4, h5, h6) {
+    overflow-wrap: break-word;
+  }
+
+  /* Improve line wrapping */
+  :where(h1, h2, h3, h4, h5, h6, figcaption, legend) {
+    text-wrap: balance;
+  }
+
+  /* Prevent widows and orphans in body text */
+  :where(p, blockquote) {
+    text-wrap: pretty;
+  }
+
+  /* Anything that has been anchored to should have extra scroll margin */
+  :where(:target) {
+    scroll-margin-block: 5ex;
+  }
+
+  /* Code elements: no hyphenation, consistent alignment */
+  :where(code, kbd, pre, samp) {
+    hyphens: none;
+    word-spacing: normal;
+  }
+
+  /* Sensible wrapping for code blocks */
+  :where(pre) {
+    white-space: pre-wrap;
+    tab-size: 2;
+  }
+
+  /* Strengthen hidden attribute */
+  :where([hidden]:not([hidden='until-found'])) {
+    display: none !important;
+  }
+
+  /* Remove list styles on ul, ol elements with a list role */
+  :where(ul[role='list'], ol[role='list']) {
+    list-style: none;
+  }
+
+  /* Abbreviations */
+  :where(abbr) {
+    font-variant: all-small-caps;
+    font-size: 0.95em;
+  }
+
+  :where(abbr[title]) {
+    cursor: help;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 50%);
+    text-decoration-thickness: max(0.08em, 1px);
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: none;
+  }
+
+  /* Superscript and subscript */
+  :where(sup, sub) {
+    font-size: 0.7em;
+    line-height: 1;
+  }
+
+  /* Strikethrough */
+  :where(del) {
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, currentColor, transparent 60%);
+    text-decoration-thickness: 1px;
+  }
+
+  /* Nested italics become upright */
+  :where(:is(em, i) > :is(em, i)) {
+    font-style: normal;
+  }
+
+  /* Bold uses relative weight (one step bolder than parent) */
+  :where(b, strong) {
+    font-weight: bolder;
+  }
+
+  /* High contrast mode support for mark */
+  @media (forced-colors: active) {
+    :where(mark) {
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+
+  /* Smooth scrolling for user-initiated navigation */
+  @media (prefers-reduced-motion: no-preference) {
+    html:focus-within {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

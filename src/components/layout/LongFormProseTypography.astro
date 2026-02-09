@@ -38,11 +38,6 @@ const { class: className, ...props } = Astro.props;
       font-weight: var(--font-weight-bold);
     }
 
-    /* Reduce top margin from adjacent headings */
-    .longform-prose > :is(h1, h2, h3, h4, h5, h6, hr) + :is(h1, h2, h3, h4, h5, h6) {
-      margin-top: var(--space-m);
-    }
-
     .longform-prose :is(p, li, blockquote, figcaption) {
       font-variant-numeric: oldstyle-nums;
     }
@@ -86,7 +81,7 @@ const { class: className, ...props } = Astro.props;
       text-decoration: underline;
       text-decoration-color: var(--color-accent);
       text-decoration-thickness: var(--border-width-hairline);
-      text-underline-offset: 0.3em;
+      text-underline-offset: 0.15em;
       text-decoration-skip-ink: none;
       border-radius: var(--radius-xs);
       transition: color var(--duration-fast) var(--ease-in-out),
@@ -123,64 +118,6 @@ const { class: className, ...props } = Astro.props;
       color: inherit;
     }
 
-    /* ----------- Lists ----------- */
-
-    .longform-prose li {
-      margin-top: var(--space-2xs);
-    }
-
-    .longform-prose :is(ul, ol) {
-      padding-left: 0.4em;
-    }
-
-    .longform-prose ol ::marker {
-      font-size: 1.4ex;
-      font-variation-settings: 'opsz' 10;
-      font-weight: var(--font-weight-medium);
-    }
-
-    /* ----------- Task Lists ------------ */
-
-    .longform-prose .contains-task-list {
-      list-style-type: none;
-      padding-left: 0;
-    }
-
-    .longform-prose .task-list-item {
-      padding-left: 0;
-    }
-
-    .longform-prose .task-list-item input {
-      position: relative;
-      height: 0.7em;
-      width: 0.7em;
-      margin-bottom: 0;
-      appearance: none;
-      outline: none;
-      border-radius: var(--radius-xs);
-      border: var(--border-width-hairline) solid var(--color-border);
-    }
-
-    .longform-prose .task-list-item input:checked {
-      color: var(--color-accent);
-      background: transparent;
-      border-color: var(--color-accent);
-    }
-
-    .longform-prose .task-list-item input:checked:before {
-      content: '\2713';
-      position: absolute;
-      top: -0.1em;
-      left: 0.05em;
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-accent);
-    }
-
-    .longform-prose .task-list-item input[disabled] {
-      opacity: 1;
-    }
-
     /* ----------- HR ----------- */
     .longform-prose hr {
       display: flex;
@@ -190,7 +127,6 @@ const { class: className, ...props } = Astro.props;
       height: 0;
       overflow: visible;
       margin: var(--space-xl) 0;
-
       border: var(--border-width-hairline) solid var(--color-border);
     }
 

@@ -1,0 +1,273 @@
+/* ============================================
+   BASE LAYER
+   ============================================ */
+@layer base {
+  html {
+    color-scheme: light dark;
+    accent-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  /* Style alt text when images fail to load */
+  img[alt] {
+    font-style: italic;
+  }
+
+  body {
+    background-color: var(--color-background);
+  }
+
+  /* ===== HR ===== */
+  hr {
+    border: var(--border-width-hairline) solid var(--color-border);
+  }
+
+  /* ======== TABLES ======== */
+
+  table {
+    border-collapse: collapse;
+    inline-size: 100%;
+    font-size: 1rem; /* rem-based font-size for consistency wherever used*/
+    caption-side: bottom;
+    font-variant-numeric: tabular-nums;
+
+    caption {
+      font-weight: var(--font-weight-semibold);
+      padding: 0.5em 1em;
+    }
+  }
+
+  th,
+  td {
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    text-align: left;
+    vertical-align: middle;
+    padding: 0.5em 1em;
+
+    /* No leading padding for the first cell in a row */
+    &:first-child {
+      padding-inline-start: 0;
+    }
+
+    /* No trailing padding for the last cell in a row */
+    &:last-child {
+      padding-inline-end: 0;
+    }
+
+    /* Center-align cells with a colspan attribute */
+    &[colspan] {
+      text-align: center;
+    }
+  }
+
+  th {
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Thicker border for header row */
+  thead th {
+    border-bottom-width: var(--border-width-base);
+  }
+
+  /* In-tbody header cells with a colspan attribute are styled as header rows */
+  tbody th[colspan] {
+    border-bottom-width: var(--border-width-base);
+    text-align: left;
+    padding-top: var(--space-s);
+  }
+
+  /* Tables with code inside cells need a line-height of 2 so they can breathe */
+  table :not(pre) > code {
+    line-height: 2;
+  }
+
+  /* ======== DETAILS ======== */
+  details {
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2xs) var(--space-s);
+
+    summary {
+      cursor: pointer;
+      &::marker {
+        color: var(--color-accent);
+      }
+    }
+    &[open] {
+      summary {
+        padding-bottom: var(--space-2xs);
+        margin-bottom: var(--space-2xs);
+        border-bottom: var(--border-width-hairline) solid var(--color-border);
+      }
+    }
+  }
+
+  /* ======== BUTTONS ======== */
+  button,
+  input:is([type='button'], [type='submit'], [type='reset']) {
+    padding-block: 0.4em;
+    padding-inline: 0.75em;
+    border: none;
+    border-radius: var(--radius-sm);
+
+    font-weight: var(--font-weight-medium);
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-in-out);
+    outline-offset: 0;
+
+    color: inherit;
+    background: light-dark(
+      color-mix(in oklch, var(--color-accent) 85%, white),
+      color-mix(in oklch, var(--color-accent) 85%, black)
+    );
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--color-background-code);
+    }
+
+    &:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
+    }
+
+    /* Buttons with icons become flex containers */
+    &:has(svg) {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5cap;
+      vertical-align: middle; /* Align consistently regardless of icon position */
+
+      svg {
+        width: 1.25cap;
+        height: 1.25cap;
+        fill: currentColor;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  /* ======== FORMS ======== */
+
+  fieldset {
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  legend {
+    font-weight: var(--font-weight-bold);
+    padding-inline: var(--space-2xs);
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+  }
+
+  /* ======== LABELS ======== */
+
+  /* Block labels only (not inline labels wrapping checkboxes/radios) */
+  label:not(:has(input)) {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: color var(--duration-fast) var(--ease-in-out);
+
+    /* Highlight label when input is focused (with possible <br> in between) */
+    &:has(~ :is(input, select, textarea):focus) {
+      color: var(--color-accent);
+    }
+  }
+
+  /* ======== INPUTS, SELECTS, TEXTAREAS ======== */
+
+  input:not(
+    [type='button'],
+    [type='submit'],
+    [type='reset'],
+    [type='image'],
+    [type='file'],
+    [type='checkbox'],
+    [type='radio']
+  ),
+  select,
+  textarea {
+    background: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  input:not(
+    [type='checkbox'],
+    [type='radio'],
+    [type='file'],
+    [type='color'],
+    [type='range'],
+    [type='hidden'],
+    [type='button'],
+    [type='submit'],
+    [type='reset'],
+    [type='image']
+  ),
+  select,
+  textarea {
+    padding-block: 0.4em;
+    padding-inline: 0.75em;
+    line-height: var(--leading-normal);
+    outline-offset: 0;
+  }
+
+  /* Placeholder styling */
+  ::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.5;
+  }
+
+  textarea {
+    inline-size: 100%;
+    resize: block;
+
+    &:not([rows]) {
+      min-block-size: 3lh;
+    }
+  }
+
+  select {
+    appearance: base-select;
+
+    &::picker-icon {
+      color: var(--color-accent);
+    }
+  }
+
+  /* ======== PROGRESS & METER ======== */
+
+  progress,
+  meter {
+    inline-size: 100%;
+  }
+
+  /* ======== DEFINITION LISTS ======== */
+
+  dt {
+    font-weight: var(--font-weight-bold);
+  }
+
+  dd {
+    margin-inline-start: var(--space-m);
+  }
+
+  /* ======== AUDIO & VIDEO ======== */
+
+  audio,
+  video {
+    inline-size: 100%;
+    border-radius: var(--radius-sm);
+  }
+
+  audio::-webkit-media-controls-panel {
+    background: var(--color-background-secondary);
+  }
+}

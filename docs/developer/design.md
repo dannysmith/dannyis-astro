@@ -36,13 +36,12 @@ This site serves two purposes:
 
 The CSS system is designed around these principles:
 
-1. **Rely on global defaults** - Don't redeclare what `global.css` already provides
+1. **Rely on global defaults** - Use the global styles (`global.css`) as a base
 2. **Prose is the default** - Typography layer assumes article content; opt-out for UI
-3. **Fluid everything** - Use Utopia-generated spacing and type scales
-4. **Adaptive by default** - Colors auto-switch for light/dark via `light-dark()`
-5. **Semantic tokens** - Use role-based variables, not hardcoded values
-6. **Modern CSS features** - Nesting, container queries, `:has()`, relative colors
-7. **Keep it simple** - Don't over-engineer; less CSS is better CSS
+3. **Adaptive by default** - Colors auto-switch for light/dark via `light-dark()`
+4. **Semantic tokens** - Use role-based variables, not hardcoded values
+5. **Modern CSS features** - Nesting, container queries, `:has()`, relative colors
+6. **Keep it simple** - Don't over-engineer; less CSS is better CSS
 
 ### The Opt-Out Pattern
 
@@ -87,55 +86,39 @@ Before adding CSS, check if it's already handled:
 
 ### Layer System
 
-Seven layers control the cascade (defined in `src/styles/global.css:2`):
+Six layers control the cascade (defined in `src/styles/global.css`):
 
 ```css
-@layer reset, base, typography, layout, utilities, longform, theme;
+@layer reset, base, typography, layout, utilities, longform;
 ```
 
 Each layer has a specific purpose:
 
 #### 1. Reset Layer (`@layer reset`)
 
-**Purpose:** Browser normalization with zero specificity via `:where()`.
+**Purpose:** Browser normalization and sensible defaults with zero specificity via `:where()`.
 
-**Contains:** Box-sizing, margin removal, media defaults, focus outlines, text wrapping, reduced motion support.
-
-**Never modify directly** - These are foundational defaults.
+Never modify directly without asking the user first. These are foundational defaults.
 
 #### 2. Base Layer (`@layer base`)
 
-**Purpose:** Site-wide foundations that apply everywhere.
-
-**Contains:**
-- `color-scheme: light dark` and `accent-color`
-- Body background color
-- Table styling
-- Button defaults
-- Mark/highlight styling
+**Purpose:** Site-wide foundations that apply everywhere, but are not about typography.
 
 **When to add here:** Only for truly global element defaults that should apply site-wide regardless of context.
 
 #### 3. Typography Layer (`@layer typography`)
 
-**Purpose:** Prose-first defaults for article content.
+**Purpose:** Default global typography.
 
-**Contains:**
-- Serif font family (`--font-prose`)
-- Heading sizes, weights, borders
-- Link styling (underlines, colors, visited state)
-- List styling (padding, markers)
-- Blockquote styling
-- Prose spacing rhythm
-- Inline code and kbd styling
+Includes `_typography.css` (fonts, headings, links, inline elements) and `_verticalflow.css` (vertical rhythm/margins). Separated into two files for maintainability.
 
-**Key insight:** This layer assumes content is an article. Everything inherits these styles. UI areas opt-out using `.ui-style`.
+Everything inherits these styles but UI areas can opt out of most of it using `.ui-style`.
 
 #### 4. Layout Layer (`@layer layout`)
 
 **Purpose:** Reusable layout utilities.
 
-**Contains:** `.flow`, `.list-reset`, `.all-caps`
+**Contains:** `.list-reset`
 
 **When to add here:** Only for layout patterns used in 3+ places across the site.
 
@@ -143,7 +126,7 @@ Each layer has a specific purpose:
 
 **Purpose:** Single-purpose helper classes.
 
-**Contains:** `.ui-style`, `.dark-surface`, `.card-surface`, `.cq`, `.img-cover`, `.content-trim`, `.sr-only`
+**Contains:** `.ui-style`, `.dark-surface`, `.card-surface`, alignment utilities, and more. See `_utilities.css` for full list.
 
 **When to add here:** For utilities that are genuinely reusable across many components. Don't add component-specific classes here.
 
@@ -151,19 +134,11 @@ Each layer has a specific purpose:
 
 **Purpose:** Article-only enhancements.
 
-**Contains:** End marks, footnotes, oldstyle numerals (all defined in `LongFormProseTypography.astro`).
-
-**When to add here:** Only for styles specific to long-form reading that shouldn't apply elsewhere.
-
-#### 7. Theme Layer (`@layer theme`)
-
-**Purpose:** Reserved for future theme customization.
-
-**Currently minimal** - Most theming is handled via `light-dark()` in token definitions.
+Only for styles specific to long-form reading that shouldn't apply elsewhere. Stles should ONLY be added to this layer via the `LongformProseTypography.astro` component, or occasionally circumstances by other components which need to override their standard styles when used inside a longform container.
 
 ### Where Component Styles Go
 
-**Most component styles go in the `.astro` file's `<style>` block**, not in global.css.
+**Most component styles go in the `.astro` file's `<style>` block**, not in a CSS file.
 
 ```astro
 <!-- Component.astro -->
@@ -228,16 +203,13 @@ Each layer has a specific purpose:
 
 ## Utility Classes
 
+Utilities are defined in `_utilities.css` and `_layout.css`. The `.flow` utility lives in `_verticalflow.css` (part of the typography layer). See the styleguide at `/styleguide` for the full list. Key utilities:
+
 ### `.ui-style` - Opt-Out of Prose Typography
 
 **Use for:** Navigation, footers, listing pages, cards, any non-article UI.
 
-**What it does:**
-- Switches to `--font-ui` (sans-serif)
-- Removes link underlines, inherits color
-- Removes heading borders
-- Resets list marker colors
-- Tightens line-height
+Switches to `--font-ui`, removes link underlines, removes heading borders, resets list markers, tightens line-height.
 
 ```html
 <nav class="ui-style">
@@ -251,112 +223,36 @@ Each layer has a specific purpose:
 
 ### `.dark-surface` - Always-Dark Areas
 
-**Use for:** Navigation, footer, or any area that should stay dark regardless of theme.
-
-**What it does:**
-- Sets `--color-charcoal` background
-- Sets `--color-beige` text
-
-**Combine with `.ui-style`** for dark UI areas.
-
-### `.card-surface` - Raised Card Styling
-
-**Use for:** Cards, panels, callouts that need elevation.
-
-**What it does:**
-- Uses `--surface-raised` background
-- Adds hairline border
-- Applies small shadow
-- Rounds corners
-
-### `.cq` - Container Query Context
-
-**Use on:** Parent elements of components that use `@container` queries.
-
-```html
-<div class="cq">
-  <article class="my-card"><!-- Uses @container queries --></article>
-</div>
-```
+Forces dark background (`--color-charcoal`) with light text (`--color-beige`). Combine with `.ui-style` for dark UI areas.
 
 ### `.flow` - Vertical Rhythm
 
-**Use for:** Content areas needing consistent vertical spacing.
+Ensures all block elements get proper vertical spacing. Most elements (headings, paragraphs, lists, etc.) already have global margins from `_verticalflow.css`. The `.flow` class adds:
 
-**What it does:**
-- Adds `--space-m` between siblings
-- Larger margins before headings
+- **Catch-all spacing** for elements not covered globally (details, aside, divs, etc.)
+- **Reduced spacing** between adjacent headings (they form logical units)
 
-### `.list-reset` - Navigation Lists
+Uses `em` units (not the spacing scale) so margins scale with font-size. Apply to prose containers like articles and notes.
 
-**Use for:** Navigation lists, UI lists without markers.
+### `.list-reset` - Navigation Lists (layout)
 
-**What it does:**
-- Removes list-style, margin, padding
-- Removes marker colors
-- Resets li padding/margin
-
-### `.all-caps` - Label Styling
-
-**Use for:** Category labels, metadata, small UI text.
-
-**What it does:**
-- Uppercase text
-- Wide letter-spacing
+Removes list-style, margin, padding, and marker colors. Use for navigation and UI lists.
 
 ### `.content-trim` - Margin Cleanup
 
-**Use on:** Containers with padding that receive slotted/arbitrary content (like `<slot />`).
-
-**When to apply:** Add to any element that:
-1. Has padding (creating space from edges)
-2. Receives content with margins (headings, paragraphs, lists)
-3. Would otherwise have awkward double-spacing at top/bottom
+Removes top margin from first child and bottom margin from last child. **Use on** containers with padding that receive slotted content (`<slot />`).
 
 ```html
-<!-- ✅ Callout with slotted content -->
 <div class="callout-content content-trim">
   <slot />
 </div>
-
-<!-- ✅ Accordion body -->
-<div class="accordion-content content-trim">
-  <slot />
-</div>
-
-<!-- ❌ Don't need it - no slotted content -->
-<div class="card-meta">
-  <span>Fixed content here</span>
-</div>
 ```
-
-**What it does:**
-- Removes top margin from first child
-- Removes bottom margin from last child
-
-### `.img-cover` - Full Container Images
-
-**Use for:** Images that should fill their container.
-
-### `.sr-only` / `.hidden-microformat` - Screen Reader Only
-
-**Use for:** Text that should be accessible but visually hidden.
-
-### `.external-arrow` - External Link Indicator
-
-**Use for:** Indicating external/offsite links in UI contexts (nav, footer).
-
-```html
-<a href="/working">Work <span class="external-arrow">↗</span></a>
-```
-
-Note: Prose external links use a different mechanism in the longform layer.
 
 ---
 
 ## Design Tokens
 
-Use semantic tokens from `global.css`. Full reference in [design-tokens.md](./design-tokens.md).
+Use semantic tokens from `_foundations.css`. Full reference in [design-tokens.md](./design-tokens.md).
 
 ### Quick Reference
 
