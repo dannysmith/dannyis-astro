@@ -87,7 +87,18 @@ These ones **clearly** need work:
 - [x] Accordian
 - [x] Grid
 
-- [ ] Double-check all other components for opportunities to clean up CSS etc
+**Other MDX components to review:**
+
+- [x] Center
+- [x] Spacer
+- [x] ColorSwatch
+- [x] IntroParagraph
+- [x] Embed
+- [x] Loom
+- [ ] Notion
+- [ ] ResizableContainer
+- [ ] SmartLink
+- [ ] Tabs / TabItem
 
 ## UI Components
 
