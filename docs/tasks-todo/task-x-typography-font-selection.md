@@ -224,3 +224,55 @@ Pairing with Literata: geometric/transitional combination leverages difference p
 
 - Technical implementation (CSS, font loading, etc.)
 - This is purely about typeface selection
+
+---
+
+## Font Variable Usage Checklist
+
+Reference for where each font variable is used across the codebase. Use this when testing new typefaces.
+
+### `--font-display` (Large Display Typography)
+
+| Location | Element | Context |
+|----------|---------|---------|
+| `src/pages/index.astro` | h1 | Homepage "DANNY SMITH" at massive scale |
+| `src/pages/writing/index.astro` | .title | "WRITING" page header |
+| `src/pages/notes/index.astro` | .title | "Notes" page header |
+| `src/pages/404.astro` | h1 | Giant "404" text |
+| `src/pages/404.astro` | h2 | "Page Not Found" label |
+| `src/pages/now/index.astro` | h1 | "What I'm doing now" heading |
+| `src/components/ui/PersonalLogo.astro` | .personal-logo | Brand mark in nav/footer |
+
+### `--font-ui` (Interface Elements)
+
+| Location | Element | Context |
+|----------|---------|---------|
+| `src/styles/_utilities.css` | .ui-style | Utility class for non-prose areas |
+| `src/components/ui/Pill.astro` | .pill | Small tag/label pills |
+| `src/components/mdx/Tabs.astro` | button | Tab control buttons |
+| `src/components/mdx/Tabs.astro` | ::before | No-JS fallback tab labels |
+| `src/components/ui/MarkdownContentActions.astro` | .flash-notification | Toast notification |
+| `src/layouts/Article.astro` | .draft-notice | Draft status badge |
+
+**Via `.ui-style` class** (inherits `--font-ui`):
+- `MainNavigation.astro` - Navigation drawer
+- `Footer.astro` - Site footer
+- `NoteCard.astro` - Note card headers
+- `ContentCard.astro` - Content card component
+- Various pages with UI sections
+
+### `--font-prose` (Reading/Body Text)
+
+Default font for the document body. Used in:
+- Article body content
+- Note body content
+- Any area not explicitly set to UI or display
+
+### `--font-code` (Code/Monospace)
+
+| Location | Element | Context |
+|----------|---------|---------|
+| Code blocks | `<pre><code>` | Syntax-highlighted code |
+| Inline code | `<code>` | Inline code snippets |
+| `src/layouts/Article.astro` | .metadata | Article date/reading time |
+| `src/pages/styleguide/_DesignTokens.astro` | Various | Token display (styleguide only) |

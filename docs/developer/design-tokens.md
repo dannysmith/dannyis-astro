@@ -153,10 +153,20 @@ For responsive gaps that jump between sizes:
 ### Font Families
 
 ```css
---font-ui: 'League Spartan Variable', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-display: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
 --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 ```
+
+| Variable | Purpose |
+|----------|---------|
+| `--font-ui` | Interface elements: navigation, buttons, labels, small text |
+| `--font-display` | Large display typography: page titles, hero text, brand marks |
+| `--font-prose` | Long-form reading: articles, body text |
+| `--font-code` | Code blocks, inline code |
+
+**Note:** `--font-ui` and `--font-display` currently use the same font stack. They are separated to allow independent experimentation with display typefaces.
 
 ### Fluid Type Scale
 

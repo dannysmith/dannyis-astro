@@ -57,6 +57,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       }
 
       .title {
+        font-family: var(--font-display);
         font-size: clamp(3rem, 14vw, 20rem);
         font-weight: var(--font-weight-bold);
         text-transform: uppercase;

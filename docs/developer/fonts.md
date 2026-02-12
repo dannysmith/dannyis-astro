@@ -10,13 +10,23 @@ Detailed reference for the custom fonts used on this site, including variable fo
 | [League Spartan](#league-spartan) | UI / headings | Variable (weight) | Self-hosted from release |
 | [Fira Code](#fira-code) | Code / monospace | Variable (weight) | Fontsource (temporary) |
 
-CSS custom properties for font stacks are defined in `src/styles/global.css`:
+CSS custom properties for font stacks are defined in `src/styles/_foundation.css`:
 
 ```css
---font-prose: 'Literata', Georgia, 'Times New Roman', serif;
 --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-display: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-prose: 'Literata', Georgia, 'Times New Roman', serif;
 --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 ```
+
+| Variable | Purpose |
+|----------|---------|
+| `--font-ui` | Interface elements: navigation, buttons, labels, form controls |
+| `--font-display` | Large display typography: page titles, hero text, brand marks |
+| `--font-prose` | Long-form reading: articles, body text |
+| `--font-code` | Code blocks, inline code |
+
+**Note:** `--font-ui` and `--font-display` currently share the same font stack. They are separated to allow independent experimentation with display typefaces.
 
 ---
 
