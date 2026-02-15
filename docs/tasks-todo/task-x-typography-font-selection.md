@@ -134,11 +134,72 @@ Note: There is no need for our display face and Literata to be **expecially** co
 
 ## Running Task Lists
 
-[Use this space to keep a checklist of tasks/progress, or write out phased plans etc as needed]
+All test fonts are loaded via CDN in `src/styles/_foundation.css`. Uncomment the relevant `--font-ui` and `--font-display` lines to test each option.
 
-### Phase 1 - ???
+### Phase 1 - Test Unified Sans Hypothesis
 
-- [ ] 
+Can Bricolage Grotesque work for BOTH display AND UI/short-form via its optical size axis?
+
+- [ ] Uncomment TEST 1 in `_foundation.css` (both `--font-ui` and `--font-display` lines)
+- [ ] Check display contexts:
+  - [ ] Homepage "DANNY SMITH" at massive scale
+  - [ ] "WRITING" / "NOTES" page headers
+  - [ ] 404 page
+- [ ] Check UI contexts:
+  - [ ] Nav drawer links
+  - [ ] Footer
+  - [ ] Pills / tags
+- [ ] Check short-form prose:
+  - [ ] /now page content
+  - [ ] Note cards on /notes
+- [ ] Check Literata pairing:
+  - [ ] Callouts within articles
+  - [ ] Captions next to prose
+- [ ] **Decision:** Is lack of italic acceptable for short-form prose?
+- [ ] **Verdict:** Does Bricolage work as unified sans? YES / NO
+
+### Phase 2A - If Unified Works
+
+- [ ] Bricolage Grotesque confirmed for both `--font-display` and `--font-ui`
+- [ ] Skip to Phase 3
+
+### Phase 2B - If Unified Doesn't Work, Split the Problem
+
+**UI/Short-form candidates** (test in order):
+
+- [ ] TEST 2: Inter - the proven, safe Literata pairing
+  - [ ] Check /now page, note cards, nav, footer
+  - [ ] Check pairing with Literata in callouts/captions
+  - [ ] Verdict: ___
+- [ ] TEST 3: Figtree - warmer, friendlier alternative
+  - [ ] Same checks as Inter
+  - [ ] Verdict: ___
+- [ ] **UI Font Decision:** ___
+
+**Display candidates** (test in order):
+
+- [ ] TEST 4: Satoshi - leading candidate, clean geometric
+  - [ ] Check homepage, page headers, 404
+  - [ ] Verdict: ___
+- [ ] TEST 5: Familjen Grotesk - ink traps add craft (watch the N)
+  - [ ] Same checks
+  - [ ] Verdict: ___
+- [ ] TEST 6: Instrument Sans - subtle playfulness
+  - [ ] Same checks
+  - [ ] Verdict: ___
+- [ ] TEST 7: Geist - angular terminals (no italic)
+  - [ ] Same checks
+  - [ ] Verdict: ___
+- [ ] **Display Font Decision:** ___
+
+### Phase 3 - Finalise
+
+- [ ] Download and self-host chosen font(s) as woff2
+- [ ] Remove CDN test fonts from `_foundation.css`
+- [ ] Update `docs/developer/fonts.md` with new font documentation
+- [ ] Run `bun run check:all`
+- [ ] Test both light and dark themes
+- [ ] Move this task to tasks-done/ 
 
 ## Research & Testing Notes
 

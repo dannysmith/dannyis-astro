@@ -3,7 +3,9 @@
    Font faces, @property declarations and design tokens
    ============================================ */
 
-/* FONT FACES */
+/* ============================================
+   FONT FACES - PRODUCTION
+   ============================================ */
 
 @font-face {
   font-family: 'Literata';
@@ -26,6 +28,141 @@
   src: url('/fonts/LeagueSpartan-v2.220-2026-01-19.woff2') format('woff2');
   font-weight: 200 900;
   font-display: swap;
+}
+
+/* ============================================
+   FONT FACES - TESTING CANDIDATES
+   These are loaded via CDN for experimentation.
+   Remove this section once font selection is finalized.
+   ============================================ */
+
+/* --- BRICOLAGE GROTESQUE ---
+   Axes: wght 200-800, wdth 75-100, opsz 12-96
+   No italic. The optical size axis is KEY - at large sizes ink traps
+   become decorative, at small sizes it adapts for legibility.
+   Could potentially serve as UNIFIED sans for both display AND UI.
+   Source: https://fonts.google.com/specimen/Bricolage+Grotesque
+*/
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/bricolage-grotesque:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
+}
+
+/* --- INTER ---
+   Axes: wght 100-900, opsz
+   Has italic (separate file). Proven Literata pairing, excellent for screens.
+   The "safe" choice for UI/short-form.
+   Source: https://rsms.me/inter/ or Fontsource
+*/
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-italic.woff2') format('woff2-variations');
+}
+
+/* --- FIGTREE ---
+   Axes: wght 300-900
+   Has italic. Friendlier/warmer than Inter. Less common.
+   Source: https://fonts.google.com/specimen/Figtree
+*/
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/figtree:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Figtree';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/figtree:vf@latest/latin-wght-italic.woff2') format('woff2-variations');
+}
+
+/* --- SATOSHI ---
+   Axes: wght 300-900
+   Has italic. Current leading display candidate. Clean geometric.
+   Source: https://www.fontshare.com/fonts/satoshi
+*/
+@font-face {
+  font-family: 'Satoshi';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('https://cdn.fontshare.com/wf/NWBQYJIM7GCZ5XWD7D26ARB3VDY55ZRT/K63EV2KZIGKLE7RANQ2U42S6SVHU5RJ7/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Satoshi';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 300 900;
+  src: url('https://cdn.fontshare.com/wf/NWBQYJIM7GCZ5XWD7D26ARB3VDY55ZRT/XCDLPNIPWWHTEBVJQMXMZ45QNILV7HMX/LYBDPA24LJFLVMQKN6WHEO7VHQHM6SZ4.woff2') format('woff2');
+}
+
+/* --- FAMILJEN GROTESK ---
+   Axes: wght 400-700
+   Has italic. Ink traps add craft at display scale. Watch the uppercase N.
+   Source: https://fonts.google.com/specimen/Familjen+Grotesk
+*/
+@font-face {
+  font-family: 'Familjen Grotesk';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/familjen-grotesk:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Familjen Grotesk';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/familjen-grotesk:vf@latest/latin-wght-italic.woff2') format('woff2-variations');
+}
+
+/* --- INSTRUMENT SANS ---
+   Axes: wght 400-700, wdth 75-100
+   Has italic. "Balances precision with subtle playfulness."
+   Source: https://fonts.google.com/specimen/Instrument+Sans
+*/
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/instrument-sans:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/instrument-sans:vf@latest/latin-wght-italic.woff2') format('woff2-variations');
+}
+
+/* --- GEIST ---
+   Axes: wght 100-900
+   No italic. Angular terminals add craft at scale. From Vercel.
+   Source: https://vercel.com/font
+*/
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('https://cdn.jsdelivr.net/fontsource/fonts/geist:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
 }
 
 /* COLOR PROPERTIES */
@@ -89,9 +226,71 @@
    ============================================ */
 :root {
   /* ======= FONTS ======= */
+  /*
+   * TESTING WORKFLOW - See docs/tasks-todo/task-x-typography-font-selection.md
+   *
+   * PHASE 1: Test "Unified Sans" hypothesis with Bricolage Grotesque
+   *   - Can one font work for BOTH display AND UI/short-form via optical sizing?
+   *   - Uncomment TEST 1 below, check: homepage, /writing, /notes, /now, nav, footer
+   *   - Key question: Is lack of italic a dealbreaker for short-form prose?
+   *
+   * PHASE 2A: If unified works → done! Keep Bricolage for both.
+   *
+   * PHASE 2B: If unified doesn't work → split the problem:
+   *   - For UI/short-form: Test Inter (safe), then Figtree (warmer)
+   *   - For Display: Test Satoshi (leading), then others
+   *
+   * WHAT TO CHECK:
+   *   Display contexts: Homepage "DANNY SMITH", "WRITING"/"NOTES" headers, 404
+   *   UI contexts: Nav links, footer, pills, buttons
+   *   Short-form: /now page prose, note cards, callouts, captions
+   *   Pairing: How does the sans look NEXT TO Literata? (article callouts, captions)
+   */
 
-  --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-display: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* === CURRENT (baseline for comparison) === */
+  --font-ui: 'League Spartan', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: 'League Spartan', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* === TEST 1: Bricolage Grotesque (unified hypothesis) ===
+   * Try ONE font for both display and UI. The optical size axis should adapt:
+   * - Large sizes (display): decorative ink traps
+   * - Small sizes (UI/prose): neutral, legible
+   * NOTE: No italic available - use font-weight for emphasis instead
+   */
+  /* --font-ui: 'Bricolage Grotesque', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+  /* --font-display: 'Bricolage Grotesque', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+
+  /* === TEST 2: Inter for UI, keep testing display separately ===
+   * The "safe" choice. Proven Literata pairing, excellent screen rendering.
+   */
+  /* --font-ui: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+
+  /* === TEST 3: Figtree for UI ===
+   * Friendlier/warmer than Inter. Less commonly used.
+   */
+  /* --font-ui: 'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+
+  /* === TEST 4: Satoshi for Display ===
+   * Leading display candidate. Clean geometric, modern.
+   */
+  /* --font-display: 'Satoshi', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+
+  /* === TEST 5: Familjen Grotesk for Display ===
+   * Ink traps add craft. Watch the uppercase N at large sizes.
+   */
+  /* --font-display: 'Familjen Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+
+  /* === TEST 6: Instrument Sans for Display ===
+   * "Balances precision with subtle playfulness"
+   */
+  /* --font-display: 'Instrument Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+
+  /* === TEST 7: Geist for Display ===
+   * Angular terminals. No italic. From Vercel.
+   */
+  /* --font-display: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+
+  /* Prose stays Literata - decision already made */
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
