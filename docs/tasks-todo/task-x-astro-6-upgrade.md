@@ -111,51 +111,13 @@ bun run test:e2e
 
 Fix any failures.
 
-## Phase 3: Content Security Policy
+## Phase 3: Content Security Policy — SKIPPED
 
-Astro 6 stabilizes CSP. Currently set to `experimental.csp: false`.
+Skipped. CSP adds complexity for minimal benefit on a static site with no user input. Issues identified during investigation:
 
-### 3a. Enable basic CSP
-
-```js
-export default defineConfig({
-  security: {
-    csp: true,
-  },
-});
-```
-
-This auto-hashes all scripts and styles in pages and generates appropriate CSP headers.
-
-### 3b. Test thoroughly
-
-CSP can break things silently (blocked resources, inline styles). Check:
-
-- All pages render correctly
-- Expressive Code blocks work (they inject styles)
-- Any inline styles/scripts aren't blocked
-- External resources (fonts, images) still load
-- Mermaid diagrams (rendered as inline SVG)
-
-### 3c. Add custom directives if needed
-
-If the basic config blocks legitimate resources, configure specific directives:
-
-```js
-security: {
-  csp: {
-    directives: [
-      "default-src 'self'",
-      "img-src 'self' data:",
-      // Add others as needed
-    ],
-  },
-},
-```
-
-### 3d. Verify in production
-
-CSP can behave differently in dev vs production. Deploy a preview and check browser console for CSP violations.
+- External scripts (Simple Analytics, GitHub Gists) need allowlisting
+- Inline `style` attributes on elements would need `'unsafe-hashes'` or refactoring
+- No meaningful XSS attack surface on a statically generated site
 
 ## Phase 4: Experimental Rust Compiler
 
