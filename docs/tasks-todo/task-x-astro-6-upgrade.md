@@ -119,32 +119,15 @@ Skipped. CSP adds complexity for minimal benefit on a static site with no user i
 - Inline `style` attributes on elements would need `'unsafe-hashes'` or refactoring
 - No meaningful XSS attack surface on a statically generated site
 
-## Phase 4: Experimental Rust Compiler
+## Phase 4: Experimental Rust Compiler — NOT YET COMPATIBLE
 
-The new Rust compiler replaces the Go-based `.astro` compiler. Faster, better diagnostics.
+Tested but reverted. The Rust compiler fails on `Embed.astro`'s inline script during build:
 
-### 4a. Install and enable
-
-```bash
-bun add @astrojs/compiler-rs
+```
+Error: Cannot find the built path for src/components/mdx/Embed.astro?astro&type=script&index=0&lang.ts
 ```
 
-```js
-export default defineConfig({
-  experimental: {
-    rustCompiler: true,
-  },
-});
-```
-
-### 4b. Test
-
-```bash
-bun run build
-bun run check:all
-```
-
-Compare build output and timing against the Go compiler. If anything breaks, disable and file an issue — it's experimental.
+`@astrojs/compiler-rs` is installed but not enabled. Revisit in a future Astro 6.x release when the compiler matures.
 
 ## Out of Scope (Future Consideration)
 
