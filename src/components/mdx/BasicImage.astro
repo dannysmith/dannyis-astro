@@ -62,7 +62,7 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
           alt={alt}
           height={defaultHeight}
           width={defaultWidth}
-          loading="eager"
+          loading="lazy"
         />
       ) : (
         <Picture
@@ -71,7 +71,7 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
           formats={['avif', 'webp', 'jpg']}
           height={defaultHeight}
           width={defaultWidth}
-          loading="eager"
+          loading="lazy"
           decoding="async"
         />
       )
@@ -131,28 +131,7 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
   /* Inline-block shrink-wraps the image so the ::before placeholder
      never exceeds image dimensions */
   .image-wrapper {
-    position: relative;
     display: inline-block;
     vertical-align: top; /* Removes baseline gap inside framed figures */
-
-    /* Pulse animation while images load */
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-color: var(--color-text);
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      z-index: -1;
-    }
-  }
-
-  @keyframes pulse {
-    0%,
-    100% {
-      opacity: 0.05;
-    }
-    50% {
-      opacity: 0.3;
-    }
   }
 </style>
