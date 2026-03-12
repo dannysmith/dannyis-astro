@@ -41,8 +41,6 @@ export default defineConfig({
     responsiveStyles: true,
   },
   experimental: {
-    headingIdCompat: true,
-    csp: false,
     svgo: true,
   },
   integrations: [
@@ -66,7 +64,7 @@ export default defineConfig({
       excludeLangs: ['mermaid'],
     },
     rehypePlugins: [
-      [rehypeHeadingIds, { headingIdCompat: true }],
+      rehypeHeadingIds,
       rehypeAutolinkHeadings,
       [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
       [rehypeMermaid, { mermaidConfig }],
