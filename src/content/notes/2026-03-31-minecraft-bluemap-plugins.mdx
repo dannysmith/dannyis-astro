@@ -12,7 +12,7 @@ But last month I found myself wanting three things which didn't exist:
 
 1. A Bluemap plugin which shows [Chunkbase-style structure markers](https://www.chunkbase.com/apps/seed-map#seed=493527618652710797&platform=java_1_21_6&dimension=overworld&x=112&z=-968&zoom=0.448) on our actual world map.
 2. A Bluemap plugin to assist with [chunk trimming](https://wisehosting.com/help/how-to-trim-your-world-with-mcaselector).
-3. A cheap way to run a persistant shared creative world with Cam, and also to spin up and manage ephemeral minecraft servers for various reasons.
+3. A cheap way to run a persistent shared creative world with Cam, and also to spin up and manage ephemeral minecraft servers for various reasons.
 
 After a few days vibe coding and learning about the minecraft ecosystem I have all three...
 
@@ -26,13 +26,13 @@ It works by replicating Minecraft's algorithms and creating [BlueMap markers](ht
 
 The process of building this was super interesting – I learned a whole bunch about how Minecraft decides where to generate structures, and also how Chunkbase manages to replicate the algorithms with such accuracy. I was surprised to discover that Chunkbase does this entirely on the client-side with a ~4 MB WebAssembly module compiled from Rust.
 
-The project includes a [command-line tool](https://github.com/dannysmith/mc-bluemap-structures/tree/main/tools/chunkbase-verify) which uses playwright to extract structure positions directly from Chunkbase and save them to a JSON file. I built this as a way to verify my own algorithms against chunkbase, but it could easily be used to create a much simpler Bluemap plugin which simplt reads a manually-generated JSON file from Chunkbase and shows markers based on that.
+The project includes a [command-line tool](https://github.com/dannysmith/mc-bluemap-structures/tree/main/tools/chunkbase-verify) which uses playwright to extract structure positions directly from Chunkbase and save them to a JSON file. I built this as a way to verify my own algorithms against chunkbase, but it could easily be used to create a much simpler Bluemap plugin which simply reads a manually-generated JSON file from Chunkbase and shows markers based on that.
 
 ## Bluemap Chunk Trimmer
 
-As a minecraft map grows through player exploration, it becomes nececarry to occasionally trip away chunks which have been generated but contain nothing valuable. This helps keep the world size (on disk) in check and also prevents players having to travel further and further afield to experience new features which will only appear in newly-generated chunks.
+As a minecraft map grows through player exploration, it becomes necessary to occasionally trim away chunks which have been generated but contain nothing valuable. This helps keep the world size (on disk) in check and also prevents players having to travel further and further afield to experience new features which will only appear in newly-generated chunks.
 
-Do do this well, you need a detailed map of your explored world and the ability to visualy select chunks for deletion/retention. It's also very helpful to know the `playerInhabitedTime` for each chunk – if it's only a few seconds we can assume that it was only generated because someone flew near it and has probably never been visited. If it's tens of hours we probably don't want to trim it even if nothing's been built, because someone's spent enough time hanging out it'd feel weird if it changed.
+To do this well, you need a detailed map of your explored world and the ability to visually select chunks for deletion/retention. It's also very helpful to know the `playerInhabitedTime` for each chunk – if it's only a few seconds we can assume that it was only generated because someone flew near it and has probably never been visited. If it's tens of hours we probably don't want to trim it even if nothing's been built, because someone's spent enough time hanging out it'd feel weird if it changed.
 
 Most of the GUI tools for chunk trimming only work on Windows or on local worlds (or both).
 
@@ -44,7 +44,7 @@ Most of the GUI tools for chunk trimming only work on Windows or on local worlds
 
 Reads the `InhabitedTime` NBT data from `.mca` region files and renders a **heatmap** as an overlay in bluemap's 2D *flat* mode. Chunks with less than 1 minute of inhabited time don't appear on the heatmap at all, and the rest are colored according to how long they've been inhabited, with the highest level being 10+ hours.
 
-When the heatmap is on, a little HUD will show the the inhabited time of the chunk under the cursor.
+When the heatmap is on, a little HUD will show the inhabited time of the chunk under the cursor.
 
 ### 2. Chunk Selector
 
@@ -52,7 +52,7 @@ When the heatmap is on, a little HUD will show the the inhabited time of the chu
 
 With the Chunk Selector toggled on, control-click on a chunk will *select* it (or deselect it). Chunks can also be selected by dragging a box, or by "painting" with the mouse.
 
-Selected chunks can be exported as either JSON or [MCA-Selector](https://github.com/Querz/mcaselector) compatable CSV. I intentionally decided against building the actual chunk deletion.
+Selected chunks can be exported as either JSON or [MCA-Selector](https://github.com/Querz/mcaselector) compatible CSV. I intentionally decided against building the actual chunk deletion.
 
 ## mc-infra
 
@@ -95,7 +95,7 @@ servers:
 
 I'll end up with a properly-configured fabric server called `mynewworld` with:
 
-- Suitable memory, disk usage, CPU limites etc for a "permanent"-tier world.
+- Suitable memory, disk usage, CPU limits etc for a "permanent"-tier world.
 - My standard fabric mods installed, plus Bluemap, DH and Simple voice Chat.
 - Proper config and port-forwarding to support Simple Voice Chat.
 - The Chunky mod installed and configured properly to pregen chunks to a 1500 radius.
