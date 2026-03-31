@@ -1,0 +1,35 @@
+---
+title: Tracking Biggles Books
+slug: tracking-biggles-books
+pubDate: 2026-03-30
+---
+
+Thirty-odd years ago I borrowed some [Biggles Audiobooks](https://en.wikipedia.org/wiki/Biggles) (on cassette tape) from my local library and enjoyed them so much I asked the librarian if they had any more. Turned out that while they had a few modern editions on the shelves, they had a whole collection of much older ones downstairs. And so for a year or two in the late '90s I'd pop in to Eastbourne library every week or two: the lady always had 2-3 ready for me and took the time to ring round other libraries asking them to dust off any they had and sent them to Eastbourne.
+
+Some time in 2000 I decided I wanted to read **every** Biggles book written and after digging about on a computer in the school library I eventually found a complete list on [biggles.nl](https://www.biggles.nl/), which is a wonderful example of the kind of weird, niche hand-rolled website which first got me interested in the internet. (I'm happy to see that the *International Biggles Association* is still going in 2026!)
+
+[Image]
+
+I never did manage to read them all, but sometime in my early 20's I started to pick up old copies if I saw them in second-hand bookshops and accidentally became a **collector of biggles books**. I now have 64 of the 98 published, and someday hope to own a first edition of all 98.
+
+## Managing my collection
+
+During the COVID pandemic I accidentally spent fifty quid on eBay buying Biggles Books I already owned, so I set up an [Airtable](https://www.airtable.com/) database to track my current collection and provide an easy list of those I'm still looking for. This was partly **for me**, and partly a reference for friends who spot a Biggles book in charity shops and message me.
+
+Last week I realised my Biggles database is the **only** thing still on Airtable. So I grabbed a CSV export and had Claude Code create some stuff in [Obsidian](https://obsidian.md/) for me to keep notes, and a tiny interactive website at https://biggles.danny.is/.
+
+The website is just three files:
+
+- [`canonical.json`](https://github.com/dannysmith/biggles-books/blob/main/canonical.json) - All published books ordered chronologically with the title and publication date, and labelled as *Pre-WW1*, *WW1*, *Interwar*, *WW2* or *Post War*.
+- [`collection.json`](https://github.com/dannysmith/biggles-books/blob/main/collection.json) – All the copies I own with the metadata I want to track.
+- [`index.html`](https://github.com/dannysmith/biggles-books/blob/main/index.html) - Reads the JSON files and renders the [site](https://biggles.danny.is/).
+
+All three files are statically served by GitHub Pages.
+
+## Reflections
+
+1. This kind of project simply wouldn't have happened without Claude Code. Sure, I *could* have done this without AI - but I just wouldn't.
+2. Sites like [biggles.nl](http://biggles.nl) and [biggles.info](http://biggles.info) are wonderful examples of the old-school "open web". They have existed largely unchanged for decades and depend only on someone keeping their servers alive. And they're still useful.
+3. Libraries are awesome.
+
+Shoutout to the folks who worked at Eastbourne Library in the late '90s, and to the folks who maintain biggles.nl and biggles.info. And if you're reading this and have any books on my wanted list, please drop me an email!
