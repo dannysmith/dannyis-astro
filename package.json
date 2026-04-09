@@ -54,6 +54,7 @@
     "astro-expressive-code": "^0.41.7",
     "astro-icon": "^1.1.5",
     "inquirer": "^12.11.1",
+    "marked": "^18.0.0",
     "mdast-util-to-string": "^4.0.0",
     "mermaid": "^11.12.1",
     "puppeteer": "^24.31.0",
