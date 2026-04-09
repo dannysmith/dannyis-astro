@@ -22,7 +22,7 @@ Large, Bold, Presentational. Used for page headers, 404 page, large headings, he
 - Will mostly be used as Caps/Small Caps
 
 **CSS Variable:** `--font-display`
-**Current:** League Spartan
+**Was:** League Spartan → **Now:** Geist
 
 ### 2. Long-form Prose
 
@@ -46,8 +46,8 @@ Anywhere we have prose, but a "bookish" feel seems inappropriate. This could be 
 - Still works well for "prose" and has nice typographic features
 - Works well ALONGSIDE Literata.
 
-**CSS Variable:** None, but should be the site default (currently Literata via `--font-prose`).
-**Current:** Literata
+**CSS Variable:** `--font-ui` (the site body default).
+**Was:** Literata → **Now:** Figtree
 
 ### 4. UI (Interface Elements)
 
@@ -59,7 +59,7 @@ The default for "interface elements" like buttons, HTML form elements, pills, UI
 - Sans-serif
 
 **CSS Variable:** `--font-ui`
-**Current:** League Spartan
+**Was:** League Spartan → **Now:** Figtree
 
 ### 5. Code
 
@@ -161,12 +161,14 @@ The earlier research note ("Geist: no italic") was **wrong**. Vercel ships varia
 
 This is what unlocked "Path B" (unified Geist for display + UI/short-form) as a real option. For now we've gone with Path A (Figtree + Geist split) because the contrast between the two sans adds character, but the toggle is one uncommented line away if we want to try unified Geist later.
 
-## Next Steps (Still To Do)
+## Open at Time of Completion
 
-- Manually tune sizes / weights / tracking / other font settings everywhere `--font-display` is used, now that Geist has different proportions than League Spartan
-- Same for `--font-ui` with Figtree
-- Experiment with Path B (unified Geist) in context once the display tuning is dialled in
-- Eventually move this task to `tasks-done/` once tuning settles
+Font swap and initial size/weight tuning are done. Remaining explorations:
+
+- **Path B (unified Geist)** — one uncommented line in `_foundation.css` away. Worth trying at some point to see if a single sans for display + UI feels more cohesive than the Geist/Figtree split.
+- **Geist's stylistic sets** (`ss01`–`ss11`) and Figtree's `ss01`/`ss02` are unexplored — inspect via [wakamaifondue.com](https://wakamaifondue.com) or a glyph viewer to see if any unlock useful alternate letterforms for display contexts.
+- **Tracking & weight calibration** — Section 5 from the typography review was deferred. Worth eyeballing default body tracking, `--tracking-tight` aggressiveness, and `.all-caps` letter-spacing now that Figtree has different proportions than League Spartan.
+- **Geist `dlig`** (discretionary ligatures) is unused — try enabling on display contexts for decorative effect.
 
 ## Ruled Out (Historical)
 

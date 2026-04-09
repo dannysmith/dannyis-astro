@@ -77,7 +77,7 @@ const components = {
 **CSS Layers Architecture:**
 
 - Six-layer cascade: `reset` → `base` → `typography` → `layout` → `utilities` → `longform`
-- Prose typography is the **default** - use `.ui-style` to opt-out for UI areas
+- Body defaults to `--font-ui` (Figtree) with prose-style links/markers/heading borders applied globally. Use `.ui-style` to opt out of those prose styles for nav/footer/listings; use `.longform-prose` (via `LongFormProseTypography.astro`) to opt **in** to Literata serif for long-form articles.
 - `.dark-surface` utility for always-dark components (nav, footer)
 - Eliminates need for `!important` or complex specificity battles
 
