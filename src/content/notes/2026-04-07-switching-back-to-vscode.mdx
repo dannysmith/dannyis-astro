@@ -1,0 +1,58 @@
+---
+title: Switching back to VSCode
+slug: switching-back-to-vscode
+pubDate: 2026-04-07
+---
+
+I switched from VSCode to Cursor as my main editor sometime in early 2025, primarily for the *much better* tab completion it had at the time. As my workflow has evolved over the last six months I've found myself using Cursor's AI **features** less and less, to the point where for the most part I just use it as a normal text editor. While AI tab-completion is still *sometimes* useful, I'm finding more and more that anywhere I'm manually writing or editing code, normal non-AI completion tends to do the job just fine.
+
+[Cursor 3 was announced](https://cursor.com/blog/cursor-3) on April 3, and as expected it isn't really a text editor anymore. I've yet to spend much time with it but I do know that there's no longer a good reason for me to use Cursor **as a text editor**.
+
+## How I use a text editor in April 2026
+
+My usual workflow at the moment involves having a project (or worktree) directory open in [Ghostty](/notes/2025-08-18-ghostty) with two panes: one for Claude Code TUI and one for a standard terminal. I have the same directory open in my editor, primarily for five things:
+
+1. Visually reviewing & tweaking uncommitted changes made by Claude.
+2. Manually staging and committing changes – I still mostly prefer to make my own commits on feature branches.
+3. Manually exploring & referencing the codebase as I've always done, only now it's often so I can provide input to Claude rather than make edits myself.
+4. Manually writing or editing markdown files which describe requirements, tasks or plans before I have Claude read them.
+5. Occasionally, writing or editing actual code.
+
+This means I basically need a **normal editor** like VSCode configured how I like it, with a few specific additions:
+
+- "Standard" language extensions, as well as things like prettier, path-intellisense etc.
+- Just enough git-related extensions that it's well-integrated with git and GitHub.
+- Extensions and configuration which makes it easy to work with markdown and CSV files.
+
+## My "new" VSCode setup
+
+My guiding principle is to keep VSCode as close to its defaults as possible. I add cosmetic tweaks, formatting and linting, a fairly heavy markdown layer, and a deliberately small amount of AI tooling. Everything else is left alone.
+
+The theme is [Cobalt Next](https://github.com/davidleininger/cobaltnext-vscode) with a custom version of [Operator Mono](https://www.typography.com/fonts/operator/styles) that includes coding ligatures, set in 15px 200 weight. I've moved the activity bar to the **top** of the window rather than its default spot on the left, and the cursor blinks with the "expand" animation and has smooth movement on. The minimap auto-hides and renders as colour blocks without characters. I use Atom-style keybindings (muscle memory from years ago that I've never managed to shake) and set a few other bits:
+
+- Tabs are 2 spaces.
+- Final newlines get inserted on save and trailing whitespace gets trimmed (except in markdown and YAML).
+- Prettier is the default formatter except for markdown, configured globally with single quotes, no semicolons, and `proseWrap: preserve` so it doesn't reflow my paragraphs.
+- ESLint runs on save rather than as I type.
+
+*Format-on-save* is deliberately off to avoid accidental big diffs when working with AI-generated code – I toggle it on or run it manually when I need it. 
+
+Markdown is the most heavily customised part of the whole config, because I write a *lot* of markdown and the defaults do things I actively dislike. Prettier is too aggressive with markdown – it reflows paragraphs, fights with my line break conventions and reformats lists in annoying ways. So `.md` files use [`yzhang.markdown-all-in-one`](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) as their default formatter instead, which is much more conservative.
+
+I disable markdown link validation, soft-wrap at column 100, and preserve trailing whitespace. I also customise the editor token colours so H1s render in cyan and H2s in magenta, which makes long documents much easier to scan. `cmd+b` and `cmd+i` are remapped to toggle bold and italic when in markdown or MDX files. I also have the following extensions installed:
+
+- [**Markdown All in One**](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) - Provides formatting, TOC generation, list continuation, keyboard shortcuts, basic table editing, and is the default formatter.
+- [**Markdown Extended**](https://github.com/qjebbs/vscode-markdown-extended) - Adds a bunch of other niceties.
+- [**Markdown Table**](https://marketplace.visualstudio.com/items?itemName=TakumiI.markdowntable) - Makes working with tables a little easier.
+
+For AI I have exactly three extensions installed:
+
+- The official **Claude Code** IDE extension, which connects the editor to a Claude Code session running in the terminal.
+- **GitHub Copilot** – purely for inline tab completion, disabled for plaintext, markdown etc.
+- **GitHub Copilot Chat** – installed *only* for the "Generate commit message" sparkle button in the Source Control view. I don't use the chat panel, but the button is a feature of this extension and there's no way to get it without installing the whole thing.
+
+Git settings are minimal: smart commit is on (so I can commit without staging first), auto-fetch is on, and the "confirm sync" dialog is off. I have the [GitHub PR extension](https://github.com/Microsoft/vscode-pull-request-github) and a [file-history extension](https://github.com/pomber/git-history) installed, but most of my git work happens in the terminal with `git` and `gh` – the extensions are just for the cases where in-editor review is genuinely faster.
+
+I also have language extensions for the things I work with regularly (Astro, Tailwind, Bun, Rust, Tauri, TOML, Vitest), plus a CSV editor and a PDF viewer.
+
+The full description lives in [vscode-setup.md](https://github.com/dannysmith/dotfiles/blob/master/vscode-setup.md) in my dotfiles repo, along with the contents of my [`settings.json`](https://github.com/dannysmith/dotfiles/blob/master/README.md) if you want to copy any of it.
