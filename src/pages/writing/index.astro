@@ -61,6 +61,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
         font-size: clamp(3rem, 14vw, 20rem);
         font-weight: var(--font-weight-extrabold);
         text-transform: uppercase;
+        font-feature-settings: 'case' on;
         text-align: right;
         line-height: var(--leading-none);
         transform: translateY(-0.2em);
