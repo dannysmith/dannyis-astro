@@ -153,20 +153,20 @@ For responsive gaps that jump between sizes:
 ### Font Families
 
 ```css
---font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
---font-display: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-display: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-ui: 'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
 --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 ```
 
 | Variable | Purpose |
 |----------|---------|
-| `--font-ui` | Interface elements: navigation, buttons, labels, small text |
 | `--font-display` | Large display typography: page titles, hero text, brand marks |
-| `--font-prose` | Long-form reading: articles, body text |
+| `--font-ui` | Interface elements AND short-form prose (document body default) |
+| `--font-prose` | Long-form reading: articles, anywhere `.longform-prose` applies |
 | `--font-code` | Code blocks, inline code |
 
-**Note:** `--font-ui` and `--font-display` currently use the same font stack. They are separated to allow independent experimentation with display typefaces.
+**Note:** The document body defaults to `--font-ui` (Figtree), so UI and short-form prose share a typeface. Long-form articles are scoped to `--font-prose` via `.longform-prose`.
 
 ### Fluid Type Scale
 

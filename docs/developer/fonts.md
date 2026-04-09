@@ -6,27 +6,31 @@ Detailed reference for the custom fonts used on this site, including variable fo
 
 | Font | Role | Type | Source |
 |------|------|------|--------|
-| [Literata](#literata) | Prose / body text | Variable (weight + optical size) | Self-built from source |
-| [League Spartan](#league-spartan) | UI / headings | Variable (weight) | Self-hosted from release |
+| [Literata](#literata) | Long-form prose / body text | Variable (weight + optical size) | Self-built from source |
+| [Geist](#geist) | Display typography | Variable (weight) + variable italic | Self-hosted from [vercel/geist-font](https://github.com/vercel/geist-font) |
+| [Figtree](#figtree) | UI + short-form prose | Variable (weight) + variable italic | Self-hosted from [google/fonts](https://github.com/google/fonts/tree/main/ofl/figtree) |
 | [Fira Code](#fira-code) | Code / monospace | Variable (weight) | Fontsource (temporary) |
 
 CSS custom properties for font stacks are defined in `src/styles/_foundation.css`:
 
 ```css
---font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
---font-display: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-display: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-ui: 'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
 --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 ```
 
 | Variable | Purpose |
 |----------|---------|
-| `--font-ui` | Interface elements: navigation, buttons, labels, form controls |
 | `--font-display` | Large display typography: page titles, hero text, brand marks |
-| `--font-prose` | Long-form reading: articles, body text |
+| `--font-ui` | Interface elements AND short-form prose (notes, callouts, captions, `/now`) — this is the document body default |
+| `--font-prose` | Long-form reading: articles, anywhere `.longform-prose` applies |
 | `--font-code` | Code blocks, inline code |
 
-**Note:** `--font-ui` and `--font-display` currently share the same font stack. They are separated to allow independent experimentation with display typefaces.
+**Notes:**
+- The document body defaults to `--font-ui` (set in `_typography.css`), so short-form prose and UI share Figtree. `.longform-prose` scopes Literata to long-form articles only.
+- A commented `--font-ui: 'Geist'` toggle exists in `_foundation.css` for experimenting with unified-Geist across display + UI.
+- League Spartan TTF files remain in `public/fonts/` (`LeagueSpartan-Regular.ttf`, `LeagueSpartan-Bold.ttf`) **only** because Satori requires TTF format for build-time OG image generation. See `src/utils/og-image-generator.ts`. The web font WOFF2 has been removed.
 
 ---
 
@@ -272,34 +276,104 @@ All OpenType features available in Literata:
 
 ---
 
-## League Spartan
+## Geist
 
-A bold, geometric sans-serif inspired by American sign painting.
+A geometric sans-serif from Vercel, designed in collaboration with Basement Studio. Angular terminals add craft at large scale. Used for display typography on this site.
 
 ### Source Information
 
 | Property | Value |
 |----------|-------|
-| Version | 2.220 |
-| Repository | [theleagueof/league-spartan](https://github.com/theleagueof/league-spartan) |
-| Download date | January 2026 |
-| Files | `LeagueSpartan-v2.220-2026-01-19.woff2` (web), `LeagueSpartan-Regular.ttf`, `LeagueSpartan-Bold.ttf` (OG images) |
+| Version | 1.800 |
+| Repository | [vercel/geist-font](https://github.com/vercel/geist-font) |
+| Download date | April 2026 |
+| Files | `Geist-v1.800-2026-04-09.woff2`, `Geist-Italic-v1.800-2026-04-09.woff2` |
 
-Downloaded from the [GitHub releases](https://github.com/theleagueof/league-spartan/releases/tag/2.220).
-
-### Static TTF Files for OG Image Generation
-
-The static TTF files (`LeagueSpartan-Regular.ttf` and `LeagueSpartan-Bold.ttf`) are required for build-time OG image generation. [Satori](https://github.com/vercel/satori), the library that renders JSX to images, does not support woff2 fonts—it requires TTF format. These files are loaded by `src/utils/og-image-generator.ts` and should not be removed.
+Downloaded from `fonts/Geist/variable/Geist[wght].ttf` and `Geist-Italic[wght].ttf` in the Vercel repo, then converted to WOFF2 with `fontTools`. Italic is a separate variable file (not available via Fontsource or Google Fonts at the time of writing — self-host from the Vercel repo directly).
 
 ### Variable Axes
 
 #### Weight (`wght`)
 
-Range: 200–900
+Range: 100–900. Italic covers the same range as a separate variable file.
 
 | Value | Name |
 |-------|------|
-| 200 | ExtraLight |
+| 100 | Thin |
+| 200 | UltraLight |
+| 300 | Light |
+| 400 | Regular |
+| 500 | Medium |
+| 600 | SemiBold |
+| 700 | Bold |
+| 800 | Black |
+| 900 | UltraBlack |
+
+```css
+font-weight: 600;
+font-weight: var(--font-weight-semibold);
+font-style: italic; /* Uses the variable italic file */
+```
+
+### OpenType Features
+
+Geist ships an extensive feature set. Notable omissions: **no small caps** (`smcp`/`c2sc`), no oldstyle figures (`onum`), no slashed zero (`zero`).
+
+| Tag | Name | Description |
+|-----|------|-------------|
+| `aalt` | Access All Alternates | Font inspection; not for CSS |
+| `case` | Case-Sensitive Forms | Adjusts punctuation for all-caps |
+| `ccmp` | Glyph Composition | Leave on; handles composition |
+| `dlig` | Discretionary Ligatures | Decorative ligatures |
+| `dnom` / `numr` | Denominators / Numerators | Building fractions manually |
+| `frac` | Fractions | Proper fraction forms (½) |
+| `kern` / `mark` / `mkmk` | Kerning & marks | Leave on; default layout |
+| `liga` | Standard Ligatures | On by default |
+| `locl` | Localized Forms | Language-specific glyphs |
+| `ordn` | Ordinals | 1st, 2nd, 3rd |
+| `pnum` | Proportional Figures | Numbers with varying widths |
+| `tnum` | Tabular Figures | Aligned columns of numbers |
+| `sinf` / `subs` / `sups` | Subscript / superscript | Chemical formulas, footnotes |
+| `ss01`–`ss11` | Stylistic Sets 1–11 | Alternate letterforms (Geist ships 11 stylistic sets; see the [Geist repo](https://github.com/vercel/geist-font) for specifics, or inspect glyphs directly) |
+
+```css
+/* Case-sensitive punctuation for display headings */
+.display-heading {
+  text-transform: uppercase;
+  font-feature-settings: 'case' on;
+}
+
+/* Tabular figures for data alignment */
+.metrics {
+  font-variant-numeric: tabular-nums;
+}
+```
+
+---
+
+## Figtree
+
+A friendly geometric sans-serif by Erik Kennedy. Used for UI elements and short-form prose (the document body default on this site).
+
+### Source Information
+
+| Property | Value |
+|----------|-------|
+| Version | 2.002 |
+| Repository | [erikdkennedy/figtree](https://github.com/erikdkennedy/figtree) (upstream), [google/fonts](https://github.com/google/fonts/tree/main/ofl/figtree) (redistribution) |
+| Download date | April 2026 |
+| Files | `Figtree-v2.002-2026-04-09.woff2`, `Figtree-Italic-v2.002-2026-04-09.woff2` |
+
+Downloaded from the Google Fonts repo (`ofl/figtree/`) — the variable TTFs there are built from the upstream source. Converted to WOFF2 with `fontTools`.
+
+### Variable Axes
+
+#### Weight (`wght`)
+
+Range: 300–900. Italic covers the same range as a separate variable file.
+
+| Value | Name |
+|-------|------|
 | 300 | Light |
 | 400 | Regular |
 | 500 | Medium |
@@ -309,40 +383,47 @@ Range: 200–900
 | 900 | Black |
 
 ```css
-font-weight: 600;
+font-weight: 400;
 font-weight: var(--font-weight-semibold);
+font-style: italic;
 ```
 
 ### OpenType Features
 
-League Spartan includes the following OpenType features:
+A leaner feature set than Geist. Notable omissions: **no small caps** (`smcp`/`c2sc`), no oldstyle figures (`onum`), no standard ligatures (`liga`), no discretionary ligatures (`dlig`).
 
 | Tag | Name | Description |
 |-----|------|-------------|
-| `aalt` | Access All Alternates | Access to all alternate glyphs |
-| `calt` | Contextual Alternates | Context-aware glyph substitution |
-| `case` | Case-Sensitive Forms | Adjusts punctuation for all-caps text |
-| `ccmp` | Glyph Composition | Handles character composition |
-| `frac` | Fractions | Proper fraction forms (½) |
-| `liga` | Standard Ligatures | Common ligature combinations |
-| `locl` | Localized Forms | Language-specific glyph forms |
-| `ordn` | Ordinals | Superscript for 1st, 2nd, 3rd |
-| `sups` | Superscript | Superior/superscript figures |
-| `ss01` | Stylistic Set 1 | **Alternate C and a** — provides alternate forms for C (and variants) and lowercase 'a' |
-| `ss02` | Stylistic Set 2 | **Alternate Q** — provides an alternate Q design |
+| `aalt` | Access All Alternates | Font inspection; not for CSS |
+| `case` | Case-Sensitive Forms | Adjusts punctuation for all-caps |
+| `ccmp` | Glyph Composition | Leave on |
+| `dnom` / `numr` | Denominators / Numerators | Building fractions manually |
+| `frac` | Fractions | Proper fraction forms |
+| `kern` / `mark` / `mkmk` / `rvrn` | Kerning & variation | Leave on; default layout |
+| `locl` | Localized Forms | Language-specific glyphs |
+| `ordn` | Ordinals | 1st, 2nd, 3rd |
+| `pnum` | Proportional Figures | Numbers with varying widths |
+| `tnum` | Tabular Figures | Aligned columns of numbers |
+| `sinf` / `subs` / `sups` | Subscript / superscript | Footnotes, formulas |
+| `ss01` | Stylistic Set 1 | Alternate letterforms — inspect glyphs to identify |
+| `ss02` | Stylistic Set 2 | Alternate letterforms — inspect glyphs to identify |
 
 ```css
-/* Enable alternate letterforms */
-.alt-style {
-  font-feature-settings: 'ss01' on; /* Alternate C and a */
-}
-
-/* Case-sensitive punctuation for headings */
-h1 {
-  text-transform: uppercase;
-  font-feature-settings: 'case' on;
+/* Tabular numerals in tables and data */
+.data-table td {
+  font-variant-numeric: tabular-nums;
 }
 ```
+
+---
+
+## League Spartan (OG images only)
+
+League Spartan is no longer used as a web font but its static TTF files remain in `public/fonts/` for build-time OG image generation.
+
+[Satori](https://github.com/vercel/satori) — the library that renders JSX to images — does not support WOFF2 and requires TTF format. The files `LeagueSpartan-Regular.ttf` and `LeagueSpartan-Bold.ttf` are loaded by `src/utils/og-image-generator.ts` and should not be removed.
+
+If OG image styling changes to use Geist or Figtree, replace these TTFs with static TTF exports of the new fonts before removing League Spartan files.
 
 ---
 
