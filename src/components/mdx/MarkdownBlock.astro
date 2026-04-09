@@ -196,6 +196,19 @@ const showingSource = defaultView === 'source';
     content: none;
   }
 
+  /* Basic block code styling for nested fences inside the preview.
+     Matches the site's inline-code tokens; no syntax highlighting —
+     readers can toggle to the Source pane for that. */
+  .md-block-rendered :global(pre) {
+    font-family: var(--font-code);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-background-code);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-s);
+    overflow-x: auto;
+  }
+
   /* Let Expressive Code's frame sit flush inside the box. */
   .md-block-source :global(.expressive-code) {
     margin: 0;
