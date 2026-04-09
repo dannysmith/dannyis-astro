@@ -40,6 +40,16 @@ export interface Props {
 
 const { code, title, defaultView = 'rendered' } = Astro.props;
 
+/** HTML-escape untrusted string values before interpolating into attributes. */
+function escapeAttr(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Fresh Marked instance per render — avoids mutating shared global state
 // across concurrent SSR calls, and lets us attach a custom renderer cleanly.
 const md = new Marked({ gfm: true, async: false });
@@ -47,18 +57,20 @@ const md = new Marked({ gfm: true, async: false });
 // Override marked's link renderer to add security attributes to external
 // links. This substitutes for `rehype-external-links`, which only runs on
 // the site's main markdown pipeline — included chunks don't pass through
-// that pipeline so we handle it here.
+// that pipeline so we handle it here. href/title are escaped defensively
+// since we're bypassing marked's default escape.
 md.use({
   renderer: {
     link({ href, title: linkTitle, tokens }) {
-      // `tokens` here is an inline token array for the link text. The
-      // `Marked.parser` utility renders them back to HTML so we preserve
-      // nested formatting (bold, code, etc.) inside link text.
+      // `tokens` is an inline token array for the link text. The parser's
+      // parseInline renders them back to (already-escaped) HTML so nested
+      // formatting (bold, code, etc.) inside link text is preserved.
       const text = this.parser.parseInline(tokens);
       const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href);
-      const titleAttr = linkTitle ? ` title="${linkTitle}"` : '';
+      const hrefAttr = escapeAttr(href ?? '');
+      const titleAttr = linkTitle ? ` title="${escapeAttr(linkTitle)}"` : '';
       const securityAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
-      return `<a href="${href}"${titleAttr}${securityAttrs}>${text}</a>`;
+      return `<a href="${hrefAttr}"${titleAttr}${securityAttrs}>${text}</a>`;
     },
   },
 });
@@ -156,7 +168,7 @@ const showingSource = defaultView === 'source';
     padding: var(--space-3xs) var(--space-2xs);
     font-family: var(--font-ui);
     font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-medium, 500);
+    font-weight: var(--font-weight-medium);
     text-transform: uppercase;
     letter-spacing: 0.03em;
     background: transparent;
@@ -185,11 +197,8 @@ const showingSource = defaultView === 'source';
     border-color: var(--color-accent);
   }
 
-  .md-block-pane {
-    /* Rendered pane gets internal padding; source pane lets Expressive
-       Code handle its own padding via its frame chrome. */
-  }
-
+  /* Rendered pane gets internal padding; source pane lets Expressive
+     Code handle its own padding via its frame chrome. */
   .md-block-rendered {
     padding: var(--space-s) var(--space-m);
   }
@@ -233,60 +242,58 @@ const showingSource = defaultView === 'source';
 
 <script>
   class MarkdownBlock {
-    private el: HTMLElement;
-    private toggleBtn: HTMLButtonElement | null;
-    private copyBtn: HTMLButtonElement | null;
-    private renderedPane: HTMLElement | null;
-    private sourcePane: HTMLElement | null;
-    private toggleLabels: HTMLElement[];
+    private static readonly COPY_LABEL = 'Copy';
+    private static readonly COPIED_LABEL = 'Copied';
+    private static readonly COPY_RESET_MS = 1500;
 
-    constructor(el: HTMLElement) {
-      this.el = el;
-      this.toggleBtn = el.querySelector<HTMLButtonElement>('[data-md-toggle]');
-      this.copyBtn = el.querySelector<HTMLButtonElement>('[data-md-copy]');
-      this.renderedPane = el.querySelector<HTMLElement>('[data-pane="rendered"]');
-      this.sourcePane = el.querySelector<HTMLElement>('[data-pane="source"]');
-      this.toggleLabels = Array.from(
-        el.querySelectorAll<HTMLElement>('.md-block-toggle-label')
-      );
+    private copyResetTimer: number | null = null;
 
-      if (!this.toggleBtn || !this.copyBtn || !this.renderedPane || !this.sourcePane) {
-        return;
-      }
-
+    /**
+     * Construct only after all required elements are known to exist. Use
+     * {@link MarkdownBlock.init} to attach to a DOM node — it returns null
+     * if the node is missing any of the expected children.
+     */
+    private constructor(
+      private readonly el: HTMLElement,
+      private readonly toggleBtn: HTMLButtonElement,
+      private readonly copyBtn: HTMLButtonElement,
+      private readonly renderedPane: HTMLElement,
+      private readonly sourcePane: HTMLElement,
+      private readonly toggleLabels: HTMLElement[]
+    ) {
       this.toggleBtn.addEventListener('click', () => this.toggle());
       this.copyBtn.addEventListener('click', () => this.copy());
       this.el.classList.add('md-block-initialized');
     }
 
-    private toggle() {
-      if (!this.renderedPane || !this.sourcePane || !this.toggleBtn) return;
+    static init(el: HTMLElement): MarkdownBlock | null {
+      const toggleBtn = el.querySelector<HTMLButtonElement>('[data-md-toggle]');
+      const copyBtn = el.querySelector<HTMLButtonElement>('[data-md-copy]');
+      const renderedPane = el.querySelector<HTMLElement>('[data-pane="rendered"]');
+      const sourcePane = el.querySelector<HTMLElement>('[data-pane="source"]');
+      if (!toggleBtn || !copyBtn || !renderedPane || !sourcePane) return null;
 
-      const showingSource = this.el.dataset.view === 'source';
-      const nextView = showingSource ? 'rendered' : 'source';
+      const toggleLabels = Array.from(
+        el.querySelectorAll<HTMLElement>('.md-block-toggle-label')
+      );
+      return new MarkdownBlock(el, toggleBtn, copyBtn, renderedPane, sourcePane, toggleLabels);
+    }
+
+    private toggle() {
+      const nextView = this.el.dataset.view === 'source' ? 'rendered' : 'source';
       this.el.dataset.view = nextView;
 
-      if (nextView === 'source') {
-        this.renderedPane.setAttribute('hidden', '');
-        this.sourcePane.removeAttribute('hidden');
-        this.toggleBtn.setAttribute('aria-pressed', 'true');
-      } else {
-        this.sourcePane.setAttribute('hidden', '');
-        this.renderedPane.removeAttribute('hidden');
-        this.toggleBtn.setAttribute('aria-pressed', 'false');
-      }
+      const showingSource = nextView === 'source';
+      this.renderedPane.toggleAttribute('hidden', showingSource);
+      this.sourcePane.toggleAttribute('hidden', !showingSource);
+      this.toggleBtn.setAttribute('aria-pressed', showingSource ? 'true' : 'false');
 
       this.toggleLabels.forEach(label => {
-        if (label.dataset.when === nextView) {
-          label.removeAttribute('hidden');
-        } else {
-          label.setAttribute('hidden', '');
-        }
+        label.toggleAttribute('hidden', label.dataset.when !== nextView);
       });
     }
 
     private async copy() {
-      if (!this.copyBtn) return;
       const code = this.copyBtn.dataset.mdCode;
       if (!code) return;
 
@@ -297,22 +304,23 @@ const showingSource = defaultView === 'source';
         return;
       }
 
-      // Brief in-button feedback — no global toast needed.
-      const originalText = this.copyBtn.textContent ?? 'Copy';
-      this.copyBtn.textContent = 'Copied';
-      this.copyBtn.setAttribute('data-md-copied', 'true');
-      window.setTimeout(() => {
-        if (!this.copyBtn) return;
-        this.copyBtn.textContent = originalText;
-        this.copyBtn.removeAttribute('data-md-copied');
-      }, 1500);
+      // Brief in-button feedback. Cancel any pending reset so that a
+      // rapid second click doesn't leave the button stuck saying "Copied".
+      if (this.copyResetTimer !== null) {
+        window.clearTimeout(this.copyResetTimer);
+      }
+      this.copyBtn.textContent = MarkdownBlock.COPIED_LABEL;
+      this.copyResetTimer = window.setTimeout(() => {
+        this.copyBtn.textContent = MarkdownBlock.COPY_LABEL;
+        this.copyResetTimer = null;
+      }, MarkdownBlock.COPY_RESET_MS);
     }
   }
 
   function initMarkdownBlocks() {
     document
       .querySelectorAll<HTMLElement>('[data-md-block]:not(.md-block-initialized)')
-      .forEach(el => new MarkdownBlock(el));
+      .forEach(el => MarkdownBlock.init(el));
   }
 
   initMarkdownBlocks();
