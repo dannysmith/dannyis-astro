@@ -1,0 +1,102 @@
+---
+/**
+ * MarkdownBlock — SPIKE VERSION
+ *
+ * Render a chunk of raw markdown twice: once as styled prose, once as a
+ * source-view code block (via Expressive Code). This spike renders both
+ * stacked with no toggle or copy button — just enough to verify the
+ * remark-plugin pipeline works and both panes render cleanly.
+ *
+ * Authors don't use this component directly. They write a fenced code block
+ * with `md preview` meta, and the remark-markdown-preview plugin rewrites
+ * it into a <markdown-preview> tag that MDX_COMPONENT_REMAPPING maps here.
+ */
+import { marked } from 'marked';
+import { Code } from 'astro-expressive-code/components';
+
+export interface Props {
+  code: string;
+  title?: string;
+}
+
+const { code, title } = Astro.props;
+
+// Render markdown to HTML at build time. GFM only; HTML passthrough disabled
+// so arbitrary HTML in the included markdown is escaped, not injected.
+const renderedHtml = marked.parse(code.trim(), {
+  gfm: true,
+  async: false,
+});
+---
+
+<figure class="markdown-block spike">
+  <header class="mb-header">
+    <span class="mb-label">MarkdownBlock (spike)</span>
+    {title && <span class="mb-title">{title}</span>}
+  </header>
+
+  <div class="mb-pane mb-rendered">
+    <div class="mb-pane-label">Rendered</div>
+    <div class="longform-prose flow">
+      <Fragment set:html={renderedHtml} />
+    </div>
+  </div>
+
+  <div class="mb-pane mb-source">
+    <div class="mb-pane-label">Source</div>
+    <Code code={code} lang="md" wrap />
+  </div>
+</figure>
+
+<style>
+  .markdown-block {
+    margin: var(--space-l) 0;
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-background);
+  }
+
+  .mb-header {
+    display: flex;
+    gap: var(--space-s);
+    align-items: baseline;
+    padding: var(--space-2xs) var(--space-s);
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+  }
+
+  .mb-label {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .mb-title {
+    font-family: var(--font-mono, monospace);
+    text-transform: none;
+  }
+
+  .mb-pane {
+    padding: var(--space-s);
+  }
+
+  .mb-pane + .mb-pane {
+    border-top: var(--border-width-hairline) dashed var(--color-border);
+  }
+
+  .mb-pane-label {
+    font-family: var(--font-ui);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2xs);
+  }
+
+  /* Neutralise the longform end-mark inside the block — it'd look weird
+     stamped on the last paragraph of an included chunk. */
+  .markdown-block :global(.longform-prose > p:last-of-type::after) {
+    content: none;
+  }
+</style>

@@ -9,6 +9,7 @@ import rehypeMermaid from 'rehype-mermaid';
 import { mermaidConfig } from './src/config/mermaid.js';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import { remarkFootnoteDetector } from './src/lib/remark-footnote-detector.mjs';
+import { remarkMarkdownPreview } from './src/lib/remark-markdown-preview.mjs';
 import { rehypeListDensity } from './src/lib/rehype-list-density.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
@@ -70,7 +71,7 @@ export default defineConfig({
       [rehypeMermaid, { mermaidConfig }],
       rehypeListDensity,
     ],
-    remarkPlugins: [remarkReadingTime, remarkFootnoteDetector],
+    remarkPlugins: [remarkReadingTime, remarkFootnoteDetector, remarkMarkdownPreview],
   },
   redirects,
 });

@@ -1,0 +1,116 @@
+---
+title: 'MarkdownBlock Spike Test'
+slug: markdown-block-spike
+draft: true
+description: 'Dummy article for testing the MarkdownBlock component spike.'
+pubDate: 2026-04-09
+tags: ['spike', 'test']
+---
+
+This is a test article used to verify that the `MarkdownBlock` component
+and its supporting remark plugin work end-to-end in the article context.
+It stays as `draft: true` so it's dev-only.
+
+## Paragraph before the block
+
+Here's a regular paragraph with a [link to example.com](https://example.com) and some **bold** text. Nothing special — it's here to make sure the prose around the MarkdownBlock still renders normally.
+
+## First MarkdownBlock — kitchen sink
+
+The block below exercises most GFM features in one go. The author writes a
+normal fenced code block with `md preview` in the meta string.
+
+```md preview title="kitchen-sink.md"
+# H1 heading
+
+## H2 heading
+
+### H3 heading
+
+A paragraph with **bold**, _italic_, `inline code`, and a
+[link to example.com](https://example.com).
+
+> A blockquote with a cited source.
+>
+> — Someone, somewhere
+
+- Unordered list item one
+- Unordered list item two
+  - Nested item
+- Unordered list item three
+
+1. Ordered item one
+2. Ordered item two
+3. Ordered item three
+
+- [ ] Unchecked task
+- [x] Checked task
+
+| Column A | Column B |
+| -------- | -------- |
+| Cell 1   | Cell 2   |
+| Cell 3   | Cell 4   |
+
+A nested fenced code block (should render as a plain `<pre><code>` inside
+the preview, not get expressive-code syntax highlighting):
+
+    function hello(name) {
+      return `Hello, ${name}!`;
+    }
+
+---
+
+Final paragraph of the included chunk.
+```
+
+## Paragraph between blocks
+
+More regular prose here. A short sentence to make sure sibling content
+flows naturally around the block.
+
+## Second MarkdownBlock — small, no title
+
+```md preview
+A tiny example.
+
+Just a paragraph and a list:
+
+- one
+- two
+- three
+```
+
+## Third MarkdownBlock — README-style
+
+The outer fence uses four backticks so the included markdown can itself
+contain triple-backtick fences (which is the whole point of this
+component).
+
+````md preview title="README.md"
+# my-project
+
+A made-up project for testing purposes.
+
+## Installation
+
+```bash
+npm install my-project
+```
+
+## Usage
+
+```js
+import { thing } from 'my-project';
+thing();
+```
+
+## License
+
+MIT
+````
+
+## Closing paragraph
+
+If everything above renders correctly in both panes — prose in the top
+pane, verbatim source in the bottom pane with Expressive Code styling —
+the spike has succeeded.
