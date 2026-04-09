@@ -136,27 +136,22 @@ const showingSource = defaultView === 'source';
     padding: var(--space-3xs) var(--space-xs);
     background: var(--color-background-secondary);
     border-bottom: var(--border-width-hairline) solid var(--color-border);
-    font-family: var(--font-ui);
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    min-height: calc(var(--space-m) + var(--space-3xs));
   }
 
   .md-block-label {
     font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    flex: 1 1 auto;
+    flex: 1;
     min-width: 0;
   }
 
   .md-block-controls {
     display: flex;
     gap: var(--space-3xs);
-    flex: 0 0 auto;
   }
 
   /* Hide controls until JS wires them up — avoids flashing dead buttons. */
@@ -166,23 +161,16 @@ const showingSource = defaultView === 'source';
 
   .md-block-button {
     padding: var(--space-3xs) var(--space-2xs);
-    font-family: var(--font-ui);
     font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-medium);
     text-transform: uppercase;
     letter-spacing: 0.03em;
     background: transparent;
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-xs);
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    transition:
-      color var(--duration-fast) var(--ease-in-out),
-      border-color var(--duration-fast) var(--ease-in-out),
-      background-color var(--duration-fast) var(--ease-in-out);
+    transition: all var(--duration-fast) var(--ease-in-out);
   }
 
-  .md-block-button:hover {
+  .md-block-button:is(:hover, [aria-pressed='true']) {
     color: var(--color-accent);
     border-color: var(--color-accent);
   }
@@ -192,33 +180,18 @@ const showingSource = defaultView === 'source';
     outline-offset: 2px;
   }
 
-  .md-block-button[aria-pressed='true'] {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  /* Rendered pane gets internal padding; source pane lets Expressive
-     Code handle its own padding via its frame chrome. */
+  /* Rendered pane gets padding; source pane uses Expressive Code's own chrome. */
   .md-block-rendered {
     padding: var(--space-s) var(--space-m);
   }
 
-  /* Neutralise the longform grid inside this container. The Article
-     layout's global rule (`.longform-prose { display: grid; ... }`) would
-     otherwise narrow the rendered pane to 60ch with visible gutters,
-     which looks inconsistent next to the full-width source pane. */
+  /* Override the Article layout's global .longform-prose grid so the
+     rendered pane fills the box edge-to-edge. */
   .md-block-rendered :global(.longform-prose) {
     display: block;
-    grid-template-columns: none;
   }
 
-  .md-block-rendered :global(.longform-prose > *) {
-    grid-column: auto;
-  }
-
-  /* Neutralise the end-mark decoration that the longform prose normally
-     stamps on the final paragraph — it's strange stamped on an included
-     chunk that isn't the end of the article. */
+  /* No end-mark on the last paragraph — included chunks aren't the end of the article. */
   .md-block-rendered :global(.longform-prose > p:last-of-type::after) {
     content: none;
   }
@@ -231,12 +204,6 @@ const showingSource = defaultView === 'source';
   .md-block-source :global(.expressive-code .frame) {
     border: none;
     border-radius: 0;
-  }
-
-  /* Hide the pane that isn't active. The `hidden` attribute handles the
-     initial SSR state; this rule keeps it hidden after JS toggles. */
-  .md-block-pane[hidden] {
-    display: none;
   }
 </style>
 
