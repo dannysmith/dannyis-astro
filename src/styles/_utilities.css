@@ -105,6 +105,7 @@
   .all-caps {
     text-transform: uppercase;
     letter-spacing: var(--tracking-wide);
+    font-feature-settings: 'case' on;
   }
 
   /* Text alignment utilities */

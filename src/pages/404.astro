@@ -42,7 +42,7 @@ import { BaseHead, MainNavigation } from '@components/layout/index';
           font-family: var(--font-display);
           font-size: 40vw;
           line-height: var(--leading-none);
-          font-weight: var(--font-weight-bold);
+          font-weight: var(--font-weight-extrabold);
           margin: 0;
 
           &::after {
@@ -59,8 +59,10 @@ import { BaseHead, MainNavigation } from '@components/layout/index';
 
         h2 {
           font-family: var(--font-display);
+          font-weight: var(--font-weight-extrabold);
           display: inline-block;
           text-transform: uppercase;
+          font-feature-settings: 'case' on;
           letter-spacing: 0.3vw;
           /* Rotate label 90° from bottom-right corner to create vertical text */
           transform-origin: bottom right;
@@ -73,6 +75,7 @@ import { BaseHead, MainNavigation } from '@components/layout/index';
 
         p {
           text-transform: uppercase;
+          font-feature-settings: 'case' on;
           letter-spacing: 0.1rem;
           font-weight: var(--font-weight-light);
           margin: 0 0 0 40vw;

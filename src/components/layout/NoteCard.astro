@@ -77,6 +77,8 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
   .date {
     font-size: var(--font-size-xs);
     text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    font-variant-numeric: tabular-nums;
     letter-spacing: var(--tracking-wider);
   }
 

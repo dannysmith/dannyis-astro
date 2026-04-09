@@ -37,18 +37,19 @@ This site serves two purposes:
 The CSS system is designed around these principles:
 
 1. **Rely on global defaults** - Use the global styles (`global.css`) as a base
-2. **Prose is the default** - Typography layer assumes article content; opt-out for UI
+2. **Prose-style typography is the default** - The `@typography` layer applies prose styles (link underlines, heading borders, list markers) globally. Body font is sans-serif (`--font-ui`/Figtree). Opt out of prose styles for UI areas with `.ui-style`; opt in to long-form serif typography for articles with `.longform-prose`.
 3. **Adaptive by default** - Colors auto-switch for light/dark via `light-dark()`
 4. **Semantic tokens** - Use role-based variables, not hardcoded values
 5. **Modern CSS features** - Nesting, container queries, `:has()`, relative colors
 6. **Keep it simple** - Don't over-engineer; less CSS is better CSS
 
-### The Opt-Out Pattern
+### The Opt-In / Opt-Out Pattern
 
-**Key architectural decision:** The `@typography` layer sets prose defaults (serif font, underlined links, colored markers, heading borders). This means:
+**Key architectural decision:** The `@typography` layer sets prose-style defaults (underlined links, colored markers, heading borders, prose vertical rhythm) on a sans-serif body (`--font-ui`/Figtree). This means:
 
-- **Articles and notes** - Just work, no styling needed
-- **UI areas** (nav, footer, listing pages) - Apply `.ui-style` to opt-out
+- **Notes and short-form content** - Inherit body sans + prose-style typography. Mostly just work.
+- **Long-form articles** - Wrap with `<LongFormProseTypography>` to opt **in** to the `--font-prose` (Literata serif) and bookish enhancements (oldstyle numerals, tighter optical sizing, etc.). See `Article.astro` for the wrapper pattern.
+- **UI areas** (nav, footer, listing pages) - Apply `.ui-style` to opt **out** of prose typography (removes link underlines, heading borders, marker colors).
 
 ```css
 /* ❌ Don't fight the defaults */
@@ -70,7 +71,7 @@ Before adding CSS, check if it's already handled:
 
 | Don't write this | It's already in... |
 |------------------|-------------------|
-| `font-family: serif` on body | `@typography` |
+| `font-family` on body | `@typography` (sets `--font-ui`) |
 | Link underlines and colors | `@typography` |
 | List marker colors | `@typography` |
 | Heading sizes and borders | `@typography` |

@@ -22,7 +22,7 @@ Large, Bold, Presentational. Used for page headers, 404 page, large headings, he
 - Will mostly be used as Caps/Small Caps
 
 **CSS Variable:** `--font-display`
-**Current:** League Spartan
+**Was:** League Spartan → **Now:** Geist
 
 ### 2. Long-form Prose
 
@@ -46,8 +46,8 @@ Anywhere we have prose, but a "bookish" feel seems inappropriate. This could be 
 - Still works well for "prose" and has nice typographic features
 - Works well ALONGSIDE Literata.
 
-**CSS Variable:** None, but should be the site default (currently Literata via `--font-prose`).
-**Current:** Literata
+**CSS Variable:** `--font-ui` (the site body default).
+**Was:** Literata → **Now:** Figtree
 
 ### 4. UI (Interface Elements)
 
@@ -59,7 +59,7 @@ The default for "interface elements" like buttons, HTML form elements, pills, UI
 - Sans-serif
 
 **CSS Variable:** `--font-ui`
-**Current:** League Spartan
+**Was:** League Spartan → **Now:** Figtree
 
 ### 5. Code
 
@@ -74,19 +74,19 @@ Monospace font used for code examples etc. Also used occasionally as a stylistic
 
 ## Current Font Setup
 
-| Usage        | Variable         | Font           |
-| ------------ | ---------------- | -------------- |
-| 1. Display   | `--font-display` | League Spartan |
-| 2. LongForm  | `--font-prose`   | Literata       |
-| 3. ShortForm | `--font-prose`   | Literata       |
-| 4. UI        | `--font-ui`      | League Spartan |
-| 5. Code      | `--font-code`    | Fira Code      |
+| Usage        | Variable         | Font     |
+| ------------ | ---------------- | -------- |
+| 1. Display   | `--font-display` | Geist    |
+| 2. LongForm  | `--font-prose`   | Literata |
+| 3. ShortForm | `--font-ui`      | Figtree  |
+| 4. UI        | `--font-ui`      | Figtree  |
+| 5. Code      | `--font-code`    | Fira Code |
 
 **Notes:**
 
-- `--font-ui` and `--font-display` currently share the same font stack. They are separated to allow independent experimentation with display typefaces.
+- Body default is now `--font-ui` (set in `_typography.css:11`), so short-form prose and UI share Figtree. `.longform-prose` scopes Literata to long-form articles only (set in `LongFormProseTypography.astro:17`).
 
-## Problems with Current Setup
+## Problems with Original Setup
 
 - While we have 5 usage contexts, I do not want 5 different faces. (3) Shortform Prose should almost certainally use the same typeface as EITHER (4) UI or (2) Longform. Currently it uses 
 
@@ -130,54 +130,60 @@ Note: There is no need for our display face and Literata to be **expecially** co
 
 ---
 
-# Implementation/Experimentation Plan
+# Testing Summary & Decisions
 
-## Running Task Lists
+## Outcome
 
-[Use this space to keep a checklist of tasks/progress, or write out phased plans etc as needed]
+- **Display (`--font-display`):** Geist (Vercel) — variable, weight 100–900
+- **UI + Short-form (`--font-ui`):** Figtree (Erik Kennedy) — variable, weight 300–900
+- **Long-form prose (`--font-prose`):** Literata — unchanged
+- **Code (`--font-code`):** Fira Code — unchanged for now (Monaspace still worth a look later)
 
-### Phase 1 - ???
+Both new fonts are self-hosted as variable WOFF2s in `public/fonts/`. A commented `--font-ui: 'Geist'` line remains in `_foundation.css` as a one-line toggle for experimenting with **Path B** (unified Geist for display + UI).
 
-- [ ] 
+## What Was Tested
 
-## Research & Testing Notes
+Tested via CDN in `_foundation.css` with TEST 1–7 toggle blocks (since removed). In order:
 
-Fonts to test side-by-side before making final decisions.
+| Font                    | Role tested | Verdict | Why |
+| ----------------------- | ----------- | ------- | --- |
+| **Bricolage Grotesque** | Unified sans (display + UI) | ❌ out | Reads nicely as UI/short-form and the optical size axis is clever, but **no italic variant** is a dealbreaker for short-form prose (notes, callouts). Display feel was also lukewarm. |
+| **Inter**               | UI          | ❌ out  | Very readable but felt boring. |
+| **Figtree**             | UI          | ✅ chosen | More geometric and cleaner-looking than Inter. Slightly less readable but fine for the short strings UI actually uses, and has proper variable italic. Pairs well with Literata. |
+| **Satoshi**             | Display     | Not reached | Geist eclipsed it before testing. |
+| **Familjen Grotesk**    | Display     | Not reached | — |
+| **Instrument Sans**     | Display     | Not reached | — |
+| **Geist**               | Display     | ✅ chosen | Love it at large scale. Angular terminals add craft. Potentially a unified-sans candidate too. |
 
-### UI + Shortform Prose?
+## Geist Italic Correction
 
-Test these for navigation, footer, buttons, tables, short-form content (notes, Now page):
+The earlier research note ("Geist: no italic") was **wrong**. Vercel ships variable italic TTFs at `vercel/geist-font/fonts/Geist/variable/Geist-Italic[wght].ttf` — just not via Fontsource or Google Fonts CDNs. Self-hosted, it's fully usable with a variable weight axis.
 
-| Font                    | Source        | Notes                                                                                                                                                                                |
-| ----------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Inter**               | rsms.me/inter | Proven Literata pairing, excellent for screens. Use variable version from rsms.me (not Google Fonts) for full OpenType features. Tabular figures excellent for tables.               |
-| **Figtree**             | Google Fonts  | Friendly while still being an interface font. Independent designer (Erik Kennedy). Less common than Inter.                                                                           |
-| **Bricolage Grotesque** | Google Fonts  | Test at small optical sizes (12-14pt range). The optical size axis adapts the design for legibility at small sizes. Could potentially serve as unified sans for both display AND UI. |
+This is what unlocked "Path B" (unified Geist for display + UI/short-form) as a real option. For now we've gone with Path A (Figtree + Geist split) because the contrast between the two sans adds character, but the toggle is one uncommented line away if we want to try unified Geist later.
 
-**Unified approach to test:** Bricolage Grotesque's optical size axis (12-96pt) means it adapts its design for different sizes. Worth testing whether one font can serve both display and UI/short-form roles - would reduce font count and create visual cohesion.
+## Open at Time of Completion
 
-### Display (Large, Bold, Presentational)
+Font swap and initial size/weight tuning are done. Remaining explorations:
 
-Test these at massive scale (homepage "DANNY SMITH", page headers like "WRITING"):
+- **Path B (unified Geist)** — one uncommented line in `_foundation.css` away. Worth trying at some point to see if a single sans for display + UI feels more cohesive than the Geist/Figtree split.
+- **Geist's stylistic sets** (`ss01`–`ss11`) and Figtree's `ss01`/`ss02` are unexplored — inspect via [wakamaifondue.com](https://wakamaifondue.com) or a glyph viewer to see if any unlock useful alternate letterforms for display contexts.
+- **Tracking & weight calibration** — Section 5 from the typography review was deferred. Worth eyeballing default body tracking, `--tracking-tight` aggressiveness, and `.all-caps` letter-spacing now that Figtree has different proportions than League Spartan.
+- **Geist `dlig`** (discretionary ligatures) is unused — try enabling on display contexts for decorative effect.
 
-| Font                    | Source       | Notes                                                                                                                                                                                                                                           |
-| ----------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **League Spartan**      | Current      | Include for comparison. Known issues: sharp corners lack visual interest at large sizes.                                                                                                                                                        |
-| **Satoshi**             | Fontshare    | Current leading candidate. Cleaner than League Spartan, more geometric. May be slightly too "even" - looking for a touch more refinement/interest.                                                                                              |
-| **Bricolage Grotesque** | Google Fonts | 3 axes: weight (200-800), width (75-100), optical size (12-96pt). At large optical sizes, ink traps become decorative/stylistic. Softened corners avoid League Spartan's harsh angularity. French/British grotesque heritage. Strong candidate. |
-| **Familjen Grotesk**    | Google Fonts | Subtle ink traps add craft at display scale. Include for comparison despite uppercase N looking odd at large sizes.                                                                                                                             |
-| **Instrument Sans**     | Google Fonts | "Balances precision with subtle playfulness." Satoshi may perform better but worth comparing.                                                                                                                                                   |
-| **Geist Sans**          | Vercel       | Angular terminals add craft at scale. Has companion Geist Mono.                                                                                                                                                                                 |
+## Ruled Out (Historical)
 
-**Display font direction:** Looking for something like Satoshi but a tiny bit less "even" - subtle refinement rather than extreme ink traps. Geometric/humanist enough to feel modern. Should look like it was designed for billboard-scale typography.
-
-### Code
-
-| Font          | Source      | Notes                                                                                                               |
-| ------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Fira Code** | Current     | Functional, keep for comparison.                                                                                    |
-| **Monaspace** | GitHub Next | Flexible family with multiple variants (Neon, Argon, Xenon, Radon, Krypton). Could work in places beyond just code. |
-
+| Font                   | Reason                                   |
+| ---------------------- | ---------------------------------------- |
+| League Spartan         | Replaced (glyphs not beautiful at large, no italic, limited features) |
+| Bricolage Grotesque    | No italic                                 |
+| Inter                  | Too boring                                |
+| Big Shoulders Display  | Too condensed                            |
+| Clash Display          | Not the right feel                       |
+| Trap*                  | Over-the-top ink traps                   |
+| Work Sans              | Feels too "Google"                       |
+| Plus Jakarta Sans      | Not ideal for either UI or display       |
+| Mona Sans / Hubot Sans | Feels very "GitHub" at display sizes     |
+| Whyte Inktrap          | Paid/premium                             |
 
 ---
 
@@ -239,44 +245,10 @@ Default font for the document body. Used in:
 | `src/pages/styleguide/_DesignTokens.astro` | Various       | Token display (styleguide only) |
 
 
-## Research Notes
+## Principles Worth Carrying Into Tuning
 
-### Literata Pairing Findings
-
-Both Satoshi + Literata and Figtree + Literata should work well (high compatibility based on typographic principles). No documented examples in the wild, but:
-- Satoshi + Literata → more modernist/editorial feel
-- Figtree + Literata → more friendly/approachable feel
-
-Literata's documented pairings include Inter, Work Sans, DM Sans, Alegreya Sans - all humanist or geometric sans-serifs.
-
-### Display Font Direction
-
-Interest at large sizes comes from: ink traps, subtle stroke contrast, optical refinements. Distinctive letterforms are less important.
-
-NOT looking for extreme ink traps - want subtle refinement. Satoshi may actually be close to ideal; if printed on paper at billboard scale it might look exactly right. The "life" in printed type comes from physical imperfection (ink bleed, micro-variations) - digital vectors lack this. Can't be fully solved by typeface selection, but fonts with subtle humanist qualities or optical corrections get closer.
-
-### Bricolage Grotesque Deep Dive
-
-Emerged as strong candidate after further research. Key insight: the optical size axis (12-96pt) transforms the font's character:
-- At large optical sizes: ink traps become decorative/stylistic features
-- At small optical sizes: adapts for legibility with more pronounced traps
-- Softened corners throughout avoid League Spartan's harsh angularity
-- 3-axis flexibility (weight, width, optical size) enables "doing layout with words"
-
-French influences (Antique Olive's relaxed confidence) + British grotesque heritage. Could potentially serve as unified sans for both display AND UI - worth testing this approach.
-
-Pairing with Literata: geometric/transitional combination leverages difference productively. Both share intellectual rigour without feeling cold.
-
-### Ruled Out
-
-| Font                   | Reason                                   |
-| ---------------------- | ---------------------------------------- |
-| Big Shoulders Display  | Too condensed                            |
-| Clash Display          | Not the right feel                       |
-| Trap*                  | Over-the-top ink traps                   |
-| Work Sans              | Feels too "Google"                       |
-| Plus Jakarta Sans      | Not ideal for either UI or display       |
-| Mona Sans / Hubot Sans | Feels very "GitHub" at display sizes     |
-| Whyte Inktrap          | Paid/premium - noting for reference only |
+- Interest at large display sizes comes from **ink traps, subtle stroke contrast, and optical refinements** — distinctive letterforms matter less.
+- NOT looking for extreme ink traps anywhere — subtle refinement over showy character.
+- The "life" in printed type comes from physical imperfection (ink bleed, micro-variations). Digital vectors lack this; the closest approximation is fonts with subtle humanist qualities or optical corrections.
 
 ---

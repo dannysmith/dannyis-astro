@@ -46,13 +46,14 @@ const { class: className } = Astro.props;
   .tabs-list :global(button) {
     padding: var(--space-2xs) var(--space-xs);
     font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
     background: transparent;
     border: none;
     border-radius: 0;
     border-bottom: var(--border-width-base) solid transparent;
     color: var(--color-text-secondary);
-    text-transform: lowercase;
-    font-variant: small-caps;
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
 
     &[aria-selected='true'] {
       color: var(--color-accent);

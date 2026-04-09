@@ -22,9 +22,34 @@
 }
 
 @font-face {
-  font-family: 'League Spartan';
-  src: url('/fonts/LeagueSpartan-v2.220-2026-01-19.woff2') format('woff2');
-  font-weight: 200 900;
+  font-family: 'Geist';
+  src: url('/fonts/Geist-v1.800-2026-04-09.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/Geist-Italic-v1.800-2026-04-09.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  src: url('/fonts/Figtree-v2.002-2026-04-09.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Figtree';
+  src: url('/fonts/Figtree-Italic-v2.002-2026-04-09.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 300 900;
   font-display: swap;
 }
 
@@ -90,8 +115,9 @@
 :root {
   /* ======= FONTS ======= */
 
-  --font-ui: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-display: 'League Spartan', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-ui: 'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* --font-ui: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
   --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
   --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
 
@@ -195,7 +221,7 @@
   --leading-none: 0.9;
   --leading-tight: 1.1;
   --leading-snug: 1.2;
-  --leading-normal: 1.5;
+  --leading-normal: 1.55;
   --leading-loose: 1.7;
 
   /* Letter Spacing */
@@ -214,6 +240,8 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-heavy: 900;
 
   /* ======= BORDERS ======= */
   /* Hairline: never subpixel, but scales with rem on high-DPI */
