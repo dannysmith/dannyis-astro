@@ -153,6 +153,7 @@
           color: var(--color-background);
           font-size: 0.6em;
           line-height: 1.2;
+          transform: translateY(0.1em);
           text-align: center;
           font-weight: var(--font-weight-bold);
         }
@@ -191,7 +192,7 @@
 
   /* Strong text */
   strong {
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-semibold);
   }
 
   /* Highlights and Marked Text */

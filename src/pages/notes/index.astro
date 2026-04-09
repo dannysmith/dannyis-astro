@@ -130,8 +130,11 @@ const recentNotesWithContent = await Promise.all(
       }
 
       .archive-title {
+        font-family: var(--font-display);
+        text-transform: uppercase;
         font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--font-weight-extrabold);
+        text-align: right;
         margin-bottom: var(--space-m);
         padding-bottom: var(--space-2xs);
         border-bottom: var(--border-width-base) solid var(--color-border);
@@ -144,7 +147,7 @@ const recentNotesWithContent = await Promise.all(
 
       .note-title {
         font-size: var(--font-size-md);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--font-weight-extrabold);
         line-height: var(--leading-tight);
         padding-bottom: var(--space-3xs);
         border-bottom: var(--border-width-thick) solid var(--color-accent);
