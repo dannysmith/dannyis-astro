@@ -30,6 +30,7 @@
  * Meta string syntax supported:
  *   ```md preview
  *   ```md preview title="README.md"
+ *   ```md preview defaultView="source"
  *   ```markdown preview
  *
  * @example
@@ -77,15 +78,21 @@ export function remarkMarkdownPreview() {
       const meta = parseMeta(node.meta);
       if (!meta.preview) return;
 
-      const attributes = [
-        { type: 'mdxJsxAttribute', name: 'code', value: node.value },
-      ];
+      const attributes = [{ type: 'mdxJsxAttribute', name: 'code', value: node.value }];
 
       if (typeof meta.title === 'string' && meta.title.length > 0) {
         attributes.push({
           type: 'mdxJsxAttribute',
           name: 'title',
           value: meta.title,
+        });
+      }
+
+      if (meta.defaultView === 'source' || meta.defaultView === 'rendered') {
+        attributes.push({
+          type: 'mdxJsxAttribute',
+          name: 'defaultView',
+          value: meta.defaultView,
         });
       }
 

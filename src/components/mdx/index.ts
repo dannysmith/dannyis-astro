@@ -18,6 +18,7 @@ import TabItem from './TabItem.astro';
 import Center from './Center.astro';
 import ColorSwatch from './ColorSwatch.astro';
 import ResizableContainer from './ResizableContainer.astro';
+import MarkdownBlock from './MarkdownBlock.astro';
 
 // Typography components
 import SmallCaps from './typography/SmallCaps.astro';
@@ -40,6 +41,7 @@ export {
   Center,
   ColorSwatch,
   ResizableContainer,
+  MarkdownBlock,
   Tabs,
   TabItem,
   // Typography

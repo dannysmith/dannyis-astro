@@ -1,102 +1,320 @@
 ---
 /**
- * MarkdownBlock — SPIKE VERSION
+ * MarkdownBlock — renders an included chunk of markdown twice: once as
+ * styled prose (default view), once as a source-view code block with the
+ * site's Expressive Code treatment. A toggle button switches between the
+ * two; a copy button puts the raw markdown on the clipboard.
  *
- * Render a chunk of raw markdown twice: once as styled prose, once as a
- * source-view code block (via Expressive Code). This spike renders both
- * stacked with no toggle or copy button — just enough to verify the
- * remark-plugin pipeline works and both panes render cleanly.
+ * Authors don't use this component directly. They write a standard
+ * fenced code block with `md preview` in the meta string:
  *
- * Authors don't use this component directly. They write a fenced code block
- * with `md preview` meta, and the remark-markdown-preview plugin rewrites
- * it into a <markdown-preview> tag that MDX_COMPONENT_REMAPPING maps here.
+ *     ```md preview
+ *     ## My included markdown
+ *     Some text.
+ *     ```
+ *
+ * The `remark-markdown-preview` plugin (src/lib/remark-markdown-preview.mjs)
+ * rewrites that code block into a <markdown-preview> JSX element which
+ * MDX_COMPONENT_REMAPPING (src/config/mdx-components.ts) maps to this
+ * component. The raw markdown is passed in as the `code` prop.
+ *
+ * Supported meta attributes on the fenced block:
+ *   title="README.md"          — optional filename label in the header
+ *   defaultView="source"       — show source pane first (defaults to rendered)
+ *
+ * Progressive enhancement: without JS, the default pane is shown, the
+ * other pane is hidden, and the toggle/copy controls are hidden via CSS.
+ * Scripts re-initialise after Astro ViewTransitions (`astro:page-load`).
  */
-import { marked } from 'marked';
+import { Marked } from 'marked';
 import { Code } from 'astro-expressive-code/components';
 
 export interface Props {
+  /** Raw markdown string to render. */
   code: string;
+  /** Optional filename / label shown in the header. */
   title?: string;
+  /** Which pane to show first. Defaults to `rendered`. */
+  defaultView?: 'rendered' | 'source';
 }
 
-const { code, title } = Astro.props;
+const { code, title, defaultView = 'rendered' } = Astro.props;
 
-// Render markdown to HTML at build time. GFM only; HTML passthrough disabled
-// so arbitrary HTML in the included markdown is escaped, not injected.
-const renderedHtml = marked.parse(code.trim(), {
-  gfm: true,
-  async: false,
+// Fresh Marked instance per render — avoids mutating shared global state
+// across concurrent SSR calls, and lets us attach a custom renderer cleanly.
+const md = new Marked({ gfm: true, async: false });
+
+// Override marked's link renderer to add security attributes to external
+// links. This substitutes for `rehype-external-links`, which only runs on
+// the site's main markdown pipeline — included chunks don't pass through
+// that pipeline so we handle it here.
+md.use({
+  renderer: {
+    link({ href, title: linkTitle, tokens }) {
+      // `tokens` here is an inline token array for the link text. The
+      // `Marked.parser` utility renders them back to HTML so we preserve
+      // nested formatting (bold, code, etc.) inside link text.
+      const text = this.parser.parseInline(tokens);
+      const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href);
+      const titleAttr = linkTitle ? ` title="${linkTitle}"` : '';
+      const securityAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<a href="${href}"${titleAttr}${securityAttrs}>${text}</a>`;
+    },
+  },
 });
+
+const renderedHtml = md.parse(code.trim()) as string;
+const showingSource = defaultView === 'source';
 ---
 
-<figure class="markdown-block spike">
-  <header class="mb-header">
-    <span class="mb-label">MarkdownBlock (spike)</span>
-    {title && <span class="mb-title">{title}</span>}
+<figure
+  class="md-block"
+  data-md-block
+  data-view={defaultView}
+  aria-label={title ? `Included markdown: ${title}` : 'Included markdown'}
+>
+  <header class="md-block-header">
+    <span class="md-block-label">
+      {title ?? 'Markdown'}
+    </span>
+    <div class="md-block-controls">
+      <button
+        type="button"
+        class="md-block-button"
+        data-md-toggle
+        aria-pressed={showingSource ? 'true' : 'false'}
+      >
+        <span class="md-block-toggle-label" data-when="rendered" hidden={showingSource}>
+          Source
+        </span>
+        <span class="md-block-toggle-label" data-when="source" hidden={!showingSource}>
+          Preview
+        </span>
+      </button>
+      <button type="button" class="md-block-button" data-md-copy data-md-code={code}>
+        Copy
+      </button>
+    </div>
   </header>
 
-  <div class="mb-pane mb-rendered">
-    <div class="mb-pane-label">Rendered</div>
+  <div class="md-block-pane md-block-rendered" data-pane="rendered" hidden={showingSource}>
     <div class="longform-prose flow">
       <Fragment set:html={renderedHtml} />
     </div>
   </div>
 
-  <div class="mb-pane mb-source">
-    <div class="mb-pane-label">Source</div>
+  <div class="md-block-pane md-block-source" data-pane="source" hidden={!showingSource}>
     <Code code={code} lang="md" wrap />
   </div>
 </figure>
 
 <style>
-  .markdown-block {
+  .md-block {
     margin: var(--space-l) 0;
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
     background: var(--color-background);
+    overflow: hidden;
   }
 
-  .mb-header {
+  .md-block-header {
     display: flex;
+    align-items: center;
     gap: var(--space-s);
-    align-items: baseline;
-    padding: var(--space-2xs) var(--space-s);
+    padding: var(--space-3xs) var(--space-xs);
+    background: var(--color-background-secondary);
     border-bottom: var(--border-width-hairline) solid var(--color-border);
     font-family: var(--font-ui);
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    text-transform: uppercase;
+    min-height: calc(var(--space-m) + var(--space-3xs));
   }
 
-  .mb-label {
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .mb-title {
-    font-family: var(--font-mono, monospace);
-    text-transform: none;
-  }
-
-  .mb-pane {
-    padding: var(--space-s);
-  }
-
-  .mb-pane + .mb-pane {
-    border-top: var(--border-width-hairline) dashed var(--color-border);
-  }
-
-  .mb-pane-label {
-    font-family: var(--font-ui);
-    font-size: var(--font-size-2xs);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .md-block-label {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-2xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
-  /* Neutralise the longform end-mark inside the block — it'd look weird
-     stamped on the last paragraph of an included chunk. */
-  .markdown-block :global(.longform-prose > p:last-of-type::after) {
+  .md-block-controls {
+    display: flex;
+    gap: var(--space-3xs);
+    flex: 0 0 auto;
+  }
+
+  /* Hide controls until JS wires them up — avoids flashing dead buttons. */
+  .md-block:not(.md-block-initialized) .md-block-controls {
+    visibility: hidden;
+  }
+
+  .md-block-button {
+    padding: var(--space-3xs) var(--space-2xs);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium, 500);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: transparent;
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-xs);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-in-out),
+      border-color var(--duration-fast) var(--ease-in-out),
+      background-color var(--duration-fast) var(--ease-in-out);
+  }
+
+  .md-block-button:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .md-block-button:focus-visible {
+    outline: var(--border-width-base) solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .md-block-button[aria-pressed='true'] {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .md-block-pane {
+    /* Rendered pane gets internal padding; source pane lets Expressive
+       Code handle its own padding via its frame chrome. */
+  }
+
+  .md-block-rendered {
+    padding: var(--space-s) var(--space-m);
+  }
+
+  /* Neutralise the longform grid inside this container. The Article
+     layout's global rule (`.longform-prose { display: grid; ... }`) would
+     otherwise narrow the rendered pane to 60ch with visible gutters,
+     which looks inconsistent next to the full-width source pane. */
+  .md-block-rendered :global(.longform-prose) {
+    display: block;
+    grid-template-columns: none;
+  }
+
+  .md-block-rendered :global(.longform-prose > *) {
+    grid-column: auto;
+  }
+
+  /* Neutralise the end-mark decoration that the longform prose normally
+     stamps on the final paragraph — it's strange stamped on an included
+     chunk that isn't the end of the article. */
+  .md-block-rendered :global(.longform-prose > p:last-of-type::after) {
     content: none;
   }
+
+  /* Let Expressive Code's frame sit flush inside the box. */
+  .md-block-source :global(.expressive-code) {
+    margin: 0;
+  }
+
+  .md-block-source :global(.expressive-code .frame) {
+    border: none;
+    border-radius: 0;
+  }
+
+  /* Hide the pane that isn't active. The `hidden` attribute handles the
+     initial SSR state; this rule keeps it hidden after JS toggles. */
+  .md-block-pane[hidden] {
+    display: none;
+  }
 </style>
+
+<script>
+  class MarkdownBlock {
+    private el: HTMLElement;
+    private toggleBtn: HTMLButtonElement | null;
+    private copyBtn: HTMLButtonElement | null;
+    private renderedPane: HTMLElement | null;
+    private sourcePane: HTMLElement | null;
+    private toggleLabels: HTMLElement[];
+
+    constructor(el: HTMLElement) {
+      this.el = el;
+      this.toggleBtn = el.querySelector<HTMLButtonElement>('[data-md-toggle]');
+      this.copyBtn = el.querySelector<HTMLButtonElement>('[data-md-copy]');
+      this.renderedPane = el.querySelector<HTMLElement>('[data-pane="rendered"]');
+      this.sourcePane = el.querySelector<HTMLElement>('[data-pane="source"]');
+      this.toggleLabels = Array.from(
+        el.querySelectorAll<HTMLElement>('.md-block-toggle-label')
+      );
+
+      if (!this.toggleBtn || !this.copyBtn || !this.renderedPane || !this.sourcePane) {
+        return;
+      }
+
+      this.toggleBtn.addEventListener('click', () => this.toggle());
+      this.copyBtn.addEventListener('click', () => this.copy());
+      this.el.classList.add('md-block-initialized');
+    }
+
+    private toggle() {
+      if (!this.renderedPane || !this.sourcePane || !this.toggleBtn) return;
+
+      const showingSource = this.el.dataset.view === 'source';
+      const nextView = showingSource ? 'rendered' : 'source';
+      this.el.dataset.view = nextView;
+
+      if (nextView === 'source') {
+        this.renderedPane.setAttribute('hidden', '');
+        this.sourcePane.removeAttribute('hidden');
+        this.toggleBtn.setAttribute('aria-pressed', 'true');
+      } else {
+        this.sourcePane.setAttribute('hidden', '');
+        this.renderedPane.removeAttribute('hidden');
+        this.toggleBtn.setAttribute('aria-pressed', 'false');
+      }
+
+      this.toggleLabels.forEach(label => {
+        if (label.dataset.when === nextView) {
+          label.removeAttribute('hidden');
+        } else {
+          label.setAttribute('hidden', '');
+        }
+      });
+    }
+
+    private async copy() {
+      if (!this.copyBtn) return;
+      const code = this.copyBtn.dataset.mdCode;
+      if (!code) return;
+
+      try {
+        await navigator.clipboard.writeText(code);
+      } catch (err) {
+        console.error('MarkdownBlock: failed to copy markdown:', err);
+        return;
+      }
+
+      // Brief in-button feedback — no global toast needed.
+      const originalText = this.copyBtn.textContent ?? 'Copy';
+      this.copyBtn.textContent = 'Copied';
+      this.copyBtn.setAttribute('data-md-copied', 'true');
+      window.setTimeout(() => {
+        if (!this.copyBtn) return;
+        this.copyBtn.textContent = originalText;
+        this.copyBtn.removeAttribute('data-md-copied');
+      }, 1500);
+    }
+  }
+
+  function initMarkdownBlocks() {
+    document
+      .querySelectorAll<HTMLElement>('[data-md-block]:not(.md-block-initialized)')
+      .forEach(el => new MarkdownBlock(el));
+  }
+
+  initMarkdownBlocks();
+  document.addEventListener('astro:page-load', initMarkdownBlocks);
+</script>

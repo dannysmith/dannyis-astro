@@ -16,6 +16,7 @@ import {
   Embed,
   Grid,
   IntroParagraph,
+  MarkdownBlock,
   Notion,
   ResizableContainer,
   Loom,
@@ -67,6 +68,18 @@ npm run dev`,
   wrap: `// This is a very long comment that demonstrates how word wrapping works in code blocks when the content exceeds the available width of the container
 const message = 'Long strings will also wrap nicely to the next line while preserving the indentation level of the original line';`,
 };
+
+// Sample markdown for the MarkdownBlock example.
+const markdownBlockSample = `## Included markdown
+
+A paragraph with **bold**, _italic_, \`inline code\`, and a
+[link to example.com](https://example.com).
+
+- one
+- two
+- three
+
+> A short quotation from elsewhere.`;
 ---
 
 <section id="content-components" class="styleguide-section flow">
@@ -634,4 +647,38 @@ const message = 'Long strings will also wrap nicely to the next line while prese
       <Code lang="js" wrap code={codeExamples.wrap} />
     </SGTypographySwitcher>
   </ResizableContainer>
+
+  <!-- 11. MarkdownBlock -->
+  <h3 id="markdown-block">MarkdownBlock</h3>
+  <p>
+    Embeds a chunk of raw markdown with two views: a rendered prose preview and a source view
+    styled as a code block. Useful for quoting READMEs, pasted notes, or any other external
+    markdown you want to show as an &ldquo;included&rdquo; artefact. A copy button puts the
+    raw markdown on the clipboard.
+  </p>
+  <p>
+    Authors don&apos;t use the component name directly. Write a normal fenced code block with
+    <code>md preview</code> in the meta string and a build-time remark plugin rewrites it into a
+    MarkdownBlock:
+  </p>
+  <Code
+    lang="md"
+    code={'```md preview title="README.md"\n## Included markdown\n\nA paragraph with **bold** text.\n```'}
+  />
+  <p>
+    Supported meta attributes: <code>title="..."</code> for the header label and
+    <code>defaultView="source"</code> to open on the source pane (defaults to
+    <code>rendered</code>). Use a four-backtick outer fence when the included markdown itself
+    contains triple-backtick code fences.
+  </p>
+
+  <h4>Default (opens on rendered)</h4>
+  <SGTypographySwitcher>
+    <MarkdownBlock code={markdownBlockSample} title="sample.md" />
+  </SGTypographySwitcher>
+
+  <h4>Default view: source</h4>
+  <SGTypographySwitcher>
+    <MarkdownBlock code={markdownBlockSample} title="sample.md" defaultView="source" />
+  </SGTypographySwitcher>
 </section>

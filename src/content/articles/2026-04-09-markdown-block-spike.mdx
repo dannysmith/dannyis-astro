@@ -1,24 +1,24 @@
 ---
-title: 'MarkdownBlock Spike Test'
-slug: markdown-block-spike
+title: 'MarkdownBlock Test Fixture'
+slug: markdown-block-test
 draft: true
-description: 'Dummy article for testing the MarkdownBlock component spike.'
+description: 'Dummy article for testing the MarkdownBlock component.'
 pubDate: 2026-04-09
-tags: ['spike', 'test']
+tags: ['test']
 ---
 
-This is a test article used to verify that the `MarkdownBlock` component
-and its supporting remark plugin work end-to-end in the article context.
-It stays as `draft: true` so it's dev-only.
+A draft article for manually testing the `MarkdownBlock` component. It stays
+`draft: true` so it never ships to production — visible only in `bun run dev`.
 
 ## Paragraph before the block
 
-Here's a regular paragraph with a [link to example.com](https://example.com) and some **bold** text. Nothing special — it's here to make sure the prose around the MarkdownBlock still renders normally.
+Here's a regular paragraph with a [link to example.com](https://example.com)
+and some **bold** text — included so we can see that surrounding prose still
+flows normally around each block.
 
-## First MarkdownBlock — kitchen sink
+## 1. Kitchen sink — defaults
 
-The block below exercises most GFM features in one go. The author writes a
-normal fenced code block with `md preview` in the meta string.
+This block uses the default view (rendered) and shows most GFM features.
 
 ```md preview title="kitchen-sink.md"
 # H1 heading
@@ -28,7 +28,8 @@ normal fenced code block with `md preview` in the meta string.
 ### H3 heading
 
 A paragraph with **bold**, _italic_, `inline code`, and a
-[link to example.com](https://example.com).
+[link to example.com](https://example.com) plus an
+[internal link](/notes).
 
 > A blockquote with a cited source.
 >
@@ -51,8 +52,8 @@ A paragraph with **bold**, _italic_, `inline code`, and a
 | Cell 1   | Cell 2   |
 | Cell 3   | Cell 4   |
 
-A nested fenced code block (should render as a plain `<pre><code>` inside
-the preview, not get expressive-code syntax highlighting):
+A nested fenced code block (renders as a plain `<pre><code>` inside the
+preview — expressive-code only applies in the source pane):
 
     function hello(name) {
       return `Hello, ${name}!`;
@@ -63,12 +64,7 @@ the preview, not get expressive-code syntax highlighting):
 Final paragraph of the included chunk.
 ```
 
-## Paragraph between blocks
-
-More regular prose here. A short sentence to make sure sibling content
-flows naturally around the block.
-
-## Second MarkdownBlock — small, no title
+## 2. Small, no title
 
 ```md preview
 A tiny example.
@@ -80,16 +76,25 @@ Just a paragraph and a list:
 - three
 ```
 
-## Third MarkdownBlock — README-style
+## 3. Default view = source
 
-The outer fence uses four backticks so the included markdown can itself
-contain triple-backtick fences (which is the whole point of this
-component).
+Same content, but the block opens on the source pane. Toggle to switch.
+
+```md preview title="source-first.md" defaultView="source"
+## This block starts on the source view
+
+Click "Preview" in the header to switch to the rendered view.
+```
+
+## 4. README-style with nested fences
+
+The outer fence uses **four** backticks so the included markdown can contain
+triple-backtick fences of its own — the whole reason this component exists.
 
 ````md preview title="README.md"
 # my-project
 
-A made-up project for testing purposes.
+A made-up project for testing.
 
 ## Installation
 
@@ -111,6 +116,5 @@ MIT
 
 ## Closing paragraph
 
-If everything above renders correctly in both panes — prose in the top
-pane, verbatim source in the bottom pane with Expressive Code styling —
-the spike has succeeded.
+If every block above toggles cleanly, copies to the clipboard, and the
+rendered pane has prose typography in both themes — we're done.
