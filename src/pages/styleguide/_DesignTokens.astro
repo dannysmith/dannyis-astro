@@ -20,32 +20,49 @@ const baseTokens = [
 
 const lineHeights = ['normal', 'loose', 'snug', 'tight', 'none'];
 const letterSpacings = ['normal', 'tight', 'wide', 'wider'];
-const fontWeights = ['light', 'normal', 'regular', 'medium', 'semibold', 'bold'];
+const fontWeights = [
+  'light',
+  'normal',
+  'regular',
+  'medium',
+  'semibold',
+  'bold',
+  'extrabold',
+  'heavy',
+];
 const borderWidths = ['hairline', 'base', 'thick', 'heavy', 'accent'];
 const borderRadii = ['xs', 'sm', 'md', 'lg', 'full'];
 const shadows = ['small', 'medium'];
 
-// Font families with usage descriptions
+// Font families mapped to the five usage contexts.
+// Four CSS variables cover five contexts: --font-ui serves both UI elements AND short-form prose.
 const fontFamilies = [
   {
     variable: '--font-display',
     family: 'Geist',
-    usage: 'Page titles, hero text, brand marks',
-  },
-  {
-    variable: '--font-ui',
-    family: 'Figtree',
-    usage: 'Interface elements and short-form prose (body default)',
+    context: '1. Display',
+    usage:
+      'Large, presentational type. Page titles, hero text, 404, brand marks. Mostly used as Caps.',
   },
   {
     variable: '--font-prose',
     family: 'Literata',
-    usage: 'Long-form articles and .longform-prose content',
+    context: '2. Long-form prose',
+    usage:
+      'Articles and any content inside .longform-prose. Rich typographic features for sustained reading.',
+  },
+  {
+    variable: '--font-ui',
+    family: 'Figtree',
+    context: '3. Short-form prose + 4. UI',
+    usage:
+      'Document body default. Notes, /now, callouts, captions AND interface elements — navigation, buttons, pills, form controls.',
   },
   {
     variable: '--font-code',
     family: 'Fira Code',
-    usage: 'Code blocks, inline code, technical content',
+    context: '5. Code',
+    usage: 'Code blocks, inline code, and occasional stylistic monospace.',
   },
 ];
 
@@ -185,14 +202,23 @@ const fontSizes = [
 <!-- Typography Tokens -->
 
 <h3>Font Families</h3>
+<p>
+  Typography on this site serves five distinct usage contexts, covered by four font stacks.
+  Short-form prose and UI elements share <code>--font-ui</code> (Figtree) — so "Notes" body copy
+  and a button label are set in the same face at different scales. Long-form articles are scoped
+  to Literata via <code>.longform-prose</code>; everything else inherits <code>--font-ui</code> as
+  the document body default.
+</p>
 {
-  fontFamilies.map(({ family, variable, usage }) => (
+  fontFamilies.map(({ family, variable, context, usage }) => (
     <div class="sg-panel">
       <p class="font-preview" style={`font-family: var(${variable})`}>
         The quick brown fox jumps over the lazy dog
       </p>
       <p class="font-meta">
-        <strong>{family}</strong> · <code>{variable}</code> · {usage}
+        <strong>{family}</strong> · <code>{variable}</code> · <em>{context}</em>
+        <br />
+        {usage}
       </p>
     </div>
   ))
@@ -267,8 +293,9 @@ const fontSizes = [
 
 <h3>Font Weights</h3>
 <p>
-  We use variable fonts, so weight can be any value between 300–700. These tokens provide common
-  weight stops, but you're not limited to them — use intermediate values when needed.
+  All four families are variable fonts. Exact weight range depends on the face (Geist 100–900,
+  Figtree 300–900, Literata 200–900, Fira Code 300–700). These tokens provide common stops — use
+  intermediate values when a design calls for it.
 </p>
 <table>
   <thead>
