@@ -1,0 +1,94 @@
+---
+title: LCVid Component Demo
+draft: true
+pubDate: 2026-05-05
+description: Test page for the <LCVid /> MDX component. Delete after testing.
+---
+
+import { LCVid, Embed } from '@components/mdx';
+
+A scratch page exercising every meaningful path through `<LCVid />`. Each section says what it's testing and what to look for.
+
+## 1. Basic — long video with storyboard
+
+Slug only. Full chrome (title, meta, open link, description). Should show storyboard previews when scrubbing.
+
+<LCVid src="lcdemo-part-2" />
+
+## 2. Short video without storyboard
+
+Under 60 seconds, so LoomClone serves no storyboard VTT. Vidstack should still work fine, just without scrubber thumbnails.
+
+<LCVid src="testing-new-json-responses" />
+
+## 3. Old slug — redirect resolution at build time
+
+`red-regions-grow` was renamed to `testing-new-json-responses`. The `fetch()` follows the 301 transparently, and the resulting JSON's `urls.page` reflects the canonical slug. Inspect the rendered "Open" link below — it should point at `/testing-new-json-responses`, not `/red-regions-grow`.
+
+<LCVid src="red-regions-grow" />
+
+## 4. Full URL with sub-path — slug resolver
+
+The resolver should extract the slug from anything pointing at v.danny.is, including `/embed`, `.json`, `.mp4`, `/raw/source.mp4`, etc.
+
+<LCVid src="https://v.danny.is/lcdemo-part-2/embed" />
+
+## 5. Path-only src
+
+Leading-slash form.
+
+<LCVid src="/lcdemo-part-2" />
+
+## 6. With transcript visible
+
+Click to expand. The transcript is one big run of auto-transcribed text — readability inside `<details>` is what we're checking.
+
+<LCVid src="lcdemo-part-2" showTranscript />
+
+## 7. Overrides
+
+`title` and `description` props override the values fetched from the JSON. Useful when the canonical title is too generic for the embedding context.
+
+<LCVid
+  src="lcdemo-part-2"
+  title="A more specific title for this article"
+  description="A description tailored to the surrounding prose, not the one I wrote in the LoomClone admin."
+/>
+
+## 8. Display toggles — minimal
+
+Just the player. No title, no meta, no open link, no description. For when the surrounding prose already covers everything.
+
+<LCVid
+  src="lcdemo-part-2"
+  showTitle={false}
+  showDescription={false}
+  showMeta={false}
+  showOpenLink={false}
+/>
+
+## 9. Display toggles — meta only, no description
+
+For when the description is redundant but the duration/date/open affordance is still useful.
+
+<LCVid src="lcdemo-part-2" showDescription={false} />
+
+## 10. Custom aspect ratio override
+
+Forced to 4/3 even though the source is 16/9. Letterboxing inside the player is Vidstack's responsibility.
+
+<LCVid src="lcdemo-part-2" aspectRatio="4 / 3" />
+
+## 11. Two videos in succession
+
+Verifies that activating one doesn't break the other and that the Vidstack module is loaded only once.
+
+<LCVid src="lcdemo-part-2" />
+
+<LCVid src="testing-new-json-responses" />
+
+## 12. Via `<Embed />`
+
+`<Embed url="https://v.danny.is/..." />` should dispatch to `<LCVid />` automatically. Equivalent to section 1.
+
+<Embed url="https://v.danny.is/lcdemo-part-2" />

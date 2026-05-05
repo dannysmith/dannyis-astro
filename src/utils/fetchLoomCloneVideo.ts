@@ -94,9 +94,6 @@ export async function fetchLoomCloneVideo(jsonUrl: string): Promise<LoomCloneVid
 
   const promise = doFetch(jsonUrl);
   cache.set(jsonUrl, promise);
-  // If the fetch fails, drop the cache entry so a retry isn't pinned to the
-  // same rejection. (Build will fail before retry, but defensive.)
-  promise.catch(() => cache.delete(jsonUrl));
   return promise;
 }
 
@@ -111,7 +108,9 @@ async function doFetch(jsonUrl: string): Promise<LoomCloneVideo> {
   }
 
   if (response.status === 404) {
-    throw new Error(`video not found at ${jsonUrl} (404). Was it deleted, renamed or made private?`);
+    throw new Error(
+      `video not found at ${jsonUrl} (404). Was it deleted, renamed or made private?`
+    );
   }
   if (!response.ok) {
     throw new Error(`fetch failed (${response.status} ${response.statusText}) for ${jsonUrl}`);
@@ -120,7 +119,9 @@ async function doFetch(jsonUrl: string): Promise<LoomCloneVideo> {
   const data = (await response.json()) as LoomCloneVideo;
 
   if (data.status !== 'complete') {
-    throw new Error(`video at ${jsonUrl} has status "${data.status}", not "complete" — refusing to embed`);
+    throw new Error(
+      `video at ${jsonUrl} has status "${data.status}", not "complete" — refusing to embed`
+    );
   }
   if (data.visibility === 'private') {
     throw new Error(`video at ${jsonUrl} is private — refusing to embed`);

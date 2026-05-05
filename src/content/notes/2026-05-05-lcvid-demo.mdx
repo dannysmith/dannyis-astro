@@ -1,0 +1,66 @@
+---
+title: LCVid Component Demo
+draft: true
+pubDate: 2026-05-05
+description: Same demos as the article version, in note layout. Delete after testing.
+---
+
+import { LCVid } from '@components/mdx';
+
+Same demos as the article version, rendered in note layout for visual comparison.
+
+## 1. Basic — long video with storyboard
+
+<LCVid src="lcdemo-part-2" />
+
+## 2. Short video without storyboard
+
+<LCVid src="testing-new-json-responses" />
+
+## 3. Old slug — redirect resolution at build time
+
+<LCVid src="red-regions-grow" />
+
+## 4. Full URL with sub-path
+
+<LCVid src="https://v.danny.is/lcdemo-part-2/embed" />
+
+## 5. Path-only src
+
+<LCVid src="/lcdemo-part-2" />
+
+## 6. With transcript visible
+
+<LCVid src="lcdemo-part-2" showTranscript />
+
+## 7. Overrides
+
+<LCVid
+  src="lcdemo-part-2"
+  title="A more specific title for this article"
+  description="A description tailored to the surrounding prose, not the one I wrote in the LoomClone admin."
+/>
+
+## 8. Display toggles — minimal
+
+<LCVid
+  src="lcdemo-part-2"
+  showTitle={false}
+  showDescription={false}
+  showMeta={false}
+  showOpenLink={false}
+/>
+
+## 9. Display toggles — meta only, no description
+
+<LCVid src="lcdemo-part-2" showDescription={false} />
+
+## 10. Custom aspect ratio override
+
+<LCVid src="lcdemo-part-2" aspectRatio="4 / 3" />
+
+## 11. Two videos in succession
+
+<LCVid src="lcdemo-part-2" />
+
+<LCVid src="testing-new-json-responses" />

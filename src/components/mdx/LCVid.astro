@@ -105,11 +105,7 @@ const hasMetaRow = showMeta || showOpenLink;
           )}
           <media-poster class="vds-poster" src={video.urls.poster} alt={title}></media-poster>
         </media-provider>
-        {video.urls.storyboard ? (
-          <media-video-layout thumbnails={video.urls.storyboard}></media-video-layout>
-        ) : (
-          <media-video-layout></media-video-layout>
-        )}
+        <media-video-layout thumbnails={video.urls.storyboard ?? undefined}></media-video-layout>
       </media-player>
     </template>
   </div>
@@ -214,29 +210,46 @@ const hasMetaRow = showMeta || showOpenLink;
     if (!wrapper || !facade || !template) return;
 
     const fragment = template.content.cloneNode(true) as DocumentFragment;
+    // Set autoplay on the player BEFORE insertion. Combined with the user's
+    // click gesture, this lets Vidstack start playback as soon as it upgrades
+    // the element — even if our async module load outlasts the gesture window.
+    const playerNode = fragment.querySelector('media-player');
+    playerNode?.setAttribute('autoplay', '');
+
     facade.remove();
     wrapper.appendChild(fragment);
 
     loadVidstack().then(() => {
       const player = wrapper.querySelector('media-player') as
-        | (HTMLElement & { play?: () => Promise<void> })
+        | (HTMLElement & { play: () => Promise<void> })
         | null;
       if (!player) return;
 
       player.addEventListener('error', () => showUnavailable(figure), { once: true });
 
-      if (typeof player.play === 'function') {
-        player.play().catch(() => {
-          /* autoplay blocked — user can click the player */
-        });
-      }
+      // Belt-and-braces alongside the autoplay attr: if Vidstack loaded
+      // synchronously enough to still be inside the click gesture, this fires.
+      // If the gesture is gone, the attr is the fallback.
+      player.play().catch(() => {
+        /* gesture lost — autoplay attr is our fallback */
+      });
     });
+  }
+
+  function warmVidstack() {
+    // Idempotent — called on first hover/focus of any facade so that by the
+    // time the user clicks, the module is already loaded and play() runs
+    // synchronously inside the click handler (preserving the user gesture).
+    loadVidstack();
   }
 
   function init() {
     document.querySelectorAll<HTMLElement>('[data-lcvid]').forEach(figure => {
       const facade = figure.querySelector<HTMLButtonElement>('.lcvid-facade');
-      facade?.addEventListener('click', () => activate(figure));
+      if (!facade) return;
+      facade.addEventListener('click', () => activate(figure));
+      facade.addEventListener('pointerenter', warmVidstack, { once: true, passive: true });
+      facade.addEventListener('focus', warmVidstack, { once: true });
     });
   }
 
@@ -322,7 +335,9 @@ const hasMetaRow = showMeta || showOpenLink;
 
   .lcvid-duration-badge {
     position: absolute;
-    right: var(--space-2xs);
+    /* Bottom-left — bottom-right collides with the camera overlay typical
+       of LoomClone recordings. */
+    left: var(--space-2xs);
     bottom: var(--space-2xs);
     padding: var(--space-3xs) var(--space-2xs);
     background: oklch(0% 0 0 / 0.65);
@@ -362,12 +377,18 @@ const hasMetaRow = showMeta || showOpenLink;
     text-decoration: underline;
   }
 
+  /* Description is supplementary metadata, not body copy. Smaller and muted
+     so it reads as "attached to the video" rather than as another paragraph
+     of the surrounding article. */
   .lcvid-description {
-    margin-block: var(--space-s) 0;
+    margin-block: var(--space-2xs) 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-snug);
+    color: var(--color-text-secondary);
   }
 
   .lcvid-description p {
-    margin: 0 0 var(--space-2xs) 0;
+    margin: 0 0 var(--space-3xs) 0;
   }
 
   .lcvid-description p:last-child {
