@@ -128,4 +128,9 @@ export const CONFIG = {
   organization: {
     name: 'Danny Smith Consulting',
   },
+
+  // Self-hosted video host (LoomClone). Used by <LCVid> MDX component.
+  videos: {
+    baseUrl: 'https://v.danny.is',
+  },
 } as const;

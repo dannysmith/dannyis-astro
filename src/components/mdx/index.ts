@@ -6,6 +6,7 @@ import Grid from './Grid.astro';
 import Callout from './Callout.astro';
 import BookmarkCard from './BookmarkCard.astro';
 import Embed from './Embed.astro';
+import LCVid from './LCVid.astro';
 import Loom from './Loom.astro';
 import BasicImage from './BasicImage.astro';
 import BlockQuoteCitation from './BlockQuoteCitation.astro';
@@ -31,6 +32,7 @@ export {
   BookmarkCard,
   Embed,
   Callout,
+  LCVid,
   Loom,
   BasicImage,
   BlockQuoteCitation,
