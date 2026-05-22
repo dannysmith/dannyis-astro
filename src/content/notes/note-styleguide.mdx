@@ -12,6 +12,7 @@ import {
   Embed,
   BlockQuoteCitation,
   ButtonLink,
+  LCVid,
 } from '@components/mdx';
 
 This styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in a Note context. Use it to check typography, component appearance, and real-world content. For a full component reference, see the [main styleguide](/styleguide/).
@@ -54,6 +55,20 @@ Great for keeping notes concise while providing depth when needed.
 <BookmarkCard url="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
 
 <Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+
+## LCVid (self-hosted video)
+
+Default rendering — title, meta and description fetched from [v.danny.is](https://v.danny.is):
+
+<LCVid src="lcdemo-part-2" />
+
+Minimal — just the player:
+
+<LCVid src="lcdemo-part-2" showTitle={false} showMeta={false} showOpenLink={false} showDescription={false} />
+
+Via `<Embed>` — any `v.danny.is` URL auto-dispatches to `<LCVid>`:
+
+<Embed url="https://v.danny.is/lcdemo-part-2" />
 
 ## Button Links
 

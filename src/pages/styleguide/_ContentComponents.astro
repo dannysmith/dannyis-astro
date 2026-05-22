@@ -16,6 +16,7 @@ import {
   Embed,
   Grid,
   IntroParagraph,
+  LCVid,
   MarkdownBlock,
   Notion,
   ResizableContainer,
@@ -257,6 +258,107 @@ A paragraph with **bold**, _italic_, \`inline code\`, and a
       <p>Loom share URLs are automatically detected and embedded:</p>
       <Embed url="https://www.loom.com/share/0132dbe661b24dd28f42e2ce040f78cc" />
       <Loom id="0132dbe661b24dd28f42e2ce040f78cc" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h4 id="lcvid">LCVid &mdash; self-hosted videos (v.danny.is)</h4>
+  <p>
+    <code>&lt;LCVid&gt;</code> renders a self-hosted video from
+    <a href="https://v.danny.is">v.danny.is</a> with a click-to-load facade, lazy-loaded
+    Vidstack player, poster, captions and storyboard thumbnails. Metadata (title, description,
+    duration, recorded date, transcript) is fetched at build time from the video's JSON. Pass a
+    full URL, an absolute path, or a bare slug as <code>src</code>.
+  </p>
+  <p>
+    <code>&lt;Embed url="https://v.danny.is/..." /&gt;</code> auto-dispatches to
+    <code>&lt;LCVid&gt;</code>, so most authors use <code>&lt;Embed&gt;</code> in prose.
+  </p>
+
+  <h5>Default &mdash; full chrome</h5>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Title, meta row (duration &middot; date &middot; Open link) and description, all sourced
+        from the video's JSON:
+      </p>
+      <LCVid src="lcdemo-part-2" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h5>With transcript</h5>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        <code>showTranscript</code> reveals a collapsible transcript below the player, when one
+        exists in the JSON:
+      </p>
+      <LCVid src="lcdemo-part-2" showTranscript />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h5>Minimal &mdash; player only</h5>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Hide all chrome when the surrounding prose already covers context. Pass
+        <code>showTitle</code>, <code>showMeta</code>, <code>showOpenLink</code> and
+        <code>showDescription</code> as <code>false</code>:
+      </p>
+      <LCVid
+        src="lcdemo-part-2"
+        showTitle={false}
+        showDescription={false}
+        showMeta={false}
+        showOpenLink={false}
+      />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h5>Meta only, no description</h5>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Drop the description but keep the duration/date/open affordance with
+        <code>showDescription={false}</code>:
+      </p>
+      <LCVid src="lcdemo-part-2" showDescription={false} />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h5>Title &amp; description overrides</h5>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Override the fetched <code>title</code> and <code>description</code> when the canonical
+        copy is too generic for the embedding context:
+      </p>
+      <LCVid
+        src="lcdemo-part-2"
+        title="A more specific title for this section"
+        description="A description tailored to the surrounding prose, not the one written in the v.danny.is admin."
+      />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h5>Custom aspect ratio</h5>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        The player defaults to the source video's native ratio. Force a different one with
+        <code>aspectRatio</code> &mdash; Vidstack letterboxes inside the box:
+      </p>
+      <LCVid src="lcdemo-part-2" aspectRatio="4 / 3" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
+
+  <h5>Via Embed (auto-dispatch)</h5>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <p>
+        Any <code>v.danny.is</code> URL passed to <code>&lt;Embed&gt;</code> renders as an
+        <code>&lt;LCVid&gt;</code>:
+      </p>
+      <Embed url="https://v.danny.is/lcdemo-part-2" />
     </SGTypographySwitcher>
   </ResizableContainer>
 

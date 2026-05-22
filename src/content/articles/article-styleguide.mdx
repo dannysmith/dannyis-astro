@@ -8,7 +8,7 @@ styleguide: true
 ---
 
 import { Image, Picture } from 'astro:assets';
-import { Accordion, Notion, Grid, BookmarkCard, Callout, Embed, BasicImage, BlockQuoteCitation, ButtonLink, IntroParagraph } from '@components/mdx';
+import { Accordion, Notion, Grid, BookmarkCard, Callout, Embed, BasicImage, BlockQuoteCitation, ButtonLink, IntroParagraph, LCVid } from '@components/mdx';
 import image1 from '@assets/articles/styleguide-image.jpg';
 
 <IntroParagraph>This Article Styleguide demonstrates how all key Markdown/MDX features, Astro components, and prose styles render in an Article context. Use it to check typography, component appearance, and real-world content. The first paragraph is intentionally long to show drop cap and first-paragraph styling. This page is a reference for designers, developers, and content authors to see how headings, lists, blockquotes, code, tables, images, embeds, and custom components appear in a real article. For a full component reference, see the [main styleguide](/styleguide/). You'll also find examples of footnotes, abbr, and other advanced markdown features. The goal is to ensure every element looks beautiful, readable, and consistent in the context of long-form writing. Feel free to add new examples as you add new features or components to the site. For more information, see the [main styleguide](/styleguide/).[^intro]</IntroParagraph>
@@ -247,6 +247,28 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, n
 <Embed url="https://www.loom.com/share/0132dbe661b24dd28f42e2ce040f78cc" />
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod. Visit [Astro documentation](https://docs.astro.build/) for details.
+
+---
+
+## LCVid (self-hosted video)
+
+`<LCVid />` renders a self-hosted video from [v.danny.is](https://v.danny.is) with build-time metadata. Most authors won't use it directly — passing a `v.danny.is` URL to `<Embed>` auto-dispatches to it.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.
+
+<LCVid src="lcdemo-part-2" />
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. The same video with the transcript visible:
+
+<LCVid src="lcdemo-part-2" showTranscript />
+
+Minimal — player only, no title, meta or description. For when the surrounding prose has already introduced the video:
+
+<LCVid src="lcdemo-part-2" showTitle={false} showMeta={false} showOpenLink={false} showDescription={false} />
+
+Via `<Embed>` — equivalent to the default rendering above:
+
+<Embed url="https://v.danny.is/lcdemo-part-2" />
 
 ---
 
