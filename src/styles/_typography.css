@@ -151,6 +151,7 @@
           content: '✓';
           display: block;
           color: var(--color-background);
+          font-family: var(--font-ui);
           font-size: 0.6em;
           line-height: 1.2;
           transform: translateY(0.1em);
