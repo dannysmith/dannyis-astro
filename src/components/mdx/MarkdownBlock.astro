@@ -28,6 +28,7 @@
  */
 import { Marked } from 'marked';
 import { Code } from 'astro-expressive-code/components';
+import { Icon } from 'astro-icon/components';
 
 export interface Props {
   /** Raw markdown string to render. */
@@ -80,7 +81,7 @@ const showingSource = defaultView === 'source';
 ---
 
 <figure
-  class="md-block"
+  class="md-block surface-white"
   data-md-block
   data-view={defaultView}
   aria-label={title ? `Included markdown: ${title}` : 'Included markdown'}
@@ -92,20 +93,38 @@ const showingSource = defaultView === 'source';
     <div class="md-block-controls">
       <button
         type="button"
-        class="md-block-button"
-        data-md-toggle
-        aria-pressed={showingSource ? 'true' : 'false'}
+        class="md-block-icon-button"
+        data-md-copy
+        data-md-code={code}
+        aria-label="Copy markdown"
       >
-        <span class="md-block-toggle-label" data-when="rendered" hidden={showingSource}>
-          Source
+        <span data-md-copy-icon="idle">
+          <Icon name="heroicons:clipboard-document-20-solid" aria-hidden="true" />
         </span>
-        <span class="md-block-toggle-label" data-when="source" hidden={!showingSource}>
-          Preview
+        <span data-md-copy-icon="done" hidden>
+          <Icon name="heroicons:check-20-solid" aria-hidden="true" />
         </span>
       </button>
-      <button type="button" class="md-block-button" data-md-copy data-md-code={code}>
-        Copy
-      </button>
+      <div role="group" aria-label="View" class="md-block-toggle">
+        <button
+          type="button"
+          class="md-block-icon-button"
+          data-md-view="rendered"
+          aria-pressed={!showingSource ? 'true' : 'false'}
+          aria-label="Show preview"
+        >
+          <Icon name="heroicons:eye-20-solid" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          class="md-block-icon-button"
+          data-md-view="source"
+          aria-pressed={showingSource ? 'true' : 'false'}
+          aria-label="Show source"
+        >
+          <Icon name="heroicons:code-bracket-20-solid" aria-hidden="true" />
+        </button>
+      </div>
     </div>
   </header>
 
@@ -122,10 +141,11 @@ const showingSource = defaultView === 'source';
 
 <style>
   .md-block {
+    /* Background + tonal palette come from the .surface-white utility,
+       which also adjusts --color-background-secondary for the header. */
     margin: var(--space-l) 0;
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
-    background: var(--color-background);
     overflow: hidden;
   }
 
@@ -151,7 +171,8 @@ const showingSource = defaultView === 'source';
 
   .md-block-controls {
     display: flex;
-    gap: var(--space-3xs);
+    align-items: center;
+    gap: var(--space-2xs);
   }
 
   /* Hide controls until JS wires them up — avoids flashing dead buttons. */
@@ -159,25 +180,33 @@ const showingSource = defaultView === 'source';
     visibility: hidden;
   }
 
-  .md-block-button {
+  .md-block-toggle {
+    display: inline-flex;
+  }
+
+  .md-block-icon-button {
+    display: inline-flex;
     padding: var(--space-3xs) var(--space-2xs);
-    font-size: var(--font-size-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
     background: transparent;
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-xs);
-    transition: all var(--duration-fast) var(--ease-in-out);
+    border: 0;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    transition: background-color var(--duration-fast) var(--ease-in-out);
   }
 
-  .md-block-button:is(:hover, [aria-pressed='true']) {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+  .md-block-icon-button:hover {
+    background: oklch(from var(--color-text) l c h / 0.08);
+    color: var(--color-text);
   }
 
-  .md-block-button:focus-visible {
-    outline: var(--border-width-base) solid var(--color-accent);
-    outline-offset: 2px;
+  .md-block-icon-button[aria-pressed='true'] {
+    background: var(--color-text);
+    color: var(--_surface-bg);
+  }
+
+  .md-block-icon-button svg {
+    width: 1rem;
+    height: 1rem;
   }
 
   /* Rendered pane gets padding; source pane uses Expressive Code's own chrome. */
@@ -209,21 +238,24 @@ const showingSource = defaultView === 'source';
     overflow-x: auto;
   }
 
-  /* Let Expressive Code's frame sit flush inside the box. */
+  /* Let Expressive Code's frame sit flush inside the box. The frame's own
+     top corners would otherwise round inside our header — flatten them so
+     the pane butts cleanly against the header divider. */
   .md-block-source :global(.expressive-code) {
     margin: 0;
   }
 
-  .md-block-source :global(.expressive-code .frame) {
+  .md-block-source :global(.expressive-code .frame),
+  .md-block-source :global(.expressive-code .frame pre),
+  .md-block-source :global(.expressive-code .frame .copy) {
     border: none;
-    border-radius: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 </style>
 
 <script>
   class MarkdownBlock {
-    private static readonly COPY_LABEL = 'Copy';
-    private static readonly COPIED_LABEL = 'Copied';
     private static readonly COPY_RESET_MS = 1500;
 
     private copyResetTimer: number | null = null;
@@ -235,41 +267,43 @@ const showingSource = defaultView === 'source';
      */
     private constructor(
       private readonly el: HTMLElement,
-      private readonly toggleBtn: HTMLButtonElement,
+      private readonly toggleButtons: HTMLButtonElement[],
       private readonly copyBtn: HTMLButtonElement,
       private readonly renderedPane: HTMLElement,
-      private readonly sourcePane: HTMLElement,
-      private readonly toggleLabels: HTMLElement[]
+      private readonly sourcePane: HTMLElement
     ) {
-      this.toggleBtn.addEventListener('click', () => this.toggle());
+      this.toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const view = btn.dataset.mdView;
+          if (view === 'rendered' || view === 'source') this.setView(view);
+        });
+      });
       this.copyBtn.addEventListener('click', () => this.copy());
       this.el.classList.add('md-block-initialized');
     }
 
     static init(el: HTMLElement): MarkdownBlock | null {
-      const toggleBtn = el.querySelector<HTMLButtonElement>('[data-md-toggle]');
+      const toggleButtons = Array.from(
+        el.querySelectorAll<HTMLButtonElement>('[data-md-view]')
+      );
       const copyBtn = el.querySelector<HTMLButtonElement>('[data-md-copy]');
       const renderedPane = el.querySelector<HTMLElement>('[data-pane="rendered"]');
       const sourcePane = el.querySelector<HTMLElement>('[data-pane="source"]');
-      if (!toggleBtn || !copyBtn || !renderedPane || !sourcePane) return null;
+      if (toggleButtons.length === 0 || !copyBtn || !renderedPane || !sourcePane) return null;
 
-      const toggleLabels = Array.from(
-        el.querySelectorAll<HTMLElement>('.md-block-toggle-label')
-      );
-      return new MarkdownBlock(el, toggleBtn, copyBtn, renderedPane, sourcePane, toggleLabels);
+      return new MarkdownBlock(el, toggleButtons, copyBtn, renderedPane, sourcePane);
     }
 
-    private toggle() {
-      const nextView = this.el.dataset.view === 'source' ? 'rendered' : 'source';
-      this.el.dataset.view = nextView;
+    private setView(view: 'rendered' | 'source') {
+      if (this.el.dataset.view === view) return;
+      this.el.dataset.view = view;
 
-      const showingSource = nextView === 'source';
+      const showingSource = view === 'source';
       this.renderedPane.toggleAttribute('hidden', showingSource);
       this.sourcePane.toggleAttribute('hidden', !showingSource);
-      this.toggleBtn.setAttribute('aria-pressed', showingSource ? 'true' : 'false');
 
-      this.toggleLabels.forEach(label => {
-        label.toggleAttribute('hidden', label.dataset.when !== nextView);
+      this.toggleButtons.forEach(btn => {
+        btn.setAttribute('aria-pressed', btn.dataset.mdView === view ? 'true' : 'false');
       });
     }
 
@@ -284,16 +318,24 @@ const showingSource = defaultView === 'source';
         return;
       }
 
-      // Brief in-button feedback. Cancel any pending reset so that a
-      // rapid second click doesn't leave the button stuck saying "Copied".
+      // Brief in-button feedback: swap clipboard icon for a tick. Cancel any
+      // pending reset so a rapid second click doesn't leave the tick stuck on.
       if (this.copyResetTimer !== null) {
         window.clearTimeout(this.copyResetTimer);
       }
-      this.copyBtn.textContent = MarkdownBlock.COPIED_LABEL;
+      this.setCopyState('done');
       this.copyResetTimer = window.setTimeout(() => {
-        this.copyBtn.textContent = MarkdownBlock.COPY_LABEL;
+        this.setCopyState('idle');
         this.copyResetTimer = null;
       }, MarkdownBlock.COPY_RESET_MS);
+    }
+
+    private setCopyState(state: 'idle' | 'done') {
+      this.copyBtn
+        .querySelectorAll<HTMLElement>('[data-md-copy-icon]')
+        .forEach(icon => {
+          icon.toggleAttribute('hidden', icon.dataset.mdCopyIcon !== state);
+        });
     }
   }
 
