@@ -124,6 +124,18 @@ describe('remarkTreeBlock', () => {
       const node = tree.children[0] as unknown as JsxNode;
       expect(hasAttr(node, 'highlight')).toBe(false);
     });
+
+    it('ignores line 0 (1-based domain, so {0} yields no highlight)', async () => {
+      const tree = await transform('```tree {0}\nsrc/\n```\n');
+      const node = tree.children[0] as unknown as JsxNode;
+      expect(hasAttr(node, 'highlight')).toBe(false);
+    });
+
+    it('drops a non-positive bound from a range ({0-2} → "1,2")', async () => {
+      const tree = await transform('```tree {0-2}\na\n```\n');
+      const node = tree.children[0] as unknown as JsxNode;
+      expect(attr(node, 'highlight')).toBe('1,2');
+    });
   });
 
   describe('combinations', () => {

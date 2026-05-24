@@ -41,7 +41,8 @@ import { visit } from 'unist-util-visit';
 /**
  * Expand a highlight spec like `2,5-7` into a sorted, de-duplicated array
  * of 1-based line numbers. Reversed ranges (`5-3`) are normalised.
- * Non-numeric junk is ignored.
+ * Non-numeric junk and non-positive line numbers (line 0 doesn't exist)
+ * are ignored.
  */
 function parseHighlightRanges(spec) {
   const lines = new Set();
@@ -53,9 +54,12 @@ function parseHighlightRanges(spec) {
       let start = Number(range[1]);
       let end = Number(range[2]);
       if (start > end) [start, end] = [end, start];
-      for (let i = start; i <= end; i++) lines.add(i);
+      for (let i = start; i <= end; i++) {
+        if (i > 0) lines.add(i);
+      }
     } else if (/^\d+$/.test(trimmed)) {
-      lines.add(Number(trimmed));
+      const n = Number(trimmed);
+      if (n > 0) lines.add(n);
     }
   }
   return [...lines].sort((a, b) => a - b);
