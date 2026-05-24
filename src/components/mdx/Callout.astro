@@ -37,6 +37,7 @@ if (icon && emoji) {
   .callout {
     --_bg: var(--color-background-secondary);
     --_border: var(--color-text-secondary);
+    --_icon-color: oklch(from var(--_border) min(l, 0.6) c h);
 
     display: flex;
     background: var(--_bg);
@@ -86,23 +87,34 @@ if (icon && emoji) {
 
   .icon {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    place-items: center;
     font-size: var(--font-size-sm);
     line-height: 1;
     margin-top: 0.15em;
 
+    /* SVG icons are visually larger than emoji at the same em — pull up. */
+    &:has(svg) {
+      margin-top: -0.05em;
+    }
+
     svg {
-      width: 1em;
-      height: 1em;
-      color: oklch(from var(--_border) min(l, 0.6) c h);
+      width: 1.35em;
+      height: 1.35em;
+      color: var(--_icon-color);
     }
   }
 
-  /* No title → first line is body text with larger line-height; nudge icon
-     further so it aligns with the cap height of that first line. */
-  .callout:not(:has(.title)) .icon {
-    margin-top: 0.3em;
+  /* No title → first line is body text with larger line-height; push the icon
+     down so it aligns with the cap height of that first line. */
+  .callout:not(:has(.title)) {
+    .icon          { margin-top: 0.3em; }
+    .icon:has(svg) { margin-top: 0.075em; }
+  }
+
+  /* Long-form prose uses --leading-loose (1.7), adding ~0.075em of half-leading
+     above the cap vs default body. SVG no-title icons need the extra nudge. */
+  :global(.longform-prose) .callout:not(:has(.title)) .icon:has(svg) {
+    margin-top: 0.2em;
   }
 
   .content-wrapper {
