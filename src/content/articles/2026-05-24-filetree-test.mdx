@@ -1,0 +1,185 @@
+---
+title: FileTree Component Test
+slug: filetree-test
+draft: true
+pubDate: 2026-05-24
+description: Scratch article for manually testing the tree fenced-code-block renderer. Delete before merge.
+---
+
+This is a scratch article for testing the `tree` fenced code block renderer. It contains a few normal paragraphs, a regular (non-tree) code block, and then every permutation of the file-tree feature. Delete this file before merging.
+
+Here is an ordinary paragraph of text so we can check that the trees sit nicely within prose and have sensible vertical rhythm above and below them. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+## A normal code block (not a tree)
+
+This should still render with Expressive Code as usual — proving the `tree` plugin doesn't interfere with normal fences:
+
+```js
+function greet(name) {
+  // A normal JS code block
+  return `Hello, ${name}!`;
+}
+```
+
+## 1. Basic tree (Unicode `tree(1)` format)
+
+```tree
+src/
+├── index.ts
+├── lib/
+│   ├── parse.ts
+│   └── helper.ts
+└── README.md
+```
+
+## 2. With a title
+
+```tree title="my-project"
+my-project/
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── main.ts
+│   └── styles.css
+└── README.md
+```
+
+## 3. Unframed (`frame="none"`)
+
+```tree frame="none"
+src/
+├── index.ts
+└── lib/
+    └── helper.ts
+```
+
+## 4. Highlighted rows (`{2,5-7}`)
+
+```tree {2,5-7}
+project/
+├── highlighted.ts
+├── normal.ts
+├── another.ts
+├── highlighted-too.ts
+├── and-this.ts
+├── this-one.ts
+└── not-this.ts
+```
+
+## 5. Ellipsis rows and comments
+
+```tree title="data directory"
+data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
+├── init.mp4                          # HLS initialization segment (codec headers)
+├── seg_000.m4s                       # ~4s media segments streamed during recording
+├── seg_001.m4s
+├── ...
+├── seg_046.m4s
+├── stream.m3u8                       # HLS playlist referencing init.mp4 + segments
+├── recording.json                    # Timeline, events and segment log from the client
+└── derivatives/
+    ├── source.mp4                    # Stitched single-file MP4 with enhanced audio
+    ├── 1080p.mp4                     # Downsampled variant (source is 1440p)
+    ├── thumbnail.jpg                 # Auto-selected best frame
+    ├── thumbnail-candidates/
+    │   ├── auto-01.jpg
+    │   ├── auto-02.jpg
+    │   └── auto-03.jpg
+    ├── captions.srt                  # Subtitles uploaded by the macOS app
+    ├── words.json                    # Per-word transcript timings
+    └── storyboard.vtt                # Maps time ranges to sprite regions
+```
+
+## 6. Unusual filenames (spaces, dotfiles, extensionless)
+
+```tree title="edge cases"
+project/
+├── My New Video.mp4       # filename with spaces
+├── .gitignore             # dotfile
+├── .env                   # dotfile, no mapped icon
+├── Dockerfile             # extensionless, exact-match icon
+├── Makefile               # extensionless, exact-match icon
+├── makefile               # lowercase variant
+└── LICENSE                # extensionless, generic fallback
+```
+
+## 7. Markdown links — in comments and as filenames
+
+```tree title="links"
+repo/
+├── index.html                                          # the [entry page](https://example.com)
+├── [README.md](https://github.com/x/y/blob/main/README.md)   # whole filename is a link
+└── [src/](https://github.com/x/y/tree/main/src)              # folder link
+```
+
+## 8. ASCII format (`tree --charset=ascii`)
+
+```tree title="ASCII charset"
+project/
+|-- src/
+|   |-- index.ts
+|   `-- lib/
+|       `-- helper.ts
+|-- README.md
+`-- tests/
+    `-- unit.test.ts
+```
+
+## 9. Hand-typed pipe/dash format
+
+```tree title="pipe/dash"
+project/
+|- src/
+|  |- index.ts
+|  `- lib/
+|     `- helper.ts
+|- README.md
+`- tests/
+   `- unit.test.ts
+```
+
+## 10. Lots of file types (icon coverage)
+
+```tree title="icon zoo"
+zoo/
+├── app.ts
+├── app.js
+├── component.tsx
+├── post.md
+├── data.json
+├── config.yaml
+├── Cargo.toml
+├── script.py
+├── main.rb
+├── lib.rs
+├── server.go
+├── styles.css
+├── styles.scss
+├── page.html
+├── logo.svg
+├── Page.astro
+├── Widget.svelte
+├── run.sh
+├── app.php
+├── photo.png
+├── movie.mp4
+├── song.mp3
+├── archive.zip
+├── notes.txt
+└── mystery.xyzzy
+```
+
+## 11. Long names and long comments (truncation + wrapping)
+
+```tree title="edge: long names & comments"
+project/
+├── a-really-really-really-really-really-really-really-really-really-really-long-filename-that-keeps-going.json   # short comment
+├── short.ts                                          # This is a deliberately very long comment that should demonstrate how we want comments to behave when they run past the available width and need to wrap onto a second (or third) line without breaking the alignment of everything else in the tree.
+├── this-extensionless-file-name-is-also-far-too-long-to-display-in-full-and-has-no-dot-anywhere-in-it-at-all   # extensionless, should still truncate
+├── nested/
+│   ├── deep.ts        # a comment on a deeply nested file, to check the column position holds at depth
+│   └── another-fairly-long-filename-inside-a-nested-folder.tsx   # and a longer one here too
+└── normal.md          # ordinary comment for comparison
+```
+
+A closing paragraph so we can see the spacing below the final tree.
