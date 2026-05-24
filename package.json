@@ -41,7 +41,6 @@
     "@astrojs/react": "^5.0.2",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
-    "@astropub/icons": "^0.2.0",
     "@dannysmith/datepicker": "^0.1.6",
     "@fontsource-variable/fira-code": "^5.2.7",
     "@iconify-json/heroicons": "^1.2.3",

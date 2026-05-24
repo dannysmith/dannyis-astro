@@ -11,7 +11,6 @@
         "@astrojs/react": "^5.0.2",
         "@astrojs/rss": "^4.0.18",
         "@astrojs/sitemap": "^3.7.2",
-        "@astropub/icons": "^0.2.0",
         "@dannysmith/datepicker": "^0.1.6",
         "@fontsource-variable/fira-code": "^5.2.7",
         "@iconify-json/heroicons": "^1.2.3",
@@ -130,8 +129,6 @@
     "@astrojs/telemetry": ["@astrojs/telemetry@3.3.0", "", { "dependencies": { "ci-info": "4.3.1", "debug": "4.4.3", "dlv": "1.1.3", "dset": "3.1.4", "is-docker": "3.0.0", "is-wsl": "3.1.0", "which-pm-runs": "1.1.0" } }, "sha512-UFBgfeldP06qu6khs/yY+q1cDAaArM2/7AEIqQ9Cuvf7B1hNLq0xDrZkct+QoIGyjq56y8IaE2I3CTvG99mlhQ=="],
 
     "@astrojs/yaml2ts": ["@astrojs/yaml2ts@0.2.3", "", { "dependencies": { "yaml": "^2.8.2" } }, "sha512-PJzRmgQzUxI2uwpdX2lXSHtP4G8ocp24/t+bZyf5Fy0SZLSF9f9KXZoMlFM/XCGue+B0nH/2IZ7FpBYQATBsCg=="],
-
-    "@astropub/icons": ["@astropub/icons@0.2.0", "", { "peerDependencies": { "astro": "5.16.0" } }, "sha512-qM/ldW/9rVHULNOZgz/23Yzgm2r3Iy2JJ1FuvJB6sFU67n61o1ImuXdHiaWSNoEHubD+IUkD9WG0hbhINgszqA=="],
 
     "@atproto/api": ["@atproto/api@0.13.35", "", { "dependencies": { "@atproto/common-web": "0.4.3", "@atproto/lexicon": "0.4.14", "@atproto/syntax": "0.3.4", "@atproto/xrpc": "0.6.12", "await-lock": "2.2.2", "multiformats": "9.9.0", "tlds": "1.261.0", "zod": "3.25.76" } }, "sha512-vsEfBj0C333TLjDppvTdTE0IdKlXuljKSveAeI4PPx/l6eUKNnDTsYxvILtXUVzwUlTDmSRqy5O4Ryh78n1b7g=="],
 
