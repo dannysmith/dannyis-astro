@@ -90,13 +90,19 @@ if (icon && emoji) {
     justify-content: center;
     font-size: var(--font-size-sm);
     line-height: 1;
-    margin-top: 0.05em;
+    margin-top: 0.15em;
 
     svg {
       width: 1em;
       height: 1em;
       color: oklch(from var(--_border) min(l, 0.6) c h);
     }
+  }
+
+  /* No title → first line is body text with larger line-height; nudge icon
+     further so it aligns with the cap height of that first line. */
+  .callout:not(:has(.title)) .icon {
+    margin-top: 0.3em;
   }
 
   .content-wrapper {
