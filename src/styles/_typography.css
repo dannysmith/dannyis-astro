@@ -182,7 +182,7 @@
   samp,
   :not(pre) > code {
     font-family: var(--font-code);
-    font-size: var(--font-size-sm);
+    font-size: 0.75em;
     font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
     background-color: var(--color-background-code);
     border: var(--border-width-hairline) solid var(--color-border);
@@ -212,7 +212,7 @@
 
   /* Small Text */
   small {
-    font-size: var(--font-size-sm);
+    font-size: 0.875em;
   }
 
   /* Strikethrough and Deleted Text */
@@ -264,7 +264,7 @@
   [data-footnote-ref] {
     display: inline-block;
     padding-inline: 0.5ch;
-    font-size: var(--font-size-xs);
+    font-size: 0.75em;
     font-weight: var(--font-weight-semibold);
     font-variant: small-caps;
     letter-spacing: var(--tracking-wide);
