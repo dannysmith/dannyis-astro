@@ -58,8 +58,16 @@ const { class: className, ...props } = Astro.props;
       }
     }
 
-    /* End Mark */
-    .longform-prose > p:last-child:after {
+    /* End Mark — applied to the last paragraph of body prose. Treats a
+       small whitelist of trailing meta-chrome as ignorable: the footnotes
+       section from remark-gfm, the markdown-actions div, the inline-footnote
+       containers injected by InlineFootnotes, and any trailing scripts.
+       Anything else following the paragraph (heading, list, callout, etc.)
+       counts as body content and suppresses the mark. */
+    .longform-prose
+      > p:not(
+        :has(~ :not(.inline-footnote-container, [data-footnotes], .markdown-actions, script))
+      ):after {
       color: var(--color-accent);
       display: inline-block;
       content: ' ';

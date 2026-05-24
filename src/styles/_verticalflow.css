@@ -38,7 +38,7 @@
 
   .flow {
     /* Catch-all for elements not handled globally above */
-    & > * + *:not(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, figure, table, hr) {
+    & > * + *:not(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, figure, table, hr, [data-footnotes]) {
       margin-top: 1.25em;
     }
 
