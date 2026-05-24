@@ -12,9 +12,11 @@
 import SmartLink from '@components/mdx/SmartLink.astro';
 import BasicImage from '@components/mdx/BasicImage.astro';
 import MarkdownBlock from '@components/mdx/MarkdownBlock.astro';
+import FileTree from '@components/mdx/file-tree/FileTree.astro';
 
 export const MDX_COMPONENT_REMAPPING = {
   a: SmartLink,
   img: BasicImage,
   'markdown-preview': MarkdownBlock,
+  'file-tree': FileTree,
 } as const;
