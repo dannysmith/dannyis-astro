@@ -122,6 +122,20 @@ import photo from '@assets/articles/my-article/photo.jpg';
 <BasicImage src={photo} alt="Full width" bleed="full" />
 ```
 
+**FileTree** - File/directory trees from a plain-text `tree` fenced code block (no import — a build-time remark plugin renders it):
+
+````md
+```tree title="src/" {3}
+src/
+├── index.ts        # entry point
+├── lib/
+│   └── parse.ts
+└── README.md
+```
+````
+
+Write a standard `tree(1)`-style tree (Unicode, ASCII, or pipe-dash glyphs all work, so it stays readable on GitHub). Folders (trailing `/` or having children) collapse on click; icons are coloured by file type. Meta attributes: `title="..."`, `frame="none"`, and `{2,5-7}` to highlight rows. Comments after `#` render as inline markdown (links work), and a literal `...` row becomes an "and more" indicator.
+
 **Typography components:**
 
 ```mdx

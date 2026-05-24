@@ -15,6 +15,7 @@ import {
   ColorSwatch,
   Embed,
   Grid,
+  FileTree,
   IntroParagraph,
   LCVid,
   MarkdownBlock,
@@ -81,6 +82,24 @@ A paragraph with **bold**, _italic_, \`inline code\`, and a
 - three
 
 > A short quotation from elsewhere.`;
+
+// Sample tree for the FileTree example. Combines most features: a title,
+// per-type coloured icons, a folder, an ellipsis row, a filename with spaces,
+// a markdown link in a comment, and a deliberately long comment that wraps.
+const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
+├── init.mp4                # HLS initialisation segment (codec headers)
+├── seg_000.m4s             # ~4-second media segments streamed during recording; a long video produces dozens of these, so the rest are collapsed into the ellipsis below
+├── seg_001.m4s
+├── ...
+├── stream.m3u8             # HLS playlist tying the init segment and media segments together
+├── recording.json          # timeline and events — see the [event schema](https://example.com)
+├── My First Take.mov       # the original screen capture, kept for reference
+└── derivatives/
+    ├── source.mp4          # stitched single-file MP4 with enhanced audio
+    ├── thumbnail.jpg        # auto-selected best frame
+    ├── captions.srt         # subtitles
+    ├── words.json           # per-word transcript timings used by the editor
+    └── notes.md             # human notes about the recording`;
 ---
 
 <section id="content-components" class="styleguide-section flow">
@@ -775,4 +794,30 @@ A paragraph with **bold**, _italic_, \`inline code\`, and a
   <SGTypographySwitcher>
     <MarkdownBlock code={markdownBlockSample} title="sample.md" defaultView="source" />
   </SGTypographySwitcher>
+
+  <!-- 12. FileTree -->
+  <h3 id="file-tree">FileTree</h3>
+  <p>
+    Renders a plain-text file tree as a macOS-Finder-like view. Authors write a fenced code block
+    with <code>tree</code> as the language, using ordinary <code>tree(1)</code> output (or the
+    ASCII / pipe-dash variants) — so it stays readable on GitHub and in editors — and a build-time
+    remark plugin renders it:
+  </p>
+  <Code
+    lang="md"
+    code={'```tree title="Recording storage" {6}\ndata/…/\n├── init.mp4       # HLS init segment\n├── ...\n└── derivatives/\n    └── source.mp4   # stitched MP4\n```'}
+  />
+  <p>
+    Folders expand and collapse natively (no JavaScript). Icons are coloured by type as a skim aid;
+    folders use a bolder blue. Meta attributes: <code>title="..."</code> for the header,
+    <code>frame="none"</code> to drop the window frame, and <code>{'{2,5-7}'}</code> to highlight
+    rows. Comments after <code>#</code> render as inline markdown (so links work), a literal
+    <code>...</code> becomes an &ldquo;and more&rdquo; row, and a trailing <code>/</code> marks a
+    folder.
+  </p>
+  <ResizableContainer>
+    <SGTypographySwitcher>
+      <FileTree code={fileTreeExample} title="Recording storage" highlight="6" />
+    </SGTypographySwitcher>
+  </ResizableContainer>
 </section>
