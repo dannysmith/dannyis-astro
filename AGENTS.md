@@ -39,6 +39,7 @@ Review `docs/developer/architecture-guide.md` for essential patterns
 7. **Update styleguides** - Add examples when creating visual components
 8. **Quality Gates**: Run `bun run check:all` after significant changes
 9. **Documentation**: Update `docs/developer/` for new patterns
+10. **Package manager**: Always use `bun` — never `npm` or `pnpm`. The lockfile is `bun.lock`.
 
 
 
