@@ -94,6 +94,9 @@ export async function fetchLoomCloneVideo(jsonUrl: string): Promise<LoomCloneVid
 
   const promise = doFetch(jsonUrl);
   cache.set(jsonUrl, promise);
+  // Evict rejected promises so a transient failure doesn't poison the cache
+  // for the remainder of the process (matters most in long-lived dev servers).
+  promise.catch(() => cache.delete(jsonUrl));
   return promise;
 }
 
