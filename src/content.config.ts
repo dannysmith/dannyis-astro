@@ -21,11 +21,7 @@ const articles = defineCollection({
         .enum(['medium', 'external'])
         .optional()
         .describe('For articles published elsewhere'),
-      redirectURL: z
-        .string()
-        .url()
-        .optional()
-        .describe('Redirect destination for external articles'),
+      redirectURL: z.url().optional().describe('Redirect destination for external articles'),
       styleguide: z.boolean().optional().describe('Styleguide page; excluded from RSS and indexes'),
     }),
 });
@@ -35,7 +31,7 @@ const notes = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/notes' }),
   schema: z.object({
     title: z.string(),
-    sourceURL: z.string().url().optional().describe('Original URL for link posts'),
+    sourceURL: z.url().optional().describe('Original URL for link posts'),
     slug: z.string().optional().describe('Custom URL slug (defaults to filename)'),
     draft: z.boolean().default(false),
     description: z.string().optional(),
@@ -51,7 +47,7 @@ const toolboxPages = defineCollection({
   schema: z.object({
     id: z.string(),
     title: z.string(),
-    url: z.string().url(),
+    url: z.url(),
   }),
 });
 

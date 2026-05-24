@@ -25,7 +25,7 @@ describe('Content Schema Logic', () => {
     });
 
     it('validates optional URL fields', () => {
-      const urlSchema = z.string().url().optional();
+      const urlSchema = z.url().optional();
       expect(() => urlSchema.parse('https://example.com')).not.toThrow();
       expect(() => urlSchema.parse(undefined)).not.toThrow();
       expect(() => urlSchema.parse('not-a-url')).toThrow();
@@ -69,7 +69,7 @@ describe('Content Schema Logic', () => {
         pubDate: z.coerce.date(),
         draft: z.boolean().default(false),
         styleguide: z.boolean().optional(),
-        sourceURL: z.string().url().optional(),
+        sourceURL: z.url().optional(),
       });
 
       const validNote = {
