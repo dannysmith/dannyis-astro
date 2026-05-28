@@ -1,0 +1,50 @@
+A short notes on how this site is built and what I use to make it. Mostly aimed at other people running their own personal sites — magpies welcome.
+
+## What this site is built with
+
+The site is built with [Astro](https://astro.dev) and written in TypeScript. It's content-first and ships **as little JavaScript as possible** — most pages are static HTML and CSS, with a sprinkle of progressive enhancement where it earns its keep.
+
+- **Framework**: [Astro 6](https://astro.dev) with [MDX](https://mdxjs.com/) content collections for the long-form articles and short notes.
+- **Styling**: Hand-written CSS using [native cascade layers](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer), CSS custom properties for theming, and `light-dark()` for the two colour schemes. No utility framework, no preprocessor.
+- **Code blocks**: [Expressive Code](https://expressive-code.com/) with a custom theme.
+- **Diagrams**: [Mermaid](https://mermaid.js.org/), rendered at build time.
+- **Icons**: [astro-icon](https://www.astroicon.dev/) with [Heroicons](https://heroicons.com/) and [Simple Icons](https://simpleicons.org/).
+- **OG images**: Generated at build time with [Satori](https://github.com/vercel/satori) and [resvg](https://github.com/yisibl/resvg-js).
+- **Tests**: [Vitest](https://vitest.dev/) for unit tests, [Playwright](https://playwright.dev/) for end-to-end.
+- **Package manager**: [Bun](https://bun.sh/).
+- **Hosting**: [Vercel](https://vercel.com/), deployed automatically from the `main` branch on GitHub.
+
+The full source is on [GitHub](https://github.com/dannysmith/dannyis-astro) if you want to nose around. There's a [styleguide page](/styleguide) too, which I use as both documentation and a kind of design playground.
+
+## Typefaces
+
+I'm a typography nerd. The site uses four typefaces, each picked deliberately for the job it does:
+
+- **[Literata](https://github.com/googlefonts/literata)** — contemporary serif used for long-form articles. A variable font with weight and optical-size axes, built from source.
+- **[Geist](https://vercel.com/font)** — geometric sans-serif by Vercel, used for display typography: page titles, headings, nav.
+- **[Figtree](https://github.com/erikdkennedy/figtree)** — friendly geometric sans by Erik Kennedy, used for UI and short-form prose (this page, notes, callouts).
+- **[Fira Code](https://github.com/tonsky/FiraCode)** — programming-ligature monospace for code blocks.
+
+All fonts are self-hosted as variable WOFF2 files, except Fira Code which is loaded via Fontsource.
+
+There's a more detailed [font reference in the docs](https://github.com/dannysmith/dannyis-astro/blob/main/docs/developer/fonts.md) if you want the OpenType-feature deep dive.
+
+## How I write and edit
+
+- **Writing**: [Astro Editor](https://astroeditor.danny.is) — a desktop markdown editor I built specifically for Astro content collections.
+- **Early drafts**: occasionally [iA Writer](https://ia.net/writer) when I want to start somewhere with fewer distractions.
+- **Editor**: [VSCode](https://code.visualstudio.com/) for everything else.
+- **Terminal**: [Ghostty](https://ghostty.org/), usually with two panes — one for [Claude Code](https://claude.com/claude-code), one for a normal shell.
+- **Version control**: Git, hosted on [GitHub](https://github.com/dannysmith).
+
+## AI
+
+I do use AI coding agents to work on this site, and I use LLMs lightly for copy-editing the writing. I've written about how — and where I draw the lines — on the [AI Statement](/ai) page.
+
+## Credits and inspiration
+
+{/* TODO: list a few sites / blogs whose colophons or design I've borrowed from. Starting points: Maggie Appleton (https://maggieappleton.com/colophon), Robin Rendle, Sara Soueidan, etc. */}
+
+If you spot something here you like and want to use, the source is permissively licensed for the code. The writing remains mine.
+
+Updated: 2026-05-28

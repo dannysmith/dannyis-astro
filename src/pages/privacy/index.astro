@@ -1,0 +1,41 @@
+---
+import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
+import { Content as PrivacyContent } from './_privacy.md';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Privacy Policy"
+      description="How danny.is handles your data. Short version: it doesn't, much."
+      pageType="page"
+    />
+  </head>
+  <body>
+    <MainNavigation />
+    <main class="content">
+      <h1 class="ui-style">Privacy Policy</h1>
+      <PrivacyContent />
+    </main>
+    <Footer />
+
+    <style>
+      .content {
+        max-width: var(--measure-standard);
+        margin-inline: auto;
+        padding: var(--space-2xl) var(--space-s);
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-weight: var(--font-weight-extrabold);
+        margin-top: 0;
+        margin-bottom: var(--space-m);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+        text-align: right;
+      }
+    </style>
+  </body>
+</html>

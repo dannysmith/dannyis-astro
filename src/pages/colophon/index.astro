@@ -1,0 +1,42 @@
+---
+import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
+import { Content as ColophonContent } from './_colophon.mdx';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Colophon"
+      description="The stack, fonts and tools behind danny.is."
+      pageType="page"
+    />
+  </head>
+  <body>
+    <MainNavigation />
+    <main class="content">
+      <h1 class="ui-style">Colophon</h1>
+      <ColophonContent components={MDX_COMPONENT_REMAPPING} />
+    </main>
+    <Footer />
+
+    <style>
+      .content {
+        max-width: var(--measure-standard);
+        margin-inline: auto;
+        padding: var(--space-2xl) var(--space-s);
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-weight: var(--font-weight-extrabold);
+        margin-top: 0;
+        margin-bottom: var(--space-m);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+        text-align: right;
+      }
+    </style>
+  </body>
+</html>

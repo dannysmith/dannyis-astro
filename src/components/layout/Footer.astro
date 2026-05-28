@@ -30,6 +30,12 @@ const today = new Date();
     </span>
   </section>
   <section class="footer-meta">
+    <a href="/colophon">colophon</a>
+    <span class="footer-meta-separator">·</span>
+    <a href="/ai">ai statement</a>
+    <span class="footer-meta-separator">·</span>
+    <a href="/privacy">privacy</a>
+    <span class="footer-meta-separator">·</span>
     <a href="https://danny.is/key.txt" target="_blank">pgp key</a>
     <span class="footer-meta-separator">·</span>
     <a
@@ -99,6 +105,7 @@ const today = new Date();
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-light);
     display: flex;
+    flex-wrap: wrap;
     padding-left: calc(var(--space-s) * 2);
     gap: var(--space-3xs);
     margin-top: var(--space-3xs);
