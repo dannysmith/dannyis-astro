@@ -1,4 +1,7 @@
-import puppeteer from 'puppeteer';
+// Requires Playwright browsers installed: `bunx playwright install chromium`.
+// (Already present locally if e2e tests have been run.)
+
+import { chromium } from 'playwright';
 import { writeFile, readFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 
@@ -7,24 +10,12 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
 (async () => {
   try {
     console.log('Starting to scrape toolbox pages...');
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
-        '--disable-gpu',
-      ],
-    });
+    const browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
 
     // Navigate and wait for network to be idle
     await page.goto('https://betterat.work/tool/', {
-      waitUntil: 'networkidle2',
+      waitUntil: 'networkidle',
       timeout: 30000,
     });
 
@@ -32,12 +23,13 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
     console.log('Waiting for toolbox cards to load...');
     await page.waitForSelector('.notion-collection-card__anchor', {
       timeout: 20000,
-      visible: true,
+      state: 'visible',
     });
 
     // Wait for a reasonable number of elements to load
     await page.waitForFunction(
       () => document.querySelectorAll('.notion-collection-card__anchor').length >= 5,
+      null,
       { timeout: 15000 }
     );
 

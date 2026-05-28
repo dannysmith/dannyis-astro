@@ -54,7 +54,6 @@
     "marked": "^18.0.0",
     "mdast-util-to-string": "^4.0.0",
     "mermaid": "^11.12.1",
-    "puppeteer": "^24.31.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "reading-time": "^1.5.0",
