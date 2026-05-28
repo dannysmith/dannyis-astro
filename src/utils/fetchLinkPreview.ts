@@ -3,18 +3,19 @@
 // Notion's public pages serve page-specific <title> / og: / favicon metadata
 // only to known social-crawler UAs. Every other UA gets the generic
 // JS-hydrated shell with `<title>Notion</title>`. `facebookexternalhit/1.1`
-// is the standard sentinel used by unfurl.js, Slack, Discord, etc.
+// is the standard sentinel used by unfurl.js, Slack, Discord, etc., and
+// also gets sensible OG metadata from most blogs and news sites.
 const USER_AGENT = 'facebookexternalhit/1.1';
 const DEFAULT_TIMEOUT_MS = 8000;
 const MAX_BYTES = 512 * 1024;
 
-export interface UrlMeta {
+export interface LinkPreview {
   title?: string;
   ogTitle?: string;
   favicon?: string;
 }
 
-export async function fetchUrlMeta(url: string, signal?: AbortSignal): Promise<UrlMeta> {
+export async function fetchLinkPreview(url: string, signal?: AbortSignal): Promise<LinkPreview> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
   if (signal) {
@@ -28,17 +29,21 @@ export async function fetchUrlMeta(url: string, signal?: AbortSignal): Promise<U
       signal: controller.signal,
     });
     if (!response.ok) {
-      throw new Error(`fetchUrlMeta: ${response.status} ${response.statusText} from ${url}`);
+      throw new Error(`fetchLinkPreview: ${response.status} ${response.statusText} from ${url}`);
     }
     const html = await readCapped(response, MAX_BYTES);
-    return {
-      title: extractTitle(html),
-      ogTitle: extractOgTitle(html),
-      favicon: extractFavicon(html, url),
-    };
+    return parseLinkPreview(html, url);
   } finally {
     clearTimeout(timer);
   }
+}
+
+export function parseLinkPreview(html: string, baseUrl: string): LinkPreview {
+  return {
+    title: extractTitle(html),
+    ogTitle: extractOgTitle(html),
+    favicon: extractFavicon(html, baseUrl),
+  };
 }
 
 async function readCapped(response: Response, maxBytes: number): Promise<string> {
