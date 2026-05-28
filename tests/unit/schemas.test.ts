@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
+import { z } from 'astro/zod';
 
 // Test the schema logic directly without importing content config
 describe('Content Schema Logic', () => {

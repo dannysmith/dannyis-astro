@@ -151,7 +151,7 @@ See `seo.md`
 
 ### Implementation
 
-Dynamic generation using `@vercel/og` + `satori` + `@resvg/resvg-js`.
+Dynamic generation using `satori` + `@resvg/resvg-js`, with a `sharp`-rendered SVG fallback if Satori fails.
 
 **Files:**
 
@@ -286,9 +286,9 @@ Custom remark/rehype plugins modify content during build.
 
 ### Image Generation
 
-- **@vercel/og** - OpenGraph image generation
-- **satori** - HTML to SVG rendering
+- **satori** - HTML/JSX to SVG rendering
 - **@resvg/resvg-js** - SVG to PNG conversion
+- **sharp** - Fallback SVG-to-PNG renderer used if Satori fails
 
 ### RSS Generation
 
