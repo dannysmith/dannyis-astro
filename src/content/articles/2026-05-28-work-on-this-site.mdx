@@ -1,0 +1,295 @@
+---
+title: Some Work on this Site
+slug: 2026-05-28-work-on-this-site
+description: A tour of the small, fiddly things I've added to this site since moving to Astro — a homemade video player, nicer tables, markdown previews, file trees, a fourth typeface and a CSS rewrite underneath it all.
+toc: true
+pubDate: 2026-05-28
+---
+
+import { Callout, LCVid } from '@components/mdx';
+
+Last autumn I [wrote about](/writing/moving-to-astro) moving this site to Astro and have shared a few notes about [little features](/notes/adding-share-features) I've added since then, but over the last few months I've picked away at a lot of little bits and pieces here which I haven't really shown off. So I'm gonna do that now if you'll indulge me for a minute.
+
+## I made a video platform
+
+I've been building my own platform for recording and sharing videos (more on that in another post soon), so I can now add videos like this...
+
+<LCVid src="polite-phones-jam" showTitle={false} />
+
+The video platform makes embedding pretty easy[^1] but I wanted videos I share here to feel like first-class citizens of *this* site. Instead of rendering the video player from the video platform, my new `LCVid.astro` component renders its own Vidstack player after grabbing the info it needs from the video platform via a JSON endpoint. This obviously includes the URLs needed to embed a Vidstack player (`1080p.mp4`, `720p.mp4`, `poster.jpg`, `captions.srt`, `storyboard.jpg`, `storyboard.vtt`), but since we do this at build-time we can also grab the title, description, length, transcript and cover image and use it to generate sensible HTML around the video player. I can use the component like this:
+
+```md
+<LCVid src="my-video-slug" />
+```
+
+It supports the following props:
+
+| Prop              | Description                                         |
+| ----------------- | --------------------------------------------------- |
+| `src`             | **Required.** Full URL, absolute path or bare slug. |
+| `title`           | Override title.                                     |
+| `description`     | Override description.                               |
+| `aspectRatio`     | Override aspect ratio.                              |
+| `showTitle`       | Render title above player.                          |
+| `showDescription` | Render description below player.                    |
+| `showMeta`        | Render duration and date.                           |
+| `showOpenLink`    | Render “Open” link to the original video page.      |
+| `showTranscript`  | Render transcript inside a collapsible `<details>`. |
+
+## Code Blocks & Tables
+
+As you just saw, I've also made some tweaks to how tables and code blocks are rendered. Tables just got a bit of CSS-love: they use tabular numerals, support captions and render various sorts of "header" nicely. Here's an example:
+
+<table>
+  <caption>Table 1. The numbers are made up, they're just here to show off tabular figures.</caption>
+  <thead>
+    <tr>
+      <th scope="col">Plan</th>
+      <th scope="col">Code</th>
+      <th scope="col">Monthly</th>
+      <th scope="col">Annual</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Hobby</td>
+      <td><code>free</code></td>
+      <td>£0</td>
+      <td>£0</td>
+      <td>For tinkering on personal side projects.</td>
+    </tr>
+    <tr>
+      <td>Starter</td>
+      <td><code>start-25</code></td>
+      <td>£9</td>
+      <td>£90</td>
+      <td>Everything a solo freelancer needs to begin.</td>
+    </tr>
+    <tr>
+      <th colspan="5">For bigger teams</th>
+    </tr>
+    <tr>
+      <td >Team</td>
+      <td><code>team-99</code></td>
+      <td>£49</td>
+      <td>£490</td>
+      <td>Shared workspaces and roles for small teams.</td>
+    </tr>
+    <tr>
+      <td>Enterprise</td>
+      <td><code>ent-x</code></td>
+      <td>£199</td>
+      <td>£1,990</td>
+      <td>Advanced controls, SSO and priority support included.</td>
+    </tr>
+  </tbody>
+</table>
+
+Code blocks are rendered using [Expressive Code](https://expressive-code.com/) which makes it easy to add titles and line highlights while still using markdown's fenced code blocks. It supports a bunch of nice features including file titles and line highlights.
+
+```ts title="expressive-code-demo.ts" {3}
+export function readingTime(text: string): number {
+  const words = text.trim().split(/\s+/).length;
+  return Math.ceil(words / 200);
+}
+```
+
+And terminal examples are rendered in a nice-looking frame...
+
+```bash frame="terminal"
+bun create astro@latest expressive-code-is-cool
+cd expressive-code-is-cool
+bun run dev
+```
+
+The color palette used for syntax highlighting took a little while to get right (and still isn't perfect) but I hope it feels consistent *enough* with the rest of this site for the time being.
+
+## Inline Styles, Footnotes, Lists & Callouts
+
+Inline text styles got a little love recently too. Strikethroughs are rendered ~~like this right here~~, which is fun. Keyboard elements render as little 3D keys that depress on hover: <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>. External links automatically get a little arrow, so [a link to Astro](https://astro.build) looks different from [a link to my notes](/notes/). Abbreviations like <abbr title="Cascading Style Sheets">CSS</abbr> get a dotted underline and custom cursor. I've also made some very subtle tweaks to `code`, *italic*, **bold** and <mark>highlight</mark> styles.
+
+Footnotes[^2] have also had a little refresh. Clicking a footnote will show it immediately below the current paragraph (try it 👆) and the client-side JS for this is only served if footnotes are present.
+
+### Lists that breathe
+
+I use lists pretty heavily in my writing. Sometimes they contain short bullets like this...
+
+- Apples 🍎
+- Oranges 🍊
+- Pears 🍐
+
+But often each list item is much longer – more like a paragraph...
+
+- **Nonsense Item One**. *Ea qui sint ex eiusmod Lorem commodo dolor excepteur. Commodo non magna irure labore excepteur non culpa nulla aute consequat. Excepteur aliquip esse magna fugiat. Occaecat ad est in consectetur. Exercitation ex excepteur sit eiusmod cillum exercitation reprehenderit. Aliquip do enim sunt est amet pariatur.*
+- **Nonsense Item Two**. *Commodo magna dolor proident pariatur cupidatat non esse proident irure laborum do culpa aliquip dolor. Sit velit culpa occaecat sunt officia. Reprehenderit duis adipisicing in incididunt nulla velit ipsum duis nostrud minim reprehenderit nisi culpa et ad.*
+- **Nonsense Item Three**. *Tempor dolore do adipisicing minim eu eiusmod eu sint. Adipisicing incididunt elit eiusmod in consequat et eiusmod do. Eu sit sit nostrud eu eu dolor ipsum aliquip ullamco.*
+
+These should be treated differently when it comes to vertical rhythm: lists with longer content should be spaced like paragraphs (because they essentially *are* paragraphs) whereas lists with short bullet points should have less leading between them. This has bugged me for ages, so I fixed it with a build-time plugin which measures the average length of a list's items and decides how they should be vertically spaced. You can see this in action in the two lists above.
+
+### Slightly Better Callouts
+
+I covered callouts in [*Moving this site to Astro*](/writing/moving-to-astro) but have made a couple of minor tweaks so they render more consistently in different contexts, particularly how icons are rendered.
+
+<Callout type="green" emoji="✅">
+  This callout uses an emoji as its marker instead of an icon.
+</Callout>
+
+<Callout type="orange" title="Heads up" icon="heroicons:exclamation-triangle-20-solid">
+  And this one uses a Heroicon.
+</Callout>
+
+
+## New Fence-Based Components
+
+Historically, the majority of fenced code blocks in my writing have contained either actual code or terminal i/o – both of which are handled perfectly by Expressive Code. But as I work more with AI tools I'm increasingly finding my code blocks contain **markdown** examples and **file trees**. While both of these are perfectly readable as plain-text code blocks, I figured I could probably do better than that.
+
+### Markdown Blocks
+
+I've added a new `MarkdownBlock.astro` component which renders like this:
+
+```md preview title="README.md"
+## An example of included markdown
+
+This is an example of the kind of markdown file I often end up including in my content. The preview renders all the usual markdown syntax like **bold**, _italic_, `inline code`, and a
+[link to example.com](https://example.com). Also lists, of course:
+
+- one
+- two
+- three
+
+And blockquotes:
+
+> A short quotation from elsewhere.
+
+And also a load of other features which I really don't need to show you here.
+```
+
+The component itself takes a markdown string, optional `title` and `defaultView` and renders both a preview of the markdown *and* the usual code block, with a toggle to flip between the two and a button to copy the markdown. A custom remark plugin renders this whenever I add `preview` to a markdown-language fenced code block and I can optionally specify a title.
+
+```md
+```md preview title="My Preview"
+```
+
+I particularly like this approach because these are still fenced code blocks and will continue to render as such on platforms like GitHub.
+
+### File Trees
+
+File trees in my content are likely to look something like this:
+
+```bash
+content/
+├── articles/                              # long-form writing
+│   └── 2026-05-28-work-on-this-site.mdx   # you are here
+└── config.ts                              # the collection schema
+```
+
+When I first considered rendering these as **nice HTML** I looked at Starlight's [`FileTree`](https://github.com/withastro/starlight/blob/main/packages/starlight/user-components/FileTree.astro) component, but it's designed to expect a markdown ordered list and much like with markdown blocks, it's important to me that file trees in my actual content are in `tree(1)` format above... because that's how I'm likely to write them, and because they'll still work wherever else they're rendered.
+
+The `FileTree.astro` component and its associated remark plugin work much the same as the MarkdownBlock one. A fenced code block like this:
+
+````md
+```tree title="My Thing" {12}
+content/
+├── assets/                                # Assets, innit
+│   ├── My Video.mp4
+│   ├── pic.jpg                            # User's avatar image
+│   ├── song.mp3
+│   ├── data.json                          # Diagnostic data used by [Hal](https://en.wikipedia.org/wiki/HAL_9000).
+│   ├── robots.txt
+│   └── .config                            # Assets config file
+├── articles/                              # long-form writing
+│   ├── 2025-10-25-moving-to-astro.mdx
+│   ├── ...
+│   └── 2026-05-28-work-on-this-site.mdx   # you are here
+├── notes/                                 # short-form posts and links
+│   └── adding-share-features.mdx
+└── config.ts                              # the collection schema
+```
+````
+
+... will render an interactive component like this ...
+
+```tree title="My Thing" {12}
+content/
+├── assets/                                # Assets, innit
+│   ├── My Video.mp4
+│   ├── pic.jpg                            # User's avatar image
+│   ├── song.mp3
+│   ├── data.json                          # Diagnostic data used by [Hal](https://en.wikipedia.org/wiki/HAL_9000).
+│   ├── robots.txt
+│   └── .config                            # Assets config file
+├── articles/                              # long-form writing
+│   ├── 2025-10-25-moving-to-astro.mdx
+│   ├── ...
+│   └── 2026-05-28-work-on-this-site.mdx   # you are here
+├── notes/                                 # short-form posts and links
+│   └── adding-share-features.mdx
+└── config.ts                              # the collection schema
+```
+
+Some interesting points to note:
+
+- The `title=""` and `{12}` both mirror the conventions used by Expressive Code for setting a title and highlighting a line.
+- There's no client-side JS here – folders collapse using plain old `<details>` HTML elements.
+- The parser is glyph-agnostic: `├──`, `|--`, `+--`, tabs or spaces all parse the same way so long as they're properly structured.
+- Icons are coloured by file type and `# comments` render as inline markdown (so links work in them).
+
+## A Fourth Typeface
+
+When I first settled on typefaces for this site I chose [Literata for articles](/writing/website-redesign-v/) and [Jost for everything else](/writing/website-redesign-xv#deciding-on-a-typeface). While I've always been happy with that choice for bookish prose, my choice of Jost never quite sat right with me even after switching it out for *League Spartan* some time ago. Eventually I realised this is because I have four distinct use cases here:
+
+1. **Long Form Prose**. I want my essays & articles set in a distinct "bookish" serif. Literata works perfectly for this.
+2. **Code**. Code examples and a few other bits should be set in a monospace font which is suited to the job. I'm still happy with Fira Code for this.
+3. **Display Type**. The aesthetic of this site is [inspired](/writing/website-redesign-xv) by early twentieth century typographic design, so a somewhat-geometric sans-serif display face is important as a *design element* for page headings and the like.
+4. **Other Copy & UI Stuff**. Copy which doesn't fit into any of 👆 includes the (not-long-form) prose in my notes and other pages, as well as UI controls like buttons and menus.
+
+I've slowly come to realise that (3) and (4) are mutually exclusive. Any typeface that's bold enough (and *Early London Underground Vibes* enough) to work as the kinda display face I want is gonna be a poor face for rendering normal copy or UI controls, and vice versa. Even worse, any typeface which *kinda* works for both is inevitably **not good enough at either**. And so after considering a whole bunch of (mostly lovely) typefaces, I went with this:
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Typeface</th>
+      <th scope="col">Used for</th>
+      <th scope="col">In the wild</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style="font-family: var(--font-display);">Geist</th>
+      <td>Display stuff</td>
+      <td style="font-family: var(--font-display); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); letter-spacing: -0.01em;">DANNY SMITH</td>
+    </tr>
+    <tr>
+      <th scope="row" style="font-family: var(--font-prose);">Literata</th>
+      <td>Long-form prose</td>
+      <td style="font-family: var(--font-prose);">The article you're reading rn.</td>
+    </tr>
+    <tr>
+      <th scope="row" style="font-family: var(--font-ui);">Figtree</th>
+      <td>UI and short-form prose</td>
+      <td style="font-family: var(--font-ui);">This is a sans-serif which works great for UI stuff and also for prose.</td>
+    </tr>
+    <tr>
+      <th scope="row" style="font-family: var(--font-code);">Fira Code</th>
+      <td>Monospaced & code</td>
+      <td><code>const ok = x !== y;</code></td>
+    </tr>
+  </tbody>
+</table>
+
+This hugely improves the readability of non-bookish body copy (mainly my [notes](/notes/)), while making stuff like headings more punchy.
+
+## Wrapping Up
+
+<Callout emoji="💡">
+  If you're on a desktop machine, you might have noticed the table of contents to the left, which is also a new feature I enable for certain articles.
+</Callout>
+
+Before I started on all this I took the time to rework my CSS to take advantage of all the awesome new stuff and simplify things as far as possible. This involved adopting layers, OKLCH colours, light-dark() theming and a bunch of other stuff which I may get round to writing about sometime. I also put together a proper styleguide-cum-component library to act as a reference for me when working on the design of this site. If you're curious, the [styleguide](/styleguide) is public — though it's really just for me.
+
+None of this stuff is at all game-changing for the tiny number of folks who visit this site, but there's a real joy in doing this kinda work on my own little bit of the internet.
+
+
+[^1]: Appending `/embed` to a video URL returns HTML specifically tailored for use in an iFrame – see https://v.danny.is/polite-phones-jam/embed for an example. The site also has an [oEmbed](https://oembed.com/) endpoint and the standard video pages are set up so platforms like Notion can properly render placeholders when they are used for embedding.
+[^2]: This is the footnote. On a page with JavaScript it expands inline, with a close button; without it, it's just a regular jump-to-bottom link.
