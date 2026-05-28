@@ -71,11 +71,12 @@ export function stripMDXElements(content: string): string {
       // Remove HTML comments
       .replace(/<!--[\s\S]*?-->/g, '')
 
+      // Remove markdown images (must run BEFORE link regex, since ![alt](src)
+      // would otherwise match the link pattern and leave a stray '!' behind)
+      .replace(/!\[[^\]]*\]\([^)]+\)\s*/g, '')
+
       // Remove markdown links but keep text
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-
-      // Remove markdown images
-      .replace(/!\[[^\]]*\]\([^)]+\)\s*/g, '')
 
       // Remove markdown headers
       .replace(/^#{1,6}\s+/gm, '')

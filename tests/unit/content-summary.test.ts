@@ -88,6 +88,17 @@ More text.`;
     expect(result).toContain('and more text.');
   });
 
+  it('should fully strip markdown images, including the leading "!"', () => {
+    // Regression test: the link regex used to run before the image regex,
+    // which left a stray "!" behind when an image appeared as the first
+    // content element (and that "!" then leaked into meta descriptions).
+    const content = '![Alt text describing the image](path/to/image.jpg)\n\nReal paragraph.';
+    const result = stripMDXElements(content);
+    expect(result).not.toContain('!');
+    expect(result).not.toContain('Alt text describing');
+    expect(result).toBe('Real paragraph.');
+  });
+
   it('should remove markdown headers', () => {
     const content = `# Main Title
 ## Subtitle
