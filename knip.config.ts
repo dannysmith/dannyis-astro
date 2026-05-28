@@ -35,7 +35,6 @@ export default {
   ignoreDependencies: [
     '@astropub/icons', // Used in astro-icon integration
     '@iconify-json/heroicons', // Icon set for astro-icon
-    '@vercel/og', // Used for OG image generation (dynamic import)
     'mermaid', // Used by rehype-mermaid plugin
     'prettier-plugin-astro', // Used by Prettier (plugin detection)
     'jscpd', // Analysis tool, not imported in source

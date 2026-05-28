@@ -1,5 +1,5 @@
 ---
-import { unfurl } from 'unfurl.js';
+import { fetchLinkPreview } from '@utils/fetchLinkPreview';
 import { Icon } from 'astro-icon/components';
 
 export interface Props {
@@ -18,8 +18,8 @@ let emoji = '';
 try {
   // Only fetch if no manual title provided
   if (!manualTitle) {
-    const result = await unfurl(href);
-    title = result.title?.trim() || 'Notion Page';
+    const meta = await fetchLinkPreview(href);
+    title = meta.title || 'Notion Page';
 
     // Clean title
     if (title?.endsWith('| Notion')) {
@@ -27,7 +27,7 @@ try {
     }
 
     // Get faviconImageURL or emoji
-    const faviconURL = result.favicon;
+    const faviconURL = meta.favicon;
 
     if (faviconURL && faviconURL.includes('amazonaws.com')) {
       hasFavicon = true;
