@@ -6,7 +6,7 @@ toc: true
 pubDate: 2026-05-28
 ---
 
-import { Callout, LCVid } from '@components/mdx';
+import { Callout, LCVid, WrappedTable } from '@components/mdx';
 
 Last autumn I [wrote about](/writing/moving-to-astro) moving this site to Astro and have shared a few notes about [little features](/notes/adding-share-features) I've added since then, but over the last few months I've picked away at a lot of little bits and pieces here which I haven't really shown off. So I'm gonna do that now if you'll indulge me for a minute.
 
@@ -40,7 +40,7 @@ It supports the following props:
 
 As you just saw, I've also made some tweaks to how tables and code blocks are rendered. Tables just got a bit of CSS-love: they use tabular numerals, support captions and render various sorts of "header" nicely. Here's an example:
 
-<table>
+<WrappedTable>
   <caption>Table 1. The numbers are made up, they're just here to show off tabular figures.</caption>
   <thead>
     <tr>
@@ -84,7 +84,7 @@ As you just saw, I've also made some tweaks to how tables and code blocks are re
       <td>Advanced controls, SSO and priority support included.</td>
     </tr>
   </tbody>
-</table>
+</WrappedTable>
 
 Code blocks are rendered using [Expressive Code](https://expressive-code.com/) which makes it easy to add titles and line highlights while still using markdown's fenced code blocks. It supports a bunch of nice features including file titles and line highlights.
 
