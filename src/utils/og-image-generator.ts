@@ -28,53 +28,30 @@ async function loadFont(fontPath: string): Promise<ArrayBuffer> {
   }
 }
 
+// Satori can't consume WOFF2 (it parses fonts via opentype.js), so the OG
+// pipeline keeps a separate set of static TTFs in public/fonts/ even though
+// the rest of the site loads Geist + Figtree as WOFF2 via CSS.
+const FONT_FILES: Array<{ name: string; file: string; weight: 400 | 700 }> = [
+  { name: 'Geist', file: 'Geist-Bold.ttf', weight: 700 },
+  { name: 'Figtree', file: 'Figtree-Regular.ttf', weight: 400 },
+  { name: 'Figtree', file: 'Figtree-Bold.ttf', weight: 700 },
+];
+
 // Load fonts with fallbacks
 async function loadFonts(): Promise<Font[]> {
   const fonts: Font[] = [];
-
-  // Try to load League Spartan static fonts
-  const leagueSpartanRegularPath = path.join(
-    process.cwd(),
-    'public',
-    'fonts',
-    'LeagueSpartan-Regular.ttf'
-  );
-  const leagueSpartanBoldPath = path.join(
-    process.cwd(),
-    'public',
-    'fonts',
-    'LeagueSpartan-Bold.ttf'
-  );
-
-  try {
-    const leagueSpartanRegular = await loadFont(leagueSpartanRegularPath);
-    if (leagueSpartanRegular.byteLength > 0) {
-      fonts.push({
-        name: 'League Spartan',
-        data: leagueSpartanRegular,
-        weight: 400,
-        style: 'normal',
-      });
+  for (const { name, file, weight } of FONT_FILES) {
+    const fontPath = path.join(process.cwd(), 'public', 'fonts', file);
+    try {
+      const data = await loadFont(fontPath);
+      if (data.byteLength > 0) {
+        fonts.push({ name, data, weight, style: 'normal' });
+      }
+    } catch (error) {
+      console.warn(`Font ${file} not found:`, error);
     }
-  } catch (error) {
-    console.warn('League Spartan Regular font not found:', error);
   }
 
-  try {
-    const leagueSpartanBold = await loadFont(leagueSpartanBoldPath);
-    if (leagueSpartanBold.byteLength > 0) {
-      fonts.push({
-        name: 'League Spartan',
-        data: leagueSpartanBold,
-        weight: 700,
-        style: 'normal',
-      });
-    }
-  } catch (error) {
-    console.warn('League Spartan Bold font not found:', error);
-  }
-
-  // If no fonts loaded, provide a minimal fallback
   if (fonts.length === 0) {
     console.warn('No custom fonts loaded, using system defaults');
   }

@@ -75,7 +75,7 @@ export const templates = {
                       type: 'span',
                       props: {
                         style: {
-                          fontFamily: 'League Spartan',
+                          fontFamily: 'Geist',
                           fontWeight: 700,
                           fontSize: '36px',
                           color: '#ff7369',
@@ -108,7 +108,7 @@ export const templates = {
                 type: 'h1',
                 props: {
                   style: {
-                    fontFamily: 'League Spartan',
+                    fontFamily: 'Geist',
                     fontWeight: 700,
                     fontSize: '84px',
                     color: '#fff',
@@ -132,7 +132,7 @@ export const templates = {
               position: 'absolute',
               left: '36px',
               bottom: '32px',
-              fontFamily: 'League Spartan',
+              fontFamily: 'Figtree',
               fontWeight: 400,
               fontSize: '24px',
               color: '#b0b0b0',
@@ -215,7 +215,7 @@ export const templates = {
                       type: 'span',
                       props: {
                         style: {
-                          fontFamily: 'League Spartan',
+                          fontFamily: 'Geist',
                           fontWeight: 700,
                           fontSize: '36px',
                           color: '#ff7369',
@@ -235,7 +235,7 @@ export const templates = {
                     marginLeft: 'auto',
                     background: '#dfab01',
                     color: '#191919',
-                    fontFamily: 'League Spartan',
+                    fontFamily: 'Figtree',
                     fontWeight: 700,
                     fontSize: '28px',
                     letterSpacing: '2px',
@@ -268,7 +268,7 @@ export const templates = {
                 type: 'h1',
                 props: {
                   style: {
-                    fontFamily: 'League Spartan',
+                    fontFamily: 'Geist',
                     fontWeight: 700,
                     fontSize: '72px',
                     color: '#fff',
@@ -292,7 +292,7 @@ export const templates = {
               position: 'absolute',
               left: '36px',
               bottom: '32px',
-              fontFamily: 'League Spartan',
+              fontFamily: 'Figtree',
               fontWeight: 400,
               fontSize: '24px',
               color: '#b0b0b0',
@@ -376,7 +376,7 @@ export const templates = {
                         type: 'span',
                         props: {
                           style: {
-                            fontFamily: 'League Spartan',
+                            fontFamily: 'Geist',
                             fontWeight: 700,
                             fontSize: '36px',
                             color: '#ff7369',
@@ -409,7 +409,7 @@ export const templates = {
                   type: 'h1',
                   props: {
                     style: {
-                      fontFamily: 'League Spartan',
+                      fontFamily: 'Geist',
                       fontWeight: 700,
                       fontSize: '84px',
                       color: '#fff',
@@ -433,7 +433,7 @@ export const templates = {
                 position: 'absolute',
                 left: '36px',
                 bottom: '32px',
-                fontFamily: 'League Spartan',
+                fontFamily: 'Figtree',
                 fontWeight: 400,
                 fontSize: '24px',
                 color: '#b0b0b0',
