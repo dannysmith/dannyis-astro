@@ -43,6 +43,15 @@ const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif');
 const isRemoteImage = typeof src === 'string' && (src.startsWith('http') || src.startsWith('/uploads'));
 const defaultWidth = width || (isRemoteImage ? 800 : undefined);
 const defaultHeight = height || (isRemoteImage ? 400 : undefined);
+
+// Match the actual rendered width so browsers pick a sensibly-sized variant.
+// Prose column caps at --measure-standard (70ch ≈ 700px); bleeds span wider.
+const sizes =
+  bleed === 'full'
+    ? '100vw'
+    : bleed === 'left' || bleed === 'right'
+      ? '(min-width: 1024px) 1000px, 100vw'
+      : '(min-width: 768px) 700px, 100vw';
 ---
 
 <figure
@@ -69,6 +78,8 @@ const defaultHeight = height || (isRemoteImage ? 400 : undefined);
           src={imageSrc as ImageMetadata}
           alt={alt}
           formats={['avif', 'webp', 'jpg']}
+          fallbackFormat="jpg"
+          sizes={sizes}
           height={defaultHeight}
           width={defaultWidth}
           loading="lazy"

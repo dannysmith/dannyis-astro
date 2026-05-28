@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { BaseHead, MainNavigation } from '@components/layout/index';
 import { getConfig } from '@config/config';
 
@@ -85,15 +84,13 @@ const config = getConfig();
           >
         </li>
       </ul>
-      <Image
+      <img
         src="/icon.jpg"
         alt="Danny Smith Profile Image"
         class="avatar u-photo"
         loading="lazy"
         width={200}
         height={200}
-        format="webp"
-        quality={85}
         itemprop="image"
       />
 

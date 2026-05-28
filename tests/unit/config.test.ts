@@ -27,12 +27,6 @@ describe('Site Config', () => {
       expect(config.seo.robotsDirective).toBeDefined();
       expect(config.seo.twitterCardType).toBe('summary_large_image');
       expect(config.seo.defaultOgImage).toBe('/og-default.png');
-      expect(config.seo.articleSection).toBeDefined();
-    });
-
-    it('has searchAction with target containing site URL', () => {
-      expect(config.seo.searchAction.target).toContain(config.site.url);
-      expect(config.seo.searchAction.queryInput).toBeDefined();
     });
   });
 

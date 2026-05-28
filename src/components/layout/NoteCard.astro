@@ -15,10 +15,8 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
 
 <article class="note h-entry cq surface-white">
   <header class="note-header ui-style">
-    <a href={`/notes/${slug}/`} class="date-link">
-      <time class="date" datetime={pubDate.toISOString()}>
-        <FormattedDate date={pubDate} />
-      </time>
+    <a href={`/notes/${slug}/`} class="date-link date">
+      <FormattedDate date={pubDate} />
     </a>
     <h1 class="p-name title"><a href={`/notes/${slug}/`}>{title}</a></h1>
     {

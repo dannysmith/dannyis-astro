@@ -30,6 +30,7 @@ const {
   platform,
   readingTime,
   headings,
+  tags,
   toc,
   hasFootnotes,
 } = Astro.props;
@@ -47,6 +48,9 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       type="article"
       pageType="article"
       image={ogImage}
+      pubDate={pubDate}
+      updatedDate={updatedDate}
+      tags={tags}
     />
     {platform && redirectURL && <meta http-equiv="refresh" content={'0;url=' + redirectURL} />}
   </head>

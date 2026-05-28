@@ -12,8 +12,6 @@ import nowMarkdown from './now/_now.md?raw';
 
 const config = getConfig();
 
-const AI_SUMMARY = `${config.author.fullName} is a ${config.author.jobTitle.toLowerCase()} based in London. This is his personal website where he shares articles and notes on remote work, leadership, and technology.`;
-
 const ABOUT_CONTENT = `Danny helps companies build healthy remote teams and optimize operations. He writes about remote work practices, organizational health, leadership, and occasionally technology and design.
 
 This site serves as Danny's corner of the web - a place to share thoughts, experiences, and work, as well as a creative playground for experimenting with CSS, HTML, and AI-assisted development.`;
@@ -82,7 +80,7 @@ export const GET: APIRoute = async () => {
   lines.push('');
 
   // AI Summary
-  lines.push(`> ${AI_SUMMARY}`);
+  lines.push(`> ${config.descriptions.aiSummary}`);
   lines.push('');
 
   // About

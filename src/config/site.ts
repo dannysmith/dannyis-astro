@@ -38,6 +38,9 @@ export const CONFIG = {
       'Remote work consultant and organizational health expert helping companies build healthy remote teams and optimize operations.',
     organization:
       'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
+    // Used as the AI summary at the top of llms.txt
+    aiSummary:
+      'Danny Smith is a remote work consultant based in London. This is his personal website where he shares articles and notes on remote work, leadership, and technology.',
   },
 
   // Page title templates ({title} replaced at runtime)

@@ -3,6 +3,7 @@ import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Article from '@layouts/Article.astro';
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
 import { filterContentForPage } from '@utils/content';
+import { generateSummary } from '@utils/content-summary';
 
 export async function getStaticPaths() {
   const posts = filterContentForPage(await getCollection('articles'));
@@ -17,7 +18,8 @@ const post = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const readingTime = remarkPluginFrontmatter.minutesRead;
 const hasFootnotes = remarkPluginFrontmatter.hasFootnotes ?? false;
-const postData = { ...post.data, readingTime, headings, hasFootnotes };
+const description = post.data.description?.trim() || generateSummary(post);
+const postData = { ...post.data, description, readingTime, headings, hasFootnotes };
 ---
 
 <Article {...postData}>
