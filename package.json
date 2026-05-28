@@ -79,7 +79,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
     "tsx": "^4.22.3",
-    "typescript": "^5.9.3",
+    "typescript": "~6.0.3",
     "vitest": "^4.1.7"
   }
 }
