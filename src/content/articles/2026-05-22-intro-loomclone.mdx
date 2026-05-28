@@ -305,7 +305,7 @@ The `video_transcripts` table will also have a row for this video, holding the p
 
 The volume attached to our server will have a directory which looks something like this…
 
-```
+```tree
 data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 ├── init.mp4                          # HLS initialization segment (codec headers)
 ├── seg_000.m4s                       # ~4s media segments streamed during recording
@@ -338,7 +338,7 @@ data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 
 Our mac will have a directory in `~/Application Support/LoomClone/recordings/[UUID]` which looks something like this…
 
-```
+```tree
 ~/Library/Application Support/LoomClone/recordings/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 ├── init.mp4                          # HLS initialization segment
 ├── seg_000.m4s                       # Composited ~4s segments (uploaded to server)
