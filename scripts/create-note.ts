@@ -6,7 +6,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
-import { unfurl } from 'unfurl.js';
+import { fetchLinkPreview } from '../src/utils/fetchLinkPreview.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,11 +24,8 @@ function isUrl(str: string): boolean {
 async function fetchTitleFromUrl(url: string): Promise<string> {
   try {
     console.log(`Fetching title from: ${url}`);
-    const result = await unfurl(url);
-
-    // Try Open Graph title first, then fallback to regular title
-    const title = result.open_graph?.title || result.title || '';
-
+    const meta = await fetchLinkPreview(url);
+    const title = meta.ogTitle || meta.title || '';
     return escapeTitle(title);
   } catch (error) {
     console.warn(`Failed to fetch title from URL: ${error}`);
