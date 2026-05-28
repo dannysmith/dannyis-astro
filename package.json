@@ -13,6 +13,7 @@
   "license": "See LICENSE.md",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "find public -name .DS_Store -delete 2>/dev/null || true",
     "build": "astro build",
     "preview": "astro preview",
     "sync": "astro sync",

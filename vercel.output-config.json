@@ -1,0 +1,41 @@
+{
+  "version": 3,
+  "routes": [
+    {
+      "src": "^/_astro/(.*)$",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
+      "continue": true
+    },
+    {
+      "src": "^/fonts/(.*)$",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
+      "continue": true
+    },
+    {
+      "src": "^/(favicon|avatar|avatar-circle|icon|end-mark|og-default).*$",
+      "headers": {
+        "cache-control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/.*\\.xml$",
+      "headers": {
+        "cache-control": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/(.*)$",
+      "headers": {
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "DENY",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "permissions-policy": "geolocation=(), microphone=(), camera=()"
+      },
+      "continue": true
+    },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "status": 404, "dest": "/404.html" }
+  ]
+}

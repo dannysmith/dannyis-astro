@@ -25,10 +25,13 @@ interface Props {
   pubDate?: Date;
   updatedDate?: Date;
   tags?: string[];
+  // Override the global robots directive (e.g. "noindex" for 404 or playground pages)
+  robotsDirective?: string;
 }
 
 const config = getConfig();
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const robotsDirective = Astro.props.robotsDirective ?? config.seo.robotsDirective;
 
 // Validate and extract props
 const seoData = validateSEOData(Astro.props);
@@ -84,7 +87,7 @@ const articleMeta = generateArticleMeta(seoData);
 <meta name="title" content={pageTitle} />
 <meta name="description" content={metaDescription} />
 <meta name="author" content={config.author.fullName} />
-<meta name="robots" content={config.seo.robotsDirective} />
+<meta name="robots" content={robotsDirective} />
 <meta name="theme-color" content={config.site.themeColor} />
 
 <!-- Open Graph / Facebook -->

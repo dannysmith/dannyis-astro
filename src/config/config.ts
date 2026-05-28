@@ -27,11 +27,6 @@ const resolvedConfig = {
     robotsDirective: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
     twitterCardType: 'summary_large_image' as const,
     defaultOgImage: '/og-default.png',
-    articleSection: 'Remote Work & Leadership',
-    searchAction: {
-      target: `${CONFIG.site.url}/search?q={search_term_string}`,
-      queryInput: 'required name=search_term_string',
-    },
   },
 } as const;
 

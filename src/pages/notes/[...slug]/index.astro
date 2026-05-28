@@ -3,6 +3,7 @@ import { type CollectionEntry, getCollection, render } from 'astro:content'
 import Note from '@layouts/Note.astro'
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
 import { filterContentForPage } from '@utils/content';
+import { generateSummary } from '@utils/content-summary';
 
 export async function getStaticPaths() {
   const notes = filterContentForPage(await getCollection('notes'));
@@ -15,8 +16,9 @@ type Props = CollectionEntry<'notes'>
 
 const note = Astro.props
 const { Content } = await render(note)
+const description = note.data.description?.trim() || generateSummary(note);
 ---
 
-<Note {...note.data}>
+<Note {...note.data} description={description}>
   <Content components={MDX_COMPONENT_REMAPPING} />
 </Note>

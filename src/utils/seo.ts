@@ -36,13 +36,8 @@ export function generatePageTitle(title: string, pageType?: PageType): string {
   return template.replace('{title}', title);
 }
 
-/**
- * Generate meta description with consistent branding
- */
 export function generateMetaDescription(description?: string): string | undefined {
-  if (!description) return undefined;
-  const config = getConfig();
-  return `${description} | ${config.author.fullName}`;
+  return description?.trim() || undefined;
 }
 
 /**
@@ -95,14 +90,6 @@ export function generateJSONLD(
     publisher: {
       '@type': 'Person',
       '@id': `${siteUrl}/#person`,
-    },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: config.seo.searchAction.target,
-      },
-      'query-input': config.seo.searchAction.queryInput,
     },
   };
 
@@ -183,7 +170,6 @@ export function generateArticleMeta(
 
   const metaTags: Array<{ property: string; content: string }> = [
     { property: 'article:author', content: config.author.fullName },
-    { property: 'article:section', content: config.seo.articleSection },
   ];
 
   // Add publication date

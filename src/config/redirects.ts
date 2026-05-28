@@ -9,6 +9,7 @@ export const redirects: Record<string, string> = {
   '/meeting': 'https://cal.com/dannysmith',
 
   '/cv': '/cv-danny-smith.pdf',
+  '/cv.pdf': '/cv-danny-smith.pdf',
   '/linkedin': 'https://www.linkedin.com/in/dannyasmith',
   '/working': 'https://betterat.work',
   '/toolbox': 'https://betterat.work/toolbox',

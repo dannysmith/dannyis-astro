@@ -29,13 +29,18 @@ describe('SEO Utils', () => {
   });
 
   describe('generateMetaDescription', () => {
-    it('adds author suffix to description', () => {
-      expect(generateMetaDescription('Test description')).toBe('Test description | Danny Smith');
+    it('returns the description as-is', () => {
+      expect(generateMetaDescription('Test description')).toBe('Test description');
     });
 
-    it('returns undefined for empty description', () => {
+    it('trims surrounding whitespace', () => {
+      expect(generateMetaDescription('  spaced  ')).toBe('spaced');
+    });
+
+    it('returns undefined for empty or whitespace-only input', () => {
       expect(generateMetaDescription()).toBe(undefined);
       expect(generateMetaDescription('')).toBe(undefined);
+      expect(generateMetaDescription('   ')).toBe(undefined);
     });
   });
 
