@@ -5,7 +5,6 @@ import { stdin, stdout } from 'node:process';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { exec } from 'child_process';
 import { fetchLinkPreview } from '../src/utils/fetchLinkPreview.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -99,13 +98,6 @@ sourceURL: "${sourceURL}"
   await fs.writeFile(filePath, frontmatter);
 
   console.log(`Created new note at: ${filePath}`);
-
-  // Open in Cursor
-  exec(`cursor ${filePath}`, error => {
-    if (error) {
-      console.error('Could not open file in VS Code:', error);
-    }
-  });
 }
 
 createNote().catch(console.error);
