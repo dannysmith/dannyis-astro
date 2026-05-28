@@ -21,6 +21,7 @@ import ColorSwatch from './ColorSwatch.astro';
 import ResizableContainer from './ResizableContainer.astro';
 import MarkdownBlock from './MarkdownBlock.astro';
 import FileTree from './file-tree/FileTree.astro';
+import WrappedTable from './WrappedTable.astro';
 
 // Typography components
 import SmallCaps from './typography/SmallCaps.astro';
@@ -46,6 +47,7 @@ export {
   ResizableContainer,
   MarkdownBlock,
   FileTree,
+  WrappedTable,
   Tabs,
   TabItem,
   // Typography
