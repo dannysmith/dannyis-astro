@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig, svgoOptimizer } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
@@ -43,7 +43,7 @@ export default defineConfig({
     responsiveStyles: true,
   },
   experimental: {
-    svgo: true,
+    svgOptimizer: svgoOptimizer(),
   },
   integrations: [
     expressiveCode({
@@ -55,7 +55,7 @@ export default defineConfig({
         },
       },
     }),
-    mdx(),
+    mdx({ gfm: true, smartypants: true }),
     sitemap({
       filter: page =>
         !page.startsWith('https://danny.is/scratchpad') &&
