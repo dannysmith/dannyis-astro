@@ -106,7 +106,8 @@ async function doFetch(jsonUrl: string): Promise<LoomCloneVideo> {
     response = await fetch(jsonUrl, { redirect: 'follow' });
   } catch (err) {
     throw new Error(
-      `network error fetching ${jsonUrl}: ${err instanceof Error ? err.message : String(err)}`
+      `network error fetching ${jsonUrl}: ${err instanceof Error ? err.message : String(err)}`,
+      { cause: err }
     );
   }
 
