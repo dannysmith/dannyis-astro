@@ -522,7 +522,7 @@ Variable fonts load a single file for all weights/styles, but consider:
 
 - **Subsetting**: Remove unused glyphs/features for smaller files
 - **`font-display: swap`**: Show fallback text immediately while font loads
-- **Preload critical fonts**: `<link rel="preload" href="/fonts/..." as="font" crossorigin>`
+- **Preload critical fonts**: handled in `src/components/layout/BaseHead.astro`. Figtree Regular (body default) and Geist Regular (display + nav) preload on every page; Literata Regular preloads only on `pageType === 'article'` because its 394KB would be wasted on notes and index pages. Italic variants and Fira Code load on demand. When bumping a font's version, update both the `@font-face` declaration in `_foundation.css` AND the preload URL in `BaseHead.astro`.
 
 ### Feature Detection
 

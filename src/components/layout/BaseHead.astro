@@ -48,6 +48,36 @@ const articleMeta = generateArticleMeta(seoData);
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
+
+<!-- Font preloads (keep filenames in sync with @font-face in src/styles/_foundation.css).
+     Figtree (body default) + Geist (display + nav) load on every page;
+     Literata (long-form prose) only on articles. -->
+<link
+  rel="preload"
+  href="/fonts/Figtree-v2.002-2026-04-09.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+<link
+  rel="preload"
+  href="/fonts/Geist-v1.800-2026-04-09.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+{
+  Astro.props.pageType === 'article' && (
+    <link
+      rel="preload"
+      href="/fonts/Literata-v3.103-2026-01-19.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  )
+}
+
 <link rel="sitemap" href="/sitemap-index.xml" />
 
 <!-- Icons -->
