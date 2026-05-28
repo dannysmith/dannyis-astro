@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 
-import inquirer from 'inquirer';
+import { createInterface } from 'node:readline/promises';
+import { stdin, stdout } from 'node:process';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -60,20 +61,17 @@ async function createNote() {
       title = escapeTitle(commandLineInput);
     }
   } else {
-    const response = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'title',
-        message: 'What is the title of your note?',
-        validate: input => {
-          if (input.trim() === '') {
-            return 'Title cannot be empty';
-          }
-          return true;
-        },
-      },
-    ]);
-    title = escapeTitle(response.title);
+    const rl = createInterface({ input: stdin, output: stdout });
+    try {
+      let rawTitle = '';
+      while (!rawTitle.trim()) {
+        rawTitle = await rl.question('What is the title of your note? ');
+        if (!rawTitle.trim()) console.log('Title cannot be empty');
+      }
+      title = escapeTitle(rawTitle);
+    } finally {
+      rl.close();
+    }
   }
 
   // Create filename
