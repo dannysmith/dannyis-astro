@@ -9,7 +9,9 @@ export const redirects: Record<string, string> = {
   '/meeting': 'https://cal.com/dannysmith',
 
   '/cv': '/cv-danny-smith.pdf',
-  '/cv.pdf': '/cv-danny-smith.pdf',
+  // Note: /cv.pdf is handled as a real HTTP 308 in vercel.output-config.json
+  // (not here as a meta-refresh) so that tools fetching it as a PDF get a
+  // proper redirect rather than HTML.
   '/linkedin': 'https://www.linkedin.com/in/dannyasmith',
   '/working': 'https://betterat.work',
   '/toolbox': 'https://betterat.work/toolbox',

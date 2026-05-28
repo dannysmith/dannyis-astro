@@ -65,7 +65,7 @@ jobs:
       - name: Prepare Vercel output
         run: |
           mkdir -p .vercel/output/static
-          cp -r dist/* .vercel/output/static/
+          cp -r dist/. .vercel/output/static/
           cp vercel.output-config.json .vercel/output/config.json
 
       - name: Upload artifact

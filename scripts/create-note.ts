@@ -1,11 +1,11 @@
 #!/usr/bin/env tsx
 
-import inquirer from 'inquirer';
+import { createInterface } from 'node:readline/promises';
+import { stdin, stdout } from 'node:process';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { exec } from 'child_process';
-import { unfurl } from 'unfurl.js';
+import { fetchLinkPreview } from '../src/utils/fetchLinkPreview.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -23,11 +23,8 @@ function isUrl(str: string): boolean {
 async function fetchTitleFromUrl(url: string): Promise<string> {
   try {
     console.log(`Fetching title from: ${url}`);
-    const result = await unfurl(url);
-
-    // Try Open Graph title first, then fallback to regular title
-    const title = result.open_graph?.title || result.title || '';
-
+    const meta = await fetchLinkPreview(url);
+    const title = meta.ogTitle || meta.title || '';
     return escapeTitle(title);
   } catch (error) {
     console.warn(`Failed to fetch title from URL: ${error}`);
@@ -60,20 +57,17 @@ async function createNote() {
       title = escapeTitle(commandLineInput);
     }
   } else {
-    const response = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'title',
-        message: 'What is the title of your note?',
-        validate: input => {
-          if (input.trim() === '') {
-            return 'Title cannot be empty';
-          }
-          return true;
-        },
-      },
-    ]);
-    title = escapeTitle(response.title);
+    const rl = createInterface({ input: stdin, output: stdout });
+    try {
+      let rawTitle = '';
+      while (!rawTitle.trim()) {
+        rawTitle = await rl.question('What is the title of your note? ');
+        if (!rawTitle.trim()) console.log('Title cannot be empty');
+      }
+      title = escapeTitle(rawTitle);
+    } finally {
+      rl.close();
+    }
   }
 
   // Create filename
@@ -104,13 +98,6 @@ sourceURL: "${sourceURL}"
   await fs.writeFile(filePath, frontmatter);
 
   console.log(`Created new note at: ${filePath}`);
-
-  // Open in Cursor
-  exec(`cursor ${filePath}`, error => {
-    if (error) {
-      console.error('Could not open file in VS Code:', error);
-    }
-  });
 }
 
 createNote().catch(console.error);
