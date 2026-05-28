@@ -30,7 +30,7 @@ CSS custom properties for font stacks are defined in `src/styles/_foundation.css
 **Notes:**
 - The document body defaults to `--font-ui` (set in `_typography.css`), so short-form prose and UI share Figtree. `.longform-prose` scopes Literata to long-form articles only.
 - A commented `--font-ui: 'Geist'` toggle exists in `_foundation.css` for experimenting with unified-Geist across display + UI.
-- League Spartan TTF files remain in `public/fonts/` (`LeagueSpartan-Regular.ttf`, `LeagueSpartan-Bold.ttf`) **only** because Satori requires TTF format for build-time OG image generation. See `src/utils/og-image-generator.ts`. The web font WOFF2 has been removed.
+- Static TTF copies of Geist and Figtree live in `public/fonts/` alongside the variable WOFF2 files (`Geist-Bold.ttf`, `Figtree-Regular.ttf`, `Figtree-Bold.ttf`). The build-time OG image pipeline (Satori) parses fonts via opentype.js and can't consume WOFF2, so it loads these TTFs directly rather than the CSS WOFF2s. See [OG Image TTFs](#og-image-ttfs-geist--figtree) below and `src/utils/og-image-generator.ts`.
 
 ---
 
@@ -417,13 +417,17 @@ A leaner feature set than Geist. Notable omissions: **no small caps** (`smcp`/`c
 
 ---
 
-## League Spartan (OG images only)
+## OG Image TTFs (Geist + Figtree)
 
-League Spartan is no longer used as a web font but its static TTF files remain in `public/fonts/` for build-time OG image generation.
+The build-time OG image pipeline uses static TTF copies of Geist and Figtree because [Satori](https://github.com/vercel/satori) — the library that renders JSX to PNGs — parses fonts via opentype.js, which doesn't support WOFF2 (the format the rest of the site uses for these typefaces).
 
-[Satori](https://github.com/vercel/satori) — the library that renders JSX to images — does not support WOFF2 and requires TTF format. The files `LeagueSpartan-Regular.ttf` and `LeagueSpartan-Bold.ttf` are loaded by `src/utils/og-image-generator.ts` and should not be removed.
+| File | Used for | Weight |
+|------|----------|--------|
+| `Geist-Bold.ttf` | OG title and the "DANNY SMITH" author bar | 700 |
+| `Figtree-Regular.ttf` | OG URL line | 400 |
+| `Figtree-Bold.ttf` | OG NOTE label | 700 |
 
-If OG image styling changes to use Geist or Figtree, replace these TTFs with static TTF exports of the new fonts before removing League Spartan files.
+Loaded by `src/utils/og-image-generator.ts` — don't remove these. Sourced from `vercel/geist-font` (`fonts/Geist/ttf/`) and `erikdkennedy/figtree` (`fonts/ttf/`) respectively. The OG pipeline isn't sensitive to minor font-version drift, so the TTFs and CSS WOFF2s don't need to stay in lockstep — refresh together only if there's a specific reason.
 
 ---
 
