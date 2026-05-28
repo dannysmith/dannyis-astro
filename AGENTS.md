@@ -61,7 +61,7 @@ bun run newnote       # Create new note with proper frontmatter
 
 ## Tech Stack
 
-- **Framework:** Astro 5.15+ with TypeScript (strict mode)
+- **Framework:** Astro 6.4+ with TypeScript (strict mode)
 - **Content:** MDX with content collections, RSS feeds via Container API
 - **Styling:** Custom CSS with layers, CSS variables for theming
 - **Icons:** astro-icon with Heroicons

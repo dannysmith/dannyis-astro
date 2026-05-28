@@ -40,7 +40,7 @@ try {
   video = await fetchLoomCloneVideo(jsonUrl);
 } catch (err) {
   const message = err instanceof Error ? err.message : String(err);
-  throw new Error(`<LCVid src="${src}"> ${message}`);
+  throw new Error(`<LCVid src="${src}"> ${message}`, { cause: err });
 }
 
 const title = titleOverride ?? video.title ?? '';

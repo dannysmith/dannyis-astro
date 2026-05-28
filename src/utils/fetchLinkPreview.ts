@@ -58,7 +58,6 @@ async function readCapped(response: Response, maxBytes: number): Promise<string>
     const remaining = maxBytes - total;
     if (value.length > remaining) {
       html += decoder.decode(value.subarray(0, remaining));
-      total = maxBytes;
       break;
     }
     total += value.length;
