@@ -56,7 +56,11 @@ export default defineConfig({
       },
     }),
     mdx(),
-    sitemap(),
+    sitemap({
+      filter: page =>
+        !page.startsWith('https://danny.is/scratchpad') &&
+        !page.startsWith('https://danny.is/toolboxtest'),
+    }),
     icon(),
     react(),
   ],

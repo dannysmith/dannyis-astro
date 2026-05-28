@@ -1,4 +1,4 @@
 Contact: mailto:hi@danny.is
 Expires: 2026-12-31T23:59:00.000Z
 Preferred-Languages: en
-Canonical: https://danny.is/security.txt
+Canonical: https://danny.is/.well-known/security.txt
