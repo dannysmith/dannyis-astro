@@ -81,5 +81,5 @@ const embed = resolveEmbedType(url);
 {embed.type === 'vimeo' && <Vimeo id={embed.id} />}
 {embed.type === 'loom' && <Loom id={embed.id} />}
 {embed.type === 'lcvid' && <LCVid src={embed.src} className={className} />}
-{embed.type === 'gist' && <script src={`https://gist.github.com/${embed.id}.js`} />}
+{embed.type === 'gist' && <script is:inline src={`https://gist.github.com/${embed.id}.js`} />}
 {embed.type === 'bookmark' && <BookmarkCard url={embed.url} className={className} />}
