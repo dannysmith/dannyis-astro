@@ -11,6 +11,7 @@ import {
   highlight as Highlight,
   ResizableContainer,
 } from '@components/mdx/index';
+import WrappedTable from '@components/mdx/WrappedTable.astro';
 import { Content as ChecklistContent } from './_snippets/checklist.mdx';
 import { Content as ListDensityContent } from './_snippets/list-density.mdx';
 ---
@@ -489,5 +490,58 @@ import { Content as ListDensityContent } from './_snippets/list-density.mdx';
         </tr>
       </tbody>
     </table>
+    <h2>Wide Tables</h2>
+    <p>
+      Tables wider than their container are wrapped in a focusable scroll region (<code
+        >div.table-scroll</code
+      >) and can be scrolled horizontally. Tables in MDX content get this wrapper automatically via
+      <code>MDX_COMPONENT_REMAPPING</code>; elsewhere, write the wrapper by hand.
+    </p>
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Quarter</th>
+          <th>Revenue</th>
+          <th>Expenses</th>
+          <th>Profit</th>
+          <th>Customers</th>
+          <th>Retention</th>
+          <th>NPS</th>
+          <th>Notes for the quarter</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Q1 2024</td>
+          <td>$124,500</td>
+          <td>$98,200</td>
+          <td>$26,300</td>
+          <td>1,204</td>
+          <td>92%</td>
+          <td>54</td>
+          <td>Steady growth driven by inbound leads.</td>
+        </tr>
+        <tr>
+          <td>Q2 2024</td>
+          <td>$156,800</td>
+          <td>$112,400</td>
+          <td>$44,400</td>
+          <td>1,488</td>
+          <td>94%</td>
+          <td>61</td>
+          <td>Launched the new pricing tiers mid-quarter.</td>
+        </tr>
+        <tr>
+          <td>Q3 2024</td>
+          <td>$189,200</td>
+          <td>$134,600</td>
+          <td>$54,600</td>
+          <td>1,712</td>
+          <td>93%</td>
+          <td>58</td>
+          <td>Slight churn uptick after the pricing change.</td>
+        </tr>
+      </tbody>
+    </WrappedTable>
   </SGTypographySwitcher>
 </section>
