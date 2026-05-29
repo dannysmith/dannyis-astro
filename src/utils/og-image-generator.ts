@@ -16,7 +16,7 @@ import { templates, type OGTemplateData } from './og-templates.js';
 // the embedded fonts change — those aren't part of the per-image key, so a
 // bump is how we invalidate every cached image at once.
 const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'og-cache');
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 
 // The decorative blobs background never changes per page, so we rasterise the
 // source SVG to a PNG once per build (per output size) and reuse the data URI.
