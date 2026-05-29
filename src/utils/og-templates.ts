@@ -1,4 +1,4 @@
-import { OG_AUTHOR_NAME, OG_PROFILE_IMAGE } from './og-branding';
+import { OG_HANDLE } from './og-branding';
 
 export interface OGTemplateData {
   title: string;
@@ -8,446 +8,203 @@ export interface OGTemplateData {
   url: string;
 }
 
-export const templates = {
-  article: (data: OGTemplateData) => ({
-    type: 'div',
-    props: {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        boxShadow: '0 4px 32px 0 rgba(0,0,0,0.18)',
-        overflow: 'hidden',
-        position: 'relative',
-        background: '#191919',
-      },
-      children: [
-        // Accent color bar on the left
-        {
-          type: 'div',
-          props: {
-            style: {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '20px',
-              height: '100%',
-              background: '#ff7369',
-            },
-          },
-        },
-        // Top bar (profile image + name)
-        {
-          type: 'div',
-          props: {
-            style: {
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              padding: '40px 56px 0 56px',
-              position: 'relative',
-            },
-            children: [
-              // Profile image + name
-              {
-                type: 'div',
-                props: {
-                  style: {
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                  children: [
-                    {
-                      type: 'img',
-                      props: {
-                        src: OG_PROFILE_IMAGE,
-                        width: 72,
-                        height: 72,
-                        style: {
-                          borderRadius: '50%',
-                          border: '4px solid #fff',
-                          marginRight: '20px',
-                        },
-                      },
-                    },
-                    {
-                      type: 'span',
-                      props: {
-                        style: {
-                          fontFamily: 'Geist',
-                          fontWeight: 700,
-                          fontSize: '36px',
-                          color: '#ff7369',
-                          letterSpacing: '2px',
-                        },
-                        children: OG_AUTHOR_NAME.toUpperCase(),
-                      },
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        },
-        // Main title area (centered block)
-        {
-          type: 'div',
-          props: {
-            style: {
-              display: 'flex',
-              flex: 1,
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              padding: '0 56px',
-            },
-            children: [
-              {
-                type: 'h1',
-                props: {
-                  style: {
-                    fontFamily: 'Geist',
-                    fontWeight: 700,
-                    fontSize: '84px',
-                    color: '#fff',
-                    lineHeight: '1.1',
-                    textAlign: 'center',
-                    textShadow: '0 2px 16px rgba(0,0,0,0.32)',
-                    margin: 0,
-                    maxWidth: 900,
-                  },
-                  children: data.title,
-                },
-              },
-            ],
-          },
-        },
-        // URL at the bottom left
-        {
-          type: 'div',
-          props: {
-            style: {
-              position: 'absolute',
-              left: '36px',
-              bottom: '32px',
-              fontFamily: 'Figtree',
-              fontWeight: 400,
-              fontSize: '24px',
-              color: '#b0b0b0',
-              letterSpacing: '0.5px',
-              maxWidth: 700,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            },
-            children: data.url,
-          },
-        },
-      ],
-    },
-  }),
+// Shared assets injected by the generator (computed once per build).
+export interface OGTemplateContext {
+  // Base64 PNG data URI of the baked blobs background (see
+  // src/assets/og/background.svg). Sized to match the output dimensions.
+  background: string;
+  // Base64 PNG data URI of the avatar (public/avatar-circle.png).
+  avatar: string;
+}
 
-  note: (data: OGTemplateData) => ({
-    type: 'div',
-    props: {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        boxShadow: '0 4px 32px 0 rgba(0,0,0,0.18)',
-        overflow: 'hidden',
-        position: 'relative',
-        background: '#191919',
-      },
-      children: [
-        // Accent color bar on the left
-        {
-          type: 'div',
-          props: {
-            style: {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '20px',
-              height: '100%',
-              background: '#ff7369',
-            },
-          },
-        },
-        // Top bar (profile image + name + NOTE label)
-        {
-          type: 'div',
-          props: {
-            style: {
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              padding: '40px 56px 0 56px',
-              position: 'relative',
-            },
-            children: [
-              // Profile image + name
-              {
-                type: 'div',
-                props: {
-                  style: {
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                  children: [
-                    {
-                      type: 'img',
-                      props: {
-                        src: OG_PROFILE_IMAGE,
-                        width: 72,
-                        height: 72,
-                        style: {
-                          borderRadius: '50%',
-                          border: '4px solid #fff',
-                          marginRight: '20px',
-                        },
-                      },
-                    },
-                    {
-                      type: 'span',
-                      props: {
-                        style: {
-                          fontFamily: 'Geist',
-                          fontWeight: 700,
-                          fontSize: '36px',
-                          color: '#ff7369',
-                          letterSpacing: '2px',
-                        },
-                        children: OG_AUTHOR_NAME.toUpperCase(),
-                      },
-                    },
-                  ],
-                },
-              },
-              // NOTE label box
-              {
-                type: 'div',
-                props: {
-                  style: {
-                    marginLeft: 'auto',
-                    background: '#dfab01',
-                    color: '#191919',
-                    fontFamily: 'Figtree',
-                    fontWeight: 700,
-                    fontSize: '28px',
-                    letterSpacing: '2px',
-                    borderRadius: 4,
-                    padding: '8px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                  children: 'NOTE',
-                },
-              },
-            ],
-          },
-        },
-        // Main title area (centered block)
-        {
-          type: 'div',
-          props: {
-            style: {
-              display: 'flex',
-              flex: 1,
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              padding: '0 56px',
-            },
-            children: [
-              {
-                type: 'h1',
-                props: {
-                  style: {
-                    fontFamily: 'Geist',
-                    fontWeight: 700,
-                    fontSize: '72px',
-                    color: '#fff',
-                    lineHeight: '1.1',
-                    textAlign: 'center',
-                    textShadow: '0 2px 16px rgba(0,0,0,0.32)',
-                    margin: 0,
-                    maxWidth: 900,
-                  },
-                  children: data.title,
-                },
-              },
-            ],
-          },
-        },
-        // URL at the bottom left
-        {
-          type: 'div',
-          props: {
-            style: {
-              position: 'absolute',
-              left: '36px',
-              bottom: '32px',
-              fontFamily: 'Figtree',
-              fontWeight: 400,
-              fontSize: '24px',
-              color: '#b0b0b0',
-              letterSpacing: '0.5px',
-              maxWidth: 700,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            },
-            children: data.url,
-          },
-        },
-      ],
-    },
-  }),
+// Canvas is always 1200x630 (the OG standard). Layout values below are in
+// that coordinate space. A single ~70px gutter frames the content; the
+// decorative blobs live in the baked background, so the text layer only
+// has to place the avatar, title, URL and handle.
+const PAD = 70;
 
-  default: (data: OGTemplateData) => {
-    return {
+const ACCENT = '#ff7369'; // coral — matches the blobs
+const TEXT = '#ffffff';
+const URL_COLOR = '#ffd5d5'; // soft pink — matches the top-left blob
+
+// Placeholder title sizing for Phase 1: pick a font size from the title
+// length so long titles don't overflow the frame. This is deliberately
+// crude — Phase 2 replaces it with proper measurement + balanced wrapping.
+function pickTitleFontSize(title: string): number {
+  const len = title.length;
+  if (len <= 22) return 96;
+  if (len <= 40) return 80;
+  if (len <= 64) return 64;
+  if (len <= 100) return 50;
+  return 42;
+}
+
+// The whole cover is one absolutely-positioned layer over the baked
+// background. article / note / default all share this; they differ only in
+// the note marker and the default fallback text.
+function coverLayout(
+  data: OGTemplateData,
+  ctx: OGTemplateContext,
+  opts: { isNote?: boolean } = {}
+) {
+  const { isNote = false } = opts;
+  const title = data.title || 'danny.is';
+  const url = data.url || 'danny.is';
+  const fontSize = pickTitleFontSize(title);
+
+  const children = [
+    // Baked blobs + dark background
+    {
+      type: 'img',
+      props: {
+        src: ctx.background,
+        width: 1200,
+        height: 630,
+        style: { position: 'absolute', top: 0, left: 0 },
+      },
+    },
+
+    // Avatar, top-left
+    {
+      type: 'img',
+      props: {
+        src: ctx.avatar,
+        width: 96,
+        height: 96,
+        style: {
+          position: 'absolute',
+          left: PAD,
+          top: 54,
+          borderRadius: '50%',
+          border: '5px solid #ffffff',
+        },
+      },
+    },
+
+    // Note marker, top-right (Phase 1 placeholder — refined in Phase 3)
+    isNote
+      ? {
+          type: 'div',
+          props: {
+            style: {
+              position: 'absolute',
+              right: PAD,
+              top: 64,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '8px 18px',
+              borderRadius: 999,
+              border: '2px solid rgba(255,255,255,0.25)',
+              color: URL_COLOR,
+              fontFamily: 'Figtree',
+              fontWeight: 700,
+              fontSize: 24,
+              letterSpacing: '3px',
+            },
+            children: 'NOTE',
+          },
+        }
+      : null,
+
+    // Title — all caps, left-aligned, vertically centred in the upper band
+    {
       type: 'div',
       props: {
         style: {
+          position: 'absolute',
+          left: PAD,
+          top: 150,
+          width: 1020,
+          height: 300,
           display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          height: '100%',
-          boxShadow: '0 4px 32px 0 rgba(0,0,0,0.18)',
-          overflow: 'hidden',
-          position: 'relative',
-          background: '#191919',
+          alignItems: 'center',
         },
         children: [
-          // Accent color bar on the left
           {
             type: 'div',
             props: {
               style: {
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '20px',
-                height: '100%',
-                background: '#ff7369',
+                width: '100%',
+                color: TEXT,
+                fontFamily: 'Geist',
+                fontWeight: 700,
+                fontSize: `${fontSize}px`,
+                lineHeight: 1.04,
+                letterSpacing: `${-(fontSize * 0.01).toFixed(2)}px`,
+                textTransform: 'uppercase',
+                textWrap: 'balance',
+                wordBreak: 'break-word',
               },
-            },
-          },
-          // Top bar (profile image + name)
-          {
-            type: 'div',
-            props: {
-              style: {
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                padding: '40px 56px 0 56px',
-                position: 'relative',
-              },
-              children: [
-                // Profile image + name
-                {
-                  type: 'div',
-                  props: {
-                    style: {
-                      display: 'flex',
-                      alignItems: 'center',
-                    },
-                    children: [
-                      {
-                        type: 'img',
-                        props: {
-                          src: OG_PROFILE_IMAGE,
-                          width: 72,
-                          height: 72,
-                          style: {
-                            borderRadius: '50%',
-                            border: '4px solid #fff',
-                            marginRight: '20px',
-                          },
-                        },
-                      },
-                      {
-                        type: 'span',
-                        props: {
-                          style: {
-                            fontFamily: 'Geist',
-                            fontWeight: 700,
-                            fontSize: '36px',
-                            color: '#ff7369',
-                            letterSpacing: '2px',
-                          },
-                          children: OG_AUTHOR_NAME.toUpperCase(),
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          // Main title area (centered block)
-          {
-            type: 'div',
-            props: {
-              style: {
-                display: 'flex',
-                flex: 1,
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
-                padding: '0 56px',
-              },
-              children: [
-                {
-                  type: 'h1',
-                  props: {
-                    style: {
-                      fontFamily: 'Geist',
-                      fontWeight: 700,
-                      fontSize: '84px',
-                      color: '#fff',
-                      lineHeight: '1.1',
-                      textAlign: 'center',
-                      textShadow: '0 2px 16px rgba(0,0,0,0.32)',
-                      margin: 0,
-                      maxWidth: 900,
-                    },
-                    children: data.title || 'danny.is',
-                  },
-                },
-              ],
-            },
-          },
-          // URL at the bottom left
-          {
-            type: 'div',
-            props: {
-              style: {
-                position: 'absolute',
-                left: '36px',
-                bottom: '32px',
-                fontFamily: 'Figtree',
-                fontWeight: 400,
-                fontSize: '24px',
-                color: '#b0b0b0',
-                letterSpacing: '0.5px',
-                maxWidth: 700,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              },
-              children: data.url || 'danny.is',
+              children: title,
             },
           },
         ],
       },
-    };
-  },
+    },
+
+    // URL, bottom-left
+    {
+      type: 'div',
+      props: {
+        style: {
+          position: 'absolute',
+          left: PAD + 2,
+          bottom: 96,
+          fontFamily: 'Figtree',
+          fontWeight: 400,
+          fontSize: 27,
+          color: URL_COLOR,
+          whiteSpace: 'nowrap',
+        },
+        children: url,
+      },
+    },
+
+    // @handle, very bottom-left
+    {
+      type: 'div',
+      props: {
+        style: {
+          position: 'absolute',
+          left: PAD,
+          bottom: 44,
+          display: 'flex',
+          alignItems: 'baseline',
+          fontFamily: 'Geist',
+          fontWeight: 700,
+          fontSize: 34,
+        },
+        children: [
+          { type: 'span', props: { style: { color: ACCENT }, children: '@' } },
+          {
+            type: 'span',
+            props: { style: { color: TEXT, marginLeft: 1 }, children: OG_HANDLE },
+          },
+        ],
+      },
+    },
+  ].filter(Boolean);
+
+  return {
+    type: 'div',
+    props: {
+      style: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        backgroundColor: '#2f3437',
+      },
+      children,
+    },
+  };
+}
+
+export const templates = {
+  article: (data: OGTemplateData, ctx: OGTemplateContext) => coverLayout(data, ctx),
+  note: (data: OGTemplateData, ctx: OGTemplateContext) => coverLayout(data, ctx, { isNote: true }),
+  default: (data: OGTemplateData, ctx: OGTemplateContext) =>
+    coverLayout({ ...data, title: data.title || 'danny.is' }, ctx),
 };
