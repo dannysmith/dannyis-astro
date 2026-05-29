@@ -13,6 +13,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Pin the Vercel CLI so npx resolves from the cached install instead of
+  # re-downloading it (~24s) on every deploy. Bump this to update the CLI.
+  VERCEL_CLI_VERSION: '54.6.1'
+
 jobs:
   checks:
     name: Check
@@ -102,8 +107,13 @@ jobs:
         with:
           name: vercel-output
           path: .vercel/output/
+      - name: Cache Vercel CLI
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: vercel-cli-${{ runner.os }}-${{ env.VERCEL_CLI_VERSION }}
       - name: Deploy to Vercel
-        run: npx vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel@${{ env.VERCEL_CLI_VERSION }} deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -121,10 +131,15 @@ jobs:
         with:
           name: vercel-output
           path: .vercel/output/
+      - name: Cache Vercel CLI
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: vercel-cli-${{ runner.os }}-${{ env.VERCEL_CLI_VERSION }}
       - name: Deploy to Vercel
         id: deploy
         run: |
-          URL=$(npx vercel deploy --prebuilt --yes --token=${{ secrets.VERCEL_TOKEN }})
+          URL=$(npx vercel@${{ env.VERCEL_CLI_VERSION }} deploy --prebuilt --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "url=$URL" >> $GITHUB_OUTPUT
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
