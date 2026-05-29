@@ -16,7 +16,7 @@ import { templates, type OGTemplateData } from './og-templates.js';
 // the embedded fonts change — those aren't part of the per-image key, so a
 // bump is how we invalidate every cached image at once.
 const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'og-cache');
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 
 // The decorative blobs background never changes per page, so we rasterise the
 // source SVG to a PNG once per build (per output size) and reuse the data URI.
@@ -83,6 +83,9 @@ const FONT_FILES: Array<{ name: string; file: string; weight: 400 | 700 }> = [
   { name: 'Geist', file: 'Geist-Bold.ttf', weight: 700 },
   { name: 'Figtree', file: 'Figtree-Regular.ttf', weight: 400 },
   { name: 'Figtree', file: 'Figtree-Bold.ttf', weight: 700 },
+  // The site's monospace (used for code); a static 400 instance derived from
+  // the @fontsource-variable/fira-code WOFF2. Used for the URL on covers.
+  { name: 'Fira Code', file: 'FiraCode-Regular.ttf', weight: 400 },
 ];
 
 // Load fonts with fallbacks

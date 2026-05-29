@@ -78,17 +78,32 @@ function wrapLineEms(words: string[], maxEm: number): number[] {
   return lines;
 }
 
-function fitTitleFontSize(title: string): number {
+function fitTitleFontSize(title: string, maxHeight: number = TITLE_BOX.height): number {
   const words = title.split(' ');
   for (let size = TITLE_MAX; size > TITLE_MIN; size -= 2) {
     const maxLineWidth = TITLE_BOX.width * 0.99;
     const lineEms = wrapLineEms(words, maxLineWidth / size);
     // A single word wider than the box is allowed (break-word handles it).
     const widthOk = lineEms.every((em, _, all) => em * size <= maxLineWidth || all.length === 1);
-    const heightOk = lineEms.length * size * TITLE_LINE_HEIGHT <= TITLE_BOX.height * 0.98;
+    const heightOk = lineEms.length * size * TITLE_LINE_HEIGHT <= maxHeight * 0.98;
     if (widthOk && heightOk) return size;
   }
   return TITLE_MIN;
+}
+
+// --- URL fitting ---------------------------------------------------------
+// The URL is one line of Fira Code (monospace), so its width is simply the
+// character count times a fixed advance — we solve directly for a size that
+// fits the available width (clear of the bottom-right blob), clamped.
+const URL_MAX = 27;
+const URL_MIN = 15;
+const URL_FIT_WIDTH = 720; // px available before the bottom-right blob
+const MONO_ADVANCE_EM = 0.6; // Fira Code advance width
+
+function fitUrlFontSize(url: string): number {
+  if (!url.length) return URL_MAX;
+  const size = Math.floor(URL_FIT_WIDTH / (url.length * MONO_ADVANCE_EM));
+  return Math.max(URL_MIN, Math.min(URL_MAX, size));
 }
 
 function normalizeTitle(raw: string): string {
@@ -131,6 +146,7 @@ function coverLayout(
   // with the rest of the text block.
   const leadQuoteEm = LEAD_QUOTE_EM[title[0]] ?? 0;
   const textIndent = leadQuoteEm ? `-${(leadQuoteEm * fontSize).toFixed(1)}px` : '0';
+  const urlFontSize = fitUrlFontSize(url);
 
   const children = [
     // Baked blobs + dark background
@@ -161,7 +177,8 @@ function coverLayout(
       },
     },
 
-    // Note marker, top-right (Phase 1 placeholder — refined in Phase 3)
+    // Note marker — pill in the top-right corner. Absolutely positioned so a
+    // multi-line title never pushes it around.
     isNote
       ? {
           type: 'div',
@@ -186,16 +203,16 @@ function coverLayout(
         }
       : null,
 
-    // Title — all caps, left-aligned, vertically centred in the upper band
+    // Title — all caps, left-aligned, vertically centred in the upper band.
     {
       type: 'div',
       props: {
         style: {
           position: 'absolute',
           left: PAD,
-          top: 150,
-          width: 1020,
-          height: 300,
+          top: TITLE_BOX.top,
+          width: TITLE_BOX.width,
+          height: TITLE_BOX.height,
           display: 'flex',
           alignItems: 'center',
         },
@@ -226,7 +243,7 @@ function coverLayout(
       },
     },
 
-    // URL, bottom-left
+    // URL, bottom-left — monospace, shrunk to stay on one line clear of the blob.
     {
       type: 'div',
       props: {
@@ -234,9 +251,9 @@ function coverLayout(
           position: 'absolute',
           left: PAD + 2,
           bottom: 96,
-          fontFamily: 'Figtree',
+          fontFamily: 'Fira Code',
           fontWeight: 400,
-          fontSize: 27,
+          fontSize: urlFontSize,
           color: URL_COLOR,
           whiteSpace: 'nowrap',
         },
