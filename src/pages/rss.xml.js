@@ -39,9 +39,11 @@ export async function GET(context) {
         link: item.type === 'note' ? `/notes/${item.id}/` : `/writing/${item.id}/`,
         content,
       });
-    } catch (error) {
-      console.warn(`Failed to render content for ${item.id}:`, error);
-      // Skip problematic items
+    } catch {
+      // Only the MDX renderer is available in this feed context, so entries whose
+      // content includes a React island (e.g. a client:only demo) can't be
+      // rendered here. Omit them from the feed rather than failing the build.
+      console.warn(`RSS: omitting "${item.id}" — its content includes a component that can't render in a feed.`);
       continue;
     }
   }
