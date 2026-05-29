@@ -13,5 +13,6 @@
 | [seo.md](./developer/seo.md)                                                     | SEO utilities and patterns                      | Specialized |
 | [code-quality.md](./developer/code-quality.md)                                   | Quality checks and standards                    | Specialized |
 | [testing.md](./developer/testing.md)                                             | Testing strategy and patterns                   | Specialized |
+| [deployment.md](./developer/deployment.md)                                       | Deployment pipeline and hosting model           | Operations  |
 | [lighthouse-audits.md](./developer/lighthouse-audits.md)                         | Site-wide Lighthouse audits via Unlighthouse    | Operations  |
 | [tasks.md](./tasks.md)                                                           | Task management system                          | Operations  |
