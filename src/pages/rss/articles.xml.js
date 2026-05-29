@@ -33,7 +33,9 @@ export async function GET(context) {
       // Only the MDX renderer is available in this feed context, so articles whose
       // content includes a React island (e.g. a client:only demo) can't be
       // rendered here. Omit them from the feed rather than failing the build.
-      console.warn(`RSS: omitting article "${article.id}" — its content includes a component that can't render in a feed.`);
+      console.warn(
+        `RSS: omitting article "${article.id}" — its content includes a component that can't render in a feed.`
+      );
       continue;
     }
   }
