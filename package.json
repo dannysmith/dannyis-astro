@@ -17,6 +17,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "sync": "astro sync",
+    "audit:serve": "astro build --site http://localhost:4321 && astro preview",
+    "audit": "bunx unlighthouse --site http://localhost:4321",
     "check:lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
