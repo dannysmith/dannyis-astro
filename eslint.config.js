@@ -73,6 +73,6 @@ export default defineConfig([
 
   // Global ignores
   {
-    ignores: ['dist/**', 'node_modules/**', '.astro/**', 'public/**'],
+    ignores: ['dist/**', 'node_modules/**', '.astro/**', '.unlighthouse/**', 'public/**'],
   },
 ]);
