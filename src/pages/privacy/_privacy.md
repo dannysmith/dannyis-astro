@@ -22,7 +22,7 @@ This site does not set any cookies of its own. If your browser shows cookies for
 
 ## Third parties
 
-A few pages embed content from other services (for example, YouTube videos, Loom recordings, tweets etc). When you load a page containing an embed, the third party may receive a request from your browser and apply their own privacy practices. I try to use privacy-respecting embeds where possible, and in most cases will not load third-party iFrames or javascript without some action from you first.
+A few pages embed content from other services (for example, YouTube videos, Loom recordings, tweets etc). When you load a page containing an embed, the third party may receive a request from your browser and apply their own privacy practices. I try to use privacy-respecting embeds where possible, and in most cases will not load third-party iframes or JavaScript without some action from you first.
 
 External links in articles and notes go where they say they go — I do not use link redirectors or affiliate trackers.
 
