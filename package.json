@@ -34,6 +34,7 @@
     "test:all": "bun run test:unit && bun run test:e2e",
     "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
     "newnote": "tsx scripts/create-note.ts",
+    "generate-og-image": "tsx scripts/generate-og-image.ts",
     "task:complete": "node scripts/complete-task.js",
     "task:rename-done": "node scripts/complete-task.js --rename-existing"
   },

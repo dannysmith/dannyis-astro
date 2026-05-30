@@ -112,7 +112,7 @@ async function loadFonts(): Promise<Font[]> {
 
 // Generate options for Satori
 interface GenerateOptions {
-  template?: 'article' | 'note' | 'default';
+  template?: 'article' | 'note' | 'default' | 'profile';
   width?: number;
   height?: number;
 }
