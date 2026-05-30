@@ -13,12 +13,16 @@ import { generateOGImage } from '../src/utils/og-image-generator.ts';
 import { getConfig } from '../src/config/config.ts';
 
 const config = getConfig();
-
-const png = await generateOGImage(
-  { title: config.author.fullName, url: config.site.url },
-  { template: 'profile', width: 1200, height: 630 }
-);
-
 const outPath = path.join(process.cwd(), 'public', 'og-default.png');
-await fs.writeFile(outPath, png);
-console.log(`Wrote ${outPath} (${png.length} bytes)`);
+
+try {
+  const png = await generateOGImage(
+    { title: config.author.fullName, url: config.site.url },
+    { template: 'profile', width: 1200, height: 630 }
+  );
+  await fs.writeFile(outPath, png);
+  console.log(`Wrote ${outPath} (${png.length} bytes)`);
+} catch (error) {
+  console.error(`Failed to generate ${outPath}:`, error);
+  process.exitCode = 1;
+}

@@ -1,4 +1,4 @@
-import { OG_HANDLE } from './og-branding';
+import { OG_HANDLE } from '@utils/og-branding';
 
 export interface OGTemplateData {
   title: string;

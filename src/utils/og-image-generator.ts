@@ -4,7 +4,7 @@ import { Resvg } from '@resvg/resvg-js';
 import { createHash } from 'node:crypto';
 import fs from 'fs/promises';
 import path from 'path';
-import { templates, type OGTemplateData } from './og-templates.js';
+import { templates, type OGTemplateData } from '@utils/og-templates.js';
 
 // Astro does not cache endpoint output, so every build re-runs satori + resvg
 // for every post (~90s on this site). We cache the rendered PNGs ourselves,
