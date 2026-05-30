@@ -14,6 +14,7 @@ import {
   validateSEOData,
 } from '@utils/seo';
 import { getConfig } from '@config/config';
+import { getOgImageUrlForPath } from '@config/og-images';
 
 interface Props {
   title: string;
@@ -39,7 +40,11 @@ const seoData = validateSEOData(Astro.props);
 // Generate all SEO values using utilities
 const pageTitle = generatePageTitle(seoData.title, seoData.pageType);
 const metaDescription = generateMetaDescription(seoData.description);
-const ogImageUrl = generateOGImageUrl(seoData.image, Astro.url.toString());
+// Articles/notes pass an explicit `image`. Otherwise, standalone pages
+// registered in og-images.ts get their generated cover; everything else
+// (home, utility pages) falls back to the static default.
+const pageOgImage = getOgImageUrlForPath(Astro.url.pathname);
+const ogImageUrl = generateOGImageUrl(seoData.image ?? pageOgImage, Astro.url.toString());
 const jsonLD = generateJSONLD(seoData, canonicalURL.toString(), ogImageUrl);
 const articleMeta = generateArticleMeta(seoData);
 ---
