@@ -14,19 +14,15 @@ This site is owned and operated by Danny Smith, a sole individual based in the U
 
 You can read more in the [Simple Analytics privacy policy](https://docs.simpleanalytics.com/what-we-collect) and their [data collection documentation](https://docs.simpleanalytics.com/data-points).
 
-**RSS feeds.** If you subscribe to one of the RSS feeds, your feed reader will make HTTP requests to this site. Standard web server logs (handled by [Vercel](https://vercel.com), my hosting provider) may temporarily record the request, including IP address, for operational purposes. I do not access or analyse these logs.
-
-**Email.** If you email me, I will have your email address and whatever you choose to write. I keep emails only as long as I find them useful and never share them.
+**RSS feeds.** If you subscribe to one of my RSS feeds, your feed reader will make HTTP requests to this site. Standard web server logs (handled by [Vercel](https://vercel.com), my hosting provider) may temporarily record the request, including IP address. I do not access or analyse these logs or use them in any way.
 
 ## Cookies
 
-This site does not set any cookies of its own. No tracking cookies, no advertising cookies, no analytics cookies.
-
-If your browser shows cookies for this domain, they did not come from me.
+This site does not set any cookies of its own. If your browser shows cookies for this domain, they did not come from this site.
 
 ## Third parties
 
-A few pages embed content from other services (for example, YouTube videos, Loom recordings, or tweets). When you load a page containing an embed, the third party may receive a request from your browser and apply their own privacy practices. I try to use privacy-respecting embeds where possible, but if you are particularly cautious, browser-level tracking protection is a good idea on any website.
+A few pages embed content from other services (for example, YouTube videos, Loom recordings, tweets etc). When you load a page containing an embed, the third party may receive a request from your browser and apply their own privacy practices. I try to use privacy-respecting embeds where possible, and in most cases will not load third-party iFrames or javascript without some action from you first.
 
 External links in articles and notes go where they say they go — I do not use link redirectors or affiliate trackers.
 
@@ -44,4 +40,4 @@ To exercise any of these rights, email [hi@danny.is](mailto:hi@danny.is).
 
 If this policy changes, the updated version will appear here. Significant changes will be noted in the date below.
 
-Updated: 2026-05-28
+Updated: 2026-05-29
