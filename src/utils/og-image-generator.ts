@@ -4,7 +4,7 @@ import { Resvg } from '@resvg/resvg-js';
 import { createHash } from 'node:crypto';
 import fs from 'fs/promises';
 import path from 'path';
-import { templates, type OGTemplateData } from './og-templates.js';
+import { templates, type OGTemplateData } from '@utils/og-templates.js';
 
 // Astro does not cache endpoint output, so every build re-runs satori + resvg
 // for every post (~90s on this site). We cache the rendered PNGs ourselves,
@@ -12,10 +12,46 @@ import { templates, type OGTemplateData } from './og-templates.js';
 // inside Astro's own cache dir so a single CI cache step covers both.
 //
 // Bump CACHE_VERSION whenever the templates (og-templates.ts), branding
-// (og-branding.ts), or the embedded fonts change — those aren't part of the
-// per-image key, so a bump is how we invalidate every cached image at once.
+// (og-branding.ts), the baked background (src/assets/og/background.svg), or
+// the embedded fonts change — those aren't part of the per-image key, so a
+// bump is how we invalidate every cached image at once.
 const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'og-cache');
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v5';
+
+// The decorative blobs background never changes per page, so we rasterise the
+// source SVG to a PNG once per build (per output size) and reuse the data URI.
+const BACKGROUND_SVG = path.join(process.cwd(), 'src', 'assets', 'og', 'background.svg');
+const backgroundCache = new Map<string, Promise<string>>();
+
+function getBackgroundDataUri(width: number, height: number): Promise<string> {
+  const key = `${width}x${height}`;
+  let pending = backgroundCache.get(key);
+  if (!pending) {
+    pending = (async () => {
+      const svg = await fs.readFile(BACKGROUND_SVG);
+      const png = await sharp(svg, { density: 200 }).resize(width, height).png().toBuffer();
+      return `data:image/png;base64,${png.toString('base64')}`;
+    })();
+    backgroundCache.set(key, pending);
+  }
+  return pending;
+}
+
+// Embed the avatar as a data URI rather than letting satori fetch it over the
+// network at build time — the file is local, and a network round-trip per
+// build (which can fail and leave the avatar missing) is both fragile and slow.
+const AVATAR_PNG = path.join(process.cwd(), 'public', 'avatar-circle.png');
+let avatarUriPromise: Promise<string> | null = null;
+
+function getAvatarDataUri(): Promise<string> {
+  if (!avatarUriPromise) {
+    avatarUriPromise = (async () => {
+      const png = await fs.readFile(AVATAR_PNG);
+      return `data:image/png;base64,${png.toString('base64')}`;
+    })();
+  }
+  return avatarUriPromise;
+}
 
 // Font type definition matching Satori's expected format
 interface Font {
@@ -47,6 +83,9 @@ const FONT_FILES: Array<{ name: string; file: string; weight: 400 | 700 }> = [
   { name: 'Geist', file: 'Geist-Bold.ttf', weight: 700 },
   { name: 'Figtree', file: 'Figtree-Regular.ttf', weight: 400 },
   { name: 'Figtree', file: 'Figtree-Bold.ttf', weight: 700 },
+  // The site's monospace (used for code); a static 400 instance derived from
+  // the @fontsource-variable/fira-code WOFF2. Used for the URL on covers.
+  { name: 'Fira Code', file: 'FiraCode-Regular.ttf', weight: 400 },
 ];
 
 // Load fonts with fallbacks
@@ -73,7 +112,7 @@ async function loadFonts(): Promise<Font[]> {
 
 // Generate options for Satori
 interface GenerateOptions {
-  template?: 'article' | 'note' | 'default';
+  template?: 'article' | 'note' | 'default' | 'profile';
   width?: number;
   height?: number;
 }
@@ -109,8 +148,14 @@ export async function generateOGImage(
       throw new Error(`Template "${template}" not found`);
     }
 
+    // Bake the decorative background + avatar (memoised, computed once).
+    const [background, avatar] = await Promise.all([
+      getBackgroundDataUri(width, height),
+      getAvatarDataUri(),
+    ]);
+
     // Generate the React element structure
-    const element = templateFn(data);
+    const element = templateFn(data, { background, avatar });
 
     // Generate SVG using Satori
     // @ts-expect-error - satori accepts { type, props } objects at runtime, but types only expose ReactNode
