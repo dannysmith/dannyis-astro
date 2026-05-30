@@ -21,6 +21,9 @@ export const OG_IMAGE_PAGES: OgImagePage[] = [
   { path: '/writing', title: 'Writing' },
   { path: '/notes', title: 'Short Notes' },
   { path: '/styleguide', title: 'Site Styleguide' },
+  { path: '/privacy', title: 'Privacy Policy' },
+  { path: '/colophon', title: 'Colophon' },
+  { path: '/ai', title: 'AI Statement' },
 ];
 
 /** Strip a trailing slash (but keep the root "/"). */
