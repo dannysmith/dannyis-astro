@@ -1,6 +1,6 @@
 # standard.site / AT Protocol publishing
 
-This site mirrors its articles and notes onto the AT Protocol network (the "ATmosphere" — the network Bluesky runs on) using the community [standard.site](https://standard.site/) lexicons. Publish a post and a matching record lands in Danny's Personal Data Server (PDS), so any AT-aware reader can index it and Bluesky can show a richer card when someone shares a danny.is URL.
+This site syncs its articles and notes onto the [ATmosphere](https://atproto.com/) using the [standard.site](https://standard.site/) lexicons so any AT-aware reader can index it and Bluesky can show a richer card when someone shares a danny.is URL. Danny usesd Bluesky as his PDS so records live in his normal Bluesky account (`@danny.is`), written with a Bluesky **app password**.
 
 ## What it does
 
@@ -9,43 +9,41 @@ Two kinds of record get written to the PDS:
 - **One `site.standard.publication` record** describing the site itself — name, URL, icon, theme. Created once.
 - **One `site.standard.document` record per published post**: title, canonical path, plain-text body, tags, cover image, dates.
 
-There's no separate PDS to run. Records live in Danny's normal Bluesky account (`danny.is`), written with a Bluesky **app password**. A PDS stores records from lexicons it doesn't recognise, so it takes a custom type like `site.standard.document` without complaint.
+Key points that may be non-obvious:
 
-Three things fall out of the design and are worth holding onto:
-
-- **No database, no stored mapping.** A post's record key is computed from the post itself, so the same post always lands at the same record.
-- **Editing a post is just a re-sync.** The write is an upsert at that computed key, so re-syncing an edited post overwrites its record in place and the record's address never moves.
-- **The site stays static.** The verification link tag is rendered at build time; the record is written separately, by CI, after deploy.
+- A post's record key is computed from the post itself, so the same post always lands at the same record.
+- Editing a post is just a re-sync: The write is an upsert at that computed key, so re-syncing an edited post overwrites its record in place and the record's address never moves.
+- The verification link tag is rendered at build time; the record is written separately, by CI, after deploy.
 
 ## How the record key works
 
-Every record has an address: `at://<did>/<collection>/<rkey>`. The `rkey` is a TID — 13 characters, base-32, sortable by time. `getDocumentRkey` in `src/utils/standard-site.ts` builds it from two halves:
+Every record has an address: `at://<did>/<collection>/<rkey>`. The `rkey` is a TID (13 characters, base-32, sortable by time) and is built from:
 
-- The **timestamp** comes from the post's `pubDate`, reduced to its UTC calendar date. Using the UTC date (not the raw timestamp, and not the filename) keeps the key identical whether it's computed during the build, in CI, or in a local backfill in another timezone.
+- The **timestamp** from the post's `pubDate`, reduced to its UTC calendar date, which keeps the key identical whether it's computed during build, in CI, or in a local backfill in another timezone.
 - The **uniqueness suffix** is a short hash of `"<collection>/<postId>"`. Two posts on the same day get different keys, and an article can't collide with a note that happens to share its slug.
 
-Because the key is a pure function of the post, the build can render a link tag pointing at the record's address before the record exists. The sync job computes the same key and writes the record there. They agree — as long as both resolve `postId` the same way.
+Because the key is a pure function of the post, the build can render a link tag pointing at the record's address before the record exists. The sync job computes the same key and writes the record there. They agree as long as both resolve `postId` the same way.
 
-That `postId` is the post's **canonical id: the `slug` frontmatter when set, otherwise the filename stem** — the same id Astro uses for the URL. The build reads it from `Astro.params.slug`; the sync reads it via `canonicalPostId`. If those two ever diverge, the link tag and the record point at different addresses.
+That `postId` is the post's **canonical id: the `slug` frontmatter when set, otherwise the filename stem** (ie what Astro uses for the URL). The build reads it from `Astro.params.slug`; the sync reads it via `canonicalPostId`.
 
 ## The moving parts
 
-| File | Responsibility |
-| --- | --- |
-| `src/utils/standard-site.ts` | Shared logic, used by both the build and the sync: `getDocumentRkey`, `getDocumentPath`, `qualifiesForStandardSite`, `getDocumentUri`. |
-| `src/components/layout/BaseHead.astro` | Renders `<link rel="site.standard.document">` on qualifying posts and `<link rel="site.standard.publication">` on the homepage. |
-| `src/layouts/Article.astro`, `src/layouts/Note.astro` | Compute each post's document AT-URI and pass it to `BaseHead`. |
-| `src/pages/standard-site-publication.ts` | Endpoint returning the publication AT-URI as plain text. Reached at `/.well-known/site.standard.publication` via a rewrite. |
-| `vercel.output-config.json` | Rewrites `/.well-known/site.standard.publication` to that endpoint. |
-| `scripts/standard-site/auth.ts` | Logs into the PDS with an app password; returns an agent + DID. |
-| `scripts/standard-site/create-publication.ts` | Creates/updates the publication record (with icon + theme). Run once. |
-| `scripts/standard-site/sync-document.ts` | Creates/updates/deletes document records. Run by CI and for backfill. |
-| `.github/workflows/standard-site-sync.yml` | After a successful deploy, syncs added/changed posts. |
-| `src/config/site.ts` → `CONFIG.standardSite` | DID, handle, publication AT-URI, and the `since` cutoff. |
+| File                                                  | Responsibility                                                                                                                         |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/utils/standard-site.ts`                          | Shared logic, used by both the build and the sync: `getDocumentRkey`, `getDocumentPath`, `qualifiesForStandardSite`, `getDocumentUri`. |
+| `src/components/layout/BaseHead.astro`                | Renders `<link rel="site.standard.document">` on qualifying posts and `<link rel="site.standard.publication">` on the homepage.        |
+| `src/layouts/Article.astro`, `src/layouts/Note.astro` | Compute each post's document AT-URI and pass it to `BaseHead`.                                                                         |
+| `src/pages/standard-site-publication.ts`              | Endpoint returning the publication AT-URI as plain text. Reached at `/.well-known/site.standard.publication` via a rewrite.            |
+| `vercel.output-config.json`                           | Rewrites `/.well-known/site.standard.publication` to that endpoint.                                                                    |
+| `scripts/standard-site/auth.ts`                       | Logs into the PDS with an app password; returns an agent + DID.                                                                        |
+| `scripts/standard-site/create-publication.ts`         | Creates/updates the publication record (with icon + theme). Run once.                                                                  |
+| `scripts/standard-site/sync-document.ts`              | Creates/updates/deletes document records. Run by CI and for backfill.                                                                  |
+| `.github/workflows/standard-site-sync.yml`            | After a successful deploy, syncs added/changed posts.                                                                                  |
+| `src/config/site.ts` → `CONFIG.standardSite`          | DID, handle, publication AT-URI, and the `since` cutoff.                                                                               |
 
 ## What gets published
 
-`qualifiesForStandardSite` decides. It follows the site's normal "is this published?" rule and adds two exclusions:
+We follow the site's normal "is this published?" rules with two extra exclusions:
 
 - **Skipped:** drafts, styleguide pages, and externally-hosted posts — anything with a `redirectURL` (e.g. an article that lives on Medium and whose danny.is page only redirects away). External posts stay skipped even under `--force`.
 - **Cutoff:** only posts on or after `CONFIG.standardSite.since`, which is set before the first post so the whole archive qualifies.
@@ -94,7 +92,7 @@ In CI the same script runs from `.github/workflows/standard-site-sync.yml`, read
 
 `CONFIG.standardSite` in `src/config/site.ts`:
 
-- `did` — the AT Protocol DID for `danny.is`. Public. Empty until setup.
+- `did` — the AT Protocol DID for `danny.is`. Public.
 - `handle` — the login handle (`danny.is`).
 - `publicationUri` — the `at://…` URI of the publication record, printed by `standard-site:publication`. Public. Empty until setup.
 - `since` — only posts on or after this date are published.
