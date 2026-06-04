@@ -145,13 +145,14 @@ export const CONFIG = {
   standardSite: {
     // AT Protocol DID for danny.is. Filled in during setup (resolve from the
     // Bluesky handle, e.g. via com.atproto.identity.resolveHandle).
-    did: '' as string,
+    did: 'did:plc:aes3lokiqtv63fk62nwnjeuf' as string,
     // Bluesky handle that owns the records / used to log in.
     handle: 'danny.is',
     // AT-URI of the site.standard.publication record. Empty until created via
     // scripts/standard-site/create-publication.ts. When empty: the /.well-known
     // endpoint 404s and the homepage publication link tag is omitted.
-    publicationUri: '' as string,
+    publicationUri:
+      'at://did:plc:aes3lokiqtv63fk62nwnjeuf/site.standard.publication/3mnin5cnq2q2a' as string,
     // Only posts on/after this cutoff get a record + link tag. Set before the
     // first post (2012-06-05) so the whole backfilled corpus qualifies.
     since: '2000-01-01',
