@@ -63,18 +63,57 @@ const MAX_BLOB_BYTES = 1_000_000;
 // Give up on a stuck OG-image fetch rather than hanging the whole sync.
 const OG_FETCH_TIMEOUT_MS = 15_000;
 
+/** Decode HTML entities (named + numeric) to their characters for plaintext. */
+function decodeEntities(text: string): string {
+  const named: Record<string, string> = {
+    amp: '&',
+    lt: '<',
+    gt: '>',
+    quot: '"',
+    apos: "'",
+    nbsp: ' ',
+    mdash: '—',
+    ndash: '–',
+    hellip: '…',
+    rarr: '→',
+    larr: '←',
+    harr: '↔',
+    times: '×',
+    reg: '®',
+    copy: '©',
+    trade: '™',
+    pound: '£',
+    euro: '€',
+  };
+  const fromCode = (m: string, code: number) => {
+    try {
+      return String.fromCodePoint(code);
+    } catch {
+      return m;
+    }
+  };
+  return text
+    .replace(/&#x([0-9a-fA-F]+);/g, (m, hex) => fromCode(m, parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (m, dec) => fromCode(m, parseInt(dec, 10)))
+    .replace(/&([a-zA-Z][a-zA-Z0-9]*);/g, (m, name) => named[name] ?? m);
+}
+
 /** Reduce markdown/MDX to a plaintext approximation for the document's textContent. */
 function stripMarkdown(markdown: string): string {
-  return markdown
-    .replace(/^\s*(import|export)\s.*$/gm, ' ') // MDX import/export statements
-    .replace(/```[\s\S]*?```/g, ' ') // fenced code blocks
-    .replace(/`[^`]*`/g, ' ') // inline code
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // images
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // links → text
-    .replace(/^\s{0,3}#{1,6}\s+/gm, '') // headings
-    .replace(/^\s{0,3}>\s?/gm, '') // blockquotes
-    .replace(/[*_~]{1,3}/g, '') // emphasis markers
-    .replace(/<[^>]+>/g, ' ') // raw HTML tags
+  return decodeEntities(
+    markdown
+      .replace(/^\s*(import|export)\s.*$/gm, ' ') // MDX import/export statements
+      .replace(/```[\s\S]*?```/g, ' ') // fenced code blocks
+      .replace(/`[^`]*`/g, ' ') // inline code
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // images
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // links → text
+      .replace(/\{\s*(['"])\s*\1\s*\}/g, ' ') // MDX JSX whitespace expressions {' '}
+      .replace(/^\s{0,3}#{1,6}\s+/gm, '') // headings
+      .replace(/^\s{0,3}>\s?/gm, '') // blockquotes
+      .replace(/[*_~]{1,3}/g, '') // emphasis markers
+      .replace(/<[^>]+>/g, ' ') // raw HTML tags
+      .replace(/\\([\\`*_{}[\]()#+\-.!~>])/g, '$1') // markdown backslash escapes
+  )
     .replace(/\s+/g, ' ')
     .trim();
 }
