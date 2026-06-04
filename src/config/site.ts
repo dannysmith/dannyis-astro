@@ -23,7 +23,7 @@ export const CONFIG = {
     contactEmail: 'hi+website@danny.is', // For mailto links (tracking suffix)
     location: 'London, UK',
     jobTitle: 'Remote Work Consultant',
-    extendedTitle: 'Operations & Leadership Expert',
+    extendedTitle: '',
     fediverse: '@dannysmith@indieweb.social',
     twitter: 'dannysmith',
     avatar: '/avatar.jpg',
@@ -45,9 +45,9 @@ export const CONFIG = {
 
   // Page title templates ({title} replaced at runtime)
   pageTitleTemplates: {
-    article: '{title} | Danny Smith - Operations & Leadership Expert',
+    article: '{title} | Danny Smith',
     note: '{title} | Quick Note by Danny Smith',
-    page: '{title} | Danny Smith - Operations & Leadership Expert',
+    page: '{title} | Danny Smith',
     default: '{title} | Danny Smith',
   },
 
