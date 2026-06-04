@@ -32,7 +32,7 @@
  * Reference: https://standard.site/docs/lexicons/document/
  */
 
-/* global fetch */
+/* global fetch, setTimeout, clearTimeout, AbortController */
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -60,6 +60,8 @@ const POST_FILE_RE = /(^|\/)\d{4}-\d{2}-\d{2}(-.+)?\.mdx?$/;
 const MAX_TEXT_CONTENT = 50_000;
 // Lexicon coverImage blob cap.
 const MAX_BLOB_BYTES = 1_000_000;
+// Give up on a stuck OG-image fetch rather than hanging the whole sync.
+const OG_FETCH_TIMEOUT_MS = 15_000;
 
 /** Reduce markdown/MDX to a plaintext approximation for the document's textContent. */
 function stripMarkdown(markdown: string): string {
@@ -132,8 +134,10 @@ async function uploadCoverImage(
   postId: string
 ): Promise<unknown> {
   const url = `${getConfig().site.url}${getDocumentPath(collection, postId)}og-image.png`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), OG_FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) {
       console.warn(`⚠️  ${postId}: OG image ${res.status} at ${url}, skipping coverImage`);
       return undefined;
@@ -146,10 +150,13 @@ async function uploadCoverImage(
     const up = await session.agent.uploadBlob(bytes, { encoding: 'image/png' });
     return up.data.blob;
   } catch (err) {
-    console.warn(
-      `⚠️  ${postId}: OG image fetch failed (${(err as Error).message}), skipping coverImage`
-    );
+    const reason = controller.signal.aborted
+      ? `timed out after ${OG_FETCH_TIMEOUT_MS}ms`
+      : (err as Error).message;
+    console.warn(`⚠️  ${postId}: OG image fetch failed (${reason}), skipping coverImage`);
     return undefined;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
