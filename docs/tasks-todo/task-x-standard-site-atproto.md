@@ -1,5 +1,13 @@
 # Publish articles & notes to the ATmosphere (standard.site / AT Protocol)
 
+## Status
+
+- ✅ **Phases 1–4 complete** and committed on branch `standard-site-atproto` (`check:all` green throughout). The code is built and dry-run-verified, but **writes nothing to the PDS yet** — `did`/`publicationUri` ship empty, so no link tags render, no `.well-known` resolves, and no records exist.
+- ⬜ **Phase 5 (go-live) is outstanding and is Danny's to do manually.** It can only be completed after the PR is merged and deployed, because verification depends on the live site. See the [Phase 5 runbook](#phase-5--go-live-manual--do-after-merge) below.
+- Once Phase 5 is verified, complete the task with `bun task:complete standard-site-atproto`.
+
+For how the shipped system works day-to-day (and troubleshooting), see [`docs/developer/standard-site.md`](../developer/standard-site.md).
+
 ## Goal
 
 When an article or note is published on danny.is, also publish it as a `site.standard.document` record into my **existing Bluesky PDS** (the `danny.is` account), using the community [standard.site](https://standard.site/) lexicons. This puts my writing on the AT network so any AT-aware reader can index it, and so Bluesky renders enhanced link cards (publication icon, reading time, theme) when my URLs are shared.
@@ -61,24 +69,11 @@ These are real things checked against the repo that would otherwise bite during 
 
 ---
 
-## Manual steps (Danny) — required, can't be automated
-
-Do these at Phase 5 (the plan calls out exactly when).
-
-1. **Create a Bluesky app password.** Bluesky → Settings → Privacy & Security → App Passwords → Add. Copy it (format `xxxx-xxxx-xxxx-xxxx`). **Never the main password.**
-2. **Add the GitHub Actions secret.** Repo → Settings → Secrets and variables → Actions → New repository secret: `ATPROTO_APP_PASSWORD`.
-3. **Resolve and record my DID.** Visit `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=danny.is` (returns the `did:plc:…`) or read it from the `create-publication` script's login output. Paste it into `CONFIG.standardSite.did` in `src/config/site.ts`.
-4. **Create the publication record (once).** `ATPROTO_APP_PASSWORD=xxxx bun run standard-site:publication` → paste the printed AT-URI into `CONFIG.standardSite.publicationUri`; commit.
-5. **Backfill (once).** Dry-run first: `ATPROTO_APP_PASSWORD=xxxx bun run standard-site:sync -- --all --dry-run`. Then for real: `ATPROTO_APP_PASSWORD=xxxx bun run standard-site:sync -- --all`.
-6. **Verify on the network.** Browse my repo on <https://pdsls.dev/> (search `danny.is`) and confirm the publication + document records exist; check `https://danny.is/.well-known/site.standard.publication` returns the AT-URI; view-source a post and confirm the `site.standard.document` link tag.
-
----
-
 ## Implementation plan
 
 Run `bun run check:all` after each phase. Commit per phase. Phases 1–4 write **no records to any PDS** — nothing touches the live network until the Phase 5 manual steps.
 
-### Phase 1 — Core util + tests (pure, no network)
+### Phase 1 — Core util + tests (pure, no network) ✅ Done
 
 **New: `src/utils/standard-site.ts`** — ported from Ben's `src/utils/standard-site.ts`, adapted for two collections:
 
@@ -119,7 +114,7 @@ Config access: `import { getConfig } from '@config/config'`; read `getConfig().s
 
 **Verify:** `bun run test:unit`, `bun run check:types`.
 
-### Phase 2 — Render verification tags + well-known endpoint (visible in build, still no PDS writes)
+### Phase 2 — Render verification tags + well-known endpoint (visible in build, still no PDS writes) ✅ Done
 
 **`src/components/layout/BaseHead.astro`:**
 - Add `standardSiteDocumentUri?: string` to the `Props` interface.
@@ -165,7 +160,7 @@ Config access: `import { getConfig } from '@config/config'`; read `getConfig().s
 
 **Verify (done):** with empty `did`/`publicationUri`, `bun run build` emits no endpoint file and no link tags (correct — nothing to point at). A build test with a dummy `publicationUri` confirmed `dist/standard-site-publication` is emitted with the URI, the homepage gets the publication tag, and non-homepage pages omit it. Real document/publication tags appear once `did`/`publicationUri` are set in Phase 5. After the first real deploy, `curl https://danny.is/.well-known/site.standard.publication` to confirm the rewrite serves it.
 
-### Phase 3 — Auth + scripts (local only; dry-run safe)
+### Phase 3 — Auth + scripts (local only; dry-run safe) ✅ Done
 
 `bun add -d @atproto/api gray-matter`.
 
@@ -194,7 +189,7 @@ Follow the existing `scripts/*.ts` convention: **relative imports into `src/` wi
 
 **Verify (no writes):** `ATPROTO_APP_PASSWORD=… bun run standard-site:sync -- --all --dry-run` and confirm the printed rkeys + paths for a few posts **exactly match** the `site.standard.document` link tags the built site emits for those same posts. This is the key check that build-time and sync-time agree.
 
-### Phase 4 — CI workflow
+### Phase 4 — CI workflow ✅ Done
 
 **New: `.github/workflows/standard-site-sync.yml`** — adapted from Ben's:
 - Trigger: `workflow_run` on `workflows: ["CI"]` (my deploy workflow's `name:`), `types: [completed]`, `branches: [main]`; plus `workflow_dispatch` with `dry_run` (default true) and optional `post_path`.
@@ -206,9 +201,61 @@ Follow the existing `scripts/*.ts` convention: **relative imports into `src/` wi
 
 **Verify:** push a no-op and confirm the workflow triggers after CI succeeds and reports "no new posts." Then `workflow_dispatch` with `dry_run: true` and a known `post_path` to confirm the record preview.
 
-### Phase 5 — Go live (manual steps + backfill)
+### Phase 5 — Go live (manual) — do after merge
 
-Do the **Manual steps** section above in order, then publish a brand-new test note and confirm the workflow auto-creates its record after deploy.
+This is Danny's to run by hand. It writes to the real `danny.is` PDS and depends on the live site, so it **cannot be finished until the PR is merged and deployed**. Do the parts in order. Commands prefixed `!` can be run inline in a Claude Code session (so the app password never lands in the transcript), or in any terminal at the repo root.
+
+The app password is the only secret here. The **DID** and **publication AT-URI** are public identifiers and get committed to `src/config/site.ts`. The OG images the backfill uploads as `coverImage` already exist on production (they're an existing feature), so the backfill does not depend on *this* deploy — only verification of the on-page link tags and `.well-known` does.
+
+#### A. Credentials (one-time)
+
+1. **Create a Bluesky app password.** bsky.app → Settings → Privacy & Security → App Passwords → Add App Password. Copy the `xxxx-xxxx-xxxx-xxxx` value. **Never use your main password.**
+2. **Add it as a GitHub Actions secret** (needed later for CI auto-sync). Repo → Settings → Secrets and variables → Actions → New repository secret named `ATPROTO_APP_PASSWORD`.
+3. **Find your DID.** `curl 'https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=danny.is'` → returns `{"did":"did:plc:…"}`.
+
+#### B. Fill config + create the publication record (on the branch, before merge)
+
+4. **Set the DID** in `src/config/site.ts` → `CONFIG.standardSite.did`.
+5. **Create the publication record** (writes one record to the PDS; uploads the avatar as the icon; idempotent — safe to re-run):
+   ```bash
+   ATPROTO_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx bun run standard-site:publication
+   ```
+   Copy the printed AT-URI into `CONFIG.standardSite.publicationUri`.
+6. **Commit** the two config values to the branch (`did` + `publicationUri`). They're public.
+
+#### C. Backfill the whole corpus (on the branch, before merge)
+
+7. **Dry-run first** and skim the output (titles, rkeys, paths, that drafts/styleguides/external posts are skipped):
+   ```bash
+   ATPROTO_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx bun run standard-site:sync -- --all --dry-run
+   ```
+8. **Run it for real** (creates a `site.standard.document` record per qualifying post; fetches each post's live OG image as the cover):
+   ```bash
+   ATPROTO_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx bun run standard-site:sync -- --all
+   ```
+   `since` is `2000-01-01`, so every published, non-external post qualifies — no `--force` needed.
+
+#### D. Merge & deploy
+
+9. **Open the PR** (`standard-site-atproto` → `main`), let CI pass, **merge**. The deploy then ships a site that renders the `site.standard.publication` tag on the homepage, a `site.standard.document` tag on every qualifying post (now pointing at records that already exist from step 8), and serves `/.well-known/site.standard.publication`.
+
+#### E. Verify on the live site
+
+10. **Publication endpoint:** `curl https://danny.is/.well-known/site.standard.publication` → returns your publication AT-URI (this confirms the Vercel rewrite works — see gotcha #5).
+11. **Records on the network:** open `https://pdsls.dev/` and look up `danny.is` → confirm one `site.standard.publication` and many `site.standard.document` records.
+12. **On-page link tag:** view-source any article/note → `<link rel="site.standard.document" href="at://…">`; view-source the homepage → `<link rel="site.standard.publication" …>`.
+13. **Bluesky card (optional):** post a danny.is article link on Bluesky (or use a card validator) and confirm the enhanced card (icon, reading time).
+
+#### F. Test the ongoing automation
+
+14. **Publish a new note** (`bun run newnote`, fill it in, commit, push to `main`). After the deploy, the **Sync posts to standard.site** workflow runs, detects the added file, and creates its record. Confirm on pdsls.dev. Editing then re-pushing the same note should update the same record in place (same rkey).
+15. **Dry-run a manual sync** any time via the Actions tab → *Sync posts to standard.site* → Run workflow, with a `post_path` and `dry_run: true`.
+
+#### G. Done
+
+16. Once verified, complete the task: `bun task:complete standard-site-atproto`.
+
+**If something looks wrong** (wrong rkey, missing cover, `.well-known` 404, records not appearing), see the troubleshooting section of [`docs/developer/standard-site.md`](../developer/standard-site.md). Full undo: `… bun run standard-site:sync -- --delete --all` wipes every document record; delete the publication record from pdsls.dev.
 
 ---
 

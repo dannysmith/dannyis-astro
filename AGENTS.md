@@ -57,6 +57,10 @@ bun run check:dupes   # Check for duplicate code with jscpd
 bun run test:unit     # Unit tests only
 bun run test:e2e      # E2E tests only
 bun run newnote       # Create new note with proper frontmatter
+
+# AT Protocol (standard.site) publishing — needs ATPROTO_APP_PASSWORD. See docs/developer/standard-site.md
+bun run standard-site:publication  # Create/update the publication record (one-time setup)
+bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-run, or <files>)
 ```
 
 ## Tech Stack
