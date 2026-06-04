@@ -1,0 +1,15 @@
+---
+title: This site now has Atproto Records
+pubDate: 2026-06-04
+---
+
+I've been poking around the edges of the Atmosphere for a while now, because [ATProto](https://atproto.com/) is mega interesting for all sorts of reasons, both technical and philosophical.
+
+Despite my Bluesky feed being full of Atproto nerds, I've so far resisted the urge to noodle with the protocol by building some [silly stuff](https://flushes.app/about) or spinning up a PDS, because I'd rather wait until I've got a slightly more practical use case to experiment with if I can.
+
+But last week I [saw this](https://bsky.app/profile/ben.balter.com/post/3mn5pwqbbxc2v) from [Ben Balter](https://ben.balter.com/) and couldn't resist spending a little time following [his lead](https://github.com/benbalter/benbalter.github.com/commit/69703cee964ad27e79e58dce455bcd79fa4b8bed) and syncing my notes and articles here to my PDS using the [standard.site](https://standard.site/) lexicons.
+
+I had Claude Code do most of the [work](https://github.com/dannysmith/dannyis-astro/commit/c7bfa17288f6c26e1ba3db95cffe7013cb0a2da0) for me, and the result is that this site now publishes a `site.standard.publication`
+record served from [`/.well-known/site.standard.publication`](/.well-known/site.standard.publication) and articles & notes are published as `site.standard.document`'s via a GitHub Action and carry appropriate link tags.
+
+You can view the document records [here](https://atproto-browser.vercel.app/at/did:plc:aes3lokiqtv63fk62nwnjeuf/site.standard.document).
