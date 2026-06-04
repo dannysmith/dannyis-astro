@@ -32,6 +32,12 @@ His site, like mine, is a statically-generated Astro site deployed from a GitHub
 - **Lexicon:** `standard.site` (`site.standard.publication` + `site.standard.document`).
 - **Records live in my personal `danny.is` repo** (the same account I post from), exactly as Ben uses `ben.balter.com`.
 - **`textContent` is public.** Each record carries a plaintext approximation of the post body — already-public content, noted consciously.
+- **Record enrichment (beyond the minimum):** populate the optional lexicon fields we have good data for —
+  - Document `updatedAt` ← `updatedDate` frontmatter (articles only; notes have none).
+  - Document `coverImage` ← the post's **generated OG image** (`/writing/<id>/og-image.png` or `/notes/<id>/og-image.png`), fetched over HTTP after deploy and uploaded as a blob. Chosen over the article `cover` because it always exists (notes included) and needs no asset processing. Note this blob is for *other* AT readers' thumbnails (e.g. docs.surf); Bluesky's own card still uses the page `og:image` meta tag.
+  - Publication `icon` ← `public/avatar-circle.png` (705 KB, under the 1 MB cap) — this is the icon Bluesky shows in enhanced link cards.
+  - Publication `basicTheme` ← the brand palette as RGB integer objects.
+  - **Deferred:** `bskyPostRef` (link a post to a Bluesky thread for comments) — a future phase once we decide how a post maps to a thread. Skip `content`/`links`/`labels`/`contributors`.
 - **Dependencies (dev-only, never shipped to the browser):** `@atproto/api` (the SDK) and `gray-matter` (frontmatter parsing in the `tsx` sync script — not currently installed, even transitively; tiny and ubiquitous).
 
 ## Gotchas verified in the codebase (get these right)
@@ -45,11 +51,13 @@ These are real things checked against the repo that would otherwise bite during 
 5. **`.well-known` on this Vercel setup.** The repo serves `/.well-known/security.txt` via a **rewrite** in `vercel.output-config.json` to a root file (`public/security.txt`), not via a dotfile route. The deploy step `cp -r dist/.` *does* copy dotfile dirs, and `handle: filesystem` will serve a real `dist/.well-known/…` file — so the Astro dotfile endpoint should work. But **verify after the first build/deploy**; if `/.well-known/site.standard.publication` isn't served, mirror the security.txt pattern: emit the endpoint at a normal path and add a rewrite to `vercel.output-config.json` (before the `handle: filesystem` line).
 6. **CI needs Node for `tsx`.** `tsx` runs under Node (its bin has a `#!/usr/bin/env node` shebang). The sync workflow must set up **both** `oven-sh/setup-bun` and `actions/setup-node@v4` (node 22), mirroring `deploy.yml` — otherwise `bun run standard-site:sync` (which shells out to `tsx`) can fail.
 7. **`postId` is the filename stem.** Routing uses `post.id` (the glob loader id; the `slug` frontmatter field is vestigial and unused for routing). Content is flat (no subdirs) and filenames are already lowercase/URL-safe, so `post.id` == `Astro.params.slug` (the `[...slug]` rest param) == the script's relative-path-minus-extension. Layouts can read `Astro.params.slug` (`Note.astro` already does).
+8. **`coverImage`/`icon` are blobs, not URLs.** Upload bytes via `agent.com.atproto.repo.uploadBlob(...)` and attach the returned blob ref to the record. Both have a **1 MB cap** — `avatar-circle.png` is 705 KB (fine); for the OG image, check `Content-Length`/byte length at runtime and skip-with-warning if it exceeds the cap rather than failing the `putRecord`. The OG image is fetched from the **live deployed URL** (`${site.url}${getDocumentPath(...)}og-image.png`), which is safe because the sync runs after deploy and OG routes already exist for every post; the blob is re-uploaded on each sync (small images, infrequent — acceptable).
+9. **Theme colours are RGB integer objects, not hex.** `site.standard.theme.basic` takes `background`/`foreground`/`accent`/`accentForeground`, each `{ $type: 'site.standard.theme.color#rgb', r, g, b }` (0–255). The brand tokens (`_foundation.css`) are OKLCH + `light-dark()`; pick the **light-mode** values and convert to sRGB. Approximate starting values (verify the exact conversion at implementation): background/beige `rgb(244, 240, 230)`, foreground/ink `rgb(52, 48, 45)`, accent/coral `rgb(242, 122, 95)`, accentForeground `rgb(255, 255, 255)`.
 
 ## What this does NOT do (possible later phases)
 
 - No rich/markdown body on-network. `standard.site`'s `content` field is currently an open union with no canonical body format, so (like Ben) we publish plaintext `textContent` + `path`/`site` pointing readers back to the canonical HTML on danny.is.
-- No pulling records back into the site, and no Bluesky-replies-as-comments. Both are possible follow-ups.
+- No pulling records back into the site, and no Bluesky-replies-as-comments (`bskyPostRef`). Both are possible follow-ups.
 
 ---
 
@@ -161,7 +169,7 @@ Follow the existing `scripts/*.ts` convention: **relative imports into `src/` wi
 
 **New: `scripts/standard-site/auth.ts`** — port Ben's. Logs in with `ATPROTO_APP_PASSWORD` (required), `ATPROTO_HANDLE` (default `danny.is`), `ATPROTO_SERVICE` (default `https://bsky.social`); returns `{ agent, did }`.
 
-**New: `scripts/standard-site/create-publication.ts`** — port Ben's. Builds the publication record from config (`url: site.url`, `name: site.name`, `description: descriptions.site`), reuses an existing publication record if present (idempotent), prints the AT-URI to paste into config. (Consider a friendlier `name` than `'Danny Smith'`, e.g. `'danny.is'` — decide on the day.)
+**New: `scripts/standard-site/create-publication.ts`** — port Ben's. Builds the publication record from config (`url: site.url`, `name: site.name`, `description: descriptions.site`), reuses an existing publication record if present (idempotent), prints the AT-URI to paste into config. (Consider a friendlier `name` than `'Danny Smith'`, e.g. `'danny.is'` — decide on the day.) **Enrichment:** also set `icon` (read `public/avatar-circle.png`, `uploadBlob`, attach the ref) and `basicTheme` (the RGB colour objects from gotcha #9).
 
 **New: `scripts/standard-site/sync-document.ts`** — port Ben's, adapted:
 - Operate over both `src/content/articles` and `src/content/notes`; derive `collection` from the path.
@@ -169,6 +177,7 @@ Follow the existing `scripts/*.ts` convention: **relative imports into `src/` wi
 - `--all` enumeration regex must allow date-only filenames: `/(^|\/)\d{4}-\d{2}-\d{2}(-.+)?\.mdx?$/` (gotcha #2).
 - Parse frontmatter with `gray-matter`; `pubDate = new Date(data.pubDate)`.
 - `buildRecord`: `$type: 'site.standard.document'`, `site: publicationUri || site.url`, `title`, `publishedAt: pubDate.toISOString()`, `path: getDocumentPath(collection, postId)`, optional `description`, optional `tags` (from `data.tags` — danny.is uses `tags`, not Ben's `categories`), `textContent: stripMarkdown(body)` truncated to ~50 KB.
+- **Enrichment:** add `updatedAt: new Date(data.updatedDate).toISOString()` when `data.updatedDate` is present (articles only). Add `coverImage` by fetching `${site.url}${getDocumentPath(collection, postId)}og-image.png`, `uploadBlob`-ing the bytes, and attaching the ref — guarded by the 1 MB check (gotcha #8); skip-with-warning on fetch failure or oversize so a missing/large image never fails the sync. Make `buildRecord` async (it now does network I/O), or upload the blob in `main` and pass the ref in.
 - Skip `draft === true` and `styleguide === true`; skip posts failing `qualifiesForStandardSite` unless `--force`.
 - Upsert via `putRecord` at `getDocumentRkey(collection, postId, pubDate)`.
 - Flags: `--dry-run`, `--all`, `--force` (ignore the `since` cutoff), `--delete` (`--delete --all` enumerates and wipes the whole `site.standard.document` collection — the backfill undo).
