@@ -9,9 +9,7 @@ import {
 describe('SEO Utils', () => {
   describe('generatePageTitle', () => {
     it('adds correct suffix for articles', () => {
-      expect(generatePageTitle('My Article', 'article')).toBe(
-        'My Article | Danny Smith - Operations & Leadership Expert'
-      );
+      expect(generatePageTitle('My Article', 'article')).toBe('My Article | Danny Smith');
     });
 
     it('adds correct suffix for notes', () => {
