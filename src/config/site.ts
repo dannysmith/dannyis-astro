@@ -136,4 +136,24 @@ export const CONFIG = {
   videos: {
     baseUrl: 'https://v.danny.is',
   },
+
+  // standard.site (AT Protocol) publishing. Posts are mirrored to the Bluesky
+  // PDS as site.standard.document records. See
+  // docs/tasks-todo/task-x-standard-site-atproto.md for setup. The empty fields
+  // are typed `as string` so reads stay `string` (CONFIG is `as const`, which
+  // would otherwise narrow '' to the literal type "" and break null checks).
+  standardSite: {
+    // AT Protocol DID for danny.is. Filled in during setup (resolve from the
+    // Bluesky handle, e.g. via com.atproto.identity.resolveHandle).
+    did: '' as string,
+    // Bluesky handle that owns the records / used to log in.
+    handle: 'danny.is',
+    // AT-URI of the site.standard.publication record. Empty until created via
+    // scripts/standard-site/create-publication.ts. When empty: the /.well-known
+    // endpoint 404s and the homepage publication link tag is omitted.
+    publicationUri: '' as string,
+    // Only posts on/after this cutoff get a record + link tag. Set before the
+    // first post (2012-06-05) so the whole backfilled corpus qualifies.
+    since: '2000-01-01',
+  },
 } as const;
