@@ -57,17 +57,18 @@ function hashString(input: string): number {
 }
 
 /**
- * Microseconds since the UNIX epoch for a post's publish date. Derived from the
- * `YYYY-MM-DD` prefix of the post id at UTC midnight so the value is independent
- * of the machine's timezone (the build and the CI sync must agree on the rkey,
- * and a local backfill runs in a different zone). Falls back to `pubDate` for
- * ids without a date prefix.
+ * Microseconds since the UNIX epoch for a post's publish date, taken from the
+ * UTC calendar date of `pubDate` (year/month/day at UTC midnight).
+ *
+ * `pubDate` is the only date source available identically on both sides — the
+ * build (post.data.pubDate) and the CI/local sync (frontmatter) — so the rkey
+ * agrees everywhere. We deliberately do *not* derive it from the post id: ids
+ * are `slug ?? filename`, and ~half the posts have a slug with no date prefix.
+ * All pubDates are date-only, so collapsing to the UTC calendar date makes the
+ * value timezone-independent (a London backfill and a UTC CI run match).
  */
-function postTimestampMicros(postId: string, pubDate: Date): number {
-  const match = postId.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  const millis = match
-    ? Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
-    : pubDate.getTime();
+function pubDateMicros(pubDate: Date): number {
+  const millis = Date.UTC(pubDate.getUTCFullYear(), pubDate.getUTCMonth(), pubDate.getUTCDate());
   return millis * 1000;
 }
 
@@ -82,15 +83,15 @@ function postTimestampMicros(postId: string, pubDate: Date): number {
  * slug *and* date can't collide on the same key.
  *
  * @param collection - The content collection (`articles` or `notes`)
- * @param postId - Post id/slug (e.g. "2012-06-05-a-simpler-responsive-grid")
- * @param pubDate - Publish date (fallback when `postId` has no date prefix)
+ * @param postId - The post's canonical id (`slug ?? filename`), matching the URL
+ * @param pubDate - Publish date (the timestamp source)
  */
 export function getDocumentRkey(
   collection: StandardSiteCollection,
   postId: string,
   pubDate: Date
 ): string {
-  const timestampMicros = postTimestampMicros(postId, pubDate);
+  const timestampMicros = pubDateMicros(pubDate);
   const clockid = hashString(`${collection}/${postId}`) % TID_CLOCKID_MAX;
   const tid =
     s32encode(timestampMicros).padStart(TID_LEN - 2, '2') + s32encode(clockid).padStart(2, '2');

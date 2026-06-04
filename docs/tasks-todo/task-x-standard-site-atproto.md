@@ -44,13 +44,13 @@ His site, like mine, is a statically-generated Astro site deployed from a GitHub
 
 These are real things checked against the repo that would otherwise bite during implementation:
 
-1. **Deterministic timestamps come from the filename date prefix, not `pubDate`.** The rkey's timestamp bits derive from the `YYYY-MM-DD` prefix of the post id via `Date.UTC(...)`, so the rkey is identical whether computed in CI (UTC) or in a **local backfill (London time)**. Deriving from `pubDate` would be unsafe if a date ever carried a time-without-zone (local vs CI would diverge). Every *published* article and note filename is date-prefixed; the only non-prefixed files are the two styleguides (excluded — see #3).
+1. **Deterministic timestamps come from `pubDate`'s UTC calendar date.** The rkey's timestamp bits derive from `Date.UTC(pubDate.getUTCFullYear(), getUTCMonth(), getUTCDate())`. `pubDate` is the only date source available identically on both sides (the build has `post.data.pubDate`; the sync reads frontmatter — neither reliably has the filename's date). All pubDates are date-only (verified — no time components), so collapsing to the UTC calendar date is timezone-independent: a **local backfill (London)** and a **UTC CI run** produce the same key. (We do *not* key off the post id's date prefix — see #7: ids are `slug ?? filename`, and ~half have a slug with no date prefix.)
 2. **`--all` file-matching must allow date-only filenames.** One note is `2026-04-12.mdx` (date, no slug). Ben's enumeration regex `\d{4}-\d{2}-\d{2}-.+\.mdx?$` requires a trailing `-slug` and would silently skip such files. Use `/(^|\/)\d{4}-\d{2}-\d{2}(-.+)?\.mdx?$/`.
 3. **Styleguide pages must not sync.** `article-styleguide.mdx` and `note-styleguide.mdx` carry `styleguide: true` (confirmed) and have no date prefix. They're excluded two ways: `qualifiesForStandardSite` rejects `styleguide: true` on the build side, and the date-prefix regex in `--all` skips them on the sync side. (Styleguide pages *do* render individually, so the build-side predicate check is what stops a link tag being emitted on those pages.)
 4. **Config placeholders must be typed as `string`, not `as const` literals.** `CONFIG` in `src/config/site.ts` is `as const`, so a literal `did: ''` narrows to type `""` — which makes `if (!did) return null` mark the rest of the function unreachable and breaks `astro check`/`tsc`. Write the empty placeholders as `did: '' as string` and `publicationUri: '' as string` so reads are `string` and the guards type-check.
-5. **`.well-known` on this Vercel setup.** The repo serves `/.well-known/security.txt` via a **rewrite** in `vercel.output-config.json` to a root file (`public/security.txt`), not via a dotfile route. The deploy step `cp -r dist/.` *does* copy dotfile dirs, and `handle: filesystem` will serve a real `dist/.well-known/…` file — so the Astro dotfile endpoint should work. But **verify after the first build/deploy**; if `/.well-known/site.standard.publication` isn't served, mirror the security.txt pattern: emit the endpoint at a normal path and add a rewrite to `vercel.output-config.json` (before the `handle: filesystem` line).
+5. **`.well-known` must use the security.txt pattern (Vercel won't serve dotfile dirs).** Astro *builds* `dist/.well-known/…` fine, but Vercel does **not** serve a dotfile-directory route in this prebuilt setup — which is exactly why `/.well-known/security.txt` is shipped as a root `public/security.txt` plus a rewrite. So the publication endpoint lives at a normal path, `src/pages/standard-site-publication.ts` (emits `dist/standard-site-publication`, confirmed by build test), and `vercel.output-config.json` rewrites `^/\.well-known/site\.standard\.publication$` → `/standard-site-publication` (right after the security.txt rewrite, before `handle: filesystem`). The canonical URL indexers use is still `/.well-known/site.standard.publication`.
 6. **CI needs Node for `tsx`.** `tsx` runs under Node (its bin has a `#!/usr/bin/env node` shebang). The sync workflow must set up **both** `oven-sh/setup-bun` and `actions/setup-node@v4` (node 22), mirroring `deploy.yml` — otherwise `bun run standard-site:sync` (which shells out to `tsx`) can fail.
-7. **`postId` is the filename stem.** Routing uses `post.id` (the glob loader id; the `slug` frontmatter field is vestigial and unused for routing). Content is flat (no subdirs) and filenames are already lowercase/URL-safe, so `post.id` == `Astro.params.slug` (the `[...slug]` rest param) == the script's relative-path-minus-extension. Layouts can read `Astro.params.slug` (`Note.astro` already does).
+7. **The canonical `postId` is `slug ?? filename`, NOT always the filename.** Astro's glob loader uses the `slug` frontmatter field as the entry `id` when present (32/68 articles, 33/105 notes have one), else the filename stem — so e.g. `2013-01-21-what-is-good-design.md` routes to `/writing/what-is-good-design/`. The build side is already correct: layouts pass `Astro.params.slug` (= `post.id`) to `getDocumentUri`. **The Phase 3 sync script must compute the same id** — read the `slug` frontmatter and fall back to the filename stem — or build/sync will disagree on the rkey *and* the path. (`getDocumentPath` then produces the real URL automatically.)
 8. **`coverImage`/`icon` are blobs, not URLs.** Upload bytes via `agent.com.atproto.repo.uploadBlob(...)` and attach the returned blob ref to the record. Both have a **1 MB cap** — `avatar-circle.png` is 705 KB (fine); for the OG image, check `Content-Length`/byte length at runtime and skip-with-warning if it exceeds the cap rather than failing the `putRecord`. The OG image is fetched from the **live deployed URL** (`${site.url}${getDocumentPath(...)}og-image.png`), which is safe because the sync runs after deploy and OG routes already exist for every post; the blob is re-uploaded on each sync (small images, infrequent — acceptable).
 9. **Theme colours are RGB integer objects, not hex.** `site.standard.theme.basic` takes `background`/`foreground`/`accent`/`accentForeground`, each `{ $type: 'site.standard.theme.color#rgb', r, g, b }` (0–255). The brand tokens (`_foundation.css`) are OKLCH + `light-dark()`; pick the **light-mode** values and convert to sRGB. Approximate starting values (verify the exact conversion at implementation): background/beige `rgb(244, 240, 230)`, foreground/ink `rgb(52, 48, 45)`, accent/coral `rgb(242, 122, 95)`, accentForeground `rgb(255, 255, 255)`.
 
@@ -83,7 +83,7 @@ Run `bun run check:all` after each phase. Commit per phase. Phases 1–4 write *
 **New: `src/utils/standard-site.ts`** — ported from Ben's `src/utils/standard-site.ts`, adapted for two collections:
 
 - `s32encode(n)` and FNV-1a `hashString(input)` — copied verbatim (base32-sortable encoding + stable 32-bit hash).
-- `getDocumentRkey(collection, postId, pubDate)` — builds a valid 13-char base32-sortable TID: 11-char timestamp prefix from the `YYYY-MM-DD` prefix of `postId` (microseconds since epoch via `Date.UTC`, falling back to `pubDate` only for non-prefixed ids) + 2-char clock id from `hashString(`${collection}/${postId}`)`. **Deviation from Ben:** the hash input is namespaced with the collection so an article and a note sharing a slug *and* date can't collide.
+- `getDocumentRkey(collection, postId, pubDate)` — builds a valid 13-char base32-sortable TID: 11-char timestamp prefix from `pubDate`'s UTC calendar date (microseconds since epoch via `Date.UTC`; see gotcha #1) + 2-char clock id from `hashString(`${collection}/${postId}`)`. **Deviation from Ben:** timestamp from `pubDate` not the filename (our ids are `slug ?? filename`), and the hash input is namespaced with the collection so an article and a note sharing a slug *and* date can't collide.
 - `getDocumentPath(collection, postId)` — `/writing/${postId}/` for `articles`, `/notes/${postId}/` for `notes`. The single definition of the canonical path for standard.site (mirrors the inline patterns in the route/index files).
 - `qualifiesForStandardSite({ draft, styleguide, pubDate })` — `true` when not a draft, not a styleguide page, and (`since` configured and `pubDate >= since`). **Note:** unlike `filterContentForListing` (which drops drafts only in PROD), this always drops drafts — we never push a draft to the network, even from a local dry-run.
 - `getDocumentUri(collection, postId, { draft, styleguide, pubDate })` — `at://${did}/site.standard.document/${rkey}` or `null` when the post doesn't qualify or no `did` is configured.
@@ -142,7 +142,7 @@ Config access: `import { getConfig } from '@config/config'`; read `getConfig().s
 
 **`src/layouts/Note.astro`:** same, with `'notes'`. Add `draft`, `styleguide` to the `const { … } = Astro.props` destructure and pass the URI into `<BaseHead>`.
 
-**New: `src/pages/.well-known/site.standard.publication.ts`** — port Ben's endpoint:
+**New: `src/pages/standard-site-publication.ts`** + **Vercel rewrite** — the endpoint returns the publication AT-URI (404 when unset). Served at the canonical `/.well-known/site.standard.publication` via a rewrite in `vercel.output-config.json` (security.txt pattern — see gotcha #5):
   ```ts
   import type { APIRoute } from 'astro';
   import { getConfig } from '@config/config';
@@ -158,8 +158,12 @@ Config access: `import { getConfig } from '@config/config'`; read `getConfig().s
     });
   };
   ```
+  ```jsonc
+  // vercel.output-config.json — after the security.txt rewrite, before `handle: filesystem`
+  { "src": "^/\\.well-known/site\\.standard\\.publication$", "dest": "/standard-site-publication" },
+  ```
 
-**Verify:** `bun run build`; confirm `dist/.well-known/site.standard.publication` is emitted. Once `did`/`publicationUri` are set (Phase 5), confirm a published post's `<head>` contains the document link tag and the homepage contains the publication link tag. Re gotcha #5: after the first real deploy, fetch `https://danny.is/.well-known/site.standard.publication`; if not served, add the Vercel rewrite fallback.
+**Verify (done):** with empty `did`/`publicationUri`, `bun run build` emits no endpoint file and no link tags (correct — nothing to point at). A build test with a dummy `publicationUri` confirmed `dist/standard-site-publication` is emitted with the URI, the homepage gets the publication tag, and non-homepage pages omit it. Real document/publication tags appear once `did`/`publicationUri` are set in Phase 5. After the first real deploy, `curl https://danny.is/.well-known/site.standard.publication` to confirm the rewrite serves it.
 
 ### Phase 3 — Auth + scripts (local only; dry-run safe)
 
@@ -173,7 +177,7 @@ Follow the existing `scripts/*.ts` convention: **relative imports into `src/` wi
 
 **New: `scripts/standard-site/sync-document.ts`** — port Ben's, adapted:
 - Operate over both `src/content/articles` and `src/content/notes`; derive `collection` from the path.
-- `postId` = file path relative to the collection dir, minus extension (gotcha #7; equals basename for the current flat layout).
+- `postId` = the canonical content-layer id: `data.slug` (frontmatter) if present, else the filename stem (gotcha #7). This **must** match the build, which keys off `post.id`. Do *not* use the bare filename.
 - `--all` enumeration regex must allow date-only filenames: `/(^|\/)\d{4}-\d{2}-\d{2}(-.+)?\.mdx?$/` (gotcha #2).
 - Parse frontmatter with `gray-matter`; `pubDate = new Date(data.pubDate)`.
 - `buildRecord`: `$type: 'site.standard.document'`, `site: publicationUri || site.url`, `title`, `publishedAt: pubDate.toISOString()`, `path: getDocumentPath(collection, postId)`, optional `description`, optional `tags` (from `data.tags` — danny.is uses `tags`, not Ben's `categories`), `textContent: stripMarkdown(body)` truncated to ~50 KB.
@@ -213,7 +217,7 @@ Do the **Manual steps** section above in order, then publish a brand-new test no
 **New**
 - `src/utils/standard-site.ts`
 - `src/utils/standard-site.test.ts`
-- `src/pages/.well-known/site.standard.publication.ts`
+- `src/pages/standard-site-publication.ts` (+ a rewrite in `vercel.output-config.json`)
 - `scripts/standard-site/auth.ts`
 - `scripts/standard-site/create-publication.ts`
 - `scripts/standard-site/sync-document.ts`
@@ -224,7 +228,7 @@ Do the **Manual steps** section above in order, then publish a brand-new test no
 - `src/components/layout/BaseHead.astro` (prop + two link tags)
 - `src/layouts/Article.astro`, `src/layouts/Note.astro` (compute + pass document URI)
 - `package.json` (two scripts; `@atproto/api` + `gray-matter` devDeps)
-- `vercel.output-config.json` (only if the `.well-known` dotfile route isn't served — gotcha #5)
+- `vercel.output-config.json` (rewrite `/.well-known/site.standard.publication` → `/standard-site-publication`)
 
 ## Rollback / cleanup
 

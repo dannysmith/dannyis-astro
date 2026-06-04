@@ -2,13 +2,19 @@
 import type { CollectionEntry } from 'astro:content';
 import { BaseHead, Footer, MainNavigation, NoteCard } from '@components/layout/index';
 import { MarkdownContentActions } from '@components/ui/index';
+import { getDocumentUri } from '@utils/standard-site';
 
 type Props = CollectionEntry<'notes'>['data'];
 
-const { title, pubDate, description, sourceURL, tags } = Astro.props;
+const { title, pubDate, description, sourceURL, tags, draft, styleguide } = Astro.props;
 
 // Build OG image path for this note
 const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
+
+// standard.site document AT-URI for the <head> verification link tag (null for
+// drafts, styleguides, or posts before the configured cutoff).
+const standardSiteDocumentUri =
+  getDocumentUri('notes', Astro.params.slug!, { draft, styleguide, pubDate }) ?? undefined;
 ---
 
 <!doctype html>
@@ -22,6 +28,7 @@ const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
       image={ogImage}
       pubDate={pubDate}
       tags={tags}
+      standardSiteDocumentUri={standardSiteDocumentUri}
     />
   </head>
 

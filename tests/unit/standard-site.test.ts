@@ -35,18 +35,18 @@ describe('standard-site', () => {
       expect(a).toBe(b);
     });
 
-    it('is timezone-independent (timestamp comes from the id date prefix)', () => {
-      // pubDate carries a local time-without-zone, which would parse differently
-      // per machine — but the rkey must not change because it keys off the
-      // YYYY-MM-DD prefix via Date.UTC.
-      const utc = getDocumentRkey('notes', '2020-03-10-note', new Date('2020-03-10T00:00:00Z'));
-      const local = getDocumentRkey('notes', '2020-03-10-note', new Date('2020-03-10T23:30:00'));
-      expect(utc).toBe(local);
+    it('is timezone-independent (timestamp comes from the pubDate UTC calendar date)', () => {
+      // Same calendar date, different instant representations — the rkey keys off
+      // the UTC y/m/d, so a London backfill and a UTC CI run must agree.
+      const midnightUtc = getDocumentRkey('notes', 'a-note', new Date('2020-03-10T00:00:00Z'));
+      const dateOnly = getDocumentRkey('notes', 'a-note', new Date('2020-03-10'));
+      expect(midnightUtc).toBe(dateOnly);
     });
 
-    it('sorts lexicographically by publish date', () => {
-      const earlier = getDocumentRkey('articles', '2012-06-05-older', new Date('2012-06-05'));
-      const later = getDocumentRkey('articles', '2020-01-01-newer', new Date('2020-01-01'));
+    it('sorts lexicographically by publish date, even for slug ids with no date prefix', () => {
+      // Ids here are slugs (no date prefix) — the timestamp comes purely from pubDate.
+      const earlier = getDocumentRkey('articles', 'an-older-post', new Date('2012-06-05'));
+      const later = getDocumentRkey('articles', 'a-newer-post', new Date('2020-01-01'));
       expect(later > earlier).toBe(true);
     });
 
