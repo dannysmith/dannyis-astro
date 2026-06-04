@@ -35,6 +35,8 @@
     "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
     "newnote": "tsx scripts/create-note.ts",
     "generate-og-image": "tsx scripts/generate-og-image.ts",
+    "standard-site:publication": "tsx scripts/standard-site/create-publication.ts",
+    "standard-site:sync": "tsx scripts/standard-site/sync-document.ts",
     "task:complete": "node scripts/complete-task.js",
     "task:rename-done": "node scripts/complete-task.js --rename-existing"
   },
@@ -67,6 +69,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@atproto/api": "^0.20.9",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.60.0",
     "@types/react": "^19.2.15",
@@ -76,6 +79,7 @@
     "astro-eslint-parser": "^1.4.0",
     "eslint": "^10.1.0",
     "eslint-plugin-astro": "^1.7.0",
+    "gray-matter": "^4.0.3",
     "jscpd": "^4.2.4",
     "knip": "^6.14.2",
     "playwright": "^1.60.0",

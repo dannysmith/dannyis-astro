@@ -24,6 +24,8 @@ Check and Build run **in parallel** — neither depends on the other. Deploy wai
 
 **Checks gate the deploy even on `main`.** Most commits land directly on `main` rather than via PR, so the Check stage is the only safety net. It must pass before anything ships — that's why Deploy depends on it and not just on Build.
 
+**A separate workflow runs after a successful production deploy.** `.github/workflows/standard-site-sync.yml` mirrors new/changed posts to the AT Protocol network; it triggers on this workflow completing and does not affect the deploy itself. See [standard-site.md](./standard-site.md).
+
 **Build → artifact → deploy.** The Build job never deploys directly. It produces `dist/`, rearranges it into the layout Vercel expects under `.vercel/output/`, and uploads that as an artifact. The Deploy jobs download the artifact and run `vercel deploy --prebuilt`, which tells Vercel "this is already built — just host it." Vercel does no building of its own. This split is what keeps deploys fast and host-agnostic: the artifact is the same portable static output, and the deploy step is a thin shipping wrapper around it.
 
 ## What gets configured for Vercel
@@ -31,7 +33,7 @@ Check and Build run **in parallel** — neither depends on the other. Deploy wai
 Two pieces translate the static output into a working site:
 
 - **`.vercel/output/`** — created in CI, never committed. It's Vercel's [Build Output API](https://vercel.com/docs/build-output-api) layout: the Build job copies `dist/` into `.vercel/output/static/` and drops the config file beside it.
-- **`vercel.output-config.json`** — committed; copied to `.vercel/output/config.json` at deploy time. It's a list of routing rules applied at the edge: long-lived cache-control headers for hashed assets and fonts, security headers on every response, a few redirects (e.g. `/cv.pdf`), the `/.well-known/security.txt` rewrite, and the filesystem handler plus 404 fallback.
+- **`vercel.output-config.json`** — committed; copied to `.vercel/output/config.json` at deploy time. It's a list of routing rules applied at the edge: long-lived cache-control headers for hashed assets and fonts, security headers on every response, a few redirects (e.g. `/cv.pdf`), the `/.well-known/security.txt` and `/.well-known/site.standard.publication` rewrites, and the filesystem handler plus 404 fallback.
 
 These are the only Vercel-shaped things in the repo, and they only describe headers and routing — not build behaviour. Another host would express the same intent in its own config.
 

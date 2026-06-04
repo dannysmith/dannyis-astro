@@ -12,6 +12,7 @@ import {
   TableOfContents,
 } from '@components/layout/index';
 import { FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index';
+import { getDocumentUri } from '@utils/standard-site';
 
 type Props = CollectionEntry<'articles'>['data'] & {
   readingTime: string;
@@ -26,6 +27,7 @@ const {
   cover,
   coverAlt,
   draft,
+  styleguide,
   redirectURL,
   platform,
   readingTime,
@@ -37,6 +39,12 @@ const {
 
 // Build OG image path for this article
 const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
+
+// standard.site document AT-URI for the <head> verification link tag (null for
+// drafts, styleguides, or posts before the configured cutoff).
+const standardSiteDocumentUri =
+  getDocumentUri('articles', Astro.params.slug!, { draft, styleguide, redirectURL, pubDate }) ??
+  undefined;
 ---
 
 <!doctype html>
@@ -51,6 +59,7 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
       pubDate={pubDate}
       updatedDate={updatedDate}
       tags={tags}
+      standardSiteDocumentUri={standardSiteDocumentUri}
     />
     {platform && redirectURL && <meta http-equiv="refresh" content={'0;url=' + redirectURL} />}
   </head>

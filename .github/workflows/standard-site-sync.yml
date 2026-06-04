@@ -1,0 +1,112 @@
+name: Sync posts to standard.site
+
+# Runs after a successful production deploy and upserts a site.standard.document
+# record on the danny.is PDS for each added/modified post. Record keys are
+# derived deterministically from the post (src/utils/standard-site.ts), so the
+# link tag the site already renders points at the synced record — no commit-back,
+# and re-runs are idempotent (which is also how edits propagate). The coverImage
+# is fetched from the just-deployed OG image, so this must run after the deploy.
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preview the records without writing to the PDS'
+        type: boolean
+        default: true
+      post_path:
+        description: 'Path to a specific post to sync (e.g. src/content/notes/2026-06-15-foo.mdx)'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: standard-site-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    # Auto-runs only when the triggering CI run (incl. deploy) succeeded.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Read-only job (git diff only) — don't leave GITHUB_TOKEN in git config.
+          persist-credentials: false
+
+      - name: Detect changed posts
+        id: detect
+        run: |
+          # Manual dispatch with a specific post path.
+          if [ -n "${{ inputs.post_path }}" ]; then
+            if [ -f "${{ inputs.post_path }}" ]; then
+              echo "${{ inputs.post_path }}" > /tmp/changed-posts.txt
+              echo "has_posts=true" >> "$GITHUB_OUTPUT"
+              echo "Manual dispatch for: ${{ inputs.post_path }}"
+              exit 0
+            else
+              echo "❌ File not found: ${{ inputs.post_path }}"
+              exit 1
+            fi
+          fi
+
+          # Manual dispatch without a path: nothing to do.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "No post_path provided for manual dispatch"
+            echo "has_posts=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Auto-detect added/modified posts from the deploy's tip commit.
+          AFTER="${{ github.event.workflow_run.head_commit.id }}"
+          BEFORE="$AFTER~1"
+          CHANGED=$(git diff --name-only --diff-filter=AM "$BEFORE" "$AFTER" -- \
+            'src/content/articles/' 'src/content/notes/' 2>/dev/null || echo "")
+
+          if [ -z "$CHANGED" ]; then
+            echo "No added/modified posts in this deploy"
+            echo "has_posts=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Changed posts:"
+          echo "$CHANGED"
+          echo "$CHANGED" > /tmp/changed-posts.txt
+          echo "has_posts=true" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Bun
+        if: steps.detect.outputs.has_posts == 'true'
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Node
+        if: steps.detect.outputs.has_posts == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        if: steps.detect.outputs.has_posts == 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Sync documents
+        if: steps.detect.outputs.has_posts == 'true'
+        env:
+          ATPROTO_APP_PASSWORD: ${{ secrets.ATPROTO_APP_PASSWORD }}
+          ATPROTO_HANDLE: danny.is
+        run: |
+          DRY_RUN_FLAG=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            DRY_RUN_FLAG="--dry-run"
+          fi
+          xargs bun run standard-site:sync -- $DRY_RUN_FLAG < /tmp/changed-posts.txt

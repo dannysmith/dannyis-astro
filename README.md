@@ -42,6 +42,7 @@ All commands are run from the root of the project, from a terminal:
 | `bun run scrape-toolbox` | Scrape toolbox data from betterat.work           |
 | `bun run astro ...`      | Run CLI commands like `astro add`, `astro check` |
 | `bun run newnote`        | Create a new note                                |
+| `bun run standard-site:sync` | Sync posts to the AT Protocol network (see [docs](docs/developer/standard-site.md)) |
 
 ## Creating a New Note
 
