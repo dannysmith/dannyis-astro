@@ -94,6 +94,12 @@ describe('standard-site', () => {
       expect(qualifiesForStandardSite({ styleguide: true, pubDate })).toBe(false);
     });
 
+    it('rejects externally-hosted posts (redirectURL)', () => {
+      expect(qualifiesForStandardSite({ redirectURL: 'https://medium.com/x', pubDate })).toBe(
+        false
+      );
+    });
+
     it('rejects posts before the cutoff', () => {
       expect(qualifiesForStandardSite({ pubDate: new Date(SINCE - 1000) })).toBe(false);
     });

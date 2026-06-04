@@ -23,6 +23,9 @@ export interface StandardSitePost {
   draft?: boolean;
   styleguide?: boolean;
   pubDate: Date;
+  // Articles published elsewhere set redirectURL; their danny.is page just
+  // redirects off-site, so they don't get a standard.site record.
+  redirectURL?: string;
 }
 
 // AT Protocol base32-sortable alphabet (a.k.a. s32). Lexicographic order of the
@@ -111,7 +114,9 @@ export function getDocumentPath(collection: StandardSiteCollection, postId: stri
 /**
  * Whether a post should be published to standard.site. Mirrors the site's
  * existing "is this published?" rule (`filterContentForListing`): excludes
- * drafts and styleguide pages. Adds the `since` cutoff so backfill scope is
+ * drafts and styleguide pages. Also excludes externally-hosted posts
+ * (`redirectURL`) — their page only redirects off-site, so there's no content to
+ * represent on the AT network. Adds the `since` cutoff so backfill scope is
  * configurable. Unlike `filterContentForListing`, drafts are *always* excluded
  * (never push a draft to the network, even from a local dry-run). Returns false
  * when no cutoff is configured.
@@ -119,9 +124,10 @@ export function getDocumentPath(collection: StandardSiteCollection, postId: stri
 export function qualifiesForStandardSite({
   draft,
   styleguide,
+  redirectURL,
   pubDate,
 }: StandardSitePost): boolean {
-  if (draft || styleguide) return false;
+  if (draft || styleguide || redirectURL) return false;
   const { since } = getConfig().standardSite;
   if (!since) return false;
   return pubDate.getTime() >= new Date(since).getTime();

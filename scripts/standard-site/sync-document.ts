@@ -289,11 +289,18 @@ async function main(): Promise<void> {
       console.log(`⏭️  ${postId}: styleguide, skipping`);
       continue;
     }
+    // Externally-hosted posts (their page just redirects off-site) never get a
+    // record — not even with --force.
+    if (data.redirectURL) {
+      console.log(`⏭️  ${postId}: external (redirectURL), skipping`);
+      continue;
+    }
     if (
       !force &&
       !qualifiesForStandardSite({
         draft: data.draft as boolean,
         styleguide: data.styleguide as boolean,
+        redirectURL: data.redirectURL as string | undefined,
         pubDate,
       })
     ) {

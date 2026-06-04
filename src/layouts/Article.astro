@@ -43,7 +43,8 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 // standard.site document AT-URI for the <head> verification link tag (null for
 // drafts, styleguides, or posts before the configured cutoff).
 const standardSiteDocumentUri =
-  getDocumentUri('articles', Astro.params.slug!, { draft, styleguide, pubDate }) ?? undefined;
+  getDocumentUri('articles', Astro.params.slug!, { draft, styleguide, redirectURL, pubDate }) ??
+  undefined;
 ---
 
 <!doctype html>
