@@ -33,6 +33,10 @@ const rgb = (r: number, g: number, b: number) => ({
   b,
 });
 const basicTheme = {
+  // Bluesky's ingester needs the $type discriminator on the theme object even
+  // though the lexicon types basicTheme as a ref — without it our publication
+  // record is silently dropped and cards never enrich.
+  $type: 'site.standard.theme.basic',
   background: rgb(248, 241, 227), // beige  oklch(96% 0.02 85)
   foreground: rgb(35, 42, 44), // ink    oklch(28% 0.01 210)
   accent: rgb(250, 104, 99), // coral  oklch(70% 0.18 25)
@@ -49,6 +53,7 @@ async function main(): Promise<void> {
     name: config.site.shortName,
     description: config.descriptions.site,
     basicTheme,
+    preferences: { showInDiscover: true },
   };
 
   if (dryRun) {
