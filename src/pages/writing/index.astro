@@ -31,17 +31,13 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
                   <p class="date all-caps">
                     <FormattedDate date={post.data.pubDate} />
                   </p>
-                  <h4 class="post-title">
+                  <h2 class="post-title">
                     {post.data.title}
                     {post.data.draft && <span class="draft-marker"> 🚧</span>}
                     {post.data.platform && (
-                      <Pill
-                        text={post.data.platform}
-                        color="var(--color-green)"
-                        textColor="var(--color-white)"
-                      />
+                      <Pill text={post.data.platform} color="var(--color-green)" />
                     )}
-                  </h4>
+                  </h2>
                 </a>
               </li>
             ))
