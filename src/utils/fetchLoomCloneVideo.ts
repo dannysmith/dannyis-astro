@@ -2,8 +2,8 @@
  * Build-time fetcher for LoomClone video metadata (v.danny.is/<slug>.json).
  *
  * Used by <LCVid> to embed self-hosted videos in MDX content. Failures
- * (404, non-complete, private) throw and fail the build — typos in slugs
- * and stale references should not silently ship to production.
+ * (404, private) throw and fail the build — typos in slugs and stale
+ * references should not silently ship to production.
  *
  * Fetches are deduplicated across the build: the same JSON URL fetched
  * from multiple components (or pages) only hits the network once.
@@ -35,7 +35,7 @@ export interface LoomCloneUrls {
 export interface LoomCloneVideo {
   id: string;
   slug: string;
-  status: 'recording' | 'healing' | 'complete' | 'failed';
+  status: string;
   visibility: 'public' | 'unlisted' | 'private';
   title: string | null;
   description: string | null;
@@ -122,11 +122,6 @@ async function doFetch(jsonUrl: string): Promise<LoomCloneVideo> {
 
   const data = (await response.json()) as LoomCloneVideo;
 
-  if (data.status !== 'complete') {
-    throw new Error(
-      `video at ${jsonUrl} has status "${data.status}", not "complete" — refusing to embed`
-    );
-  }
   if (data.visibility === 'private') {
     throw new Error(`video at ${jsonUrl} is private — refusing to embed`);
   }
