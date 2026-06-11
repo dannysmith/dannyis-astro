@@ -6,10 +6,8 @@ import { ColorSwatch } from '@components/mdx/index';
 
 const toc = [
   { id: 'colour', label: 'Colour System' },
+  { id: 'borders', label: 'Borders' },
   { id: 'spacing', label: 'Spacing' },
-  { id: 'border-widths', label: 'Border widths' },
-  { id: 'border-radii', label: 'Border radii' },
-  { id: 'shadows', label: 'Shadows' },
   { id: 'font-families', label: 'Font families' },
   { id: 'font-sizes', label: 'Font sizes' },
   { id: 'font-weights', label: 'Font weights' },
@@ -70,7 +68,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       }
     </div>
     <p>
-      The table below shows the semantic colours currently in use. Components should use these (or derivitives of them via CSS functions like `color-mix()`) wherever their use case fits their semantic role. In situations where a foundational colour is <em>more semantic</em> (eg a "blue callout") then use the foundational colour instead. I deliberatly try to keep these semantic colours to a minimum to avoid ending up with a large unwieldy palette of very specific colours that are only used in one place.
+      The table below shows the semantic colours currently in use. Components should use these (or
+      derivatives of them via CSS functions like `color-mix()`) wherever their use case fits their
+      semantic role. In situations where a foundational colour is <em>more semantic</em> (eg a "blue callout")
+      then use the foundational colour instead. I deliberately try to keep these semantic colours to a
+      minimum to avoid ending up with a large unwieldy palette of very specific colours that are only
+      used in one place.
     </p>
     <table>
       <thead>
@@ -270,6 +273,164 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     </table>
   </section>
 
+  <section id="design-tokens" class="flow">
+    <h2>Design tokens</h2>
+    <p>
+      As with colours, I've tried to keep the number of generic design tokens to a minimum, while
+      still providing a wide enough set of options for most use cases.
+    </p>
+
+    <h3 id="borders">Borders, radii and shadows</h3>
+    <p>
+      Five CSS custom properties are available for setting border widths and radii. Border widths
+      are set in pixels so they don't scale with the base font size while radii are mostly set in
+      rems so they do.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--border-width-hairline</code></td>
+          <td><code>max(0.0625rem, 1px)</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-hairline)"
+            >
+            </div>
+          </td>
+          <td
+            >1px at the default root size but never falls to a sub-pixel when scaling up with the
+            root font size</td
+          >
+        </tr>
+        <tr>
+          <td><code>--border-width-base</code></td>
+          <td><code>2px</code></td>
+          <td>
+            <div class="border-width-preview" style="border-bottom-width: var(--border-width-base)">
+            </div>
+          </td>
+          <td>Standard border width for most elements</td>
+        </tr>
+        <tr>
+          <td><code>--border-width-thick</code></td>
+          <td><code>4px</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-thick)"
+            >
+            </div>
+          </td>
+          <td>Usually only applied to one edge of an element</td>
+        </tr>
+        <tr>
+          <td><code>--border-width-heavy</code></td>
+          <td><code>6px</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-heavy)"
+            >
+            </div>
+          </td>
+          <td>Usually only applied to one edge of an element</td>
+        </tr>
+        <tr>
+          <td><code>--border-width-accent</code></td>
+          <td><code>1rem</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-accent)"
+            >
+            </div>
+          </td>
+          <td>Used as a design element, so scales with the root font size</td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--radius-xs</code></td>
+          <td><code>0.125rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-xs)"></div></td>
+          <td>Very subtle radius for softening corners slightly</td>
+        </tr>
+        <tr>
+          <td><code>--radius-sm</code></td>
+          <td><code>0.25rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-sm)"></div></td>
+          <td>Standard radius for most rounded elements</td>
+        </tr>
+        <tr>
+          <td><code>--radius-md</code></td>
+          <td><code>0.5rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-md)"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>--radius-lg</code></td>
+          <td><code>0.75rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-lg)"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>--radius-full</code></td>
+          <td><code>calc(infinity * 1px)</code></td>
+          <td>
+            <div class="border-radius-preview" style="border-radius: var(--radius-full)"></div>
+          </td>
+          <td
+            >Infinite radius for fully rounding into a pill or circle regardless of size.</td
+          >
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      I don't use shadows heavily but there are two custom properties available if I need to create depth and elevation.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--shadow-small</code></td>
+          <td class="shadow-preview-container">
+            <div class="shadow-preview" style="filter: var(--shadow-small)"></div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>--shadow-medium</code></td>
+          <td class="shadow-preview-container">
+            <div class="shadow-preview" style="filter: var(--shadow-medium)"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
   <DesignTokens />
   <UtilityClasses />
 </StyleguideLayout>
@@ -311,5 +472,30 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     width: 2.5rem;
     height: 2.5rem;
     vertical-align: middle;
+  }
+
+  /* Border widths preview */
+  .border-width-preview {
+    border-bottom-style: solid;
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* Border radii preview */
+  .border-radius-preview {
+    width: 5rem;
+    height: 3rem;
+    background-color: var(--color-accent);
+  }
+
+  /* Shadows preview */
+  .shadow-preview-container {
+    background-color: var(--color-background);
+    padding: var(--space-2xs);
+  }
+
+  .shadow-preview {
+    width: 5rem;
+    height: 3rem;
+    background-color: var(--color-background);
   }
 </style>

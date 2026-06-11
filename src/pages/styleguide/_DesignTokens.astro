@@ -30,10 +30,6 @@ const fontWeights = [
   'extrabold',
   'heavy',
 ];
-const borderWidths = ['hairline', 'base', 'thick', 'heavy', 'accent'];
-const borderRadii = ['xs', 'sm', 'md', 'lg', 'full'];
-const shadows = ['small', 'medium'];
-
 // Font families mapped to the five usage contexts.
 // Four CSS variables cover five contexts: --font-ui serves both UI elements AND short-form prose.
 const fontFamilies = [
@@ -79,8 +75,8 @@ const fontSizes = [
 ];
 ---
 
-<section id="design-tokens" class="flow">
-  <h2>Design Tokens</h2>
+<section id="typography-spacing" class="flow">
+  <h2>Typography &amp; Spacing Tokens</h2>
   <p>
     Spacing, typography, borders, and motion tokens that provide consistent rhythm and visual harmony
     across the site. All values use fluid scaling via <code>clamp()</code> for responsive behavior.
@@ -109,89 +105,6 @@ const fontSizes = [
           </td>
           <td>
             <div class="spacing-bar" style={`width: var(${variable})`} />
-          </td>
-        </tr>
-      ))
-    }
-  </tbody>
-</table>
-
-<h3 id="border-widths">Border Widths</h3>
-<p>
-  Use hairline for subtle dividers, base for standard borders, and heavier weights for emphasis or
-  interactive states.
-</p>
-<table>
-  <thead>
-    <tr>
-      <th>Variable</th>
-      <th>Preview</th>
-    </tr>
-  </thead>
-  <tbody>
-    {
-      borderWidths.map(name => (
-        <tr>
-          <td>
-            <code>{`--border-width-${name}`}</code>
-          </td>
-          <td>
-            <div class="border-width-preview" style={`border-bottom-width: var(--border-width-${name})`} />
-          </td>
-        </tr>
-      ))
-    }
-  </tbody>
-</table>
-
-<h3 id="border-radii">Border Radii</h3>
-<p>
-  From subtle rounding (xs) to fully circular (full). Use smaller radii for compact UI elements,
-  larger for cards and containers.
-</p>
-<table>
-  <thead>
-    <tr>
-      <th>Variable</th>
-      <th>Preview</th>
-    </tr>
-  </thead>
-  <tbody>
-    {
-      borderRadii.map(name => (
-        <tr>
-          <td>
-            <code>{`--radius-${name}`}</code>
-          </td>
-          <td>
-            <div class="border-radius-preview" style={`border-radius: var(--radius-${name})`} />
-          </td>
-        </tr>
-      ))
-    }
-  </tbody>
-</table>
-
-<h3 id="shadows">Shadows</h3>
-<p>
-  Drop shadows for creating depth and elevation. Use sparingly to draw attention to raised elements.
-</p>
-<table>
-  <thead>
-    <tr>
-      <th>Variable</th>
-      <th>Preview</th>
-    </tr>
-  </thead>
-  <tbody>
-    {
-      shadows.map(name => (
-        <tr>
-          <td>
-            <code>{`--shadow-${name}`}</code>
-          </td>
-          <td class="shadow-preview-container">
-            <div class="shadow-preview" style={`filter: var(--shadow-${name})`} />
           </td>
         </tr>
       ))
@@ -327,31 +240,6 @@ const fontSizes = [
     height: var(--space-s);
     background-color: var(--color-accent);
     border-radius: var(--radius-xs);
-  }
-
-  /* Border widths table */
-  .border-width-preview {
-    border-bottom-style: solid;
-    border-bottom-color: var(--color-accent);
-  }
-
-  /* Border radii table */
-  .border-radius-preview {
-    width: 4rem;
-    height: 4rem;
-    background-color: var(--color-accent);
-    border-radius: var(--radius-full);
-  }
-
-  /* Shadows table */
-  .shadow-preview-container {
-    background-color: var(--color-background);
-    padding: var(--space-2xs);
-  }
-  .shadow-preview {
-    width: 4rem;
-    height: 4rem;
-    background-color: var(--color-background);
   }
 
   /* Font preview table */
