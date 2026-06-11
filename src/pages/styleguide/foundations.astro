@@ -1,6 +1,7 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
+import SGTypeSpecimen from './_components/SGTypeSpecimen.astro';
 import { ColorSwatch } from '@components/mdx/index';
 
 const toc = [
@@ -16,38 +17,6 @@ const toc = [
 ];
 
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-// Font families mapped to the five usage contexts (ported as-is from _DesignTokens — to be reworked).
-// Four CSS variables cover five contexts: --font-ui serves both UI elements AND short-form prose.
-const fontFamilies = [
-  {
-    variable: '--font-display',
-    family: 'Geist',
-    context: '1. Display',
-    usage:
-      'Large, presentational type. Page titles, hero text, 404, brand marks. Mostly used as Caps.',
-  },
-  {
-    variable: '--font-prose',
-    family: 'Literata',
-    context: '2. Long-form prose',
-    usage:
-      'Articles and any content inside .longform-prose. Rich typographic features for sustained reading.',
-  },
-  {
-    variable: '--font-ui',
-    family: 'Figtree',
-    context: '3. Short-form prose + 4. UI',
-    usage:
-      'Document body default. Notes, /now, callouts, captions AND interface elements — navigation, buttons, pills, form controls.',
-  },
-  {
-    variable: '--font-code',
-    family: 'Fira Code',
-    context: '5. Code',
-    usage: 'Code blocks, inline code, and occasional stylistic monospace.',
-  },
-];
 ---
 
 <StyleguideLayout
@@ -473,20 +442,36 @@ const fontFamilies = [
     <p>
       Typography on this site serves five distinct usage contexts, covered by four font stacks. Short-form prose and UI elements use Figtree (<code>--font-ui</code>) which works well for both use cases and is the deault face. Long-form prose uses Literata (<code>--font-prose</code>), while "display" type uses Giest (<code>--font-display</code>). Code examples and other monospacefonts use a version of Fira Code.
     </p>
-    {
-      fontFamilies.map(({ family, variable, context, usage }) => (
-        <div class="sg-panel">
-          <p class="font-preview" style={`font-family: var(${variable})`}>
-            The quick brown fox jumps over the lazy dog
-          </p>
-          <p class="font-meta">
-            <strong>{family}</strong> · <code>{variable}</code> · <em>{context}</em>
-            <br />
-            {usage}
-          </p>
-        </div>
-      ))
-    }
+    <div class="sg-type-specimens">
+      <SGTypeSpecimen
+        family="Geist"
+        url="https://vercel.com/font"
+        usageTitle="Display"
+        cssVar="--font-display"
+        description="Large, presentational type. Page titles, hero text, 404, brand marks. Mostly used as Caps."
+      />
+      <SGTypeSpecimen
+        family="Literata"
+        url="https://fonts.google.com/specimen/Literata"
+        usageTitle="Long-form prose"
+        cssVar="--font-prose"
+        description="Articles and any content inside .longform-prose. Rich typographic features for sustained reading."
+      />
+      <SGTypeSpecimen
+        family="Figtree"
+        url="https://fonts.google.com/specimen/Figtree"
+        usageTitle="Short-form prose & UI"
+        cssVar="--font-ui"
+        description="Document body default. Notes, /now, callouts, captions AND interface elements — navigation, buttons, pills, form controls."
+      />
+      <SGTypeSpecimen
+        family="Fira Code"
+        url="https://github.com/tonsky/FiraCode"
+        usageTitle="Code"
+        cssVar="--font-code"
+        description="Code blocks, inline code, and occasional stylistic monospace."
+      />
+    </div>
 
     <h3 id="font-sizes">Font Sizes</h3>
     <p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
@@ -959,14 +944,11 @@ const fontFamilies = [
     background-color: var(--color-background);
   }
 
-  /* Font families preview */
-  .font-preview {
-    font-size: var(--font-size-lg);
-    color: var(--color-accent);
-  }
-
-  .font-meta {
-    font-size: var(--font-size-sm);
+  /* Typeface specimens stack */
+  .sg-type-specimens {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
   }
 
   /* Font sizes preview */

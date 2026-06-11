@@ -1,0 +1,150 @@
+---
+/**
+ * SGTypeSpecimen - a FontBook-style card documenting one typeface.
+ *
+ * Left column is the identity (big "Aa", name, usage label, CSS property);
+ * right column shows the face in use (heading + body samples) with optional
+ * prose. The font is applied via the `cssVar` prop, which is both shown as
+ * code and used to render every sample.
+ *
+ * Usage:
+ *   <SGTypeSpecimen
+ *     family="Literata"
+ *     url="https://fonts.google.com/specimen/Literata"
+ *     usageTitle="Long-form prose"
+ *     cssVar="--font-prose"
+ *   >
+ *     Why we use it…
+ *   </SGTypeSpecimen>
+ */
+interface Props {
+  /** Font family name, e.g. "Literata". */
+  family: string;
+  /** Optional URL to the font's home; the family name links to it when set. */
+  url?: string;
+  /** Short usage label, e.g. "Long-form prose". */
+  usageTitle: string;
+  /** CSS custom property that applies the font, e.g. "--font-prose". */
+  cssVar: string;
+  /** Optional prose describing how/why the face is used (also accepted via slot). */
+  description?: string;
+}
+
+const { family, url, usageTitle, cssVar, description } = Astro.props;
+
+const hasDescription = description != null || Astro.slots.has('default');
+---
+
+<div class="specimen" style={`--specimen-font: var(${cssVar})`}>
+  <div class="id">
+    <div class="poster" aria-hidden="true">Aa</div>
+    <p class="meta"><span>{usageTitle}</span> <code>{cssVar}</code></p>
+    <p class="name">{url ? <a href={url}>{family}</a> : family}</p>
+    {hasDescription && <div class="desc">{description ?? <slot />}</div>}
+  </div>
+
+  <div class="samples">
+    <h2>The quick brown fox jumps over the lazy dog</h2>
+    <p class="body">
+      Mollit amet velit reprehenderit. Proident aliqua officia nisi officia sint sint elit commodo
+      pariatur voluptate nisi duis occaecat mollit. Dolor sint id velit ipsum excepteur pariatur
+      adipisicing. Irure laborum ea nulla esse aute aliquip dolor reprehenderit sit laborum
+      consequat esse ad. Duis pariatur laborum ut veniam exercitation in ut. Ullamco irure Lorem sit
+      consequat adipisicing do fugiat occaecat consectetur commodo pariatur amet ut amet.
+    </p>
+  </div>
+</div>
+
+<style>
+  .specimen {
+    display: grid;
+    grid-template-columns: 13rem 1fr;
+    gap: var(--space-l);
+    padding: var(--space-m);
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  /* Spacing comes from flex gaps below, not element margins. */
+  .specimin :where(p, h2) {
+    margin: 0;
+  }
+
+  /* Left column: the typeface's identity. */
+  .id {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .poster {
+    font-family: var(--specimen-font);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-none);
+  }
+
+  /* Family name, set in its own face. Deliberately not a heading. */
+  .name {
+    font-family: var(--specimen-font);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-none);
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: var(--space-3xs);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .meta span {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Right column: the face in use. */
+  .samples {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Heading sample is a real <h3>, retyped in the specimen face. */
+  h2 {
+    font-family: var(--specimen-font);
+    text-wrap: balance;
+  }
+
+  .body {
+    font-family: var(--specimen-font);
+    text-wrap: pretty;
+  }
+
+  /* The author's prose: why we use it, what for. */
+  .desc {
+    margin-top: var(--space-s);
+    padding-top: var(--space-s);
+    border-top: var(--border-width-hairline) solid var(--color-border);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    max-width: var(--measure-standard);
+  }
+
+  /* Stack the identity above the samples when space is tight. */
+  @media (max-width: 34rem) {
+    .specimen {
+      grid-template-columns: 1fr;
+      gap: var(--space-m);
+    }
+  }
+</style>
