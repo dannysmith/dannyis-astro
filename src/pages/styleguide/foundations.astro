@@ -1,11 +1,22 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
+
+// DUMMY content for testing the TOC sidebar — remove before Phase 1 content lands.
+const toc = [
+  { id: 'colour', label: 'Colour' },
+  { id: 'spacing', label: 'Spacing' },
+  { id: 'borders', label: 'Borders & radii' },
+  { id: 'shadows', label: 'Shadows' },
+  { id: 'typography-tokens', label: 'Typography tokens' },
+  { id: 'utilities', label: 'Utility classes' },
+];
 ---
 
 <StyleguideLayout
   title="Foundations"
   description="The design system documented: colour, design tokens, and utility classes."
   current="foundations"
+  toc={toc}
 >
   <header>
     <p>
@@ -14,5 +25,103 @@ import StyleguideLayout from './_layout/StyleguideLayout.astro';
     </p>
   </header>
 
-  <p><em>Scaffolded in Phase 0 — content migrates here in Phase 1.</em></p>
+  <p><em>Dummy content below — scaffolding to test the TOC. Replaced in Phase 1.</em></p>
+
+  <section id="colour">
+    <h2>Colour</h2>
+    <p>
+      Adaptive and absolute colours, plus the semantic groups that map them onto accents,
+      backgrounds, text and borders. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+      eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+    <p>
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+      dolore eu fugiat nulla pariatur.
+    </p>
+    <p>
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
+      id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
+    </p>
+  </section>
+
+  <section id="spacing">
+    <h2>Spacing</h2>
+    <p>
+      The fluid spacing scale, from <code>--space-3xs</code> through <code>--space-3xl</code>. At
+      vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum.
+    </p>
+    <p>
+      Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
+      maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+    </p>
+    <p>
+      Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et
+      voluptates repudiandae sint et molestiae non recusandae.
+    </p>
+  </section>
+
+  <section id="borders">
+    <h2>Borders &amp; radii</h2>
+    <p>
+      Border widths and corner radii. Itaque earum rerum hic tenetur a sapiente delectus, ut aut
+      reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque faucibus ex sapien vitae
+      pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.
+    </p>
+    <p>
+      Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum
+      egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere.
+    </p>
+  </section>
+
+  <section id="shadows">
+    <h2>Shadows</h2>
+    <p>
+      The two elevation shadows. Ut hendrerit semper vel class aptent taciti sociosqu ad litora
+      torquent per conubia nostra inceptos himenaeos.
+    </p>
+    <p>
+      Nulla facilisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
+      cubilia curae donec velit neque auctor.
+    </p>
+    <p>
+      Sit amet aliquam vel ullamcorper sit amet ligula. Mauris blandit aliquet elit eget tincidunt
+      nibh pulvinar a vivamus suscipit tellus.
+    </p>
+  </section>
+
+  <section id="typography-tokens">
+    <h2>Typography tokens</h2>
+    <p>
+      Font families, sizes, line heights, letter spacing and weights. Cras ultricies ligula sed magna
+      dictum porta vestibulum lacinia arcu eget nulla.
+    </p>
+    <p>
+      Curabitur aliquet quam id dui posuere blandit. Vivamus magna justo lacinia eget consectetur sed
+      convallis at tellus pellentesque in ipsum id orci porta dapibus.
+    </p>
+    <p>
+      Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Donec sollicitudin
+      molestie malesuada proin eget tortor risus.
+    </p>
+  </section>
+
+  <section id="utilities">
+    <h2>Utility classes</h2>
+    <p>
+      The global utility classes, treated as system primitives alongside the tokens. Sed porttitor
+      lectus nibh quisque velit nisi pretium ut lacinia in elementum id enim.
+    </p>
+    <p>
+      Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Donec rutrum congue leo eget
+      malesuada nulla quis lorem ut libero malesuada feugiat.
+    </p>
+    <p>
+      Proin eget tortor risus. Vivamus suscipit tortor eget felis porttitor volutpat. Pellentesque in
+      ipsum id orci porta dapibus.
+    </p>
+  </section>
 </StyleguideLayout>

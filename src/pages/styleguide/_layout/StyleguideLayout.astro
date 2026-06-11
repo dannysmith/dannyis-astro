@@ -1,27 +1,27 @@
 ---
-/**
- * StyleguideLayout - shared shell for the split styleguide pages.
- *
- * Both navs are inlined here (each is styleguide-only and used nowhere else):
- * - Section nav — cross-page links, an inline row at the top at every width.
- *   Active state is server-rendered from `current`, so there's NO client JS.
- * - TOC — optional in-page anchors for the current page (`toc` prop). A sticky
- *   left sidebar on wide viewports; hidden on narrow (each page is one section).
- *
- * Also hosts the styleguide-only globals (`.sg-panel`, `[data-theme]` forcing)
- * so every section page shares them.
- */
 import { BaseHead, Footer, Lightbox, MainNavigation } from '@components/layout/index';
-import { STYLEGUIDE_SECTIONS } from '../_components/sections';
 
 interface Props {
   title: string;
   description?: string;
-  /** Active section slug (see `_components/sections.ts`). */
   current?: string;
-  /** In-page anchors for this page, rendered as the left-hand TOC. */
   toc?: Array<{ id: string; label: string }>;
 }
+
+interface StyleguideSection {
+  slug: string;
+  href: string;
+  label: string;
+}
+
+const STYLEGUIDE_SECTIONS: StyleguideSection[] = [
+  { slug: 'overview', href: '/styleguide', label: 'Overview' },
+  { slug: 'foundations', href: '/styleguide/foundations', label: 'Foundations' },
+  { slug: 'typography', href: '/styleguide/typography', label: 'Typography' },
+  { slug: 'components', href: '/styleguide/components', label: 'Content' },
+  { slug: 'ui', href: '/styleguide/ui', label: 'UI' },
+  { slug: 'html', href: '/styleguide/html', label: 'HTML' },
+];
 
 const { title, description, current, toc = [] } = Astro.props;
 ---
@@ -33,47 +33,45 @@ const { title, description, current, toc = [] } = Astro.props;
   </head>
   <body>
     <MainNavigation />
-    <div class="styleguide-layout">
-      <div class:list={['styleguide-body', { 'has-toc': toc.length > 0 }]}>
-        {
-          toc.length > 0 && (
-            <nav class="sg-toc ui-style" aria-label="On this page">
-              <ul class="list-reset">
-                {toc.map(({ id, label }) => (
-                  <li>
-                    <a href={`#${id}`}>{label}</a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )
-        }
-        <main class="styleguide-content flow">
-          <nav class="sg-sectionnav ui-style" aria-label="Styleguide sections">
+    <div class:list={['styleguide-body', { 'has-toc': toc.length > 0 }]}>
+      {
+        toc.length > 0 && (
+          <nav class="sg-toc ui-style" aria-label="On this page">
             <ul class="list-reset">
-              {
-                STYLEGUIDE_SECTIONS.map(({ slug, href, label }) => {
-                  const isActive = slug === current;
-                  return (
-                    <li>
-                      <a
-                        href={href}
-                        class:list={['sg-sectionnav-link', { 'is-active': isActive }]}
-                        aria-current={isActive ? 'page' : undefined}
-                      >
-                        {label}
-                      </a>
-                    </li>
-                  );
-                })
-              }
+              {toc.map(({ id, label }) => (
+                <li>
+                  <a href={`#${id}`}>{label}</a>
+                </li>
+              ))}
             </ul>
           </nav>
-          <h1>{title}</h1>
-          <h2>Site styleguide</h2>
-          <slot />
-        </main>
-      </div>
+        )
+      }
+      <main class="styleguide-content flow">
+        <nav class="sg-sectionnav ui-style" aria-label="Styleguide sections">
+          <ul class="list-reset">
+            {
+              STYLEGUIDE_SECTIONS.map(({ slug, href, label }) => {
+                const isActive = slug === current;
+                return (
+                  <li>
+                    <a
+                      href={href}
+                      class:list={['sg-sectionnav-link', { 'is-active': isActive }]}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {label}
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </nav>
+        <h1>{title}</h1>
+        <h2>Site styleguide</h2>
+        <slot />
+      </main>
     </div>
     <Footer />
     <Lightbox />
@@ -85,7 +83,7 @@ const { title, description, current, toc = [] } = Astro.props;
         min-height: 100vh;
       }
 
-      .styleguide-layout {
+      .styleguide-body {
         padding: var(--space-m);
       }
 
@@ -101,7 +99,6 @@ const { title, description, current, toc = [] } = Astro.props;
       }
 
       .styleguide-content {
-        min-width: 0;
         max-width: var(--measure-standard);
         margin-inline: auto;
         padding: var(--space-2xl) var(--space-s);
@@ -124,7 +121,6 @@ const { title, description, current, toc = [] } = Astro.props;
         text-transform: uppercase;
       }
 
-      /* TOC: hidden on narrow; a sticky left sidebar once there's room. */
       .sg-toc {
         display: none;
       }
@@ -137,14 +133,15 @@ const { title, description, current, toc = [] } = Astro.props;
           align-items: start;
         }
 
-        .has-toc .sg-toc {
+        .sg-toc {
           display: block;
           position: sticky;
           inset-block-start: var(--space-m);
+          margin-block-start: var(--space-2xl);
           font-size: var(--font-size-sm);
         }
 
-        .has-toc .sg-toc li:not(:last-child) {
+        .sg-toc li:not(:last-child) {
           margin-block-end: var(--space-3xs);
         }
       }
