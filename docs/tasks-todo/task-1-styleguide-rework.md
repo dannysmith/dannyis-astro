@@ -141,14 +141,116 @@ src/pages/styleguide/
 
 ### Phase 2 — Typography
 
+> **Source:** `_Typography.astro`, plus footnotes from `_OtherStuff.astro` and the `.list-reset` demo from `_UtilityClasses.astro`. These specimens are things that happen *by default* from markdown/HTML — `SmartLink` belongs here (auto from markdown links); manual components like `BlockQuoteCitation`, `SmallCaps` and `Highlight` go to Phase 3.
+
+- [ ] Intro
+- [ ] Inline elements reference table (you write / renders / notes)
+  - [ ] Links — plain `<a>` (internal & external)
+  - [ ] SmartLink (auto from markdown links)
+  - [ ] `em` / `strong`
+  - [ ] `b` / `i`
+  - [ ] inline `code`
+  - [ ] `mark`
+  - [ ] `del` / `s`
+  - [ ] `sub` / `sup`
+  - [ ] `kbd`
+  - [ ] `var` / `samp`
+  - [ ] `abbr` / `dfn`
+  - [ ] `cite` / `q`
+  - [ ] `small`
+- [ ] Manual inline typographic components (need an explicit tag, *not* auto from markdown — kept here because they're pure inline-text styling)
+  - [ ] SmallCaps (`<SmallCaps>`)
+  - [ ] Highlight (`<highlight>` — shares `.highlight` styling with `<mark>`)
+- [ ] Default behaviours worth showing (decide per item — may be too subtle to demo)
+  - [ ] Visited-link colour (`a:visited` → `--color-visited`)
+  - [ ] Nested italics flip upright (`em > em`)
+  - [ ] Failed-image alt text renders italic (`img[alt]`)
+- [ ] Block-level elements reference (table or list)
+  - [ ] Headings (h1–h6)
+  - [ ] Paragraphs
+  - [ ] Blockquote (plain markdown `>`)
+  - [ ] Horizontal rule (`hr`)
+- [ ] Composite block-level samples (headings + paragraphs together)
+- [ ] Lists
+  - [ ] Unordered (incl. nesting)
+  - [ ] Ordered (incl. nesting)
+  - [ ] Checklists (GFM task lists, from MDX)
+  - [ ] List density (`.long-list-items` auto-spacing, from MDX)
+- [ ] Tables
+  - [ ] Basic table (caption, thead, th/td)
+  - [ ] Mixed-content cells
+  - [ ] Wide / horizontally-scrolling tables (`.table-scroll`)
+- [ ] Footnotes demo (reference + inline popup + footnotes section)
+- [ ] `.list-reset` demo
+- [ ] Realistic composite example (multiple elements working together)
 
 ### Phase 3 — Content Components
 
+> **Source:** `_ContentComponents.astro`. Each gets the full treatment: what it is, props table where non-trivial, "you write this" + rendered output, examples in different contexts / `ResizableContainer`, and badges for auto-replace components. Per the colocation rule, native `<details>` (→ Accordion) and native `<audio>`/`<video>` (→ Embeds) live here too, not in HTML.
+
+- [ ] Intro
+- [ ] IntroParagraph
+- [ ] Inline content components (manual, not auto from markdown)
+  - [ ] Notion (NotionLink)
+  - [ ] BlockQuoteCitation (author / title+url / `small`)
+- [ ] Images
+  - [ ] BasicImage — default / framed / caption / framed+caption / bleed variants
+  - [ ] Astro `<Image>` & `<Picture>`
+- [ ] Embeds
+  - [ ] Embed (auto-detect dispatch)
+  - [ ] YouTube
+  - [ ] Vimeo
+  - [ ] Loom
+  - [ ] LCVid (self-hosted v.danny.is — chrome / transcript / minimal / overrides)
+  - [ ] Native `<audio>` / `<video>` (colocated here)
+- [ ] BookmarkCard
+- [ ] ButtonLink (primary / secondary / inline) + standard HTML buttons
+- [ ] Callout (colour variants / title+icon+emoji / rich content)
+- [ ] Accordion (+ native `<details>` comparison, colocated here)
+- [ ] Code blocks (title / terminal / line highlight / ins+del / diff / wrap)
+- [ ] MarkdownBlock (rendered / source default)
+- [ ] FileTree
+- [ ] ColorSwatch
+- [ ] Tabs / TabItem
+- [ ] ContentCard (articles / notes / custom / compact)
+- [ ] NoteCard (with tags+sourceURL / minimal)
+- [ ] Layout helpers
+  - [ ] Center
+  - [ ] Grid
+  - [ ] ResizableContainer
+  - [ ] Spacer
 
 ### Phase 4 — UI Components
 
+> **Source:** `_UiComponents.astro`. Code-only building blocks used outside content. Same component-library treatment as Phase 3. (ContentCard / NoteCard live in Phase 3 per the page split, even though they currently sit in this partial.)
+
+- [ ] Intro
+- [ ] PersonalLogo
+- [ ] Pill (default / custom colour / `textColor` override)
+- [ ] Spinner (sizes)
+- [ ] SocialLinks
+- [ ] ThemeToggle
+- [ ] MarkdownContentActions
+- [ ] FormattedDate
+- [ ] Footer
+
 ### Phase 5 — HTML
 
+> **Source:** `_HtmlElements.astro`. Raw native element defaults under our CSS, for elements with no component home. Native `<details>`, `<audio>` and `<video>` are *not* here — they're colocated with Accordion / Embeds in Phase 3.
+>
+> **Open decision:** if form controls end up moving to `/styleguide/ui`, this page may shrink enough to delete entirely (see End State note).
+
+- [ ] Intro
+- [ ] Forms
+  - [ ] Text inputs (text / email / password / search / url / number)
+  - [ ] File / color / date / range inputs
+  - [ ] Checkboxes & radios
+  - [ ] Select & datalist
+  - [ ] Textarea (with / without `rows`)
+  - [ ] Progress & meter
+  - [ ] Fieldset / legend / label structure
+- [ ] Definition lists (`dl` / `dt` / `dd`)
+- [ ] Figure / figcaption
 
 ### Phase 6 — Full Edit
 
