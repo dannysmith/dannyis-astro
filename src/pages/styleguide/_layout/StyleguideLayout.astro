@@ -1,0 +1,175 @@
+---
+/**
+ * StyleguideLayout - shared shell for the split styleguide pages.
+ *
+ * Both navs are inlined here (each is styleguide-only and used nowhere else):
+ * - Section nav — cross-page links, an inline row at the top at every width.
+ *   Active state is server-rendered from `current`, so there's NO client JS.
+ * - TOC — optional in-page anchors for the current page (`toc` prop). A sticky
+ *   left sidebar on wide viewports; hidden on narrow (each page is one section).
+ *
+ * Also hosts the styleguide-only globals (`.sg-panel`, `[data-theme]` forcing)
+ * so every section page shares them.
+ */
+import { BaseHead, Footer, Lightbox, MainNavigation } from '@components/layout/index';
+import { STYLEGUIDE_SECTIONS } from '../_components/sections';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Active section slug (see `_components/sections.ts`). */
+  current?: string;
+  /** In-page anchors for this page, rendered as the left-hand TOC. */
+  toc?: Array<{ id: string; label: string }>;
+}
+
+const { title, description, current, toc = [] } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <MainNavigation />
+    <div class="styleguide-layout">
+      <div class:list={['styleguide-body', { 'has-toc': toc.length > 0 }]}>
+        {
+          toc.length > 0 && (
+            <nav class="sg-toc ui-style" aria-label="On this page">
+              <ul class="list-reset">
+                {toc.map(({ id, label }) => (
+                  <li>
+                    <a href={`#${id}`}>{label}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+        <main class="styleguide-content flow">
+          <nav class="sg-sectionnav ui-style" aria-label="Styleguide sections">
+            <ul class="list-reset">
+              {
+                STYLEGUIDE_SECTIONS.map(({ slug, href, label }) => {
+                  const isActive = slug === current;
+                  return (
+                    <li>
+                      <a
+                        href={href}
+                        class:list={['sg-sectionnav-link', { 'is-active': isActive }]}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        {label}
+                      </a>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </nav>
+          <h1>{title}</h1>
+          <h2>Site styleguide</h2>
+          <slot />
+        </main>
+      </div>
+    </div>
+    <Footer />
+    <Lightbox />
+
+    <style>
+      body {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 100vh;
+      }
+
+      .styleguide-layout {
+        padding: var(--space-m);
+      }
+
+      .sg-sectionnav ul {
+        display: flex;
+        flex-wrap: wrap;
+        text-transform: uppercase;
+        font-size: var(--font-size-sm);
+      }
+
+      .sg-sectionnav-link.is-active {
+        border-bottom: var(--border-width-base) solid var(--color-accent);
+      }
+
+      .styleguide-content {
+        min-width: 0;
+        max-width: var(--measure-standard);
+        margin-inline: auto;
+        padding: var(--space-2xl) var(--space-s);
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-extrabold);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+        border-bottom: none;
+        padding-block-end: 0;
+      }
+
+      h2 {
+        font-family: var(--font-display);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-light);
+        text-transform: uppercase;
+      }
+
+      /* TOC: hidden on narrow; a sticky left sidebar once there's room. */
+      .sg-toc {
+        display: none;
+      }
+
+      @media (min-width: 70rem) {
+        .styleguide-body.has-toc {
+          display: grid;
+          grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
+          gap: var(--space-xl);
+          align-items: start;
+        }
+
+        .has-toc .sg-toc {
+          display: block;
+          position: sticky;
+          inset-block-start: var(--space-m);
+          font-size: var(--font-size-sm);
+        }
+
+        .has-toc .sg-toc li:not(:last-child) {
+          margin-block-end: var(--space-3xs);
+        }
+      }
+
+      /* Shared styleguide utilities (global) */
+      :global(.sg-panel) {
+        padding: var(--space-m);
+        background-color: var(--color-background-secondary);
+        border: var(--border-width-hairline) solid var(--color-border);
+        border-radius: var(--radius-sm);
+      }
+
+      /* Theme forcing - force light or dark mode on containers */
+      :global([data-theme]) {
+        background-color: var(--color-background);
+        color: var(--color-text);
+      }
+
+      :global([data-theme='light']) {
+        color-scheme: light;
+      }
+
+      :global([data-theme='dark']) {
+        color-scheme: dark;
+      }
+    </style>
+  </body>
+</html>

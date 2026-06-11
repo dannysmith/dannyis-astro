@@ -1,0 +1,48 @@
+---
+/**
+ * SGSwitcher - renders slot content across the site's typographic contexts.
+ *
+ * Successor to `SGTypographySwitcher`, trimmed to the four contexts we keep
+ * (UI Flow dropped). Wraps the shared `<Tabs>` so there's one tab system on the
+ * site. Use only where cross-context comparison earns it — many specimens only
+ * make sense in a single context.
+ *
+ * Contexts:
+ * - Default          — bare, no wrapper
+ * - Default Flow     — `.flow` (vertical rhythm/spacing)
+ * - Long Form Prose  — `<LongFormProseTypography>`, as used in articles
+ * - UI               — `.ui-style` (spacing/most styles stripped)
+ */
+import { Tabs, TabItem } from '@components/mdx/index';
+import { LongFormProseTypography } from '@components/layout/index';
+
+type TypographySystem =
+  | { name: string; type: 'none' }
+  | { name: string; type: 'component'; component: 'LongFormProseTypography' }
+  | { name: string; type: 'class'; className: string };
+
+const typographySystems: TypographySystem[] = [
+  { name: 'Default', type: 'none' },
+  { name: 'Default Flow', type: 'class', className: 'flow' },
+  { name: 'Long Form Prose', type: 'component', component: 'LongFormProseTypography' },
+  { name: 'UI', type: 'class', className: 'ui-style' },
+];
+
+const content = await Astro.slots.render('default');
+---
+
+<Tabs>
+  {
+    typographySystems.map((system) => (
+      <TabItem label={system.name}>
+        {system.type === 'none' && <Fragment set:html={content} />}
+        {system.type === 'component' && system.component === 'LongFormProseTypography' && (
+          <LongFormProseTypography>
+            <Fragment set:html={content} />
+          </LongFormProseTypography>
+        )}
+        {system.type === 'class' && <div class={system.className} set:html={content} />}
+      </TabItem>
+    ))
+  }
+</Tabs>

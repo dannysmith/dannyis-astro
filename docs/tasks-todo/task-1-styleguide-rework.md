@@ -96,13 +96,15 @@ src/pages/styleguide/
 
 Each phase: Claude drafts the scaffolding/structure and a first pass of content; Danny reviews and tweaks copy and examples. Work the phases in order; the page split means later phases don't disturb earlier ones.
 
-### Phase 0 — Scaffolding
+### Phase 0 — Scaffolding ✅ done
 
-- New responsive shared layout (single-column on mobile) + `SGNav` cross-page nav.
-- Relocate the existing helpers into co-located `_components/`: `SGTOC` → `SGNav`, `SGTypographySwitcher` → `SGSwitcher`. Update the `src/components/styleguide/index.ts` barrel and any imports.
-- `SGSwitcher` (four contexts) — adapt the existing `SGTypographySwitcher`, dropping UI Flow.
-- `SGSpecimen` helper for code + rendered output.
-- Create the **sibling** stub pages (`foundations`, `typography`, `components`, `ui`, `html`) on the new layout. **Leave `index.astro` as the current monolith** — it keeps rendering all sections until Phase 6, so the styleguide stays working throughout the migration.
+Built the new co-located scaffolding **alongside** the monolith (rather than relocating the old helpers in place — `SGTOC`/`SGTypographySwitcher` are still used by the `index.astro` monolith and by `scratchpad.astro`, so they stay until Phase 6).
+
+- `src/pages/styleguide/_layout/StyleguideLayout.astro` — responsive shared layout, hosts the shared `.sg-panel` / `[data-theme]` globals. Both navs are inlined here (each is styleguide-only, used nowhere else): a **section nav** (cross-page links, inline row at the top at every width, server-rendered active state, **no client JS** — replaces the old scroll-spy `SGTOC`) and an optional per-page **TOC** (`toc` prop of in-page anchors; sticky left sidebar ≥70rem, hidden on narrow).
+- `_components/sections.ts` — canonical section list (single source of truth for the section nav).
+- `_components/SGSwitcher.astro` — four-context switcher (UI Flow dropped), wraps the shared `<Tabs>`.
+- `_components/SGSpecimen.astro` — "you write this" (Expressive Code) + rendered output unit.
+- Sibling stub pages (`foundations`, `typography`, `components`, `ui`, `html`) on the new layout. `index.astro` left as the monolith — it keeps rendering all sections until Phase 6, so the styleguide stays working throughout the migration.
 
 ### Phase 1 — Foundations page
 
@@ -126,7 +128,7 @@ Distribute media/`<details>` into their component homes; build the baseline appe
 
 ### Phase 6 — Cleanup
 
-Convert `index.astro` from the monolith into the slim hub (last, once every section has its own page); remove the old single-page partials; verify mobile performance/heat; `bun run check:all`; update `docs/developer/` if any patterns changed.
+Convert `index.astro` from the monolith into the slim hub (last, once every section has its own page); remove the old single-page partials; remove the now-unused `src/components/styleguide/` helpers (`SGTOC`, `SGTypographySwitcher`) and their barrel once nothing references them (check `scratchpad.astro`); verify mobile performance/heat; `bun run check:all`; update `docs/developer/` if any patterns changed.
 
 Note on Phases 1–5: as each section moves to its own page, remove its partial from the `index.astro` monolith so content is never duplicated or lost mid-migration.
 
