@@ -1,12 +1,7 @@
 ---
 /**
  * SGTypeSpecimen - a FontBook-style card documenting one typeface.
- *
- * Left column is the identity (big "Aa", name, usage label, CSS property);
- * right column shows the face in use (heading + body samples) with optional
- * prose. The font is applied via the `cssVar` prop, which is both shown as
- * code and used to render every sample.
- *
+
  * Usage:
  *   <SGTypeSpecimen
  *     family="Literata"
@@ -28,7 +23,7 @@ interface Props {
   cssVar: string;
   /** Optional prose describing how/why the face is used (also accepted via slot). */
   description?: string;
-  /** Render the heading sample as display caps (extrabold, uppercase, case feature) — for faces used as caps, like Geist. */
+  /** Render the heading sample as display caps */
   caps?: boolean;
 }
 
@@ -68,12 +63,6 @@ const hasDescription = description != null || Astro.slots.has('default');
     border-radius: var(--radius-md);
   }
 
-  /* Spacing comes from flex gaps below, not element margins. */
-  .specimin :where(p, h2) {
-    margin: 0;
-  }
-
-  /* Left column: the typeface's identity. */
   .id {
     display: flex;
     flex-direction: column;
@@ -87,7 +76,6 @@ const hasDescription = description != null || Astro.slots.has('default');
     line-height: var(--leading-none);
   }
 
-  /* Family name, set in its own face. Deliberately not a heading. */
   .name {
     font-family: var(--specimen-font);
     font-size: var(--font-size-md);
@@ -115,19 +103,15 @@ const hasDescription = description != null || Astro.slots.has('default');
     font-weight: var(--font-weight-medium);
   }
 
-  /* Right column: the face in use. */
   .samples {
     display: flex;
     flex-direction: column;
   }
 
-  /* Heading sample is a real <h3>, retyped in the specimen face. */
   h2 {
     font-family: var(--specimen-font);
-    text-wrap: balance;
   }
 
-  /* Display-caps treatment, for faces used as caps (e.g. Geist). */
   h2.caps {
     font-weight: var(--font-weight-extrabold);
     text-transform: uppercase;
@@ -136,10 +120,8 @@ const hasDescription = description != null || Astro.slots.has('default');
 
   .body {
     font-family: var(--specimen-font);
-    text-wrap: pretty;
   }
 
-  /* The author's prose: why we use it, what for. */
   .desc {
     margin-top: var(--space-s);
     padding-top: var(--space-s);
@@ -149,7 +131,6 @@ const hasDescription = description != null || Astro.slots.has('default');
     max-width: var(--measure-standard);
   }
 
-  /* Stack the identity above the samples when space is tight. */
   @media (max-width: 34rem) {
     .specimen {
       grid-template-columns: 1fr;
