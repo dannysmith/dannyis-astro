@@ -1,14 +1,55 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
+import DesignTokens from './_DesignTokens.astro';
+import UtilityClasses from './_UtilityClasses.astro';
+import { ColorSwatch } from '@components/mdx/index';
 
-// DUMMY content for testing the TOC sidebar — remove before Phase 1 content lands.
 const toc = [
-  { id: 'colour', label: 'Colour' },
+  { id: 'colour', label: 'Colour System' },
   { id: 'spacing', label: 'Spacing' },
-  { id: 'borders', label: 'Borders & radii' },
+  { id: 'border-widths', label: 'Border widths' },
+  { id: 'border-radii', label: 'Border radii' },
   { id: 'shadows', label: 'Shadows' },
-  { id: 'typography-tokens', label: 'Typography tokens' },
-  { id: 'utilities', label: 'Utility classes' },
+  { id: 'font-families', label: 'Font families' },
+  { id: 'font-sizes', label: 'Font sizes' },
+  { id: 'font-weights', label: 'Font weights' },
+  { id: 'utility-classes', label: 'Utility classes' },
+];
+
+const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Semantic colours — role-based tokens, grouped by purpose. These are what you
+// reach for in components, rather than the raw palette above.
+const semanticGroups = [
+  {
+    name: 'Accent & interaction',
+    tokens: [
+      { label: 'Accent', variable: '--color-accent', usage: 'Primary brand colour, links' },
+      { label: 'Visited', variable: '--color-visited', usage: 'Visited links' },
+      { label: 'Highlight', variable: '--color-highlight', usage: 'Text highlights' },
+      { label: 'Focus ring', variable: '--color-focus-ring', usage: 'Focus ring' },
+    ],
+  },
+  {
+    name: 'Backgrounds & surfaces',
+    tokens: [
+      { label: 'Background', variable: '--color-background', usage: 'Page background' },
+      {
+        label: 'Background secondary',
+        variable: '--color-background-secondary',
+        usage: 'Cards, panels',
+      },
+      { label: 'Background code', variable: '--color-background-code', usage: 'Code blocks' },
+    ],
+  },
+  {
+    name: 'Text & borders',
+    tokens: [
+      { label: 'Text', variable: '--color-text', usage: 'Body text' },
+      { label: 'Text secondary', variable: '--color-text-secondary', usage: 'Muted text' },
+      { label: 'Border', variable: '--color-border', usage: 'Borders, dividers' },
+    ],
+  },
 ];
 ---
 
@@ -20,108 +61,148 @@ const toc = [
 >
   <header>
     <p>
-      The design system, documented (not specimens): the colour system, design tokens (space, type
-      tokens, borders, radii, shadows, font families and sizes), and utility classes.
+      This page is the primary reference for the site's foundational design system. It includes the
+      colour system, the design tokens for spacing, type, borders, radii and shadows, and the global
+      utility classes.
     </p>
   </header>
 
-  <p><em>Dummy content below — scaffolding to test the TOC. Replaced in Phase 1.</em></p>
+  <section id="colour" class="flow">
+    <h2>Colour System</h2>
+    <p>
+      The colour system is rooted in a set of foundational colours, some of which are <strong
+        >adaptive</strong
+      > and appear differently in light and dark modes (via <code>light-dark()</code>), and some of
+      which are absolute and appear the same in both modes. These are used to create a set of <strong
+        >semantic</strong
+      > role-based tokens that are primarily used accross the site. All colors are defined in <a
+        href="https://oklch.com/">OKLCH</a
+      >. The adaptive colours use lower lightness and higher chroma in light mode and have increased
+      lightness and lower chroma in dark mode.
+    </p>
+    <p></p>
+    <div class="sg-theme-pair">
+      {
+        ['light', 'dark'].map(theme => (
+          <div class="sg-theme-col" data-theme={theme}>
+            <p class="sg-theme-label">{theme}</p>
+            <div class="sg-swatch-grid">
+              {['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'].map(colour => (
+                <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
 
-  <section id="colour">
-    <h2>Colour</h2>
+    <div class="sg-panel">
+      <p class="sg-theme-label">Absolute</p>
+      <div class="sg-swatch-grid" style="--sg-swatch-min: 8rem">
+        {
+          ['white', 'black', 'ink', 'charcoal', 'beige'].map(colour => (
+            <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
+          ))
+        }
+      </div>
+    </div>
+
     <p>
-      Adaptive and absolute colours, plus the semantic groups that map them onto accents,
-      backgrounds, text and borders. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-      eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
     </p>
-    <p>
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-      dolore eu fugiat nulla pariatur.
-    </p>
-    <p>
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
-      id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
-    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th class="center">Light</th>
+          <th class="center">Dark</th>
+          <th>Variable</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      {
+        semanticGroups.map(({ name, tokens }) => (
+          <tbody>
+            <tr>
+              <th colspan="5">{name}</th>
+            </tr>
+            {tokens.map(({ label, variable, usage }) => (
+              <tr>
+                <td>{label}</td>
+                <td class="center" data-theme="light">
+                  <span class="sg-mini-swatch">
+                    <ColorSwatch color={`var(${variable})`} />
+                  </span>
+                </td>
+                <td class="center" data-theme="dark">
+                  <span class="sg-mini-swatch">
+                    <ColorSwatch color={`var(${variable})`} />
+                  </span>
+                </td>
+                <td>
+                  <code>{variable}</code>
+                </td>
+                <td>{usage}</td>
+              </tr>
+            ))}
+          </tbody>
+        ))
+      }
+    </table>
   </section>
 
-  <section id="spacing">
-    <h2>Spacing</h2>
-    <p>
-      The fluid spacing scale, from <code>--space-3xs</code> through <code>--space-3xl</code>. At
-      vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum.
-    </p>
-    <p>
-      Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
-      maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
-    </p>
-    <p>
-      Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et
-      voluptates repudiandae sint et molestiae non recusandae.
-    </p>
-  </section>
-
-  <section id="borders">
-    <h2>Borders &amp; radii</h2>
-    <p>
-      Border widths and corner radii. Itaque earum rerum hic tenetur a sapiente delectus, ut aut
-      reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-    </p>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque faucibus ex sapien vitae
-      pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.
-    </p>
-    <p>
-      Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum
-      egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere.
-    </p>
-  </section>
-
-  <section id="shadows">
-    <h2>Shadows</h2>
-    <p>
-      The two elevation shadows. Ut hendrerit semper vel class aptent taciti sociosqu ad litora
-      torquent per conubia nostra inceptos himenaeos.
-    </p>
-    <p>
-      Nulla facilisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
-      cubilia curae donec velit neque auctor.
-    </p>
-    <p>
-      Sit amet aliquam vel ullamcorper sit amet ligula. Mauris blandit aliquet elit eget tincidunt
-      nibh pulvinar a vivamus suscipit tellus.
-    </p>
-  </section>
-
-  <section id="typography-tokens">
-    <h2>Typography tokens</h2>
-    <p>
-      Font families, sizes, line heights, letter spacing and weights. Cras ultricies ligula sed magna
-      dictum porta vestibulum lacinia arcu eget nulla.
-    </p>
-    <p>
-      Curabitur aliquet quam id dui posuere blandit. Vivamus magna justo lacinia eget consectetur sed
-      convallis at tellus pellentesque in ipsum id orci porta dapibus.
-    </p>
-    <p>
-      Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Donec sollicitudin
-      molestie malesuada proin eget tortor risus.
-    </p>
-  </section>
-
-  <section id="utilities">
-    <h2>Utility classes</h2>
-    <p>
-      The global utility classes, treated as system primitives alongside the tokens. Sed porttitor
-      lectus nibh quisque velit nisi pretium ut lacinia in elementum id enim.
-    </p>
-    <p>
-      Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Donec rutrum congue leo eget
-      malesuada nulla quis lorem ut libero malesuada feugiat.
-    </p>
-    <p>
-      Proin eget tortor risus. Vivamus suscipit tortor eget felis porttitor volutpat. Pellentesque in
-      ipsum id orci porta dapibus.
-    </p>
-  </section>
+  <DesignTokens />
+  <UtilityClasses />
 </StyleguideLayout>
+
+<style>
+  /* Grid of square colour swatches; --sg-swatch-min controls minimum cell size. */
+  .sg-swatch-grid {
+    --sg-swatch-min: 6rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--sg-swatch-min), 1fr));
+    gap: var(--space-m);
+  }
+
+  .sg-swatch-grid :global(.color-swatch) {
+    aspect-ratio: 1;
+  }
+
+  /* Light/dark comparison: two themed columns side by side. */
+  .sg-theme-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-s);
+  }
+
+  @media (max-width: 40rem) {
+    .sg-theme-pair {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .sg-theme-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  .sg-theme-label {
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    color: var(--color-text-secondary);
+  }
+
+  /* Fixed-size swatch used inside the semantic table cells. */
+  .sg-mini-swatch {
+    display: inline-block;
+    width: 2.5rem;
+    height: 2.5rem;
+    vertical-align: middle;
+  }
+</style>

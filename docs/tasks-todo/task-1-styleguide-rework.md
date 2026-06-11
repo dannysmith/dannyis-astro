@@ -106,9 +106,11 @@ Built the new co-located scaffolding **alongside** the monolith (rather than rel
 - `_components/SGSpecimen.astro` — "you write this" (Expressive Code) + rendered output unit.
 - Sibling stub pages (`foundations`, `typography`, `components`, `ui`, `html`) on the new layout. `index.astro` left as the monolith — it keeps rendering all sections until Phase 6, so the styleguide stays working throughout the migration.
 
-### Phase 1 — Foundations page
+### Phase 1 — Foundations page ✅ done
 
-Migrate colour system + design tokens; add intro/explanatory copy; fold in utility classes as a reference.
+`foundations.astro` imports the three (already co-located) partials — `_ColorSystem`, `_DesignTokens`, `_UtilityClasses` — with an intro and a scrollspy TOC. Adaptations: dropped the dead `styleguide-section` marker (kept `flow`), added `id`s to the design-token sub-headings (spacing / border-widths / border-radii / shadows / font-families / font-sizes / font-weights) so the TOC targets them, and switched the utilities demo from `SGTypographySwitcher` to the new `SGSwitcher`. Removed those three sections from the `index.astro` monolith (with a pointer link to the new page).
+
+First pass — the partials are migrated faithfully but largely as-was; reorganising the prose/grouping and trimming `.map()` boilerplate is left for Danny to refine. The partials can be consolidated into the page or deleted once that settles (they're now foundations-only).
 
 ### Phase 2 — Prose & Typography page
 

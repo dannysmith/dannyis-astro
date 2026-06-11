@@ -79,7 +79,7 @@ const fontSizes = [
 ];
 ---
 
-<section id="design-tokens" class="styleguide-section flow">
+<section id="design-tokens" class="flow">
   <h2>Design Tokens</h2>
   <p>
     Spacing, typography, borders, and motion tokens that provide consistent rhythm and visual harmony
@@ -87,7 +87,7 @@ const fontSizes = [
   </p>
 
 <!-- Spacing Scale -->
-<h3>Spacing Scale</h3>
+<h3 id="spacing">Spacing Scale</h3>
 <p>
   Generated using <a href="https://utopia.fyi/space/calculator">Utopia</a>. Base scale provides
   consistent spacing; fluid pairs smoothly interpolate between sizes based on viewport.
@@ -116,7 +116,7 @@ const fontSizes = [
   </tbody>
 </table>
 
-<h3>Border Widths</h3>
+<h3 id="border-widths">Border Widths</h3>
 <p>
   Use hairline for subtle dividers, base for standard borders, and heavier weights for emphasis or
   interactive states.
@@ -144,7 +144,7 @@ const fontSizes = [
   </tbody>
 </table>
 
-<h3>Border Radii</h3>
+<h3 id="border-radii">Border Radii</h3>
 <p>
   From subtle rounding (xs) to fully circular (full). Use smaller radii for compact UI elements,
   larger for cards and containers.
@@ -172,7 +172,7 @@ const fontSizes = [
   </tbody>
 </table>
 
-<h3>Shadows</h3>
+<h3 id="shadows">Shadows</h3>
 <p>
   Drop shadows for creating depth and elevation. Use sparingly to draw attention to raised elements.
 </p>
@@ -201,7 +201,7 @@ const fontSizes = [
 
 <!-- Typography Tokens -->
 
-<h3>Font Families</h3>
+<h3 id="font-families">Font Families</h3>
 <p>
   Typography on this site serves five distinct usage contexts, covered by four font stacks.
   Short-form prose and UI elements share <code>--font-ui</code> (Figtree) — so "Notes" body copy
@@ -224,7 +224,7 @@ const fontSizes = [
   ))
 }
 
-<h3>Font Sizes</h3>
+<h3 id="font-sizes">Font Sizes</h3>
 <p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
 <table>
   <thead>
@@ -291,7 +291,7 @@ const fontSizes = [
   }
 </Tabs>
 
-<h3>Font Weights</h3>
+<h3 id="font-weights">Font Weights</h3>
 <p>
   All four families are variable fonts. Exact weight range depends on the face (Geist 100–900,
   Figtree 300–900, Literata 200–900, Fira Code 300–700). These tokens provide common stops — use

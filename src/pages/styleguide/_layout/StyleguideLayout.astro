@@ -70,7 +70,7 @@ const { title, description, current, toc = [] } = Astro.props;
         </nav>
         <h1>{title}</h1>
         <h2>Site styleguide</h2>
-        <slot />
+        <slot class="flow"/>
       </main>
     </div>
     <Footer />
@@ -106,7 +106,7 @@ const { title, description, current, toc = [] } = Astro.props;
 
       h1 {
         font-family: var(--font-display);
-        font-size: var(--font-size-xl);
+        font-size: var(--font-size-2xl);
         font-weight: var(--font-weight-extrabold);
         text-transform: uppercase;
         font-feature-settings: 'case' on;
@@ -119,6 +119,7 @@ const { title, description, current, toc = [] } = Astro.props;
         font-size: var(--font-size-md);
         font-weight: var(--font-weight-light);
         text-transform: uppercase;
+        margin-block-end: var(--space-2xl);
       }
 
       .sg-toc {
