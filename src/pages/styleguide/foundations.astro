@@ -540,61 +540,50 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
     <h3 id="spacing">Spacing Scale</h3>
     <p>
-      Generated using <a href="https://utopia.fyi/space/calculator">Utopia</a>. Base scale provides
-      consistent spacing; fluid pairs smoothly interpolate between sizes based on viewport.
+      The spacing scale is generated with <a href="https://utopia.fyi/space/calculator">Utopia</a> using the same base values as the type scale. Using the custom properties below to set margins, padding and the like will ensure they scale in concert with the fluid type.
     </p>
     <table>
       <thead>
         <tr>
           <th>Variable</th>
-          <th>Value</th>
           <th>Preview</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><code>--space-3xs</code></td>
-          <td><code>clamp(0.25rem, 0.2241rem + 0.1105vw, 0.3125rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-3xs)"></div></td>
         </tr>
         <tr>
           <td><code>--space-2xs</code></td>
-          <td><code>clamp(0.5rem, 0.4482rem + 0.221vw, 0.625rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-2xs)"></div></td>
         </tr>
         <tr>
           <td><code>--space-xs</code></td>
-          <td><code>clamp(0.75rem, 0.6723rem + 0.3315vw, 0.9375rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-xs)"></div></td>
         </tr>
         <tr>
           <td><code>--space-s</code></td>
-          <td><code>clamp(1rem, 0.8964rem + 0.442vw, 1.25rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-s)"></div></td>
         </tr>
         <tr>
           <td><code>--space-m</code></td>
-          <td><code>clamp(1.5rem, 1.3446rem + 0.663vw, 1.875rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-m)"></div></td>
         </tr>
         <tr>
           <td><code>--space-l</code></td>
-          <td><code>clamp(2rem, 1.7928rem + 0.884vw, 2.5rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-l)"></div></td>
         </tr>
         <tr>
           <td><code>--space-xl</code></td>
-          <td><code>clamp(3rem, 2.6892rem + 1.326vw, 3.75rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-xl)"></div></td>
         </tr>
         <tr>
           <td><code>--space-2xl</code></td>
-          <td><code>clamp(4rem, 3.5856rem + 1.768vw, 5rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-2xl)"></div></td>
         </tr>
         <tr>
           <td><code>--space-3xl</code></td>
-          <td><code>clamp(6rem, 5.3785rem + 2.6519vw, 7.5rem)</code></td>
           <td><div class="spacing-bar" style="width: var(--space-3xl)"></div></td>
         </tr>
       </tbody>
