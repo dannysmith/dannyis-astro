@@ -41,17 +41,25 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       > and appear differently in light and dark modes (via <code>light-dark()</code>), and some of
       which are absolute and appear the same in both modes. These are used to create a set of <strong
         >semantic</strong
-      > role-based tokens that are primarily used accross the site. All colors are defined in <a
+      > role-based tokens that are primarily used across the site. All colours are defined in <a
         href="https://oklch.com/">OKLCH</a
       >. The adaptive colours use lower lightness and higher chroma in light mode and have increased
       lightness and lower chroma in dark mode.
     </p>
-    <p></p>
+    <div class="sg-panel">
+      <div class="sg-swatch-grid" style="--sg-swatch-min: 8rem">
+        {
+          ['white', 'black', 'ink', 'charcoal', 'beige'].map(colour => (
+            <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
+          ))
+        }
+      </div>
+    </div>
     <div class="sg-theme-pair">
       {
         ['light', 'dark'].map(theme => (
-          <div class="sg-theme-col" data-theme={theme}>
-            <p class="sg-theme-label">{theme}</p>
+          <div class="sg-theme-col flow" data-theme={theme}>
+            <p class="sg-theme-label">{theme} mode</p>
             <div class="sg-swatch-grid">
               {['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'].map(colour => (
                 <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
@@ -61,17 +69,9 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         ))
       }
     </div>
-
-    <div class="sg-panel">
-      <p class="sg-theme-label">Absolute</p>
-      <div class="sg-swatch-grid" style="--sg-swatch-min: 8rem">
-        {
-          ['white', 'black', 'ink', 'charcoal', 'beige'].map(colour => (
-            <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
-          ))
-        }
-      </div>
-    </div>
+    <p>
+      The table below shows the semantic colours currently in use. Components should use these (or derivitives of them via CSS functions like `color-mix()`) wherever their use case fits their semantic role. In situations where a foundational colour is <em>more semantic</em> (eg a "blue callout") then use the foundational colour instead. I deliberatly try to keep these semantic colours to a minimum to avoid ending up with a large unwieldy palette of very specific colours that are only used in one place.
+    </p>
     <table>
       <thead>
         <tr>
@@ -84,7 +84,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       </thead>
       <tbody>
         <tr>
-          <th colspan="5">Accent &amp; interaction</th>
+          <th colspan="5">Accent & interaction</th>
         </tr>
         <tr>
           <td>Accent</td>
@@ -135,7 +135,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>
             <code>--color-highlight</code>
           </td>
-          <td>Highlighted text and accosionally other forms of highlight</td>
+          <td>Highlighted text and occasionally other forms of highlight</td>
         </tr>
         <tr>
           <td>Focus ring</td>
@@ -290,31 +290,19 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   /* Light/dark comparison: two themed columns side by side. */
   .sg-theme-pair {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
     gap: var(--space-s);
-  }
-
-  @media (max-width: 40rem) {
-    .sg-theme-pair {
-      grid-template-columns: 1fr;
-    }
   }
 
   .sg-theme-col {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
     padding: var(--space-s);
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
   }
 
   .sg-theme-label {
-    font-family: var(--font-ui);
-    font-size: var(--font-size-sm);
     text-transform: uppercase;
-    font-feature-settings: 'case' on;
-    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
   }
 
   /* Fixed-size swatch used inside the semantic table cells. */
