@@ -128,25 +128,40 @@ const { title, description, current, toc = [] } = Astro.props;
       @media (min-width: 70rem) {
         .styleguide-body.has-toc {
           display: grid;
-          grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
-          gap: var(--space-xl);
+          grid-template-columns: minmax(0, 1fr) min(var(--measure-standard), 100%) minmax(0, 1fr);
           align-items: start;
+        }
+
+        .styleguide-body.has-toc .styleguide-content {
+          grid-column: 2;
         }
 
         .sg-toc {
           display: block;
+          grid-column: 1;
+          justify-self: end;
           position: sticky;
           inset-block-start: var(--space-m);
           margin-block-start: var(--space-2xl);
+          padding-inline-end: var(--space-l);
           font-size: var(--font-size-sm);
+          text-align: right;
         }
 
         .sg-toc li:not(:last-child) {
           margin-block-end: var(--space-3xs);
         }
+
+        .sg-toc ul {
+          scroll-target-group: auto;
+        }
+
+        .sg-toc a:target-current {
+          color: var(--color-accent);
+        }
       }
 
-      /* Shared styleguide utilities (global) */
+      /* Shared styleguide utilities */
       :global(.sg-panel) {
         padding: var(--space-m);
         background-color: var(--color-background-secondary);
