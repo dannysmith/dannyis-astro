@@ -17,40 +17,6 @@ const toc = [
 ];
 
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-// Semantic colours — role-based tokens, grouped by purpose. These are what you
-// reach for in components, rather than the raw palette above.
-const semanticGroups = [
-  {
-    name: 'Accent & interaction',
-    tokens: [
-      { label: 'Accent', variable: '--color-accent', usage: 'Primary brand colour, links' },
-      { label: 'Visited', variable: '--color-visited', usage: 'Visited links' },
-      { label: 'Highlight', variable: '--color-highlight', usage: 'Text highlights' },
-      { label: 'Focus ring', variable: '--color-focus-ring', usage: 'Focus ring' },
-    ],
-  },
-  {
-    name: 'Backgrounds & surfaces',
-    tokens: [
-      { label: 'Background', variable: '--color-background', usage: 'Page background' },
-      {
-        label: 'Background secondary',
-        variable: '--color-background-secondary',
-        usage: 'Cards, panels',
-      },
-      { label: 'Background code', variable: '--color-background-code', usage: 'Code blocks' },
-    ],
-  },
-  {
-    name: 'Text & borders',
-    tokens: [
-      { label: 'Text', variable: '--color-text', usage: 'Body text' },
-      { label: 'Text secondary', variable: '--color-text-secondary', usage: 'Muted text' },
-      { label: 'Border', variable: '--color-border', usage: 'Borders, dividers' },
-    ],
-  },
-];
 ---
 
 <StyleguideLayout
@@ -106,10 +72,6 @@ const semanticGroups = [
         }
       </div>
     </div>
-
-    <p>
-
-    </p>
     <table>
       <thead>
         <tr>
@@ -120,34 +82,191 @@ const semanticGroups = [
           <th>Usage</th>
         </tr>
       </thead>
-      {
-        semanticGroups.map(({ name, tokens }) => (
-          <tbody>
-            <tr>
-              <th colspan="5">{name}</th>
-            </tr>
-            {tokens.map(({ label, variable, usage }) => (
-              <tr>
-                <td>{label}</td>
-                <td class="center" data-theme="light">
-                  <span class="sg-mini-swatch">
-                    <ColorSwatch color={`var(${variable})`} />
-                  </span>
-                </td>
-                <td class="center" data-theme="dark">
-                  <span class="sg-mini-swatch">
-                    <ColorSwatch color={`var(${variable})`} />
-                  </span>
-                </td>
-                <td>
-                  <code>{variable}</code>
-                </td>
-                <td>{usage}</td>
-              </tr>
-            ))}
-          </tbody>
-        ))
-      }
+      <tbody>
+        <tr>
+          <th colspan="5">Accent &amp; interaction</th>
+        </tr>
+        <tr>
+          <td>Accent</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-accent)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-accent)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-accent</code>
+          </td>
+          <td>The primary brand colour, used in many places including for links</td>
+        </tr>
+        <tr>
+          <td>Visited</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-visited)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-visited)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-visited</code>
+          </td>
+          <td>Visited links, because purple is an affordance people are used to</td>
+        </tr>
+        <tr>
+          <td>Highlight</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-highlight)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-highlight)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-highlight</code>
+          </td>
+          <td>Highlighted text and accosionally other forms of highlight</td>
+        </tr>
+        <tr>
+          <td>Focus ring</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-focus-ring)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-focus-ring)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-focus-ring</code>
+          </td>
+          <td>The focus ring for interactive elements</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <th colspan="5">Backgrounds & surfaces</th>
+        </tr>
+        <tr>
+          <td>Primary background</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-background)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-background)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-background</code>
+          </td>
+          <td>The primary background colour</td>
+        </tr>
+        <tr>
+          <td>Secondary background</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-background-secondary)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-background-secondary)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-background-secondary</code>
+          </td>
+          <td>A secondary background colour for things like cards and panels</td>
+        </tr>
+        <tr>
+          <td>Code background</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-background-code)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-background-code)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-background-code</code>
+          </td>
+          <td>Background for inline code and some other code-like elements</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <th colspan="5">Text & borders</th>
+        </tr>
+        <tr>
+          <td>Text</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-text)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-text)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-text</code>
+          </td>
+          <td>Body text</td>
+        </tr>
+        <tr>
+          <td>Text secondary</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-text-secondary)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-text-secondary)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-text-secondary</code>
+          </td>
+          <td>Muted or secondary text</td>
+        </tr>
+        <tr>
+          <td>Border</td>
+          <td class="center" data-theme="light">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-border)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="sg-mini-swatch">
+              <ColorSwatch color="var(--color-border)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-border</code>
+          </td>
+          <td>Subtle borders and dividers</td>
+        </tr>
+      </tbody>
     </table>
   </section>
 
