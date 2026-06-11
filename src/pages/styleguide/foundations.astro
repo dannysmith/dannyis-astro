@@ -540,7 +540,9 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
     <h3 id="spacing">Spacing Scale</h3>
     <p>
-      The spacing scale is generated with <a href="https://utopia.fyi/space/calculator">Utopia</a> using the same base values as the type scale. Using the custom properties below to set margins, padding and the like will ensure they scale in concert with the fluid type.
+      The spacing scale is generated with <a href="https://utopia.fyi/space/calculator">Utopia</a> using
+      the same base values as the type scale. Using the custom properties below to set margins, padding
+      and the like will ensure they scale in concert with the fluid type.
     </p>
     <table>
       <thead>
@@ -591,58 +593,77 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
     <h3 id="font-weights">Font Weights</h3>
     <p>
-      All four families are variable fonts. Exact weight range depends on the face (Geist 100–900,
-      Figtree 300–900, Literata 200–900, Fira Code 300–700). These tokens provide common stops — use
-      intermediate values when a design calls for it.
+      All four families are variable fonts and therefore not limited to the weights defined below <em
+        >(Geist: 100-900, Figtree: 300-900, Literata: 200-900, Fira Code: 300-700)</em
+      >. These design tokens provide common stops to help keep the weight scale consistent across the
+      site, but it's fine to use intermediate weights when needed.
     </p>
     <table>
       <thead>
         <tr>
+          <th>Literata</th>
+          <th>Geist</th>
+          <th>Figtree</th>
           <th>Variable</th>
           <th>Value</th>
-          <th>Preview</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr style="--weight: var(--font-weight-light)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-light</code></td>
-          <td><code>300</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-light)">Aa</td>
+          <td>300</td>
         </tr>
-        <tr>
+        <tr style="--weight: var(--font-weight-normal)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-normal</code></td>
-          <td><code>350</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-normal)">Aa</td>
+          <td>350</td>
         </tr>
-        <tr>
+        <tr style="--weight: var(--font-weight-regular)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-regular</code></td>
-          <td><code>400</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-regular)">Aa</td>
+          <td>400</td>
         </tr>
-        <tr>
+        <tr style="--weight: var(--font-weight-medium)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-medium</code></td>
-          <td><code>500</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-medium)">Aa</td>
+          <td>500</td>
         </tr>
-        <tr>
+        <tr style="--weight: var(--font-weight-semibold)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-semibold</code></td>
-          <td><code>600</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-semibold)">Aa</td>
+          <td>600</td>
         </tr>
-        <tr>
+        <tr style="--weight: var(--font-weight-bold)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-bold</code></td>
-          <td><code>700</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-bold)">Aa</td>
+          <td>700</td>
         </tr>
-        <tr>
+        <tr style="--weight: var(--font-weight-extrabold)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-extrabold</code></td>
-          <td><code>800</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-extrabold)">Aa</td>
+          <td>800</td>
         </tr>
-        <tr>
+        <tr style="--weight: var(--font-weight-heavy)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
           <td><code>--font-weight-heavy</code></td>
-          <td><code>900</code></td>
-          <td class="font-weight-preview" style="font-weight: var(--font-weight-heavy)">Aa</td>
+          <td>900</td>
         </tr>
       </tbody>
     </table>
@@ -956,11 +977,21 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     border-radius: var(--radius-xs);
   }
 
-  /* Font weights preview */
+  /* Font weights preview: weight comes from the row's --weight, face from the column class. */
   .font-weight-preview {
     font-size: var(--font-size-lg);
-    font-family: var(--font-prose);
+    font-weight: var(--weight);
     white-space: nowrap;
+  }
+
+  .face-prose {
+    font-family: var(--font-prose);
+  }
+  .face-display {
+    font-family: var(--font-display);
+  }
+  .face-ui {
+    font-family: var(--font-ui);
   }
 
   /* Line height preview */
