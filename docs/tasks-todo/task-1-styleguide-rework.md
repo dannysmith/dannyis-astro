@@ -118,7 +118,7 @@ src/pages/styleguide/
 
 ### Phase 1 — Foundations
 
-> **Where the remaining source lives:** the unchecked items below are still in two partials that `foundations.astro` imports and renders — `_DesignTokens.astro` (already trimmed to just the typography/spacing content and **retitled** `id="typography-spacing"` / "Typography & Spacing Tokens"; its intro paragraph is now stale) and `_UtilityClasses.astro`. Port each inline into `foundations.astro`, then delete the partial.
+> **Where the remaining source lives:** all source has now been ported inline into `foundations.astro` and both partials (`_DesignTokens.astro`, `_UtilityClasses.astro`) have been deleted. The token tables (font sizes, spacing, font weights, line height, letter spacing) were converted to plain-HTML `Variable | Value | Preview` tables per the reference model (Line Height + Letter Spacing converted from the old `<Tabs>` demos). The **Typefaces** section and the section **Intro** were ported verbatim and still need their planned rework; the section intro paragraph is stale.
 
 - [x] Intro
 - [x] Colour System
@@ -130,14 +130,14 @@ src/pages/styleguide/
   - [x] Table of Radii
   - [x] Table of Shadows
 - [ ] Typography & Spacing Tokens
-  - [ ] Intro explaining the general approach to typography
-  - [ ] Typefaces <a completely reworked section coveging the Font Families>
-  - [ ] Font Sizes Scale Table
-  - [ ] Spacing Scale Table
-  - [ ] Font Weights Table
-  - [ ] Line Height Table
-  - [ ] Letter Spacings Table
-- [ ] Utility classes Table
+  - [ ] Intro explaining the general approach to typography <ported verbatim — stale, needs rework>
+  - [ ] Typefaces <ported verbatim — a completely reworked section covering the Font Families is still to do>
+  - [x] Font Sizes Scale Table
+  - [x] Spacing Scale Table
+  - [x] Font Weights Table
+  - [x] Line Height Table
+  - [x] Letter Spacings Table
+- [x] Utility classes Table
 
 ### Phase 2 — Typography
 

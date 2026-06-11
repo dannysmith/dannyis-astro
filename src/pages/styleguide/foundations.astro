@@ -1,20 +1,53 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
-import DesignTokens from './_DesignTokens.astro';
-import UtilityClasses from './_UtilityClasses.astro';
+import SGSwitcher from './_components/SGSwitcher.astro';
 import { ColorSwatch } from '@components/mdx/index';
 
 const toc = [
   { id: 'colour', label: 'Colour System' },
   { id: 'borders', label: 'Borders' },
-  { id: 'spacing', label: 'Spacing' },
-  { id: 'font-families', label: 'Font families' },
+  { id: 'font-families', label: 'Typefaces' },
   { id: 'font-sizes', label: 'Font sizes' },
+  { id: 'spacing', label: 'Spacing' },
   { id: 'font-weights', label: 'Font weights' },
+  { id: 'line-height', label: 'Line height' },
+  { id: 'letter-spacing', label: 'Letter spacing' },
   { id: 'utility-classes', label: 'Utility classes' },
 ];
 
 const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Font families mapped to the five usage contexts (ported as-is from _DesignTokens — to be reworked).
+// Four CSS variables cover five contexts: --font-ui serves both UI elements AND short-form prose.
+const fontFamilies = [
+  {
+    variable: '--font-display',
+    family: 'Geist',
+    context: '1. Display',
+    usage:
+      'Large, presentational type. Page titles, hero text, 404, brand marks. Mostly used as Caps.',
+  },
+  {
+    variable: '--font-prose',
+    family: 'Literata',
+    context: '2. Long-form prose',
+    usage:
+      'Articles and any content inside .longform-prose. Rich typographic features for sustained reading.',
+  },
+  {
+    variable: '--font-ui',
+    family: 'Figtree',
+    context: '3. Short-form prose + 4. UI',
+    usage:
+      'Document body default. Notes, /now, callouts, captions AND interface elements — navigation, buttons, pills, form controls.',
+  },
+  {
+    variable: '--font-code',
+    family: 'Fira Code',
+    context: '5. Code',
+    usage: 'Code blocks, inline code, and occasional stylistic monospace.',
+  },
+];
 ---
 
 <StyleguideLayout
@@ -398,14 +431,13 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>
             <div class="border-radius-preview" style="border-radius: var(--radius-full)"></div>
           </td>
-          <td
-            >Infinite radius for fully rounding into a pill or circle regardless of size.</td
-          >
+          <td>Infinite radius for fully rounding into a pill or circle regardless of size.</td>
         </tr>
       </tbody>
     </table>
     <p>
-      I don't use shadows heavily but there are two custom properties available if I need to create depth and elevation.
+      I don't use shadows heavily but there are two custom properties available if I need to create
+      depth and elevation.
     </p>
     <table>
       <thead>
@@ -431,8 +463,436 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     </table>
   </section>
 
-  <DesignTokens />
-  <UtilityClasses />
+  <section id="typography-spacing" class="flow">
+    <h2>Typography & Spacing Tokens</h2>
+    <p>
+      Typography and spacing designtokens provide consistent rhythm and visual hireachy across the site.
+    </p>
+
+    <h3 id="font-families">Font Families</h3>
+    <p>
+      Typography on this site serves five distinct usage contexts, covered by four font stacks. Short-form prose and UI elements use Figtree (<code>--font-ui</code>) which works well for both use cases and is the deault face. Long-form prose uses Literata (<code>--font-prose</code>), while "display" type uses Giest (<code>--font-display</code>). Code examples and other monospacefonts use a version of Fira Code.
+    </p>
+    {
+      fontFamilies.map(({ family, variable, context, usage }) => (
+        <div class="sg-panel">
+          <p class="font-preview" style={`font-family: var(${variable})`}>
+            The quick brown fox jumps over the lazy dog
+          </p>
+          <p class="font-meta">
+            <strong>{family}</strong> · <code>{variable}</code> · <em>{context}</em>
+            <br />
+            {usage}
+          </p>
+        </div>
+      ))
+    }
+
+    <h3 id="font-sizes">Font Sizes</h3>
+    <p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--font-size-xs</code></td>
+          <td><code>var(--step--2)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-xs)">Aa</td>
+          <td>Captions, labels, fine print</td>
+        </tr>
+        <tr>
+          <td><code>--font-size-sm</code></td>
+          <td><code>var(--step--1)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-sm)">Aa</td>
+          <td>Secondary text, metadata, UI elements</td>
+        </tr>
+        <tr>
+          <td><code>--font-size-base</code></td>
+          <td><code>var(--step-0)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-base)">Aa</td>
+          <td>Body text, paragraphs</td>
+        </tr>
+        <tr>
+          <td><code>--font-size-md</code></td>
+          <td><code>var(--step-1)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-md)">Aa</td>
+          <td>Emphasized body text, lead paragraphs</td>
+        </tr>
+        <tr>
+          <td><code>--font-size-lg</code></td>
+          <td><code>var(--step-2)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-lg)">Aa</td>
+          <td>Section headings (h4), large UI text</td>
+        </tr>
+        <tr>
+          <td><code>--font-size-xl</code></td>
+          <td><code>var(--step-3)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-xl)">Aa</td>
+          <td>Subheadings (h3)</td>
+        </tr>
+        <tr>
+          <td><code>--font-size-2xl</code></td>
+          <td><code>var(--step-4)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-2xl)">Aa</td>
+          <td>Major headings (h2)</td>
+        </tr>
+        <tr>
+          <td><code>--font-size-3xl</code></td>
+          <td><code>var(--step-5)</code></td>
+          <td class="font-size-preview" style="font-size: var(--font-size-3xl)">Aa</td>
+          <td>Page titles (h1)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="spacing">Spacing Scale</h3>
+    <p>
+      Generated using <a href="https://utopia.fyi/space/calculator">Utopia</a>. Base scale provides
+      consistent spacing; fluid pairs smoothly interpolate between sizes based on viewport.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--space-3xs</code></td>
+          <td><code>clamp(0.25rem, 0.2241rem + 0.1105vw, 0.3125rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-3xs)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-2xs</code></td>
+          <td><code>clamp(0.5rem, 0.4482rem + 0.221vw, 0.625rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-2xs)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-xs</code></td>
+          <td><code>clamp(0.75rem, 0.6723rem + 0.3315vw, 0.9375rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-xs)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-s</code></td>
+          <td><code>clamp(1rem, 0.8964rem + 0.442vw, 1.25rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-s)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-m</code></td>
+          <td><code>clamp(1.5rem, 1.3446rem + 0.663vw, 1.875rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-m)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-l</code></td>
+          <td><code>clamp(2rem, 1.7928rem + 0.884vw, 2.5rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-l)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-xl</code></td>
+          <td><code>clamp(3rem, 2.6892rem + 1.326vw, 3.75rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-xl)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-2xl</code></td>
+          <td><code>clamp(4rem, 3.5856rem + 1.768vw, 5rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-2xl)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-3xl</code></td>
+          <td><code>clamp(6rem, 5.3785rem + 2.6519vw, 7.5rem)</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-3xl)"></div></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="font-weights">Font Weights</h3>
+    <p>
+      All four families are variable fonts. Exact weight range depends on the face (Geist 100–900,
+      Figtree 300–900, Literata 200–900, Fira Code 300–700). These tokens provide common stops — use
+      intermediate values when a design calls for it.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--font-weight-light</code></td>
+          <td><code>300</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-light)">Aa</td>
+        </tr>
+        <tr>
+          <td><code>--font-weight-normal</code></td>
+          <td><code>350</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-normal)">Aa</td>
+        </tr>
+        <tr>
+          <td><code>--font-weight-regular</code></td>
+          <td><code>400</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-regular)">Aa</td>
+        </tr>
+        <tr>
+          <td><code>--font-weight-medium</code></td>
+          <td><code>500</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-medium)">Aa</td>
+        </tr>
+        <tr>
+          <td><code>--font-weight-semibold</code></td>
+          <td><code>600</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-semibold)">Aa</td>
+        </tr>
+        <tr>
+          <td><code>--font-weight-bold</code></td>
+          <td><code>700</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-bold)">Aa</td>
+        </tr>
+        <tr>
+          <td><code>--font-weight-extrabold</code></td>
+          <td><code>800</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-extrabold)">Aa</td>
+        </tr>
+        <tr>
+          <td><code>--font-weight-heavy</code></td>
+          <td><code>900</code></td>
+          <td class="font-weight-preview" style="font-weight: var(--font-weight-heavy)">Aa</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="line-height">Line Height</h3>
+    <p>
+      Line height can be controlled via the <code>--leading-*</code> CSS variables. The default is <code
+        >var(--leading-normal)</code
+      >.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--leading-none</code></td>
+          <td><code>0.9</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-none)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-tight</code></td>
+          <td><code>1.1</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-tight)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-snug</code></td>
+          <td><code>1.2</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-snug)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-normal</code></td>
+          <td><code>1.55</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-normal)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-loose</code></td>
+          <td><code>1.7</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-loose)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="letter-spacing">Letter Spacing</h3>
+    <p>
+      Letter spacing can be controlled via the <code>--tracking-*</code> CSS variables. The default is
+      <code>var(--tracking-normal)</code>.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--tracking-tight</code></td>
+          <td><code>-0.02ch</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-tight)"
+            >Hello there</td
+          >
+        </tr>
+        <tr>
+          <td><code>--tracking-normal</code></td>
+          <td><code>0</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-normal)"
+            >Hello there</td
+          >
+        </tr>
+        <tr>
+          <td><code>--tracking-wide</code></td>
+          <td><code>0.05ch</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-wide)"
+            >Hello there</td
+          >
+        </tr>
+        <tr>
+          <td><code>--tracking-wider</code></td>
+          <td><code>0.1ch</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-wider)"
+            >Hello there</td
+          >
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="utility-classes" class="flow">
+    <h2>Utility Classes</h2>
+    <p>
+      Global utility classes available throughout the site. Most are documented here for reference;
+      <code>.list-reset</code> has a visual demo below.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>.ui-style</code></td>
+          <td>
+            Opt-out of prose typography for nav, footer, UI-heavy areas. Already demoed extensively
+            via SGTypographySwitcher throughout this styleguide.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.dark-surface</code></td>
+          <td>
+            Forces dark background (charcoal) with light text (beige). For always-dark areas
+            regardless of theme.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.surface-white</code></td>
+          <td>
+            White surface context (light mode) or raised dark surface (dark mode). Also redefines
+            <code>--color-background-secondary</code> for children to ensure contrast.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.cq</code></td>
+          <td>
+            Establishes container query context (<code>container-type: inline-size</code>).
+          </td>
+        </tr>
+        <tr>
+          <td><code>.all-caps</code></td>
+          <td>Uppercase text with wide letter-spacing. For labels and UI text.</td>
+        </tr>
+        <tr>
+          <td><code>.center</code>, <code>.right</code>, <code>.left</code></td>
+          <td>Text alignment utilities. Useful for table cells and other contexts.</td>
+        </tr>
+        <tr>
+          <td><code>.top</code>, <code>.middle</code>, <code>.bottom</code></td>
+          <td>Vertical alignment utilities. Useful for table cells and inline elements.</td>
+        </tr>
+        <tr>
+          <td><code>.content-trim</code></td>
+          <td>
+            Removes top margin from first child, bottom margin from last child. Use inside padded
+            containers with slotted content.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.img-cover</code></td>
+          <td>
+            Makes image fill container with <code>object-fit: cover</code>.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.sr-only</code></td>
+          <td>
+            Visually hidden but accessible to screen readers. Also available as
+            <code>.hidden-microformat</code> for hiding microformat metadata.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.external-arrow</code></td>
+          <td>Subtle arrow indicator for external/offsite links in UI contexts.</td>
+        </tr>
+        <tr>
+          <td><code>.list-reset</code></td>
+          <td>Removes list styling for navigation/UI lists. See demo below.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="list-reset-demo">.list-reset</h3>
+    <p>
+      The <code>.list-reset</code> class removes default list styling (bullets, padding) for navigation-style
+      lists:
+    </p>
+    <SGSwitcher>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-m);">
+        <div>
+          <strong>Without .list-reset</strong>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Writing</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <strong>With .list-reset</strong>
+          <ul class="list-reset">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Writing</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </SGSwitcher>
+  </section>
 </StyleguideLayout>
 
 <style>
@@ -497,5 +957,48 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     width: 5rem;
     height: 3rem;
     background-color: var(--color-background);
+  }
+
+  /* Font families preview */
+  .font-preview {
+    font-size: var(--font-size-lg);
+    color: var(--color-accent);
+  }
+
+  .font-meta {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Font sizes preview */
+  .font-size-preview {
+    color: var(--color-accent);
+    font-family: var(--font-prose);
+    white-space: nowrap;
+  }
+
+  /* Spacing scale preview */
+  .spacing-bar {
+    height: var(--space-s);
+    background-color: var(--color-accent);
+    border-radius: var(--radius-xs);
+  }
+
+  /* Font weights preview */
+  .font-weight-preview {
+    font-size: var(--font-size-lg);
+    font-family: var(--font-prose);
+    white-space: nowrap;
+  }
+
+  /* Line height preview */
+  .leading-preview {
+    max-width: 30ch;
+  }
+
+  /* Letter spacing preview */
+  .letter-spacing-preview {
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
   }
 </style>
