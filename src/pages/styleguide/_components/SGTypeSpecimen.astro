@@ -28,9 +28,11 @@ interface Props {
   cssVar: string;
   /** Optional prose describing how/why the face is used (also accepted via slot). */
   description?: string;
+  /** Render the heading sample as display caps (extrabold, uppercase, case feature) — for faces used as caps, like Geist. */
+  caps?: boolean;
 }
 
-const { family, url, usageTitle, cssVar, description } = Astro.props;
+const { family, url, usageTitle, cssVar, description, caps } = Astro.props;
 
 const hasDescription = description != null || Astro.slots.has('default');
 ---
@@ -44,7 +46,7 @@ const hasDescription = description != null || Astro.slots.has('default');
   </div>
 
   <div class="samples">
-    <h2>The quick brown fox jumps over the lazy dog</h2>
+    <h2 class:list={{ caps }}>The quick brown fox jumps over the lazy dog</h2>
     <p class="body">
       Mollit amet velit reprehenderit. Proident aliqua officia nisi officia sint sint elit commodo
       pariatur voluptate nisi duis occaecat mollit. Dolor sint id velit ipsum excepteur pariatur
@@ -123,6 +125,13 @@ const hasDescription = description != null || Astro.slots.has('default');
   h2 {
     font-family: var(--specimen-font);
     text-wrap: balance;
+  }
+
+  /* Display-caps treatment, for faces used as caps (e.g. Geist). */
+  h2.caps {
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
   }
 
   .body {
