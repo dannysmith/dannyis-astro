@@ -4,7 +4,7 @@ We are reworking the **main** styleguide at `src/pages/styleguide/` (not the art
 
 ## Initial State
 
-The styleguide is a single page at `/styleguide` rendered from a set of partials. It uses 
+The styleguide is a single page at `/styleguide` rendered from a set of partials.
 
 ## Goals
 
@@ -91,13 +91,15 @@ src/pages/styleguide/
   ui.astro
   html.astro
   _layout/               # co-located shared layout + nav
-  _components/           # SGSwitcher, SGSpecimen, SGNav etc
+  _components/           # SGSwitcher, SGSpecimen (the nav lives in _layout)
   _snippets/             # MDX snippets (existing pattern, extended as needed)
 ```
 
 ## Implementation Rules & Guidance
 
-- Do not delete or remove content from the existing styleguide partials until the end. Once we have a *new* working styleguide we can remove them en-mass.
+- Do not delete or remove content from the partials still used by the monolith `index.astro` (`_Typography`, `_ContentComponents`, `_UiComponents`, `_HtmlElements`, `_OtherStuff`) until the end — they keep `/styleguide` working. The **exception** is the foundations-only partials we're actively migrating (`_DesignTokens`, `_UtilityClasses`): gut/inline them as you port, then delete. Once we have a *new* working styleguide we can remove the rest en-masse.
+- The finished **Colour System** and **Design tokens** sections in `foundations.astro` are the reference model for a ported section: `section[id] → h2 → intro → h3[id] sub-sections → plain HTML tables` (token tables use `Variable | Value | Preview | Notes`, where Value is the literal from `_foundation.css` and Notes is hand-written), with co-located `sg-`-prefixed CSS. Mirror them rather than inventing a new shape.
+- Each page passes a `toc={[{ id, label }]}` to `StyleguideLayout`; the active-item highlight is a **CSS-only scrollspy** (`scroll-target-group` + `:target-current`, Chromium-only progressive enhancement — no JS, don't add any). Keep every `toc` id matched to a real heading `id` and in page order: an entry pointing at a missing id silently breaks (dead anchor, no highlight).
 - Do not attempt to write explanatory prose like intro paragraphs unless the user specifically asks you to. 
 - Do not run linters and checks after simple HTML or CSS changes unless asked.
 - When porting content from the old styleguide pages, start by directly porting what's there and *then* look for opportunities to:
@@ -112,9 +114,11 @@ src/pages/styleguide/
 - [x] New structure with stub docs.
 - [x] New responsive `StyleguideLayout.astro` with cross-page navigation and in-page TOC. Check this works properly with the user.
 - [x] New `SGSwitcher.astro` based on `SGTypographySwitcher` with "UI Flow" removed.
-- [x] New `SGSpecimin.astro` for rendering the "you write this" code block + live output as one consistent unit. The core repeated element across Components/UI pages.
+- [x] New `SGSpecimen.astro` for rendering the "you write this" code block + live output as one consistent unit. The core repeated element across Components/UI pages.
 
 ### Phase 1 — Foundations
+
+> **Where the remaining source lives:** the unchecked items below are still in two partials that `foundations.astro` imports and renders — `_DesignTokens.astro` (already trimmed to just the typography/spacing content and **retitled** `id="typography-spacing"` / "Typography & Spacing Tokens"; its intro paragraph is now stale) and `_UtilityClasses.astro`. Port each inline into `foundations.astro`, then delete the partial.
 
 - [x] Intro
 - [x] Colour System
