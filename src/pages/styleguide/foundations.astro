@@ -435,12 +435,17 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   <section id="typography-spacing" class="flow">
     <h2>Typography & Spacing Tokens</h2>
     <p>
-      Typography and spacing designtokens provide consistent rhythm and visual hireachy across the site.
+      Typography and spacing designtokens provide consistent rhythm and visual hireachy across the
+      site.
     </p>
 
     <h3 id="font-families">Font Families</h3>
     <p>
-      Typography on this site serves five distinct usage contexts, covered by four font stacks. Short-form prose and UI elements use Figtree (<code>--font-ui</code>) which works well for both use cases and is the deault face. Long-form prose uses Literata (<code>--font-prose</code>), while "display" type uses Giest (<code>--font-display</code>). Code examples and other monospacefonts use a version of Fira Code.
+      Typography on this site serves five distinct usage contexts, covered by four font stacks.
+      Short-form prose and UI elements use Figtree (<code>--font-ui</code>) which works well for
+      both use cases and is the deault face. Long-form prose uses Literata (<code>--font-prose</code
+      >), while "display" type uses Giest (<code>--font-display</code>). Code examples and other
+      monospacefonts use a version of Fira Code.
     </p>
     <div class="sg-type-specimens">
       <SGTypeSpecimen
@@ -475,64 +480,60 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     </div>
 
     <h3 id="font-sizes">Font Sizes</h3>
-    <p>Fluid type scale using <a href="https://utopia.fyi/type/calculator">Utopia</a>.</p>
+    <p>
+      The base type is generated with <a href="https://utopia.fyi/type/calculator">Utopia</a> and uses
+      `clamp()` to appropriatley scale with the viewport width. While the CSS variables below are used
+      in most places, I also use <code>em</code>'s in certain contexts where I want text sized
+      relative to that of it's parent context.
+    </p>
     <table>
       <thead>
         <tr>
-          <th>Variable</th>
-          <th>Value</th>
           <th>Preview</th>
+          <th>Variable</th>
           <th>Notes</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><code>--font-size-xs</code></td>
-          <td><code>var(--step--2)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-xs)">Aa</td>
-          <td>Captions, labels, fine print</td>
+          <td><code>--font-size-xs</code></td>
+          <td>Occasional use in captions, labels, fine print etc</td>
         </tr>
         <tr>
-          <td><code>--font-size-sm</code></td>
-          <td><code>var(--step--1)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-sm)">Aa</td>
-          <td>Secondary text, metadata, UI elements</td>
+          <td><code>--font-size-sm</code></td>
+          <td>Used for secondary text, metadata and anywhere else I wan smaller copy</td>
         </tr>
         <tr>
-          <td><code>--font-size-base</code></td>
-          <td><code>var(--step-0)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-base)">Aa</td>
-          <td>Body text, paragraphs</td>
+          <td><code>--font-size-base</code></td>
+          <td>Default. Default for all body text and H4-6</td>
         </tr>
         <tr>
-          <td><code>--font-size-md</code></td>
-          <td><code>var(--step-1)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-md)">Aa</td>
-          <td>Emphasized body text, lead paragraphs</td>
+          <td><code>--font-size-md</code></td>
+          <td>Anywhere we want slightly larger copy. Default for H3</td>
         </tr>
         <tr>
-          <td><code>--font-size-lg</code></td>
-          <td><code>var(--step-2)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-lg)">Aa</td>
-          <td>Section headings (h4), large UI text</td>
+          <td><code>--font-size-lg</code></td>
+          <td>Default for H2</td>
         </tr>
         <tr>
-          <td><code>--font-size-xl</code></td>
-          <td><code>var(--step-3)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-xl)">Aa</td>
-          <td>Subheadings (h3)</td>
+          <td><code>--font-size-xl</code></td>
+          <td>Default for H1</td>
         </tr>
         <tr>
-          <td><code>--font-size-2xl</code></td>
-          <td><code>var(--step-4)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-2xl)">Aa</td>
-          <td>Major headings (h2)</td>
+          <td><code>--font-size-2xl</code></td>
+          <td>Used for large display copy and some page titles</td>
         </tr>
         <tr>
-          <td><code>--font-size-3xl</code></td>
-          <td><code>var(--step-5)</code></td>
           <td class="font-size-preview" style="font-size: var(--font-size-3xl)">Aa</td>
-          <td>Page titles (h1)</td>
+          <td><code>--font-size-3xl</code></td>
+          <td>Used for large display copy</td>
         </tr>
       </tbody>
     </table>
