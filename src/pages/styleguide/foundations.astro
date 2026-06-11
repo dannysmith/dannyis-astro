@@ -11,8 +11,7 @@ const toc = [
   { id: 'font-sizes', label: 'Font sizes' },
   { id: 'spacing', label: 'Spacing' },
   { id: 'font-weights', label: 'Font weights' },
-  { id: 'line-height', label: 'Line height' },
-  { id: 'letter-spacing', label: 'Letter spacing' },
+  { id: 'leading-tracking', label: 'Leading & tracking' },
   { id: 'utility-classes', label: 'Utility classes' },
 ];
 
@@ -47,7 +46,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       lightness and lower chroma in dark mode.
     </p>
     <div class="sg-panel">
-      <div class="sg-swatch-grid" style="--sg-swatch-min: 8rem">
+      <div class="swatch-grid" style="--swatch-min: 8rem">
         {
           ['white', 'black', 'ink', 'charcoal', 'beige'].map(colour => (
             <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
@@ -55,12 +54,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         }
       </div>
     </div>
-    <div class="sg-theme-pair">
+    <div class="theme-pair">
       {
         ['light', 'dark'].map(theme => (
-          <div class="sg-theme-col flow" data-theme={theme}>
-            <p class="sg-theme-label">{theme} mode</p>
-            <div class="sg-swatch-grid">
+          <div class="theme-col flow" data-theme={theme}>
+            <p class="theme-label">{theme} mode</p>
+            <div class="swatch-grid">
               {['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'].map(colour => (
                 <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
               ))}
@@ -71,7 +70,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     </div>
     <p>
       The table below shows the semantic colours currently in use. Components should use these (or
-      derivatives of them via CSS functions like `color-mix()`) wherever their use case fits their
+      derivatives of them via CSS functions like <code>color-mix()</code>) wherever their use case fits their
       semantic role. In situations where a foundational colour is <em>more semantic</em> (eg a "blue callout")
       then use the foundational colour instead. I deliberately try to keep these semantic colours to a
       minimum to avoid ending up with a large unwieldy palette of very specific colours that are only
@@ -94,12 +93,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Accent</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-accent)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-accent)" />
             </span>
           </td>
@@ -111,12 +110,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Visited</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-visited)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-visited)" />
             </span>
           </td>
@@ -128,12 +127,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Highlight</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-highlight)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-highlight)" />
             </span>
           </td>
@@ -145,12 +144,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Focus ring</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-focus-ring)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-focus-ring)" />
             </span>
           </td>
@@ -167,12 +166,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Primary background</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-background)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-background)" />
             </span>
           </td>
@@ -184,12 +183,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Secondary background</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-background-secondary)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-background-secondary)" />
             </span>
           </td>
@@ -201,12 +200,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Code background</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-background-code)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-background-code)" />
             </span>
           </td>
@@ -223,12 +222,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Text</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-text)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-text)" />
             </span>
           </td>
@@ -240,12 +239,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Text secondary</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-text-secondary)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-text-secondary)" />
             </span>
           </td>
@@ -257,12 +256,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td>Border</td>
           <td class="center" data-theme="light">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-border)" />
             </span>
           </td>
           <td class="center" data-theme="dark">
-            <span class="sg-mini-swatch">
+            <span class="mini-swatch">
               <ColorSwatch color="var(--color-border)" />
             </span>
           </td>
@@ -435,7 +434,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   <section id="typography-spacing" class="flow">
     <h2>Typography & Spacing Tokens</h2>
     <p>
-      Typography and spacing designtokens provide consistent rhythm and visual hireachy across the
+      Typography and spacing design tokens provide consistent rhythm and visual hierarchy across the
       site.
     </p>
 
@@ -443,11 +442,11 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     <p>
       Typography on this site serves five distinct usage contexts, covered by four font stacks.
       Short-form prose and UI elements use Figtree (<code>--font-ui</code>) which works well for
-      both use cases and is the deault face. Long-form prose uses Literata (<code>--font-prose</code
-      >), while "display" type uses Giest (<code>--font-display</code>). Code examples and other
-      monospacefonts use a version of Fira Code.
+      both use cases and is the default face. Long-form prose uses Literata (<code>--font-prose</code
+      >), while "display" type uses Geist (<code>--font-display</code>). Code examples and other
+      monospace fonts use a version of Fira Code.
     </p>
-    <div class="sg-type-specimens">
+    <div class="type-specimens" class="flow">
       <SGTypeSpecimen
         family="Geist"
         url="https://vercel.com/font"
@@ -461,14 +460,14 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         url="https://fonts.google.com/specimen/Literata"
         usageTitle="Long-form prose"
         cssVar="--font-prose"
-        description="Used for 'bookish' long-form prose, mostly in articles. "
+        description="Used for 'bookish' long-form prose, mostly in articles."
       />
       <SGTypeSpecimen
         family="Figtree"
         url="https://fonts.google.com/specimen/Figtree"
         usageTitle="Short-form prose & UI"
         cssVar="--font-ui"
-        description="The default face for UI and standard prose. "
+        description="The default face for UI and standard prose."
       />
       <SGTypeSpecimen
         family="Fira Code"
@@ -482,9 +481,9 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
     <h3 id="font-sizes">Font Sizes</h3>
     <p>
       The base type is generated with <a href="https://utopia.fyi/type/calculator">Utopia</a> and uses
-      `clamp()` to appropriatley scale with the viewport width. While the CSS variables below are used
-      in most places, I also use <code>em</code>'s in certain contexts where I want text sized
-      relative to that of it's parent context.
+      <code>clamp()</code> to appropriately scale with the viewport width. While the CSS variables below
+      are used in most places, I also use <code>em</code>s in certain contexts where I want text sized
+      relative to that of its parent context.
     </p>
     <table>
       <thead>
@@ -503,12 +502,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         <tr>
           <td class="font-size-preview" style="font-size: var(--font-size-sm)">Aa</td>
           <td><code>--font-size-sm</code></td>
-          <td>Used for secondary text, metadata and anywhere else I wan smaller copy</td>
+          <td>Used for secondary text, metadata and anywhere else I want smaller copy</td>
         </tr>
         <tr>
           <td class="font-size-preview" style="font-size: var(--font-size-base)">Aa</td>
           <td><code>--font-size-base</code></td>
-          <td>Default. Default for all body text and H4-6</td>
+          <td>Default for all body text and H4–6</td>
         </tr>
         <tr>
           <td class="font-size-preview" style="font-size: var(--font-size-md)">Aa</td>
@@ -668,7 +667,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       </tbody>
     </table>
 
-    <h3 id="line-height">Leading & Tracking</h3>
+    <h3 id="leading-tracking">Leading & Tracking</h3>
     <p>
       Line height and letter-spacing can be controlled via <code>--leading-*</code> and <code
         >--tracking-*</code
@@ -774,7 +773,8 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   <section id="utility-classes" class="flow">
     <h2>Utility Classes</h2>
     <p>
-      In addition to the foundational custom properties above, a few global utility classes available.
+      In addition to the foundational custom properties above, there are a few global utility classes
+      available.
     </p>
 
     <table>
@@ -884,38 +884,43 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 </StyleguideLayout>
 
 <style>
-  /* Grid of square colour swatches; --sg-swatch-min controls minimum cell size. */
-  .sg-swatch-grid {
-    --sg-swatch-min: 6rem;
+  /* Extra breathing room above each section's main heading. */
+  section > h2 {
+    margin-block-start: var(--space-xl);
+  }
+
+  /* Grid of square colour swatches; --swatch-min controls minimum cell size. */
+  .swatch-grid {
+    --swatch-min: 6rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--sg-swatch-min), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--swatch-min), 1fr));
     gap: var(--space-m);
   }
 
-  .sg-swatch-grid :global(.color-swatch) {
+  .swatch-grid :global(.color-swatch) {
     aspect-ratio: 1;
   }
 
   /* Light/dark comparison: two themed columns side by side. */
-  .sg-theme-pair {
+  .theme-pair {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
     gap: var(--space-s);
   }
 
-  .sg-theme-col {
+  .theme-col {
     padding: var(--space-s);
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
   }
 
-  .sg-theme-label {
+  .theme-label {
     text-transform: uppercase;
     font-weight: var(--font-weight-medium);
   }
 
   /* Fixed-size swatch used inside the semantic table cells. */
-  .sg-mini-swatch {
+  .mini-swatch {
     display: inline-block;
     width: 2.5rem;
     height: 2.5rem;
@@ -948,7 +953,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   }
 
   /* Typeface specimens stack */
-  .sg-type-specimens {
+  .type-specimens {
     display: flex;
     flex-direction: column;
     gap: var(--space-m);

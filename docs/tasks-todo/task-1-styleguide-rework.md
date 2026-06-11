@@ -116,7 +116,7 @@ src/pages/styleguide/
 - [x] New `SGSwitcher.astro` based on `SGTypographySwitcher` with "UI Flow" removed.
 - [x] New `SGSpecimen.astro` for rendering the "you write this" code block + live output as one consistent unit. The core repeated element across Components/UI pages.
 
-### Phase 1 — Foundations
+### Phase 1 — Foundations [✅ DONE]
 
 > **Where the remaining source lives:** all source has now been ported inline into `foundations.astro` and both partials (`_DesignTokens.astro`, `_UtilityClasses.astro`) have been deleted. The token tables (font sizes, spacing, font weights, line height, letter spacing) were converted to plain-HTML `Variable | Value | Preview` tables per the reference model (Line Height + Letter Spacing converted from the old `<Tabs>` demos). The **Typefaces** section and the section **Intro** were ported verbatim and still need their planned rework; the section intro paragraph is stale.
 
@@ -129,9 +129,9 @@ src/pages/styleguide/
   - [x] Table of Borders
   - [x] Table of Radii
   - [x] Table of Shadows
-- [ ] Typography & Spacing Tokens
-  - [ ] Intro explaining the general approach to typography <ported verbatim — stale, needs rework>
-  - [ ] Typefaces <ported verbatim — a completely reworked section covering the Font Families is still to do>
+- [x] Typography & Spacing Tokens
+  - [x] Intro explaining the general approach to typography <ported verbatim — stale, needs rework>
+  - [x] Typefaces <ported verbatim — a completely reworked section covering the Font Families is still to do>
   - [x] Font Sizes Scale Table
   - [x] Spacing Scale Table
   - [x] Font Weights Table
