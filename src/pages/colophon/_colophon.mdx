@@ -1,33 +1,32 @@
-The site is built with [Astro](https://astro.build) and TypeScript. It's statically-generated and I try to ship as little JavaScript as possible. Most of my content is written in Markdown or [MDX](https://mdxjs.com/). The styling is hand-rolled CSS for the most part, and the site is deployed to [Vercel](https://vercel.com/) via a GitHub Action. I also use...
+The site is built with [Astro](https://astro.build) and TypeScript. It's statically-generated and I try to ship as little JavaScript as possible. Most of my content is written in Markdown or [MDX](https://mdxjs.com/). The full source is on [GitHub](https://github.com/dannysmith/dannyis-astro) if you wanna have a look.
+
+## Design & Styling
+
+The CSS is mostly hand-written – I don't use a framework like Tailwind. The *design system* is [described in the styleguide](/styleguide/) along with details of the typefaces I use here. The styleguide also contains demos of all the Astro components.
+
+## Deployment
+
+The site is statically generated using a GitHub Action which produces a plain 'ol HTML website. This is currently deployed to [Vercel](https://vercel.com/), but could equally be deployed to anywhere else I wanted. The only vercel-specific stuff is in `vercel.output-config.json`.
+
+## Other Dependencies
 
 - [Expressive Code](https://expressive-code.com/) with a custom theme for code blocks.
 - [Mermaid](https://mermaid.js.org/) for diagrams.
-- [astro-icon](https://www.astroicon.dev/), [Heroicons](https://heroicons.com/) and [Simple Icons](https://simpleicons.org/).
+- [astro-icon](https://www.astroicon.dev/), [Heroicons](https://heroicons.com/) and [Simple Icons](https://simpleicons.org/) for icons.
 - [Satori](https://github.com/vercel/satori) and [resvg](https://github.com/yisibl/resvg-js) to generate OG Images.
 - [Vitest](https://vitest.dev/) & [Playwright](https://playwright.dev/) for testing.
 - [Bun](https://bun.sh/) as my package manager.
 
-The full source is on [GitHub](https://github.com/dannysmith/dannyis-astro) and there's a kinda-private [styleguide page](/styleguide) if you want to nose around a bit.
-
-## Typefaces
-
-The site uses four typefaces, each picked deliberately for the job it does:
-
-- **[Literata](https://github.com/googlefonts/literata)** — a contemporary serif used for long-form articles.
-- **[Geist](https://vercel.com/font)** — a geometric sans-serif by Vercel, used for display type.
-- **[Figtree](https://github.com/erikdkennedy/figtree)** — a friendly geometric sans by Erik Kennedy, used for UI and short-form prose.
-- **[Fira Code](https://github.com/tonsky/FiraCode)** for code blocks.
-
 ## How I write and edit
 
-I mostly write in [Astro Editor](https://astroeditor.danny.is), a desktop markdown editor I built specifically for authoring in Astro content collections. I occasionally reach for [iA Writer](https://ia.net/writer) when working on very early drafts.
+I mostly write in [Astro Editor](https://astroeditor.danny.is), a desktop markdown editor I built specifically for authoring Astro content collections. I occasionally reach for [iA Writer](https://ia.net/writer) when working on very early drafts.
 
-I use [VSCode](https://code.visualstudio.com/) and [Ghostty](https://ghostty.org/) to publish via GitHub, and also for development. My AI tool of choice is [Claude Code](https://claude.com/claude-code), which I tend to use in the terminal.
+I use [VSCode](https://code.visualstudio.com/) and [Ghostty](https://ghostty.org/) for development, and to publish content via `git push`.
+
+My AI tool of choice is [Claude Code](https://claude.com/claude-code) which I tend to use in the terminal. See my [AI Statement](/ai) for how I use that in this site.
 
 ## Other stuff
 
-See my [AI Statement](/ai) for how I use that here.
-
 If you spot something here you like and want to use, the source is permissively licensed for the code. The writing remains mine.
 
-Updated: 2026-05-28
+Updated: 2026-06-12
