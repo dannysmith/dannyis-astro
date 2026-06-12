@@ -1,6 +1,5 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
-import SGSwitcher from './_components/SGSwitcher.astro';
 import SGTypeSpecimen from './_components/SGTypeSpecimen.astro';
 import { ColorSwatch } from '@components/mdx/index';
 
@@ -852,34 +851,6 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         </tr>
       </tbody>
     </table>
-
-    <h3 id="list-reset-demo">.list-reset</h3>
-    <p>
-      The <code>.list-reset</code> class removes default list styling (bullets, padding etc) for navigation-style
-      lists.
-    </p>
-    <SGSwitcher>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-m);">
-        <div>
-          <strong>Without .list-reset</strong>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Writing</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-        </div>
-        <div>
-          <strong>With .list-reset</strong>
-          <ul class="list-reset">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Writing</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-        </div>
-      </div>
-    </SGSwitcher>
   </section>
 </StyleguideLayout>
 

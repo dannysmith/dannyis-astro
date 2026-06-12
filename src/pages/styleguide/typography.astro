@@ -407,13 +407,22 @@ const toc = [
     </SGSwitcher>
 
     <h3 id="lists-density">List density</h3>
-    <!-- TODO(Danny): intro — `.long-list-items` is added by the rehype-list-density plugin when items run long. Rendered from a real MDX snippet. -->
+    <p>
+      Lists earn their vertical rhythm based on how long their items are. A list of short bullets
+      gets tight spacing, while a list whose items run long — essentially paragraphs in their own
+      right — gets the more generous spacing that paragraphs receive. A build-time rehype plugin
+      measures the average length of each list's items and adds the <code>.long-list-items</code> class
+      when it crosses a threshold.
+    </p>
     <SGSwitcher>
       <ListDensityContent />
     </SGSwitcher>
 
-    <h3 id="list-reset">.list-reset</h3>
-    <!-- TODO(Danny): intro. NOTE: Foundations also carries a .list-reset demo (ported in Phase 1) — decide which page should own it. -->
+    <h3 id="list-reset-demo">.list-reset</h3>
+    <p>
+      The <code>.list-reset</code> class removes default list styling (bullets, padding etc) for navigation-style
+      lists.
+    </p>
     <SGSwitcher>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-m);">
         <div>
