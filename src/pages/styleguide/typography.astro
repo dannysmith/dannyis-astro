@@ -2,6 +2,11 @@
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
 import { SmartLink, SmallCaps, highlight as Highlight } from '@components/mdx/index';
+import WrappedTable from '@components/mdx/WrappedTable.astro';
+import { InlineFootnotes } from '@components/layout/index';
+import { Content as ChecklistContent } from './_snippets/checklist.mdx';
+import { Content as ListDensityContent } from './_snippets/list-density.mdx';
+import { Content as FootnotesContent } from './_snippets/footnotes.mdx';
 
 const toc = [
   { id: 'inline', label: 'Inline elements' },
@@ -10,6 +15,10 @@ const toc = [
   { id: 'block', label: 'Block-level elements' },
   { id: 'headings', label: 'Headings' },
   { id: 'composite', label: 'Composite sample' },
+  { id: 'lists', label: 'Lists' },
+  { id: 'tables', label: 'Tables' },
+  { id: 'footnotes', label: 'Footnotes' },
+  { id: 'realistic', label: 'Realistic example' },
 ];
 ---
 
@@ -49,10 +58,9 @@ const toc = [
             <td><code>[Notes](/notes/)</code></td>
             <td><SmartLink href="/notes/">Notes</SmartLink></td>
             <td
-              >Unvisited links are rendered in the accent colour while visited ones are
-              rendered in purple. Hover and active behaviour depends on the context. In
-              longform prose on wide viewports, coloured underlines are shown instead of
-              coloured text.</td
+              >Unvisited links are rendered in the accent colour while visited ones are rendered in
+              purple. Hover and active behaviour depends on the context. In longform prose on wide
+              viewports, coloured underlines are shown instead of coloured text.</td
             >
           </tr>
           <tr>
@@ -60,8 +68,8 @@ const toc = [
             <td><code>[GitHub](https://github.com)</code></td>
             <td><SmartLink href="https://github.com">GitHub</SmartLink></td>
             <td
-              >Markdown links are automatically converted to SmartLink components. Those
-              pointing to external domains get a small arrow and appropriate attributes.</td
+              >Markdown links are automatically converted to SmartLink components. Those pointing to
+              external domains get a small arrow and appropriate attributes.</td
             >
           </tr>
           <tr>
@@ -173,8 +181,7 @@ const toc = [
             <td><code>&lt;abbr title="…"&gt;W3C&lt;/abbr&gt;</code></td>
             <td><abbr title="World Wide Web Consortium">W3C</abbr></td>
             <td
-              >Abbreviations are rendered in small caps. If a title is present, they're
-              underlined.</td
+              >Abbreviations are rendered in small caps. If a title is present, they're underlined.</td
             >
           </tr>
           <tr>
@@ -207,8 +214,7 @@ const toc = [
 
     <h3 id="manual-inline">Manual inline components</h3>
     <p>
-      The following inline Astro components are available for use in MDX files or other Astro
-      pages.
+      The following inline Astro components are available for use in MDX files or other Astro pages.
     </p>
     <SGSwitcher>
       <table>
@@ -279,13 +285,19 @@ const toc = [
     <h3 id="paragraphs">Paragraphs</h3>
     <SGSwitcher>
       <p>
-        A paragraph of body copy, with <em>emphasis</em>, <strong>strong importance</strong>,
-        a bit of <code>inline code</code> and a <SmartLink href="/notes/">link</SmartLink> woven
-        through it. Placeholder text — replace with your own.
+        A paragraph of body copy, with <em>emphasis</em>, <strong>strong importance</strong>, a bit
+        of <code>inline code</code> and a <SmartLink href="/notes/">link</SmartLink> woven through it.
+        Nostrud in deserunt et laborum id adipisicing laboris sint. Consectetur laborum consequat mollit
+        laborum.
       </p>
       <p>
-        A second paragraph, so the spacing and rhythm between blocks is visible. Notice how
-        the Default tab has no inter-paragraph spacing until the Flow context adds it.
+        A second paragraph, so the spacing and rhythm between blocks is visible. Nostrud in deserunt
+        et laborum id adipisicing laboris sint. Consectetur laborum consequat mollit laborum. Dolore
+        occaecat ex anim reprehenderit aliqua. Veniam commodo qui quis anim consectetur pariatur.
+        Dolore exercitation esse et. Minim dolor aliquip laboris Lorem nostrud minim incididunt
+        fugiat voluptate ex veniam. Nisi aliqua ut veniam incididunt officia cillum aliqua
+        reprehenderit velit et mollit eu voluptate. Sunt ut elit ipsum aute duis minim incididunt et
+        nulla dolor magna. Officia consequat ex duis.
       </p>
     </SGSwitcher>
 
@@ -293,8 +305,7 @@ const toc = [
     <SGSwitcher>
       <blockquote>
         <p>
-          A plain markdown blockquote. This is what a single <code>&gt;</code> prefix produces —
-          a
+          A plain markdown blockquote. This is what a single <code>&gt;</code> prefix produces — a
           <code>blockquote</code> wrapping one or more paragraphs.
         </p>
       </blockquote>
@@ -318,14 +329,19 @@ const toc = [
     <SGSwitcher>
       <h2>A section heading</h2>
       <p>
-        An opening paragraph that introduces the section, with an <em>emphasised phrase</em> and
-        a
-        <SmartLink href="/notes/">link</SmartLink> to set the scene. Placeholder copy throughout.
+        An opening paragraph that introduces the section, with an <em>emphasised phrase</em> and a
+        <SmartLink href="/notes/">link</SmartLink> to set the scene. Dolore occaecat ex anim reprehenderit
+        aliqua. Veniam commodo qui quis anim consectetur pariatur. Dolore exercitation esse et. Minim
+        dolor aliquip laboris Lorem nostrud minim incididunt fugiat voluptate ex veniam. Nisi aliqua ut
+        veniam incididunt officia cillum aliqua reprehenderit velit et mollit eu voluptate. Sunt ut elit
+        ipsum aute duis minim incididunt et nulla dolor magna. Officia consequat ex duis.
       </p>
       <h3>A subsection</h3>
       <p>
-        Body copy under a subsection heading, showing how headings and paragraphs sit together
-        with the right vertical rhythm.
+        Body copy under a subsection heading, showing how headings and paragraphs sit together with
+        the right vertical rhythm. Nisi aliqua ut veniam incididunt officia cillum aliqua
+        reprehenderit velit et mollit eu voluptate. Sunt ut elit ipsum aute duis minim incididunt et
+        nulla dolor magna. Officia consequat ex duis.
       </p>
       <blockquote>
         <p>A quotation that breaks up the flow and carries a little extra weight.</p>
@@ -335,6 +351,261 @@ const toc = [
       <p>And a final paragraph after the rule.</p>
     </SGSwitcher>
   </section>
+
+  <section id="lists" class="flow">
+    <h2>Lists</h2>
+    <p>
+      Unordered and ordered lists share much of their styling, and handle nesting properly. Ordered
+      lists are rendered with numerals by default and use letters then roman numerals for nested
+      items.
+    </p>
+    <h3 id="lists-unordered">Unordered lists</h3>
+    <SGSwitcher>
+      <ul>
+        <li>A first item</li>
+        <li>
+          A second item with <em>emphasis</em> and a <SmartLink href="/notes/">link</SmartLink>
+        </li>
+        <li>
+          A third item with nested children
+          <ul>
+            <li>A nested item</li>
+            <li>Another nested item</li>
+          </ul>
+        </li>
+        <li>A fourth item</li>
+      </ul>
+    </SGSwitcher>
+
+    <h3 id="lists-ordered">Ordered lists</h3>
+    <!-- TODO(Danny): intro — markdown `1.`, including nesting. -->
+    <SGSwitcher>
+      <ol>
+        <li>The first step</li>
+        <li>The second step</li>
+        <li>
+          The third step, with sub-steps
+          <ol>
+            <li>
+              A sub-step
+              <ol>
+                <li>A sub-sub-step</li>
+                <li>Another sub-sub-step</li>
+              </ol>
+            </li>
+            <li>Another sub-step</li>
+          </ol>
+        </li>
+        <li>The fourth step</li>
+      </ol>
+    </SGSwitcher>
+
+    <h3 id="lists-checklists">Checklists</h3>
+    <p>GFM task lists are supported by default and render as checklists.</p>
+    <SGSwitcher>
+      <ChecklistContent />
+    </SGSwitcher>
+
+    <h3 id="lists-density">List density</h3>
+    <!-- TODO(Danny): intro — `.long-list-items` is added by the rehype-list-density plugin when items run long. Rendered from a real MDX snippet. -->
+    <SGSwitcher>
+      <ListDensityContent />
+    </SGSwitcher>
+
+    <h3 id="list-reset">.list-reset</h3>
+    <!-- TODO(Danny): intro. NOTE: Foundations also carries a .list-reset demo (ported in Phase 1) — decide which page should own it. -->
+    <SGSwitcher>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-m);">
+        <div>
+          <strong>Without .list-reset</strong>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Writing</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <strong>With .list-reset</strong>
+          <ul class="list-reset">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Writing</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </SGSwitcher>
+  </section>
+
+  <section id="tables" class="flow">
+    <h2>Tables</h2>
+    <!-- TODO(Danny): intro. -->
+
+    <h3 id="tables-basic">Basic table</h3>
+    <!-- TODO(Danny): intro — caption, thead, th/td. -->
+    <SGSwitcher>
+      <table>
+        <caption>Quarterly results</caption>
+        <thead>
+          <tr>
+            <th>Quarter</th>
+            <th>Revenue</th>
+            <th>Expenses</th>
+            <th>Profit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Q1</th>
+            <td>$124,500</td>
+            <td>$98,200</td>
+            <td>$26,300</td>
+          </tr>
+          <tr>
+            <th>Q2</th>
+            <td>$156,800</td>
+            <td>$112,400</td>
+            <td>$44,400</td>
+          </tr>
+          <tr>
+            <th>Q3</th>
+            <td>$189,200</td>
+            <td>$134,600</td>
+            <td>$54,600</td>
+          </tr>
+        </tbody>
+      </table>
+    </SGSwitcher>
+
+    <h3 id="tables-mixed">Mixed-content cells</h3>
+    <!-- TODO(Danny): intro — cells holding code, formatted text and other inline elements. -->
+    <SGSwitcher>
+      <table>
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Value</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>font-size</code></td>
+            <td><code>var(--font-size-base)</code></td>
+            <td>Base text size for body copy</td>
+          </tr>
+          <tr>
+            <td><code>line-height</code></td>
+            <td><code>var(--leading-normal)</code></td>
+            <td>Comfortable reading rhythm for <em>most</em> text</td>
+          </tr>
+          <tr>
+            <td><code>letter-spacing</code></td>
+            <td><code>var(--tracking-normal)</code></td>
+            <td>Default tracking for body text</td>
+          </tr>
+        </tbody>
+      </table>
+    </SGSwitcher>
+
+    <h3 id="tables-wide">Wide / scrolling tables</h3>
+    <!-- TODO(Danny): intro — tables wider than their container get a focusable scroll region (div.table-scroll). In MDX this wrapper is automatic via MDX_COMPONENT_REMAPPING; elsewhere use <WrappedTable> (or write the wrapper by hand). -->
+    <SGSwitcher>
+      <WrappedTable>
+        <thead>
+          <tr>
+            <th>Quarter</th>
+            <th>Revenue</th>
+            <th>Expenses</th>
+            <th>Profit</th>
+            <th>Customers</th>
+            <th>Retention</th>
+            <th>NPS</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Q1</td>
+            <td>$124,500</td>
+            <td>$98,200</td>
+            <td>$26,300</td>
+            <td>1,204</td>
+            <td>92%</td>
+            <td>54</td>
+            <td>Steady growth driven by inbound leads.</td>
+          </tr>
+          <tr>
+            <td>Q2</td>
+            <td>$156,800</td>
+            <td>$112,400</td>
+            <td>$44,400</td>
+            <td>1,488</td>
+            <td>94%</td>
+            <td>61</td>
+            <td>Launched the new pricing tiers mid-quarter.</td>
+          </tr>
+          <tr>
+            <td>Q3</td>
+            <td>$189,200</td>
+            <td>$134,600</td>
+            <td>$54,600</td>
+            <td>1,712</td>
+            <td>93%</td>
+            <td>58</td>
+            <td>Slight churn uptick after the pricing change.</td>
+          </tr>
+        </tbody>
+      </WrappedTable>
+    </SGSwitcher>
+  </section>
+
+  <section id="footnotes" class="flow">
+    <h2>Footnotes</h2>
+    <!-- TODO(Danny): intro — footnotes are generated from markdown ([^label] reference, [^label]: definition). Three parts work together: the reference marker, the inline popup (progressive enhancement via InlineFootnotes), and the footnotes section at the bottom. Shown once (not context-switched) so footnote anchor IDs stay unique. -->
+    <div class="sg-panel">
+      <FootnotesContent />
+    </div>
+  </section>
+
+  <section id="realistic" class="flow">
+    <h2>Realistic example</h2>
+    <!-- TODO(Danny): intro — a longer, realistic passage combining many of the elements above. -->
+    <SGSwitcher>
+      <h2>The craft of small decisions</h2>
+      <p>
+        Good design rarely announces itself. It shows up in the <em>accumulation</em> of small choices
+        — the <strong>weight of a heading</strong>, the rhythm between paragraphs, the moment a <SmartLink
+          href="/notes/">link</SmartLink
+        > invites you somewhere new. None of it is loud, and that's the point.
+      </p>
+      <blockquote>
+        <p>The details are not the details. They make the design.</p>
+      </blockquote>
+      <h3>Where it adds up</h3>
+      <p>A few places those small decisions compound:</p>
+      <ul>
+        <li>Setting type that's comfortable to read for more than a paragraph</li>
+        <li>Keeping <code>inline code</code> legible without breaking the line</li>
+        <li>Letting lists and tables carry structure the prose can't</li>
+      </ul>
+      <p>
+        Press <kbd>Cmd</kbd> + <kbd>P</kbd> to print this and the type still holds together. That resilience<sup
+          >1</sup
+        > is the result of decisions made long before anyone reads a word.
+      </p>
+      <hr />
+      <p>
+        <small
+          >A closing aside, set smaller, the way fine print or a postscript might sit at the end of
+          a piece.</small
+        >
+      </p>
+    </SGSwitcher>
+  </section>
+
+  <InlineFootnotes />
 </StyleguideLayout>
 
 <style>
