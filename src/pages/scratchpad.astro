@@ -4,9 +4,6 @@
  * Covers all the edge cases for prose spacing work.
  */
 import { BaseHead, MainNavigation } from '@components/layout/index';
-import SGSwitcher from './styleguide/_components/SGSwitcher.astro';
-import { ResizableContainer } from '@components/mdx/index';
-import { Tweet, Gist } from 'astro-embed';
 ---
 
 <!doctype html>
@@ -22,27 +19,17 @@ import { Tweet, Gist } from 'astro-embed';
     <MainNavigation />
     <main>
       <h1>Test Page</h1>
-      <ResizableContainer>
-        <SGSwitcher>
-          <Tweet id="https://twitter.com/astrodotbuild/status/1512144306898976768" />
-        </SGSwitcher>
-      </ResizableContainer>
-      <ResizableContainer>
-        <SGSwitcher>
-          <Gist id="https://gist.github.com/delucis/0b44f4ff0397767b2416cc981692c346" />
-        </SGSwitcher>
-      </ResizableContainer>
     </main>
-    <style>
-      body {
-        min-height: 100vh;
-      }
-
-      main {
-        margin: 0 auto;
-        padding: var(--space-m);
-        max-width: 100ch;
-      }
-    </style>
   </body>
 </html>
+<style>
+  body {
+    min-height: 100vh;
+  }
+
+  main {
+    margin: 0 auto;
+    padding: var(--space-m);
+    max-width: 100ch;
+  }
+</style>
