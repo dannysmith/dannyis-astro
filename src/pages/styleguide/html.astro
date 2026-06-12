@@ -1,0 +1,320 @@
+---
+import StyleguideLayout from './_layout/StyleguideLayout.astro';
+import SGSwitcher from './_components/SGSwitcher.astro';
+import { ResizableContainer } from '@components/mdx/index';
+import styleguideImage from '@assets/articles/styleguide-image.jpg';
+
+const toc = [
+  { id: 'forms', label: 'Forms' },
+  { id: 'definition-lists', label: 'Definition lists' },
+  { id: 'figure', label: 'Figure & figcaption' },
+];
+---
+
+<StyleguideLayout
+  title="HTML Baseline"
+  description="Orphan native elements under our default CSS, as a baseline audit."
+  current="html"
+  toc={toc}
+>
+  <header>
+    <p>
+      Raw native element defaults under our default CSS styling. Some HTML elements are showing in other sections of the styleguide – this section is for HTML elements which don't fit neatly elsewhere.
+    </p>
+  </header>
+
+  <section id="forms" class="flow">
+    <h2>Forms</h2>
+    <p>
+      Form controls under the site's base styles. Most forms here will be minimal, but sensible
+      defaults keep them consistent wherever they appear.
+    </p>
+
+    <h3 id="text-inputs">Text inputs</h3>
+    <p>
+      The text-like input types all share the same base styling.
+    </p>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label>Text<br /><input type="text" placeholder="Your name" autocomplete="name" /></label>
+        </p>
+        <p>
+          <label>Email<br /><input type="email" placeholder="you@example.com" autocomplete="email" /></label>
+        </p>
+        <p>
+          <label
+            >Password<br /><input
+              type="password"
+              placeholder="Enter password"
+              autocomplete="current-password"
+            /></label
+          >
+        </p>
+        <p>
+          <label>Search<br /><input type="search" placeholder="Search…" /></label>
+        </p>
+        <p>
+          <label>URL<br /><input type="url" placeholder="https://example.com" /></label>
+        </p>
+        <p>
+          <label>Telephone<br /><input type="tel" placeholder="+44 7700 900000" autocomplete="tel" /></label>
+        </p>
+        <p>
+          <label>Number<br /><input type="number" min="0" max="100" value="1" /></label>
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="datetime-inputs">Date &amp; time inputs</h3>
+    <p>
+      The date- and time-family inputs. Each shows the browser's native picker chrome under our
+      styles.
+    </p>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label>Date<br /><input type="date" /></label>
+        </p>
+        <p>
+          <label>Time<br /><input type="time" /></label>
+        </p>
+        <p>
+          <label>Date &amp; time<br /><input type="datetime-local" /></label>
+        </p>
+        <p>
+          <label>Month<br /><input type="month" /></label>
+        </p>
+        <p>
+          <label>Week<br /><input type="week" /></label>
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="other-inputs">File, colour, range &amp; output</h3>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label>Upload file<br /><input type="file" /></label>
+        </p>
+        <p>
+          <label>Favourite colour<br /><input type="color" value="#E07A5F" /></label>
+        </p>
+        <p>
+          <label>Volume<br /><input type="range" min="0" max="100" value="50" /></label>
+        </p>
+        <p>
+          <label>Output<br /><output>50</output></label>
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="checkboxes-radios">Checkboxes &amp; radios</h3>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label><input type="checkbox" checked /> Subscribe to the newsletter</label><br />
+          <label><input type="checkbox" /> Receive product updates</label>
+        </p>
+        <p>
+          Contact preference:<br />
+          <label><input type="radio" name="contact" value="email" checked /> Email</label><br />
+          <label><input type="radio" name="contact" value="phone" /> Phone</label><br />
+          <label><input type="radio" name="contact" value="none" /> No contact</label>
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="select-datalist">Select &amp; datalist</h3>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label
+            >Country (with optgroups)<br /><select>
+              <option value="">Select a country…</option>
+              <optgroup label="Europe">
+                <option value="uk">United Kingdom</option>
+                <option value="de">Germany</option>
+              </optgroup>
+              <optgroup label="Americas">
+                <option value="us">United States</option>
+                <option value="ca">Canada</option>
+              </optgroup>
+              <optgroup label="Oceania">
+                <option value="au">Australia</option>
+              </optgroup>
+            </select></label
+          >
+        </p>
+        <p>
+          <label
+            >Toppings (multiple)<br /><select multiple size="4">
+              <option value="cheese" selected>Cheese</option>
+              <option value="mushroom">Mushroom</option>
+              <option value="pepperoni" selected>Pepperoni</option>
+              <option value="olives">Olives</option>
+            </select></label
+          >
+        </p>
+        <p>
+          <label>Browser<br /><input type="text" list="sg-browsers" placeholder="Type to search…" /></label>
+          <datalist id="sg-browsers">
+            <option value="Chrome"></option>
+            <option value="Firefox"></option>
+            <option value="Safari"></option>
+            <option value="Edge"></option>
+          </datalist>
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="textarea">Textarea</h3>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label>Message (4 rows)<br /><textarea rows="4" placeholder="Your message here…"></textarea></label>
+        </p>
+        <p>
+          <label>Message (no rows)<br /><textarea placeholder="Your message here…"></textarea></label>
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="input-states">Input states</h3>
+    <p>
+      How the base styles handle <code>disabled</code>, <code>readonly</code> and
+      <code>required</code> controls (a <code>required</code> field also picks up
+      <code>:invalid</code> styling once the browser validates it).
+    </p>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label>Disabled<br /><input type="text" value="Can't touch this" disabled /></label>
+        </p>
+        <p>
+          <label>Read-only<br /><input type="text" value="Read-only value" readonly /></label>
+        </p>
+        <p>
+          <label>Required<br /><input type="text" placeholder="Required field" required /></label>
+        </p>
+        <p>
+          <label>Disabled textarea<br /><textarea rows="2" disabled>Disabled content</textarea></label>
+        </p>
+        <p>
+          <label><input type="checkbox" disabled /> Disabled checkbox</label>
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="progress-meter">Progress &amp; meter</h3>
+    <SGSwitcher>
+      <form>
+        <p>
+          <label>Download progress<br /><progress value="65" max="100">65%</progress></label>
+        </p>
+        <p>
+          <label
+            >Disk usage<br /><meter value="0.7" min="0" max="1" low="0.3" high="0.7" optimum="0.5"
+              >70%</meter
+            ></label
+          >
+        </p>
+      </form>
+    </SGSwitcher>
+
+    <h3 id="form-structure">Fieldset, legend &amp; label structure</h3>
+    <p>
+      The small form below shows the recommended structure for forms: related controls grouped in a
+      <code>&lt;fieldset&gt;</code> with a <code>&lt;legend&gt;</code>, and explicit
+      <code>&lt;label for&gt;</code> associations.
+    </p>
+    <ResizableContainer>
+      <form>
+        <fieldset>
+          <legend>Contact information</legend>
+          <p>
+            <label for="sg-name">Name</label><br />
+            <input type="text" id="sg-name" name="name" autocomplete="name" />
+          </p>
+          <p>
+            <label for="sg-email">Email</label><br />
+            <input type="email" id="sg-email" name="email" autocomplete="email" />
+          </p>
+        </fieldset>
+        <p>
+          <button type="submit">Submit</button>
+          <button type="reset">Reset</button>
+          <button type="button" disabled>Disabled</button>
+        </p>
+        <p>
+          <input type="submit" value="Submit (input)" />
+          <input type="reset" value="Reset (input)" />
+        </p>
+      </form>
+    </ResizableContainer>
+  </section>
+
+  <section id="definition-lists" class="flow">
+    <h2>Definition lists</h2>
+    <p>
+      The <code>&lt;dl&gt;</code> / <code>&lt;dt&gt;</code> / <code>&lt;dd&gt;</code> trio for
+      term–definition pairs — glossaries, metadata, FAQ-style content. A single term can carry
+      multiple definitions.
+    </p>
+    <SGSwitcher>
+      <dl>
+        <dt>Async-first</dt>
+        <dd>
+          A communication approach where asynchronous methods (written docs, recorded video) are the
+          default, with synchronous meetings reserved for high-bandwidth discussion.
+        </dd>
+
+        <dt>Deep work</dt>
+        <dd>
+          Professional activity performed in a state of distraction-free concentration that pushes
+          cognitive capabilities to their limit. Coined by Cal Newport.
+        </dd>
+
+        <dt>Calm company</dt>
+        <dd>
+          A business that prioritises sustainable growth, well-being and profitability over
+          hypergrowth and external funding.
+        </dd>
+        <dd>Often characterised by remote-first policies, async communication and reasonable hours.</dd>
+      </dl>
+    </SGSwitcher>
+  </section>
+
+  <section id="figure" class="flow">
+    <h2>Figure &amp; figcaption</h2>
+    <p>
+      The <code>&lt;figure&gt;</code> element with a <code>&lt;figcaption&gt;</code> for
+      self-contained content and its caption. Distinct from
+      <a href="/styleguide/components#basic-image">BasicImage</a> — this is the raw element under our
+      CSS.
+    </p>
+    <ResizableContainer>
+      <SGSwitcher>
+        <figure>
+          <img src={styleguideImage.src} alt="Modern architectural terrace with wooden decking" />
+          <figcaption>
+            A modern architectural space, demonstrating the figure / figcaption structure. The
+            caption sits below the content.
+          </figcaption>
+        </figure>
+      </SGSwitcher>
+    </ResizableContainer>
+  </section>
+
+  <script>
+    // The forms on this page exist only to give the demo controls a valid form
+    // ancestor — they should never actually submit and navigate.
+    function preventDemoFormSubmits() {
+      document
+        .querySelectorAll<HTMLFormElement>('.styleguide-content form')
+        .forEach(form => form.addEventListener('submit', event => event.preventDefault()));
+    }
+    preventDemoFormSubmits();
+    document.addEventListener('astro:page-load', preventDemoFormSubmits);
+  </script>
+</StyleguideLayout>

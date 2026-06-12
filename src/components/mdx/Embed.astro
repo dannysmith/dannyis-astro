@@ -1,8 +1,8 @@
 ---
-import { YouTube, Tweet, Vimeo } from 'astro-embed';
-import BookmarkCard from './BookmarkCard.astro';
-import LCVid from './LCVid.astro';
-import Loom from './Loom.astro';
+import { YouTube, Tweet, Vimeo, BlueskyPost, MastodonPost } from 'astro-embed';
+import BookmarkCard from '@components/mdx/BookmarkCard.astro';
+import LCVid from '@components/mdx/LCVid.astro';
+import Loom from '@components/mdx/Loom.astro';
 
 export interface Props {
   url: string;
@@ -42,6 +42,19 @@ function getGistId(url: string) {
   return match ? (match[1] ? `${match[1]}/${match[2]}` : match[2]) : null;
 }
 
+function getBlueskyUrl(url: string) {
+  // bsky.app post URLs, e.g. https://bsky.app/profile/<handle>/post/<rkey>.
+  // BlueskyPost takes the full URL (or at:// URI) as its id, so pass it through.
+  return /^https?:\/\/bsky\.app\/profile\/[^/]+\/post\/[\w.-]+/.test(url) ? url : null;
+}
+
+function getMastodonUrl(url: string) {
+  // Mastodon is federated, so there's no single domain — match the fediverse
+  // status shape https://<instance>/@<user>/<numeric-id>. MastodonPost takes the
+  // full URL as its id, so pass it through.
+  return /^https?:\/\/[^/]+\/@[\w.-]+\/\d+\/?$/.test(url) ? url : null;
+}
+
 type EmbedType =
   | { type: 'youtube'; id: string }
   | { type: 'tweet'; id: string }
@@ -49,6 +62,8 @@ type EmbedType =
   | { type: 'loom'; id: string }
   | { type: 'lcvid'; src: string }
   | { type: 'gist'; id: string }
+  | { type: 'bluesky'; url: string }
+  | { type: 'mastodon'; url: string }
   | { type: 'bookmark'; url: string };
 
 function resolveEmbedType(url: string): EmbedType {
@@ -70,6 +85,12 @@ function resolveEmbedType(url: string): EmbedType {
   const gistId = getGistId(url);
   if (gistId) return { type: 'gist', id: gistId };
 
+  const blueskyUrl = getBlueskyUrl(url);
+  if (blueskyUrl) return { type: 'bluesky', url: blueskyUrl };
+
+  const mastodonUrl = getMastodonUrl(url);
+  if (mastodonUrl) return { type: 'mastodon', url: mastodonUrl };
+
   return { type: 'bookmark', url };
 }
 
@@ -82,4 +103,6 @@ const embed = resolveEmbedType(url);
 {embed.type === 'loom' && <Loom id={embed.id} />}
 {embed.type === 'lcvid' && <LCVid src={embed.src} className={className} />}
 {embed.type === 'gist' && <script is:inline src={`https://gist.github.com/${embed.id}.js`} />}
+{embed.type === 'bluesky' && <BlueskyPost id={embed.url} />}
+{embed.type === 'mastodon' && <MastodonPost id={embed.url} />}
 {embed.type === 'bookmark' && <BookmarkCard url={embed.url} className={className} />}

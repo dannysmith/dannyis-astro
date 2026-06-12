@@ -19,6 +19,17 @@ This site serves as Danny's corner of the web - a place to share thoughts, exper
 // Pages to exclude from "Other Pages" (matched against URL path)
 const EXCLUDED_PAGES = ['/scratchpad/', '/toolboxtest/', '/404/'];
 
+// Styleguide pages get their own section below, with hand-written titles, and
+// are excluded from the auto-discovered "Other Pages" list.
+const STYLEGUIDE_PAGES: Array<{ path: string; title: string }> = [
+  { path: '/styleguide/', title: 'Overview' },
+  { path: '/styleguide/foundations/', title: 'Foundations' },
+  { path: '/styleguide/typography/', title: 'Typography' },
+  { path: '/styleguide/components/', title: 'Content' },
+  { path: '/styleguide/ui/', title: 'UI' },
+  { path: '/styleguide/html/', title: 'HTML' },
+];
+
 // =============================================================================
 // PAGE DISCOVERY
 // Auto-discovers static pages from src/pages/, excluding dynamic routes and partials
@@ -56,7 +67,7 @@ function discoverStaticPages(): Array<{ path: string; title: string }> {
 
       return { path, title };
     })
-    .filter(({ path }) => !EXCLUDED_PAGES.includes(path))
+    .filter(({ path }) => !EXCLUDED_PAGES.includes(path) && !path.startsWith('/styleguide'))
     .sort((a, b) => a.title.localeCompare(b.title));
 }
 
@@ -132,6 +143,16 @@ export const GET: APIRoute = async () => {
   lines.push('## Other Pages');
   lines.push('');
   for (const page of staticPages) {
+    lines.push(`- [${page.title}](${config.site.url}${page.path})`);
+  }
+  lines.push('');
+
+  // Styleguide (the design-system reference pages)
+  lines.push('## Styleguide');
+  lines.push('');
+  lines.push("Reference pages documenting the site's design system and components.");
+  lines.push('');
+  for (const page of STYLEGUIDE_PAGES) {
     lines.push(`- [${page.title}](${config.site.url}${page.path})`);
   }
   lines.push('');

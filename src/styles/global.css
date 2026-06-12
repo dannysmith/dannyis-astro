@@ -20,6 +20,56 @@ svg[id^='mermaid-'] {
   background-color: light-dark(var(--color-background-secondary), #ffffff);
 }
 
+/* GITHUB GIST EMBEDS */
+
+/*
+ * GitHub's gist stylesheet (loaded inside the <Gist> shadow root) references
+ * font variables it never defines, so code and meta fall back to the page
+ * font. Custom properties cross the shadow boundary, so we define them here.
+ */
+astro-embed-gist {
+  --fontStack-monospace: var(--font-code);
+  --fontStack-system: var(--font-ui);
+  --text-body-size-small: var(--font-size-sm);
+}
+
+/* TWITTER / X EMBEDS */
+
+/*
+ * astro-embed's <Tweet> is a bare <blockquote>, so the site's blockquote
+ * styles (italic, accent rule) apply to it. Reset those and dress it as a card,
+ * sizing border and padding via astro-embed's --tc-* custom-property API.
+ */
+.twitter-tweet {
+  --tc-border-color: var(--color-border);
+  --tc-padding: var(--space-m);
+  max-width: 34rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-background-secondary);
+  font-style: normal;
+  font-variant-numeric: normal;
+  /* Base styles target the muted attribution line; the body opts back up below. */
+  font-size: var(--font-size-xs);
+  line-height: var(--leading-snug);
+  color: var(--color-text-secondary);
+}
+
+.twitter-tweet > p {
+  margin-block-end: var(--space-s);
+  font-size: var(--font-size-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+}
+
+/* Links inside the body use the accent; the trailing date stays muted. */
+.twitter-tweet a {
+  color: var(--color-accent);
+}
+
+.twitter-tweet > a {
+  color: var(--color-text-secondary);
+}
+
 /* VIEW TRANSITION ANIMATIONS */
 
 /* Note card morph animation */

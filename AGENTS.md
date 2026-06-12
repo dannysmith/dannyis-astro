@@ -94,7 +94,6 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
     │   ├── navigation/# Nav-specific
     │   ├── ui/        # Reusable utilities (FormattedDate, Pill, etc.)
     │   ├── mdx/       # Available in MDX content (Callout, Embed, etc.)
-    │   ├── styleguide/# Styleguide page helpers (not for general use)
     │   └── demos/     # Interactive demos for articles/notes (React OK here)
     ├── config/        # Centralized config (SEO, constants)
     ├── content/
@@ -104,7 +103,7 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
     ├── layouts/       # Page templates (Article, Note)
     ├── lib/           # Build-time plugins (runs independently)
     ├── pages/         # Routes and API endpoints
-    │   └── styleguide/# Visual styleguide (partials prefixed with _)
+    │   └── styleguide/# Multi-page visual styleguide (_layout, _components, _snippets helpers)
     ├── styles/        # CSS architecture (one file per layer)
     │   ├── global.css       # Entry point: layer order & imports
     │   ├── _foundation.css  # Design tokens, fonts, @property

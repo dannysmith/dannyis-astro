@@ -1,109 +1,72 @@
 ---
-import { BaseHead, Footer, Lightbox, MainNavigation } from '@components/layout/index';
-import { SGTOC } from '@components/styleguide';
-
-
-// Section partials
-import ColorSystem from './_ColorSystem.astro';
-import DesignTokens from './_DesignTokens.astro';
-import Typography from './_Typography.astro';
-import ContentComponents from './_ContentComponents.astro';
-import UiComponents from './_UiComponents.astro';
-import HtmlElements from './_HtmlElements.astro';
-import OtherStuff from './_OtherStuff.astro';
-import UtilityClasses from './_UtilityClasses.astro';
-
-const sections = [
-  { id: 'colors', label: 'Colors' },
-  { id: 'design-tokens', label: 'Design Tokens' },
-  { id: 'typography', label: 'Typography' },
-  { id: 'content-components', label: 'Content' },
-  { id: 'ui-components', label: 'UI' },
-  { id: 'html-elements', label: 'HTML' },
-  { id: 'other-stuff', label: 'Other' },
-  { id: 'utility-classes', label: 'Utilities' },
-];
+import StyleguideLayout from './_layout/StyleguideLayout.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="Design System & Styleguide"
-      description="Comprehensive design system reference for danny.is - colors, typography, components, and utilities."
-    />
-  </head>
-  <body>
-    <MainNavigation />
-    <div class="styleguide-layout">
-      <SGTOC sections={sections} />
-      <main class="styleguide-content flow">
-        <header>
-          <h1>Design System</h1>
-          <p>
-            A comprehensive reference for all visual treatments, components, and utilities used
-            across this site. Use the theme toggle to preview light and dark modes.
-          </p>
-          <p class="styleguide-links">
-            <a href="/notes/note-styleguide/">Note Styleguide</a> &middot;
-            <a href="/writing/article-styleguide/">Article Styleguide</a>
-          </p>
-        </header>
+<StyleguideLayout
+  title="Overview"
+  description="The styleguide and design system reference for danny.is — foundations, typography, components and raw HTML defaults."
+  current="overview"
+>
+  <p>
+    This is the styleguide for danny.is. It mostly exists for my own use when I'm working on the
+    site, both as a place to check how everything renders and as an occasional reference. Since I'm
+    always interested to see how other folks build their personal sites, I figured I should make it
+    public.
+  </p>
+  <p>
+    This site is a bit of a playground for me: it's where I experiment with CSS and design and new
+    stuff, so the styleguide doubles as a place to see everything (visual) working together,
+    including quite a few features which I use occasionally enough that you might never see them
+    anywhere else.
+  </p>
+  <p>
+    The site is <strong>typographically-driven</strong> and leans on constructivist and
+    modernist influences design-wise. It's also static HTML and CSS with as little client-side JavaScript as possible.
+  </p>
+  <p>
+    Two other styleguides live in the content itself rather than here: the
+    <a href="/writing/article-styleguide/">Article Styleguide</a> shows how a long-form article renders,
+    and the <a href="/notes/note-styleguide/">Note Styleguide</a> does the same for a note. These are
+    an <strong>actual</strong> article and note, so they faithfully represent how things work in those
+    contexts, but neither is intended to be at all comprehensive.
+  </p>
+  <p>This main styleguide is split into five sections...</p>
 
-        <ColorSystem />
-        <DesignTokens />
-        <Typography />
-        <ContentComponents />
-        <UiComponents />
-        <HtmlElements />
-        <OtherStuff />
-        <UtilityClasses />
-      </main>
-    </div>
-    <Footer />
-    <Lightbox />
-
-    <style>
-      body {
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        min-height: 100vh;
-      }
-
-      .styleguide-layout {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: var(--space-l);
-        max-width: 100%;
-        margin: 0 auto;
-        padding: var(--space-m);
-      }
-
-      .styleguide-content {
-        max-width: var(--measure-standard);
-      }
-
-      /* Shared styleguide utilities (global) */
-      :global(.sg-panel) {
-        padding: var(--space-m);
-        background-color: var(--color-background-secondary);
-        border: var(--border-width-hairline) solid var(--color-border);
-        border-radius: var(--radius-sm);
-      }
-
-      /* Theme forcing - force light or dark mode on containers */
-      :global([data-theme]) {
-        background-color: var(--color-background);
-        color: var(--color-text);
-      }
-
-      :global([data-theme='light']) {
-        color-scheme: light;
-      }
-
-      :global([data-theme='dark']) {
-        color-scheme: dark;
-      }
-    </style>
-  </body>
-</html>
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>What it covers</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="/styleguide/foundations">Foundations</a></td>
+        <td>
+          The fundamentals of my "design system" including colours, design tokens, type and spacing
+          scales, plus some global utility classes.
+        </td>
+      </tr>
+      <tr>
+        <td><a href="/styleguide/typography">Typography</a></td>
+        <td> Shows the various type treatments and other typographic features. </td>
+      </tr>
+      <tr>
+        <td><a href="/styleguide/components">Content</a></td>
+        <td> Shows the various components I use in my content. </td>
+      </tr>
+      <tr>
+        <td><a href="/styleguide/ui">UI</a></td>
+        <td>A reference for other reusable components used in the design and layout of the site.</td
+        >
+      </tr>
+      <tr>
+        <td><a href="/styleguide/html">HTML</a></td>
+        <td>
+          Reference for native HTML elements which aren't covered elsewhere but are styled in the
+          site.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</StyleguideLayout>

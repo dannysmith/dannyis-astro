@@ -1,0 +1,1014 @@
+---
+import StyleguideLayout from './_layout/StyleguideLayout.astro';
+import SGTypeSpecimen from './_components/SGTypeSpecimen.astro';
+import { ColorSwatch } from '@components/mdx/index';
+
+const toc = [
+  { id: 'colour', label: 'Colour System' },
+  { id: 'borders', label: 'Borders' },
+  { id: 'font-families', label: 'Typefaces' },
+  { id: 'typographic-contexts', label: 'Typographic contexts' },
+  { id: 'font-sizes', label: 'Font sizes' },
+  { id: 'spacing', label: 'Spacing' },
+  { id: 'font-weights', label: 'Font weights' },
+  { id: 'leading-tracking', label: 'Leading & tracking' },
+  { id: 'measure', label: 'Measure' },
+  { id: 'utility-classes', label: 'Utility classes' },
+];
+
+const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+---
+
+<StyleguideLayout
+  title="Foundations"
+  description="The design system documented: colour, design tokens, and utility classes."
+  current="foundations"
+  toc={toc}
+>
+  <header>
+    <p>
+      This page is the primary reference for the site's foundational design system. It includes the
+      colour system, the design tokens for spacing, type, borders, radii and shadows, and the global
+      utility classes.
+    </p>
+  </header>
+
+  <section id="colour" class="flow">
+    <h2>Colour System</h2>
+    <p>
+      The colour system is rooted in a set of foundational colours, some of which are <strong
+        >adaptive</strong
+      > and appear differently in light and dark modes (via <code>light-dark()</code>), and some of
+      which are absolute and appear the same in both modes. These are used to create a set of <strong
+        >semantic</strong
+      > role-based tokens that are primarily used across the site. All colours are defined in <a
+        href="https://oklch.com/">OKLCH</a
+      >. The adaptive colours use lower lightness and higher chroma in light mode and have increased
+      lightness and lower chroma in dark mode.
+    </p>
+    <div class="sg-panel">
+      <div class="swatch-grid" style="--swatch-min: 8rem">
+        {
+          ['white', 'black', 'ink', 'charcoal', 'beige'].map(colour => (
+            <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
+          ))
+        }
+      </div>
+    </div>
+    <div class="theme-pair">
+      {
+        ['light', 'dark'].map(theme => (
+          <div class="theme-col flow" data-theme={theme}>
+            <p class="theme-label">{theme} mode</p>
+            <div class="swatch-grid">
+              {['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'].map(colour => (
+                <ColorSwatch color={`var(--color-${colour})`} name={capitalise(colour)} />
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <p>
+      The table below shows the semantic colours currently in use. Components should use these (or
+      derivatives of them via CSS functions like <code>color-mix()</code>) wherever their use case fits their
+      semantic role. In situations where a foundational colour is <em>more semantic</em> (eg a "blue callout")
+      then use the foundational colour instead. I deliberately try to keep these semantic colours to a
+      minimum to avoid ending up with a large unwieldy palette of very specific colours that are only
+      used in one place.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th class="center">Light</th>
+          <th class="center">Dark</th>
+          <th>Variable</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th colspan="5">Accent & interaction</th>
+        </tr>
+        <tr>
+          <td>Accent</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-accent)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-accent)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-accent</code>
+          </td>
+          <td>The primary brand colour, used in many places including for links</td>
+        </tr>
+        <tr>
+          <td>Visited</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-visited)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-visited)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-visited</code>
+          </td>
+          <td>Visited links, because purple is an affordance people are used to</td>
+        </tr>
+        <tr>
+          <td>Highlight</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-highlight)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-highlight)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-highlight</code>
+          </td>
+          <td>Highlighted text and occasionally other forms of highlight</td>
+        </tr>
+        <tr>
+          <td>Focus ring</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-focus-ring)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-focus-ring)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-focus-ring</code>
+          </td>
+          <td>The focus ring for interactive elements</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <th colspan="5">Backgrounds & surfaces</th>
+        </tr>
+        <tr>
+          <td>Primary background</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-background)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-background)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-background</code>
+          </td>
+          <td>The primary background colour</td>
+        </tr>
+        <tr>
+          <td>Secondary background</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-background-secondary)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-background-secondary)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-background-secondary</code>
+          </td>
+          <td>A secondary background colour for things like cards and panels</td>
+        </tr>
+        <tr>
+          <td>Code background</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-background-code)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-background-code)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-background-code</code>
+          </td>
+          <td>Background for inline code and some other code-like elements</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr>
+          <th colspan="5">Text & borders</th>
+        </tr>
+        <tr>
+          <td>Text</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-text)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-text)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-text</code>
+          </td>
+          <td>Body text</td>
+        </tr>
+        <tr>
+          <td>Text secondary</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-text-secondary)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-text-secondary)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-text-secondary</code>
+          </td>
+          <td>Muted or secondary text</td>
+        </tr>
+        <tr>
+          <td>Border</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-border)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-border)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-border</code>
+          </td>
+          <td>Subtle borders and dividers</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="design-tokens" class="flow">
+    <h2>Design tokens</h2>
+    <p>
+      As with colours, I've tried to keep the number of generic design tokens to a minimum, while
+      still providing a wide enough set of options for most use cases.
+    </p>
+
+    <h3 id="borders">Borders, radii and shadows</h3>
+    <p>
+      Five CSS custom properties are available for setting border widths and radii. Border widths
+      are set in pixels so they don't scale with the base font size while radii are mostly set in
+      rems so they do.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--border-width-hairline</code></td>
+          <td><code>max(0.0625rem, 1px)</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-hairline)"
+            >
+            </div>
+          </td>
+          <td
+            >1px at the default root size but never falls to a sub-pixel when scaling up with the
+            root font size</td
+          >
+        </tr>
+        <tr>
+          <td><code>--border-width-base</code></td>
+          <td><code>2px</code></td>
+          <td>
+            <div class="border-width-preview" style="border-bottom-width: var(--border-width-base)">
+            </div>
+          </td>
+          <td>Standard border width for most elements</td>
+        </tr>
+        <tr>
+          <td><code>--border-width-thick</code></td>
+          <td><code>4px</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-thick)"
+            >
+            </div>
+          </td>
+          <td>Usually only applied to one edge of an element</td>
+        </tr>
+        <tr>
+          <td><code>--border-width-heavy</code></td>
+          <td><code>6px</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-heavy)"
+            >
+            </div>
+          </td>
+          <td>Usually only applied to one edge of an element</td>
+        </tr>
+        <tr>
+          <td><code>--border-width-accent</code></td>
+          <td><code>1rem</code></td>
+          <td>
+            <div
+              class="border-width-preview"
+              style="border-bottom-width: var(--border-width-accent)"
+            >
+            </div>
+          </td>
+          <td>Used as a design element, so scales with the root font size</td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--radius-xs</code></td>
+          <td><code>0.125rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-xs)"></div></td>
+          <td>Very subtle radius for softening corners slightly</td>
+        </tr>
+        <tr>
+          <td><code>--radius-sm</code></td>
+          <td><code>0.25rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-sm)"></div></td>
+          <td>Standard radius for most rounded elements</td>
+        </tr>
+        <tr>
+          <td><code>--radius-md</code></td>
+          <td><code>0.5rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-md)"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>--radius-lg</code></td>
+          <td><code>0.75rem</code></td>
+          <td><div class="border-radius-preview" style="border-radius: var(--radius-lg)"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>--radius-full</code></td>
+          <td><code>calc(infinity * 1px)</code></td>
+          <td>
+            <div class="border-radius-preview" style="border-radius: var(--radius-full)"></div>
+          </td>
+          <td>Infinite radius for fully rounding into a pill or circle regardless of size.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      I don't use shadows heavily but there are two custom properties available if I need to create
+      depth and elevation.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--shadow-small</code></td>
+          <td class="shadow-preview-container">
+            <div class="shadow-preview" style="filter: var(--shadow-small)"></div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>--shadow-medium</code></td>
+          <td class="shadow-preview-container">
+            <div class="shadow-preview" style="filter: var(--shadow-medium)"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="typography-spacing" class="flow">
+    <h2>Typography & Spacing Tokens</h2>
+    <p>
+      Typography and spacing design tokens provide consistent rhythm and visual hierarchy across the
+      site.
+    </p>
+
+    <h3 id="font-families">Font Families</h3>
+    <p>
+      Typography on this site serves five distinct usage contexts, covered by four font stacks.
+      Short-form prose and UI elements use Figtree (<code>--font-ui</code>) which works well for
+      both use cases and is the default face. Long-form prose uses Literata (<code>--font-prose</code
+      >), while "display" type uses Geist (<code>--font-display</code>). Code examples and other
+      monospace fonts use a version of Fira Code.
+    </p>
+    <div class="type-specimens">
+      <SGTypeSpecimen
+        family="Geist"
+        url="https://vercel.com/font"
+        usageTitle="Display"
+        cssVar="--font-display"
+        description="For large, presentational type, especially when used as a design element. Almost always used in all caps."
+        caps
+      />
+      <SGTypeSpecimen
+        family="Literata"
+        url="https://fonts.google.com/specimen/Literata"
+        usageTitle="Long-form prose"
+        cssVar="--font-prose"
+        description="Used for 'bookish' long-form prose, mostly in articles."
+      />
+      <SGTypeSpecimen
+        family="Figtree"
+        url="https://fonts.google.com/specimen/Figtree"
+        usageTitle="Short-form prose & UI"
+        cssVar="--font-ui"
+        description="The default face for UI and standard prose."
+      />
+      <SGTypeSpecimen
+        family="Fira Code"
+        url="https://github.com/tonsky/FiraCode"
+        usageTitle="Code"
+        cssVar="--font-code"
+        description="Code and occasional stylistic monospace."
+      />
+    </div>
+
+    <h3 id="typographic-contexts">Typographic contexts</h3>
+    <p>
+      Most of the site renders with <strong>prose-style</strong> typography by default, set in
+      Figtree. Individual areas can opt in or out of that baseline. These four contexts show up as
+      tabs throughout the rest of the styleguide, so you can preview an element or component in each:
+    </p>
+    <ul>
+      <li>
+        <strong>Default (flow)</strong> — the global prose-style defaults plus the <code>.flow</code>
+        utility for vertical rhythm between block-level elements.
+      </li>
+      <li>
+        <strong>Long form Prose</strong> — wrapped in <code>&lt;LongFormProseTypography&gt;</code>,
+        which opts <em>in</em> to Literata and the bookish enhancements (oldstyle numerals, tighter
+        optical sizing) used in articles.
+      </li>
+      <li>
+        <strong>Default (no flow)</strong> — the global prose-style defaults on their own, with no
+        wrapper.
+      </li>
+      <li>
+        <strong>UI Style</strong> — the <code>.ui-style</code> utility, which opts <em>out</em> of
+        prose styling (no underlines, no heading borders, no list markers) for navigation, cards and other interface areas.
+      </li>
+    </ul>
+
+    <h3 id="font-sizes">Font Sizes</h3>
+    <p>
+      The base type is generated with <a href="https://utopia.fyi/type/calculator">Utopia</a> and uses
+      <code>clamp()</code> to appropriately scale with the viewport width. While the CSS variables below
+      are used in most places, I also use <code>em</code>s in certain contexts where I want text sized
+      relative to that of its parent context.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Preview</th>
+          <th>Variable</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-xs)">Aa</td>
+          <td><code>--font-size-xs</code></td>
+          <td>Occasional use in captions, labels, fine print etc</td>
+        </tr>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-sm)">Aa</td>
+          <td><code>--font-size-sm</code></td>
+          <td>Used for secondary text, metadata and anywhere else I want smaller copy</td>
+        </tr>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-base)">Aa</td>
+          <td><code>--font-size-base</code></td>
+          <td>Default for all body text and H4–6</td>
+        </tr>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-md)">Aa</td>
+          <td><code>--font-size-md</code></td>
+          <td>Anywhere we want slightly larger copy. Default for H3</td>
+        </tr>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-lg)">Aa</td>
+          <td><code>--font-size-lg</code></td>
+          <td>Default for H2</td>
+        </tr>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-xl)">Aa</td>
+          <td><code>--font-size-xl</code></td>
+          <td>Default for H1</td>
+        </tr>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-2xl)">Aa</td>
+          <td><code>--font-size-2xl</code></td>
+          <td>Used for large display copy and some page titles</td>
+        </tr>
+        <tr>
+          <td class="font-size-preview" style="font-size: var(--font-size-3xl)">Aa</td>
+          <td><code>--font-size-3xl</code></td>
+          <td>Used for large display copy</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="spacing">Spacing Scale</h3>
+    <p>
+      The spacing scale is generated with <a href="https://utopia.fyi/space/calculator">Utopia</a> using
+      the same base values as the type scale. Using the custom properties below to set margins, padding
+      and the like will ensure they scale in concert with the fluid type.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--space-3xs</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-3xs)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-2xs</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-2xs)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-xs</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-xs)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-s</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-s)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-m</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-m)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-l</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-l)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-xl</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-xl)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-2xl</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-2xl)"></div></td>
+        </tr>
+        <tr>
+          <td><code>--space-3xl</code></td>
+          <td><div class="spacing-bar" style="width: var(--space-3xl)"></div></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="font-weights">Font Weights</h3>
+    <p>
+      All four families are variable fonts and therefore not limited to the weights defined below <em
+        >(Geist: 100-900, Figtree: 300-900, Literata: 200-900, Fira Code: 300-700)</em
+      >. These design tokens provide common stops to help keep the weight scale consistent across
+      the site, but it's fine to use intermediate weights when needed.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Literata</th>
+          <th>Geist</th>
+          <th>Figtree</th>
+          <th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="--weight: var(--font-weight-light)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-light</code></td>
+          <td>300</td>
+        </tr>
+        <tr style="--weight: var(--font-weight-normal)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-normal</code></td>
+          <td>350</td>
+        </tr>
+        <tr style="--weight: var(--font-weight-regular)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-regular</code></td>
+          <td>400</td>
+        </tr>
+        <tr style="--weight: var(--font-weight-medium)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-medium</code></td>
+          <td>500</td>
+        </tr>
+        <tr style="--weight: var(--font-weight-semibold)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-semibold</code></td>
+          <td>600</td>
+        </tr>
+        <tr style="--weight: var(--font-weight-bold)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-bold</code></td>
+          <td>700</td>
+        </tr>
+        <tr style="--weight: var(--font-weight-extrabold)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-extrabold</code></td>
+          <td>800</td>
+        </tr>
+        <tr style="--weight: var(--font-weight-heavy)">
+          <td class="font-weight-preview face-prose">Aa</td>
+          <td class="font-weight-preview face-display">Aa</td>
+          <td class="font-weight-preview face-ui">Aa</td>
+          <td><code>--font-weight-heavy</code></td>
+          <td>900</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="leading-tracking">Leading & Tracking</h3>
+    <p>
+      Line height and letter-spacing can be controlled via <code>--leading-*</code> and <code
+        >--tracking-*</code
+      > CSS custom properties.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--leading-none</code></td>
+          <td><code>0.9</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-none)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-tight</code></td>
+          <td><code>1.1</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-tight)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-snug</code></td>
+          <td><code>1.2</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-snug)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-normal</code></td>
+          <td><code>1.55</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-normal)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+        <tr>
+          <td><code>--leading-loose</code></td>
+          <td><code>1.7</code></td>
+          <td
+            ><p class="leading-preview" style="line-height: var(--leading-loose)">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+            </p></td
+          >
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+          <th>Preview</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--tracking-tight</code></td>
+          <td><code>-0.02ch</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-tight)"
+            >Hello there</td
+          >
+        </tr>
+        <tr>
+          <td><code>--tracking-normal</code></td>
+          <td><code>0</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-normal)"
+            >Hello there</td
+          >
+        </tr>
+        <tr>
+          <td><code>--tracking-wide</code></td>
+          <td><code>0.05ch</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-wide)"
+            >Hello there</td
+          >
+        </tr>
+        <tr>
+          <td><code>--tracking-wider</code></td>
+          <td><code>0.1ch</code></td>
+          <td class="letter-spacing-preview" style="letter-spacing: var(--tracking-wider)"
+            >Hello there</td
+          >
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="measure">Measure</h3>
+    <p>
+      A single token, <code>--measure-standard</code> (<code>70ch</code>), sets the standard measure
+      — the maximum line length for comfortable reading, around 70 characters. I use it to cap the
+      width of prose columns and most content areas.
+    </p>
+  </section>
+
+  <section id="utility-classes" class="flow">
+    <h2>Utility Classes</h2>
+    <p>
+      In addition to the foundational custom properties above, there are a few global utility classes
+      available.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>.flow</code></td>
+          <td>
+            Adds consistent vertical rhythm between block-level children — catch-all margins for
+            elements not covered globally, and tighter spacing between adjacent headings. Applied to
+            most prose containers like articles and notes. Margins are <code>em</code>-based, so they
+            scale with font size.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.ui-style</code></td>
+          <td>
+            Opt-out of default styles meant for prose-like content. Will remove margins, padding etc. Think of this like a mini "reset".
+          </td>
+        </tr>
+        <tr>
+          <td><code>.dark-surface</code></td>
+          <td>
+            Forces dark background with light text regardless of theme. Used for always-dark areas like the footer.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.surface-white</code></td>
+          <td>
+            Sets a white surface context in light mode (or dark surface in dark mode) and redefines
+            <code>--color-background-secondary</code> for children to ensure proper contrast. Used for some card-like components.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.cq</code></td>
+          <td>
+            Establishes container query context (<code>container-type: inline-size</code>).
+          </td>
+        </tr>
+        <tr>
+          <td><code>.all-caps</code></td>
+          <td>Uppercase text with wide letter-spacing.</td>
+        </tr>
+        <tr>
+          <td><code>.center</code>, <code>.right</code>, <code>.left</code></td>
+          <td>Text alignment utilities. Useful for table cells and other contexts.</td>
+        </tr>
+        <tr>
+          <td><code>.top</code>, <code>.middle</code>, <code>.bottom</code></td>
+          <td>Vertical alignment utilities. Useful for table cells and inline elements.</td>
+        </tr>
+        <tr>
+          <td><code>.content-trim</code></td>
+          <td>
+            Removes top margin from first child and bottom margin from last child. Use inside padded
+            containers with slotted content.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.img-cover</code></td>
+          <td>
+            Makes image fill container with <code>object-fit: cover</code>.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.sr-only</code></td>
+          <td>
+            Visually hidden but accessible to screen readers. Also available as
+            <code>.hidden-microformat</code> for hiding microformat metadata.
+          </td>
+        </tr>
+        <tr>
+          <td><code>.external-arrow</code></td>
+          <td>Subtle arrow indicator for external/offsite links in UI contexts.</td>
+        </tr>
+        <tr>
+          <td><code>.list-reset</code></td>
+          <td>Removes list styling for navigation/UI lists.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</StyleguideLayout>
+
+<style>
+  /* Grid of square colour swatches; --swatch-min controls minimum cell size. */
+  .swatch-grid {
+    --swatch-min: 6rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--swatch-min), 1fr));
+    gap: var(--space-m);
+  }
+
+  .swatch-grid :global(.color-swatch) {
+    aspect-ratio: 1;
+  }
+
+  /* Light/dark comparison: two themed columns side by side. */
+  .theme-pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+    gap: var(--space-s);
+  }
+
+  .theme-col {
+    padding: var(--space-s);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  .theme-label {
+    text-transform: uppercase;
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Fixed-size swatch used inside the semantic table cells. */
+  .mini-swatch {
+    display: inline-block;
+    width: 2.5rem;
+    height: 2.5rem;
+    vertical-align: middle;
+  }
+
+  /* Border widths preview */
+  .border-width-preview {
+    border-bottom-style: solid;
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* Border radii preview */
+  .border-radius-preview {
+    width: 5rem;
+    height: 3rem;
+    background-color: var(--color-accent);
+  }
+
+  /* Shadows preview */
+  .shadow-preview-container {
+    background-color: var(--color-background);
+    padding: var(--space-2xs);
+  }
+
+  .shadow-preview {
+    width: 5rem;
+    height: 3rem;
+    background-color: var(--color-background);
+  }
+
+  /* Typeface specimens stack */
+  .type-specimens {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+
+  /* Font sizes preview */
+  .font-size-preview {
+    color: var(--color-accent);
+    font-family: var(--font-prose);
+    white-space: nowrap;
+  }
+
+  /* Spacing scale preview */
+  .spacing-bar {
+    height: var(--space-s);
+    background-color: var(--color-accent);
+    border-radius: var(--radius-xs);
+  }
+
+  /* Font weights preview: weight comes from the row's --weight, face from the column class. */
+  .font-weight-preview {
+    font-size: var(--font-size-lg);
+    font-weight: var(--weight);
+    white-space: nowrap;
+  }
+
+  .face-prose {
+    font-family: var(--font-prose);
+  }
+  .face-display {
+    font-family: var(--font-display);
+  }
+  .face-ui {
+    font-family: var(--font-ui);
+  }
+
+  /* Line height preview */
+  .leading-preview {
+    max-width: 30ch;
+  }
+
+  /* Letter spacing preview */
+  .letter-spacing-preview {
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+  }
+</style>

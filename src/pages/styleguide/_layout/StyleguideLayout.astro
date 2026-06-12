@@ -1,0 +1,194 @@
+---
+import { BaseHead, Footer, Lightbox, MainNavigation } from '@components/layout/index';
+
+interface Props {
+  title: string;
+  description?: string;
+  current?: 'overview' | 'foundations' | 'typography' | 'components' | 'ui' | 'html';
+  toc?: Array<{ id: string; label: string }>;
+}
+
+interface StyleguideSection {
+  slug: string;
+  href: string;
+  label: string;
+}
+
+const STYLEGUIDE_SECTIONS: StyleguideSection[] = [
+  { slug: 'overview', href: '/styleguide', label: 'Overview' },
+  { slug: 'foundations', href: '/styleguide/foundations', label: 'Foundations' },
+  { slug: 'typography', href: '/styleguide/typography', label: 'Typography' },
+  { slug: 'components', href: '/styleguide/components', label: 'Content' },
+  { slug: 'ui', href: '/styleguide/ui', label: 'UI' },
+  { slug: 'html', href: '/styleguide/html', label: 'HTML' },
+];
+
+const { title, description, current, toc = [] } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <MainNavigation />
+    <div class:list={['styleguide-body', { 'has-toc': toc.length > 0 }]}>
+      {
+        toc.length > 0 && (
+          <nav class="sg-toc ui-style" aria-label="On this page">
+            <ul class="list-reset">
+              {toc.map(({ id, label }) => (
+                <li>
+                  <a href={`#${id}`}>{label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+      <main class="styleguide-content flow">
+        <nav class="sg-sectionnav ui-style" aria-label="Styleguide sections">
+          <ul class="list-reset">
+            {
+              STYLEGUIDE_SECTIONS.map(({ slug, href, label }) => {
+                const isActive = slug === current;
+                return (
+                  <li>
+                    <a
+                      href={href}
+                      class:list={['sg-sectionnav-link', { 'is-active': isActive }]}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {label}
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </nav>
+        <h1>{title}</h1>
+        <h2>Site styleguide</h2>
+        <slot class="flow"/>
+      </main>
+    </div>
+    <Footer />
+    <Lightbox />
+
+    <style>
+      body {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 100vh;
+      }
+
+      .styleguide-body {
+        padding: var(--space-m);
+      }
+
+      .sg-sectionnav ul {
+        display: flex;
+        flex-wrap: wrap;
+        text-transform: uppercase;
+        font-size: var(--font-size-sm);
+      }
+
+      .sg-sectionnav-link.is-active {
+        border-bottom: var(--border-width-base) solid var(--color-accent);
+      }
+
+      .styleguide-content {
+        max-width: var(--measure-standard);
+        margin-inline: auto;
+        padding: var(--space-2xl) var(--space-s);
+      }
+
+      /* Extra breathing room above each section's main heading (applies to the
+         section[id] blocks each page slots into the content column). */
+      .styleguide-content :global(section > h2) {
+        margin-block-start: var(--space-xl);
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-extrabold);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+        border-bottom: none;
+        padding-block-end: 0;
+      }
+
+      h2 {
+        font-family: var(--font-display);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-light);
+        text-transform: uppercase;
+        margin-block-end: var(--space-2xl);
+      }
+
+      .sg-toc {
+        display: none;
+      }
+
+      @media (min-width: 70rem) {
+        .styleguide-body.has-toc {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) min(var(--measure-standard), 100%) minmax(0, 1fr);
+          align-items: start;
+        }
+
+        .styleguide-body.has-toc .styleguide-content {
+          grid-column: 2;
+        }
+
+        .sg-toc {
+          display: block;
+          grid-column: 1;
+          justify-self: end;
+          position: sticky;
+          inset-block-start: var(--space-m);
+          margin-block-start: var(--space-2xl);
+          padding-inline-end: var(--space-l);
+          font-size: var(--font-size-sm);
+          text-align: right;
+        }
+
+        .sg-toc li:not(:last-child) {
+          margin-block-end: var(--space-3xs);
+        }
+
+        .sg-toc ul {
+          scroll-target-group: auto;
+        }
+
+        .sg-toc a:target-current {
+          color: var(--color-accent);
+        }
+      }
+
+      /* Shared styleguide utilities */
+      :global(.sg-panel) {
+        padding: var(--space-m);
+        background-color: var(--color-background-secondary);
+        border: var(--border-width-hairline) solid var(--color-border);
+        border-radius: var(--radius-sm);
+      }
+
+      /* Theme forcing - force light or dark mode on containers */
+      :global([data-theme]) {
+        background-color: var(--color-background);
+        color: var(--color-text);
+      }
+
+      :global([data-theme='light']) {
+        color-scheme: light;
+      }
+
+      :global([data-theme='dark']) {
+        color-scheme: dark;
+      }
+    </style>
+  </body>
+</html>
