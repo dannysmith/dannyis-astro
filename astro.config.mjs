@@ -1,4 +1,5 @@
 import { defineConfig, svgoOptimizer } from 'astro/config';
+import AutoImport from 'astro-auto-import';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
@@ -54,6 +55,31 @@ export default defineConfig({
           frameBoxShadowCssValue: 'none',
         },
       },
+    }),
+    // Auto-import the MDX components I most often hand-write in content, so I
+    // don't have to import them in every file. MUST come before mdx() below.
+    // Components inserted automatically by syntax (SmartLink, BasicImage,
+    // MarkdownBlock, FileTree, etc.) are intentionally omitted. See docs/README.
+    AutoImport({
+      imports: [
+        {
+          './src/components/mdx/index.ts': [
+            'Callout',
+            'IntroParagraph',
+            'Embed',
+            'LCVid',
+            'Center',
+            'Notion',
+            'Grid',
+            'BlockQuoteCitation',
+            'BookmarkCard',
+            'Spacer',
+            'SmallCaps',
+            'Tabs',
+            'TabItem',
+          ],
+        },
+      ],
     }),
     mdx({ gfm: true, smartypants: true }),
     sitemap({
