@@ -1,7 +1,12 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
-import { SmartLink, SmallCaps, highlight as Highlight } from '@components/mdx/index';
+import {
+  SmartLink,
+  SmallCaps,
+  highlight as Highlight,
+  ResizableContainer,
+} from '@components/mdx/index';
 import WrappedTable from '@components/mdx/WrappedTable.astro';
 import { InlineFootnotes } from '@components/layout/index';
 import { Content as ChecklistContent } from './_snippets/checklist.mdx';
@@ -11,7 +16,6 @@ import { Content as FootnotesContent } from './_snippets/footnotes.mdx';
 const toc = [
   { id: 'inline', label: 'Inline elements' },
   { id: 'manual-inline', label: 'Manual inline' },
-  { id: 'default-behaviours', label: 'Default behaviours' },
   { id: 'block', label: 'Block-level elements' },
   { id: 'headings', label: 'Headings' },
   { id: 'composite', label: 'Composite sample' },
@@ -59,7 +63,7 @@ const toc = [
             <td><SmartLink href="/notes/">Notes</SmartLink></td>
             <td
               >Unvisited links are rendered in the accent colour while visited ones are rendered in
-              purple. Hover and active behaviour depends on the context. In longform prose on wide
+              purple. Hover and active behaviour depend on the context. In long-form prose on wide
               viewports, coloured underlines are shown instead of coloured text.</td
             >
           </tr>
@@ -122,7 +126,7 @@ const toc = [
             <td>Keyboard</td>
             <td><code>&lt;kbd&gt;Ctrl&lt;/kbd&gt;</code></td>
             <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
-            <td>Keyboard input renders as little buttons which depress on hover</td>
+            <td>Keyboard input renders as little buttons which depress on hover.</td>
           </tr>
           <tr>
             <td>Variable</td>
@@ -249,38 +253,40 @@ const toc = [
     <p>And here's how the basic block-level elements are styled...</p>
 
     <h3 id="headings">Headings</h3>
-    <SGSwitcher>
-      <h1>Heading level 1</h1>
-      <p>
-        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
-        consectetur nisi aliquip est.
-      </p>
-      <h2>Heading level 2</h2>
-      <p>
-        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
-        consectetur nisi aliquip est.
-      </p>
-      <h3>Heading level 3</h3>
-      <p>
-        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
-        consectetur nisi aliquip est.
-      </p>
-      <h4>Heading level 4</h4>
-      <p>
-        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
-        consectetur nisi aliquip est.
-      </p>
-      <h5>Heading level 5</h5>
-      <p>
-        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
-        consectetur nisi aliquip est.
-      </p>
-      <h6>Heading level 6</h6>
-      <p>
-        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
-        consectetur nisi aliquip est.
-      </p>
-    </SGSwitcher>
+    <ResizableContainer>
+      <SGSwitcher>
+        <h1>Heading level 1</h1>
+        <p>
+          Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+          consectetur nisi aliquip est.
+        </p>
+        <h2>Heading level 2</h2>
+        <p>
+          Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+          consectetur nisi aliquip est.
+        </p>
+        <h3>Heading level 3</h3>
+        <p>
+          Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+          consectetur nisi aliquip est.
+        </p>
+        <h4>Heading level 4</h4>
+        <p>
+          Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+          consectetur nisi aliquip est.
+        </p>
+        <h5>Heading level 5</h5>
+        <p>
+          Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+          consectetur nisi aliquip est.
+        </p>
+        <h6>Heading level 6</h6>
+        <p>
+          Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+          consectetur nisi aliquip est.
+        </p>
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="paragraphs">Paragraphs</h3>
     <SGSwitcher>
@@ -325,7 +331,7 @@ const toc = [
     </SGSwitcher>
 
     <h3 id="composite">Composite sample</h3>
-    <p>Here are a few more realistic examples of all these components in action together.</p>
+    <p>Here's a more realistic example of these elements working together.</p>
     <SGSwitcher>
       <h2>A section heading</h2>
       <p>
@@ -360,51 +366,56 @@ const toc = [
       items.
     </p>
     <h3 id="lists-unordered">Unordered lists</h3>
-    <SGSwitcher>
-      <ul>
-        <li>A first item</li>
-        <li>
-          A second item with <em>emphasis</em> and a <SmartLink href="/notes/">link</SmartLink>
-        </li>
-        <li>
-          A third item with nested children
-          <ul>
-            <li>A nested item</li>
-            <li>Another nested item</li>
-          </ul>
-        </li>
-        <li>A fourth item</li>
-      </ul>
-    </SGSwitcher>
+    <ResizableContainer>
+      <SGSwitcher>
+        <ul>
+          <li>A first item</li>
+          <li>
+            A second item with <em>emphasis</em> and a <SmartLink href="/notes/">link</SmartLink>
+          </li>
+          <li>
+            A third item with nested children
+            <ul>
+              <li>A nested item</li>
+              <li>Another nested item</li>
+            </ul>
+          </li>
+          <li>A fourth item</li>
+        </ul>
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="lists-ordered">Ordered lists</h3>
-    <!-- TODO(Danny): intro — markdown `1.`, including nesting. -->
-    <SGSwitcher>
-      <ol>
-        <li>The first step</li>
-        <li>The second step</li>
-        <li>
-          The third step, with sub-steps
-          <ol>
-            <li>
-              A sub-step
-              <ol>
-                <li>A sub-sub-step</li>
-                <li>Another sub-sub-step</li>
-              </ol>
-            </li>
-            <li>Another sub-step</li>
-          </ol>
-        </li>
-        <li>The fourth step</li>
-      </ol>
-    </SGSwitcher>
+    <ResizableContainer>
+      <SGSwitcher>
+        <ol>
+          <li>The first step</li>
+          <li>The second step</li>
+          <li>
+            The third step, with sub-steps
+            <ol>
+              <li>
+                A sub-step
+                <ol>
+                  <li>A sub-sub-step</li>
+                  <li>Another sub-sub-step</li>
+                </ol>
+              </li>
+              <li>Another sub-step</li>
+            </ol>
+          </li>
+          <li>The fourth step</li>
+        </ol>
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="lists-checklists">Checklists</h3>
     <p>GFM task lists are supported by default and render as checklists.</p>
-    <SGSwitcher>
-      <ChecklistContent />
-    </SGSwitcher>
+    <ResizableContainer>
+      <SGSwitcher>
+        <ChecklistContent />
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="lists-density">List density</h3>
     <p>
@@ -414,9 +425,11 @@ const toc = [
       measures the average length of each list's items and adds the <code>.long-list-items</code> class
       when it crosses a threshold.
     </p>
-    <SGSwitcher>
-      <ListDensityContent />
-    </SGSwitcher>
+    <ResizableContainer>
+      <SGSwitcher>
+        <ListDensityContent />
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="list-reset-demo">.list-reset</h3>
     <p>
@@ -449,77 +462,95 @@ const toc = [
 
   <section id="tables" class="flow">
     <h2>Tables</h2>
-    <!-- TODO(Danny): intro. -->
+    <p>
+      Tables are built from standard markdown or HTML — <code>thead</code>, <code>tbody</code>,
+      <code>th</code>, <code>td</code> and an optional <code>caption</code>. They stretch to the
+      full width of their container with collapsed, hairline borders and just enough padding to
+      breathe, and the first and last cells sit flush with the text edges so a table lines up with
+      the surrounding prose. Captions sit below the table, and numerals are set with tabular figures
+      so digits align vertically column-to-column for easy scanning.
+    </p>
 
     <h3 id="tables-basic">Basic table</h3>
-    <!-- TODO(Danny): intro — caption, thead, th/td. -->
-    <SGSwitcher>
-      <table>
-        <caption>Quarterly results</caption>
-        <thead>
-          <tr>
-            <th>Quarter</th>
-            <th>Revenue</th>
-            <th>Expenses</th>
-            <th>Profit</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>Q1</th>
-            <td>$124,500</td>
-            <td>$98,200</td>
-            <td>$26,300</td>
-          </tr>
-          <tr>
-            <th>Q2</th>
-            <td>$156,800</td>
-            <td>$112,400</td>
-            <td>$44,400</td>
-          </tr>
-          <tr>
-            <th>Q3</th>
-            <td>$189,200</td>
-            <td>$134,600</td>
-            <td>$54,600</td>
-          </tr>
-        </tbody>
-      </table>
-    </SGSwitcher>
+    <ResizableContainer>
+      <SGSwitcher>
+        <table>
+          <caption>Quarterly results</caption>
+          <thead>
+            <tr>
+              <th>Quarter</th>
+              <th>Revenue</th>
+              <th>Expenses</th>
+              <th>Profit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Q1</th>
+              <td>$124,500</td>
+              <td>$98,200</td>
+              <td>$26,300</td>
+            </tr>
+            <tr>
+              <th>Q2</th>
+              <td>$156,800</td>
+              <td>$112,400</td>
+              <td>$44,400</td>
+            </tr>
+            <tr>
+              <th>Q3</th>
+              <td>$189,200</td>
+              <td>$134,600</td>
+              <td>$54,600</td>
+            </tr>
+          </tbody>
+        </table>
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="tables-mixed">Mixed-content cells</h3>
-    <!-- TODO(Danny): intro — cells holding code, formatted text and other inline elements. -->
-    <SGSwitcher>
-      <table>
-        <thead>
-          <tr>
-            <th>Property</th>
-            <th>Value</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>font-size</code></td>
-            <td><code>var(--font-size-base)</code></td>
-            <td>Base text size for body copy</td>
-          </tr>
-          <tr>
-            <td><code>line-height</code></td>
-            <td><code>var(--leading-normal)</code></td>
-            <td>Comfortable reading rhythm for <em>most</em> text</td>
-          </tr>
-          <tr>
-            <td><code>letter-spacing</code></td>
-            <td><code>var(--tracking-normal)</code></td>
-            <td>Default tracking for body text</td>
-          </tr>
-        </tbody>
-      </table>
-    </SGSwitcher>
+    <ResizableContainer>
+      <SGSwitcher>
+        <table>
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Value</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>font-size</code></td>
+              <td><code>var(--font-size-base)</code></td>
+              <td>Base text size for body copy</td>
+            </tr>
+            <tr>
+              <td><code>line-height</code></td>
+              <td><code>var(--leading-normal)</code></td>
+              <td>Comfortable reading rhythm for <em>most</em> text</td>
+            </tr>
+            <tr>
+              <td><code>letter-spacing</code></td>
+              <td><code>var(--tracking-normal)</code></td>
+              <td>Default tracking for body text</td>
+            </tr>
+          </tbody>
+        </table>
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="tables-wide">Wide / scrolling tables</h3>
-    <!-- TODO(Danny): intro — tables wider than their container get a focusable scroll region (div.table-scroll). In MDX this wrapper is automatic via MDX_COMPONENT_REMAPPING; elsewhere use <WrappedTable> (or write the wrapper by hand). -->
+    <p>
+      A table wider than its container would overflow the page, so wide tables are wrapped in a
+      focusable, horizontally-scrollable region (<code>div.table-scroll</code>). In MDX this happens
+      automatically — markdown tables are remapped to the <code>&lt;WrappedTable&gt;</code> component
+      — so I never have to think about it while writing. Anywhere else (a plain Astro page or raw HTML)
+      I wrap the table in <code>&lt;WrappedTable&gt;</code> myself, or add the <code
+        >div.table-scroll</code
+      >
+      by hand.
+    </p>
     <SGSwitcher>
       <WrappedTable>
         <thead>
@@ -572,7 +603,15 @@ const toc = [
 
   <section id="footnotes" class="flow">
     <h2>Footnotes</h2>
-    <!-- TODO(Danny): intro — footnotes are generated from markdown ([^label] reference, [^label]: definition). Three parts work together: the reference marker, the inline popup (progressive enhancement via InlineFootnotes), and the footnotes section at the bottom. Shown once (not context-switched) so footnote anchor IDs stay unique. -->
+    <p>
+      Footnotes are generated automatically from markdown: <code>[^label]</code> places a reference and
+      <code>[^label]: …</code> defines its content. Three parts work together — the superscript reference
+      marker (set in small caps and the accent colour), the footnotes section at the bottom with back-reference
+      arrows, and a progressive enhancement that shows a footnote inline just below the current paragraph
+      when you click its marker. The client-side JavaScript for that popup is only served when a page
+      actually has footnotes; without it the marker simply jumps to the footnotes section, so everything
+      still works.
+    </p>
     <div class="sg-panel">
       <FootnotesContent />
     </div>
@@ -580,38 +619,147 @@ const toc = [
 
   <section id="realistic" class="flow">
     <h2>Realistic example</h2>
-    <!-- TODO(Danny): intro — a longer, realistic passage combining many of the elements above. -->
-    <SGSwitcher>
-      <h2>The craft of small decisions</h2>
-      <p>
-        Good design rarely announces itself. It shows up in the <em>accumulation</em> of small choices
-        — the <strong>weight of a heading</strong>, the rhythm between paragraphs, the moment a <SmartLink
-          href="/notes/">link</SmartLink
-        > invites you somewhere new. None of it is loud, and that's the point.
-      </p>
-      <blockquote>
-        <p>The details are not the details. They make the design.</p>
-      </blockquote>
-      <h3>Where it adds up</h3>
-      <p>A few places those small decisions compound:</p>
-      <ul>
-        <li>Setting type that's comfortable to read for more than a paragraph</li>
-        <li>Keeping <code>inline code</code> legible without breaking the line</li>
-        <li>Letting lists and tables carry structure the prose can't</li>
-      </ul>
-      <p>
-        Press <kbd>Cmd</kbd> + <kbd>P</kbd> to print this and the type still holds together. That resilience<sup
-          >1</sup
-        > is the result of decisions made long before anyone reads a word.
-      </p>
-      <hr />
-      <p>
-        <small
-          >A closing aside, set smaller, the way fine print or a postscript might sit at the end of
-          a piece.</small
-        >
-      </p>
-    </SGSwitcher>
+    <p>Here's an example of a bunch of these elements working together.</p>
+    <ResizableContainer>
+      <SGSwitcher>
+        <h2>The craft of small decisions</h2>
+        <p>
+          Good design rarely announces itself. It shows up in the <em>accumulation</em> of small choices
+          — the <strong>weight of a heading</strong>, the rhythm between paragraphs, the moment a <SmartLink
+            href="/notes/">link</SmartLink
+          > invites you somewhere new. None of it is loud, and that's the point. Lorem ipsum dolor sit
+          amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+          aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+          ea commodo consequat.
+        </p>
+        <p>
+          I keep coming back to a single idea: the interface should get out of the way of the words.
+          Duis aute irure dolor in reprehenderit in <em>voluptate velit</em> esse cillum dolore eu fugiat
+          nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+          mollit anim id est laborum. You can read more about how I think about this on the <SmartLink
+            href="https://astro.build">Astro website</SmartLink
+          >, which is where a lot of these patterns started for me.
+        </p>
+        <blockquote>
+          <p>
+            The details are not the details. They make the design. Lorem ipsum dolor sit amet,
+            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.
+          </p>
+        </blockquote>
+
+        <h3>Where it adds up</h3>
+        <p>
+          A few places those small decisions compound, none of them glamorous on their own. Sed ut
+          perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+          totam rem aperiam:
+        </p>
+        <ul>
+          <li>Setting type that's comfortable to read for more than a paragraph</li>
+          <li>Keeping <code>inline code</code> legible without breaking the line</li>
+          <li>Letting lists and tables carry structure the prose can't</li>
+        </ul>
+        <p>
+          That last one matters more than it sounds. Neque porro quisquam est, qui dolorem ipsum
+          quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora
+          incidunt ut labore et dolore magnam aliquam quaerat voluptatem. The <abbr
+            title="Cascading Style Sheets">CSS</abbr
+          > does most of the heavy lifting here, and <b>almost none of it</b> needs a single class.
+        </p>
+
+        <h3>A process, more or less in order</h3>
+        <p>
+          I don't follow this rigidly, but when a piece is fighting me it usually means I've skipped
+          a step. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit
+          laboriosam, nisi ut aliquid ex ea commodi consequatur:
+        </p>
+        <ol>
+          <li>
+            Start with the content, in plain markdown, before touching a single style. It is far
+            easier to see whether an argument holds together when nothing is dressed up — quis autem
+            vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae
+            consequatur.
+          </li>
+          <li>
+            Read the whole thing aloud, slowly, and mark every place you stumble. Each stumble is
+            usually a structural problem wearing a stylistic disguise, and at vero eos et accusamus
+            et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
+            corrupti.
+          </li>
+          <li>
+            Only then start shaping the type, working outwards from the body text:
+            <ol>
+              <li>Fix the measure and the leading until a long paragraph feels effortless</li>
+              <li>
+                Tune the headings so the hierarchy is obvious at a glance, even with the
+                <i>text blurred</i>
+              </li>
+              <li>Last of all, the small touches — links, emphasis, the occasional highlight</li>
+            </ol>
+          </li>
+          <li>
+            Ship it, then read it again the next morning on a real device. Temporibus autem
+            quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et
+            voluptates repudiandae sint et molestiae non recusandae.
+          </li>
+        </ol>
+
+        <hr />
+
+        <h3>A quick comparison</h3>
+        <p>
+          It helps to see the trade-offs side by side. Itaque earum rerum hic tenetur a sapiente
+          delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
+          doloribus.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Approach</th>
+              <th>Effort</th>
+              <th>Payoff</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Sensible defaults</th>
+              <td>Low</td>
+              <td>Consistent everywhere, for free</td>
+            </tr>
+            <tr>
+              <th>Per-page tweaks</th>
+              <td>Medium</td>
+              <td>Fits the moment, drifts over time</td>
+            </tr>
+            <tr>
+              <th>Bespoke layout</th>
+              <td>High</td>
+              <td>Memorable when it's worth it</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>One more thing</h4>
+        <p>
+          A worked example, because abstractions only go so far. If a layout holds at <code
+            >320px</code
+          >
+          wide and still holds when you bump the root size up by <del>two</del>
+          <mark>three</mark> steps, it'll survive most of what readers throw at it. Press <kbd
+            >Cmd</kbd
+          > + <kbd>P</kbd> to print this and the type still holds together — the same rules that work
+          on screen mostly work on paper too. Nam libero tempore, cum soluta nobis est eligendi optio
+          cumque nihil impedit quo minus id quod maxime placeat.
+        </p>
+        <p>
+          And the maths underneath is hardly exotic: a scale where each step is roughly 1.2<sup
+            >n</sup
+          >
+          the one below it, with the body sitting at the <s>third</s> second rung. That
+          <strong>resilience</strong> is the result of decisions made long before anyone reads a word
+          — et harum quidem rerum facilis est et expedita distinctio.
+        </p>
+      </SGSwitcher>
+    </ResizableContainer>
   </section>
 
   <InlineFootnotes />
