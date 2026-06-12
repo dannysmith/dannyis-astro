@@ -184,47 +184,52 @@ src/pages/styleguide/
 - [x] `.list-reset` demo
 - [x] Realistic composite example (multiple elements working together)
 
-### Phase 3 — Content Components
+### Phase 3 — Content Components  [✅ DONE]
 
 > **Source:** `_ContentComponents.astro`. Each gets the full treatment: what it is, props table where non-trivial, "you write this" + rendered output, examples in different contexts / `ResizableContainer`, and badges for auto-replace components. Per the colocation rule, native `<details>` (→ Accordion) and native `<audio>`/`<video>` (→ Embeds) live here too, not in HTML.
 
-- [ ] Intro
+- [x] Intro
 - [x] IntroParagraph
-- [ ] Inline content components (manual, not auto from markdown)
-  - [ ] Notion (NotionLink)
-  - [ ] BlockQuoteCitation (author / title+url / `small`)
-- [ ] Images
-  - [ ] BasicImage — default / framed / caption / framed+caption / bleed variants
-  - [ ] Astro `<Image>` & `<Picture>`
-- [ ] Embeds
-  - [ ] Embed (auto-detect dispatch)
-  - [ ] YouTube
-  - [ ] Vimeo
-  - [ ] Loom
-  - [ ] LCVid (self-hosted v.danny.is — chrome / transcript / minimal / overrides)
-  - [ ] Native `<audio>` / `<video>` (colocated here)
-- [ ] BookmarkCard
+- [x] Inline content components (manual, not auto from markdown)
+  - [x] Notion (NotionLink)
+  - [x] BlockQuoteCitation (author / title+url / `small`)
+- [x] Images
+  - [x] BasicImage — default / framed / caption / framed+caption / bleed variants
+  - [x] Astro `<Image>` & `<Picture>`
+- [x] Embeds
+  - [x] Embed (auto-detect dispatch)
+  - [x] YouTube
+  - [x] Vimeo
+  - [x] Loom
+  - [x] LCVid (self-hosted v.danny.is — chrome / transcript / minimal / overrides)
+  - [x] Native `<audio>` / `<video>` (colocated here)
+  - [x] Tweet
+  - [x] Gist
+  - [x] BlueskyPost
+  - [x] MastadonPost
+  - [x] BaselineReady
+- [x] BookmarkCard
 - [x] ButtonLink (primary / secondary / inline) + standard HTML buttons
 - [x] Callout (colour variants / title+icon+emoji / rich content)
 - [x] Accordion (+ native `<details>` comparison, colocated here)
-- [ ] Code blocks (title / terminal / line highlight / ins+del / diff / wrap)
-- [ ] MarkdownBlock (rendered / source default)
-- [ ] FileTree
-- [ ] ColorSwatch
-- [ ] Tabs / TabItem
-- [ ] ContentCard (articles / notes / custom / compact)
-- [ ] NoteCard (with tags+sourceURL / minimal)
-- [ ] Layout helpers
-  - [ ] Center
-  - [ ] Grid
-  - [ ] ResizableContainer
-  - [ ] Spacer
+- [x] Code blocks (title / terminal / line highlight / ins+del / diff / wrap)
+- [x] MarkdownBlock (rendered / source default)
+- [x] FileTree
+- [x] ColorSwatch
+- [x] Tabs / TabItem
+- [x] ContentCard (articles / notes / custom / compact)
+- [x] NoteCard (with tags+sourceURL / minimal)
+- [x] Layout helpers
+  - [x] Center
+  - [x] Grid
+  - [x] ResizableContainer
+  - [x] Spacer
 
 ### Phase 4 — UI Components
 
 > **Source:** `_UiComponents.astro`. Code-only building blocks used outside content. Same component-library treatment as Phase 3. (ContentCard / NoteCard live in Phase 3 per the page split, even though they currently sit in this partial.)
 
-- [ ] Intro
+- [ ] Intro (Danny to write)
 - [ ] PersonalLogo
 - [ ] Pill (default / custom colour / `textColor` override)
 - [ ] Spinner (sizes)
