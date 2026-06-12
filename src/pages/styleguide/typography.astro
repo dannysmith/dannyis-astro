@@ -1,19 +1,345 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
+import SGSwitcher from './_components/SGSwitcher.astro';
+import { SmartLink, SmallCaps, highlight as Highlight } from '@components/mdx/index';
+
+const toc = [
+  { id: 'inline', label: 'Inline elements' },
+  { id: 'manual-inline', label: 'Manual inline' },
+  { id: 'default-behaviours', label: 'Default behaviours' },
+  { id: 'block', label: 'Block-level elements' },
+  { id: 'headings', label: 'Headings' },
+  { id: 'composite', label: 'Composite sample' },
+];
 ---
 
 <StyleguideLayout
   title="Prose & Typography"
-  description="Everything you get from writing plain markdown — inline elements, headings, lists, tables, blockquotes, auto-enrichments and footnotes."
+  description="Everything you get from writing plain markdown and HTML"
   current="typography"
+  toc={toc}
 >
   <header>
     <p>
-      Everything you get from writing plain markdown: inline elements, headings, lists, tables and
-      blockquotes, the auto-enrichments (SmartLink/NotionLink, footnotes), and composite real-article
-      examples.
+      The <a href="/styleguide/foundations#font-families">foundations section</a> covers the fundamentals
+      of typography and spacing. This section demonstrates how content is styled and rendered in various
+      contexts. It's a reference for the inline and block-level elements I use on this site.
     </p>
   </header>
+  <section id="inline" class="flow">
+    <h2>Inline elements</h2>
+    <p>Here's how inline text elements are styled...</p>
 
-  <p><em>Scaffolded in Phase 0 — content migrates here in Phase 2.</em></p>
+    <SGSwitcher>
+      <table>
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>You write</th>
+            <th>Renders</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th colspan="4">Links</th>
+          </tr>
+          <tr>
+            <td>Link (internal)</td>
+            <td><code>[Notes](/notes/)</code></td>
+            <td><SmartLink href="/notes/">Notes</SmartLink></td>
+            <td
+              >Unvisited links are rendered in the accent colour while visited ones are
+              rendered in purple. Hover and active behaviour depends on the context. In
+              longform prose on wide viewports, coloured underlines are shown instead of
+              coloured text.</td
+            >
+          </tr>
+          <tr>
+            <td>Link (external)</td>
+            <td><code>[GitHub](https://github.com)</code></td>
+            <td><SmartLink href="https://github.com">GitHub</SmartLink></td>
+            <td
+              >Markdown links are automatically converted to SmartLink components. Those
+              pointing to external domains get a small arrow and appropriate attributes.</td
+            >
+          </tr>
+          <tr>
+            <td>Raw anchor</td>
+            <td><code>&lt;a href="/notes/"&gt;Notes&lt;/a&gt;</code></td>
+            <td><a href="/notes/">Notes</a></td>
+            <td></td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th colspan="4">Emphasis & weight</th>
+          </tr>
+          <tr>
+            <td>Emphasis</td>
+            <td><code>*emphasis*</code></td>
+            <td><em>emphasis</em></td>
+            <td>Em elements nested inside other em elements are rendered upright.</td>
+          </tr>
+          <tr>
+            <td>Strong</td>
+            <td><code>**strong**</code></td>
+            <td><strong>strong</strong></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Italic</td>
+            <td><code>&lt;i&gt;italic&lt;/i&gt;</code></td>
+            <td><i>italic</i></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Bold</td>
+            <td><code>&lt;b&gt;bold&lt;/b&gt;</code></td>
+            <td><b>bold</b></td>
+            <td></td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th colspan="4">Code & technical</th>
+          </tr>
+          <tr>
+            <td>Inline code</td>
+            <td><code>`code`</code></td>
+            <td><code>code</code></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Keyboard</td>
+            <td><code>&lt;kbd&gt;Ctrl&lt;/kbd&gt;</code></td>
+            <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+            <td>Keyboard input renders as little buttons which depress on hover</td>
+          </tr>
+          <tr>
+            <td>Variable</td>
+            <td><code>&lt;var&gt;x&lt;/var&gt;</code></td>
+            <td>f(<var>x</var>) = <var>x</var><sup>2</sup></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Sample output</td>
+            <td><code>&lt;samp&gt;Build complete&lt;/samp&gt;</code></td>
+            <td><samp>Build complete</samp></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Subscript</td>
+            <td><code>H&lt;sub&gt;2&lt;/sub&gt;O</code></td>
+            <td>H<sub>2</sub>O</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Superscript</td>
+            <td><code>E = mc&lt;sup&gt;2&lt;/sup&gt;</code></td>
+            <td>E = mc<sup>2</sup></td>
+            <td></td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th colspan="4">Edits & highlights</th>
+          </tr>
+          <tr>
+            <td>Marked / highlighted</td>
+            <td><code>&lt;mark&gt;highlighted&lt;/mark&gt;</code></td>
+            <td><mark>highlighted</mark></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Deleted</td>
+            <td><code>~~deleted~~</code></td>
+            <td><del>deleted</del></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Strikethrough</td>
+            <td><code>&lt;s&gt;struck&lt;/s&gt;</code></td>
+            <td><s>struck</s></td>
+            <td></td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr>
+            <th colspan="4">References & meta</th>
+          </tr>
+          <tr>
+            <td>Abbreviation</td>
+            <td><code>&lt;abbr title="…"&gt;W3C&lt;/abbr&gt;</code></td>
+            <td><abbr title="World Wide Web Consortium">W3C</abbr></td>
+            <td
+              >Abbreviations are rendered in small caps. If a title is present, they're
+              underlined.</td
+            >
+          </tr>
+          <tr>
+            <td>Definition</td>
+            <td><code>&lt;dfn&gt;design token&lt;/dfn&gt;</code></td>
+            <td><dfn>design token</dfn></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Citation</td>
+            <td><code>&lt;cite&gt;Title&lt;/cite&gt;</code></td>
+            <td><cite>The Elements of Typographic Style</cite></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Inline quote</td>
+            <td><code>&lt;q&gt;quote&lt;/q&gt;</code></td>
+            <td><q>Typography exists to honor content.</q></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Small print</td>
+            <td><code>&lt;small&gt;fine print&lt;/small&gt;</code></td>
+            <td><small>fine print</small></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </SGSwitcher>
+
+    <h3 id="manual-inline">Manual inline components</h3>
+    <p>
+      The following inline Astro components are available for use in MDX files or other Astro
+      pages.
+    </p>
+    <SGSwitcher>
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>You write</th>
+            <th>Renders</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SmallCaps</td>
+            <td><code>&lt;SmallCaps&gt;Small Caps&lt;/SmallCaps&gt;</code></td>
+            <td><SmallCaps>Small Caps</SmallCaps></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Highlight</td>
+            <td><code>&lt;Highlight&gt;highlighted&lt;/Highlight&gt;</code></td>
+            <td><Highlight>highlighted</Highlight></td>
+            <td><!-- shares .highlight styling with <mark> --></td>
+          </tr>
+        </tbody>
+      </table>
+    </SGSwitcher>
+  </section>
+
+  <section id="block" class="flow">
+    <h2>Block-level elements</h2>
+    <p>And here's how the basic block-level elements are styled...</p>
+
+    <h3 id="headings">Headings</h3>
+    <SGSwitcher>
+      <h1>Heading level 1</h1>
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+      <h2>Heading level 2</h2>
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+      <h3>Heading level 3</h3>
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+      <h4>Heading level 4</h4>
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+      <h5>Heading level 5</h5>
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+      <h6>Heading level 6</h6>
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+    </SGSwitcher>
+
+    <h3 id="paragraphs">Paragraphs</h3>
+    <SGSwitcher>
+      <p>
+        A paragraph of body copy, with <em>emphasis</em>, <strong>strong importance</strong>,
+        a bit of <code>inline code</code> and a <SmartLink href="/notes/">link</SmartLink> woven
+        through it. Placeholder text — replace with your own.
+      </p>
+      <p>
+        A second paragraph, so the spacing and rhythm between blocks is visible. Notice how
+        the Default tab has no inter-paragraph spacing until the Flow context adds it.
+      </p>
+    </SGSwitcher>
+
+    <h3 id="blockquote">Blockquote</h3>
+    <SGSwitcher>
+      <blockquote>
+        <p>
+          A plain markdown blockquote. This is what a single <code>&gt;</code> prefix produces —
+          a
+          <code>blockquote</code> wrapping one or more paragraphs.
+        </p>
+      </blockquote>
+    </SGSwitcher>
+
+    <h3 id="hr">Horizontal rule</h3>
+    <SGSwitcher>
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+      <hr />
+      <p>
+        Elit est aliqua excepteur aliquip pariatur voluptate officia Lorem tempor occaecat
+        consectetur nisi aliquip est.
+      </p>
+    </SGSwitcher>
+
+    <h3 id="composite">Composite sample</h3>
+    <p>Here are a few more realistic examples of all these components in action together.</p>
+    <SGSwitcher>
+      <h2>A section heading</h2>
+      <p>
+        An opening paragraph that introduces the section, with an <em>emphasised phrase</em> and
+        a
+        <SmartLink href="/notes/">link</SmartLink> to set the scene. Placeholder copy throughout.
+      </p>
+      <h3>A subsection</h3>
+      <p>
+        Body copy under a subsection heading, showing how headings and paragraphs sit together
+        with the right vertical rhythm.
+      </p>
+      <blockquote>
+        <p>A quotation that breaks up the flow and carries a little extra weight.</p>
+      </blockquote>
+      <p>A closing paragraph before a thematic break.</p>
+      <hr />
+      <p>And a final paragraph after the rule.</p>
+    </SGSwitcher>
+  </section>
 </StyleguideLayout>
+
+<style>
+  /* Extra breathing room above each section's main heading. */
+  section > h2 {
+    margin-block-start: var(--space-xl);
+  }
+</style>
