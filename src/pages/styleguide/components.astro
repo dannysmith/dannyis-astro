@@ -1515,15 +1515,15 @@ Provide a title to skip the fetch or override it:
     <h3 id="embed-auto">Embed (auto-dispatch)</h3>
     <p>
       The <code>&lt;Embed&gt;</code> component regex-matches a URL and renders the most appropriate
-      component, so in prose you can paste almost any link and get a sensible embed. It currently
-      dispatches YouTube, Vimeo, Tweet, Loom and v.danny.is (LCVid) URLs to the components above, plus
-      GitHub Gists — and falls back to a <code>&lt;BookmarkCard&gt;</code> for anything it doesn't
+      component, so in prose you can paste almost any link and get a sensible embed. It dispatches
+      YouTube, Vimeo, Tweet, Loom, v.danny.is (LCVid), GitHub Gist, Bluesky and Mastodon URLs to the
+      components above — and falls back to a <code>&lt;BookmarkCard&gt;</code> for anything it doesn't
       recognise.
     </p>
     <p>
       <em
-        >Not yet auto-dispatched: BaselineStatus, BlueskyPost and MastodonPost — use the named
-        components above for now.</em
+        >BaselineStatus has no URL to match against, so it isn't auto-dispatched — use the named
+        component above.</em
       >
     </p>
     <Code
