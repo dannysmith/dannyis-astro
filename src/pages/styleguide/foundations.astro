@@ -486,18 +486,21 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       tabs throughout the rest of the styleguide, so you can preview an element or component in each:
     </p>
     <ul>
-      <li><strong>Default</strong> — the global prose-style defaults, with no wrapper.</li>
       <li>
-        <strong>Default Flow</strong> — the same, plus the <code>.flow</code> utility for adding vertical
-        rhythm between block-level elements.
+        <strong>Default (flow)</strong> — the global prose-style defaults plus the <code>.flow</code>
+        utility for vertical rhythm between block-level elements.
       </li>
       <li>
-        <strong>Long Form Prose</strong> — wrapped in <code>&lt;LongFormProseTypography&gt;</code>,
+        <strong>Long form Prose</strong> — wrapped in <code>&lt;LongFormProseTypography&gt;</code>,
         which opts <em>in</em> to Literata and the bookish enhancements (oldstyle numerals, tighter
         optical sizing) used in articles.
       </li>
       <li>
-        <strong>UI</strong> — the <code>.ui-style</code> utility, which opts <em>out</em> of
+        <strong>Default (no flow)</strong> — the global prose-style defaults on their own, with no
+        wrapper.
+      </li>
+      <li>
+        <strong>UI Style</strong> — the <code>.ui-style</code> utility, which opts <em>out</em> of
         prose styling (no underlines, no heading borders, no list markers) for navigation, cards and other interface areas.
       </li>
     </ul>
