@@ -1,19 +1,166 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
+import SGSwitcher from './_components/SGSwitcher.astro';
+import { Callout, IntroParagraph, ResizableContainer } from '@components/mdx/index';
+import { Code } from 'astro-expressive-code/components';
+
+const toc = [
+  { id: 'intro-paragraph', label: 'IntroParagraph' },
+  { id: 'callout', label: 'Callout' },
+];
 ---
 
 <StyleguideLayout
   title="Content Components"
   description="Components you deliberately reach for in MDX — each with usage, props, and rendered examples."
   current="components"
+  toc={toc}
 >
   <header>
-    <p>
-      Components you deliberately reach for in MDX: Callout, the Embed family, BookmarkCard,
-      Accordion, FileTree, ButtonLink, Image/Picture, IntroParagraph, MarkdownBlock, code blocks,
-      ContentCard/NoteCard and the layout helpers. Each gets the full component-library treatment.
-    </p>
+    <!-- TODO(Danny): page intro. -->
   </header>
 
-  <p><em>Scaffolded in Phase 0 — content migrates here in Phase 3.</em></p>
+  <section id="intro-paragraph" class="flow">
+    <h2>IntroParagraph</h2>
+    <p>Adds a drop cap and styling to its content. Primarily for use in longform articles.</p>
+    <Code
+      lang="mdx"
+      code={`<IntroParagraph>
+  Every great piece of writing begins with a single word, and that word carries the weight of
+  everything that follows. It sets the tone, establishes the voice, and quietly invites the
+  reader in. The drop cap is an old trick — medieval scribes used it to mark where something
+  important began — and it still earns its place on screen, whether you're writing about
+  [software architecture](/writing/) or something more personal. A strong opening can turn a
+  casual browser into someone who reads to the end.
+</IntroParagraph>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <IntroParagraph>
+          Every great piece of writing begins with a single word, and that word carries the weight
+          of everything that follows. It sets the tone, establishes the voice, and quietly invites
+          the reader in. The drop cap is an old trick — medieval scribes used it to mark where
+          something important began — and it still earns its place on screen, whether you're writing
+          about <a href="/writing/">software architecture</a> or something more personal. A strong
+          opening can turn a casual browser into someone who reads to the end.
+        </IntroParagraph>
+      </SGSwitcher>
+    </ResizableContainer>
+  </section>
+
+  <section id="callout" class="flow">
+    <h2>Callout</h2>
+    <!-- TODO(Danny): what it is / how it works. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>type</code></td>
+          <td>
+            <code>'default' | 'red' | 'blue' | 'green' | 'orange' | 'yellow' | 'purple'</code>
+          </td>
+          <td><code>'default'</code></td>
+          <td>Colour variant.</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Optional bold heading shown above the content.</td>
+        </tr>
+        <tr>
+          <td><code>icon</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>
+            An astro-icon name (e.g. <code>heroicons:fire-20-solid</code>). Mutually exclusive with
+            <code>emoji</code>.
+          </td>
+        </tr>
+        <tr>
+          <td><code>emoji</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>A text emoji shown in place of an icon. Mutually exclusive with <code>icon</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="callout-variants">Colour variants &amp; options</h3>
+    <Code
+      lang="mdx"
+      code={`<Callout>Default callout — neutral styling for general asides.</Callout>
+
+<Callout type="blue" title="Info">Blue suits informational notes and tips. The title adds a bold heading.</Callout>
+
+<Callout type="green" emoji="✅">Green for success messages and things to do — this one uses an emoji.</Callout>
+
+<Callout type="yellow" icon="heroicons:exclamation-triangle-20-solid">Yellow draws attention to cautions — this one uses an icon.</Callout>
+
+<Callout type="orange" title="Important" icon="heroicons:fire-20-solid">Orange signals something noteworthy. Title and icon combined.</Callout>
+
+<Callout type="red" title="Warning" emoji="🚨">Red is for serious warnings and critical information.</Callout>
+
+<Callout type="purple" emoji="💡">Purple highlights creative ideas or experiments.</Callout>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <Callout>Default callout — neutral styling for general asides.</Callout>
+        <Callout type="blue" title="Info">
+          Blue suits informational notes and tips. The title adds a bold heading.
+        </Callout>
+        <Callout type="green" emoji="✅">
+          Green for success messages and things to do — this one uses an emoji.
+        </Callout>
+        <Callout type="yellow" icon="heroicons:exclamation-triangle-20-solid">
+          Yellow draws attention to cautions — this one uses an icon.
+        </Callout>
+        <Callout type="orange" title="Important" icon="heroicons:fire-20-solid">
+          Orange signals something noteworthy. Title and icon combined.
+        </Callout>
+        <Callout type="red" title="Warning" emoji="🚨">
+          Red is for serious warnings and critical information.
+        </Callout>
+        <Callout type="purple" emoji="💡">
+          Purple highlights creative ideas or experiments.
+        </Callout>
+      </SGSwitcher>
+    </ResizableContainer>
+
+    <h3 id="callout-rich">Rich content</h3>
+    <Code
+      lang="mdx"
+      code={`<Callout type="blue" title="Rich content" icon="heroicons:document-text-20-solid">
+  Callouts can hold anything you'd write elsewhere: **bold**, *italics*,
+  \`inline code\` and [links](/). Lists work too:
+
+  - Bullet points
+  - Numbered lists
+  - Any nesting you need
+</Callout>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <Callout type="blue" title="Rich content" icon="heroicons:document-text-20-solid">
+          <p>
+            Callouts can hold anything you'd write elsewhere: <strong>bold</strong>,
+            <em>italics</em>, <code>inline code</code> and <a href="/">links</a>. Lists work too:
+          </p>
+          <ul>
+            <li>Bullet points</li>
+            <li>Numbered lists</li>
+            <li>Any nesting you need</li>
+          </ul>
+        </Callout>
+      </SGSwitcher>
+    </ResizableContainer>
+  </section>
 </StyleguideLayout>
