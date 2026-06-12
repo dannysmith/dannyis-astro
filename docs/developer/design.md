@@ -204,7 +204,7 @@ Only for styles specific to long-form reading that shouldn't apply elsewhere. St
 
 ## Utility Classes
 
-Utilities are defined in `_utilities.css` and `_layout.css`. The `.flow` utility lives in `_verticalflow.css` (part of the typography layer). See the styleguide at `/styleguide` for the full list. Key utilities:
+Utilities are defined in `_utilities.css` and `_layout.css`. The `.flow` utility lives in `_verticalflow.css` (part of the typography layer). See the styleguide at `/styleguide/foundations` for the full list. Key utilities:
 
 ### `.ui-style` - Opt-Out of Prose Typography
 
