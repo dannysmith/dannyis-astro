@@ -447,7 +447,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       >), while "display" type uses Geist (<code>--font-display</code>). Code examples and other
       monospace fonts use a version of Fira Code.
     </p>
-    <div class="type-specimens" class="flow">
+    <div class="type-specimens">
       <SGTypeSpecimen
         family="Geist"
         url="https://vercel.com/font"
@@ -896,11 +896,6 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 </StyleguideLayout>
 
 <style>
-  /* Extra breathing room above each section's main heading. */
-  section > h2 {
-    margin-block-start: var(--space-xl);
-  }
-
   /* Grid of square colour swatches; --swatch-min controls minimum cell size. */
   .swatch-grid {
     --swatch-min: 6rem;
