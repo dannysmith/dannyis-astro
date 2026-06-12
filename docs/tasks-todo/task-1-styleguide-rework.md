@@ -257,15 +257,15 @@ src/pages/styleguide/
 - [x] Definition lists (`dl` / `dt` / `dd`)
 - [x] Figure / figcaption
 
-### Phase 6 — Full Edit
+### Phase 6 — Full Edit [✅ DONE]
 
 - [x] Convert `index.astro` from the monolith into the slim hub 
-- [ ] Full spelling and error check across all files
-- [ ] Full user-review in the browser to address working etc
+- [x] Full spelling and error check across all files
+- [x] Full user-review in the browser to address working etc
 
 ### Phase 7 - Final Cleanup
 
-- [ ] Remove the old single-page partials
-- [ ] Remove the now-unused `src/components/styleguide/` helpers (`SGTOC`, `SGTypographySwitcher`) and their barrel once nothing references them (check `scratchpad.astro`)
+- [x] Remove the old single-page partials
+- [x] Remove the now-unused `src/components/styleguide/` helpers (`SGTOC`, `SGTypographySwitcher`) and their barrel once nothing references them (check `scratchpad.astro`)
 - [ ] Update `docs/developer/` if any patterns changed
 - [ ] TBC
