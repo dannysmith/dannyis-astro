@@ -259,7 +259,7 @@ src/pages/styleguide/
 
 ### Phase 6 — Full Edit
 
-- [ ] Convert `index.astro` from the monolith into the slim hub 
+- [x] Convert `index.astro` from the monolith into the slim hub 
 - [ ] Full spelling and error check across all files
 - [ ] Full user-review in the browser to address working etc
 

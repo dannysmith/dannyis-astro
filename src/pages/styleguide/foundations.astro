@@ -7,10 +7,12 @@ const toc = [
   { id: 'colour', label: 'Colour System' },
   { id: 'borders', label: 'Borders' },
   { id: 'font-families', label: 'Typefaces' },
+  { id: 'typographic-contexts', label: 'Typographic contexts' },
   { id: 'font-sizes', label: 'Font sizes' },
   { id: 'spacing', label: 'Spacing' },
   { id: 'font-weights', label: 'Font weights' },
   { id: 'leading-tracking', label: 'Leading & tracking' },
+  { id: 'measure', label: 'Measure' },
   { id: 'utility-classes', label: 'Utility classes' },
 ];
 
@@ -477,6 +479,29 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       />
     </div>
 
+    <h3 id="typographic-contexts">Typographic contexts</h3>
+    <p>
+      Most of the site renders with <strong>prose-style</strong> typography by default, set in
+      Figtree. Individual areas can opt in or out of that baseline. These four contexts show up as
+      tabs throughout the rest of the styleguide, so you can preview an element or component in each:
+    </p>
+    <ul>
+      <li><strong>Default</strong> — the global prose-style defaults, with no wrapper.</li>
+      <li>
+        <strong>Default Flow</strong> — the same, plus the <code>.flow</code> utility for adding vertical
+        rhythm between block-level elements.
+      </li>
+      <li>
+        <strong>Long Form Prose</strong> — wrapped in <code>&lt;LongFormProseTypography&gt;</code>,
+        which opts <em>in</em> to Literata and the bookish enhancements (oldstyle numerals, tighter
+        optical sizing) used in articles.
+      </li>
+      <li>
+        <strong>UI</strong> — the <code>.ui-style</code> utility, which opts <em>out</em> of
+        prose styling (no underlines, no heading borders, no list markers) for navigation, cards and other interface areas.
+      </li>
+    </ul>
+
     <h3 id="font-sizes">Font Sizes</h3>
     <p>
       The base type is generated with <a href="https://utopia.fyi/type/calculator">Utopia</a> and uses
@@ -767,6 +792,13 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         </tr>
       </tbody>
     </table>
+
+    <h3 id="measure">Measure</h3>
+    <p>
+      A single token, <code>--measure-standard</code> (<code>70ch</code>), sets the standard measure
+      — the maximum line length for comfortable reading, around 70 characters. I use it to cap the
+      width of prose columns and most content areas.
+    </p>
   </section>
 
   <section id="utility-classes" class="flow">
@@ -784,6 +816,15 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td><code>.flow</code></td>
+          <td>
+            Adds consistent vertical rhythm between block-level children — catch-all margins for
+            elements not covered globally, and tighter spacing between adjacent headings. Applied to
+            most prose containers like articles and notes. Margins are <code>em</code>-based, so they
+            scale with font size.
+          </td>
+        </tr>
         <tr>
           <td><code>.ui-style</code></td>
           <td>
