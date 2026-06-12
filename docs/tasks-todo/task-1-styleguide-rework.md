@@ -189,7 +189,7 @@ src/pages/styleguide/
 > **Source:** `_ContentComponents.astro`. Each gets the full treatment: what it is, props table where non-trivial, "you write this" + rendered output, examples in different contexts / `ResizableContainer`, and badges for auto-replace components. Per the colocation rule, native `<details>` (→ Accordion) and native `<audio>`/`<video>` (→ Embeds) live here too, not in HTML.
 
 - [ ] Intro
-- [ ] IntroParagraph
+- [x] IntroParagraph
 - [ ] Inline content components (manual, not auto from markdown)
   - [ ] Notion (NotionLink)
   - [ ] BlockQuoteCitation (author / title+url / `small`)
@@ -204,9 +204,9 @@ src/pages/styleguide/
   - [ ] LCVid (self-hosted v.danny.is — chrome / transcript / minimal / overrides)
   - [ ] Native `<audio>` / `<video>` (colocated here)
 - [ ] BookmarkCard
-- [ ] ButtonLink (primary / secondary / inline) + standard HTML buttons
-- [ ] Callout (colour variants / title+icon+emoji / rich content)
-- [ ] Accordion (+ native `<details>` comparison, colocated here)
+- [x] ButtonLink (primary / secondary / inline) + standard HTML buttons
+- [x] Callout (colour variants / title+icon+emoji / rich content)
+- [x] Accordion (+ native `<details>` comparison, colocated here)
 - [ ] Code blocks (title / terminal / line highlight / ins+del / diff / wrap)
 - [ ] MarkdownBlock (rendered / source default)
 - [ ] FileTree

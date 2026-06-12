@@ -1,12 +1,22 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
-import { Callout, IntroParagraph, ResizableContainer } from '@components/mdx/index';
+import {
+  Accordion,
+  BlockQuoteCitation,
+  ButtonLink,
+  Callout,
+  IntroParagraph,
+  ResizableContainer,
+} from '@components/mdx/index';
 import { Code } from 'astro-expressive-code/components';
 
 const toc = [
   { id: 'intro-paragraph', label: 'IntroParagraph' },
   { id: 'callout', label: 'Callout' },
+  { id: 'blockquote-citation', label: 'BlockQuoteCitation' },
+  { id: 'button-link', label: 'ButtonLink' },
+  { id: 'accordion', label: 'Accordion' },
 ];
 ---
 
@@ -162,5 +172,244 @@ const toc = [
         </Callout>
       </SGSwitcher>
     </ResizableContainer>
+  </section>
+
+  <section id="blockquote-citation" class="flow">
+    <h2>BlockQuoteCitation</h2>
+    <!-- TODO(Danny): what it is / how it works. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>author</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Attribution name shown in the citation.</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Source title, rendered in a <code>&lt;cite&gt;</code>.</td>
+        </tr>
+        <tr>
+          <td><code>url</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Optional link wrapping the <code>title</code>.</td>
+        </tr>
+        <tr>
+          <td><code>small</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Render the quote in a smaller, less prominent style.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="blockquote-citation-author">Author only</h3>
+    <Code
+      lang="mdx"
+      code={`<BlockQuoteCitation author="Charles Eames">
+  Design is a plan for arranging elements in such a way as best to accomplish a particular purpose.
+</BlockQuoteCitation>`}
+    />
+    <SGSwitcher>
+      <BlockQuoteCitation author="Charles Eames">
+        <p>
+          Design is a plan for arranging elements in such a way as best to accomplish a particular
+          purpose.
+        </p>
+      </BlockQuoteCitation>
+    </SGSwitcher>
+
+    <h3 id="blockquote-citation-title">Author, title &amp; link</h3>
+    <Code
+      lang="mdx"
+      code={`<BlockQuoteCitation
+  author="Steve Jobs"
+  title="Stanford Commencement Address"
+  url="https://news.stanford.edu/2005/06/12/youve-got-find-love-jobs-says/"
+>
+  Your work is going to fill a large part of your life, and the only way to be truly satisfied is to
+  do what you believe is great work.
+</BlockQuoteCitation>`}
+    />
+    <SGSwitcher>
+      <BlockQuoteCitation
+        author="Steve Jobs"
+        title="Stanford Commencement Address"
+        url="https://news.stanford.edu/2005/06/12/youve-got-find-love-jobs-says/"
+      >
+        <p>
+          Your work is going to fill a large part of your life, and the only way to be truly
+          satisfied is to do what you believe is great work.
+        </p>
+      </BlockQuoteCitation>
+    </SGSwitcher>
+
+    <h3 id="blockquote-citation-small">Small</h3>
+    <Code
+      lang="mdx"
+      code={`<BlockQuoteCitation author="Anonymous" small>
+  The best time to plant a tree was twenty years ago. The second best time is now.
+</BlockQuoteCitation>`}
+    />
+    <SGSwitcher>
+      <BlockQuoteCitation author="Anonymous" small>
+        <p>The best time to plant a tree was twenty years ago. The second best time is now.</p>
+      </BlockQuoteCitation>
+    </SGSwitcher>
+  </section>
+
+  <section id="button-link" class="flow">
+    <h2>ButtonLink</h2>
+    <!-- TODO(Danny): what it is / how it works. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>href</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>Destination URL.</td>
+        </tr>
+        <tr>
+          <td><code>variant</code></td>
+          <td><code>'primary' | 'secondary'</code></td>
+          <td><code>'primary'</code></td>
+          <td>Filled accent style, or a subtle bordered style.</td>
+        </tr>
+        <tr>
+          <td><code>inline</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Flow inline with text instead of a centred block.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="button-link-variants">Variants</h3>
+    <Code
+      lang="mdx"
+      code={`<ButtonLink href="/writing/">Read more articles</ButtonLink>
+<ButtonLink href="/about/" variant="secondary">Learn about me</ButtonLink>
+
+Inline buttons flow with text:
+<ButtonLink href="/writing/" inline>Read articles</ButtonLink>
+<ButtonLink href="/notes/" inline>Browse notes</ButtonLink>`}
+    />
+    <SGSwitcher>
+      <ButtonLink href="/writing/">Read more articles</ButtonLink>
+      <ButtonLink href="/about/" variant="secondary">Learn about me</ButtonLink>
+      <p>
+        Inline buttons flow with text: <ButtonLink href="/writing/" inline>Read articles</ButtonLink>
+        <ButtonLink href="/notes/" inline>Browse notes</ButtonLink>
+      </p>
+    </SGSwitcher>
+
+    <h3 id="button-link-html">Standard HTML buttons</h3>
+    <Code
+      lang="html"
+      code={`<button type="submit">Submit</button>
+<button type="reset">Reset</button>
+<button type="button" disabled>Disabled</button>
+<input type="button" value="Input button" />`}
+    />
+    <SGSwitcher>
+      <p>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+        <button type="button" disabled>Disabled</button>
+        <input type="button" value="Input button" />
+      </p>
+    </SGSwitcher>
+  </section>
+
+  <section id="accordion" class="flow">
+    <h2>Accordion</h2>
+    <!-- TODO(Danny): what it is / how it works — wraps the native <details> element. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>header</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The summary text shown on the toggle.</td>
+        </tr>
+        <tr>
+          <td><code>open</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Whether the accordion starts expanded.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="accordion-examples">Examples</h3>
+    <Code
+      lang="mdx"
+      code={`<Accordion header="Standard accordion">
+  Default style — starts closed. Click the header to expand.
+</Accordion>
+
+<Accordion header="Starts open" open>
+  Pass the open prop to render it expanded by default.
+</Accordion>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <Accordion header="Standard accordion">
+          <p>Default style — starts closed. Click the header to expand.</p>
+        </Accordion>
+        <Accordion header="Starts open" open>
+          <p>Pass the open prop to render it expanded by default.</p>
+        </Accordion>
+      </SGSwitcher>
+    </ResizableContainer>
+
+    <h3 id="accordion-native">Native &lt;details&gt;</h3>
+    <p>
+      Accordion wraps the native <code>&lt;details&gt;</code> element. The raw element under our CSS,
+      for comparison:
+    </p>
+    <Code
+      lang="html"
+      code={`<details>
+  <summary>Native details element</summary>
+  <p>Accordion adds the smaller type and the content-trim spacing on top of this.</p>
+</details>`}
+    />
+    <SGSwitcher>
+      <details>
+        <summary>Native details element</summary>
+        <p>Accordion adds the smaller type and the content-trim spacing on top of this.</p>
+      </details>
+    </SGSwitcher>
   </section>
 </StyleguideLayout>
