@@ -1,18 +1,111 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
+import SGSwitcher from './_components/SGSwitcher.astro';
+import { Code } from 'astro-expressive-code/components';
+import { PersonalLogo, Pill } from '@components/ui/index';
+
+const toc = [
+  { id: 'personal-logo', label: 'PersonalLogo' },
+  { id: 'pill', label: 'Pill' },
+];
 ---
 
 <StyleguideLayout
   title="UI Components"
   description="Code-only building blocks used when coding Astro pages."
   current="ui"
+  toc={toc}
 >
   <header>
     <p>
-      Code-only building blocks you only touch when coding an Astro page: Pill, Spinner,
-      PersonalLogo, SocialLinks, ThemeToggle, MarkdownContentActions, Footer and nav.
+      The components on this page are the reusable building blocks I use <em>outside</em> of my content
+      files.
     </p>
   </header>
 
-  <p><em>Scaffolded in Phase 0 — content migrates here in Phase 4.</em></p>
+  <section id="personal-logo" class="flow">
+    <h2>PersonalLogo</h2>
+    <p>
+      The PersonalLogo is the little accent dot and name used in the header and footer. It takes no
+      props.
+    </p>
+    <Code lang="astro" code={'<PersonalLogo />'} />
+    <SGSwitcher>
+      <PersonalLogo />
+    </SGSwitcher>
+  </section>
+
+  <section id="pill" class="flow">
+    <h2>Pill</h2>
+    <p>
+      Small label badges for tags, categories, status indicators and thelike. By default a Pill is a
+      subtle outline but you can pass a <code>color</code> and it fills, deriving a readable text colour
+      from the background with <code>color-mix()</code>.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>text</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The label text.</td>
+        </tr>
+        <tr>
+          <td><code>color</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Fill colour. When set, the pill switches from outline to filled.</td>
+        </tr>
+        <tr>
+          <td><code>textColor</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Override the auto-derived text colour.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="pill-default">Default</h3>
+    <Code lang="astro" code={'<Pill text="Default" />'} />
+    <SGSwitcher>
+      <Pill text="Default" />
+    </SGSwitcher>
+
+    <h3 id="pill-custom-colour">Custom colour</h3>
+    <Code
+      lang="astro"
+      code={`<Pill text="Coral" color="var(--color-coral)" />
+<Pill text="Blue" color="var(--color-blue)" />
+<Pill text="Green" color="var(--color-green)" />
+<Pill text="Purple" color="var(--color-purple)" />
+<Pill text="Orange" color="var(--color-orange)" />
+<Pill text="Custom Text" color="var(--color-charcoal)" textColor="var(--color-coral)" />`}
+    />
+    <SGSwitcher>
+      <p>
+        <Pill text="Coral" color="var(--color-coral)" />
+        <Pill text="Blue" color="var(--color-blue)" />
+        <Pill text="Green" color="var(--color-green)" />
+        <Pill text="Purple" color="var(--color-purple)" />
+        <Pill text="Orange" color="var(--color-orange)" />
+        <Pill text="Custom Text" color="var(--color-charcoal)" textColor="var(--color-coral)" />
+      </p>
+    </SGSwitcher>
+  </section>
+
+  <style>
+    /* Extra breathing room above each section's main heading. */
+    section > h2 {
+      margin-block-start: var(--space-xl);
+    }
+  </style>
 </StyleguideLayout>
