@@ -1,4 +1,5 @@
 import { defineConfig, svgoOptimizer } from 'astro/config';
+import AutoImport from 'astro-auto-import';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
@@ -27,6 +28,20 @@ const codeThemeJson = readFileSync(
 );
 const codeTheme = ExpressiveCodeTheme.fromJSONString(codeThemeJson);
 
+// Auto-import every component the MDX barrel exports, so none of them ever
+// need an explicit import in content. We derive the list from the barrel
+// itself (single source of truth) and keep only PascalCase exports — this
+// naturally excludes anything not meant to be hand-written as a `<Component>`.
+// Consequence: never explicitly import from `@components/mdx` in .mdx files —
+// the auto-injected import would collide (duplicate declaration).
+const mdxBarrelPath = './src/components/mdx/index.ts';
+const mdxComponentNames = readFileSync(new URL(mdxBarrelPath, import.meta.url), 'utf-8')
+  .match(/export\s*\{([^}]*)\}/)[1]
+  .replace(/\/\/[^\n]*/g, '') // strip line comments (e.g. `// Typography`)
+  .split(/[,\n]/)
+  .map(name => name.trim())
+  .filter(name => /^[A-Z][A-Za-z0-9]*$/.test(name));
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://danny.is',
@@ -54,6 +69,11 @@ export default defineConfig({
           frameBoxShadowCssValue: 'none',
         },
       },
+    }),
+    // Auto-import every MDX component (derived from the barrel above) so none
+    // need an explicit import in content. MUST come before mdx() below.
+    AutoImport({
+      imports: [{ [mdxBarrelPath]: mdxComponentNames }],
     }),
     mdx({ gfm: true, smartypants: true }),
     sitemap({
