@@ -245,17 +245,17 @@ src/pages/styleguide/
 >
 > **Open decision:** if form controls end up moving to `/styleguide/ui`, this page may shrink enough to delete entirely (see End State note).
 
-- [ ] Intro
-- [ ] Forms
-  - [ ] Text inputs (text / email / password / search / url / number)
-  - [ ] File / color / date / range inputs
-  - [ ] Checkboxes & radios
-  - [ ] Select & datalist
-  - [ ] Textarea (with / without `rows`)
-  - [ ] Progress & meter
-  - [ ] Fieldset / legend / label structure
-- [ ] Definition lists (`dl` / `dt` / `dd`)
-- [ ] Figure / figcaption
+- [x] Intro
+- [x] Forms
+  - [x] Text inputs (text / email / password / search / url / number)
+  - [x] File / color / date / range inputs
+  - [x] Checkboxes & radios
+  - [x] Select & datalist
+  - [x] Textarea (with / without `rows`)
+  - [x] Progress & meter
+  - [x] Fieldset / legend / label structure
+- [x] Definition lists (`dl` / `dt` / `dd`)
+- [x] Figure / figcaption
 
 ### Phase 6 — Full Edit
 
