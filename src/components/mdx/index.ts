@@ -25,7 +25,7 @@ import WrappedTable from './WrappedTable.astro';
 
 // Typography components
 import SmallCaps from './typography/SmallCaps.astro';
-import highlight from './typography/highlight.astro';
+import Highlight from './typography/Highlight.astro';
 
 export {
   Accordion,
@@ -52,5 +52,5 @@ export {
   TabItem,
   // Typography
   SmallCaps,
-  highlight,
+  Highlight,
 };

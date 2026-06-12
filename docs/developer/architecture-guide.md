@@ -257,8 +257,8 @@ import { FormattedDate, Pill } from '@components/ui/index';
 import { NavLink, ThemeToggle } from '@components/navigation/index';
 import { Callout, Embed } from '@components/mdx/index';
 
-// In .mdx files - /index suffix is optional
-import { Callout, Embed } from '@components/mdx';
+// In .mdx content - mdx components are auto-imported; do NOT import them
+// (an explicit import collides with the auto-injected one and breaks the build)
 
 // Direct imports (when not in barrel export)
 import InlineFootnotes from '@components/layout/InlineFootnotes.astro';

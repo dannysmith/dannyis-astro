@@ -78,31 +78,27 @@ pubDate: 2025-01-15
 
 ## MDX Components
 
-Import components from `@components/mdx`. **Full list in `src/components/mdx/index.ts`** with TypeScript types.
+Every component exported from `src/components/mdx/index.ts` is **auto-imported** into all `.mdx` content (via `astro-auto-import`, configured in `astro.config.mjs`). Just use them — no `import` line needed.
+
+> **Don't import these explicitly.** Adding `import { Callout } from '@components/mdx';` to an `.mdx` file collides with the auto-injected import and breaks the build (`Identifier "Callout" has already been declared`). Only import things that _aren't_ in that barrel (e.g. image assets, or a one-off component from elsewhere).
 
 ### Common Components
 
 **Embed** - Multi-platform embed (YouTube, Twitter, Vimeo, Loom):
 
 ```mdx
-import { Embed } from '@components/mdx';
-
 <Embed url="https://youtube.com/watch?v=example" />
 ```
 
 **BookmarkCard** - Rich URL preview with Open Graph data:
 
 ```mdx
-import { BookmarkCard } from '@components/mdx';
-
 <BookmarkCard url="https://example.com/article" />
 ```
 
 **Callout** - Highlighted information boxes:
 
 ```mdx
-import { Callout } from '@components/mdx';
-
 <Callout type="blue" emoji="💡" title="Pro Tip">
   Important information here
 </Callout>
@@ -115,12 +111,13 @@ Icons: Use `emoji` for text emoji or `icon` for heroicons (e.g., `icon="heroicon
 **BasicImage** - Optimized images with optional full-bleed:
 
 ```mdx
-import { BasicImage } from '@components/mdx';
 import photo from '@assets/articles/my-article/photo.jpg';
 
 <BasicImage src={photo} alt="Descriptive alt text" />
 <BasicImage src={photo} alt="Full width" bleed="full" />
 ```
+
+(The image asset still needs importing — only the `BasicImage` component is auto-imported.)
 
 **FileTree** - File/directory trees from a plain-text `tree` fenced code block (no import — a build-time remark plugin renders it):
 
@@ -139,11 +136,9 @@ Write a standard `tree(1)`-style tree (Unicode, ASCII, or pipe-dash glyphs all w
 **Typography components:**
 
 ```mdx
-import { IntroParagraph, SmallCaps, Title1 } from '@components/mdx';
-
 <IntroParagraph>Opening paragraph with special styling</IntroParagraph>
 <SmallCaps>Formatted in small capitals</SmallCaps>
-<Title1>Large display title</Title1>
+<Highlight>Inline highlighted text</Highlight>
 ```
 
 **Other components:**
@@ -172,7 +167,6 @@ TypeScript will show available props. See `src/components/mdx/index.ts` for comp
 **Recommended: BasicImage component**
 
 ```mdx
-import { BasicImage } from '@components/mdx';
 import photo from '@assets/articles/my-article/photo.jpg';
 
 <BasicImage src={photo} alt="Descriptive alt text" />
