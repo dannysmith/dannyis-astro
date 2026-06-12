@@ -139,46 +139,50 @@ src/pages/styleguide/
   - [x] Letter Spacings Table
 - [x] Utility classes Table
 
-### Phase 2 — Typography
+### Phase 2 — Typography [✅ DONE]
 
-> **Source:** `_Typography.astro`, plus footnotes from `_OtherStuff.astro` and the `.list-reset` demo from `_UtilityClasses.astro`. These specimens are things that happen *by default* from markdown/HTML — `SmartLink` belongs here (auto from markdown links); manual components like `BlockQuoteCitation`, `SmallCaps` and `Highlight` go to Phase 3.
+> **Source:** `_Typography.astro`, plus footnotes from `_OtherStuff.astro` and the `.list-reset` demo from `_UtilityClasses.astro`. These specimens are things that happen *by default* from markdown/HTML — `SmartLink` belongs here (auto from markdown links); `SmallCaps` and `Highlight` are kept here too as pure inline-text styling, while `BlockQuoteCitation` goes to Phase 3.
+>
+> **Where it landed:** all specimens live in `typography.astro`, restructured into reference tables (inline + manual-inline) plus full-width specimens for everything block-level. Each specimen is wrapped in `SGSwitcher` (Default / Default Flow / Long Form Prose / UI); headings, both lists, checklist, density, the basic + mixed-content tables and the realistic example are additionally wrapped in `ResizableContainer`. Intros and Notes-column copy written by Danny.
+>
+> **Two open decisions (flagged, not yet actioned):** (1) the inline Links row shows a plain *internal* `<a>` but not a plain *external* `<a>` (a raw external anchor wouldn't get SmartLink's arrow, since rehype-external-links only runs on MDX) — left out pending a call on whether it's worth showing. (2) `.list-reset` now appears on **both** Foundations (ported in Phase 1) and Typography — decide which page should own it.
 
-- [ ] Intro
-- [ ] Inline elements reference table (you write / renders / notes)
-  - [ ] Links — plain `<a>` (internal & external)
-  - [ ] SmartLink (auto from markdown links)
-  - [ ] `em` / `strong`
-  - [ ] `b` / `i`
-  - [ ] inline `code`
-  - [ ] `mark`
-  - [ ] `del` / `s`
-  - [ ] `sub` / `sup`
-  - [ ] `kbd`
-  - [ ] `var` / `samp`
-  - [ ] `abbr` / `dfn`
-  - [ ] `cite` / `q`
-  - [ ] `small`
-- [ ] Manual inline typographic components (need an explicit tag, *not* auto from markdown — kept here because they're pure inline-text styling)
-  - [ ] SmallCaps (`<SmallCaps>`)
-  - [ ] Highlight (`<highlight>` — shares `.highlight` styling with `<mark>`)
-- [ ] Block-level elements reference (table or list)
-  - [ ] Headings (h1–h6)
-  - [ ] Paragraphs
-  - [ ] Blockquote (plain markdown `>`)
-  - [ ] Horizontal rule (`hr`)
-- [ ] Composite block-level samples (headings + paragraphs together)
-- [ ] Lists
-  - [ ] Unordered (incl. nesting)
-  - [ ] Ordered (incl. nesting)
-  - [ ] Checklists (GFM task lists, from MDX)
-  - [ ] List density (`.long-list-items` auto-spacing, from MDX)
-- [ ] Tables
-  - [ ] Basic table (caption, thead, th/td)
-  - [ ] Mixed-content cells
-  - [ ] Wide / horizontally-scrolling tables (`.table-scroll`)
-- [ ] Footnotes demo (reference + inline popup + footnotes section)
-- [ ] `.list-reset` demo
-- [ ] Realistic composite example (multiple elements working together)
+- [x] Intro
+- [x] Inline elements reference table (you write / renders / notes)
+  - [x] Links — plain `<a>` (internal & external) <plain internal + SmartLink internal/external done; plain external not shown — see open decision>
+  - [x] SmartLink (auto from markdown links)
+  - [x] `em` / `strong`
+  - [x] `b` / `i`
+  - [x] inline `code`
+  - [x] `mark`
+  - [x] `del` / `s`
+  - [x] `sub` / `sup`
+  - [x] `kbd`
+  - [x] `var` / `samp`
+  - [x] `abbr` / `dfn`
+  - [x] `cite` / `q`
+  - [x] `small`
+- [x] Manual inline typographic components (need an explicit tag, *not* auto from markdown — kept here because they're pure inline-text styling)
+  - [x] SmallCaps (`<SmallCaps>`)
+  - [x] Highlight (`<highlight>` — shares `.highlight` styling with `<mark>`)
+- [x] Block-level elements reference (table or list) <ported as full-width specimens, not a table — headings/blockquote need real scale>
+  - [x] Headings (h1–h6)
+  - [x] Paragraphs
+  - [x] Blockquote (plain markdown `>`)
+  - [x] Horizontal rule (`hr`)
+- [x] Composite block-level samples (headings + paragraphs together)
+- [x] Lists
+  - [x] Unordered (incl. nesting)
+  - [x] Ordered (incl. nesting)
+  - [x] Checklists (GFM task lists, from MDX)
+  - [x] List density (`.long-list-items` auto-spacing, from MDX)
+- [x] Tables
+  - [x] Basic table (caption, thead, th/td)
+  - [x] Mixed-content cells
+  - [x] Wide / horizontally-scrolling tables (`.table-scroll`)
+- [x] Footnotes demo (reference + inline popup + footnotes section)
+- [x] `.list-reset` demo
+- [x] Realistic composite example (multiple elements working together)
 
 ### Phase 3 — Content Components
 
