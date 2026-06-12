@@ -184,7 +184,7 @@ src/pages/styleguide/
 - [x] `.list-reset` demo
 - [x] Realistic composite example (multiple elements working together)
 
-### Phase 3 — Content Components  [✅ DONE]
+### Phase 3 — Content Components [✅ DONE]
 
 > **Source:** `_ContentComponents.astro`. Each gets the full treatment: what it is, props table where non-trivial, "you write this" + rendered output, examples in different contexts / `ResizableContainer`, and badges for auto-replace components. Per the colocation rule, native `<details>` (→ Accordion) and native `<audio>`/`<video>` (→ Embeds) live here too, not in HTML.
 
@@ -225,19 +225,19 @@ src/pages/styleguide/
   - [x] ResizableContainer
   - [x] Spacer
 
-### Phase 4 — UI Components
+### Phase 4 — UI Components [✅ DONE]
 
 > **Source:** `_UiComponents.astro`. Code-only building blocks used outside content. Same component-library treatment as Phase 3. (ContentCard / NoteCard live in Phase 3 per the page split, even though they currently sit in this partial.)
 
-- [ ] Intro (Danny to write)
-- [ ] PersonalLogo
-- [ ] Pill (default / custom colour / `textColor` override)
-- [ ] Spinner (sizes)
-- [ ] SocialLinks
-- [ ] ThemeToggle
-- [ ] MarkdownContentActions
-- [ ] FormattedDate
-- [ ] Footer
+- [x] Intro (Danny to write)
+- [x] PersonalLogo
+- [x] Pill (default / custom colour / `textColor` override)
+- [x] Spinner (sizes)
+- [x] SocialLinks
+- [x] ThemeToggle
+- [x] MarkdownContentActions
+- [x] FormattedDate
+- [x] Footer
 
 ### Phase 5 — HTML
 

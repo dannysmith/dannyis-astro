@@ -2,11 +2,27 @@
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
 import { Code } from 'astro-expressive-code/components';
-import { PersonalLogo, Pill } from '@components/ui/index';
+import { ResizableContainer } from '@components/mdx/index';
+import {
+  FormattedDate,
+  MarkdownContentActions,
+  PersonalLogo,
+  Pill,
+  SocialLinks,
+  Spinner,
+} from '@components/ui/index';
+import { ThemeToggle } from '@components/navigation/index';
+import { Footer } from '@components/layout/index';
 
 const toc = [
   { id: 'personal-logo', label: 'PersonalLogo' },
   { id: 'pill', label: 'Pill' },
+  { id: 'spinner', label: 'Spinner' },
+  { id: 'social-links', label: 'SocialLinks' },
+  { id: 'theme-toggle', label: 'ThemeToggle' },
+  { id: 'markdown-content-actions', label: 'MarkdownContentActions' },
+  { id: 'formatted-date', label: 'FormattedDate' },
+  { id: 'footer', label: 'Footer' },
 ];
 ---
 
@@ -100,6 +116,162 @@ const toc = [
         <Pill text="Custom Text" color="var(--color-charcoal)" textColor="var(--color-coral)" />
       </p>
     </SGSwitcher>
+  </section>
+
+  <section id="spinner" class="flow">
+    <h2>Spinner</h2>
+    <p>
+      An animated loading indicator drawn in the accent colour. The <code>size</code> prop accepts any
+      CSS length.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>size</code></td>
+          <td><code>string</code></td>
+          <td><code>'5rem'</code></td>
+          <td>Width and height as a CSS length.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <Code
+      lang="astro"
+      code={`<Spinner size="1.5rem" />
+<Spinner size="2.5rem" />
+<Spinner size="4rem" />`}
+    />
+    <SGSwitcher>
+      <div style="display: flex; align-items: center; gap: var(--space-m);">
+        <Spinner size="1.5rem" />
+        <Spinner size="2.5rem" />
+        <Spinner size="4rem" />
+      </div>
+    </SGSwitcher>
+  </section>
+
+  <section id="social-links" class="flow">
+    <h2>SocialLinks</h2>
+    <p>
+      The row of social icons used in the footer. It takes no props — the profiles are read from the
+      site config (those flagged <code>showInFooter</code>).
+    </p>
+    <Code lang="astro" code={'<SocialLinks />'} />
+    <SGSwitcher>
+      <SocialLinks />
+    </SGSwitcher>
+  </section>
+
+  <section id="theme-toggle" class="flow">
+    <h2>ThemeToggle</h2>
+    <p>
+      A three-option segmented control (light / auto / dark) with a sliding thumb. CSS handles all
+      the visuals via <code>:has()</code>; the script only tracks state and talks to the global theme
+      API. An optional <code>class</code> prop is forwarded to the wrapper.
+    </p>
+    <Code lang="astro" code={'<ThemeToggle />'} />
+    <SGSwitcher>
+      <div style="display: flex; justify-content: center;">
+        <ThemeToggle />
+      </div>
+    </SGSwitcher>
+  </section>
+
+  <section id="markdown-content-actions" class="flow">
+    <h2>MarkdownContentActions</h2>
+    <p>
+      The copy / view / share links shown below content for grabbing the page as markdown. The share
+      link only appears on devices that support the Web Share API.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>markdownUrl</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>URL of the <code>.md</code> source to copy and link to.</td>
+        </tr>
+        <tr>
+          <td><code>disableShare</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Hide the share link entirely, even where the Web Share API exists.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <Code lang="astro" code={'<MarkdownContentActions markdownUrl="/example.md" />'} />
+    <SGSwitcher>
+      <MarkdownContentActions markdownUrl="/example.md" />
+    </SGSwitcher>
+  </section>
+
+  <section id="formatted-date" class="flow">
+    <h2>FormattedDate</h2>
+    <p>
+      Renders a <code>Date</code> as a machine-readable <code>&lt;time&gt;</code> element with a
+      human-friendly label (e.g. <em>Jun 12, 2025</em>). Used for publication dates across the site.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>date</code></td>
+          <td><code>Date</code></td>
+          <td><em>required</em></td>
+          <td>The date to render.</td>
+        </tr>
+        <tr>
+          <td><code>itemprop</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Optional microdata <code>itemprop</code> attribute.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <Code lang="astro" code={"<FormattedDate date={new Date('2025-06-12')} />"} />
+    <SGSwitcher>
+      <FormattedDate date={new Date('2025-06-12')} />
+    </SGSwitcher>
+  </section>
+
+  <section id="footer" class="flow">
+    <h2>Footer</h2>
+    <p>
+      The site footer. It uses fixed <code>.dark-surface</code> styling regardless of theme and pulls
+      together the PersonalLogo, navigation links, RSS feeds and SocialLinks. It takes no props.
+    </p>
+    <Code lang="astro" code={'<Footer />'} />
+    <ResizableContainer>
+      <Footer />
+    </ResizableContainer>
   </section>
 
   <style>
