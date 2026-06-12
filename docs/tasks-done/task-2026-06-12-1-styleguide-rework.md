@@ -263,9 +263,8 @@ src/pages/styleguide/
 - [x] Full spelling and error check across all files
 - [x] Full user-review in the browser to address working etc
 
-### Phase 7 - Final Cleanup
+### Phase 7 - Final Cleanup [✅ DONE]
 
 - [x] Remove the old single-page partials
 - [x] Remove the now-unused `src/components/styleguide/` helpers (`SGTOC`, `SGTypographySwitcher`) and their barrel once nothing references them (check `scratchpad.astro`)
-- [ ] Update `docs/developer/` if any patterns changed
-- [ ] TBC
+- [x] Update `docs/developer/` if any patterns changed
