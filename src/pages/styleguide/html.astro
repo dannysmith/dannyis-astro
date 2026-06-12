@@ -35,7 +35,7 @@ const toc = [
       The text-like input types all share the same base styling.
     </p>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label>Text<br /><input type="text" placeholder="Your name" autocomplete="name" /></label>
         </p>
@@ -72,7 +72,7 @@ const toc = [
       styles.
     </p>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label>Date<br /><input type="date" /></label>
         </p>
@@ -93,7 +93,7 @@ const toc = [
 
     <h3 id="other-inputs">File, colour, range &amp; output</h3>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label>Upload file<br /><input type="file" /></label>
         </p>
@@ -111,7 +111,7 @@ const toc = [
 
     <h3 id="checkboxes-radios">Checkboxes &amp; radios</h3>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label><input type="checkbox" checked /> Subscribe to the newsletter</label><br />
           <label><input type="checkbox" /> Receive product updates</label>
@@ -127,7 +127,7 @@ const toc = [
 
     <h3 id="select-datalist">Select &amp; datalist</h3>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label
             >Country (with optgroups)<br /><select>
@@ -170,7 +170,7 @@ const toc = [
 
     <h3 id="textarea">Textarea</h3>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label>Message (4 rows)<br /><textarea rows="4" placeholder="Your message here…"></textarea></label>
         </p>
@@ -187,7 +187,7 @@ const toc = [
       <code>:invalid</code> styling once the browser validates it).
     </p>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label>Disabled<br /><input type="text" value="Can't touch this" disabled /></label>
         </p>
@@ -208,7 +208,7 @@ const toc = [
 
     <h3 id="progress-meter">Progress &amp; meter</h3>
     <SGSwitcher>
-      <form onsubmit="return false;">
+      <form>
         <p>
           <label>Download progress<br /><progress value="65" max="100">65%</progress></label>
         </p>
@@ -229,7 +229,7 @@ const toc = [
       <code>&lt;label for&gt;</code> associations.
     </p>
     <ResizableContainer>
-      <form onsubmit="return false;">
+      <form>
         <fieldset>
           <legend>Contact information</legend>
           <p>
@@ -305,6 +305,18 @@ const toc = [
       </SGSwitcher>
     </ResizableContainer>
   </section>
+
+  <script>
+    // The forms on this page exist only to give the demo controls a valid form
+    // ancestor — they should never actually submit and navigate.
+    function preventDemoFormSubmits() {
+      document
+        .querySelectorAll<HTMLFormElement>('.styleguide-content form')
+        .forEach(form => form.addEventListener('submit', event => event.preventDefault()));
+    }
+    preventDemoFormSubmits();
+    document.addEventListener('astro:page-load', preventDemoFormSubmits);
+  </script>
 
   <style>
     /* Extra breathing room above each section's main heading. */
