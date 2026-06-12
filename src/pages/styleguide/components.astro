@@ -3,13 +3,41 @@ import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
 import {
   Accordion,
+  BasicImage,
   BlockQuoteCitation,
+  BookmarkCard,
   ButtonLink,
   Callout,
+  Center,
+  ColorSwatch,
+  Embed,
+  FileTree,
+  Grid,
   IntroParagraph,
+  LCVid,
+  Loom,
+  MarkdownBlock,
+  Notion,
   ResizableContainer,
+  Spacer,
+  TabItem,
+  Tabs,
 } from '@components/mdx/index';
+import {
+  BaselineStatus,
+  BlueskyPost,
+  Gist,
+  MastodonPost,
+  Tweet,
+  Vimeo,
+  YouTube,
+} from 'astro-embed';
 import { Code } from 'astro-expressive-code/components';
+import { ContentCard } from '@components/ui/index';
+import { NoteCard } from '@components/layout/index';
+import { Image, Picture } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import styleguideImage from '@assets/articles/styleguide-image.jpg';
 
 const toc = [
   { id: 'intro-paragraph', label: 'IntroParagraph' },
@@ -17,7 +45,108 @@ const toc = [
   { id: 'blockquote-citation', label: 'BlockQuoteCitation' },
   { id: 'button-link', label: 'ButtonLink' },
   { id: 'accordion', label: 'Accordion' },
+  { id: 'notion', label: 'Notion' },
+  { id: 'bookmark-card', label: 'BookmarkCard' },
+  { id: 'color-swatch', label: 'ColorSwatch' },
+  { id: 'tabs', label: 'Tabs / TabItem' },
+  { id: 'layout-helpers', label: 'Layout helpers' },
+  { id: 'code-blocks', label: 'Code blocks' },
+  { id: 'markdown-block', label: 'MarkdownBlock' },
+  { id: 'file-tree', label: 'FileTree' },
+  { id: 'basic-image', label: 'BasicImage' },
+  { id: 'astro-image', label: 'Astro Image & Picture' },
+  { id: 'content-card', label: 'ContentCard' },
+  { id: 'note-card', label: 'NoteCard' },
+  { id: 'embeds', label: 'Embeds' },
 ];
+
+// Sample data for the code-display blocks below — kept in the frontmatter to
+// avoid heavy backtick-escaping in the markup. `fence()` builds the "you write
+// this in MDX" fenced-code string from a code body so it stays in sync with the
+// rendered output.
+const fence = (lang: string, body: string, meta = '') =>
+  '```' + lang + (meta ? ` ${meta}` : '') + '\n' + body + '\n```';
+
+const codeExamples = {
+  basic: `const colors = ['coral', 'blue', 'green'];
+colors.forEach(c => console.log(c));`,
+
+  withTitle: `function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+
+console.log(greet('World'));`,
+
+  highlight: `export const config = {
+  siteName: 'My Site',        // highlighted
+  baseUrl: 'https://example.com',
+  theme: 'dark',              // highlighted
+  language: 'en',             // highlighted
+  version: '1.0.0',
+};`,
+
+  insDel: `async function fetchData(url) {
+  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: { 'Accept': 'application/json' }
+  });
+  return response.json();
+}`,
+
+  diff: `- const API_VERSION = 'v1';
++ const API_VERSION = 'v2';
+
+  function getEndpoint(path) {
+-   return \`/api/\${API_VERSION}/\${path}\`;
++   return \`/api/\${API_VERSION}/\${path}?format=json\`;
+  }`,
+
+  terminal: `npm create astro@latest my-project
+cd my-project
+npm install
+npm run dev`,
+
+  wrap: `// This is a very long comment that demonstrates how word wrapping works in code blocks when the content exceeds the available width of the container
+const message = 'Long strings will also wrap nicely to the next line while preserving the indentation level of the original line';`,
+};
+
+const markdownBlockSample = `## Included markdown
+
+A paragraph with **bold**, _italic_, \`inline code\`, and a
+[link to example.com](https://example.com).
+
+- one
+- two
+- three
+
+> A short quotation from elsewhere.`;
+
+const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
+├── init.mp4                # HLS initialisation segment (codec headers)
+├── seg_000.m4s             # ~4-second media segments streamed during recording; a long video produces dozens of these, so the rest are collapsed into the ellipsis below
+├── seg_001.m4s
+├── ...
+├── stream.m3u8             # HLS playlist tying the init segment and media segments together
+├── recording.json          # timeline and events — see the [event schema](https://example.com)
+├── My First Take.mov       # the original screen capture, kept for reference
+└── derivatives/
+    ├── source.mp4          # stitched single-file MP4 with enhanced audio
+    ├── thumbnail.jpg        # auto-selected best frame
+    ├── captions.srt         # subtitles
+    ├── words.json           # per-word transcript timings used by the editor
+    └── notes.md             # human notes about the recording`;
+
+// Sample content-collection entries for the card demos. Mirrors the old
+// styleguide: prefer a couple of articles with cover images for visual testing.
+const allArticles = await getCollection('articles', ({ data }) => !data.draft);
+const articlesWithCovers = allArticles.filter(a => 'cover' in a.data && a.data.cover);
+const articlesWithoutCovers = allArticles.filter(
+  a => !('cover' in a.data && a.data.cover) && !a.data.styleguide
+);
+const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCovers.slice(0, 1)];
+
+const allNotes = await getCollection('notes', ({ data }) => !data.styleguide);
+const sampleNotes = allNotes.slice(0, 3);
 ---
 
 <StyleguideLayout
@@ -411,5 +540,1001 @@ Inline buttons flow with text:
         <p>Accordion adds the smaller type and the content-trim spacing on top of this.</p>
       </details>
     </SGSwitcher>
+  </section>
+
+  <section id="notion" class="flow">
+    <h2>Notion</h2>
+    <!-- TODO(Danny): what it is / how it works — inline links to Notion pages; title + icon fetched at build time. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>href</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The Notion page URL.</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Manual title override; skips the build-time fetch.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <Code
+      lang="mdx"
+      code={`A reference to <Notion href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f" />
+fetches its title and icon automatically.
+
+Provide a title to skip the fetch or override it:
+<Notion href="https://www.notion.so/Example-Page-abc123" title="My Custom Title" />`}
+    />
+    <SGSwitcher>
+      <p>
+        A reference to <Notion
+          href="https://dannysmith.notion.site/Meetings-2c4bd8d7ba31427cb1294a008a9df21f"
+        /> fetches its title and icon automatically. You can drop several into a sentence — see <Notion
+          href="https://dannysmith.notion.site/Loom-4a6ebae015494adbbec07bf3f7912b03"
+        /> too.
+      </p>
+      <p>
+        Provide a title to skip the fetch or override it: <Notion
+          href="https://www.notion.so/Example-Page-abc123"
+          title="My Custom Title"
+        />
+      </p>
+    </SGSwitcher>
+  </section>
+
+  <section id="bookmark-card" class="flow">
+    <h2>BookmarkCard</h2>
+    <!-- TODO(Danny): what it is / how it works — rich link previews; metadata fetched at build time; layout adapts to container width. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>url</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The URL to preview.</td>
+        </tr>
+        <tr>
+          <td><code>className</code></td>
+          <td><code>string</code></td>
+          <td><code>''</code></td>
+          <td>Extra classes on the card wrapper.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <Code lang="mdx" code={`<BookmarkCard url="https://astro.build" />`} />
+    <ResizableContainer>
+      <SGSwitcher>
+        <BookmarkCard url="https://astro.build" />
+        <BookmarkCard url="https://developer.mozilla.org/en-US/docs/Web/CSS" />
+        <BookmarkCard url="https://github.com/withastro/astro" />
+      </SGSwitcher>
+    </ResizableContainer>
+  </section>
+
+  <section id="color-swatch" class="flow">
+    <h2>ColorSwatch</h2>
+    <!-- TODO(Danny): what it is / how it works — shows a colour; hover reveals the variable, click copies the computed hex. Also used in Foundations. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>color</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>A CSS colour value or custom property.</td>
+        </tr>
+        <tr>
+          <td><code>name</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Optional label shown inside the swatch.</td>
+        </tr>
+        <tr>
+          <td><code>class</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Extra classes on the swatch.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <Code lang="mdx" code={`<ColorSwatch color="var(--color-coral)" name="Coral" />`} />
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr)); gap: var(--space-xs); height: 4rem;"
+    >
+      <ColorSwatch color="var(--color-coral)" name="Coral" />
+      <ColorSwatch color="var(--color-blue)" name="Blue" />
+      <ColorSwatch color="var(--color-green)" name="Green" />
+      <ColorSwatch color="var(--color-purple)" name="Purple" />
+      <ColorSwatch color="var(--color-orange)" name="Orange" />
+    </div>
+  </section>
+
+  <section id="tabs" class="flow">
+    <h2>Tabs / TabItem</h2>
+    <!-- TODO(Danny): what it is / how it works — accessible tabset; renders stacked + labelled without JS. SGSwitcher is built on this. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Tabs</code></td>
+          <td><code>class</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Extra classes on the tabset.</td>
+        </tr>
+        <tr>
+          <td><code>TabItem</code></td>
+          <td><code>label</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>Text shown on the tab button.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <Code
+      lang="mdx"
+      code={`<Tabs>
+  <TabItem label="First">Content for the first tab.</TabItem>
+  <TabItem label="Second">Content for the second tab.</TabItem>
+  <TabItem label="Third">Content for the third tab.</TabItem>
+</Tabs>`}
+    />
+    <Tabs>
+      <TabItem label="First">Content for the first tab.</TabItem>
+      <TabItem label="Second">Content for the second tab.</TabItem>
+      <TabItem label="Third">Content for the third tab.</TabItem>
+    </Tabs>
+  </section>
+
+  <section id="layout-helpers" class="flow">
+    <h2>Layout helpers</h2>
+    <!-- TODO(Danny): intro. -->
+
+    <h3 id="layout-center">Center</h3>
+    <p>Horizontally centres its children. No props.</p>
+    <Code lang="mdx" code={`<Center>
+  <ButtonLink href="/" inline>Centered button</ButtonLink>
+</Center>`} />
+    <SGSwitcher>
+      <Center>
+        <ButtonLink href="/" inline>Centered button</ButtonLink>
+      </Center>
+    </SGSwitcher>
+
+    <h3 id="layout-grid">Grid</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>columns</code></td>
+          <td><code>number</code></td>
+          <td><code>2</code></td>
+          <td>Target number of columns; collapses on narrow containers (never below 200px).</td>
+        </tr>
+        <tr>
+          <td><code>rows</code></td>
+          <td><code>number</code></td>
+          <td><code>1</code></td>
+          <td>Number of equal-height rows.</td>
+        </tr>
+        <tr>
+          <td><code>gap</code></td>
+          <td><code>string</code></td>
+          <td><code>var(--space-s)</code></td>
+          <td>Gap between items.</td>
+        </tr>
+      </tbody>
+    </table>
+    <Code
+      lang="mdx"
+      code={`<Grid columns={3}>
+  <div>Column 1</div>
+  <div>Column 2</div>
+  <div>Column 3</div>
+</Grid>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <Grid columns={3}>
+          <div class="sg-panel">Column 1</div>
+          <div class="sg-panel">Column 2</div>
+          <div class="sg-panel">Column 3</div>
+          <div class="sg-panel">Column 4</div>
+          <div class="sg-panel">Column 5</div>
+          <div class="sg-panel">Column 6</div>
+        </Grid>
+      </SGSwitcher>
+    </ResizableContainer>
+
+    <h3 id="layout-spacer">Spacer</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>size</code></td>
+          <td><code>'3xs' | '2xs' | 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl' | '3xl'</code></td>
+          <td><code>'m'</code></td>
+          <td>Height from the spacing scale.</td>
+        </tr>
+        <tr>
+          <td><code>height</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Explicit height override.</td>
+        </tr>
+      </tbody>
+    </table>
+    <Code
+      lang="mdx"
+      code={`<div>Above the spacer</div>
+<Spacer size="l" />
+<div>Below the spacer</div>`}
+    />
+    <div class="sg-panel">Above the spacer</div>
+    <Spacer size="l" />
+    <div class="sg-panel">Below the spacer</div>
+
+    <h3 id="layout-resizable">ResizableContainer</h3>
+    <p>Wraps content in a drag-to-resize container for testing width-response — used throughout this styleguide.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>initialWidth</code></td>
+          <td><code>string</code></td>
+          <td><code>'100%'</code></td>
+          <td>Starting width.</td>
+        </tr>
+        <tr>
+          <td><code>minWidth</code></td>
+          <td><code>string</code></td>
+          <td><code>'200px'</code></td>
+          <td>Minimum resize width.</td>
+        </tr>
+        <tr>
+          <td><code>maxWidth</code></td>
+          <td><code>string</code></td>
+          <td><code>'100%'</code></td>
+          <td>Maximum resize width.</td>
+        </tr>
+      </tbody>
+    </table>
+    <Code
+      lang="mdx"
+      code={`<ResizableContainer>
+  <p>Drag the right edge to resize.</p>
+</ResizableContainer>`}
+    />
+    <ResizableContainer>
+      <p>Drag the right edge to resize.</p>
+    </ResizableContainer>
+  </section>
+
+  <section id="code-blocks" class="flow">
+    <h2>Code blocks</h2>
+    <!-- TODO(Danny): what it is / how it works — Expressive Code; in MDX you write a fenced block with a meta string, the same renders via the Code component elsewhere. -->
+
+    <h3 id="code-basic">Basic</h3>
+    <Code lang="md" code={fence('js', codeExamples.basic)} />
+    <Code lang="js" code={codeExamples.basic} />
+
+    <h3 id="code-title">Title</h3>
+    <Code lang="md" code={fence('js', codeExamples.withTitle, 'title="greet.js"')} />
+    <Code lang="js" title="greet.js" code={codeExamples.withTitle} />
+
+    <h3 id="code-terminal">Terminal frame</h3>
+    <Code lang="md" code={fence('bash', codeExamples.terminal, 'frame="terminal"')} />
+    <Code lang="bash" frame="terminal" code={codeExamples.terminal} />
+
+    <h3 id="code-highlight">Line highlighting</h3>
+    <Code lang="md" code={fence('ts', codeExamples.highlight, 'title="config.ts" {2,4-5}')} />
+    <Code lang="ts" title="config.ts" meta="{2,4-5}" code={codeExamples.highlight} />
+
+    <h3 id="code-insdel">Inserted &amp; deleted lines</h3>
+    <Code lang="md" code={fence('js', codeExamples.insDel, 'title="api.js" del={2} ins={3-4}')} />
+    <Code lang="js" title="api.js" meta="del={2} ins={3-4}" code={codeExamples.insDel} />
+
+    <h3 id="code-diff">Diff</h3>
+    <Code lang="md" code={fence('diff', codeExamples.diff)} />
+    <Code lang="diff" code={codeExamples.diff} />
+
+    <h3 id="code-wrap">Word wrap</h3>
+    <Code lang="md" code={fence('js', codeExamples.wrap, 'wrap')} />
+    <ResizableContainer>
+      <Code lang="js" wrap code={codeExamples.wrap} />
+    </ResizableContainer>
+  </section>
+
+  <section id="markdown-block" class="flow">
+    <h2>MarkdownBlock</h2>
+    <!-- TODO(Danny): what it is / how it works — embeds a chunk of markdown with rendered + source views and a copy button. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>code</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The raw markdown to embed.</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Filename / label shown in the header.</td>
+        </tr>
+        <tr>
+          <td><code>defaultView</code></td>
+          <td><code>'rendered' | 'source'</code></td>
+          <td><code>'rendered'</code></td>
+          <td>Which pane shows first.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>In MDX, write a fenced block with <code>md preview</code> in the meta string:</p>
+    <Code lang="md" code={fence('md', markdownBlockSample, 'preview title="sample.md"')} />
+    <p>Or place the component directly, passing the markdown as the <code>code</code> prop:</p>
+    <Code lang="mdx" code={'<MarkdownBlock code={markdownSource} title="sample.md" />'} />
+    <p>Both render the same toggleable block:</p>
+    <MarkdownBlock code={markdownBlockSample} title="sample.md" />
+
+    <h3 id="markdown-block-source">Opening on the source pane</h3>
+    <Code
+      lang="md"
+      code={fence('md', markdownBlockSample, 'preview title="sample.md" defaultView="source"')}
+    />
+    <MarkdownBlock code={markdownBlockSample} title="sample.md" defaultView="source" />
+  </section>
+
+  <section id="file-tree" class="flow">
+    <h2>FileTree</h2>
+    <!-- TODO(Danny): what it is / how it works — renders plain-text tree output as a Finder-like view; folders collapse natively (no JS). -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>code</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The raw tree text (<code>tree(1)</code> output or ASCII variants).</td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Label shown in the frame header.</td>
+        </tr>
+        <tr>
+          <td><code>frame</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td><code>"none"</code> drops the window frame.</td>
+        </tr>
+        <tr>
+          <td><code>highlight</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Comma-separated 1-based line numbers to highlight.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      In MDX, write a fenced block with <code>tree</code> as the language; rows are highlighted with
+      <code>{'{6}'}</code>-style ranges:
+    </p>
+    <Code lang="md" code={fence('tree', fileTreeExample, 'title="Recording storage" {6}')} />
+    <p>
+      Or place the component directly, passing the tree as the <code>code</code> prop (note
+      <code>highlight</code> takes the line numbers as a string):
+    </p>
+    <Code
+      lang="mdx"
+      code={'<FileTree code={treeText} title="Recording storage" highlight="6" />'}
+    />
+    <p>Both render the same tree:</p>
+    <ResizableContainer>
+      <FileTree code={fileTreeExample} title="Recording storage" highlight="6" />
+    </ResizableContainer>
+  </section>
+
+  <section id="basic-image" class="flow">
+    <h2>BasicImage</h2>
+    <!-- TODO(Danny): what it is / how it works — markdown images auto-become BasicImage; optimised via Astro Picture; placeholder shows while loading. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>src</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>Image path (<code>/src/assets/…</code>) or remote URL.</td>
+        </tr>
+        <tr>
+          <td><code>alt</code></td>
+          <td><code>string</code></td>
+          <td><code>''</code></td>
+          <td>Alt text.</td>
+        </tr>
+        <tr>
+          <td><code>framed</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Adds a border and subtle shadow.</td>
+        </tr>
+        <tr>
+          <td><code>showAlt</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Show the alt text as a visible caption.</td>
+        </tr>
+        <tr>
+          <td><code>sourceUrl</code> / <code>sourceTitle</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Attribution link and label shown in the caption.</td>
+        </tr>
+        <tr>
+          <td><code>bleed</code></td>
+          <td><code>'left' | 'right' | 'full'</code></td>
+          <td>—</td>
+          <td>Extend the image beyond the content column.</td>
+        </tr>
+        <tr>
+          <td><code>width</code> / <code>height</code></td>
+          <td><code>number</code></td>
+          <td>—</td>
+          <td>Explicit dimensions (defaulted for remote images).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="basic-image-default">Default</h3>
+    <p>A markdown image automatically becomes a BasicImage:</p>
+    <Code
+      lang="md"
+      code={'![Wooden deck with striped columns and glass panels](/src/assets/articles/styleguide-image.jpg)'}
+    />
+    <p>Or place the component directly for more control:</p>
+    <Code
+      lang="mdx"
+      code={'<BasicImage\n  src="/src/assets/articles/styleguide-image.jpg"\n  alt="Wooden deck with striped columns and glass panels"\n/>'}
+    />
+    <ResizableContainer>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Wooden deck with striped columns and glass panels"
+      />
+    </ResizableContainer>
+
+    <h3 id="basic-image-framed">Framed</h3>
+    <Code
+      lang="mdx"
+      code={'<BasicImage src="/src/assets/articles/styleguide-image.jpg" alt="…" framed />'}
+    />
+    <ResizableContainer>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Architectural photograph with a frame treatment"
+        framed
+      />
+    </ResizableContainer>
+
+    <h3 id="basic-image-caption">With caption</h3>
+    <Code
+      lang="mdx"
+      code={'<BasicImage\n  src="/src/assets/articles/styleguide-image.jpg"\n  alt="Modern architectural details with natural light"\n  showAlt\n  sourceUrl="https://unsplash.com"\n  sourceTitle="Unsplash"\n/>'}
+    />
+    <ResizableContainer>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Modern architectural details with natural light"
+        showAlt
+        sourceUrl="https://unsplash.com"
+        sourceTitle="Unsplash"
+      />
+    </ResizableContainer>
+
+    <h3 id="basic-image-framed-caption">Framed with caption</h3>
+    <ResizableContainer>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Architectural photograph combining frame and caption treatments"
+        framed
+        showAlt
+        sourceUrl="https://unsplash.com"
+        sourceTitle="Unsplash"
+      />
+    </ResizableContainer>
+
+    <h3 id="basic-image-bleed">Bleed</h3>
+    <p>
+      The <code>bleed</code> prop (<code>left</code>, <code>right</code> or <code>full</code>) extends
+      the image beyond the content column. It works best inside real article layouts with defined
+      grid columns:
+    </p>
+    <Code
+      lang="mdx"
+      code={'<BasicImage src="/src/assets/articles/styleguide-image.jpg" alt="…" bleed="full" />'}
+    />
+    <BasicImage
+      src="/src/assets/articles/styleguide-image.jpg"
+      alt="Image demonstrating a full-bleed layout"
+      bleed="full"
+    />
+
+    <h3 id="basic-image-native">Native &lt;img&gt;</h3>
+    <p>
+      The raw element under the site's CSS. Markdown images become BasicImage automatically; reach
+      for a plain <code>&lt;img&gt;</code> only to bypass that (e.g. an SVG or an already-sized
+      asset in <code>public/</code>).
+    </p>
+    <Code lang="html" code={'<img src="/avatar.jpg" alt="Danny\'s avatar" width="200" />'} />
+    <img src="/avatar.jpg" alt="Danny's avatar" width="200" />
+  </section>
+
+  <section id="astro-image" class="flow">
+    <h2>Astro Image &amp; Picture</h2>
+    <!-- TODO(Danny): what it is / how it works — Astro's built-in components for direct control over optimisation. The asset must be imported so Astro can process it at build time. -->
+
+    <h3 id="astro-image-image">Image</h3>
+    <p>Generates a single optimised format:</p>
+    <Code
+      lang="astro"
+      code={"import styleguideImage from '@assets/articles/styleguide-image.jpg';\n\n<Image src={styleguideImage} alt=\"Using Astro's Image component\" width={600} />"}
+    />
+    <Image src={styleguideImage} alt="Using Astro's Image component" width={600} />
+
+    <h3 id="astro-image-picture">Picture</h3>
+    <p>Generates multiple formats (AVIF, WebP, JPEG) for broader browser support:</p>
+    <Code
+      lang="astro"
+      code={"<Picture\n  src={styleguideImage}\n  formats={['avif', 'webp', 'jpg']}\n  alt=\"Using Astro's Picture component\"\n  width={600}\n/>"}
+    />
+    <Picture
+      src={styleguideImage}
+      formats={['avif', 'webp', 'jpg']}
+      alt="Using Astro's Picture component"
+      width={600}
+    />
+  </section>
+
+  <section id="content-card" class="flow">
+    <h2>ContentCard</h2>
+    <!-- TODO(Danny): what it is / how it works — preview card for articles/notes/tools; pass a collection entry to auto-extract metadata, or manual props. Compacts below 350px via container query. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>content</code></td>
+          <td><code>CollectionEntry&lt;'articles' | 'notes' | 'toolboxPages'&gt;</code></td>
+          <td>—</td>
+          <td>A collection entry; auto-extracts title, date, summary, image and type.</td>
+        </tr>
+        <tr>
+          <td><code>href</code> / <code>title</code> / <code>date</code></td>
+          <td><code>string</code> / <code>string</code> / <code>Date</code></td>
+          <td>—</td>
+          <td>Manual props when not passing a <code>content</code> entry.</td>
+        </tr>
+        <tr>
+          <td><code>type</code></td>
+          <td><code>'article' | 'note' | 'tool' | 'custom'</code></td>
+          <td><code>'custom'</code></td>
+          <td>Sets the label and accent colour (manual usage).</td>
+        </tr>
+        <tr>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Hide the image and summary regardless of width.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="content-card-articles">Articles</h3>
+    <Code lang="mdx" code={'<ContentCard content={article} />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.map(article => <ContentCard content={article} />)}
+      </div>
+    </ResizableContainer>
+
+    <h3 id="content-card-notes">Notes</h3>
+    <p>Notes get a blue accent border (set via <code>--color-blue</code> in the component's config):</p>
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleNotes.map(note => <ContentCard content={note} />)}
+      </div>
+    </ResizableContainer>
+
+    <h3 id="content-card-compact">Compact</h3>
+    <p>The <code>compact</code> prop hides the image and summary (cards also compact below 350px):</p>
+    <Code lang="mdx" code={'<ContentCard content={article} compact />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.slice(0, 2).map(article => <ContentCard content={article} compact />)}
+      </div>
+    </ResizableContainer>
+
+    <h3 id="content-card-custom">Custom (manual props)</h3>
+    <Code
+      lang="mdx"
+      code={'<ContentCard\n  href="/example"\n  title="Custom card example"\n  date={new Date(\'2024-01-15\')}\n  type="custom"\n/>'}
+    />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        <ContentCard
+          href="/example"
+          title="Custom card example"
+          date={new Date('2024-01-15')}
+          type="custom"
+        />
+      </div>
+    </ResizableContainer>
+  </section>
+
+  <section id="note-card" class="flow">
+    <h2>NoteCard</h2>
+    <!-- TODO(Danny): what it is / how it works — renders a full note (with its content via slot), as used on the notes index and note pages. A sourceURL shows an embed; tags render as pills. -->
+
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>title</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The note title.</td>
+        </tr>
+        <tr>
+          <td><code>pubDate</code></td>
+          <td><code>Date</code></td>
+          <td><em>required</em></td>
+          <td>Publication date.</td>
+        </tr>
+        <tr>
+          <td><code>slug</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>Links to <code>/notes/&lt;slug&gt;/</code>.</td>
+        </tr>
+        <tr>
+          <td><code>sourceURL</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>If set, an embed of the source is shown.</td>
+        </tr>
+        <tr>
+          <td><code>tags</code></td>
+          <td><code>string[]</code></td>
+          <td><code>[]</code></td>
+          <td>Rendered as pills below the title.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="note-card-full">With tags &amp; source URL</h3>
+    <Code
+      lang="mdx"
+      code={'<NoteCard\n  title="On the nature of remote work"\n  pubDate={new Date(\'2024-03-15\')}\n  slug="demo-note-1"\n  tags={[\'remote-work\', \'culture\', \'async\']}\n  sourceURL="https://justinjackson.ca/calm-company"\n>\n  Remote work isn\'t just about *where* you work…\n</NoteCard>'}
+    />
+    <ResizableContainer>
+      <NoteCard
+        title="On the nature of remote work"
+        pubDate={new Date('2024-03-15')}
+        slug="demo-note-1"
+        tags={['remote-work', 'culture', 'async']}
+        sourceURL="https://justinjackson.ca/calm-company"
+      >
+        <p>
+          Remote work isn't just about <em>where</em> you work — it's about <strong>how</strong> you
+          work. The best remote teams treat asynchronous communication as the foundation, not an
+          afterthought.
+        </p>
+        <p>
+          When you default to async, you give people the gift of <a href="#">deep work</a>. Meetings
+          become the exception, not the rule.
+        </p>
+      </NoteCard>
+    </ResizableContainer>
+
+    <h3 id="note-card-minimal">Minimal</h3>
+    <p>Just title, date and content — no tags or source:</p>
+    <ResizableContainer>
+      <NoteCard title="A quick thought on defaults" pubDate={new Date('2024-06-22')} slug="demo-note-2">
+        <p>
+          Good defaults are invisible; bad defaults create friction. The best software feels like it
+          was configured just for you, even when you've changed nothing.
+        </p>
+      </NoteCard>
+    </ResizableContainer>
+  </section>
+
+  <section id="embeds" class="flow">
+    <h2>Embeds</h2>
+    <!-- TODO(Danny): intro — the named embed components below, plus the <Embed> auto-dispatcher at the end. -->
+
+    <h3 id="embed-lcvid">LCVid</h3>
+    <!-- TODO(Danny): what it is / how it works — self-hosted videos from v.danny.is; click-to-load facade; metadata (title, description, duration, transcript) fetched at build time from the video's JSON. -->
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>src</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>Full URL, absolute path, or bare slug on v.danny.is.</td>
+        </tr>
+        <tr>
+          <td><code>title</code> / <code>description</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Override the copy fetched from the video's JSON.</td>
+        </tr>
+        <tr>
+          <td><code>showTitle</code> / <code>showDescription</code> / <code>showMeta</code> / <code>showOpenLink</code></td>
+          <td><code>boolean</code></td>
+          <td><code>true</code></td>
+          <td>Toggle each piece of chrome around the player.</td>
+        </tr>
+        <tr>
+          <td><code>showTranscript</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Reveal a collapsible transcript (when one exists in the JSON).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Default — full chrome</h4>
+    <Code lang="mdx" code={'<LCVid src="lcdemo-part-2" />'} />
+    <ResizableContainer>
+      <LCVid src="lcdemo-part-2" />
+    </ResizableContainer>
+
+    <h4>With transcript</h4>
+    <Code lang="mdx" code={'<LCVid src="lcdemo-part-2" showTranscript />'} />
+    <ResizableContainer>
+      <LCVid src="lcdemo-part-2" showTranscript />
+    </ResizableContainer>
+
+    <h3 id="embed-loom">Loom</h3>
+    <!-- TODO(Danny): what it is / how it works — facade pattern; only loads the heavy iframe on click. -->
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>The Loom share id.</td>
+        </tr>
+        <tr>
+          <td><code>poster</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Custom poster image (falls back to the oEmbed thumbnail).</td>
+        </tr>
+      </tbody>
+    </table>
+    <Code lang="mdx" code={'<Loom id="0132dbe661b24dd28f42e2ce040f78cc" />'} />
+    <ResizableContainer>
+      <Loom id="0132dbe661b24dd28f42e2ce040f78cc" />
+    </ResizableContainer>
+
+    <h3 id="embed-astro-embed">astro-embed components</h3>
+    <p>
+      These come from the <a href="https://astro-embed.netlify.app/">astro-embed</a> package. Each takes
+      the resource URL (or bare id) as its <code>id</code> prop and loads at build time.
+    </p>
+
+    <h4>YouTube</h4>
+    <Code lang="mdx" code={'<YouTube id="https://youtu.be/xtTy5nKay_Y" />'} />
+    <ResizableContainer>
+      <YouTube id="https://youtu.be/xtTy5nKay_Y" />
+    </ResizableContainer>
+
+    <h4>Vimeo</h4>
+    <Code lang="mdx" code={'<Vimeo id="32001208" />'} />
+    <ResizableContainer>
+      <Vimeo id="32001208" />
+    </ResizableContainer>
+
+    <h4>Tweet</h4>
+    <Code lang="mdx" code={'<Tweet id="https://twitter.com/astrodotbuild/status/1512144306898976768" />'} />
+    <ResizableContainer>
+      <Tweet id="https://twitter.com/astrodotbuild/status/1512144306898976768" />
+    </ResizableContainer>
+
+    <h4>Gist</h4>
+    <Code
+      lang="mdx"
+      code={'<Gist id="https://gist.github.com/delucis/0b44f4ff0397767b2416cc981692c346" />'}
+    />
+    <ResizableContainer>
+      <Gist id="https://gist.github.com/delucis/0b44f4ff0397767b2416cc981692c346" />
+    </ResizableContainer>
+
+    <h4>BaselineStatus</h4>
+    <Code lang="mdx" code={'<BaselineStatus id="scroll-snap" />'} />
+    <ResizableContainer>
+      <BaselineStatus id="scroll-snap" />
+    </ResizableContainer>
+
+    <h4>BlueskyPost</h4>
+    <Code lang="mdx" code={'<BlueskyPost id="https://bsky.app/profile/mk.gg/post/3la4wqeyztm2u" />'} />
+    <ResizableContainer>
+      <BlueskyPost id="https://bsky.app/profile/mk.gg/post/3la4wqeyztm2u" />
+    </ResizableContainer>
+
+    <h4>MastodonPost</h4>
+    <Code lang="mdx" code={'<MastodonPost id="https://m.webtoo.ls/@astro/112966069629573422" />'} />
+    <ResizableContainer>
+      <MastodonPost id="https://m.webtoo.ls/@astro/112966069629573422" />
+    </ResizableContainer>
+
+    <h3 id="embed-video">Native &lt;video&gt;</h3>
+    <p>
+      The raw HTML5 video element under the site's CSS. Self-hosted clips normally use LCVid above;
+      this is the unstyled baseline.
+    </p>
+    <Code
+      lang="html"
+      code={`<video controls width="640" style="max-width: 100%">
+  <source src="/styleguide/placeholder.mp4" type="video/mp4" />
+</video>`}
+    />
+    <video controls width="640" style="max-width: 100%">
+      <source src="/styleguide/placeholder.mp4" type="video/mp4" />
+    </video>
+
+    <h3 id="embed-audio">Native &lt;audio&gt;</h3>
+    <p>The raw HTML5 audio element under the site's CSS.</p>
+    <Code lang="html" code={'<audio controls src="/styleguide/placeholder.mp3"></audio>'} />
+    <audio controls src="/styleguide/placeholder.mp3"></audio>
+
+    <h3 id="embed-auto">Embed (auto-dispatch)</h3>
+    <p>
+      The <code>&lt;Embed&gt;</code> component regex-matches a URL and renders the most appropriate
+      component, so in prose you can paste almost any link and get a sensible embed. It currently
+      dispatches YouTube, Vimeo, Tweet, Loom and v.danny.is (LCVid) URLs to the components above, plus
+      GitHub Gists — and falls back to a <code>&lt;BookmarkCard&gt;</code> for anything it doesn't
+      recognise.
+    </p>
+    <p>
+      <em
+        >Not yet auto-dispatched: BaselineStatus, BlueskyPost and MastodonPost — use the named
+        components above for now.</em
+      >
+    </p>
+    <Code
+      lang="mdx"
+      code={`<Embed url="https://youtu.be/xtTy5nKay_Y" />
+<Embed url="https://v.danny.is/lcdemo-part-2" />
+<Embed url="https://example.com" /> {/* no match → BookmarkCard */}`}
+    />
+    <p>An unrecognised URL falls back to a BookmarkCard:</p>
+    <ResizableContainer>
+      <Embed url="https://example.com" />
+    </ResizableContainer>
   </section>
 </StyleguideLayout>
