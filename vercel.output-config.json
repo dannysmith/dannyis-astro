@@ -31,12 +31,36 @@
         "x-content-type-options": "nosniff",
         "x-frame-options": "DENY",
         "referrer-policy": "strict-origin-when-cross-origin",
-        "permissions-policy": "geolocation=(), microphone=(), camera=()"
+        "permissions-policy": "geolocation=(), microphone=(), camera=()",
+        "link": "</llms.txt>; rel=\"describedby\""
       },
       "continue": true
     },
     { "src": "^/cv\\.pdf$", "status": 308, "headers": { "location": "/cv-danny-smith.pdf" } },
     { "src": "^/\\.well-known/(.*)$", "dest": "/well-known/$1" },
+    {
+      "src": "^/(?:writing/[^/]+/?|notes/[^/]+/?)?$",
+      "headers": { "vary": "accept" },
+      "continue": true
+    },
+    {
+      "src": "^/$",
+      "has": [{ "type": "header", "key": "accept", "value": ".*text/markdown.*" }],
+      "dest": "/llms.txt",
+      "headers": { "content-type": "text/markdown; charset=utf-8" }
+    },
+    {
+      "src": "^/writing/([^/]+)/?$",
+      "has": [{ "type": "header", "key": "accept", "value": ".*text/markdown.*" }],
+      "dest": "/writing/$1.md",
+      "headers": { "content-type": "text/markdown; charset=utf-8" }
+    },
+    {
+      "src": "^/notes/([^/]+)/?$",
+      "has": [{ "type": "header", "key": "accept", "value": ".*text/markdown.*" }],
+      "dest": "/notes/$1.md",
+      "headers": { "content-type": "text/markdown; charset=utf-8" }
+    },
     { "handle": "filesystem" },
     { "src": "/(.*)", "status": 404, "dest": "/404.html" }
   ]
