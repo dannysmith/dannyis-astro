@@ -1,0 +1,88 @@
+---
+import { BaseHead, Footer, MainNavigation, Lightbox } from '@components/layout/index';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    subtitle?: string;
+    description?: string;
+    headingAlign?: 'left' | 'center' | 'right';
+  };
+}
+
+const { title, subtitle, description, headingAlign } = Astro.props.frontmatter;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} pageType="page" />
+  </head>
+  <body>
+    <MainNavigation />
+    <main class="content flow">
+      <header data-align={headingAlign ?? 'left'} data-hassubtitle={subtitle ? true : undefined}>
+        <h1 class="ui-style">
+          {title}
+        </h1>
+        {subtitle && <h2 class="subtitle ui-style">{subtitle}</h2>}
+      </header>
+      <slot />
+    </main>
+    <Footer class="footer" />
+    <Lightbox />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+      }
+
+      .content {
+        flex: 1;
+        max-width: var(--measure-standard);
+        width: 100%;
+        margin-inline: auto;
+        padding: var(--space-2xl) var(--space-s);
+      }
+
+      h1,
+      h2 {
+        font-family: var(--font-display);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+      }
+
+      h1 {
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-extrabold);
+      }
+
+      h2 {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-light);
+      }
+
+      header {
+        &[data-align='center'] {
+          text-align: center;
+        }
+
+        &[data-align='right'] {
+          text-align: right;
+        }
+
+        &[data-hassubtitle] {
+          h1 {
+            border-block-end: none;
+            padding-block-end: 0;
+          }
+
+          h2 {
+            margin-block-start: 0;
+          }
+        }
+      }
+    </style>
+  </body>
+</html>

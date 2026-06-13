@@ -1,0 +1,30 @@
+---
+import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
+const { frontmatter } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={frontmatter.title} description={frontmatter.description} pageType="page" />
+  </head>
+  <body>
+    <MainNavigation />
+    <main class="content">
+      <slot />
+    </main>
+    <Footer/>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+      }
+
+      .content {
+        flex: 1;
+        width: 100%;
+      }
+    </style>
+  </body>
+</html>
