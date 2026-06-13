@@ -1,12 +1,16 @@
 /**
  * standard.site publication verification document.
  *
- * Serves the AT-URI of this site's site.standard.publication record. The
- * canonical URL is /.well-known/site.standard.publication, but Vercel does not
- * reliably serve files Astro builds into a dotfile directory (dist/.well-known/),
- * so — exactly like /security.txt — this endpoint is emitted at a normal path
- * and `vercel.output-config.json` rewrites /.well-known/site.standard.publication
- * here.
+ * Serves the AT-URI of this site's site.standard.publication record at the
+ * canonical URL /.well-known/site.standard.publication.
+ *
+ * This file follows the site-wide `.well-known` scheme: well-known resources
+ * are authored under a non-dot `well-known/` path (here as an Astro route, so
+ * the content can be generated) and emitted to `dist/well-known/`. A `postbuild`
+ * step copies that to `dist/.well-known/` for portable hosts, and a single
+ * rewrite in `vercel.output-config.json` (`/.well-known/* -> /well-known/*`)
+ * makes the canonical dot-path resolve on Vercel, which does not serve dotfile
+ * directories. See docs/tasks-done for the agent-readiness task.
  *
  * Returns 404 until the record exists and its AT-URI is set in
  * siteConfig.standardSite.publicationUri (created via

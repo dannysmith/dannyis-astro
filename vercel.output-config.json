@@ -36,11 +36,7 @@
       "continue": true
     },
     { "src": "^/cv\\.pdf$", "status": 308, "headers": { "location": "/cv-danny-smith.pdf" } },
-    { "src": "^/\\.well-known/security\\.txt$", "dest": "/security.txt" },
-    {
-      "src": "^/\\.well-known/site\\.standard\\.publication$",
-      "dest": "/standard-site-publication"
-    },
+    { "src": "^/\\.well-known/(.*)$", "dest": "/well-known/$1" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "status": 404, "dest": "/404.html" }
   ]

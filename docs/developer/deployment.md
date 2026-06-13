@@ -33,9 +33,17 @@ Check and Build run **in parallel** — neither depends on the other. Deploy wai
 Two pieces translate the static output into a working site:
 
 - **`.vercel/output/`** — created in CI, never committed. It's Vercel's [Build Output API](https://vercel.com/docs/build-output-api) layout: the Build job copies `dist/` into `.vercel/output/static/` and drops the config file beside it.
-- **`vercel.output-config.json`** — committed; copied to `.vercel/output/config.json` at deploy time. It's a list of routing rules applied at the edge: long-lived cache-control headers for hashed assets and fonts, security headers on every response, a few redirects (e.g. `/cv.pdf`), the `/.well-known/security.txt` and `/.well-known/site.standard.publication` rewrites, and the filesystem handler plus 404 fallback.
+- **`vercel.output-config.json`** — committed; copied to `.vercel/output/config.json` at deploy time. It's a list of routing rules applied at the edge: long-lived cache-control headers for hashed assets and fonts, security headers on every response, a few redirects (e.g. `/cv.pdf`), the `/.well-known/*` rewrite (see [Serving `.well-known`](#serving-well-known)), and the filesystem handler plus 404 fallback.
 
 These are the only Vercel-shaped things in the repo, and they only describe headers and routing — not build behaviour. Another host would express the same intent in its own config.
+
+## Serving `.well-known`
+
+Web- and agent-standard files (`security.txt`, the standard.site publication record, and more over time) belong at `/.well-known/…`. Two quirks shape how we get them there: **Vercel won't serve a dotfile directory** (anything under `dist/.well-known/` 404s), and **Astro won't reliably build routes placed in a dotfile directory** under `src/pages/`.
+
+So we author everything under a non-dot `well-known/` instead — static files in `public/well-known/`, generated ones as routes in `src/pages/well-known/` — which builds to `dist/well-known/` and is served directly by Vercel. A `postbuild` step (in `package.json`) copies that tree to `dist/.well-known/` so the canonical path works on any other static host, and the single `/.well-known/* → /well-known/*` rewrite maps the canonical path onto the served one on Vercel.
+
+The upshot: one place to add a well-known file — `well-known/`, static or generated — and it works both on Vercel and on a plain static host.
 
 ## Why builds are fast (caching)
 

@@ -15,6 +15,7 @@
     "dev": "astro dev",
     "prebuild": "find public -name .DS_Store -delete 2>/dev/null || true",
     "build": "astro build",
+    "postbuild": "rm -rf dist/.well-known && cp -R dist/well-known dist/.well-known",
     "preview": "astro preview",
     "sync": "astro sync",
     "audit:serve": "astro build --site http://localhost:4321 && astro preview",
