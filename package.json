@@ -34,12 +34,10 @@
     "test:e2e": "playwright test",
     "test:all": "bun run test:unit && bun run test:e2e",
     "scrape-toolbox": "tsx scripts/get-toolbox-json.ts",
-    "newnote": "tsx scripts/create-note.ts",
     "generate-og-image": "tsx scripts/generate-og-image.ts",
     "standard-site:publication": "tsx scripts/standard-site/create-publication.ts",
     "standard-site:sync": "tsx scripts/standard-site/sync-document.ts",
-    "task:complete": "node scripts/complete-task.js",
-    "task:rename-done": "node scripts/complete-task.js --rename-existing"
+    "task:complete": "node scripts/complete-task.js"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",

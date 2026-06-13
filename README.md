@@ -41,17 +41,8 @@ All commands are run from the root of the project, from a terminal:
 | `bun run check:format`   | Check if code is properly formatted              |
 | `bun run scrape-toolbox` | Scrape toolbox data from betterat.work           |
 | `bun run astro ...`      | Run CLI commands like `astro add`, `astro check` |
-| `bun run newnote`        | Create a new note                                |
 | `bun run standard-site:sync` | Sync posts to the AT Protocol network (see [docs](docs/developer/standard-site.md)) |
 
 ## Creating a New Note
-
-You can run `bun newnote` to create a new note in `src/content/notes` with the correct frontmatter and filename. Examples:
-
-```shell
-bun run newnote                          # Asks the user for a title
-bun run newnote "Some Title Here"        # Uses the supplied title
-bun run newnote "https://some-url.com"   # Fetches the og:title or <title> and sets sourceUR to the URL.
-```
 
 New draft notes can also be created using [this Chrome extension](https://github.com/dannysmith/dannyischromeextension) or [Astro Editor](https://astroeditor.dannyu.is).

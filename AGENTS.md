@@ -20,11 +20,9 @@ Content-first creative playground for writing and design experimentation. Built 
 
 ## Core Rules
 
-@docs/tasks.md
-
 ### Developer Docs
 
-@docs/README.md
+@docs/developer/
 
 Review `docs/developer/architecture-guide.md` for essential patterns
 
@@ -82,8 +80,6 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
 │   ├── unit/          # Vitest unit tests
 │   └── fixtures/      # Test fixtures
 ├── docs/
-│   ├── README.md      # Documentation index
-│   ├── tasks.md       # Task management system
 │   ├── developer/     # Technical documentation
 │   ├── tasks-todo/    # Pending tasks
 │   └── tasks-done/    # Completed tasks
@@ -117,8 +113,10 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
     └── utils/         # Shared helper functions
 ```
 
-## AI Assistance Tools
-
-### Skills
+## Agent Skills
 
 - **CSS Expert** - Available globally via `css-expert` skill for advanced CSS patterns, modern features, and defensive CSS guidance
+
+## Task Management
+
+**Uncompleted tasks** are in `docs/tasks-todo/`, named `task-NUM-name.md` where NUM indicates priority order. The lowest number is usually the current task. If NUM is "x", the task is unprioritised. **Completed tasks** are in `docs/tasks-done/` named task-YYYY-MM-DD-NUM-name.md ie. the completion date has been inserted after `task-`. You can run `bun task:complete TASK_NAME_OR_NUMBER` to appropriatley rename and move a task.
