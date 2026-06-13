@@ -1,7 +1,7 @@
 ---
-title: 'Gas Town’s Agent Patterns, Design Bottlenecks, and Vibecoding at Scale'
-sourceURL: 'https://maggieappleton.com/gastown'
-draft: true
+title: Gas Town’s Agent Patterns, Design Bottlenecks, and Vibecoding at Scale
+sourceURL: https://maggieappleton.com/gastown
+draft: false
 pubDate: 2026-04-09
 ---
 
