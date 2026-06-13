@@ -3,7 +3,15 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import { getConfig } from '@config/config';
 import { filterContentForListing } from '@utils/content';
-import nowMarkdown from './now/_now.md?raw';
+import nowRaw from './now.mdx?raw';
+
+// now.mdx is an MDX page (frontmatter + MDX components). For the plain-text
+// llms.txt we want only its prose, so strip the frontmatter block and any
+// standalone MDX component tags, leaving the markdown body intact.
+const nowMarkdown = nowRaw
+  .replace(/^---\n[\s\S]*?\n---\n/, '')
+  .replace(/^[ \t]*<\/?[A-Z][^>]*>[ \t]*$/gm, '')
+  .trim();
 
 // =============================================================================
 // CUSTOMIZABLE CONTENT
@@ -36,8 +44,8 @@ const STYLEGUIDE_PAGES: Array<{ path: string; title: string }> = [
 // =============================================================================
 
 function discoverStaticPages(): Array<{ path: string; title: string }> {
-  // Glob all .astro page files (eager: false since we only need paths)
-  const pageFiles = import.meta.glob('./**/*.astro', { eager: false });
+  // Glob all .astro/.mdx page files (eager: false since we only need paths)
+  const pageFiles = import.meta.glob('./**/*.{astro,mdx}', { eager: false });
 
   return Object.keys(pageFiles)
     .filter(file => {
@@ -55,8 +63,8 @@ function discoverStaticPages(): Array<{ path: string; title: string }> {
         '/' +
         file
           .replace(/^\.\//, '') // Remove leading ./
-          .replace(/\/index\.astro$/, '/') // /foo/index.astro -> /foo/
-          .replace(/\.astro$/, '/'); // /foo.astro -> /foo/
+          .replace(/\/index\.(astro|mdx)$/, '/') // /foo/index.astro -> /foo/
+          .replace(/\.(astro|mdx)$/, '/'); // /foo.mdx -> /foo/
 
       // Derive title from path: /foo-bar/ -> Foo Bar, /about/team/ -> About Team
       const title = path
@@ -109,7 +117,7 @@ export const GET: APIRoute = async () => {
   }
   lines.push('');
 
-  // Now (imported from src/pages/now/_now.md)
+  // Now (imported from src/pages/now.mdx)
   lines.push('## Now');
   lines.push('');
   lines.push(nowMarkdown.trim());
