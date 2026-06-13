@@ -7,6 +7,7 @@ import {
   Footer,
   InlineFootnotes,
   Lightbox,
+  LLMDiscoveryNote,
   LongFormProseTypography,
   MainNavigation,
   TableOfContents,
@@ -74,6 +75,7 @@ const standardSiteDocumentUri =
       )
     }
     <main>
+      <LLMDiscoveryNote />
       <article class="h-entry" itemscope itemtype="https://schema.org/Article">
         {toc && <TableOfContents headings={headings} />}
         <LongFormProseTypography>

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { getConfig } from '@config/config';
 import { filterContentForPage } from '@utils/content';
 
 export async function getStaticPaths() {
@@ -12,9 +13,11 @@ export async function getStaticPaths() {
 
 export const GET: APIRoute = async ({ props }) => {
   const { note } = props;
+  const llmsTxtUrl = `${getConfig().site.url}/llms.txt`;
 
-  // Build markdown with title as H1
-  let markdown = `# ${note.data.title}\n\n`;
+  // Build markdown with title as H1, followed by a pointer to the site index
+  // for agents (afdocs llms-txt-directive-md).
+  let markdown = `# ${note.data.title}\n\n> For the complete site index, see [llms.txt](${llmsTxtUrl})\n\n`;
 
   // Add source URL if present (notes-specific)
   if (note.data.sourceURL) {

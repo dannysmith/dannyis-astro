@@ -1,5 +1,5 @@
 ---
-import { BaseHead, Footer, Lightbox, MainNavigation } from '@components/layout/index';
+import { BaseHead, Footer, Lightbox, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
 
 interface Props {
   title: string;
@@ -48,6 +48,7 @@ const { title, description, current, toc = [] } = Astro.props;
         )
       }
       <main class="styleguide-content flow">
+        <LLMDiscoveryNote />
         <nav class="sg-sectionnav ui-style" aria-label="Styleguide sections">
           <ul class="list-reset">
             {

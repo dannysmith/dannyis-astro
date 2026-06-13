@@ -1,5 +1,5 @@
 ---
-import { BaseHead, MainNavigation } from '@components/layout/index';
+import { BaseHead, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
 import { getConfig } from '@config/config';
 
 const config = getConfig();
@@ -18,6 +18,7 @@ const config = getConfig();
       itemprop="mainEntity"
       itemscope
     >
+      <LLMDiscoveryNote />
       <a rel="me" href={Astro.site?.href} class="u-url u-uid hidden-microformat">Danny Smith</a>
       <h1 class="fn p-name" itemprop="name">
         <span itemprop="givenName">Danny</span>

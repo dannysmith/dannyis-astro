@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { BaseHead, Footer, MainNavigation, NoteCard } from '@components/layout/index';
+import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation, NoteCard } from '@components/layout/index';
 import { MarkdownContentActions } from '@components/ui/index';
 import { getDocumentUri } from '@utils/standard-site';
 
@@ -35,6 +35,7 @@ const standardSiteDocumentUri =
   <body>
     <MainNavigation />
     <main style={`--vt-name: note-${Astro.params.slug}`}>
+      <LLMDiscoveryNote />
       <NoteCard
         title={title}
         pubDate={pubDate}

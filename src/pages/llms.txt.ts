@@ -129,7 +129,11 @@ export const GET: APIRoute = async () => {
   lines.push('Long-form articles by Danny.');
   lines.push('');
   for (const article of articles) {
-    const url = `${config.site.url}/writing/${article.id}/`;
+    // Link to the .md variant so agents fetch markdown directly (afdocs
+    // llms-txt-links-markdown). Every listed article has a .md route: llms.txt
+    // uses filterContentForListing (no drafts, no styleguide), a subset of the
+    // .md routes' filterContentForPage (no drafts).
+    const url = `${config.site.url}/writing/${article.id}.md`;
     const description = article.data.description ? `: ${article.data.description}` : '';
     lines.push(`- [${article.data.title}](${url})${description}`);
   }
@@ -141,7 +145,8 @@ export const GET: APIRoute = async () => {
   lines.push('Short-form thoughts and observations.');
   lines.push('');
   for (const note of notes) {
-    const url = `${config.site.url}/notes/${note.id}/`;
+    // Link to the .md variant (see Articles loop above).
+    const url = `${config.site.url}/notes/${note.id}.md`;
     lines.push(`- [${note.data.title}](${url})`);
   }
   lines.push('');

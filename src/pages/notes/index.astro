@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { BaseHead, Footer, MainNavigation, NoteCard } from '@components/layout/index';
+import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation, NoteCard } from '@components/layout/index';
 import { FormattedDate, MarkdownContentActions } from '@components/ui/index';
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
 import { filterContentForListing } from '@utils/content';
@@ -35,6 +35,7 @@ const recentNotesWithContent = await Promise.all(
   <body>
     <MainNavigation />
     <main>
+      <LLMDiscoveryNote />
       <h1 class="title ui-style">Notes</h1>
 
       <!-- Recent Notes as Cards (prose styling for content) -->

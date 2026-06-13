@@ -1,0 +1,19 @@
+---
+// Visually-hidden note pointing AI agents and crawlers at the machine-readable
+// site index (/llms.txt). Dropped near the top of <main> on content pages so
+// agents discover it while parsing any page.
+//
+// Uses the clip-based .sr-only utility because some
+// HTML→markdown converters strip display:none content, but clipped text
+// survives, which is what agent tooling reads.
+// See https://agentdocsspec.com/spec/#llms-txt-directive-html
+import { getConfig } from '@config/config';
+
+const llmsTxtUrl = `${getConfig().site.url}/llms.txt`;
+---
+
+<p class="sr-only">
+  For AI agents and crawlers: a structured index of this site is available at <a href={llmsTxtUrl}
+    >{llmsTxtUrl}</a
+  >.
+</p>

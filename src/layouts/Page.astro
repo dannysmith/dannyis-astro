@@ -1,5 +1,5 @@
 ---
-import { BaseHead, Footer, MainNavigation, Lightbox } from '@components/layout/index';
+import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation, Lightbox } from '@components/layout/index';
 
 interface Props {
   frontmatter: {
@@ -21,6 +21,7 @@ const { title, subtitle, description, headingAlign } = Astro.props.frontmatter;
   <body>
     <MainNavigation />
     <main class="content flow">
+      <LLMDiscoveryNote />
       <header data-align={headingAlign ?? 'left'} data-hassubtitle={subtitle ? true : undefined}>
         <h1 class="ui-style">
           {title}
