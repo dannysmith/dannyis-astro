@@ -1,0 +1,254 @@
+---
+title: Speeding up Astro builds and improving deployment
+slug: speeding-up-astro-builds
+draft: false
+toc: true
+pubDate: 2026-06-14
+---
+
+When I first started [moving this site to Astro](/writing/moving-to-astro) I decided that I wanted a *truly statically-generated site*. In other words, I want `astro build` to produce a folder of plain old files which can be served by **any** webserver which can serve files. So while I currently deploy to [Vercel](https://vercel.com), nothing about the build **depends** on Vercel. This means I can use a [GitHub Action](https://github.com/features/actions) to build the site and then dump the resultant `dist/` on Vercel (or anywhere else I want).
+
+I've been doing a lot of work here recently and noticed two problems:
+
+1. **Slow builds**. Every time I push to main I have to wait for ages. Builds were taking upwards of five minutes from push to deploy, with `astro build` alone taking **4m 30s**.
+2. **Rubbish Caching**. Just dumping a static site meant Vercel was serving everything with `cache-control: public, max-age=0, must-revalidate` headers, including content-hashed assets and static files like fonts. The lack of Vercel config was also preventing my custom 404 page from being served and there were a few other little bits which are only possible to fix by configuring how my files are *served by Vercel*.
+
+
+Before looking at anything else we should see if we can reduce the weight of our build-time dependencies. Individually this is unlikely to make a huge difference to build time but it's good hygiene and reduces supply-chain risks to boot.
+
+I ended up removing some old unused packages and moving a bunch to `devDependencies` since they're not needed at build-time. I replaced [`unfurl.js`](https://www.npmjs.com/package/unfurl.js) with a small [utility function](https://github.com/dannysmith/dannyis-astro/blob/main/src/utils/fetchLinkMetadata.ts), and noticed that while I was using [Playwright](https://playwright.dev) for end-to-end tests & rendering [mermaid](https://mermaid.js.org) diagrams, I was *also loading [puppeteer](https://pptr.dev)* to grab screenshots in a scraper script. Since puppeteer bundles Chromium that's not ideal, so now I'm using playwright everywhere.
+
+
+## Speeding up the Astro build on GitHub
+
+Three jobs run per push (all defined in [`deploy.yml`](https://github.com/dannysmith/dannyis-astro/blob/main/.github/workflows/deploy.yml)): **Check → Build → Deploy**. Measured on a real run against `main` I got:
+
+| Job | Time | The expensive bit |
+|---|---|---|
+| Check | 102s | Playwright install ~23s, e2e tests ~30s |
+| Build | 313s (5m 13s) | `astro build` was 4m 30s of it |
+| Deploy (prod) | 48s | `npx vercel` re-downloading the CLI took ~24s |
+
+Inside `astro build`, two phases were the main culprits and both are cacheable across runs:
+
+| Phase | Time | What it is |
+|---|---|---|
+| **OG image generation** | **92s** | 167 images @ ~553ms average |
+| **Image optimisation** | **2m 4s** (124s) | 312 transforms (avif + webp + jpg) from ~100 source images |
+
+Together, these account for about 80% of the actual build time and ~70% of the Build job. On top of that, the **build** job waited for the **check** job to finish before starting, which added about 100s to every run.
+
+### Fix 1 — Cache `node_modules/.astro`
+
+GitHub Actions gives every job a clean machine. To carry files between runs we can use [`actions/cache`](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows), which takes a `path` and a `key` to store it under. On the next run, if a cache exists for that `key` it gets restored to `path`. I was already doing this for Playwright's browsers, which are slow to download:
+
+```yaml
+- name: Cache Playwright
+  uses: actions/cache@v4
+  with:
+    path: ~/.cache/ms-playwright
+    key: playwright-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}
+    restore-keys: |
+      playwright-${{ runner.os }}-
+```
+
+This is a common pattern: the key is a hash of `bun.lock`, so the cache is reused until any of my dependencies change, at which point the key changes and fresh browsers are downloaded and re-cached. The `restore-keys` line is a prefix fallback — if there's no exact match, GitHub restores the most recent cache whose key *starts* with `playwright-<os>-`, so a dependency bump still starts from a recent cache rather than from nothing.
+
+[Astro](https://astro.build) keeps its own cache in `node_modules/.astro/` and the useful part for us is how it handles images. Every optimised image is written out with a hash of the source file and its transform baked into the filename. So when Astro goes to optimise an image, if a file with that exact hash already exists, the work is already done and it skips it.
+
+Astro does this on disk but I wasn't caching this across builds so every image was regenerated on every build. The fix is obvious: persist `node_modules/.astro/` between runs with `actions/cache`, like we did with Playwright. The only interesting question is **what to key it on**?
+
+It's tempting to copy the Playwright pattern and key on a hash of the content (`hashFiles('src/content/**')` or similar), but that throws away the *entire* image cache the moment *any* content changes, which is most pushes. So instead I'm keying on the commit SHA which is unique to every push. Combined with the `restore-keys` prefix fallback, this means:
+
+- Every successful run writes a fresh cache snapshot under its own SHA (remember, keys are write-once).
+- Every run restores the **most recent** snapshot via the prefix, regardless of what changed.
+- Astro's own per-image hashing then re-processes only the images that actually changed.
+
+```yaml
+- name: Cache Astro build output
+  uses: actions/cache@v4
+  with:
+    path: node_modules/.astro
+    key: astro-cache-${{ runner.os }}-${{ github.sha }}
+    restore-keys: |
+      astro-cache-${{ runner.os }}-
+```
+
+This is the pattern [`withastro/action`](https://github.com/withastro/action) uses and it drastically sped up my build times.
+
+### Fix 2 — Add a file-cache to OG image generation
+
+Astro's content-addressed caching only applies to its own image optimisation, and my OG images are generated by an Astro *endpoint* (a `.png` route that renders each post's social-share image with [satori](https://github.com/vercel/satori) and [resvg](https://github.com/yisibl/resvg-js)). Astro doesn't cache this kind of thing, so even with `node_modules/.astro/` cached on GH Actions, every build re-renders all the OG images from scratch.
+
+What if we also cached these files to `node_modules/.astro/` in a similar way to Astro's image cache?
+
+Before rendering, we hash everything that affects the image and then if a PNG already exists for that hash, we return it; otherwise we render it, write the PNG, and return it. Here's the gist of [`og-image-generator.ts`](https://github.com/dannysmith/dannyis-astro/blob/main/src/utils/og-image-generator.ts):
+
+```ts
+const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'og-cache');
+const CACHE_VERSION = 'v5';
+
+// Content-addressed cache key: any change to the data, template, or
+// dimensions produces a different key, so edits regenerate the image.
+const cacheKey = createHash('sha256')
+  .update(JSON.stringify({ data, template, width, height, v: CACHE_VERSION }))
+  .digest('hex');
+const cachePath = path.join(CACHE_DIR, `${cacheKey}.png`);
+
+// Cache hit — return the previously rendered PNG.
+try {
+  return await fs.readFile(cachePath);
+} catch {
+  // Miss (or unreadable) — fall through and generate.
+}
+
+// ... satori + resvg render ...
+
+// Cache the successful render
+try {
+  await fs.mkdir(CACHE_DIR, { recursive: true });
+  await fs.writeFile(cachePath, pngBuffer);
+} catch (cacheError) {
+  console.warn('Failed to write OG image cache:', cacheError);
+}
+```
+
+A few things make this safe to do:
+
+- **It's only safe to content-hash because the render is deterministic.** I embed static TTF fonts straight into `satori({ fonts })` rather than letting it fetch them, so identical inputs always produce a byte-identical PNG. If the fonts came over the network or from the system, the same inputs could render differently and a content hash would be a lie.
+- **The key contains everything that affects the output** — `data` (the post's title, description, url and type), the template name, and the dimensions. Editing a post's title means only that image is regenerated.
+- **`CACHE_VERSION` is a manual override.** Things that are the same for every image (template markup, branding etc) aren't in the per-image key, so if I change how the OG images *look* none of the keys will change and I'd end up serving the old cached versions. Bumping `CACHE_VERSION` changes every key at once so I can just bump this to invalidate the whole lot.
+- **Writes are best-effort and the fallback isn't cached.** A failed cache write never fails the build, and if satori falls over and we render a simpler [Sharp](https://sharp.pixelplumbing.com)-generated fallback instead, that is deliberately *not* cached.
+
+### Fix 3 — Run Check and Build in parallel and only deploy after both
+
+The **check** job just runs `bun run check:all` which basically does this and fails if any checks fail:
+
+```bash
+tsc --noEmit &&
+astro check &&
+prettier --check . &&
+eslint . &&
+vitest run tests/unit &&
+playwright test
+```
+
+The **build** job just runs `bun run build`, prepares an artifact for Vercel and uploads it using `actions/upload-artifact`. The **deploy** job grabs that artifact and drops it on Vercel.
+
+There's no reason at all why **check** and **build** shouldn't run in parallel, so long as **deploy** waits for *both* of them to finish successfully.
+
+
+Before: `checks → build → deploy` (build waited on checks, ~100s idle). After: Check and Build run **in parallel**, and Deploy waits on **both**.
+
+```yaml
+jobs:
+  checks:        # Starts immediately
+  build:         # Starts immediately (dropped `needs: checks`)
+  deploy-production:
+    needs: [checks, build]      # both must pass before anything ships
+    if: github.ref == 'refs/heads/main'
+```
+
+
+### Fix 4 — Stop `npx` re-downloading the Vercel CLI
+
+The **deploy** job ran `npx vercel` which fetched a fresh copy of the Vercel CLI on every deploy (adding ~24s) because `ubuntu-latest` no longer pre-bundles it. Pinning the CLI version in an env var and cacheing npm's download cache means `npx` resolves from that instead of re-downloading.
+
+```yaml
+env:
+  VERCEL_CLI_VERSION: '54.6.1'
+
+# ...in each deploy job:
+- name: Cache Vercel CLI
+  uses: actions/cache@v4
+  with:
+    path: ~/.npm
+    key: vercel-cli-${{ runner.os }}-${{ env.VERCEL_CLI_VERSION }}
+- name: Deploy to Vercel
+  run: npx vercel@${{ env.VERCEL_CLI_VERSION }} deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+```
+
+
+### So how much faster did things get?
+
+Measured before & after on the Build job:
+
+| Phase | Cold (before) | Warm (after) |
+|---|---|---|
+| Static entrypoints (HTML + OG) | 2m 17s | **48s** (OG cached) |
+| Image optimisation (Sharp) | 2m 4s | **~80ms** (cached) |
+| `astro build` total | 4m 30s | **58.7s** |
+| **Build job wall-clock** | **4m 56s** | **~1m 54s** |
+
+
+## Adding some light Vercel config
+
+Because we're deploying an already-built site, the **deploy** job uses `vercel deploy --prebuilt` to stop Vercel trying to run its own build. This means it won't read `vercel.json` – the only config consulted is `.vercel/output/config.json` (the [Build Output API](https://vercel.com/docs/build-output-api)). By default this is basically empty, which is why my custom 404 page wasn't being served and all my routes had `cache-control: public, max-age=0, must-revalidate`.
+
+The solution is to include a lightweight [`vercel.output-config.json`](https://github.com/dannysmith/dannyis-astro/blob/main/vercel.output-config.json) in the repo and have CI copy it to `.vercel/output/config.json` at deploy time. Here's the whole file, block by block. Each `"continue": true` rule *adds headers and keeps matching*.
+
+```json
+{ "src": "^/_astro/(.*)$",
+  "headers": { "cache-control": "public, max-age=31536000, immutable" }, "continue": true },
+{ "src": "^/fonts/(.*)$",
+  "headers": { "cache-control": "public, max-age=31536000, immutable" }, "continue": true },
+```
+
+`/_astro/*` contains content-hashed JS, CSS & images, and `/fonts/*` contains version-stamped static font files. So our cache control can be `immutable` with a 1 year `max-age`. The filename changes every time the content does, which invalidates the cache. This alone is a huge performance boost for people viewing my site.
+
+```json
+{ "src": "^/(favicon|avatar|avatar-circle|icon|end-mark|og-default).*$",
+  "headers": { "cache-control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400" },
+  "continue": true },
+```
+
+Unhashed static assets in `public/` which get 1h for browsers and 1 day for edge and [SWR](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#stale-while-revalidate) because their URLs don't change with their content.
+
+```json
+{ "src": "^/.*\\.xml$",
+  "headers": { "cache-control": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400" },
+  "continue": true },
+```
+
+RSS/feeds (`*.xml`) get 10 mins for browsers and 1h for edge & SWR.
+
+If you're wondering, `s-maxage` is consumed by Vercel's CDN and stripped from the responses sent to clients — so a browser only ever sees `public, max-age=…`, while the edge gets the longer cache lifetime.
+
+**Redirects & rewrites:**
+
+```json
+{ "src": "^/cv\\.pdf$", "status": 308, "headers": { "location": "/cv-danny-smith.pdf" } },
+{ "src": "^/\\.well-known/(.*)$", "dest": "/well-known/$1" }
+```
+
+Redirecting `/cv.pdf` to `/cv-danny-smith.pdf` with a proper [308](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/308) only matters because some user agents won't follow other redirects if they point to binary files. We'll come back to the `well-known` line shortly.
+
+```json
+{ "handle": "filesystem" },
+{ "src": "/(.*)", "status": 404, "dest": "/404.html" }
+```
+
+Adding `{ "handle": "filesystem" }` ensures that *any* real file in `dist/` is served, which we want with a static site. The last line ensures my custom `dist/404.html` is returned with the proper status code for unknown routes.
+
+### Dealing with `.well-known` files
+
+I want to serve [well-known URIs](https://en.wikipedia.org/wiki/Well-known_URI) from `https://danny.is/.well-known/*`. Right now that's just a static `security.txt` and a couple of other files I'll discuss in future articles.
+
+It turns out that Vercel doesn't serve dotfile directories so I can't just generate these files in `dist/.well-known` and be done with it. It also turns out that Astro won't reliably build routes placed in a dotfile dir under `src/pages/`. So I now keep my well-known stuff in two *non-dot* directories:
+
+- `public/well-known/` for static files.
+- `src/pages/well-known/` for those which need build-time generation.
+
+Files from both end up in `dist/well-known/` and the Vercel rewrite rule you saw above maps requests for `https://danny.is/.well-known/*` onto `dist/well-known/*` **on Vercel**.
+
+But even if Vercel won't serve `dist/.well-known/` other webservers will so they should be in the right place in my generated site in case I decide to move off Vercel. We can achieve this with a simple `postbuild` script in [`package.json`](https://github.com/dannysmith/dannyis-astro/blob/main/package.json) which runs
+
+```bash
+rm -rf dist/.well-known && cp -R dist/well-known dist/.well-known
+```
+
+Since this runs automatically after every `astro build`, I always get a proper `.well-known/` directory.
+
+## Wrapping up
+
+A typical content push now goes from commit to live in around two minutes instead of six, my assets finally cache the way they should, and my 404 page actually shows up. Best of all, none of this cost me the thing I cared about in the first place: `astro build` still spits out a plain folder of files that'll run on any webserver.
