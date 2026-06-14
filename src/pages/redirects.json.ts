@@ -18,7 +18,7 @@
  * Excluded from the sitemap (astro.config) and not listed in llms.txt.
  */
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { redirects as manualRedirects } from '@config/redirects';
 import { filterContentForPage } from '@utils/content';
 
@@ -40,7 +40,13 @@ export const GET: APIRoute = async () => {
 
   // Cross-posted articles that redirect elsewhere. filterContentForPage matches
   // the /writing route's getStaticPaths (non-drafts), so every source has a page.
-  const articles = filterContentForPage(await getCollection('articles'));
+  // The cast restores the full schema: the filter's generic narrows to its bare
+  // constraint ({ draft?, styleguide? }) when Astro's generated content types
+  // aren't present (e.g. `tsc` in CI before `astro sync`), which drops
+  // `redirectURL`. Same pattern as llms.txt.ts.
+  const articles = filterContentForPage(
+    await getCollection('articles')
+  ) as CollectionEntry<'articles'>[];
   const articleRedirects: RedirectEntry[] = [];
   for (const article of articles) {
     if (article.data.redirectURL) {
