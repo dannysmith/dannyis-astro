@@ -85,7 +85,9 @@ jobs:
         run: |
           mkdir -p .vercel/output/static
           cp -r dist/. .vercel/output/static/
-          cp vercel.output-config.json .vercel/output/config.json
+          # Generate .vercel/output/config.json from the base config + the
+          # redirect manifest the build emits (dist/redirects.json).
+          bun scripts/build-vercel-config.mjs
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
