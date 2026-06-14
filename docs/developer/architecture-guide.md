@@ -1,6 +1,6 @@
 # Architecture Guide
 
-This document covers the core architectural patterns and principles for Danny's personal website. It focuses on the **essential patterns you need daily**. For specialized topics, consult the [specialized guides](./README.md#tier-3-specialized-references).
+This document covers the core architectural patterns and principles for Danny's personal website. It focuses on the **essential patterns you need daily**. For specialized topics (content, SEO, design tokens, deployment, etc.), consult the other guides in `docs/developer/`.
 
 ## Core Architecture Principles
 
@@ -45,23 +45,27 @@ This document covers the core architectural patterns and principles for Danny's 
 **Implementation:**
 
 ```typescript
-// In article/note page templates
-const components = {
-  a: SmartLink,    // Auto-detects internal/external, adds icons/attributes
-  img: BasicImage, // Responsive images with optimization
+// src/config/mdx-components.ts — a single shared mapping
+export const MDX_COMPONENT_REMAPPING = {
+  a: SmartLink,               // Auto-detects internal/external, adds icons/attributes
+  img: BasicImage,            // Responsive images with optimization
+  table: WrappedTable,        // Adds horizontal-scroll wrapper
+  'markdown-preview': MarkdownBlock,
+  'file-tree': FileTree,
 };
 
-<Content components={components} />
+// In article/note page templates:
+<Content components={MDX_COMPONENT_REMAPPING} />
 ```
 
 **Location:**
 
-- `src/pages/writing/[...slug]/index.astro:23-27`
-- `src/pages/notes/[...slug]/index.astro` (similar pattern)
+- Mapping defined once in `src/config/mdx-components.ts`
+- Used by `src/pages/writing/[...slug]/index.astro` and `src/pages/notes/[...slug]/index.astro`
 
 **How to extend:**
 
-- Add more mappings to the `components` object (e.g., `code: CustomCode`)
+- Add more mappings to `MDX_COMPONENT_REMAPPING` in `src/config/mdx-components.ts` (e.g., `code: CustomCode`)
 - Available for any HTML element rendered from markdown
 - Components must accept standard HTML element props
 
@@ -88,20 +92,20 @@ const components = {
 - `_reset.css` through `_utilities.css` — One file per layer
 - `_verticalflow.css` — Vertical rhythm (part of typography layer, separate for maintainability)
 
-**Color System with `light-dark()`:**
+**Colour system:** OKLCH tokens that auto-switch via `light-dark()`; style from semantic tokens and derive variants with relative colour syntax. Full reference in [design-tokens.md](./design-tokens.md).
 
-- Colors use `light-dark()` function for automatic theme switching
-- Semantic tokens: `--color-accent`, `--color-text`, `--color-background`, etc.
-- Adaptive palette: `--color-coral`, `--color-purple`, etc. auto-switch for theme
-- Derive variants with relative color syntax: `oklch(from var(--color-accent) calc(l - 0.1) c h)`
+**Theme Management:** Three modes — `auto` (follows system via `color-scheme`), `light`, `dark`. An inline script in `BaseHead.astro` applies the saved theme before paint (prevents FOUC), persists it in `localStorage` under `theme`, and exposes a small global API (types in `src/types/theme.d.ts`):
 
-**Theme Management:**
+```js
+window.theme.current; // 'auto' | 'light' | 'dark'
+window.theme.set('dark'); // 'auto' | 'light' | 'dark'
 
-- Three modes: `auto` (follows system via `color-scheme`), `light`, `dark`
-- Global `window.theme` API for programmatic access
-- Inline script in `BaseHead.astro` prevents FOUC
-- Custom `theme-changed` event for component updates
-- localStorage persistence across sessions
+// Components react to changes via the theme-changed event:
+document.addEventListener('theme-changed', (e) => {
+  e.detail.theme; // the chosen mode
+  e.detail.resolvedTheme; // 'light' | 'dark' (after resolving 'auto')
+});
+```
 
 **Why they're related:**
 
@@ -118,41 +122,9 @@ const components = {
 
 ### View Transitions
 
-The site uses the View Transitions API for smooth page navigation. Key elements have named transitions:
+The site uses the View Transitions API for smooth navigation. Key elements get a `view-transition-name` (the footer is stable; note cards morph between list and detail via a per-id name passed through a CSS variable like `--vt-name: note-${id}`), with animation tuned in `global.css`.
 
-**CSS Setup (in global.css or component styles):**
-
-```css
-/* Footer stays stable during navigation */
-footer {
-  view-transition-name: site-footer;
-}
-
-/* Note cards morph between list and detail views */
-.note {
-  view-transition-name: var(--vt-name, none);
-  view-transition-class: note-card;
-}
-
-/* Animation configuration (in global.css) */
-::view-transition-group(site-footer) {
-  animation-duration: 250ms;
-  animation-timing-function: ease-in-out;
-}
-```
-
-**Dynamic transition names via CSS variable:**
-
-```astro
-<!-- Pass unique ID via inline style -->
-<div class="note-container" style={`--vt-name: note-${note.id}`}>
-  <NoteCard ... />
-</div>
-```
-
-**Scripts must handle transitions:**
-
-All interactive components re-initialize on `astro:after-swap`:
+**The one gotcha:** client JS doesn't survive a swap, so every interactive component must re-initialise on `astro:after-swap`:
 
 ```javascript
 document.addEventListener('astro:after-swap', initComponent);
@@ -292,7 +264,7 @@ import { BaseHead } from '@components/layout/index';
 
 ### Redirects
 
-Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
+Redirects configured in `src/config/redirects.ts` - DO NOT BREAK THESE URLs:
 
 - `/meeting` → `https://cal.com/dannysmith`
 - `/cv` → `/cv-danny-smith.pdf`
@@ -300,10 +272,9 @@ Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
 - `/youtube` → YouTube channel
 - `/working` → `https://betterat.work`
 - `/toolbox` → `https://betterat.work/toolbox`
-- `/tools` → `/toolbox`
 - `/using` → Notion doc (tools Danny uses)
 - `/remote`, `/rtotd` → Notion doc (remote work tips)
-- `/music`, `/singing` → YouTube channel
+- `/music`, `/singing` → music/singing YouTube (`youtube.com/dannysmithblues`)
 
 **Important:** No trailing slashes in target URLs (causes redirect loops).
 
@@ -358,10 +329,6 @@ TypeScript files with special extensions (`.md.ts`, `.png.ts`) generate dynamic 
 
 📖 **See [content-system.md § Dynamic API Endpoints](./content-system.md#dynamic-api-endpoints) for file locations and implementation**
 
-## Performance Essentials
-
-📖 **See [accessibility-and-performance.md](./accessibility-and-performance.md) for detailed patterns and optimization strategies**
-
 ## Component Organization
 
 ### Directory Structure
@@ -379,59 +346,33 @@ src/
 ├── utils/           # Shared helper functions (imported throughout codebase)
 ```
 
+## Pages & Layouts
+
+### Layouts
+
+Four layouts in `src/layouts/`:
+
+- **`Article.astro`** — articles only.
+- **`Note.astro`** — notes only.
+- **`Page.astro`** — any simple standalone MDX page (eg `/now`, `/ai`, `/colophon`, `/privacy`). Renders a display-font uppercase title (+ optional subtitle) then your content in a centred `.flow` column. Frontmatter props: `title` (required), `subtitle?`, `description?`, and `headingAlign?`.
+- **`BasicPage.astro`** — the barebones: nav, footer, your content, nothing else. Used rarely, for when you want a real page shell without `Page.astro`'s heading.
+
+### Creating one-off pages in `src/pages/`
+
+**Simple content pages** (no real custom design) — write a routed `.mdx` like `now.mdx` / `ai.mdx`: frontmatter with `layout: '@layouts/Page.astro'` plus the props above, then markdown. All the usual MDX components are available (auto-imported via `astro-auto-import`) and the remark plugins apply — including `remarkPageComponents`, which wires up the same `a`/`img`/etc. remapping that collection content gets.
+
+**Pages with bespoke designs** — make a `thing.astro` that duplicates the shell from `BasicPage.astro` and write the content/styling directly as HTML/Astro/CSS. If part of such a page is genuinely better as MDX, split it: `thing/index.astro` imports a sibling `thing/_thing.mdx` and renders its `<Content />`. Only do this when MDX really is the best tool for that content.
+
+`BasicPage.astro` is for the occasional case between these two and should rarely be used.
+
+## Styleguide
+
+A multi-page visual styleguide lives in `src/pages/styleguide/` (public at `/styleguide`). It's where visual components, typography, tokens and raw HTML defaults are rendered together — update it as needed when you add or change anything visual. See `src/pages/styleguide/CLAUDE.md` for its directory structure and how to add a section.
+
 ## Testing Strategy
 
-### What to Test
-
-- ✅ Business logic and algorithms (unit tests)
-- ✅ User interactions (component tests)
-- ✅ Edge cases and error handling
-
-### What NOT to Test
-
-- ❌ Simple UI rendering
-- ❌ Third-party library internals
-- ❌ Trivial getters/setters
-
-### Test Types
-
-1. **Unit Tests**: Individual functions and modules in `lib/`
-2. **Integration Tests**: How multiple units work together
-3. **Component Tests**: User interactions and workflows
-
-📖 **See [testing.md](./testing.md) for comprehensive testing strategies**
+Test business logic, user interactions, and edge cases; don't test trivial UI rendering or third-party internals. See [testing.md](./testing.md) for the full strategy.
 
 ## External Documentation
 
-### Using Context7 for Astro Documentation
-
-**Always check Context7 first** before web searching for Astro-specific questions:
-
-```
-mcp__context7__get-library-docs with context7CompatibleLibraryID: /withastro/docs
-```
-
-This provides access to 2400+ code snippets and comprehensive Astro documentation.
-
-### Key External Resources
-
-**CSS Layers** - Central to our styling architecture:
-
-- See [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification
-- Our layer order: reset → base → typography → layout → utilities → longform → theme
-
-### General Principle
-
-1. Check Context7 for framework/library docs (`mcp__context7__resolve-library-id` then `mcp__context7__get-library-docs`)
-2. Use web search if Context7 lacks the specific information
-3. Reference codebase examples when documentation is unclear
-
-## Quick Start for New Sessions
-
-1. **Read** `docs/tasks.md` for current work
-2. **Check** git status and recent commits
-3. **Reference** this guide for core patterns
-4. **Consult** specialized guides when working on specific features
-5. **Follow** established patterns - don't reinvent
-6. **Test** changes thoroughly
-7. **Run** `bun run check:all` before committing
+Check Context7 first for framework/library docs (e.g. `/withastro/docs`), then web search. For our CSS layer architecture, [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) is the reference — our order is reset → base → typography → layout → utilities → longform.

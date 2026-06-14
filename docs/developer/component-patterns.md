@@ -40,7 +40,7 @@ const processedData = transformData(required);
 <style>
   .component {
     /* Use semantic tokens from global.css */
-    background: var(--surface-raised);
+    background: var(--color-background-secondary);
     color: var(--color-text);
     padding: var(--space-m);
   }
@@ -67,59 +67,11 @@ try {
 
 ### Graceful Degradation
 
-Principles:
-
-- Provide optional props for manual overrides
-- Use sensible defaults
-- Ensure components work when external services fail
-
-```typescript
-export interface Props {
-  url: string;
-  title?: string; // Manual override to skip expensive title fetching
-  className?: string;
-}
-
-const { url, title, className } = Astro.props;
-
-// Use manual title if provided, otherwise fetch
-let displayTitle = title;
-if (!title) {
-  try {
-    displayTitle = await fetchTitle(url);
-  } catch (error) {
-    console.warn('Failed to fetch title, using URL as fallback:', error);
-    displayTitle = url;
-  }
-}
-```
+Components that depend on external services should still render if those fail: provide optional props for manual overrides (e.g. a `title` prop that skips an expensive fetch), use sensible defaults, and fall back rather than throw.
 
 ## Styling Integration
 
-### CSS Variables and Theming
-
-See `design.md` for complete theming architecture. Key principle:
-
-**Use semantic variables from global.css:**
-
-```css
-/* ✅ Correct: Using semantic tokens */
-.component {
-  background: var(--surface-raised);
-  color: var(--color-text);
-  border-color: var(--color-accent);
-}
-
-/* ✅ Correct: Deriving variants with relative color syntax */
-.component:hover {
-  background: oklch(from var(--color-accent) calc(l - 0.1) c h);
-}
-
-/* ✅ Correct: Using light-dark() for theme-specific values */
-.component {
-  background: light-dark(var(--color-beige), var(--color-charcoal));
-}
-```
+Style components from semantic tokens, derive variants with relative colour syntax, and use `light-dark()` for theme-specific values. See [design.md](./design.md) for the full theming architecture and token conventions.
 
 ### Component Variants Pattern
 
@@ -186,38 +138,6 @@ Apply to any container that:
     .longform-prose { ... }
   }
 </style>
-```
-
-### Modern CSS Patterns
-
-```css
-.component {
-  /* Inline flex for alignment control */
-  display: inline-flex;
-  align-items: baseline;
-
-  /* Smooth transitions using motion tokens */
-  transition: opacity var(--duration-fast) var(--ease-in-out);
-
-  /* currentColor for inherited color */
-  border-color: currentColor;
-}
-
-.component:hover {
-  opacity: 0.8;
-}
-
-/* Responsive with container queries */
-@container (width > 400px) {
-  .component {
-    /* Wider layout styles */
-  }
-}
-
-/* Use fluid typography tokens instead of custom clamp() */
-.title {
-  font-size: var(--font-size-lg);
-}
 ```
 
 ### Container Queries vs Media Queries

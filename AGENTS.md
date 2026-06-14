@@ -54,7 +54,7 @@ bun run check:knip    # Check for unused code with Knip
 bun run check:dupes   # Check for duplicate code with jscpd
 bun run test:unit     # Unit tests only
 bun run test:e2e      # E2E tests only
-bun run newnote       # Create new note with proper frontmatter
+bun run scrape-toolbox # Refresh src/content/toolboxPages.json from betterat.work
 
 # AT Protocol (standard.site) publishing — needs ATPROTO_APP_PASSWORD. See docs/developer/standard-site.md
 bun run standard-site:publication  # Create/update the publication record (one-time setup)

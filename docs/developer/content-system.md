@@ -8,41 +8,10 @@ The site uses Astro's content collections with **glob loaders** and **inline-com
 
 ### Collection Configuration
 
-```typescript
-import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders';
+Three collections are defined in `src/content.config.ts` (the single source of truth for schemas, which carry inline comments):
 
-// Articles collection
-const articles = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/articles' }),
-  schema: z.object({
-    title: z.string(),
-    pubDate: z.date(),
-    draft: z.boolean().optional(),
-    // ... see src/content.config.ts for complete schema with comments
-  }),
-});
-
-// Notes collection
-const notes = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/notes' }),
-  schema: z.object({
-    title: z.string(),
-    pubDate: z.date(),
-    // ... see src/content.config.ts for complete schema
-  }),
-});
-
-// Toolbox pages collection (JSON loader)
-const toolboxPages = defineCollection({
-  loader: file('./src/content/toolbox-pages/toolbox.json'),
-  schema: z.object({
-    // ... see src/content.config.ts for complete schema
-  }),
-});
-
-export const collections = { articles, notes, toolboxPages };
-```
+- **`articles`** and **`notes`** — markdown/MDX via a `glob` loader.
+- **`toolboxPages`** — external data via a `file` loader (see below).
 
 ### Glob Loader Behavior
 
@@ -56,8 +25,9 @@ See `content-authoring.md` for file naming conventions and schema reference.
 
 The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
 
-- **Source:** `scripts/get-toolbox-json.ts` - Fetches and processes toolbox data
-- **Data file:** `src/content/toolbox-pages/toolbox.json`
+- **Source:** `scripts/get-toolbox-json.ts` (run via `bun run scrape-toolbox`) - Fetches and processes toolbox data
+- **Auto-refresh:** `.github/workflows/update-toolbox.yml` runs the scrape on a daily cron (and on demand) and commits any changes
+- **Data file:** `src/content/toolboxPages.json`
 - **Consumption:** `ContentCard` component, toolbox test page
 - **Pattern:** JSON loader enables sourcing external API data at build time
 
@@ -214,24 +184,7 @@ Markdown export endpoints (`.md.ts` files) convert rendered content back to mark
 
 ### Utility Functions
 
-**File:** `src/utils/content-summary.ts`
-
-```typescript
-import { generateSummary } from '@utils/content-summary';
-
-const summary = generateSummary(entry, maxLength);
-// Smart summary generation with fallback logic
-```
-
-**Available functions:**
-
-- `generateSummary(entry, maxLength=200)` - Smart summary generation
-- `stripMDXElements(content)` - Removes MDX/HTML from content
-- `extractFirstMeaningfulParagraph(text)` - Filters structural content
-- `truncateAtSentence(text, maxLength)` - Smart truncation at sentence/word boundaries
-- `validateSummary(summary)` - Quality check (min 10 chars)
-
-**Used by:** `ContentCard` component for consistent previews.
+`src/utils/content-summary.ts` exposes `generateSummary(entry, maxLength)` (used by `ContentCard`) plus its helpers for stripping MDX, extracting the first meaningful paragraph, sentence-aware truncation, and validation. See the file for signatures.
 
 ## Markdown Plugins Configuration
 
@@ -241,16 +194,21 @@ Custom remark/rehype plugins modify content during build.
 
 ### Active Plugins
 
-**Remark plugins:**
+**Remark plugins** (all custom, in `src/lib/`):
 
-- `remarkReadingTime` (custom) - Injects `minutesRead` into frontmatter
-- Built-in Mermaid diagram support
+- `remarkReadingTime` - Injects `minutesRead` into frontmatter
+- `remarkFootnoteDetector` - Flags whether content contains footnotes
+- `remarkMarkdownPreview` - Transforms ` ```md preview ` blocks into a `MarkdownBlock` component
+- `remarkTreeBlock` - Transforms ` ```tree ` blocks into a `FileTree` component
+- `remarkPageComponents` - Auto-applies `MDX_COMPONENT_REMAPPING` to routed MDX pages using `Page.astro`
 
 **Rehype plugins:**
 
-- `rehype-heading-ids` - Adds IDs to headings
-- `rehype-autolink-headings` - Makes headings clickable
-- `rehype-external-links` - Adds `target="_blank" rel="noopener noreferrer"` to external links
+- `rehypeHeadingIds` (from `@astrojs/markdown-remark`) - Adds IDs to headings
+- `rehypeAutolinkHeadings` - Makes headings clickable
+- `rehypeExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links
+- `rehypeMermaid` - Renders Mermaid diagrams
+- `rehypeListDensity` (custom) - Adds `long-list-items` class to lists with paragraph-like items
 
 ### Reading Time Plugin
 
@@ -268,33 +226,18 @@ Custom remark/rehype plugins modify content during build.
 
 ### Critical Settings
 
-- **Redirects:** 14 redirects configured (see [architecture-guide.md § Redirects](./architecture-guide.md#redirects))
+- **Redirects:** Configured in `src/config/redirects.ts` plus per-page `redirectURL` frontmatter (see [architecture-guide.md § Redirects](./architecture-guide.md#redirects))
 - **Vite optimizations:** Excludes `@resvg/resvg-js`
 - **Markdown plugins:** Remark + rehype configuration
-- **Expressive Code:** Dracula-soft theme with no frame shadows
-- **Compatibility:** `headingIdCompat: true` for heading ID generation
+- **Expressive Code:** Custom theme loaded from `src/config/code-theme.json`, with no frame box-shadow
 
 ## External Dependencies
 
-### Content Processing
+See `package.json` for the full list. The non-obvious ones:
 
-- **@astrojs/mdx** - MDX support
-- **remark-reading-time** (custom) - Reading time calculation
-- **rehype-external-links** - External link security
-- **rehype-heading-ids** - Heading IDs
-- **rehype-autolink-headings** - Clickable headings
-
-### Image Generation
-
-- **satori** - HTML/JSX to SVG rendering
-- **@resvg/resvg-js** - SVG to PNG conversion
-- **sharp** - Fallback SVG-to-PNG renderer used if Satori fails
-
-### RSS Generation
-
-- **Astro Container API** (experimental) - MDX rendering in RSS
-
-See `package.json` for complete dependency list.
+- **Image generation** uses **satori** (JSX → SVG) then **@resvg/resvg-js** (SVG → PNG), with **sharp** as a fallback renderer if Satori fails.
+- **RSS** renders MDX via Astro's experimental **Container API**.
+- Markdown processing is driven by the custom remark/rehype plugins listed under [Markdown Plugins Configuration](#markdown-plugins-configuration) above.
 
 ## See Also
 

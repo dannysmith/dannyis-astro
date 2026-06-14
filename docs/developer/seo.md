@@ -32,118 +32,29 @@ Centralized SEO configuration prevents inconsistencies and simplifies updates.
 
 ### Configuration Files
 
-**Base configuration:** `src/config/site.ts`
+Config is split across two files for a reason:
 
-- `author` - Name, job title, email, social handles, avatar paths
-- `organization` - Business info
-- `socialProfiles` - Social media URLs with icons
-- `pageTitleTemplates` - Page title formatting by page type
-- `pageDescriptions` - Default descriptions
-- `descriptions` - Site, author, and organization descriptions
-
-**Resolved configuration:** `src/config/config.ts`
-
-- Spreads `CONFIG` from `site.ts`
-- Adds derived values (`fullName`, `avatarUrl`, `avatarCircleUrl`, `twitterHandle`)
-- Adds technical SEO constants (`robotsDirective`, `twitterCardType`, `defaultOgImage`, etc.)
-
-**Usage:**
+- **`src/config/site.ts`** — the hand-edited base: author, organization, social profiles, title templates, descriptions.
+- **`src/config/config.ts`** — spreads the base and adds **derived** values (`fullName`, `avatarUrl`, `twitterHandle`, …) and technical SEO constants (`robotsDirective`, `defaultOgImage`, …). Read it via `getConfig()`; don't recompute derived values yourself.
 
 ```typescript
 import { getConfig } from '@config/config';
-
-const config = getConfig();
-console.log(config.author.fullName); // "Danny Smith"
-console.log(config.seo.defaultOgImage); // "/og-default.png"
+const config = getConfig(); // config.author.fullName, config.seo.defaultOgImage, …
 ```
 
 ### SEO Utility Functions
 
-**File:** `src/utils/seo.ts`
-
-**Title generation:**
-
-```typescript
-import { generatePageTitle } from '@utils/seo';
-
-const title = generatePageTitle('My Article', 'article');
-// Result: "My Article | Danny Smith"
-```
-
-**Meta description:**
-
-```typescript
-import { generateMetaDescription } from '@utils/seo';
-
-const description = generateMetaDescription('Article description');
-// Appends author name for consistent branding
-```
-
-**JSON-LD structured data:**
-
-```typescript
-import { generateJSONLD } from '@utils/seo';
-
-const jsonld = generateJSONLD(pageData, canonicalUrl, ogImageUrl);
-// Returns schema.org Person + Organization + Website + optional BlogPosting
-```
-
-**Article metadata:**
-
-```typescript
-import { generateArticleMeta } from '@utils/seo';
-
-const meta = generateArticleMeta(pageData);
-// Returns OpenGraph article-specific tags (author, section, dates, tags)
-```
-
-**OG image URL:**
-
-```typescript
-import { generateOGImageUrl } from '@utils/seo';
-
-const imageUrl = generateOGImageUrl(customImage, baseUrl);
-// Returns custom image or defaults to /og-default.png
-```
-
-**Data validation:**
-
-```typescript
-import { validateSEOData } from '@utils/seo';
-
-const validated = validateSEOData(rawData);
-// Normalizes and validates SEO data with defaults
-```
+`src/utils/seo.ts` is the home for SEO logic — use it instead of hand-rolling tags. It exposes `generatePageTitle`, `generateMetaDescription`, `validateSEOData`, `generateArticleMeta`, `generateOGImageUrl`, and `generateJSONLD` (which returns schema.org Person + Organization + Website + optional BlogPosting). TypeScript surfaces the signatures.
 
 ### BaseHead Component
 
-Unified HTML head management with SEO integration.
-
-**File:** `src/components/layout/BaseHead.astro`
-
-```astro
-import { BaseHead } from '@components/layout/index';
-
-<BaseHead
-  title="Page Title"
-  description="Page description under 160 characters"
-  type="article"        // 'website' (default) or 'article'
-  pageType="article"    // 'article', 'note', or 'page' for title templates
-  image="/custom-og.png" // Optional: custom OG image
-  pubDate={new Date()}   // Optional: for articles/notes
-  updatedDate={new Date()} // Optional: for articles/notes
-  tags={['tag1', 'tag2']} // Optional: for articles/notes
-/>
-```
-
-**BaseHead handles:**
+`src/components/layout/BaseHead.astro` is the single head manager — render it once per page with `title`/`description`/`pageType` (plus `type`, `image`, `pubDate`, `updatedDate`, `tags` where relevant). From those props it emits:
 
 - Meta tags (title, description, canonical URL)
-- OpenGraph tags (og:title, og:image, og:type, etc.)
-- Twitter Card tags
+- OpenGraph + Twitter Card tags
 - JSON-LD structured data
-- Theme management (theme color, initial theme)
-- Font imports (@fontsource-variable)
+- Theme colour / initial theme
+- Font preloads (and the Fira Code `@fontsource-variable` import)
 
 ### Schema.org Structured Data
 

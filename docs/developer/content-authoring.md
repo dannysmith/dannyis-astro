@@ -164,38 +164,11 @@ TypeScript will show available props. See `src/components/mdx/index.ts` for comp
 
 ### Using Images
 
-**Recommended: BasicImage component**
-
-```mdx
-import photo from '@assets/articles/my-article/photo.jpg';
-
-<BasicImage src={photo} alt="Descriptive alt text" />
-```
-
-Options:
-
-- `bleed="full"` - Extend to full viewport width
-- Automatic format optimization (WebP, AVIF)
-- Responsive srcset generation
-
-**Alternative: Astro Image component**
-
-```astro
-import { Image } from 'astro:assets';
-import photo from '@assets/articles/my-article/photo.jpg';
-
-<Image
-  src={photo}
-  alt="Descriptive alt text"
-  width={800}
-  height={600}
-  loading="lazy"
-/>
-```
+Use the `BasicImage` component (shown under [MDX Components](#mdx-components) above) — import the asset at the top of the file, then `<BasicImage src={photo} alt="…" />`. It handles format optimisation and responsive `srcset`; add `bleed="full"` to extend an image to the full viewport width. Always provide descriptive alt text.
 
 ### Cover Images
 
-Add to frontmatter:
+Add to frontmatter — `cover` is resolved by Astro's image pipeline, so use a path relative to the file:
 
 ```yaml
 ---
@@ -203,13 +176,6 @@ cover: ./path/to/cover-image.jpg
 coverAlt: 'Descriptive alt text for accessibility'
 ---
 ```
-
-### Best Practices
-
-- Always provide descriptive alt text
-- Use appropriate image formats (WebP preferred)
-- Implement lazy loading for below-fold images
-- Leverage Astro's automatic optimization
 
 ## Publishing Workflow
 
@@ -253,14 +219,8 @@ coverAlt: 'Descriptive alt text for accessibility'
 - [ ] Links work as expected
 - [ ] MDX components render properly
 
-### Creating Notes via CLI
+### Creating Content
 
-```bash
-bun run newnote "Note Title"
-# Creates note with today's date and proper frontmatter
+Notes and articles are created manually — add a new `.md`/`.mdx` file under `src/content/notes/` or `src/content/articles/` following the naming and frontmatter conventions above. There is no CLI generator.
 
-bun run newnote "https://example.com/article"
-# Creates note with sourceURL set
-```
-
-Articles are created manually (no CLI command).
+For standalone pages (like `/now` or `/colophon`) rather than articles or notes, see [architecture-guide.md § Pages & Layouts](./architecture-guide.md#pages--layouts).

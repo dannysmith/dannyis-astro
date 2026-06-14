@@ -26,21 +26,6 @@ Because the key is a pure function of the post, the build can render a link tag 
 
 That `postId` is the post's **canonical id: the `slug` frontmatter when set, otherwise the filename stem** (ie what Astro uses for the URL). The build reads it from `Astro.params.slug`; the sync reads it via `canonicalPostId`.
 
-## The moving parts
-
-| File                                                  | Responsibility                                                                                                                         |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/utils/standard-site.ts`                          | Shared logic, used by both the build and the sync: `getDocumentRkey`, `getDocumentPath`, `qualifiesForStandardSite`, `getDocumentUri`. |
-| `src/components/layout/BaseHead.astro`                | Renders `<link rel="site.standard.document">` on qualifying posts and `<link rel="site.standard.publication">` on the homepage.        |
-| `src/layouts/Article.astro`, `src/layouts/Note.astro` | Compute each post's document AT-URI and pass it to `BaseHead`.                                                                         |
-| `src/pages/standard-site-publication.ts`              | Endpoint returning the publication AT-URI as plain text. Reached at `/.well-known/site.standard.publication` via a rewrite.            |
-| `vercel.output-config.json`                           | Rewrites `/.well-known/site.standard.publication` to that endpoint.                                                                    |
-| `scripts/standard-site/auth.ts`                       | Logs into the PDS with an app password; returns an agent + DID.                                                                        |
-| `scripts/standard-site/create-publication.ts`         | Creates/updates the publication record (with icon + theme). Run once.                                                                  |
-| `scripts/standard-site/sync-document.ts`              | Creates/updates/deletes document records. Run by CI and for backfill.                                                                  |
-| `.github/workflows/standard-site-sync.yml`            | After a successful deploy, syncs added/changed posts.                                                                                  |
-| `src/config/site.ts` → `CONFIG.standardSite`          | DID, handle, publication AT-URI, and the `since` cutoff.                                                                               |
-
 ## What gets published
 
 We follow the site's normal "is this published?" rules with two extra exclusions:
@@ -48,7 +33,7 @@ We follow the site's normal "is this published?" rules with two extra exclusions
 - **Skipped:** drafts, styleguide pages, and externally-hosted posts — anything with a `redirectURL` (e.g. an article that lives on Medium and whose danny.is page only redirects away). External posts stay skipped even under `--force`.
 - **Cutoff:** only posts on or after `CONFIG.standardSite.since`, which is set before the first post so the whole archive qualifies.
 
-Until `CONFIG.standardSite.did` is set, `getDocumentUri` returns nothing and no tags render. The integration sits dormant until it's configured.
+If `CONFIG.standardSite.did` is empty, `getDocumentUri` returns nothing and no tags render — the integration sits dormant until configured. It is currently configured and live (`did` and `publicationUri` are set in `src/config/site.ts`).
 
 **Fields on a document record.** Always `site`, `title`, `publishedAt`, `path`, and `textContent` (a plain-text rendering of the body, with markdown and MDX imports/JSX stripped). When present: `description`, `tags`, `updatedAt` (from `updatedDate`, articles only), and `coverImage`.
 
@@ -94,10 +79,10 @@ In CI the same script runs from `.github/workflows/standard-site-sync.yml`, read
 
 - `did` — the AT Protocol DID for `danny.is`. Public.
 - `handle` — the login handle (`danny.is`).
-- `publicationUri` — the `at://…` URI of the publication record, printed by `standard-site:publication`. Public. Empty until setup.
+- `publicationUri` — the `at://…` URI of the publication record, printed by `standard-site:publication`. Public.
 - `since` — only posts on or after this date are published.
 
-`did` and `publicationUri` ship empty, typed `as string` on purpose (see below).
+`did` and `publicationUri` are typed `as string` on purpose (see below) so the "is it configured?" checks work whether or not they're populated.
 
 ## Troubleshooting
 
@@ -115,7 +100,7 @@ In CI the same script runs from `.github/workflows/standard-site-sync.yml`, read
 
 ## If you change this
 
-- **Keep the key deterministic.** The timestamp comes from `pubDate`'s UTC date and the id is the canonical `slug ?? filename`. If the build and sync ever compute keys differently, tags and records drift apart. The unit tests in `src/utils/standard-site.test.ts` guard this — keep them green.
+- **Keep the key deterministic.** The timestamp comes from `pubDate`'s UTC date and the id is the canonical `slug ?? filename`. If the build and sync ever compute keys differently, tags and records drift apart. The unit tests in `tests/unit/standard-site.test.ts` guard this — keep them green.
 - **Keep the qualification rule in one place.** Change `qualifiesForStandardSite` and both the build and the sync follow. Don't reimplement it.
 - **Leave the config placeholders typed `as string`.** `CONFIG` is `as const`, so an empty literal would narrow to a type that breaks the "is it configured?" checks.
 - **Don't move the publication endpoint into a dotfile directory.** It has to stay a normal route with the rewrite in front of the `filesystem` handler.
