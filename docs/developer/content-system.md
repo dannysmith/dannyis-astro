@@ -26,6 +26,7 @@ See `content-authoring.md` for file naming conventions and schema reference.
 The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
 
 - **Source:** `scripts/get-toolbox-json.ts` (run via `bun run scrape-toolbox`) - Fetches and processes toolbox data
+- **Auto-refresh:** `.github/workflows/update-toolbox.yml` runs the scrape on a daily cron (and on demand) and commits any changes
 - **Data file:** `src/content/toolboxPages.json`
 - **Consumption:** `ContentCard` component, toolbox test page
 - **Pattern:** JSON loader enables sourcing external API data at build time

@@ -94,13 +94,18 @@ export const MDX_COMPONENT_REMAPPING = {
 
 **Colour system:** OKLCH tokens that auto-switch via `light-dark()`; style from semantic tokens and derive variants with relative colour syntax. Full reference in [design-tokens.md](./design-tokens.md).
 
-**Theme Management:**
+**Theme Management:** Three modes — `auto` (follows system via `color-scheme`), `light`, `dark`. An inline script in `BaseHead.astro` applies the saved theme before paint (prevents FOUC), persists it in `localStorage` under `theme`, and exposes a small global API (types in `src/types/theme.d.ts`):
 
-- Three modes: `auto` (follows system via `color-scheme`), `light`, `dark`
-- Global `window.theme` API for programmatic access
-- Inline script in `BaseHead.astro` prevents FOUC
-- Custom `theme-changed` event for component updates
-- localStorage persistence across sessions
+```js
+window.theme.current; // 'auto' | 'light' | 'dark'
+window.theme.set('dark'); // 'auto' | 'light' | 'dark'
+
+// Components react to changes via the theme-changed event:
+document.addEventListener('theme-changed', (e) => {
+  e.detail.theme; // the chosen mode
+  e.detail.resolvedTheme; // 'light' | 'dark' (after resolving 'auto')
+});
+```
 
 **Why they're related:**
 
@@ -341,6 +346,29 @@ src/
 ├── utils/           # Shared helper functions (imported throughout codebase)
 ```
 
+## Pages & Layouts
+
+### Layouts
+
+Four layouts in `src/layouts/`:
+
+- **`Article.astro`** — articles only.
+- **`Note.astro`** — notes only.
+- **`Page.astro`** — any simple standalone MDX page (eg `/now`, `/ai`, `/colophon`, `/privacy`). Renders a display-font uppercase title (+ optional subtitle) then your content in a centred `.flow` column. Frontmatter props: `title` (required), `subtitle?`, `description?`, and `headingAlign?`.
+- **`BasicPage.astro`** — the barebones: nav, footer, your content, nothing else. Used rarely, for when you want a real page shell without `Page.astro`'s heading.
+
+### Creating one-off pages in `src/pages/`
+
+**Simple content pages** (no real custom design) — write a routed `.mdx` like `now.mdx` / `ai.mdx`: frontmatter with `layout: '@layouts/Page.astro'` plus the props above, then markdown. All the usual MDX components are available (auto-imported via `astro-auto-import`) and the remark plugins apply — including `remarkPageComponents`, which wires up the same `a`/`img`/etc. remapping that collection content gets.
+
+**Pages with bespoke designs** — make a `thing.astro` that duplicates the shell from `BasicPage.astro` and write the content/styling directly as HTML/Astro/CSS. If part of such a page is genuinely better as MDX, split it: `thing/index.astro` imports a sibling `thing/_thing.mdx` and renders its `<Content />`. Only do this when MDX really is the best tool for that content.
+
+`BasicPage.astro` is for the occasional case between these two and should rarely be used.
+
+## Styleguide
+
+A multi-page visual styleguide lives in `src/pages/styleguide/` (public at `/styleguide`). It's where visual components, typography, tokens and raw HTML defaults are rendered together — update it as needed when you add or change anything visual. See `src/pages/styleguide/CLAUDE.md` for its directory structure and how to add a section.
+
 ## Testing Strategy
 
 Test business logic, user interactions, and edge cases; don't test trivial UI rendering or third-party internals. See [testing.md](./testing.md) for the full strategy.
@@ -348,4 +376,3 @@ Test business logic, user interactions, and edge cases; don't test trivial UI re
 ## External Documentation
 
 Check Context7 first for framework/library docs (e.g. `/withastro/docs`), then web search. For our CSS layer architecture, [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) is the reference — our order is reset → base → typography → layout → utilities → longform.
-7. **Run** `bun run check:all` before committing

@@ -222,3 +222,5 @@ coverAlt: 'Descriptive alt text for accessibility'
 ### Creating Content
 
 Notes and articles are created manually — add a new `.md`/`.mdx` file under `src/content/notes/` or `src/content/articles/` following the naming and frontmatter conventions above. There is no CLI generator.
+
+For standalone pages (like `/now` or `/colophon`) rather than articles or notes, see [architecture-guide.md § Pages & Layouts](./architecture-guide.md#pages--layouts).
