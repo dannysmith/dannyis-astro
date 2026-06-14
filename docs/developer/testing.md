@@ -36,7 +36,7 @@ tests/
 └── e2e/          # User journey tests (navigation, RSS, critical paths)
 ```
 
-Unit tests live alongside the code they test when appropriate, or in `tests/unit/` for integration scenarios.
+Unit tests all live in `tests/unit/` (not co-located with source).
 
 E2E tests in `tests/e2e/` mirror user workflows rather than file structure.
 

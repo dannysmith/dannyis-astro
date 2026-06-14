@@ -40,7 +40,7 @@ const processedData = transformData(required);
 <style>
   .component {
     /* Use semantic tokens from global.css */
-    background: var(--surface-raised);
+    background: var(--color-background-secondary);
     color: var(--color-text);
     padding: var(--space-m);
   }
@@ -105,7 +105,7 @@ See `design.md` for complete theming architecture. Key principle:
 ```css
 /* ✅ Correct: Using semantic tokens */
 .component {
-  background: var(--surface-raised);
+  background: var(--color-background-secondary);
   color: var(--color-text);
   border-color: var(--color-accent);
 }

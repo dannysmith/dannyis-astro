@@ -35,7 +35,7 @@ const notes = defineCollection({
 
 // Toolbox pages collection (JSON loader)
 const toolboxPages = defineCollection({
-  loader: file('./src/content/toolbox-pages/toolbox.json'),
+  loader: file('src/content/toolboxPages.json'),
   schema: z.object({
     // ... see src/content.config.ts for complete schema
   }),
@@ -56,8 +56,8 @@ See `content-authoring.md` for file naming conventions and schema reference.
 
 The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
 
-- **Source:** `scripts/get-toolbox-json.ts` - Fetches and processes toolbox data
-- **Data file:** `src/content/toolbox-pages/toolbox.json`
+- **Source:** `scripts/get-toolbox-json.ts` (run via `bun run scrape-toolbox`) - Fetches and processes toolbox data
+- **Data file:** `src/content/toolboxPages.json`
 - **Consumption:** `ContentCard` component, toolbox test page
 - **Pattern:** JSON loader enables sourcing external API data at build time
 
@@ -230,6 +230,7 @@ const summary = generateSummary(entry, maxLength);
 - `extractFirstMeaningfulParagraph(text)` - Filters structural content
 - `truncateAtSentence(text, maxLength)` - Smart truncation at sentence/word boundaries
 - `validateSummary(summary)` - Quality check (min 10 chars)
+- `estimateReadingTime(content)` - Estimates reading time (minutes) from raw content
 
 **Used by:** `ContentCard` component for consistent previews.
 
@@ -241,16 +242,21 @@ Custom remark/rehype plugins modify content during build.
 
 ### Active Plugins
 
-**Remark plugins:**
+**Remark plugins** (all custom, in `src/lib/`):
 
-- `remarkReadingTime` (custom) - Injects `minutesRead` into frontmatter
-- Built-in Mermaid diagram support
+- `remarkReadingTime` - Injects `minutesRead` into frontmatter
+- `remarkFootnoteDetector` - Flags whether content contains footnotes
+- `remarkMarkdownPreview` - Transforms ` ```md preview ` blocks into a `MarkdownBlock` component
+- `remarkTreeBlock` - Transforms ` ```tree ` blocks into a `FileTree` component
+- `remarkPageComponents` - Auto-applies `MDX_COMPONENT_REMAPPING` to routed MDX pages using `Page.astro`
 
 **Rehype plugins:**
 
-- `rehype-heading-ids` - Adds IDs to headings
-- `rehype-autolink-headings` - Makes headings clickable
-- `rehype-external-links` - Adds `target="_blank" rel="noopener noreferrer"` to external links
+- `rehypeHeadingIds` (from `@astrojs/markdown-remark`) - Adds IDs to headings
+- `rehypeAutolinkHeadings` - Makes headings clickable
+- `rehypeExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links
+- `rehypeMermaid` - Renders Mermaid diagrams
+- `rehypeListDensity` (custom) - Adds `long-list-items` class to lists with paragraph-like items
 
 ### Reading Time Plugin
 
@@ -268,11 +274,10 @@ Custom remark/rehype plugins modify content during build.
 
 ### Critical Settings
 
-- **Redirects:** 14 redirects configured (see [architecture-guide.md § Redirects](./architecture-guide.md#redirects))
+- **Redirects:** Configured in `src/config/redirects.ts` plus per-page `redirectURL` frontmatter (see [architecture-guide.md § Redirects](./architecture-guide.md#redirects))
 - **Vite optimizations:** Excludes `@resvg/resvg-js`
 - **Markdown plugins:** Remark + rehype configuration
-- **Expressive Code:** Dracula-soft theme with no frame shadows
-- **Compatibility:** `headingIdCompat: true` for heading ID generation
+- **Expressive Code:** Custom theme loaded from `src/config/code-theme.json`, with no frame box-shadow
 
 ## External Dependencies
 

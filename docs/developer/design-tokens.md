@@ -8,7 +8,7 @@ CSS custom properties defined in `src/styles/_foundation.css`. Uses OKLCH colors
 |----------|--------------|---------|
 | Colors (adaptive) | `--color-{name}` | `--color-coral`, `--color-text` |
 | Colors (semantic) | `--color-{purpose}` | `--color-accent`, `--color-background` |
-| Surfaces | `--surface-{name}` | `--surface-raised` |
+| Surfaces | `--color-background-{name}` + `.surface-white` utility | `--color-background-secondary` |
 | Spacing | `--space-{size}` | `--space-m`, `--space-l` |
 | Font Size | `--font-size-{size}` | `--font-size-base`, `--font-size-lg` |
 | Line Height | `--leading-{name}` | `--leading-normal`, `--leading-tight` |
@@ -87,7 +87,10 @@ Role-based tokens - **use these in components**:
 | `--color-text` | Primary text color |
 | `--color-text-secondary` | Muted/secondary text |
 | `--color-border` | Default border color (10% opacity) |
-| `--surface-raised` | Cards/panels (white in light, dark grey in dark) |
+| `--color-background-code` | Background for inline code / code blocks |
+| `--color-focus-ring` | Focus outline colour (blue); applied globally by the reset layer |
+
+There is no `--surface-raised` token. For raised cards/panels, use the `.surface-white` utility (`_utilities.css`), which sets a white-in-light / dark-grey-in-dark background and re-points `--color-background-secondary` for descendants.
 
 ### Deriving Color Variants
 
@@ -192,7 +195,7 @@ Utopia-generated. Scales from 375px (1.2 ratio) to 1280px (1.333 ratio):
 | `--leading-none` | 0.9 | Hero text, large display |
 | `--leading-tight` | 1.1 | Headings |
 | `--leading-snug` | 1.2 | Subheadings, UI text |
-| `--leading-normal` | 1.5 | Body text (default) |
+| `--leading-normal` | 1.55 | Body text (default) |
 | `--leading-loose` | 1.7 | Long-form prose |
 
 ### Letter Spacing
@@ -214,11 +217,13 @@ Utopia-generated. Scales from 375px (1.2 ratio) to 1280px (1.333 ratio):
 | `--font-weight-medium` | 500 |
 | `--font-weight-semibold` | 600 |
 | `--font-weight-bold` | 700 |
+| `--font-weight-extrabold` | 800 |
+| `--font-weight-heavy` | 900 |
 
 ### Measure
 
 ```css
---measure-standard: 80ch;  /* Optimal line length for readability */
+--measure-standard: 70ch;  /* Optimal line length for readability */
 ```
 
 ---
@@ -229,7 +234,7 @@ Utopia-generated. Scales from 375px (1.2 ratio) to 1280px (1.333 ratio):
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--border-width-hairline` | 1px | Subtle dividers, table cells |
+| `--border-width-hairline` | `max(0.0625rem, 1px)` | Subtle dividers, table cells — never subpixel, but scales with rem on high-DPI |
 | `--border-width-base` | 2px | Default borders |
 | `--border-width-thick` | 4px | Emphasis, blockquotes |
 | `--border-width-heavy` | 6px | Strong accents |
@@ -243,7 +248,7 @@ Utopia-generated. Scales from 375px (1.2 ratio) to 1280px (1.333 ratio):
 | `--radius-sm` | 0.25rem (4px) |
 | `--radius-md` | 0.5rem (8px) |
 | `--radius-lg` | 0.75rem (12px) |
-| `--radius-full` | 9999px (pills) |
+| `--radius-full` | `calc(infinity * 1px)` (pills) |
 
 ---
 

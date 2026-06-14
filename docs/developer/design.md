@@ -127,7 +127,7 @@ Everything inherits these styles but UI areas can opt out of most of it using `.
 
 **Purpose:** Single-purpose helper classes.
 
-**Contains:** `.ui-style`, `.dark-surface`, `.card-surface`, alignment utilities, and more. See `_utilities.css` for full list.
+**Contains:** `.ui-style`, `.dark-surface`, `.surface-white`, alignment utilities, and more. See `_utilities.css` for full list.
 
 **When to add here:** For utilities that are genuinely reusable across many components. Don't add component-specific classes here.
 
@@ -263,7 +263,7 @@ color: var(--color-text);
 color: var(--color-text-secondary);
 color: var(--color-accent);
 background: var(--color-background);
-background: var(--surface-raised);
+background: var(--color-background-secondary);
 border-color: var(--color-border);
 
 /* Spacing - fluid Utopia scale */
@@ -488,7 +488,7 @@ Typography is **central** - large, expressive, and layout-defining.
 
 - **Primary Font**: Literata - serif for bookish, elegant feel
 - **Base Size**: Fluid 16px→20px via Utopia scale (`--font-size-base`)
-- **Line Height**: 1.5 (`--leading-normal`)
+- **Line Height**: 1.55 (`--leading-normal`); long-form prose uses 1.7 (`--leading-loose`)
 - **Advanced Features**: Ligatures, hanging punctuation (oldstyle numerals enabled in long-form articles only)
 
 ### Implementation
@@ -532,7 +532,7 @@ Theme switching uses `color-scheme` property with `light-dark()` function for au
 color: var(--color-text);
 color: var(--color-accent);
 background: var(--color-background);
-background: var(--surface-raised);
+background: var(--color-background-secondary);
 
 /* ❌ Never hardcode */
 color: #2f3437;

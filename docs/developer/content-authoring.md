@@ -253,14 +253,6 @@ coverAlt: 'Descriptive alt text for accessibility'
 - [ ] Links work as expected
 - [ ] MDX components render properly
 
-### Creating Notes via CLI
+### Creating Content
 
-```bash
-bun run newnote "Note Title"
-# Creates note with today's date and proper frontmatter
-
-bun run newnote "https://example.com/article"
-# Creates note with sourceURL set
-```
-
-Articles are created manually (no CLI command).
+Notes and articles are created manually — add a new `.md`/`.mdx` file under `src/content/notes/` or `src/content/articles/` following the naming and frontmatter conventions above. There is no CLI generator.

@@ -45,23 +45,27 @@ This document covers the core architectural patterns and principles for Danny's 
 **Implementation:**
 
 ```typescript
-// In article/note page templates
-const components = {
-  a: SmartLink,    // Auto-detects internal/external, adds icons/attributes
-  img: BasicImage, // Responsive images with optimization
+// src/config/mdx-components.ts — a single shared mapping
+export const MDX_COMPONENT_REMAPPING = {
+  a: SmartLink,               // Auto-detects internal/external, adds icons/attributes
+  img: BasicImage,            // Responsive images with optimization
+  table: WrappedTable,        // Adds horizontal-scroll wrapper
+  'markdown-preview': MarkdownBlock,
+  'file-tree': FileTree,
 };
 
-<Content components={components} />
+// In article/note page templates:
+<Content components={MDX_COMPONENT_REMAPPING} />
 ```
 
 **Location:**
 
-- `src/pages/writing/[...slug]/index.astro:23-27`
-- `src/pages/notes/[...slug]/index.astro` (similar pattern)
+- Mapping defined once in `src/config/mdx-components.ts`
+- Used by `src/pages/writing/[...slug]/index.astro` and `src/pages/notes/[...slug]/index.astro`
 
 **How to extend:**
 
-- Add more mappings to the `components` object (e.g., `code: CustomCode`)
+- Add more mappings to `MDX_COMPONENT_REMAPPING` in `src/config/mdx-components.ts` (e.g., `code: CustomCode`)
 - Available for any HTML element rendered from markdown
 - Components must accept standard HTML element props
 
@@ -292,7 +296,7 @@ import { BaseHead } from '@components/layout/index';
 
 ### Redirects
 
-Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
+Redirects configured in `src/config/redirects.ts` - DO NOT BREAK THESE URLs:
 
 - `/meeting` → `https://cal.com/dannysmith`
 - `/cv` → `/cv-danny-smith.pdf`
@@ -300,10 +304,9 @@ Redirects configured in `astro.config.mjs` - DO NOT BREAK THESE URLs:
 - `/youtube` → YouTube channel
 - `/working` → `https://betterat.work`
 - `/toolbox` → `https://betterat.work/toolbox`
-- `/tools` → `/toolbox`
 - `/using` → Notion doc (tools Danny uses)
 - `/remote`, `/rtotd` → Notion doc (remote work tips)
-- `/music`, `/singing` → YouTube channel
+- `/music`, `/singing` → music/singing YouTube (`youtube.com/dannysmithblues`)
 
 **Important:** No trailing slashes in target URLs (causes redirect loops).
 
@@ -418,7 +421,7 @@ This provides access to 2400+ code snippets and comprehensive Astro documentatio
 **CSS Layers** - Central to our styling architecture:
 
 - See [MDN: @layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) for specification
-- Our layer order: reset → base → typography → layout → utilities → longform → theme
+- Our layer order: reset → base → typography → layout → utilities → longform
 
 ### General Principle
 

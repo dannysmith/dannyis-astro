@@ -113,17 +113,14 @@ See [component-patterns.md § Accessible Interactive Component](./component-patt
 
 ### Image Optimization
 
-```astro
-<Image
-  src={import('@assets/image.jpg')}
-  alt="Descriptive alt text"
-  width={800}
-  height={600}
-  loading="lazy"  <!-- Below-fold images -->
-/>
+The site standard is the `BasicImage` component with a top-level asset import (see `content-authoring.md`):
+
+```mdx
+import photo from '@assets/articles/my-article/photo.jpg';
+
+<BasicImage src={photo} alt="Descriptive alt text" />
 ```
 
-- Always provide width and height
-- Use descriptive alt text
-- Leverage Astro's automatic optimization
-- Implement lazy loading for below-fold images
+- Always provide descriptive alt text
+- Let Astro's image pipeline handle optimization and dimensions
+- Lazy-load below-fold images
