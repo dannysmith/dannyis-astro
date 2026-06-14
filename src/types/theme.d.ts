@@ -4,9 +4,6 @@ declare global {
   interface Window {
     theme: {
       readonly current: 'auto' | 'light' | 'dark';
-      readonly resolved: 'light' | 'dark';
-      readonly system: 'light' | 'dark';
-      readonly themes: readonly ['auto', 'light', 'dark'];
       set: (theme: 'auto' | 'light' | 'dark') => void;
     };
   }

@@ -59,9 +59,7 @@ const articleMeta = generateArticleMeta(seoData);
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
 
-<!-- Font preloads (keep filenames in sync with @font-face in src/styles/_foundation.css).
-     Figtree (body default) + Geist (display + nav) load on every page;
-     Literata (long-form prose) only on articles. -->
+<!-- Font preloads (keep filenames in sync with @font-face in src/styles/_foundation.css). Literata (long-form prose) only on articles. -->
 <link
   rel="preload"
   href="/fonts/Figtree-v2.002-2026-04-09.woff2"
@@ -88,6 +86,7 @@ const articleMeta = generateArticleMeta(seoData);
   )
 }
 
+<!-- Sitemap -->
 <link rel="sitemap" href="/sitemap-index.xml" />
 
 <!-- Icons -->
@@ -117,7 +116,7 @@ const articleMeta = generateArticleMeta(seoData);
 />
 
 <!-- standard.site (AT Protocol) verification: document link tag on qualifying
-     posts; publication link tag on the homepage. See src/utils/standard-site.ts. -->
+     posts, publication link tag on the homepage. See src/utils/standard-site.ts. -->
 {standardSiteDocumentUri && <link rel="site.standard.document" href={standardSiteDocumentUri} />}
 {
   isHomepage && config.standardSite.publicationUri && (
@@ -164,94 +163,53 @@ const articleMeta = generateArticleMeta(seoData);
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLD)} />
 
-<!-- Theme Management Script (must be inline to prevent flash) -->
+<!-- Theme script: inline + render-blocking so the correct theme is set before first paint (no flash) -->
 <script is:inline>
   (function () {
-    // Theme management API
-    const themes = ['auto', 'light', 'dark'];
+    const root = document.documentElement;
+    const mq = matchMedia('(prefers-color-scheme: dark)');
 
-    function getSystemTheme() {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-
-    function getStoredTheme() {
+    // Saved preference: 'light' | 'dark' | 'auto' (the default when unset or storage is unavailable).
+    const current = () => {
       try {
-        return localStorage.getItem('theme');
+        return localStorage.getItem('theme') || 'auto';
       } catch {
-        return null;
+        return 'auto';
       }
-    }
+    };
 
-    function setStoredTheme(theme) {
+    // 'auto' follows the OS; an explicit choice wins.
+    const resolve = theme => (theme === 'auto' ? (mq.matches ? 'dark' : 'light') : theme);
+
+    // colorScheme drives the CSS (light-dark() reads it); data-theme is a styling/debug hook.
+    const apply = theme => {
+      const resolved = resolve(theme);
+      root.dataset.theme = root.style.colorScheme = resolved;
+      return resolved;
+    };
+
+    const set = theme => {
+      if (theme !== 'auto' && theme !== 'light' && theme !== 'dark') return;
       try {
         localStorage.setItem('theme', theme);
       } catch {
-        // Silently fail if localStorage is not available
+        // ignore unavailable storage
       }
-    }
-
-    function getResolvedTheme(theme = getCurrentTheme()) {
-      return theme === 'auto' ? getSystemTheme() : theme;
-    }
-
-    function getCurrentTheme() {
-      return getStoredTheme() || 'auto';
-    }
-
-    function applyTheme(resolvedTheme) {
-      document.documentElement.setAttribute('data-theme', resolvedTheme);
-      document.documentElement.style.colorScheme = resolvedTheme;
-    }
-
-    function setTheme(newTheme) {
-      if (!themes.includes(newTheme)) return;
-
-      setStoredTheme(newTheme);
-      const resolvedTheme = getResolvedTheme(newTheme);
-      applyTheme(resolvedTheme);
-
-      // Dispatch custom event for components to listen to
-      document.dispatchEvent(
-        new CustomEvent('theme-changed', {
-          detail: { theme: newTheme, resolvedTheme },
-        })
-      );
-    }
-
-    // Initialize theme on page load
-    function initTheme() {
-      const currentTheme = getCurrentTheme();
-      const resolvedTheme = getResolvedTheme(currentTheme);
-      applyTheme(resolvedTheme);
-    }
-
-    // Global API
-    window.theme = {
-      get current() {
-        return getCurrentTheme();
-      },
-      get resolved() {
-        return getResolvedTheme();
-      },
-      get system() {
-        return getSystemTheme();
-      },
-      set: setTheme,
-      themes,
+      const resolvedTheme = apply(theme);
+      document.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme, resolvedTheme } }));
     };
 
-    // Initialize immediately
-    initTheme();
+    // Public API consumed by ThemeToggle.
+    window.theme = {
+      get current() {
+        return current();
+      },
+      set,
+    };
 
-    // Handle system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      if (getCurrentTheme() === 'auto') {
-        applyTheme(getSystemTheme());
-      }
-    });
-
-    // Handle ViewTransitions
-    document.addEventListener('astro:after-swap', initTheme);
+    apply(current());
+    mq.addEventListener('change', () => current() === 'auto' && apply('auto'));
+    document.addEventListener('astro:after-swap', () => apply(current()));
   })();
 </script>
 
@@ -278,8 +236,7 @@ const articleMeta = generateArticleMeta(seoData);
   })}
 />
 
-<!-- Simple Analytics -->
-<!-- 100% privacy-first analytics -->
+<!-- Simple Analytics - 100% privacy-first analytics  -->
 <script is:inline async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 <noscript
   ><img

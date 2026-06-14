@@ -102,7 +102,6 @@ const components = {
 - Inline script in `BaseHead.astro` prevents FOUC
 - Custom `theme-changed` event for component updates
 - localStorage persistence across sessions
-- Tab synchronization via `storage` event
 
 **Why they're related:**
 
