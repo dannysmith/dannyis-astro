@@ -1,0 +1,100 @@
+---
+title: A less painful editing experience in Astro
+slug: less-painful-editing-in-astro
+pubDate: 2026-06-14
+---
+
+I write most of my content in [Astro Editor](https://astroeditor.danny.is), which is [intentionally designed to leave all code-like things alone](/writing/introducing-astro-editor#but-why) and just help me write prose. One of the most annoying things about this is that whenever I use a component like `<Callout>` in an MDX file I have to remember to import it at the top of the file before I publish.
+
+I recently stumbled upon Chris Swithinbank's `astro-auto-import`, which can automatically import named components into all astro files at build-time.
+
+<BookmarkCard url="https://github.com/delucis/astro-auto-import" />
+
+After a bit of experimentation, I decided to import all the components in my [MDX directory](https://github.com/dannysmith/dannyis-astro/tree/main/src/components/mdx) and added this to my `astrojs.config.mjs`...
+
+```js
+[
+    AutoImport({
+      imports: [{ [mdxBarrelPath]: mdxComponentNames }],
+    })
+]
+```
+
+This works like a charm. The only negative side-effect so far is that when running the dev server, all MDX-generated pages include the CSS and client-side JS for all these components whether they're used or not. This isn't an issue with production builds though, so I can live with that.
+
+## Better editing outside content collections
+
+My notes and articles live in [Content Collections](https://docs.astro.build/en/guides/content-collections/) but I also have a few text-based pages which don't – my [Now page](/now) and my [recently-added](/notes/new-meta-pages) colophon, AI and Privacy pages. I was previously generating them from `.astro` files in the same way I would for any other "HTML Pages":
+
+```tree
+pages/
+├── now/
+│   ├── index.astro      # Imports the MDX file as `Content`
+│   └── _now.mdx         # The actual text content
+└── colophon/
+    ├── index.astro
+    └── _colophon.mdx
+```
+
+This is nice because I can still think of the page as a normal `.astro` page and can fully control the HTML and CSS for it. The only reason the `_thing.mdx` files exists is to make the **content I change regularly** nicer to edit. This is great for pages with their own design and layout, but all four of the pages I mentioned above essentially share the same layout and had almost identical `index.astro`'s.
+
+This is precisely what Astro's [individual markdown support](https://docs.astro.build/en/guides/markdown-content/#individual-markdown-pages) is for. And so now these pages are just MDX files:
+
+```tree
+pages/
+├── now.mdx
+├── colophon.mdx
+├── ai.mdx
+└── privacy.mdx
+```
+
+Here's what my now page looks like:
+
+```md title="now.mdx"
+---
+title: Now
+subtitle: What I'm doing now
+description: Danny Smith's Now Page
+layout: '@layouts/Page.astro'
+headingAlign: right
+---
+
+<Callout emoji="💡">
+This is a [Now Page](https://nownownow.com/about). Thanks to Derek Sivers for the [idea](https://sive.rs/nowff).
+</Callout>
+
+- [Consulting](https://betterat.work) on leadership, remote working and operations with a few companies.
+- Working on [Taskdn](https://tdn.danny.is), a system for managing tasks and projects as plain markdown files. Includes a desktop app, a CLI, Claude plugin and Obsidian plugin, among other things.
+- Working on [Astro Editor](https://astroeditor.danny.is), a markdown editor for Astro content collections.
+- Learning a shit ton about how to work with AI to build stuff fast **and well**.
+- Occasionally adding to my [collection of tools and frameworks](https://betterat.work/toolbox).
+- Playing at Open Mic nights in my local pub.
+- Living in a lovely little mews in Islington, North London.
+
+Updated: 2025-10-04
+```
+
+To make this work I added a new [`Page.astro`](https://github.com/dannysmith/dannyis-astro/blob/main/src/layouts/Page.astro) layout specifically for this kind of page. The `title` and `description` are passed through to `BaseHead` and the title is used for the Heading. If `subtitle` is present it's shown under the heading (and slightly changes some styling). `headingAlign` does what it says on the tin. Thanks to `astro-auto-import`, I can use all the same components in these files as I would in articles and notes without needing to import them.
+
+### Broken component remapping
+
+I remap certain MDX components onto my own by passing this to Astro's `<Content>` so certain markdown elements are used in place of the defaults.
+
+```js
+export const MDX_COMPONENT_REMAPPING = {
+  a: SmartLink,
+  img: BasicImage,
+  table: WrappedTable,
+  'markdown-preview': MarkdownBlock,
+  'file-tree': FileTree,
+} as const;
+```
+
+The solution to this is pretty simple. I need to add this after the frontmatter in my `.mdx` pages:
+
+```js
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
+export const components = MDX_COMPONENT_REMAPPING;
+```
+
+Considering the whole point of this is making it nicer to edit these pages, this felt all kinds of wrong. So I ended up with a [tiny remark plugin which does it for me](https://github.com/dannysmith/dannyis-astro/blob/main/src/lib/remark-page-components.mjs)!
