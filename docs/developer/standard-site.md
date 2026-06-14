@@ -26,21 +26,6 @@ Because the key is a pure function of the post, the build can render a link tag 
 
 That `postId` is the post's **canonical id: the `slug` frontmatter when set, otherwise the filename stem** (ie what Astro uses for the URL). The build reads it from `Astro.params.slug`; the sync reads it via `canonicalPostId`.
 
-## The moving parts
-
-| File                                                  | Responsibility                                                                                                                         |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/utils/standard-site.ts`                          | Shared logic, used by both the build and the sync: `getDocumentRkey`, `getDocumentPath`, `qualifiesForStandardSite`, `getDocumentUri`. |
-| `src/components/layout/BaseHead.astro`                | Renders `<link rel="site.standard.document">` on qualifying posts and `<link rel="site.standard.publication">` on the homepage.        |
-| `src/layouts/Article.astro`, `src/layouts/Note.astro` | Compute each post's document AT-URI and pass it to `BaseHead`.                                                                         |
-| `src/pages/well-known/site.standard.publication.ts`  | Endpoint returning the publication AT-URI as plain text. Reached at `/.well-known/site.standard.publication` via a rewrite.            |
-| `vercel.output-config.json`                           | Generic `^/\.well-known/(.*)$ → /well-known/$1` rewrite, which covers the publication endpoint (same trick as `security.txt`).         |
-| `scripts/standard-site/auth.ts`                       | Logs into the PDS with an app password; returns an agent + DID.                                                                        |
-| `scripts/standard-site/create-publication.ts`         | Creates/updates the publication record (with icon + theme). Run once.                                                                  |
-| `scripts/standard-site/sync-document.ts`              | Creates/updates/deletes document records. Run by CI and for backfill.                                                                  |
-| `.github/workflows/standard-site-sync.yml`            | After a successful deploy, syncs added/changed posts.                                                                                  |
-| `src/config/site.ts` → `CONFIG.standardSite`          | DID, handle, publication AT-URI, and the `since` cutoff.                                                                               |
-
 ## What gets published
 
 We follow the site's normal "is this published?" rules with two extra exclusions:

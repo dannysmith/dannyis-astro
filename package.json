@@ -19,8 +19,6 @@
     "preview": "astro preview",
     "vercel:config": "bun scripts/build-vercel-config.mjs --stdout",
     "sync": "astro sync",
-    "audit:serve": "astro build --site http://localhost:4321 && astro preview",
-    "audit": "bunx unlighthouse --site http://localhost:4321",
     "check:lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

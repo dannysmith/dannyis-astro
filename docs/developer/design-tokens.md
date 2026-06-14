@@ -1,147 +1,86 @@
 # Design Token System
 
-CSS custom properties defined in `src/styles/_foundation.css`. Uses OKLCH colors with `light-dark()` for automatic theming, and Utopia-generated fluid scales for spacing and typography.
+CSS custom properties defined in `src/styles/_foundation.css`. Uses OKLCH colours with `light-dark()` for automatic theming, and Utopia-generated fluid scales for spacing and typography.
 
-## Quick Reference
+This doc captures the _why_ and the _when to use_. For exact values, read `_foundation.css` — it's the single source of truth, and these tokens change rarely.
 
-| Category | Token Pattern | Example |
+## Naming patterns
+
+| Category | Token pattern | Example |
 |----------|--------------|---------|
-| Colors (adaptive) | `--color-{name}` | `--color-coral`, `--color-text` |
-| Colors (semantic) | `--color-{purpose}` | `--color-accent`, `--color-background` |
+| Colours (adaptive) | `--color-{name}` | `--color-coral`, `--color-text` |
+| Colours (semantic) | `--color-{purpose}` | `--color-accent`, `--color-background` |
 | Surfaces | `--color-background-{name}` + `.surface-white` utility | `--color-background-secondary` |
 | Spacing | `--space-{size}` | `--space-m`, `--space-l` |
-| Font Size | `--font-size-{size}` | `--font-size-base`, `--font-size-lg` |
-| Line Height | `--leading-{name}` | `--leading-normal`, `--leading-tight` |
-| Letter Spacing | `--tracking-{name}` | `--tracking-wide`, `--tracking-tight` |
-| Font Weight | `--font-weight-{name}` | `--font-weight-bold`, `--font-weight-normal` |
-| Border Width | `--border-width-{size}` | `--border-width-hairline`, `--border-width-thick` |
-| Border Radius | `--radius-{size}` | `--radius-sm`, `--radius-md` |
+| Font size | `--font-size-{size}` | `--font-size-base`, `--font-size-lg` |
+| Line height | `--leading-{name}` | `--leading-normal`, `--leading-tight` |
+| Letter spacing | `--tracking-{name}` | `--tracking-wide`, `--tracking-tight` |
+| Font weight | `--font-weight-{name}` | `--font-weight-bold`, `--font-weight-normal` |
+| Border width | `--border-width-{size}` | `--border-width-hairline`, `--border-width-thick` |
+| Border radius | `--radius-{size}` | `--radius-sm`, `--radius-md` |
 | Duration | `--duration-{speed}` | `--duration-fast`, `--duration-normal` |
-| Shadows | `--shadow-{size}` | `--shadow-small`, `--shadow-medium` |
+| Shadow | `--shadow-{size}` | `--shadow-small`, `--shadow-medium` |
 
 ---
 
-## Color System
+## Colour system
 
-### OKLCH Color Space
+### OKLCH
 
-All colors use OKLCH for perceptual uniformity and wide gamut support.
+All colours use OKLCH for perceptual uniformity and wide-gamut support. Syntax is `oklch(lightness chroma hue)` — lightness `0–100%`, chroma `0–0.4` (0 = grey), hue `0–360`.
 
-**Syntax:** `oklch(lightness chroma hue)`
-- Lightness: 0-100% (0 = black, 100 = white)
-- Chroma: 0-0.4 (0 = gray, higher = more saturated)
-- Hue: 0-360 degrees
+### Hue variables
 
-### Hue Variables
+Base hues (`--hue-coral`, `--hue-pink`, …) are shared across light and dark modes and used to derive the adaptive palette. This is why a single hue stays recognisable in both themes — only lightness/chroma shift.
 
-Base hues shared across light/dark modes. Used to derive the adaptive palette:
+### Adaptive palette
 
-```css
---hue-coral: 25;
---hue-pink: 350;
---hue-orange: 55;
---hue-purple: 300;
---hue-yellow: 95;
---hue-green: 165;
---hue-blue: 250;
---hue-grey: 210;
-```
+Colours that auto-switch for light/dark via `light-dark()`. Prefer the semantic alias (below) where one exists.
 
-### Adaptive Color Palette
+| Token | Usage |
+|-------|-------|
+| `--color-coral` | Primary accent |
+| `--color-pink` | Alternate accent |
+| `--color-orange` | Warning states |
+| `--color-purple` | Visited links |
+| `--color-yellow` | Highlights |
+| `--color-green` | Success states |
+| `--color-blue` | Info states |
 
-Colors that auto-switch for light/dark mode via `light-dark()`:
+Non-adaptive absolutes also exist: `--color-white`, `--color-black`, `--color-ink` (dark text), `--color-charcoal` (dark background), `--color-beige` (light background).
 
-| Token | Light Mode | Dark Mode | Usage |
-|-------|------------|-----------|-------|
-| `--color-coral` | 70% L, 0.18 C | 80% L, 0.14 C | Primary accent |
-| `--color-pink` | 55% L | 70% L | Alternate accent |
-| `--color-orange` | 78% L | 80% L | Warning states |
-| `--color-purple` | 60% L | 72% L | Visited links |
-| `--color-yellow` | 90% L | 82% L | Highlights |
-| `--color-green` | 65% L | 72% L | Success states |
-| `--color-blue` | 62% L | 70% L | Info states |
+### Semantic colours
 
-### Absolute Colors
-
-Non-adaptive colors:
-
-```css
---color-white: oklch(100% 0 0);
---color-black: oklch(0% 0 0);
---color-ink: oklch(28% 0.01 var(--hue-grey));      /* Dark text */
---color-charcoal: oklch(24.35% 0 0);               /* Dark background */
---color-beige: oklch(96% 0.02 85);                 /* Light background */
-```
-
-### Semantic Colors
-
-Role-based tokens - **use these in components**:
+Role-based tokens — **use these in components**, not the raw palette:
 
 | Token | Purpose |
 |-------|---------|
-| `--color-accent` | Primary brand color (coral) |
-| `--color-visited` | Visited link color (purple) |
+| `--color-accent` | Primary brand colour (coral) |
+| `--color-visited` | Visited link colour (purple) |
 | `--color-highlight` | Text highlight/mark (yellow) |
 | `--color-background` | Page background |
 | `--color-background-secondary` | Subtle background variation |
-| `--color-text` | Primary text color |
+| `--color-text` | Primary text colour |
 | `--color-text-secondary` | Muted/secondary text |
-| `--color-border` | Default border color (10% opacity) |
+| `--color-border` | Default border colour (10% opacity) |
 | `--color-background-code` | Background for inline code / code blocks |
 | `--color-focus-ring` | Focus outline colour (blue); applied globally by the reset layer |
 
 There is no `--surface-raised` token. For raised cards/panels, use the `.surface-white` utility (`_utilities.css`), which sets a white-in-light / dark-grey-in-dark background and re-points `--color-background-secondary` for descendants.
 
-### Deriving Color Variants
+### Deriving variants
 
-Use relative color syntax to derive hover states and variants from tokens:
-
-```css
-/* Darken: oklch(from [token] calc(l - 0.1) c h) */
-/* Lighten: oklch(from [token] calc(l + 0.1) c h) */
-/* Transparency: oklch(from [token] l c h / 0.1) */
-```
-
-See [design.md § Deriving Variants](./design.md#deriving-variants) for full examples including `color-mix()` and `light-dark()`.
+Derive hover states and variants from existing tokens with relative colour syntax rather than creating new tokens. See [design.md § Deriving Variants](./design.md#deriving-variants) for the patterns (`oklch(from …)`, `color-mix()`, `light-dark()`).
 
 ---
 
-## Spacing System
+## Spacing
 
-Utopia-generated fluid spacing. Values scale smoothly between 375px and 1280px viewports.
+Utopia-generated fluid spacing (`--space-3xs` … `--space-3xl`) that scales smoothly between 375px and 1280px viewports, plus one-up pairs (`--space-s-m`, `--space-l-xl`, …) for gaps that jump a size as the viewport grows. Exact clamps live in `_foundation.css`; tune via the Utopia space calculator.
 
-### Base Scale
+### When to use which
 
-| Token | Clamp Value | ~Min | ~Max |
-|-------|-------------|------|------|
-| `--space-3xs` | `clamp(0.25rem, ...)` | 4px | 5px |
-| `--space-2xs` | `clamp(0.5rem, ...)` | 8px | 10px |
-| `--space-xs` | `clamp(0.75rem, ...)` | 12px | 15px |
-| `--space-s` | `clamp(1rem, ...)` | 16px | 20px |
-| `--space-m` | `clamp(1.5rem, ...)` | 24px | 30px |
-| `--space-l` | `clamp(2rem, ...)` | 32px | 40px |
-| `--space-xl` | `clamp(3rem, ...)` | 48px | 60px |
-| `--space-2xl` | `clamp(4rem, ...)` | 64px | 80px |
-| `--space-3xl` | `clamp(6rem, ...)` | 96px | 120px |
-
-### One-Up Pairs
-
-For responsive gaps that jump between sizes:
-
-| Token | Range |
-|-------|-------|
-| `--space-3xs-2xs` | 3xs → 2xs |
-| `--space-2xs-xs` | 2xs → xs |
-| `--space-xs-s` | xs → s |
-| `--space-s-m` | s → m |
-| `--space-m-l` | m → l |
-| `--space-l-xl` | l → xl |
-| `--space-xl-2xl` | xl → 2xl |
-| `--space-2xl-3xl` | 2xl → 3xl |
-
-### Usage Guidelines
-
-| Context | Recommended Token |
+| Context | Recommended token |
 |---------|------------------|
 | Micro adjustments (icon gaps) | `--space-3xs`, `--space-2xs` |
 | Component padding | `--space-s`, `--space-m` |
@@ -151,124 +90,55 @@ For responsive gaps that jump between sizes:
 
 ---
 
-## Typography System
+## Typography
 
-### Font Families
-
-```css
---font-display: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
---font-ui: 'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif;
---font-prose: 'Literata', Georgia, 'Times New Roman', serif;
---font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
-```
+### Font families
 
 | Variable | Purpose |
 |----------|---------|
-| `--font-display` | Large display typography: page titles, hero text, brand marks |
-| `--font-ui` | Interface elements AND short-form prose (document body default) |
-| `--font-prose` | Long-form reading: articles, anywhere `.longform-prose` applies |
-| `--font-code` | Code blocks, inline code |
+| `--font-display` | Large display typography: page titles, hero text, brand marks (Geist) |
+| `--font-ui` | Interface elements **and** short-form prose — the document body default (Figtree) |
+| `--font-prose` | Long-form reading: articles, anywhere `.longform-prose` applies (Literata) |
+| `--font-code` | Code blocks, inline code (Fira Code) |
 
-**Note:** The document body defaults to `--font-ui` (Figtree), so UI and short-form prose share a typeface. Long-form articles are scoped to `--font-prose` via `.longform-prose`.
+The body defaults to `--font-ui`, so UI and short-form prose share a typeface; long-form articles opt into `--font-prose` via `.longform-prose`. See `fonts.md` for the full font reference.
 
-### Fluid Type Scale
+### Type scale
 
-Utopia-generated. Scales from 375px (1.2 ratio) to 1280px (1.333 ratio):
+Utopia-generated, scaling 375px (1.2 ratio) → 1280px (1.333 ratio). **Use the semantic aliases, not the underlying `--step-N` tokens.**
 
-| Step Token | Semantic Alias | ~Min | ~Max | Usage |
-|------------|----------------|------|------|-------|
-| `--step--2` | `--font-size-xs` | 11px | 11px | Captions, labels |
-| `--step--1` | `--font-size-sm` | 13px | 15px | Metadata, small text |
-| `--step-0` | `--font-size-base` | 16px | 20px | Body text |
-| `--step-1` | `--font-size-md` | 19px | 27px | Large body, small headings |
-| `--step-2` | `--font-size-lg` | 23px | 36px | H3, card titles |
-| `--step-3` | `--font-size-xl` | 28px | 47px | H2, section titles |
-| `--step-4` | `--font-size-2xl` | 33px | 63px | H1, page titles |
-| `--step-5` | `--font-size-3xl` | 40px | 84px | Hero masthead |
+| Alias | Step | Usage |
+|-------|------|-------|
+| `--font-size-xs` | `--step--2` | Captions, labels |
+| `--font-size-sm` | `--step--1` | Metadata, small text |
+| `--font-size-base` | `--step-0` | Body text |
+| `--font-size-md` | `--step-1` | Large body, small headings |
+| `--font-size-lg` | `--step-2` | H3, card titles |
+| `--font-size-xl` | `--step-3` | H2, section titles |
+| `--font-size-2xl` | `--step-4` | H1, page titles |
+| `--font-size-3xl` | `--step-5` | Hero masthead |
 
-**Use semantic aliases** (`--font-size-base`) rather than step tokens (`--step-0`).
+### Line height, letter spacing, weight
 
-### Line Heights
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--leading-none` | 0.9 | Hero text, large display |
-| `--leading-tight` | 1.1 | Headings |
-| `--leading-snug` | 1.2 | Subheadings, UI text |
-| `--leading-normal` | 1.55 | Body text (default) |
-| `--leading-loose` | 1.7 | Long-form prose |
-
-### Letter Spacing
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--tracking-tight` | -0.02ch | Large display text |
-| `--tracking-normal` | 0 | Body text (default) |
-| `--tracking-wide` | 0.05ch | All-caps labels |
-| `--tracking-wider` | 0.1ch | Small all-caps |
-
-### Font Weights
-
-| Token | Value |
-|-------|-------|
-| `--font-weight-light` | 300 |
-| `--font-weight-normal` | 350 |
-| `--font-weight-regular` | 400 |
-| `--font-weight-medium` | 500 |
-| `--font-weight-semibold` | 600 |
-| `--font-weight-bold` | 700 |
-| `--font-weight-extrabold` | 800 |
-| `--font-weight-heavy` | 900 |
+- **Line height:** `--leading-none` (0.9, display) → `--leading-loose` (1.7, long-form prose); body defaults to `--leading-normal` (1.55).
+- **Letter spacing:** `--tracking-tight` (display) → `--tracking-wider` (small all-caps); body is `--tracking-normal`.
+- **Weight:** `--font-weight-light` (300) through `--font-weight-heavy` (900). Note `--font-weight-normal` is **350**, not 400.
 
 ### Measure
 
-```css
---measure-standard: 70ch;  /* Optimal line length for readability */
-```
+`--measure-standard` (70ch) caps line length for readability.
 
 ---
 
-## Border System
+## Borders & radius
 
-### Border Widths
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--border-width-hairline` | `max(0.0625rem, 1px)` | Subtle dividers, table cells — never subpixel, but scales with rem on high-DPI |
-| `--border-width-base` | 2px | Default borders |
-| `--border-width-thick` | 4px | Emphasis, blockquotes |
-| `--border-width-heavy` | 6px | Strong accents |
-| `--border-width-accent` | 1rem | Decorative bars |
-
-### Border Radius
-
-| Token | Value |
-|-------|-------|
-| `--radius-xs` | 0.125rem (2px) |
-| `--radius-sm` | 0.25rem (4px) |
-| `--radius-md` | 0.5rem (8px) |
-| `--radius-lg` | 0.75rem (12px) |
-| `--radius-full` | `calc(infinity * 1px)` (pills) |
+Widths run from `--border-width-hairline` (`max(0.0625rem, 1px)` — never subpixel, but scales with rem on high-DPI) up to `--border-width-accent` (1rem, decorative bars). Radii run `--radius-xs` … `--radius-lg`, plus `--radius-full` (`calc(infinity * 1px)`) for pills.
 
 ---
 
-## Motion System
+## Motion
 
-### Durations
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--duration-fast` | 150ms | Micro-interactions, hover |
-| `--duration-normal` | 200ms | Standard transitions |
-| `--duration-slow` | 300ms | Emphasis, theme changes |
-
-### Easing
-
-```css
---ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-```
-
-### Usage Pattern
+`--duration-fast` / `--duration-normal` / `--duration-slow` (150 / 200 / 300ms) paired with `--ease-in-out`:
 
 ```css
 .element {
@@ -278,14 +148,9 @@ Utopia-generated. Scales from 375px (1.2 ratio) to 1280px (1.333 ratio):
 
 ---
 
-## Shadow System
+## Shadows
 
-Uses `drop-shadow` filter for better performance with rounded corners:
-
-| Token | Usage |
-|-------|-------|
-| `--shadow-small` | Subtle elevation (cards at rest) |
-| `--shadow-medium` | Moderate elevation (cards on hover) |
+Use the `drop-shadow` filter (not `box-shadow`) so shadows follow rounded corners: `--shadow-small` (cards at rest) / `--shadow-medium` (cards on hover).
 
 ```css
 .card {
@@ -298,43 +163,22 @@ Uses `drop-shadow` filter for better performance with rounded corners:
 
 ---
 
-## @property Declarations
+## @property declarations
 
-Type-safe custom properties enabling smooth animations and type checking.
+Typed custom properties enable two things untyped variables can't: smooth animation (CSS can only interpolate typed values) and type checking. Globals live in `global.css`; hue properties are `<number>` for smooth interpolation.
 
-### Global Properties (in global.css)
-
-```css
-@property --color-accent {
-  syntax: '<color>';
-  inherits: true;
-  initial-value: oklch(70% 0.18 25);
-}
-
-@property --duration-fast {
-  syntax: '<time>';
-  inherits: true;
-  initial-value: 150ms;
-}
-```
-
-Hue properties (`--hue-coral`, etc.) are declared as `<number>` for smooth interpolation.
-
-### Component-Scoped @property
-
-Components can define their own typed properties for smooth transitions on internal state:
+Components can also declare their own scoped typed properties for transitions on internal state:
 
 ```css
-/* ContentCard.astro - enables smooth color transitions on hover */
+/* ContentCard.astro - smooth colour transition on hover */
 @property --_border-color {
   syntax: '<color>';
-  inherits: false;           /* Scoped to this component */
+  inherits: false; /* scoped to this component, won't leak to children */
   initial-value: oklch(70% 0.18 25);
 }
 
 .content-card {
   --_border-color: var(--color-accent);
-
   &::before {
     background: var(--_border-color);
     transition: background var(--duration-fast) var(--ease-in-out);
@@ -342,43 +186,21 @@ Components can define their own typed properties for smooth transitions on inter
 }
 ```
 
-**When to use component-scoped `@property`:**
-- Animating between colors (CSS can't interpolate untyped custom properties)
-- Ensuring type safety for component-internal values
-- Use `inherits: false` to prevent leaking to children
+Reach for component-scoped `@property` when animating between colours, or to type-check a component-internal value. Use `inherits: false` to keep it local.
 
 ---
 
-## Browser Support
+## Browser support
 
-All features are Baseline (widely available):
-
-| Feature | Safari | Chrome | Firefox |
-|---------|--------|--------|---------|
-| OKLCH | 15.4+ | 111+ | 113+ |
-| `light-dark()` | 17.5+ | 123+ | 120+ |
-| Relative colors | 18+ | 122+ | 128+ |
-| `@property` | 16.4+ | 85+ | 128+ |
-| Container queries | 16+ | 105+ | 110+ |
+All features used are Baseline (widely available): OKLCH, `light-dark()`, relative colours, `@property`, and container queries.
 
 ---
 
-## When to Create New Tokens
+## When to create new tokens
 
-**Don't create new tokens for:**
+**Don't** create a token for one-off values, derived values (use relative colour syntax or `calc()`), theme variants (use `light-dark()` inline), or slight variations of an existing token.
 
-- One-off values used in a single component
-- Derived values (use relative color syntax or `calc()` instead)
-- Theme-specific variants (use `light-dark()` inline)
-- Slight variations of existing tokens
-
-**Do create new tokens when:**
-
-- A value is used identically in 3+ unrelated places
-- A semantic role doesn't have an existing token (e.g., new accent color)
-- The value is foundational and likely to change site-wide
-
-**Example: Deriving vs Creating**
+**Do** create one when a value is used identically in 3+ unrelated places, a semantic role has no existing token, or the value is foundational and likely to change site-wide.
 
 ```css
 /* ❌ Don't create --color-accent-hover */
@@ -389,10 +211,7 @@ All features are Baseline (widely available):
   background: oklch(from var(--color-accent) calc(l - 0.1) c h);
 }
 
-/* ❌ Don't create --space-card-padding */
---space-card-padding: 1.5rem;
-
-/* ✅ Use existing token */
+/* ❌ Don't create --space-card-padding; ✅ use the existing token */
 .card {
   padding: var(--space-m);
 }
@@ -400,7 +219,7 @@ All features are Baseline (widely available):
 
 ---
 
-## Utopia Resources
+## Utopia resources
 
 - **Type calculator:** https://utopia.fyi/type/calculator
 - **Space calculator:** https://utopia.fyi/space/calculator

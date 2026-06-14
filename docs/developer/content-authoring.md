@@ -164,38 +164,11 @@ TypeScript will show available props. See `src/components/mdx/index.ts` for comp
 
 ### Using Images
 
-**Recommended: BasicImage component**
-
-```mdx
-import photo from '@assets/articles/my-article/photo.jpg';
-
-<BasicImage src={photo} alt="Descriptive alt text" />
-```
-
-Options:
-
-- `bleed="full"` - Extend to full viewport width
-- Automatic format optimization (WebP, AVIF)
-- Responsive srcset generation
-
-**Alternative: Astro Image component**
-
-```astro
-import { Image } from 'astro:assets';
-import photo from '@assets/articles/my-article/photo.jpg';
-
-<Image
-  src={photo}
-  alt="Descriptive alt text"
-  width={800}
-  height={600}
-  loading="lazy"
-/>
-```
+Use the `BasicImage` component (shown under [MDX Components](#mdx-components) above) — import the asset at the top of the file, then `<BasicImage src={photo} alt="…" />`. It handles format optimisation and responsive `srcset`; add `bleed="full"` to extend an image to the full viewport width. Always provide descriptive alt text.
 
 ### Cover Images
 
-Add to frontmatter:
+Add to frontmatter — `cover` is resolved by Astro's image pipeline, so use a path relative to the file:
 
 ```yaml
 ---
@@ -203,13 +176,6 @@ cover: ./path/to/cover-image.jpg
 coverAlt: 'Descriptive alt text for accessibility'
 ---
 ```
-
-### Best Practices
-
-- Always provide descriptive alt text
-- Use appropriate image formats (WebP preferred)
-- Implement lazy loading for below-fold images
-- Leverage Astro's automatic optimization
 
 ## Publishing Workflow
 

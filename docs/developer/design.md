@@ -135,7 +135,7 @@ Everything inherits these styles but UI areas can opt out of most of it using `.
 
 **Purpose:** Article-only enhancements.
 
-Only for styles specific to long-form reading that shouldn't apply elsewhere. Stles should ONLY be added to this layer via the `LongformProseTypography.astro` component, or occasionally circumstances by other components which need to override their standard styles when used inside a longform container.
+Only for styles specific to long-form reading that shouldn't apply elsewhere. Styles should ONLY be added to this layer via the `LongFormProseTypography.astro` component, or occasionally by other components that need to override their standard styles when used inside a longform container.
 
 ### Where Component Styles Go
 
@@ -253,37 +253,7 @@ Removes top margin from first child and bottom margin from last child. **Use on*
 
 ## Design Tokens
 
-Use semantic tokens from `_foundations.css`. Full reference in [design-tokens.md](./design-tokens.md).
-
-### Quick Reference
-
-```css
-/* Colors - use semantic tokens */
-color: var(--color-text);
-color: var(--color-text-secondary);
-color: var(--color-accent);
-background: var(--color-background);
-background: var(--color-background-secondary);
-border-color: var(--color-border);
-
-/* Spacing - fluid Utopia scale */
-padding: var(--space-m);
-gap: var(--space-s);
-margin-top: var(--space-l);
-
-/* Typography */
-font-size: var(--font-size-lg);
-font-weight: var(--font-weight-semibold);
-line-height: var(--leading-tight);
-letter-spacing: var(--tracking-wide);
-
-/* Motion */
-transition: color var(--duration-fast) var(--ease-in-out);
-
-/* Borders */
-border: var(--border-width-hairline) solid var(--color-border);
-border-radius: var(--radius-sm);
-```
+Always style from semantic tokens (`var(--color-text)`, `var(--space-m)`, `var(--font-size-lg)`, …) rather than hardcoded values. Full token reference — names, when-to-use, and the why — lives in [design-tokens.md](./design-tokens.md).
 
 ### Deriving Variants
 
@@ -371,45 +341,7 @@ Utilities are designed to combine. Common patterns:
 
 ### Modern Patterns to Use
 
-```css
-/* ✅ CSS nesting */
-.card {
-  padding: var(--space-m);
-
-  & a {
-    color: var(--color-accent);
-  }
-
-  &:hover {
-    filter: var(--shadow-medium);
-  }
-}
-
-/* ✅ Container queries for component responsiveness */
-.cq {
-  container-type: inline-size;
-}
-
-@container (width > 400px) {
-  .card {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ✅ :is() and :where() for grouping */
-.card :is(h1, h2, h3) {
-  margin-top: 0;
-}
-
-/* ✅ :has() for parent selection */
-.card:has(img) {
-  grid-template-columns: 1fr 2fr;
-}
-
-/* ✅ Logical properties where clearer */
-margin-block: var(--space-m);
-padding-inline: var(--space-s);
-```
+Write modern CSS: nesting, container queries (`container-type: inline-size`), `:is()`/`:where()` for grouping, `:has()` for parent selection, and logical properties (`margin-block`, `padding-inline`). For deeper guidance reach for the `css-expert` skill.
 
 ### Patterns to Avoid
 
@@ -429,18 +361,7 @@ font-size: var(--font-size-lg);
 
 **Exception:** Hero/display text can use custom `clamp()` for dramatic viewport-based scaling.
 
-**Fight the cascade with utilities, not overrides:**
-
-```css
-/* ❌ Fighting inherited prose styles */
-.my-nav a {
-  text-decoration: none;
-  color: inherit;
-}
-
-/* ✅ Use utility class */
-<nav class="ui-style">
-```
+**Fight the cascade with utilities, not overrides** — reach for `.ui-style` rather than re-resetting inherited prose styles (see [The Opt-In / Opt-Out Pattern](#the-opt-in--opt-out-pattern)).
 
 **Use semantic tokens for muted states:**
 
@@ -480,74 +401,11 @@ Don't over-engineer - only add defensive CSS to genuinely reusable components.
 
 ---
 
-## Typography System
+## Typography & Colour
 
-Typography is **central** - large, expressive, and layout-defining.
+Typography is **central** here — large, expressive, and layout-defining. Long-form articles use Literata serif with bookish enhancements (ligatures, hanging punctuation, oldstyle numerals); everything else uses the Figtree UI sans. The full type scale, line-heights, and font reference live in [design-tokens.md](./design-tokens.md) and `fonts.md`.
 
-### Article Typography (Long-form)
-
-- **Primary Font**: Literata - serif for bookish, elegant feel
-- **Base Size**: Fluid 16px→20px via Utopia scale (`--font-size-base`)
-- **Line Height**: 1.55 (`--leading-normal`); long-form prose uses 1.7 (`--leading-loose`)
-- **Advanced Features**: Ligatures, hanging punctuation (oldstyle numerals enabled in long-form articles only)
-
-### Implementation
-
-```css
-/* Typography tokens handle fluid sizing */
-.title {
-  font-size: var(--font-size-lg);
-  line-height: var(--leading-tight);
-}
-
-/* Oversized display typography */
-.display-huge {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-none);
-  letter-spacing: var(--tracking-tight);
-}
-```
-
----
-
-## Color System
-
-### Theme Architecture
-
-Three theme modes:
-
-- **Auto** - Follows system preference via `color-scheme: light dark`
-- **Light** - Warm, beige backgrounds
-- **Dark** - Deep, rich backgrounds
-
-Theme switching uses `color-scheme` property with `light-dark()` function for automatic adaptation.
-
-### Using Colors
-
-**Always use semantic tokens:**
-
-```css
-/* ✅ Semantic tokens */
-color: var(--color-text);
-color: var(--color-accent);
-background: var(--color-background);
-background: var(--color-background-secondary);
-
-/* ❌ Never hardcode */
-color: #2f3437;
-background: oklch(96% 0.02 85);
-```
-
-**Derive variants when needed:**
-
-```css
-/* Hover states - darken */
-background: oklch(from var(--color-accent) calc(l - 0.1) c h);
-
-/* Subtle backgrounds - lighten and desaturate */
-background: oklch(from var(--color-accent) 96% calc(c * 0.3) h);
-```
+Colour theming is automatic: three modes (auto / light / dark) driven by the `color-scheme` property, with `light-dark()` adapting every adaptive token. Always style from semantic tokens and derive variants rather than hardcoding (see [Deriving Variants](#deriving-variants) above).
 
 ---
 
@@ -581,25 +439,15 @@ See [component-patterns.md § Container Queries vs Media Queries](./component-pa
 
 ### Patterns
 
+Transition specific properties using the motion tokens (prefer this over `transition: all`):
+
 ```css
-/* Standard transitions */
-.interactive {
-  transition: all var(--duration-normal) var(--ease-in-out);
-}
-
-/* Specific property transitions */
 .link {
-  transition:
-    color var(--duration-fast) var(--ease-in-out),
-    text-decoration-color var(--duration-fast) var(--ease-in-out);
-}
-
-/* Focus states */
-.focusable:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+  transition: color var(--duration-fast) var(--ease-in-out);
 }
 ```
+
+Focus rings are handled globally in `@reset` (`:focus-visible` with `outline-offset`) — you rarely need to set them per-component.
 
 ---
 
