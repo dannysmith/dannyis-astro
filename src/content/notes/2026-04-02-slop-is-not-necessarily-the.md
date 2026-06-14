@@ -1,7 +1,7 @@
 ---
-title: 'Slop Is Not Necessarily The Future'
-sourceURL: 'https://www.greptile.com/blog/ai-slopware-future'
-draft: true
+title: Slop Is Not Necessarily The Future
+sourceURL: https://www.greptile.com/blog/ai-slopware-future
+draft: false
 pubDate: 2026-04-02
 ---
 
@@ -28,11 +28,5 @@ Over the last nine months or so I've built a bunch of projects with AI coding to
 When developing [Taskdn](https://tdn.danny.is/), I spent a good few days thinking and iterating on [the specification](https://tdn.danny.is/specification/overview/) for the underlying markdown/YAML files with the sole purpose of making it as **simple and uncomplex as possible**. Taskdn is made up of four completeley independant tools to reduce the complexity of each. The Obsidian plugin does three things and nothing more, and the code is uncomplicated as a result.
 
 My [recent minecraft projects](https://danny.is/notes/minecraft-bluemap-plugins/) are intentionally limited in their features for the same reason. And this (entirely vibe-coded) [menubar app](https://github.com/dannysmith/roberts-radio) is intentially a single file of swift.
-
-
-
-## Comparing Handy with Voiceink
-
-### Beans
 
 
