@@ -46,7 +46,21 @@
     font-size: var(--font-size-base);
   }
 
-  /* ----------- Links ----------- */
+  /* Heading anchor links (injected by rehype-autolink-headings).
+     A floating "#" after the heading, revealed on hover/focus. */
+  :is(h1, h2, h3, h4, h5, h6) > a[href^='#'] {
+    margin-left: 0.3em;
+    font-size: 0.7em;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-in-out);
+  }
+
+  :is(h1, h2, h3, h4, h5, h6):hover > a[href^='#'],
+  :is(h1, h2, h3, h4, h5, h6) > a[href^='#']:focus {
+    opacity: 0.6;
+  }
 
   a {
     color: var(--color-accent);

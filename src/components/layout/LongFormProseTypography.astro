@@ -85,7 +85,7 @@ const { class: className, ...props } = Astro.props;
     /* ----------- Links ----------- */
     /* Exclude footnote links - they have their own styling in global.css */
 
-    .longform-prose a:not([data-footnote-ref], [data-footnote-backref]) {
+    .longform-prose a:not([data-footnote-ref], [data-footnote-backref], [aria-hidden]) {
       color: inherit;
       text-decoration: underline;
       text-decoration-color: var(--color-accent);
@@ -97,27 +97,27 @@ const { class: className, ...props } = Astro.props;
                   text-decoration-color var(--duration-fast) var(--ease-in-out);
     }
 
-    .longform-prose a:not([data-footnote-ref], [data-footnote-backref]):visited {
+    .longform-prose a:not([data-footnote-ref], [data-footnote-backref], [aria-hidden]):visited {
       text-decoration-color: var(--color-visited);
     }
 
-    .longform-prose a:not([data-footnote-ref], [data-footnote-backref]):is(:hover, :active) {
+    .longform-prose a:not([data-footnote-ref], [data-footnote-backref], [aria-hidden]):is(:hover, :active) {
       text-decoration-color: var(--color-accent);
       color: var(--color-accent);
     }
 
-    .longform-prose a:not([data-footnote-ref], [data-footnote-backref]):focus-visible {
+    .longform-prose a:not([data-footnote-ref], [data-footnote-backref], [aria-hidden]):focus-visible {
       outline: var(--border-width-base) solid var(--color-accent);
       text-decoration: none;
     }
 
     @media (pointer: coarse) {
-      .longform-prose a:not([data-footnote-ref], [data-footnote-backref]) {
+      .longform-prose a:not([data-footnote-ref], [data-footnote-backref], [aria-hidden]) {
         text-decoration: none;
         color: var(--color-accent);
       }
 
-      .longform-prose a:not([data-footnote-ref], [data-footnote-backref]):visited {
+      .longform-prose a:not([data-footnote-ref], [data-footnote-backref], [aria-hidden]):visited {
         color: var(--color-visited);
       }
     }
