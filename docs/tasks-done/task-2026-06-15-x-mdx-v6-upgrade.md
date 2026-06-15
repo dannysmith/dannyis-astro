@@ -1,5 +1,17 @@
 # Task: Upgrade `@astrojs/mdx` to v6 and migrate to the unified Markdown processor
 
+## Outcome (2026-06-15)
+
+All three scoped steps done:
+
+1. `@astrojs/mdx` 5.0.6 → **6.0.3**.
+2. `astro.config.mjs` migrated to `markdown.processor: unified({...})` (`syntaxHighlight` left at the `markdown` level). MDX v6 extends the processor automatically — verified on a real article: reading-time, `tree`/`md preview` blocks, list-density, mermaid, footnotes, heading IDs, and `Page.astro` remapping all still run.
+3. `astro-expressive-code` 0.42.0 → **0.43.1** (now registers its plugin on the unified processor instead of the legacy `markdown.rehypePlugins` API).
+
+**The deprecation warning could NOT be fully cleared**, and that's expected. After fixing our config and Expressive Code, the warning now comes *solely* from **`astro-auto-import@0.5.1`** (our `AutoImport(...)`), which injects its MDX-imports remark plugin via the legacy `markdown.remarkPlugins` API and has no `markdown.processor` awareness. 0.5.1 is the latest published version — there is no upstream fix to pick up. Astro's `coerceLegacyMarkdownPlugins` shim merges that legacy plugin into our processor, so auto-imports keep working; the only consequence is the cosmetic warning.
+
+Decision (Danny): **accept the residual warning for now.** The legacy API isn't removed until Astro 8.0, so there's no urgency. Revisit when `astro-auto-import` ships a processor-aware release — or, if it never does, replace it with an in-repo remark plugin (registered on the processor) that injects the component imports, and drop the dependency.
+
 ## Background
 
 Astro 6.4 deprecated the top-level `markdown.remarkPlugins`, `markdown.rehypePlugins`, and `markdown.remarkRehype` config options. On every build we get this one-time warning:

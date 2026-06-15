@@ -3,7 +3,7 @@ import AutoImport from 'astro-auto-import';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
-import { rehypeHeadingIds } from '@astrojs/markdown-remark';
+import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeExternalLinks from 'rehype-external-links';
 import rehypeMermaid from 'rehype-mermaid';
@@ -87,24 +87,29 @@ export default defineConfig({
     react(),
   ],
   markdown: {
+    // syntaxHighlight stays at the markdown level — `unified()` does not accept
+    // it. The processor passes it through untouched. MDX v6 extends this
+    // processor automatically (unlike v5, which only read the legacy arrays).
     syntaxHighlight: {
       type: 'shiki',
       excludeLangs: ['mermaid'],
     },
-    rehypePlugins: [
-      rehypeHeadingIds,
-      rehypeAutolinkHeadings,
-      [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
-      [rehypeMermaid, { mermaidConfig }],
-      rehypeListDensity,
-    ],
-    remarkPlugins: [
-      remarkReadingTime,
-      remarkFootnoteDetector,
-      remarkMarkdownPreview,
-      remarkTreeBlock,
-      remarkPageComponents,
-    ],
+    processor: unified({
+      remarkPlugins: [
+        remarkReadingTime,
+        remarkFootnoteDetector,
+        remarkMarkdownPreview,
+        remarkTreeBlock,
+        remarkPageComponents,
+      ],
+      rehypePlugins: [
+        rehypeHeadingIds,
+        rehypeAutolinkHeadings,
+        [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
+        [rehypeMermaid, { mermaidConfig }],
+        rehypeListDensity,
+      ],
+    }),
   },
   redirects,
 });
