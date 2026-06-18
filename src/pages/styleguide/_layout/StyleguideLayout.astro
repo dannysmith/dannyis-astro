@@ -81,6 +81,7 @@ const { title, description, current, toc = [] } = Astro.props;
       body {
         display: grid;
         grid-template-rows: auto 1fr auto;
+        grid-template-columns: minmax(0, 1fr);
         min-height: 100vh;
       }
 
@@ -109,6 +110,17 @@ const { title, description, current, toc = [] } = Astro.props;
          section[id] blocks each page slots into the content column). */
       .styleguide-content :global(section > h2) {
         margin-block-start: var(--space-xl);
+      }
+
+      /* Styleguide pages are .astro, so their raw <table>s miss the MDX
+         table->WrappedTable remap that keeps wide tables scrollable in
+         articles. Mirror that here so a wide table scrolls instead of blowing
+         out the page. Skips tables already wrapped in .table-scroll. */
+      .styleguide-content :global(table:not(.table-scroll table)) {
+        display: block;
+        max-inline-size: 100%;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
       }
 
       h1 {
