@@ -28,7 +28,7 @@ export const GET: APIRoute = async ({ props }) => {
   if (!note.body || note.body.trim() === '') {
     return new Response(markdown.trim(), {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Type': 'text/markdown; charset=utf-8',
       },
     });
   }
@@ -55,7 +55,7 @@ export const GET: APIRoute = async ({ props }) => {
 
   return new Response(markdown, {
     headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Type': 'text/markdown; charset=utf-8',
     },
   });
 };

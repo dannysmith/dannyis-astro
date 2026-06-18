@@ -31,13 +31,16 @@ interface Props {
   // standard.site (AT Protocol) document AT-URI, for the verification link tag
   // on qualifying article/note pages (see src/utils/standard-site.ts).
   standardSiteDocumentUri?: string;
+  // Root-relative URL of the raw markdown twin for this page, for the
+  // text/markdown alternate link tag (article/note pages only).
+  markdownUrl?: string;
 }
 
 const config = getConfig();
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const robotsDirective = Astro.props.robotsDirective ?? config.seo.robotsDirective;
 const isHomepage = Astro.url.pathname === '/';
-const { standardSiteDocumentUri } = Astro.props;
+const { standardSiteDocumentUri, markdownUrl } = Astro.props;
 
 // Validate and extract props
 const seoData = validateSEOData(Astro.props);
@@ -114,6 +117,18 @@ const articleMeta = generateArticleMeta(seoData);
   title={`${config.site.name} - Notes`}
   href="/rss/notes.xml"
 />
+
+<!-- Markdown Auto-Discovery (article/note pages have a raw markdown twin) -->
+{
+  markdownUrl && (
+    <link
+      rel="alternate"
+      type="text/markdown"
+      title={`${seoData.title} (Markdown)`}
+      href={markdownUrl}
+    />
+  )
+}
 
 <!-- standard.site (AT Protocol) verification: document link tag on qualifying
      posts, publication link tag on the homepage. See src/utils/standard-site.ts. -->

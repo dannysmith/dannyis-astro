@@ -11,6 +11,9 @@ const { title, pubDate, description, sourceURL, tags, draft, styleguide } = Astr
 // Build OG image path for this note
 const ogImage = `/notes/${Astro.params.slug}/og-image.png`;
 
+// Root-relative URL of the raw markdown twin (served by [...slug].md.ts).
+const markdownUrl = `${Astro.url.pathname.replace(/\/$/, '')}.md`;
+
 // standard.site document AT-URI for the <head> verification link tag (null for
 // drafts, styleguides, or posts before the configured cutoff).
 const standardSiteDocumentUri =
@@ -29,6 +32,7 @@ const standardSiteDocumentUri =
       pubDate={pubDate}
       tags={tags}
       standardSiteDocumentUri={standardSiteDocumentUri}
+      markdownUrl={markdownUrl}
     />
   </head>
 
@@ -44,7 +48,7 @@ const standardSiteDocumentUri =
         slug={Astro.params.slug!}
       >
         <slot />
-        <MarkdownContentActions markdownUrl={`${Astro.url.pathname.replace(/\/$/, '')}.md`} />
+        <MarkdownContentActions markdownUrl={markdownUrl} />
       </NoteCard>
     </main>
 
