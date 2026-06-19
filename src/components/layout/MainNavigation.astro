@@ -45,6 +45,13 @@ const isDev = import.meta.env.MODE === 'development';
     z-index: 1000;
     background: oklch(from var(--color-background-secondary) l c h / 0.8);
     color: var(--color-accent);
+
+    /* WebKit zeroes the icon's reset `max-width: 100%` when the button is
+       sized purely by `aspect-ratio` (indefinite containing block), hiding
+       the hamburger lines. Opting out of the clamp restores them. */
+    svg {
+      max-width: none;
+    }
   }
 
   .main-navigation {
