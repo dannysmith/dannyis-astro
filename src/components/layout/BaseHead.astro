@@ -62,7 +62,7 @@ const articleMeta = generateArticleMeta(seoData);
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
 
-<!-- Font preloads (keep filenames in sync with @font-face in src/styles/_foundation.css). Literata (long-form prose) only on articles. -->
+<!-- Font preloads (keep filenames in sync with @font-face in src/styles/_foundation.css)  -->
 <link
   rel="preload"
   href="/fonts/Figtree-v2.002-2026-04-09.woff2"
@@ -118,7 +118,8 @@ const articleMeta = generateArticleMeta(seoData);
   href="/rss/notes.xml"
 />
 
-<!-- Markdown Auto-Discovery (article/note pages have a raw markdown twin) -->
+<!-- Markdown Auto-Discovery  -->
+<link rel="describedby" type="text/markdown" href="/llms.txt" />
 {
   markdownUrl && (
     <link
@@ -130,8 +131,7 @@ const articleMeta = generateArticleMeta(seoData);
   )
 }
 
-<!-- standard.site (AT Protocol) verification: document link tag on qualifying
-     posts, publication link tag on the homepage. See src/utils/standard-site.ts. -->
+<!-- standard.site (AT Protocol) verification -->
 {standardSiteDocumentUri && <link rel="site.standard.document" href={standardSiteDocumentUri} />}
 {
   isHomepage && config.standardSite.publicationUri && (
@@ -141,6 +141,7 @@ const articleMeta = generateArticleMeta(seoData);
 
 <!-- Identity etc -->
 <link rel="pgpkey" href="/key.txt" />
+<meta name="fediverse:creator" content={config.author.fediverse} />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
@@ -153,7 +154,7 @@ const articleMeta = generateArticleMeta(seoData);
 <meta name="robots" content={robotsDirective} />
 <meta name="theme-color" content={config.site.themeColor} />
 
-<!-- Open Graph / Facebook -->
+<!-- Open Graph  -->
 <meta property="og:type" content={seoData.type} />
 <meta property="og:site_name" content={config.site.shortName} />
 <meta property="og:locale" content={config.site.locale} />
@@ -171,9 +172,6 @@ const articleMeta = generateArticleMeta(seoData);
 <meta property="twitter:title" content={pageTitle} />
 <meta property="twitter:description" content={metaDescription} />
 <meta property="twitter:image" content={ogImageUrl} />
-
-<!-- Mastodon etc -->
-<meta name="fediverse:creator" content={config.author.fediverse} />
 
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLD)} />
@@ -211,7 +209,9 @@ const articleMeta = generateArticleMeta(seoData);
         // ignore unavailable storage
       }
       const resolvedTheme = apply(theme);
-      document.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme, resolvedTheme } }));
+      document.dispatchEvent(
+        new CustomEvent('theme-changed', { detail: { theme, resolvedTheme } })
+      );
     };
 
     // Public API consumed by ThemeToggle.
