@@ -36,7 +36,7 @@
 
     /* Hyphenation defaults (applied when hyphens: auto is enabled) */
     hyphenate-character: '‐'; /* U+2010 true hyphen, not ASCII hyphen-minus */
-    hyphenate-limit-chars: auto 2 3; /* min 2 chars before, 3 after break */
+    hyphenate-limit-chars: 7 3 4; /* min 3 chars before, 4 after break, only words with at least 7 chars */
 
     /* Prevent layout shift when scrollbars appear */
     scrollbar-gutter: stable;
