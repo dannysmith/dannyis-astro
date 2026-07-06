@@ -1,8 +1,7 @@
 ---
-title: Introducing my very own Loom
+title: LoomClone 1 Introducing my very own Loom
 draft: true
-toc: false
-pubDate: 2026-05-22
+pubDate: 2027-01-01
 ---
 
 <IntroParagraph>
@@ -500,15 +499,3 @@ I don't use these endpoints to embed videos on this site...
 
 - `/llms.txt`
 - `/` hints for LLMs and machines etc
-
-## Infrastructure
-
-To keep things simple on the server side the Backend API, Admin Web App and Viewer-facing Surface are all part of a single Hono app. This is backed by a SQLite database and intentionally has very few dependencies. The server is deployed to a cheap Hetzner VPS in Europe as a docker container, with public-facing endpoints behind BunnyCDN.
-
-- The Server
-- Docker & Volumes
-- Deployment
-- BunnyCDN & Cache Busting
-- Backups
-
-## Wrapping Up

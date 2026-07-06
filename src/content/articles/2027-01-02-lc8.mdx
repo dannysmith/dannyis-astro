@@ -1,0 +1,19 @@
+---
+title: "LoomClone 8: How it's deployed"
+draft: true
+pubDate: 2027-01-01
+---
+
+To keep things simple on the server side the Backend API, Admin Web App and Viewer-facing Surface are all part of a single Hono app. This is backed by a SQLite database and intentionally has very few dependencies. The server is deployed to a cheap Hetzner VPS in Europe as a docker container, with public-facing endpoints behind BunnyCDN.
+
+## The Server itself
+
+## Docker, Shared volumes and the like
+
+## The deployment pipeline
+
+## The CDN and cacheing
+
+## The cron jobs
+
+## Wrapping up

@@ -1,0 +1,101 @@
+---
+title: 'How my personal Loom works – an overview'
+draft: true
+pubDate: 2027-01-01
+slug: loomclone-part-2
+---
+
+<Callout>
+This is the first in a series of articles covering my new video platform:
+
+1. Part 1 - [Introducing my very own loom](/writing/loomclone-part-1)
+2. Part 2 - **How my personal Loom works – an overview**
+</Callout>
+
+
+
+## The recording lifecycle, a walkthrough
+
+The best way to explain the finer details is for us to walk through the recording process together...
+
+### 1. We Open the Menubar App
+
+When I open the menubar popover, lightweight preview sessions start for the camera and audio devices and the app begins polling for new devices and capturing screenshots for previewing the selected display. It also checks the server is reachable and the local data directory is writable. All this is torn down once the menubar popover is closed.
+
+I select my input devices, check they look & sound okay in the preview and…
+
+### 2. We Hit Record
+
+The recording toolbar shows a short countdown to me while in the background:
+
+1. We immediately start capture sessions for the available devices so they have time to warm up, check the audio source is actually providing samples and spin up the various writer sessions so they’re warm.
+2. We hit the server to generate a UUID and unique slug, create a new video record and the required data directory on the server. The UUID and slug are returned.
+3. We use the UUID to create a local data directory and an `init.mp4` to act as entrypoint for the local `m4s` segments.
+
+When the countdown finishes we initiate an internal metronome and begin the various writers.
+
+### 3. During Recording
+
+We use two capture sessions: one for the screen and another for the camera+audio together (or just the audio of there’s no camera feed). These feed an orchestrator which maintains a metronome & recording clock, handles users pausing/unpausing (by pausing the clock), and deals with things like frame caching. It also writes three files to disk locally, directly from the capture sessions:
+
+- `screen.mov` - The “raw” output of the ProRes screen capture session.
+- `camera.mp4` - The “raw” output of the H.264 camera capture session, ignoring any adjustments to white balance & brightness. It includes an audio track.
+- `audio.m4a` - The “raw” audio from the mic.
+
+These are never sent to the server, but having the raw recordings locally means I can always pull them into Final Cut Pro if I need to do some proper editing. They also act as a reliable backup if composition fails.
+
+The video we send to the server is *composited* from the capture streams using the upload resolution and framerate selected before recording.
+
+- Camera adjustments for white balance & brightness are applied to the camera feed.
+- The camera and screen feeds are downscaled and/or cropped to an appropriate size and aspect ratio for the recording, taking into account the selected stream quality.
+
+<Callout title="User Actions While Recording">
+The following user actions will affect the composited recording.
+
+- Pressing **pause** in the toolbar will temporarily pause all recording streams until **unpause** is pressed.
+- Pressing **chapter marker** in the toolbar will add an anonymous marker to the recording timeline which can later be edited in the admin app to create viewer-facing chapter markers. If pressed while paused it will be added at the next unpause timestamp.
+- Changing the **mode** in the toolbar will cause the composited recording to show the relevant feed (screen or camera). In screen & camera mode the camera feed is rendered as a small circular overlay in a corner of the screen.
+- Moving the camera preview from one quadrant to another (eg. from bottom-right to top-left) will cause it to be shown in that corner in the composited output when in screen & camera mode.
+</Callout>
+
+The composited video is then encoded at an appropriate bitrate and written to disk as series of ~4s  `.m4s` segments before being streamed to the server via a queue of simple `PUT` requests. Failed `PUT`s are retried sensibly: even a ~10min connection loss will just cause the queued segments to stream up on reconnection. These `PUT`s are idempotent on the server.
+
+There are a couple of other resilience details worth a mention. If the Metal compositor hangs or returns a bad frame – which can happen under sustained GPU pressure – we detect it, rebuild the context and carry on. And when the screen content isn't changing for a while (eg. I'm holding on a slide while talking to camera) we emit synthetic *keep-alive* frames so the HLS segments never go empty and break the playlist.
+
+A recording timeline is periodically written to a temporary file on disk to facilitate recovery if anything goes wrong.
+
+### 4. We Hit Stop: client-side
+
+When we hit stop, the capture sessions are terminated and the writer processes are terminated after their next write job finishes. If the `UploadActor` queue isn’t empty it’s given ten seconds to finish uploading before any remaining are marked as *failed* locally.
+
+The recording timeline is used to write a `recording.json` to disk which includes:
+
+- Basic info like UUID, start/end timestamps, duration etc.
+- Details of the input source hardware and raw writers used.
+- Details of the composited writer including the encoder and streaming settings.
+- A log of timeline events during recording, each of which includes:
+	- `kind` - type of event (eg `segment.uploaded` or `modeChange.CamOnly`).
+	- `t` - time of event as seconds since metronome `T0`.
+	- `wallClock` - datetime of event per OS clock as UTC.
+	- `data` - Other stuff as object. Depends on the kind of event.
+- A log of segments written, each of which includes:
+	- `bytes` - size of the segment.
+  - `durationSeconds` - segment duration.
+  - `emittedAt` - Metronome time the segment was emitted.
+  - `filename` - Filename on local filesystem (eg `seg_000.m4s`).
+  - `index` - Order of segments chronologically (as recorded).
+  - `uploaded` - True if any `PUT` for the segment returned OK, false if not.
+
+The data above is then `POST`ed to `/:id/complete` which tells the server our client is done recording. This kicks off the async post-processing pipeline below.
+
+### 6. We hit stop: server-side
+
+## Sharing a video
+
+With the HLS segments on the server already, the public URL is instantly shareable (and now on our clipboard), even before any post-processing tasks are started. If we want to quickly edit the title, slug or visibility we can do so directly in the menubar app, or use it to open the video in the admin web app.
+
+## What's actually happening during recording?
+
+## Designing the post-processing pipeline
+
+## End state after recording and post-processing
