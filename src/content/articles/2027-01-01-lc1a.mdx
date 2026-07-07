@@ -1,16 +1,8 @@
 ---
 title: 'Introducing my very own Loom'
-draft: true
-pubDate: 2027-01-01
+pubDate: 2026-07-07
 slug: loomclone-part-1
 ---
-
-<Callout>
-This is the first in a series of articles covering my new video platform:
-
-1. Part 1 - **Introducing my very own loom**
-2. Part 2 – [How my personal Loom works – an overview](/writing/loomclone-part-2)
-</Callout>
 
 <IntroParagraph>
 Over the past couple of months I've been building a personal video-sharing platform to replace  [Loom](https://loom.com/), partly so it works how I've always wanted Loom to work and partly so I have long-term control over my own videos. Its basic functionality is broadly equivalent to Loom minus the stuff I never use, plus some me-specific extras. Building what I'm currently calling *LoomClone* has been mad fun and I've learned a **ton** (this is my first proper native macOS app, among other things).
@@ -31,14 +23,14 @@ Loom's whole business is built on being brilliant at (1) and while they do (2) k
 2. **I don't have much control over the viewer experience.** Loom controls how my videos are served to viewers: It's impossible for me to control things like RSS feeds, custom embed players, SEO and text-based endpoints to the degree I want.
 3. **The camera feed isn't first class unless I'm in *cam-only* mode.** Most of my longer videos involve cutting between talking-head and screenshare segments. Loom doesn't let you do that with a fullscreen, high-quality camera feed mid-recording. This has always been mega frustrating for me.
 4. **Reliability & Recomposability.** Loom recordings rarely fail, but when they do it's invariably a 30-minute single take in which I was *fucking inspired* and will never repeat quite as well after picking my smashed laptop off the floor. If you've been here you **know** how that feels. And it's only *slightly* less frustrating to realise a whole segment which should've been *talking-head* is actually a recording of my empty desktop with a voiceover on top. And there's nothing I can do because the camera feed wasn't even captured.
-5. **The mac app is not a mac app.** Loom's macOS app is built on Electron and bundles a custom build of [ffmpeg](https://ffmpeg.org/) alongside the usual Chromium. I get why they do this but as I'm always on Apple Silicon, a proper native mac app is likeley to be way more performant for heavy stuff like video capture in all sorts of ways (even before taking advantage of lower-level OS APIs).
+5. **The mac app is not a mac app.** Loom's macOS app is built on Electron and bundles a custom build of [ffmpeg](https://ffmpeg.org/) alongside the usual Chromium. I get why they do this but as I'm always on Apple Silicon, a proper native mac app is likely to be way more performant for heavy stuff like video capture in all sorts of ways (even before taking advantage of lower-level OS APIs).
 6. **All the features I don't want.** Any product with a wide audience will have features I don't want. I'm cool with that even though I can't turn many of them off. But in 2026, any product like Loom will likely have features nobody at all wants because *a)* it can never be finished unless it's been abandoned, and *b)* it's gonna be **stuffed full of nonsense AI features**.
 
 I tried [switching to Cap](/notes/loom-to-cap/) because it's open source and I can use my own domain, but while it isn't terrible it doesn't feel like a platform I wanna bet on long-term. And so we arrive at the thought... **what if I built my own?** 🤔
 
 Which is just what I've been doing...
 
-<Callout color="blue" emoji="📜" title="Core Principles">
+<Callout type="blue" emoji="📜" title="Core Principles">
 
 Given the massive potential for scope creep here, I started by defining some core principles. These underpin almost all the product decisions I've made along the way.
 
@@ -64,7 +56,7 @@ It's helpful to think about LoomClone as four separate things, each with a disti
 
 1. **The macOS recording app**. A native macOS menubar app for recording videos with as little friction as possible. Its only job is helping me get set up for a recording quickly and then streaming it up to the server once I hit record while dealing properly with all the pausing and mode switching that happens during recording.
 
-2. **The backend API**. A web API which receives data from the mac app and handles storage, background post-processing, backup, error recovery and the like. It's job is working with the mac app to get recordings on a server and ready for public consumption in a reliable way.
+2. **The backend API**. A web API which receives data from the mac app and handles storage, background post-processing, backup, error recovery and the like. Its job is working with the mac app to get recordings on a server and ready for public consumption in a reliable way.
 
 3. **The admin app**. A web interface for managing, editing and working with my videos, optimised for the workflows I personally care about most. Ideally, I'll rarely use it but when I do, its job is to make whatever I need as easy and painless as possible.
 
@@ -76,7 +68,7 @@ We'll go into detail about *how* these work later but for now it's important to 
 
 The menubar app is deliberately very simple. Clicking it opens a popover like this.
 
-![The LoomClone menubar popover showing display, camera and mic selectors, a recording preview, a sound meter, white balance and brightness sliders, and the starting-mode, quality and framerate controls](../../assets/articles/2026-07-06-lc-menubar-app-1.png)
+![The LoomClone menubar popover showing display, camera and mic selectors, a recording preview, a sound meter, white balance and brightness sliders, and the starting-mode, quality and framerate controls](../../assets/articles/2026-07-06-lc-menubar-app-1.png 'The pre-recording menubar app')
 
 Here's what each control is for...
 
@@ -125,8 +117,8 @@ From left to right the controls are...
 
 When in a camera mode a draggable preview of the camera feed is shown as an overlay while recording. This is circular when in screen-and-camera and rectangular when in camera-only mode.
 
-![A recording in picture-in-picture mode with a circular camera preview overlaid in the corner of the screen](../../assets/articles/2026-07-06-lc-recording-pip.png)
-![A recording in camera-only mode with a large rectangular camera preview](../../assets/articles/2026-07-06-lc-recording-camonly.png)
+![A recording in picture-in-picture mode with a circular camera preview overlaid in the corner of the screen](../../assets/articles/2026-07-06-lc-recording-pip.png 'Recording in camera-and-screen mode')
+![A recording in camera-only mode with a large rectangular camera preview](../../assets/articles/2026-07-06-lc-recording-camonly.png 'Recording in camera-only mode')
 
 Neither the camera preview nor toolbar are captured in the actual screen recording, but dragging the camera preview between quadrants of the screen will cause the camera overlay in the final recording to move to that corner of the screen.
 
@@ -146,9 +138,9 @@ It shows the title, length and date at the top (plus any public tags – more on
 
 While the page is intentionally simple, fully controlling its underlying code means I've been able to ensure these URLs embed properly in Notion and Google docs, have appropriate rich preview data when shared, and – for public videos – are discoverable via appropriate SEO, RSS feeds and the like.
 
-![A LoomClone video embedded and playing inline within a Notion page](../../assets/articles/2026-07-06-lc-embedding-notion.png)
+![A LoomClone video embedded and playing inline within a Notion page](../../assets/articles/2026-07-06-lc-embedding-notion.png 'A video URL embedded in a notion page')
 
-![A LoomClone video link shared in WhatsApp showing a rich preview with thumbnail and title](../../assets/articles/2026-07-06-lc-whatsapp-share.png)
+![A LoomClone video link shared in WhatsApp showing a rich preview with thumbnail and title](../../assets/articles/2026-07-06-lc-whatsapp-share.png 'A video URL shared in WhatsApp')
 
 Here's a quick 3-minute run-through of the video player itself, plus a few little easter eggs.
 
@@ -156,7 +148,7 @@ Here's a quick 3-minute run-through of the video player itself, plus a few littl
 
 The only other part of the public surface I should mention is **tag pages**, but first a note on visibility...
 
-<Callout title="Visibility" type="blue">
+<Callout title="Visibility" type="blue" emoji="👀">
 A video's *visibility* can be one of three values:
 - **Unlisted** is the default. These are publicly available but are not easily *discoverable* unless you know the URL. The vast majority of my videos are of this type.
 - **Public** videos are additionally discoverable via things like RSS & JSON feeds, and are indexed by search engines.
@@ -165,7 +157,7 @@ A video's *visibility* can be one of three values:
 
 As we'll see shortly, **tags** mainly exist to help organise my recordings in the admin app. But like videos themselves, tags can be *private*, *unlisted* or *public*. And public tags have their own **tag pages** which serve as public collections (or playlists) which look like this.
 
-![A public tag page on v.danny.is listing several videos as a collection or playlist](../../assets/articles/2026-07-07-lc-tagpage-public-demo.png)
+![A public tag page on v.danny.is listing several videos as a collection or playlist](../../assets/articles/2026-07-07-lc-tagpage-public-demo.png 'Example of a tag page')
 
 We'll dig into some of the more interesting features and subtleties of the public surface in subsequent articles, but for now I wanna give you a quick tour of the admin app for all this.
 
