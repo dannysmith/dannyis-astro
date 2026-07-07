@@ -9,6 +9,7 @@ interface Props {
   bleed?: 'left' | 'right' | 'full';
   alt?: string;
   showAlt?: boolean;
+  caption?: string;
   sourceUrl?: string;
   sourceTitle?: string;
   framed?: boolean;
@@ -21,10 +22,16 @@ const {
   bleed = null,
   alt = '',
   showAlt = false,
+  caption,
   sourceUrl,
   sourceTitle,
   framed = false,
 } = Astro.props;
+
+// A caption (explicit prop, or markdown image title) takes precedence over the
+// alt text. `showAlt` falls back to rendering the alt as the caption.
+const captionText = caption || (showAlt ? alt : '');
+const showCaption = Boolean(captionText);
 
 // Use glob import to get all images
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*');
@@ -89,13 +96,13 @@ const sizes =
     }
   </div>
   {
-    showAlt &&
+    showCaption &&
       (sourceUrl ? (
         <figcaption>
-          {alt} (source: <a href={sourceUrl}>{sourceTitle}</a>)
+          {captionText} (source: <a href={sourceUrl}>{sourceTitle}</a>)
         </figcaption>
       ) : (
-        <figcaption>{alt}</figcaption>
+        <figcaption>{captionText}</figcaption>
       ))
   }
 </figure>

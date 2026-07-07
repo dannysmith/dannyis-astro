@@ -1114,10 +1114,16 @@ Provide a title to skip the fetch or override it:
           <td>Adds a border and subtle shadow. Intended only for use when an image's background is too similar to the page background.</td>
         </tr>
         <tr>
+          <td><code>caption</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Visible caption, independent of the alt text. Takes precedence over <code>showAlt</code>.</td>
+        </tr>
+        <tr>
           <td><code>showAlt</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
-          <td>Show the alt text as a visible caption.</td>
+          <td>Show the alt text as a visible caption (fallback when no <code>caption</code> is set).</td>
         </tr>
         <tr>
           <td><code>sourceUrl</code> / <code>sourceTitle</code></td>
@@ -1172,6 +1178,29 @@ Provide a title to skip the fetch or override it:
     </ResizableContainer>
 
     <h3 id="basic-image-caption">With caption</h3>
+    <p>
+      Use the <code>caption</code> prop for a caption that differs from the alt text. In
+      <code>.mdx</code> content you can also add it to a plain markdown image via its title (the third
+      quoted argument); the <code>img → BasicImage</code> remapping isn't available in <code>.md</code>,
+      so there the title stays a native <code>title</code> attribute.
+    </p>
+    <Code
+      lang="md"
+      code={'![Accessible alt text](/src/assets/articles/styleguide-image.jpg \'Caption shown to readers\')'}
+    />
+    <Code
+      lang="mdx"
+      code={'<BasicImage\n  src="/src/assets/articles/styleguide-image.jpg"\n  alt="Accessible alt text"\n  caption="Caption shown to readers"\n/>'}
+    />
+    <ResizableContainer>
+      <BasicImage
+        src="/src/assets/articles/styleguide-image.jpg"
+        alt="Accessible alt text"
+        caption="Caption shown to readers"
+      />
+    </ResizableContainer>
+
+    <p>The alt text can be reused as the caption with <code>showAlt</code>, plus an optional source credit:</p>
     <Code
       lang="mdx"
       code={'<BasicImage\n  src="/src/assets/articles/styleguide-image.jpg"\n  alt="Modern architectural details with natural light"\n  showAlt\n  sourceUrl="https://unsplash.com"\n  sourceTitle="Unsplash"\n/>'}

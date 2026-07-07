@@ -115,9 +115,22 @@ import photo from '@assets/articles/my-article/photo.jpg';
 
 <BasicImage src={photo} alt="Descriptive alt text" />
 <BasicImage src={photo} alt="Full width" bleed="full" />
+<BasicImage src={photo} alt="Accessible alt" caption="Caption shown to readers" />
 ```
 
 (The image asset still needs importing — only the `BasicImage` component is auto-imported.)
+
+A `caption` renders as a `<figcaption>` and is independent of the alt text (it takes
+precedence over `showAlt`). `sourceUrl`/`sourceTitle` still append a source credit to it.
+In `.mdx` files you can also add a caption to a plain markdown image via its title string —
+the third quoted argument becomes the caption:
+
+```mdx
+![Accessible alt text](./photo.jpg 'Caption shown to readers')
+```
+
+This is `.mdx`-only: in `.md` files the `img → BasicImage` remapping doesn't run, so the
+title stays a standard HTML `title` attribute and no caption is rendered.
 
 **FileTree** - File/directory trees from a plain-text `tree` fenced code block (no import — a build-time remark plugin renders it):
 

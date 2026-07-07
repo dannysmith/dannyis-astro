@@ -13,6 +13,7 @@ import { remarkFootnoteDetector } from './src/lib/remark-footnote-detector.mjs';
 import { remarkMarkdownPreview } from './src/lib/remark-markdown-preview.mjs';
 import { remarkTreeBlock } from './src/lib/remark-tree-block.mjs';
 import { remarkPageComponents } from './src/lib/remark-page-components.mjs';
+import { remarkImageCaption } from './src/lib/remark-image-caption.mjs';
 import { rehypeListDensity } from './src/lib/rehype-list-density.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
@@ -112,6 +113,7 @@ export default defineConfig({
         remarkMarkdownPreview,
         remarkTreeBlock,
         remarkPageComponents,
+        remarkImageCaption,
       ],
       rehypePlugins: [
         rehypeHeadingIds,
