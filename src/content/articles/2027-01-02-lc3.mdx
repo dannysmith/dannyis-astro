@@ -8,18 +8,48 @@ Intro
 
 ## The Video Page
 
+[IMAGE Video Page]
+
+- Basic info shown
+- The Player: versions, poster, subtitles, storyboard, transcriptions etc.
+- SEO, Metadata, JSONL, Microformats etc
+- Preload, HTTP Headers etc
+
 ## The Video Player
 
 ## Tag Pages
+
+[IMAGE Tag Page]
 
 ## Discoverability
 
 ### RSS & JSON Feeds
 
+- `/feed.xml` (and `/rss`)
+- `/feed.json`
+- `/:tag/feed.xml` and `/:tag/feed.json`
+
 ### AI-Facing Features
+
+- `/llms.txt`
+- `/` hints for LLMs and machines etc
 
 ## Other Formats
 
-## Embeddings
+- `/:slug.json`
+- `/:slug.md`
+- `/:slug.mp4`
+
+## Embedding
+
+[IMAGE Video Embed Page]
+
+- Poster Frame etc from vidstack.
+- `/:slug/embed`
+- The `/oembed` URL
+
+<Callout title="Embedding on this site">
+I don't use these endpoints to embed videos on this site...
+</Callout>
 
 ## Semantic HTML and Accessibility
