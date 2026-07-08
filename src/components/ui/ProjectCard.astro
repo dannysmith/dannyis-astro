@@ -1,6 +1,8 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import { render } from 'astro:content'
 import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
 import Pill from '@components/ui/Pill.astro'
 
 // Stage → badge label + colour. Type is derived from the schema, so adding a
@@ -20,7 +22,10 @@ interface Props {
 }
 
 const { project } = Astro.props
-const { title, byline, stage, audience, icon, website, github } = project.data
+const { title, byline, stage, audience, icon, image, website, github } = project.data
+
+// The markdown body of the project, rendered inline (no per-project pages).
+const { Content } = await render(project)
 
 // Only surface audience as a hint when it's not the plain "public" case.
 const audienceHint =
@@ -35,7 +40,7 @@ const audienceHint =
   <div class="icon">
     {
       icon ? (
-        <Image src={icon} alt={`${title} icon`} width={64} height={64} />
+        <Image src={icon} alt={`${title} icon`} width={128} height={128} />
       ) : (
         <span class="icon-fallback" aria-hidden="true">
           {title.charAt(0)}
@@ -55,13 +60,176 @@ const audienceHint =
       <h4 class="byline">{byline}</h4>
     </div>
 
+    <div class="content flow">
+      <Content />
+      {
+        (website || github) && (
+          <div class="links">
+            {website && (
+              <a
+                class="project-button"
+                data-variant="primary"
+                href={website}
+                target="_blank"
+                rel="noopener"
+              >
+                <span class="label">{title} Website</span>
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            )}
+            {github && (
+              <a
+                class="project-button"
+                data-variant="secondary"
+                href={github}
+                target="_blank"
+                rel="noopener"
+              >
+                <Icon name="social/github" />
+                <span class="label">GitHub Repo</span>
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            )}
+          </div>
+        )
+      }
+    </div>
   </div>
+
+  {image && <Image class="project-image" src={image} alt="" width={1000} />}
 </article>
 
 <style>
   .project-card {
-    padding: var(--space-4);
+    padding: 2rem;
     border-radius: var(--radius-lg);
-    background-color: var(--color-surface);
+    background-color: var(--color-background-secondary);
+    margin: 2rem;
+  }
+
+  .header {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+
+    h3 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-extrabold);
+    }
+
+    h4 {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-light);
+      margin-block-start: 0;
+    }
+  }
+
+  .icon {
+    --_icon-size: 4rem;
+    inline-size: var(--_icon-size);
+  }
+
+  .icon :is(img, .icon-fallback) {
+    inline-size: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+  }
+
+  .icon img {
+    object-fit: cover;
+  }
+
+  .icon-fallback {
+    display: grid;
+    place-items: center;
+    background-color: var(--color-text);
+    color: var(--color-background);
+    font-family: var(--font-display);
+    font-size: calc(var(--_icon-size) * 0.55);
+    font-weight: var(--font-weight-extrabold);
+    line-height: 1;
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-s);
+  }
+
+  .project-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em 1em;
+    min-height: 44px;
+
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-tight);
+    text-decoration: none;
+
+    border-radius: var(--radius-full);
+    transition:
+      background-color var(--duration-fast) var(--ease-in-out),
+      border-color var(--duration-fast) var(--ease-in-out),
+      color var(--duration-fast) var(--ease-in-out);
+
+    &:active {
+      scale: 0.98;
+    }
+
+    /* Primary (website): solid accent, always dark text for contrast. */
+    &[data-variant='primary'] {
+      background-color: var(--color-accent);
+      color: var(--color-ink);
+
+      &:visited {
+        color: var(--color-ink);
+      }
+
+      &:hover {
+        background-color: oklch(from var(--color-accent) calc(l - 0.1) c h);
+      }
+    }
+
+    /* Secondary (GitHub): outline that picks up the accent on hover. */
+    &[data-variant='secondary'] {
+      background-color: transparent;
+      color: var(--color-text);
+      border: var(--border-width-hairline) solid var(--color-border);
+
+      &:visited {
+        color: var(--color-text);
+      }
+
+      &:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+      }
+    }
+
+    & svg {
+      inline-size: 1.15em;
+      block-size: 1.15em;
+    }
+
+    & .arrow {
+      transition: translate var(--duration-fast) var(--ease-in-out);
+    }
+
+    &:hover .arrow {
+      translate: 0.2em 0;
+    }
+  }
+
+  .project-image {
+    border-radius: var(--radius-md);
   }
 </style>

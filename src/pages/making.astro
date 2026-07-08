@@ -21,7 +21,7 @@ const projects = getSortedProjects(await getCollection('projects'));
     <main id="main" tabindex="-1" class="ui-style">
       <LLMDiscoveryNote />
       <h1 class="title">Making</h1>
-      <div class="project-grid">
+      <div class="projects">
         {projects.map(project => <ProjectCard project={project} />)}
       </div>
     </main>
