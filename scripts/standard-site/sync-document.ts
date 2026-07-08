@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env bun
 /**
  * Sync blog posts to AT Protocol as site.standard.document records.
  *
