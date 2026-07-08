@@ -1,11 +1,10 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*", "src/types/*.d.ts"],
+  "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist", ".unlighthouse"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "strictNullChecks": true,
-    "allowImportingTsExtensions": true,
+    "jsxImportSource": "react",
     "paths": {
       "@components": ["./src/components/index.ts"],
       "@components/*": ["./src/components/*"],
@@ -17,14 +16,11 @@
       "@components/mdx/*": ["./src/components/mdx/*"],
       "@components/ui": ["./src/components/ui/index.ts"],
       "@components/ui/*": ["./src/components/ui/*"],
-      "@components/styleguide": ["./src/components/styleguide/index.ts"],
-      "@components/styleguide/*": ["./src/components/styleguide/*"],
       "@layouts/*": ["./src/layouts/*"],
       "@assets/*": ["./src/assets/*"],
       "@config/*": ["./src/config/*"],
       "@lib/*": ["./src/lib/*"],
       "@utils/*": ["./src/utils/*"]
-    },
-    "jsxImportSource": "react"
+    }
   }
 }
