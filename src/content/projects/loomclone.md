@@ -1,9 +1,12 @@
 ---
 title: LoomClone
-byline: My own video recording and hosting setup to replace Loom.
+byline: My own video recording and hosting setup to replace Loom
 stage: finished
 audience: personal-only
 kind: toy
+icon: ../../assets/projects/loomclone-icon.png
+image: ../../assets/projects/loomclone-image.png
+github: https://github.com/dannysmith/loom-clone/
 startDate: 2023-01-01
 ---
 

@@ -1,14 +1,16 @@
 ---
 title: Taskdn
-byline: Managing tasks and projects as plain markdown files.
+byline: Local-first task management system, based on plain markdown files
 stage: active-development
 audience: public-with-dragons
 kind: proper
+icon: ../../assets/projects/taskdn-icon.png
+image: ../../assets/projects/taskdn-image.png
 website: https://tdn.danny.is
+github: https://github.com/dannysmith/taskdn
 featured: true
 startDate: 2025-09-01
 ---
 
-A system for managing tasks and projects as plain markdown files — a desktop app,
-a CLI, a Claude plugin and an Obsidian plugin, among other things. Very much in
-alpha: it works for me, but here be dragons.
+A personal task management where everything is plain old markdown files. Includes a desktop app,
+CLI, Obsidian plugin and Claude plugin.
