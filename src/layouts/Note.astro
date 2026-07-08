@@ -44,7 +44,7 @@ const standardSiteDocumentUri =
 
   <body>
     <MainNavigation />
-    <main style={`--vt-name: note-${Astro.params.slug}`}>
+    <main id="main" tabindex="-1" style={`--vt-name: note-${Astro.params.slug}`}>
       <LLMDiscoveryNote />
       <NoteCard
         title={title}

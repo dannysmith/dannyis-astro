@@ -17,6 +17,11 @@
     background-color: var(--color-background);
   }
 
+  /* <main> carries tabindex="-1" as the skip-link target. Suppress focus ring for it */
+  main:focus {
+    outline: none;
+  }
+
   /* ===== HR ===== */
   hr {
     border: var(--border-width-hairline) solid var(--color-border);

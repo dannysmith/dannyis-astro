@@ -2,9 +2,11 @@
 import { Icon } from 'astro-icon/components';
 import { NavLink, ThemeToggle } from '@components/navigation/index';
 import { PersonalLogo } from '@components/ui/index';
+import SkipLink from './SkipLink.astro';
 const isDev = import.meta.env.MODE === 'development';
 ---
 
+<SkipLink />
 <button class="nav-open" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-navigation">
   <Icon name="heroicons:bars-3-20-solid" />
 </button>

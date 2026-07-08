@@ -20,7 +20,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
   </head>
   <body>
     <MainNavigation />
-    <main class="ui-style">
+    <main id="main" tabindex="-1" class="ui-style">
       <LLMDiscoveryNote />
       <h1 class="title">Writing</h1>
       <section class="writing-index">

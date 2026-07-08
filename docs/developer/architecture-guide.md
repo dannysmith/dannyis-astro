@@ -116,8 +116,7 @@ document.addEventListener('theme-changed', (e) => {
 
 **Cross-references:**
 
-- See [design.md](./design.md) for complete CSS architecture details
-- See [design.md](./design.md) for color system specification
+- See [design.md](./design.md) for complete CSS architecture details and color system specification
 - See [component-patterns.md](./component-patterns.md) for theme-aware component patterns
 
 ### View Transitions

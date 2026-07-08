@@ -7,6 +7,7 @@ Site-specific accessibility and performance patterns. For the underlying standar
 The baseline is **WCAG 2.1 AA** and full keyboard operability for every interactive element.
 
 - **Reach for semantic HTML first** (`article`, `header`, `section`, `nav`, `time`, `button`) and only add ARIA when an element's role/state isn't already conveyed. Hidden-but-announced text uses the `.sr-only` utility.
+- **Skip link.** `SkipLink` renders first in the DOM on every page (inside `MainNavigation`, ahead of the nav), targeting `<main id="main" tabindex="-1">`. Every page needs that `<main id="main" tabindex="-1">` so the link has a focusable target — layouts already include it, but add it when hand-rolling a page's `<body>`.
 - **Focus rings are global.** The reset layer in `global.css` sets `:focus-visible` with `outline-offset: 3px`, so you rarely need per-component focus styles. See [component-patterns.md § Accessible Interactive Component](./component-patterns.md#accessible-interactive-component) for a full example.
 - **Colour contrast** must meet AA in both themes — test light and dark.
 

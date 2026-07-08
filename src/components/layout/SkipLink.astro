@@ -1,0 +1,33 @@
+---
+// "Skip to content" link for keyboard and screen-reader users (WCAG 2.4.1
+// Bypass Blocks). Rendered as the first focusable element on every page, ahead
+// of the navigation. Hidden off-screen until focused, then revealed as a chip
+// at the top-left. Targets <main id="main" tabindex="-1"> so focus genuinely
+// lands inside the content. Zero JavaScript.
+---
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: var(--space-s);
+    left: var(--space-s);
+    /* Sits above the navigation when revealed. */
+    z-index: 1001;
+    padding: var(--space-2xs) var(--space-s);
+    background: var(--color-accent);
+    color: var(--color-ink);
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    text-decoration: none;
+
+    /* Hidden off-screen by default and revealed on focus. */
+    transform: translateY(calc(-100% - var(--space-s)));
+
+    &:focus {
+      transform: translateY(0);
+    }
+  }
+</style>

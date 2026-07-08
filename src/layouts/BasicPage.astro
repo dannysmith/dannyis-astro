@@ -10,7 +10,7 @@ const { frontmatter } = Astro.props;
   </head>
   <body>
     <MainNavigation />
-    <main class="content">
+    <main id="main" tabindex="-1" class="content">
       <LLMDiscoveryNote />
       <slot />
     </main>

@@ -48,7 +48,7 @@ const { title, description, current, toc = [] } = Astro.props;
           </nav>
         )
       }
-      <main class="styleguide-content flow">
+      <main id="main" tabindex="-1" class="styleguide-content flow">
         <LLMDiscoveryNote />
         <nav class="sg-sectionnav ui-style" aria-label="Styleguide sections">
           <ul class="list-reset">
