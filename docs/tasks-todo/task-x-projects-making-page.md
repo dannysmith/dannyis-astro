@@ -120,6 +120,8 @@ Auto-surface live projects on the now page instead of hand-maintaining the list.
 
 Actually, have well-written descriptions of all these things, all the links are correct, I've got icons and covers and all the rest of it. Most of this is going to be manual on my part.
 
+### Phase 5 - Add to footer, nav, homepage and the like
+
 ### Phase 5 - Deployment, CI, Checks & Documentation
 
 We may need to update the deployment pipeline to ensure that assets for this are correctly handled, optimised and cached, although we may not need to do this at all. Maybe a few other places that we need to update to ensure that this new content collection is used and referenced everywhere it needs to, and so on.

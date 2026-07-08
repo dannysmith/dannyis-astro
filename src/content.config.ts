@@ -29,7 +29,7 @@ const articles = defineCollection({
     }),
 });
 
-// Article series metadata (drives the "part of a series" callout)
+// Article series metadata (for the "part of a series" callout)
 const series = defineCollection({
   loader: file('src/content/series.json'),
   schema: z.object({
@@ -71,7 +71,6 @@ const projects = defineCollection({
     z.object({
       title: z.string(),
       byline: z.string().describe('One-sentence description of what it is'),
-      // Three orthogonal status axes (see docs/tasks-todo project doc for definitions).
       stage: z
         .enum(['active-development', 'actively-maintained', 'finished', 'paused', 'archived'])
         .describe('Lifecycle: am I still working on this?'),
@@ -79,14 +78,12 @@ const projects = defineCollection({
         .enum(['public', 'public-with-dragons', 'personal-only'])
         .describe("Who's it for, can others use it?"),
       kind: z.enum(['proper', 'toy', 'experiment']).optional().describe('How seriously to take it'),
-      // Icon is optional for now so projects can exist before their art does;
-      // real square icons are added during the Phase 4 data cleanup.
       icon: image().optional().describe('Square icon'),
       image: image().optional().describe('Main graphic'),
       website: z.url().optional(),
       github: z.url().optional(),
-      featured: z.boolean().default(false).describe('Surface on now page / homepage'),
-      startDate: z.coerce.date().optional().describe('When I started it; drives ordering'),
+      featured: z.boolean().default(false),
+      startDate: z.coerce.date().optional(),
       draft: z.boolean().default(false),
     }),
 });

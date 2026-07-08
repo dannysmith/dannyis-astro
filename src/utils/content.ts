@@ -62,77 +62,32 @@ export function getPublishedSeriesArticles<
 }
 
 /**
- * Project stage metadata — plain data shared by the ordering helper, the
- * `/making` page (group headings) and ProjectCard (badge label + colour).
- * PROJECT_STAGE_ORDER also defines the top→bottom display order of groups.
+ * Filter projects for listing (drafts excluded in production, kept in dev) and
+ * return them in display order: newest first by startDate, with undated
+ * projects floating to the top, tie-broken by title.
+ *
+ * Returns a flat list — callers filter()/map() it for whatever subset they need
+ * (featured, a given stage, etc.). Mirrors the filter-then-sort pattern used for
+ * the article/note indexes.
  */
-export type ProjectStage =
-  | 'active-development'
-  | 'actively-maintained'
-  | 'finished'
-  | 'paused'
-  | 'archived';
-
-export const PROJECT_STAGE_ORDER: ProjectStage[] = [
-  'active-development',
-  'actively-maintained',
-  'finished',
-  'paused',
-  'archived',
-];
-
-export const PROJECT_STAGE_LABELS: Record<ProjectStage, string> = {
-  'active-development': 'In active development',
-  'actively-maintained': 'Actively maintained',
-  finished: 'Finished',
-  paused: 'Paused',
-  archived: 'Archived',
-};
-
-export const PROJECT_STAGE_COLORS: Record<ProjectStage, string> = {
-  'active-development': 'var(--color-accent)',
-  'actively-maintained': 'var(--color-green)',
-  finished: 'var(--color-blue)',
-  paused: 'var(--color-orange)',
-  archived: 'var(--color-charcoal)',
-};
-
-/**
- * Group projects for the /making page: one group per stage in
- * PROJECT_STAGE_ORDER, empty groups dropped. Within a group, newest first by
- * startDate with undated projects floating to the top (tie-broken by title).
- * Reuses filterContentForListing, so drafts show in dev but not in production.
- */
-export function groupProjectsByStage<
+export function getSortedProjects<
   T extends {
     id: string;
     data: {
       draft?: boolean;
       styleguide?: boolean;
       title: string;
-      stage: ProjectStage;
       startDate?: Date;
     };
   },
->(
-  projects: T[],
-  isProduction: boolean = import.meta.env.PROD,
-): { stage: ProjectStage; label: string; projects: T[] }[] {
-  const filtered = filterContentForListing(projects, isProduction);
-
-  return PROJECT_STAGE_ORDER.map(stage => ({
-    stage,
-    label: PROJECT_STAGE_LABELS[stage],
-    projects: filtered
-      .filter(entry => entry.data.stage === stage)
-      .sort((a, b) => {
-        const da = a.data.startDate;
-        const db = b.data.startDate;
-        if (!da && !db) return a.data.title.localeCompare(b.data.title);
-        if (!da) return -1; // undated floats to the top
-        if (!db) return 1;
-        const byDate = db.valueOf() - da.valueOf(); // newest first
-        return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title);
-      }),
-  })).filter(group => group.projects.length > 0);
+>(projects: T[], isProduction: boolean = import.meta.env.PROD): T[] {
+  return filterContentForListing(projects, isProduction).sort((a, b) => {
+    const da = a.data.startDate;
+    const db = b.data.startDate;
+    if (!da && !db) return a.data.title.localeCompare(b.data.title);
+    if (!da) return -1; // undated floats to the top
+    if (!db) return 1;
+    const byDate = db.valueOf() - da.valueOf(); // newest first
+    return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title);
+  });
 }

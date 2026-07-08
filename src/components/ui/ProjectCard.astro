@@ -2,7 +2,18 @@
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import Pill from '@components/ui/Pill.astro';
-import { PROJECT_STAGE_LABELS, PROJECT_STAGE_COLORS } from '@utils/content';
+
+// Stage → badge label + colour. Type is derived from the schema, so adding a
+// stage in content.config.ts forces this map to be updated.
+type ProjectStage = CollectionEntry<'projects'>['data']['stage'];
+
+const STAGE_META: Record<ProjectStage, { label: string; color: string }> = {
+  'active-development': { label: 'In active development', color: 'var(--color-accent)' },
+  'actively-maintained': { label: 'Actively maintained', color: 'var(--color-green)' },
+  finished: { label: 'Finished', color: 'var(--color-blue)' },
+  paused: { label: 'Paused', color: 'var(--color-orange)' },
+  archived: { label: 'Archived', color: 'var(--color-charcoal)' },
+};
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -35,7 +46,7 @@ const audienceHint =
 
   <div class="body">
     <div class="meta">
-      <Pill text={PROJECT_STAGE_LABELS[stage]} color={PROJECT_STAGE_COLORS[stage]} />
+      <Pill text={STAGE_META[stage].label} color={STAGE_META[stage].color} />
       {audienceHint && <Pill text={audienceHint} />}
     </div>
 
