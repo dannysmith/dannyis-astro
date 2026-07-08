@@ -5,16 +5,67 @@ import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import Pill from '@components/ui/Pill.astro';
 
-// Stage → badge label + colour. Type is derived from the schema, so adding a
-// stage in content.config.ts forces this map to be updated.
+// Types derived from the schema, so adding an enum value in content.config.ts
+// forces these maps to be updated.
 type ProjectStage = CollectionEntry<'projects'>['data']['stage'];
+type ProjectAudience = CollectionEntry<'projects'>['data']['audience'];
 
-const STAGE_META: Record<ProjectStage, { label: string; color: string }> = {
-  'active-development': { label: 'In active development', color: 'var(--color-accent)' },
-  'actively-maintained': { label: 'Actively maintained', color: 'var(--color-green)' },
-  finished: { label: 'Finished', color: 'var(--color-blue)' },
-  paused: { label: 'Paused', color: 'var(--color-orange)' },
-  archived: { label: 'Archived', color: 'var(--color-charcoal)' },
+// Pill metadata: label + hover explanation, optional fill colour and leading icon.
+// No colour => the pill's default outline style.
+interface PillMeta {
+  label: string;
+  description: string;
+  color?: string;
+  icon?: string;
+}
+
+// Stage pill — always shown.
+const STAGE_META: Record<ProjectStage, PillMeta> = {
+  'active-development': {
+    label: 'In active development',
+    description: "I'm actively working on this right now.",
+    color: 'var(--color-blue)',
+    icon: 'heroicons:code-bracket-20-solid',
+  },
+  'actively-maintained': {
+    label: 'Actively maintained',
+    description:
+      'Finished software that I actively keep healthy — dependency upgrades, bug fixes and small improvements.',
+  },
+  finished: {
+    label: 'Finished',
+    description:
+      "Finished software I consider done. It works, but I don't necessarily keep it up to date.",
+    icon: 'heroicons:check-circle-20-solid',
+  },
+  paused: {
+    label: 'Paused',
+    description: "Was in development, but I've set it aside for now.",
+    icon: 'heroicons:pause-circle-20-solid',
+  },
+  archived: {
+    label: 'Archived',
+    description:
+      "No longer working on this and don't intend to again. Probably archived on GitHub.",
+    icon: 'heroicons:archive-box-20-solid',
+  },
+};
+
+// Audience pill — only shown when it's not plainly public.
+const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
+  'public-with-dragons': {
+    label: 'Here be dragons',
+    description:
+      'Publicly available and should work, but rough around the edges — alpha quality, or not much effort made to work for anyone but me.',
+    color: 'var(--color-yellow)',
+    icon: 'heroicons:exclamation-triangle-20-solid',
+  },
+  'personal-only': {
+    label: 'Not for public consumption',
+    description: 'I made this just for me — it is not intended for anyone else to use.',
+    color: 'var(--color-yellow)',
+    icon: 'heroicons:lock-closed-20-solid',
+  },
 };
 
 interface Props {
@@ -27,13 +78,8 @@ const { title, byline, stage, audience, icon, image, website, github } = project
 // The markdown body of the project, rendered inline (no per-project pages).
 const { Content } = await render(project);
 
-// Only surface audience as a hint when it's not the plain "public" case.
-const audienceHint =
-  audience === 'public-with-dragons'
-    ? 'Here be dragons'
-    : audience === 'personal-only'
-      ? 'Just for me'
-      : null;
+const stageMeta = STAGE_META[stage];
+const audienceMeta = AUDIENCE_META[audience];
 ---
 
 <article class="project-card ui-style">
@@ -56,8 +102,22 @@ const audienceHint =
     </div>
 
     <div class="meta">
-      <Pill text={STAGE_META[stage].label} color={STAGE_META[stage].color} />
-      {audienceHint && <Pill text={audienceHint} />}
+      {
+        audienceMeta && (
+          <Pill
+            text={audienceMeta.label}
+            title={audienceMeta.description}
+            color={audienceMeta.color}
+            icon={audienceMeta.icon}
+          />
+        )
+      }
+      <Pill
+        text={stageMeta.label}
+        title={stageMeta.description}
+        color={stageMeta.color}
+        icon={stageMeta.icon}
+      />
     </div>
   </div>
 

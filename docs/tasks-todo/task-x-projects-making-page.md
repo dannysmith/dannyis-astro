@@ -103,27 +103,30 @@ The minimum that makes `/making` real.
 5. **`/making` page** (`src/pages/making.astro`): big display-type "Making" / "Stuff I Made" title matching the writing index; grouped grid of `ProjectCard`s with section headings per `stage`. Test light + dark.
 6. **Quality gates**: unit-test the ordering helper; `bun run check:all`; eyeball both themes.
 
-### Phase 2 — Now page integration
+### Phase 2 — Compact ProjectCard
 
-Auto-surface live projects on the now page instead of hand-maintaining the list.
+What we could do with a variant of the project card which can be used in all sorts of places where we don't want to actually display the full thing. Sensible thing here would be to have a prop for "compact" and have that render a small version (which is also responsive to its container) which contains just the icon, title and byline, and when clicked opens the website if it exists or if not opens the GitHub link or if neither exists it opens /making#name-of-project.
 
-- `<ActiveProjects />` component pulling `stage: active-development` (and/or `featured`) projects, rendered inside `now.mdx`. Note this shifts `now.mdx` from pure prose to prose + component — acceptable, but a deliberate change. Replace the current hand-written Taskdn/Astro Editor bullets.
+No well, I think I'd prefer to make this a variant of our existing component Make things easier to maintain. I am totally open to having a separate component for this if there's a strong argument for it. We're probably not going to use this right now, but in the future I can imagine using this on the home page potentially also in my now page and perhaps in the future in articles and notes etc too (at which point we'd probs wanna move it to the mdx components dir). Let's get this wired up and looking good now. We can use scratchpad.astro to see howit looks in various circumstances.
 
-### Phase 3 — SEO & LLM discovery
+### Phase 3 — Nav, SEO & LLM discovery
 
 - Add a projects section to `llms.txt` (`src/pages/llms.txt.ts`).
 - Confirm `/making` is in the sitemap (should be free).
-- No RSS/JSON feeds for projects.
-- Nice to have: schema.org `CreativeWork` / `SoftwareApplication` structured data per project on `/making`.
+- Nice to have: schema.org `CreativeWork` / `SoftwareApplication` structured data per project on `/making`. This one needs a little discussion.
+- Add link to making to homepage
+- Add link to making to footer and main navigation
 
-### Phase 4 — Clean up the data
+### Phase 4 — Write better descriptions of projects
 
-Actually, have well-written descriptions of all these things, all the links are correct, I've got icons and covers and all the rest of it. Most of this is going to be manual on my part.
-
-### Phase 5 - Add to footer, nav, homepage and the like
+I'll manually edit these but we can probably write some much better content for the current projects based on their websites and some of the articles we have in this site. Let's do this together.
 
 ### Phase 5 - Deployment, CI, Checks & Documentation
 
 We may need to update the deployment pipeline to ensure that assets for this are correctly handled, optimised and cached, although we may not need to do this at all. Maybe a few other places that we need to update to ensure that this new content collection is used and referenced everywhere it needs to, and so on.
 
 We also need to update the developer documentation appropriately to reflect the new content collection and the `/making` route. We'll also need to update the styleguide as appropriate to include any new components.
+
+### Phase 6 - Review & Refactor
+
+We should do a full review of all of the code we've written on this branch with the object of cleaning it up and refactoring where possible. That might mean extracting where it makes sense, that might mean JavaScript and CSS so that it's a little more efficient or neater and generally more "clean code". It will certainly mean looking over all of the CSS we've written on this branch for any opportunities to use modern selectors or modern CSS rules or to lean on existing CSS that we have but this should predominantly be about reducing the amount of code we have and the complexity of the code without changing the actual CSS and how it looks and works. And this will certainly involve looking over any comments that we have written and ensuring that they are good, proper "evergreen" comments not the kind of temporary comments that AI agents leave littered all over the code base. 
