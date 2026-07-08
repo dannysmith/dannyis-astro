@@ -102,6 +102,12 @@ const audienceMeta = AUDIENCE_META[audience];
     </div>
 
     <div class="meta">
+      <Pill
+        text={stageMeta.label}
+        title={stageMeta.description}
+        color={stageMeta.color}
+        icon={stageMeta.icon}
+      />
       {
         audienceMeta && (
           <Pill
@@ -112,12 +118,6 @@ const audienceMeta = AUDIENCE_META[audience];
           />
         )
       }
-      <Pill
-        text={stageMeta.label}
-        title={stageMeta.description}
-        color={stageMeta.color}
-        icon={stageMeta.icon}
-      />
     </div>
   </div>
 
@@ -191,28 +191,29 @@ const audienceMeta = AUDIENCE_META[audience];
     grid-area: content;
   }
 
-  /* Wide: image moves out to the right, spanning the identity + content rows. */
-  @container (min-width: 55rem) {
-    .project-card {
-      grid-template-columns: 1fr minmax(0, 20rem);
-      grid-template-areas:
-        'identity image'
-        'content  image';
-    }
+  /* Narrow: icon on the left; header and meta stacked in the column beside it. */
+  .identity {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'icon header'
+      'meta meta';
+    column-gap: var(--space-s);
+    row-gap: var(--space-2xs);
+    align-items: start;
   }
 
-  /* Icon on the left, header beside it, pills pushed out to the top-right. */
-  .identity {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-s);
+  .identity > .icon {
+    grid-area: icon;
+  }
+  .identity > .header {
+    grid-area: header;
   }
 
   .meta {
-    margin-inline-start: auto;
+    grid-area: meta;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
     gap: var(--space-2xs);
   }
 
@@ -344,5 +345,25 @@ const audienceMeta = AUDIENCE_META[audience];
     inline-size: 100%;
     block-size: auto;
     border-radius: var(--radius-md);
+  }
+
+  /* Wide: image out to the right; identity back to a single row with the status
+     on the right. Placed last so these overrides win over the narrow base rules. */
+  @container (min-width: 55rem) {
+    .project-card {
+      grid-template-columns: 1fr minmax(0, 20rem);
+      grid-template-areas:
+        'identity image'
+        'content  image';
+    }
+
+    .identity {
+      grid-template-columns: auto 1fr auto;
+      grid-template-areas: 'icon header meta';
+    }
+
+    .meta {
+      flex-direction: row-reverse;
+    }
   }
 </style>
