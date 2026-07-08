@@ -2,6 +2,7 @@
 title: Website Redesign Part XV - A typographic system for the rest of this site
 slug: website-redesign-xv
 pubDate: 2020-08-12
+series: website-redesign
 ---
 
 When I started this redesign I already had a fairly clear idea of the aesthetic I wanted, based on the existing design. These two pages show that off quite well.

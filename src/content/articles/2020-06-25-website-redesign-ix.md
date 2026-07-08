@@ -2,6 +2,7 @@
 title: Website Redesign Part IX - Lists
 slug: website-redesign-ix
 pubDate: 2020-06-25
+series: website-redesign
 ---
 
 Lists are incredibly useful for certain sorts of article. I tend to make quite heavy use of lists in some of my articles, so it's important that I give some thought to how they're styled. Since I'm going for a "bookish" vibe, I'd rather keep the vertical rhythm the same as for all the other text on the page, so I'll be sticking with the standard top-margin of 1 &times; _line height_ and leaving the margin and line height of the list items as they are. With that decision made, we only need to worry about styling the list markers: bullets, numbers and checkboxes.

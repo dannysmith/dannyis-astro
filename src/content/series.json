@@ -1,0 +1,12 @@
+[
+  {
+    "id": "loomclone",
+    "name": "LoomClone",
+    "intro": "This short series covers how and why I built my own video recording and hosting platform to replace tools like Loom."
+  },
+  {
+    "id": "website-redesign",
+    "name": "Website Redesign",
+    "intro": "A build-in-the-open series documenting the design and development of this very website — from tech choices to typography."
+  }
+]

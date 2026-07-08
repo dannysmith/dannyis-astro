@@ -10,6 +10,7 @@ import {
   LLMDiscoveryNote,
   LongFormProseTypography,
   MainNavigation,
+  SeriesCallout,
   TableOfContents,
 } from '@components/layout/index';
 import { FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index';
@@ -36,6 +37,7 @@ const {
   tags,
   toc,
   hasFootnotes,
+  series,
 } = Astro.props;
 
 // Build OG image path for this article
@@ -114,6 +116,7 @@ const standardSiteDocumentUri =
 
             <h1 class="title p-name" itemprop="headline">{title}</h1>
           </div>
+          <SeriesCallout series={series} currentId={Astro.params.slug!} />
           <slot />
           <MarkdownContentActions markdownUrl={markdownUrl} />
         </LongFormProseTypography>

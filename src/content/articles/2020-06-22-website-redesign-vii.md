@@ -2,6 +2,7 @@
 title: Website Redesign Part VII - Responsive Typography
 slug: website-redesign-vii
 pubDate: 2020-06-22
+series: website-redesign
 ---
 
 Having settled on a typeface for my essays, it's time to set up some basic typography. In the past, I've spent a lot of time building maths-based ype systems with myriad variables and functions and it's so tempting to go down that route this time and try to create a system that caters to every eventuality. But that would be at odds with my **simplicity** value, so for the time being I'll stick to the basics. We're going to set up a base font size and line height and scale that as the viewport grows. We'll also add just enough whitespace to create a nice vertical rhythm and create some visual hierachy by styling the headings. Everything else can wait.

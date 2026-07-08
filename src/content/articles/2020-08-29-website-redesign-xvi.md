@@ -2,6 +2,7 @@
 title: Website Redesign Part XVI - A Header and Footer for Articles
 slug: website-redesign-xvi
 pubDate: 2020-08-29
+series: website-redesign
 ---
 
 I pretty much finished designing the article pages back in [Part XI](/writing/website-redesign-xi), and after [deciding on a typeface and some general design rules](/writing/website-redesign-xv) for the rest of the site it's time to finish it off by adding a header and footer to the article pages.

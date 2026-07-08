@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { filterContentForPage, filterContentForListing } from '@utils/content';
+import {
+  filterContentForPage,
+  filterContentForListing,
+  getPublishedSeriesArticles,
+} from '@utils/content';
 
 // Mock content entries
 type MockEntry = {
@@ -168,5 +172,90 @@ describe('Content Filtering Functions', () => {
         expect(listFiltered).toHaveLength(1);
       });
     });
+  });
+});
+
+describe('getPublishedSeriesArticles', () => {
+  type SeriesEntry = {
+    id: string;
+    data: {
+      draft?: boolean;
+      styleguide?: boolean;
+      title: string;
+      pubDate: Date;
+      series?: { id: string };
+    };
+  };
+
+  const entries: SeriesEntry[] = [
+    {
+      id: 'part-2',
+      data: { title: 'Part 2', pubDate: new Date('2020-02-01'), series: { id: 'redesign' } },
+    },
+    {
+      id: 'part-1',
+      data: { title: 'Part 1', pubDate: new Date('2020-01-01'), series: { id: 'redesign' } },
+    },
+    {
+      id: 'part-3-draft',
+      data: {
+        draft: true,
+        title: 'Part 3',
+        pubDate: new Date('2020-03-01'),
+        series: { id: 'redesign' },
+      },
+    },
+    {
+      id: 'other-series',
+      data: { title: 'Elsewhere', pubDate: new Date('2020-01-15'), series: { id: 'loomclone' } },
+    },
+    { id: 'no-series', data: { title: 'Standalone', pubDate: new Date('2020-01-20') } },
+  ];
+
+  it('returns only articles in the requested series', () => {
+    const ids = getPublishedSeriesArticles('redesign', entries, true).map(e => e.id);
+    expect(ids).not.toContain('other-series');
+    expect(ids).not.toContain('no-series');
+  });
+
+  it('orders by pubDate ascending (reading order)', () => {
+    const ids = getPublishedSeriesArticles('redesign', entries, false).map(e => e.id);
+    expect(ids).toEqual(['part-1', 'part-2', 'part-3-draft']);
+  });
+
+  it('excludes drafts in production', () => {
+    const ids = getPublishedSeriesArticles('redesign', entries, true).map(e => e.id);
+    expect(ids).toEqual(['part-1', 'part-2']);
+  });
+
+  it('includes drafts in development', () => {
+    const ids = getPublishedSeriesArticles('redesign', entries, false).map(e => e.id);
+    expect(ids).toContain('part-3-draft');
+  });
+
+  it('tie-breaks same pubDate by title', () => {
+    const sameDate: SeriesEntry[] = [
+      { id: 'b', data: { title: 'Beta', pubDate: new Date('2020-01-01'), series: { id: 's' } } },
+      { id: 'a', data: { title: 'Alpha', pubDate: new Date('2020-01-01'), series: { id: 's' } } },
+    ];
+    const ids = getPublishedSeriesArticles('s', sameDate, true).map(e => e.id);
+    expect(ids).toEqual(['a', 'b']);
+  });
+
+  it('excludes styleguide entries', () => {
+    const withStyleguide: SeriesEntry[] = [
+      ...entries,
+      {
+        id: 'sg',
+        data: {
+          styleguide: true,
+          title: 'Guide',
+          pubDate: new Date('2020-01-05'),
+          series: { id: 'redesign' },
+        },
+      },
+    ];
+    const ids = getPublishedSeriesArticles('redesign', withStyleguide, true).map(e => e.id);
+    expect(ids).not.toContain('sg');
   });
 });

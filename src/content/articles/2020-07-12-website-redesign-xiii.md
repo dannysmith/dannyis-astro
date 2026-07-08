@@ -2,6 +2,7 @@
 title: Website Redesign Part XIII - Taking Stock of Content
 slug: website-redesign-xiii
 pubDate: 2020-07-12
+series: website-redesign
 ---
 
 I'm now pretty happy with how the essays on here look, so it's time to turn my attention to the rest of the site. Although I have an idea of the aesthetic I'm after, every time I've opened Figma to have a play I've found myself staring at a blank page wrought with indecision – the dreaded writers block. Or rather, _designers block_.

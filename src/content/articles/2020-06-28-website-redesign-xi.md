@@ -2,6 +2,7 @@
 title: Website Redesign Part XI - Code Blocks and Section Rules
 slug: website-redesign-xi
 pubDate: 2020-06-28
+series: website-redesign
 ---
 
 I spent a long time [deciding on a typeface]({% post_url 2020-06-20-website-redesign-v %}) for these essays and I don't want to spend nearly as long on code snippets. Although this series involves a lot of code snippets, I generally write about code a lot less than I used to, so it doesn't make sense to spend ages on this. I use the wonderful [Operator Mono](https://www.typography.com/blog/introducing-operator) in my text editor and I briefly considered paying for a web license so I could use it here too. But while _I_ love it, it's quite unusual and is definitely not suited to everyone's taste. Both the typeface itself and the act of buying a web license are the opposite of simple, one of my stated values for this site. So instead, I'll stick with the same requirements I used before: open source, ideally with variable and static versions, with nice ligatures and a range of weights.

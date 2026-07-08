@@ -2,6 +2,7 @@
 title: Website Redesign Part IV - Pages and URLs
 slug: website-redesign-iv
 pubDate: 2020-04-07
+series: website-redesign
 ---
 
 I bought this domain specifically so I could have cool URLs like `danny.is/doingsomething`, so definitely want to use certain URLs, regardless of content. These provide a good starting point for deciding what pages I might want.

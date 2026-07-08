@@ -6,16 +6,17 @@ export interface Props {
   type?: 'default' | 'red' | 'blue' | 'green' | 'orange' | 'yellow' | 'purple';
   icon?: string;
   emoji?: string;
+  className?: string;
 }
 
-const { title, icon, emoji, type = 'default' } = Astro.props;
+const { title, icon, emoji, type = 'default', className } = Astro.props;
 
 if (icon && emoji) {
   throw new Error('Callout: Cannot use both icon and emoji props. Use either icon (for astro-icons) or emoji (for text emojis).');
 }
 ---
 
-<aside aria-label={title || undefined} class="callout" data-callout-color={type}>
+<aside aria-label={title || undefined} class={`callout ${className || ''}`} data-callout-color={type}>
   {
     (icon || emoji) && (
       <div class="icon-wrapper">

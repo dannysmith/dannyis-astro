@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { z } from 'astro/zod';
 import { file, glob } from 'astro/loaders';
 
@@ -23,7 +23,20 @@ const articles = defineCollection({
         .describe('For articles published elsewhere'),
       redirectURL: z.url().optional().describe('Redirect destination for external articles'),
       styleguide: z.boolean().optional().describe('Styleguide page; excluded from RSS and indexes'),
+      series: reference('series')
+        .optional()
+        .describe('Series this article belongs to (id from series.json)'),
     }),
+});
+
+// Article series metadata (drives the "part of a series" callout)
+const series = defineCollection({
+  loader: file('src/content/series.json'),
+  schema: z.object({
+    id: z.string(),
+    name: z.string(),
+    intro: z.string().optional(),
+  }),
 });
 
 // Short-form Notes, often about other people's content
@@ -51,4 +64,4 @@ const toolboxPages = defineCollection({
   }),
 });
 
-export const collections = { articles, notes, toolboxPages };
+export const collections = { articles, notes, toolboxPages, series };

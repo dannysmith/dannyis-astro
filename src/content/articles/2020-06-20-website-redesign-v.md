@@ -2,6 +2,7 @@
 title: Website Redesign Part V - Choosing a Typeface for Essays
 slug: website-redesign-v
 pubDate: 2020-06-20
+series: website-redesign
 ---
 
 I love typography, but I'm not that good at it. One day I'll take a typography course at a a design school, but in the meantime I need to choose some typefaces for this website. I'm fairly confident I'll need two rather different typefaces in the end. A **essay face** for setting longer-form writing and a **UI face** for everything else. I like the idea of using a very modernist face for the UI and something more old-fasioned and bookish for the essays. It might be hard to make this work but it seems to chime will with my personality – I've always had a tendancy to mix super-modern with traditional oldy-worldy. Trainers and Tweeds, if you will.

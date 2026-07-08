@@ -2,6 +2,7 @@
 title: Website Redesign Part XIV - Stepping Into Figma
 slug: website-redesign-xiv
 pubDate: 2020-07-12
+series: website-redesign
 ---
 
 Figma is one of my new favourite tools. I've been an avid fan of Sketch since I first picked it up in 2011. Compared to the other tools available at the time, it was a breath of fresh air. I still remember how excited I felt after I first used it for some actual work.
