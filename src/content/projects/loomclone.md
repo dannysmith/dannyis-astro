@@ -1,6 +1,6 @@
 ---
 title: LoomClone
-byline: My own video recording and hosting setup to replace Loom
+byline: A personal video recording and hosting platform
 stage: finished
 audience: personal-only
 kind: toy

@@ -1,6 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
+import {
+  BaseHead,
+  Footer,
+  Lightbox,
+  LLMDiscoveryNote,
+  MainNavigation,
+} from '@components/layout/index';
 import { ProjectCard } from '@components/ui/index';
 import { getSortedProjects } from '@utils/content';
 
@@ -21,11 +27,12 @@ const projects = getSortedProjects(await getCollection('projects'));
     <main id="main" tabindex="-1" class="ui-style">
       <LLMDiscoveryNote />
       <h1 class="title">Making</h1>
-      <div class="projects">
+      <div class="projects cq">
         {projects.map(project => <ProjectCard project={project} />)}
       </div>
     </main>
     <Footer />
+    <Lightbox />
     <style>
       .title {
         font-family: var(--font-display);

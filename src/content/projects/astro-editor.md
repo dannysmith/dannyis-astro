@@ -1,6 +1,6 @@
 ---
 title: Astro Editor
-byline: 'Writer mode for your Astro content: a beautiful desktop app for working with content collections'
+byline: 'A desktop app for writing astro content'
 stage: active-development
 audience: public
 kind: proper

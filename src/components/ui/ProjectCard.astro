@@ -1,13 +1,13 @@
 ---
-import type { CollectionEntry } from 'astro:content'
-import { render } from 'astro:content'
-import { Image } from 'astro:assets'
-import { Icon } from 'astro-icon/components'
-import Pill from '@components/ui/Pill.astro'
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import Pill from '@components/ui/Pill.astro';
 
 // Stage → badge label + colour. Type is derived from the schema, so adding a
 // stage in content.config.ts forces this map to be updated.
-type ProjectStage = CollectionEntry<'projects'>['data']['stage']
+type ProjectStage = CollectionEntry<'projects'>['data']['stage'];
 
 const STAGE_META: Record<ProjectStage, { label: string; color: string }> = {
   'active-development': { label: 'In active development', color: 'var(--color-accent)' },
@@ -15,17 +15,17 @@ const STAGE_META: Record<ProjectStage, { label: string; color: string }> = {
   finished: { label: 'Finished', color: 'var(--color-blue)' },
   paused: { label: 'Paused', color: 'var(--color-orange)' },
   archived: { label: 'Archived', color: 'var(--color-charcoal)' },
-}
+};
 
 interface Props {
-  project: CollectionEntry<'projects'>
+  project: CollectionEntry<'projects'>;
 }
 
-const { project } = Astro.props
-const { title, byline, stage, audience, icon, image, website, github } = project.data
+const { project } = Astro.props;
+const { title, byline, stage, audience, icon, image, website, github } = project.data;
 
 // The markdown body of the project, rendered inline (no per-project pages).
-const { Content } = await render(project)
+const { Content } = await render(project);
 
 // Only surface audience as a hint when it's not the plain "public" case.
 const audienceHint =
@@ -33,96 +33,92 @@ const audienceHint =
     ? 'Here be dragons'
     : audience === 'personal-only'
       ? 'Just for me'
-      : null
+      : null;
 ---
 
 <article class="project-card ui-style">
-  <div class="layout">
-    <div class="identity">
-      <div class="icon">
-        {
-          icon ? (
-            <Image src={icon} alt={`${title} icon`} width={128} height={128} />
-          ) : (
-            <span class="icon-fallback" aria-hidden="true">
-              {title.charAt(0)}
-            </span>
-          )
-        }
-      </div>
-
-      <div class="header">
-        <h3 class="title">{title}</h3>
-        <h4 class="byline">{byline}</h4>
-      </div>
-
-      <div class="meta">
-        <Pill text={STAGE_META[stage].label} color={STAGE_META[stage].color} />
-        {audienceHint && <Pill text={audienceHint} />}
-      </div>
-    </div>
-
-    {image && <Image class="project-image" src={image} alt="" width={1000} />}
-
-    <div class="content flow">
-      <Content />
+  <div class="identity">
+    <div class="icon">
       {
-        (website || github) && (
-          <div class="links">
-            {github && (
-              <a
-                class="project-button"
-                data-variant="secondary"
-                href={github}
-                target="_blank"
-                rel="noopener"
-              >
-                <Icon name="social/github" />
-                <span class="label">GitHub Repo</span>
-                <span class="arrow" aria-hidden="true">
-                  →
-                </span>
-              </a>
-            )}
-            {website && (
-              <a
-                class="project-button"
-                data-variant="primary"
-                href={website}
-                target="_blank"
-                rel="noopener"
-              >
-                <span class="label">{title} Website</span>
-                <span class="arrow" aria-hidden="true">
-                  →
-                </span>
-              </a>
-            )}
-          </div>
+        icon ? (
+          <Image src={icon} alt={`${title} icon`} width={128} height={128} />
+        ) : (
+          <span class="icon-fallback" aria-hidden="true">
+            {title.charAt(0)}
+          </span>
         )
       }
     </div>
+
+    <div class="header">
+      <h3 class="title">{title}</h3>
+      <h4 class="byline">{byline}</h4>
+    </div>
+
+    <div class="meta">
+      <Pill text={STAGE_META[stage].label} color={STAGE_META[stage].color} />
+      {audienceHint && <Pill text={audienceHint} />}
+    </div>
+  </div>
+
+  {image && <Image class="project-image" src={image} alt="" width={1000} />}
+
+  <div class="content flow">
+    <Content />
+    {
+      (website || github) && (
+        <div class="links">
+          {github && (
+            <a
+              class="project-button"
+              data-variant="secondary"
+              href={github}
+              target="_blank"
+              rel="noopener"
+            >
+              <Icon name="social/github" />
+              <span class="label">GitHub Repo</span>
+              <span class="arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+          )}
+          {website && (
+            <a
+              class="project-button"
+              data-variant="primary"
+              href={website}
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="label">{title} Website</span>
+              <span class="arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+          )}
+        </div>
+      )
+    }
   </div>
 </article>
 
 <style>
-  .project-card {
-    container-type: inline-size;
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    background-color: var(--color-background-secondary);
-    margin: 2rem;
-  }
-
   /* Narrow (default): a single column — identity, then image, then content.
-     Source order already matches, so no reordering needed here. */
-  .layout {
+     Source order already matches, so no reordering needed here. The container
+     itself is set by the consumer (e.g. .cq on the making page), not here. */
+  .project-card {
     display: grid;
     gap: var(--space-m);
     grid-template-areas:
       'identity'
       'image'
       'content';
+
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-background-secondary);
+    margin: 2rem;
   }
 
   .identity {
@@ -136,8 +132,8 @@ const audienceHint =
   }
 
   /* Wide: image moves out to the right, spanning the identity + content rows. */
-  @container (min-width: 38rem) {
-    .layout {
+  @container (min-width: 55rem) {
+    .project-card {
       grid-template-columns: 1fr minmax(0, 20rem);
       grid-template-areas:
         'identity image'

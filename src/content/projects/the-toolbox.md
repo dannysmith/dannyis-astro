@@ -1,6 +1,6 @@
 ---
 title: The Toolbox
-byline: A growing collection of tools and frameworks for work and leadership.
+byline: Tools and frameworks for leadership and remote working
 stage: actively-maintained
 audience: public
 kind: proper
