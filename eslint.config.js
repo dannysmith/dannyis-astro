@@ -1,78 +1,34 @@
 import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsparser from '@typescript-eslint/parser';
+import tseslint from 'typescript-eslint';
 import astro from 'eslint-plugin-astro';
-import astroParser from 'astro-eslint-parser';
+import globals from 'globals';
 
 export default defineConfig([
   // Base JavaScript recommended rules
   js.configs.recommended,
 
-  // TypeScript configuration
+  // TypeScript/JavaScript: recommended rules + project rule tweaks
   {
     files: ['**/*.{js,mjs,cjs,ts,tsx}'],
-    plugins: {
-      '@typescript-eslint': tseslint,
-    },
+    extends: [tseslint.configs.recommended],
     languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-      },
       globals: {
-        // Browser globals
-        window: 'readonly',
-        document: 'readonly',
-        console: 'readonly',
-        // Node.js globals
-        process: 'readonly',
-        Buffer: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        global: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        exports: 'readonly',
-        URL: 'readonly',
+        ...globals.browser,
+        ...globals.node,
       },
     },
     rules: {
-      ...tseslint.configs.recommended.rules,
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
 
-  // TypeScript files with project reference
-  {
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        project: './tsconfig.json',
-      },
-    },
-  },
-
-  // Astro configuration
+  // Astro recommended (sets up the .astro parser and rules)
   ...astro.configs.recommended,
 
-  // Custom Astro overrides
+  // Global ignores (node_modules and .git are ignored by default)
   {
-    files: ['**/*.astro'],
-    languageOptions: {
-      parser: astroParser,
-      parserOptions: {
-        parser: tsparser,
-        extraFileExtensions: ['.astro'],
-      },
-    },
-  },
-
-  // Global ignores
-  {
-    ignores: ['dist/**', 'node_modules/**', '.astro/**', '.unlighthouse/**', 'public/**'],
+    ignores: ['dist/**', '.astro/**', '.unlighthouse/**', 'public/**'],
   },
 ]);
