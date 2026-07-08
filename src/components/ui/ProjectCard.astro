@@ -1,11 +1,11 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { Image } from 'astro:assets';
-import Pill from '@components/ui/Pill.astro';
+import type { CollectionEntry } from 'astro:content'
+import { Image } from 'astro:assets'
+import Pill from '@components/ui/Pill.astro'
 
 // Stage → badge label + colour. Type is derived from the schema, so adding a
 // stage in content.config.ts forces this map to be updated.
-type ProjectStage = CollectionEntry<'projects'>['data']['stage'];
+type ProjectStage = CollectionEntry<'projects'>['data']['stage']
 
 const STAGE_META: Record<ProjectStage, { label: string; color: string }> = {
   'active-development': { label: 'In active development', color: 'var(--color-accent)' },
@@ -13,14 +13,14 @@ const STAGE_META: Record<ProjectStage, { label: string; color: string }> = {
   finished: { label: 'Finished', color: 'var(--color-blue)' },
   paused: { label: 'Paused', color: 'var(--color-orange)' },
   archived: { label: 'Archived', color: 'var(--color-charcoal)' },
-};
-
-interface Props {
-  project: CollectionEntry<'projects'>;
 }
 
-const { project } = Astro.props;
-const { title, byline, stage, audience, icon, website, github } = project.data;
+interface Props {
+  project: CollectionEntry<'projects'>
+}
+
+const { project } = Astro.props
+const { title, byline, stage, audience, icon, website, github } = project.data
 
 // Only surface audience as a hint when it's not the plain "public" case.
 const audienceHint =
@@ -28,7 +28,7 @@ const audienceHint =
     ? 'Here be dragons'
     : audience === 'personal-only'
       ? 'Just for me'
-      : null;
+      : null
 ---
 
 <article class="project-card ui-style">
@@ -50,90 +50,18 @@ const audienceHint =
       {audienceHint && <Pill text={audienceHint} />}
     </div>
 
-    <h3 class="title">{title}</h3>
-    <p class="byline">{byline}</p>
+    <div class="header">
+      <h3 class="title">{title}</h3>
+      <h4 class="byline">{byline}</h4>
+    </div>
 
-    {
-      (website || github) && (
-        <p class="links">
-          {website && (
-            <a href={website} target="_blank" rel="noopener">
-              Website
-            </a>
-          )}
-          {github && (
-            <a href={github} target="_blank" rel="noopener">
-              GitHub
-            </a>
-          )}
-        </p>
-      )
-    }
   </div>
 </article>
 
 <style>
   .project-card {
-    display: flex;
-    gap: var(--space-s);
-    padding: var(--space-s);
-    background-color: var(--color-background-secondary);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-  }
-
-  .icon {
-    flex-shrink: 0;
-  }
-
-  .icon img,
-  .icon-fallback {
-    width: 64px;
-    height: 64px;
-    border-radius: var(--radius-xs);
-    object-fit: cover;
-  }
-
-  .icon-fallback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-background);
-    color: var(--color-text-secondary);
-    font-family: var(--font-display);
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-  }
-
-  .body {
-    min-width: 0;
-  }
-
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);
-    margin-bottom: var(--space-2xs);
-  }
-
-  .title {
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-bold);
-    line-height: var(--leading-snug);
-  }
-
-  .byline {
-    margin-top: var(--space-3xs);
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
-    line-height: var(--leading-normal);
-  }
-
-  .links {
-    display: flex;
-    gap: var(--space-s);
-    margin-top: var(--space-xs);
-    font-size: var(--font-size-sm);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
   }
 </style>
