@@ -1,0 +1,24 @@
+---
+// Subtle "back to top" link for the end of long content. Uses the special
+// `#top` fragment, which scrolls to the top of the document without needing an
+// id on any element. Smooth-scroll + reduced-motion behaviour is inherited
+// from the global reset. Zero JavaScript.
+---
+
+<a href="#top" class="back-to-top">Back to top <span aria-hidden="true">↑</span></a>
+
+<style>
+  .back-to-top {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-light);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    text-align: right;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-accent);
+    }
+  }
+</style>

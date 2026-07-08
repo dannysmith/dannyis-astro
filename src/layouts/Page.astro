@@ -1,5 +1,6 @@
 ---
 import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation, Lightbox } from '@components/layout/index';
+import { BackToTopLink } from '@components/ui/index';
 
 interface Props {
   frontmatter: {
@@ -29,6 +30,7 @@ const { title, subtitle, description, headingAlign } = Astro.props.frontmatter;
         {subtitle && <h2 class="subtitle ui-style">{subtitle}</h2>}
       </header>
       <slot />
+      <BackToTopLink />
     </main>
     <Footer class="footer" />
     <Lightbox />

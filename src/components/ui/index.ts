@@ -1,4 +1,5 @@
 // Small, reusable UI utility components
+export { default as BackToTopLink } from './BackToTopLink.astro';
 export { default as ContentCard } from './ContentCard.astro';
 export { default as FormattedDate } from './FormattedDate.astro';
 export { default as MarkdownContentActions } from './MarkdownContentActions.astro';

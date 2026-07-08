@@ -13,7 +13,12 @@ import {
   SeriesCallout,
   TableOfContents,
 } from '@components/layout/index';
-import { FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index';
+import {
+  BackToTopLink,
+  FormattedDate,
+  MarkdownContentActions,
+  Spinner,
+} from '@components/ui/index';
 import { getDocumentUri } from '@utils/standard-site';
 
 type Props = CollectionEntry<'articles'>['data'] & {
@@ -118,82 +123,91 @@ const standardSiteDocumentUri =
           </div>
           <SeriesCallout series={series} currentId={Astro.params.slug!} />
           <slot />
-          <MarkdownContentActions markdownUrl={markdownUrl} />
+          <div class="footer-actions">
+            <MarkdownContentActions markdownUrl={markdownUrl} />
+            <BackToTopLink />
+          </div>
         </LongFormProseTypography>
       </article>
-    </main>
 
-    <Footer />
-    <Lightbox />
-    {hasFootnotes && <InlineFootnotes />}
-    <style>
-      /* Article needs position context for TOC */
-      article {
-        position: relative;
-      }
-
-      /* Article grid layout - 3 columns for full-bleed support */
-      :global(.longform-prose) {
-        --gutter: var(--space-m);
-        display: grid;
-        grid-template-columns:
-          minmax(var(--gutter), 1fr)
-          min(var(--measure-standard), calc(100% - var(--gutter) * 2))
-          minmax(var(--gutter), 1fr);
-      }
-
-      /* All other elements span the middle column */
-      :global(.longform-prose) > :global(*) {
-        grid-column: 2 / 3;
-      }
-
-      /* Full-bleed elements span all columns */
-      :global(.longform-prose) > :global(.full-bleed),
-      .hero-image {
-        grid-column: 1 / -1;
-      }
-
-      .spinner-overlay {
-        min-height: 100vh;
-        display: grid;
-        place-content: center;
-        background: var(--color-background);
-      }
-
-      .metadata {
-        font-size: var(--font-size-sm);
-        color: var(--color-accent);
-        font-family: var(--font-code);
-        margin-top: var(--space-s);
-      }
-
-      @media (max-width: 700px) {
-        .metadata {
-          padding-top: var(--space-l);
+      <Footer />
+      <Lightbox />
+      {hasFootnotes && <InlineFootnotes />}
+      <style>
+        /* Article needs position context for TOC */
+        article {
+          position: relative;
         }
-      }
 
-      .hero-image {
-        aspect-ratio: 5 / 1;
-        overflow: hidden;
-      }
+        /* Article grid layout - 3 columns for full-bleed support */
+        :global(.longform-prose) {
+          --gutter: var(--space-m);
+          display: grid;
+          grid-template-columns:
+            minmax(var(--gutter), 1fr)
+            min(var(--measure-standard), calc(100% - var(--gutter) * 2))
+            minmax(var(--gutter), 1fr);
+        }
 
-      .hero-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: light-dark(none, grayscale(70%));
-      }
+        /* All other elements span the middle column */
+        :global(.longform-prose) > :global(*) {
+          grid-column: 2 / 3;
+        }
 
-      .draft-notice {
-        border: var(--border-width-base) solid var(--color-accent);
-        color: var(--color-accent);
-        font-family: var(--font-ui);
-        padding: var(--space-2xs) var(--space-s);
-        border-radius: var(--radius-sm);
-        float: right;
-      }
+        /* Full-bleed elements span all columns */
+        :global(.longform-prose) > :global(.full-bleed),
+        .hero-image {
+          grid-column: 1 / -1;
+        }
 
-    </style>
+        .spinner-overlay {
+          min-height: 100vh;
+          display: grid;
+          place-content: center;
+          background: var(--color-background);
+        }
+
+        .metadata {
+          font-size: var(--font-size-sm);
+          color: var(--color-accent);
+          font-family: var(--font-code);
+          margin-top: var(--space-s);
+        }
+
+        @media (max-width: 700px) {
+          .metadata {
+            padding-top: var(--space-l);
+          }
+        }
+
+        .hero-image {
+          aspect-ratio: 5 / 1;
+          overflow: hidden;
+        }
+
+        .hero-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          filter: light-dark(none, grayscale(70%));
+        }
+
+        .draft-notice {
+          border: var(--border-width-base) solid var(--color-accent);
+          color: var(--color-accent);
+          font-family: var(--font-ui);
+          padding: var(--space-2xs) var(--space-s);
+          border-radius: var(--radius-sm);
+          float: right;
+        }
+
+        .footer-actions {
+          margin-top: var(--space-l);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      </style>
+    </main>
   </body>
 </html>

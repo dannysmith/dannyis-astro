@@ -1,7 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation, NoteCard } from '@components/layout/index';
-import { MarkdownContentActions } from '@components/ui/index';
+import {
+  BaseHead,
+  Footer,
+  LLMDiscoveryNote,
+  MainNavigation,
+  NoteCard,
+} from '@components/layout/index';
+import { BackToTopLink, MarkdownContentActions } from '@components/ui/index';
 import { getDocumentUri } from '@utils/standard-site';
 
 type Props = CollectionEntry<'notes'>['data'];
@@ -48,7 +54,10 @@ const standardSiteDocumentUri =
         slug={Astro.params.slug!}
       >
         <slot />
-        <MarkdownContentActions markdownUrl={markdownUrl} />
+        <div class="footer-actions">
+          <MarkdownContentActions markdownUrl={markdownUrl} />
+          <BackToTopLink />
+        </div>
       </NoteCard>
     </main>
 
@@ -70,6 +79,12 @@ const standardSiteDocumentUri =
         .note {
           max-width: var(--measure-standard);
         }
+      }
+
+      .footer-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
     </style>
   </body>
