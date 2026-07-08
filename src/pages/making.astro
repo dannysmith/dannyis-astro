@@ -27,9 +27,7 @@ const projects = getSortedProjects(await getCollection('projects'));
     <main id="main" tabindex="-1" class="ui-style">
       <LLMDiscoveryNote />
       <h1 class="title">Making</h1>
-      <p class="intro">
-        Some of the stuff I've been making recently...
-      </p>
+      <p class="intro">Some of the stuff I've been making recently...</p>
       <div class="projects cq">
         {projects.map(project => <ProjectCard project={project} />)}
       </div>
@@ -52,6 +50,12 @@ const projects = getSortedProjects(await getCollection('projects'));
       .intro {
         font-size: var(--font-size-md);
         font-weight: var(--font-weight-light);
+      }
+
+      .projects {
+        display: grid;
+        gap: var(--space-l);
+        padding: var(--space-l);
       }
     </style>
   </body>
