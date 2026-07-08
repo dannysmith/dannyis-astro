@@ -21,4 +21,8 @@ Spun out of `task-x-some-little-bits.md` item 4 — turned out to be more than a
 - [x] **1. Non-behavioural slim (no reformatting).** Trimmed `.prettierrc` to `singleQuote`, `printWidth`, `arrowParens`, `trailingComma`; dropped dead `md`/`mdx` override. Slimmed `.prettierignore` to `*.yml`/`*.yaml`/`*.md`/`*.mdx`. `check:format` stayed green.
 - [x] **2. `trailingComma` → `"all"` + `bun run format`.** 31 JS/TS files, trailing commas only.
 - [x] **3. Enable Astro plugin + `bun run format`.** Added `"plugins": ["prettier-plugin-astro"]`; reformatted 34 `.astro` files. Fixed `SeriesCallout.astro` (wrapped adjacent `<Callout>`/`<Spacer>` in a `<>…</>` fragment — the plugin's JSX parser rejected the un-wrapped siblings that Astro's compiler had tolerated). `bun run check:all` fully green (astro check, prettier, eslint, 337 unit, 13 e2e).
-- [ ] **4. YAML experiment (last).** Remove `*.yml`/`*.yaml` from `.prettierignore`, run `prettier --check .`, review issue count with Danny, then keep-ignored or format.
+- [x] **4. YAML experiment (last).** Un-ignored YAML. Only 4 tracked YAML files (`.coderabbit.yml` + 3 GitHub workflows); only `.coderabbit.yml` was non-conformant (4 double→single quote swaps). No tool-generated YAML in the repo, so the original churn/conflict worry didn't apply. Formatted `.coderabbit.yml` and left `*.yml`/`*.yaml` out of `.prettierignore` so YAML stays formatted going forward.
+
+## Status: complete
+
+All four steps done. `.prettierignore` now only lists `*.md`/`*.mdx`. Prettier formats everything else (JS/TS/Astro/JSON/YAML/CSS) with `plugins: ["prettier-plugin-astro"]` and `trailingComma: "all"`.

@@ -6,12 +6,12 @@ reviews:
   sequence_diagrams: false
   path_filters:
     # Ignore markdown/content files (noisy spelling/grammar feedback)
-    - "!**/*.md"
-    - "!**/*.mdx"
+    - '!**/*.md'
+    - '!**/*.mdx'
     # Ignore lockfiles
-    - "!bun.lock"
+    - '!bun.lock'
     # Ignore static assets
-    - "!public/**"
+    - '!public/**'
 
 issue_enrichment:
   auto_enrich:
