@@ -1,20 +1,7 @@
 {
-  "semi": true,
+  "plugins": ["prettier-plugin-astro"],
   "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5",
+  "trailingComma": "all",
   "printWidth": 100,
-  "bracketSpacing": true,
-  "arrowParens": "avoid",
-  "useTabs": false,
-  "endOfLine": "lf",
-  "overrides": [
-    {
-      "files": ["*.md", "*.mdx"],
-      "options": {
-        "proseWrap": "never",
-        "printWidth": 9999
-      }
-    }
-  ]
+  "arrowParens": "avoid"
 }

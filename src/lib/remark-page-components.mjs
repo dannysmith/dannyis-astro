@@ -87,9 +87,9 @@ function hasComponentsExport(tree) {
           statement.type === 'ExportNamedDeclaration' &&
           statement.declaration?.type === 'VariableDeclaration' &&
           statement.declaration.declarations.some(
-            declarator => declarator.id?.name === 'components'
-          )
-      )
+            declarator => declarator.id?.name === 'components',
+          ),
+      ),
   );
 }
 

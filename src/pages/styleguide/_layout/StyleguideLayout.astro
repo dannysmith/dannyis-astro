@@ -1,5 +1,11 @@
 ---
-import { BaseHead, Footer, Lightbox, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
+import {
+  BaseHead,
+  Footer,
+  Lightbox,
+  LLMDiscoveryNote,
+  MainNavigation,
+} from '@components/layout/index';
 import { BackToTopLink } from '@components/ui/index';
 
 interface Props {
@@ -72,7 +78,7 @@ const { title, description, current, toc = [] } = Astro.props;
         </nav>
         <h1>{title}</h1>
         <h2>Site styleguide</h2>
-        <slot class="flow"/>
+        <slot class="flow" />
         <BackToTopLink />
       </main>
     </div>

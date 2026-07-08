@@ -270,7 +270,7 @@ const showingSource = defaultView === 'source';
       private readonly toggleButtons: HTMLButtonElement[],
       private readonly copyBtn: HTMLButtonElement,
       private readonly renderedPane: HTMLElement,
-      private readonly sourcePane: HTMLElement
+      private readonly sourcePane: HTMLElement,
     ) {
       this.toggleButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -283,9 +283,7 @@ const showingSource = defaultView === 'source';
     }
 
     static init(el: HTMLElement): MarkdownBlock | null {
-      const toggleButtons = Array.from(
-        el.querySelectorAll<HTMLButtonElement>('[data-md-view]')
-      );
+      const toggleButtons = Array.from(el.querySelectorAll<HTMLButtonElement>('[data-md-view]'));
       const copyBtn = el.querySelector<HTMLButtonElement>('[data-md-copy]');
       const renderedPane = el.querySelector<HTMLElement>('[data-pane="rendered"]');
       const sourcePane = el.querySelector<HTMLElement>('[data-pane="source"]');
@@ -331,11 +329,9 @@ const showingSource = defaultView === 'source';
     }
 
     private setCopyState(state: 'idle' | 'done') {
-      this.copyBtn
-        .querySelectorAll<HTMLElement>('[data-md-copy-icon]')
-        .forEach(icon => {
-          icon.toggleAttribute('hidden', icon.dataset.mdCopyIcon !== state);
-        });
+      this.copyBtn.querySelectorAll<HTMLElement>('[data-md-copy-icon]').forEach(icon => {
+        icon.toggleAttribute('hidden', icon.dataset.mdCopyIcon !== state);
+      });
     }
   }
 

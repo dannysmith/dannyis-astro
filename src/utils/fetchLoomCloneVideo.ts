@@ -107,13 +107,13 @@ async function doFetch(jsonUrl: string): Promise<LoomCloneVideo> {
   } catch (err) {
     throw new Error(
       `network error fetching ${jsonUrl}: ${err instanceof Error ? err.message : String(err)}`,
-      { cause: err }
+      { cause: err },
     );
   }
 
   if (response.status === 404) {
     throw new Error(
-      `video not found at ${jsonUrl} (404). Was it deleted, renamed or made private?`
+      `video not found at ${jsonUrl} (404). Was it deleted, renamed or made private?`,
     );
   }
   if (!response.ok) {

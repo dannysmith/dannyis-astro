@@ -86,23 +86,27 @@ const hasMetaRow = showMeta || showOpenLink;
         preload="auto"
       >
         <media-provider>
-          {video.sources.map(source => (
-            <source
-              src={source.url}
-              type={source.type}
-              data-width={source.width}
-              data-height={source.height}
-            />
-          ))}
-          {video.urls.captions && (
-            <track
-              src={video.urls.captions}
-              kind="subtitles"
-              srclang="en"
-              label="English"
-              default
-            />
-          )}
+          {
+            video.sources.map(source => (
+              <source
+                src={source.url}
+                type={source.type}
+                data-width={source.width}
+                data-height={source.height}
+              />
+            ))
+          }
+          {
+            video.urls.captions && (
+              <track
+                src={video.urls.captions}
+                kind="subtitles"
+                srclang="en"
+                label="English"
+                default
+              />
+            )
+          }
           <media-poster class="vds-poster" src={video.urls.poster} alt={title}></media-poster>
         </media-provider>
         <media-video-layout thumbnails={video.urls.storyboard ?? undefined}></media-video-layout>
@@ -110,56 +114,59 @@ const hasMetaRow = showMeta || showOpenLink;
     </template>
   </div>
 
-  {hasMetaRow && (
-    <figcaption class="lcvid-meta">
-      {showMeta && (
-        <span class="lcvid-detail">
-          <span>{video.durationFormatted}</span>
-          <span aria-hidden="true">·</span>
-          <span>{recordedDate}</span>
-        </span>
-      )}
-      {showOpenLink && (
-        <a
-          class="lcvid-open"
-          href={video.urls.page}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span>Open</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M15 3h6v6"></path>
-            <path d="M10 14L21 3"></path>
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-          </svg>
-        </a>
-      )}
-    </figcaption>
-  )}
+  {
+    hasMetaRow && (
+      <figcaption class="lcvid-meta">
+        {showMeta && (
+          <span class="lcvid-detail">
+            <span>{video.durationFormatted}</span>
+            <span aria-hidden="true">·</span>
+            <span>{recordedDate}</span>
+          </span>
+        )}
+        {showOpenLink && (
+          <a class="lcvid-open" href={video.urls.page} target="_blank" rel="noopener noreferrer">
+            <span>Open</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M15 3h6v6" />
+              <path d="M10 14L21 3" />
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
+        )}
+      </figcaption>
+    )
+  }
 
-  {showDescription && descriptionParagraphs.length > 0 && (
-    <div class="lcvid-description">
-      {descriptionParagraphs.map(p => <p>{p}</p>)}
-    </div>
-  )}
+  {
+    showDescription && descriptionParagraphs.length > 0 && (
+      <div class="lcvid-description">
+        {descriptionParagraphs.map(p => (
+          <p>{p}</p>
+        ))}
+      </div>
+    )
+  }
 
-  {showTranscript && video.transcript && (
-    <details class="lcvid-transcript">
-      <summary>Transcript</summary>
-      <div class="lcvid-transcript-body">{video.transcript}</div>
-    </details>
-  )}
+  {
+    showTranscript && video.transcript && (
+      <details class="lcvid-transcript">
+        <summary>Transcript</summary>
+        <div class="lcvid-transcript-body">{video.transcript}</div>
+      </details>
+    )
+  }
 </figure>
 
 <script>
@@ -196,8 +203,7 @@ const hasMetaRow = showMeta || showOpenLink;
   function showUnavailable(figure: HTMLElement) {
     const wrapper = figure.querySelector<HTMLElement>('.lcvid-player');
     if (!wrapper) return;
-    wrapper.innerHTML =
-      '<div class="lcvid-unavailable" role="status">Video unavailable</div>';
+    wrapper.innerHTML = '<div class="lcvid-unavailable" role="status">Video unavailable</div>';
   }
 
   function activate(figure: HTMLElement) {

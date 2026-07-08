@@ -46,7 +46,7 @@ export function generateMetaDescription(description?: string): string | undefine
 export function generateJSONLD(
   pageData: SEOData,
   canonicalUrl: string,
-  ogImageUrl: string
+  ogImageUrl: string,
 ): Record<string, unknown> {
   const config = getConfig();
   const siteUrl = config.site.url;
@@ -112,7 +112,7 @@ export function generateJSONLD(
 function generateArticleSchema(
   pageData: SEOData,
   canonicalUrl: string,
-  ogImageUrl: string
+  ogImageUrl: string,
 ): Record<string, unknown> {
   const config = getConfig();
   const siteUrl = config.site.url;
@@ -162,7 +162,7 @@ function generateArticleSchema(
  * Generate article meta tags for OpenGraph
  */
 export function generateArticleMeta(
-  pageData: SEOData
+  pageData: SEOData,
 ): Array<{ property: string; content: string }> {
   if (pageData.type !== 'article') return [];
 

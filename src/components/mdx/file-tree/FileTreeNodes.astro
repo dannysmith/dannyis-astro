@@ -81,7 +81,10 @@ function externalAttrs(href: string): Record<string, string> {
               <summary class="ft-row" style={`--ft-depth: ${folderDepth}`}>
                 <span class="ft-label">
                   <span class="ft-disclosure" aria-hidden="true" />
-                  <Icon class="ft-icon ft-icon--folder ft-icon-closed" name={iconForFolder(false)} />
+                  <Icon
+                    class="ft-icon ft-icon--folder ft-icon-closed"
+                    name={iconForFolder(false)}
+                  />
                   <Icon class="ft-icon ft-icon--folder ft-icon-open" name={iconForFolder(true)} />
                   {nameEl}
                 </span>
@@ -106,7 +109,10 @@ function externalAttrs(href: string): Record<string, string> {
           <span class="ft-row" style={`--ft-depth: ${depth}`}>
             <span class="ft-label">
               <span class="ft-disclosure" aria-hidden="true" />
-              <Icon class:list={['ft-icon', `ft-icon--${colorForFile(node.name)}`]} name={iconForFile(node.name)} />
+              <Icon
+                class:list={['ft-icon', `ft-icon--${colorForFile(node.name)}`]}
+                name={iconForFile(node.name)}
+              />
               {nameEl}
             </span>
             {node.comment && (

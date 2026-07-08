@@ -15,7 +15,7 @@ describe('generateOGImage', () => {
     it(`renders a valid PNG for the "${template}" template`, async () => {
       const buffer = await generateOGImage(
         { title: 'A Test Title', url: 'https://danny.is/test' },
-        { template }
+        { template },
       );
       expect(isPng(buffer)).toBe(true);
       expect(buffer.length).toBeGreaterThan(1000);
@@ -26,7 +26,7 @@ describe('generateOGImage', () => {
     const longTitle = 'Some Words Here '.repeat(20).trim();
     const buffer = await generateOGImage(
       { title: longTitle, url: 'https://danny.is/a-very-long-slug-that-keeps-going-and-going' },
-      { template: 'article' }
+      { template: 'article' },
     );
     expect(isPng(buffer)).toBe(true);
   }, 20000);
@@ -34,7 +34,7 @@ describe('generateOGImage', () => {
   it('renders an empty title using the fallback text', async () => {
     const buffer = await generateOGImage(
       { title: '', url: 'https://danny.is' },
-      { template: 'default' }
+      { template: 'default' },
     );
     expect(isPng(buffer)).toBe(true);
   }, 20000);

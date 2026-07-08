@@ -12,17 +12,21 @@ export interface Props {
 const { title, icon, emoji, type = 'default', className } = Astro.props;
 
 if (icon && emoji) {
-  throw new Error('Callout: Cannot use both icon and emoji props. Use either icon (for astro-icons) or emoji (for text emojis).');
+  throw new Error(
+    'Callout: Cannot use both icon and emoji props. Use either icon (for astro-icons) or emoji (for text emojis).',
+  );
 }
 ---
 
-<aside aria-label={title || undefined} class={`callout ${className || ''}`} data-callout-color={type}>
+<aside
+  aria-label={title || undefined}
+  class={`callout ${className || ''}`}
+  data-callout-color={type}
+>
   {
     (icon || emoji) && (
       <div class="icon-wrapper">
-        <div class="icon">
-          {icon ? <Icon name={icon} /> : emoji}
-        </div>
+        <div class="icon">{icon ? <Icon name={icon} /> : emoji}</div>
       </div>
     )
   }
@@ -108,8 +112,12 @@ if (icon && emoji) {
   /* No title → first line is body text with larger line-height; push the icon
      down so it aligns with the cap height of that first line. */
   .callout:not(:has(.title)) {
-    .icon          { margin-top: 0.3em; }
-    .icon:has(svg) { margin-top: 0.075em; }
+    .icon {
+      margin-top: 0.3em;
+    }
+    .icon:has(svg) {
+      margin-top: 0.075em;
+    }
   }
 
   /* Long-form prose uses --leading-loose (1.7), adding ~0.075em of half-leading

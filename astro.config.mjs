@@ -26,7 +26,7 @@ import react from '@astrojs/react';
 // Load custom code theme
 const codeThemeJson = readFileSync(
   new URL('./src/config/code-theme.json', import.meta.url),
-  'utf-8'
+  'utf-8',
 );
 const codeTheme = ExpressiveCodeTheme.fromJSONString(codeThemeJson);
 

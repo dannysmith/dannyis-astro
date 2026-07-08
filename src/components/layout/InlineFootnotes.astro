@@ -79,7 +79,7 @@
 
         // Find the closest block-level parent (p, div, li, etc.)
         const closestBlock = elm.closest(
-          'p, .intro-paragraph, li, blockquote, div.longform-prose > *'
+          'p, .intro-paragraph, li, blockquote, div.longform-prose > *',
         );
         if (!closestBlock || !footnoteElement?.children.length) return;
 

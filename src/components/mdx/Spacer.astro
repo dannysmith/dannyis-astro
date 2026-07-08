@@ -7,10 +7,7 @@ interface Props {
 const { size = 'm', height } = Astro.props;
 ---
 
-<div
-  class:list={['spacer', `size-${size}`]}
-  style={height ? `height: ${height};` : undefined}
->
+<div class:list={['spacer', `size-${size}`]} style={height ? `height: ${height};` : undefined}>
 </div>
 
 <style>
@@ -18,14 +15,32 @@ const { size = 'm', height } = Astro.props;
     width: 100%;
     display: block;
 
-    &.size-3xs { height: var(--space-3xs); }
-    &.size-2xs { height: var(--space-2xs); }
-    &.size-xs { height: var(--space-xs); }
-    &.size-s { height: var(--space-s); }
-    &.size-m { height: var(--space-m); }
-    &.size-l { height: var(--space-l); }
-    &.size-xl { height: var(--space-xl); }
-    &.size-2xl { height: var(--space-2xl); }
-    &.size-3xl { height: var(--space-3xl); }
+    &.size-3xs {
+      height: var(--space-3xs);
+    }
+    &.size-2xs {
+      height: var(--space-2xs);
+    }
+    &.size-xs {
+      height: var(--space-xs);
+    }
+    &.size-s {
+      height: var(--space-s);
+    }
+    &.size-m {
+      height: var(--space-m);
+    }
+    &.size-l {
+      height: var(--space-l);
+    }
+    &.size-xl {
+      height: var(--space-xl);
+    }
+    &.size-2xl {
+      height: var(--space-2xl);
+    }
+    &.size-3xl {
+      height: var(--space-3xl);
+    }
   }
 </style>

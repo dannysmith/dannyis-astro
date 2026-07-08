@@ -43,7 +43,7 @@ describe('Site Config', () => {
 
     it('has at least one profile with showInFooter', () => {
       const footerProfiles = config.socialProfiles.filter(
-        p => 'showInFooter' in p && p.showInFooter
+        p => 'showInFooter' in p && p.showInFooter,
       );
       expect(footerProfiles.length).toBeGreaterThan(0);
     });

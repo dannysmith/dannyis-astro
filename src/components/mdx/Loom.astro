@@ -80,23 +80,17 @@ const embedUrl = `https://www.loom.com/embed/${id}?autoplay=1`;
   data-embed-url={embedUrl}
   data-title={title || 'Loom video'}
 >
-  {thumbnail && (
-    <img src={thumbnail} class="lite-loom-poster" aria-hidden="true" />
-  )}
+  {thumbnail && <img src={thumbnail} class="lite-loom-poster" aria-hidden="true" />}
 
   <button type="button" class="lite-loom-playbtn" aria-label={`Play: ${title || 'Loom video'}`}>
     <svg viewBox="0 0 72 72" aria-hidden="true">
-      <circle cx="36" cy="36" r="35" class="lite-loom-playbtn-bg" />
-      <path d="M29 23 L29 49 L51 36 Z" fill="white" />
+      <circle cx="36" cy="36" r="35" class="lite-loom-playbtn-bg"></circle>
+      <path d="M29 23 L29 49 L51 36 Z" fill="white"></path>
     </svg>
-    {formattedDuration && (
-      <span class="lite-loom-duration">{formattedDuration}</span>
-    )}
+    {formattedDuration && <span class="lite-loom-duration">{formattedDuration}</span>}
   </button>
 
-  {title && (
-    <div class="lite-loom-title">{title}</div>
-  )}
+  {title && <div class="lite-loom-title">{title}</div>}
 </lite-loom>
 
 <script>
@@ -107,7 +101,7 @@ const embedUrl = `https://www.loom.com/embed/${id}?autoplay=1`;
       const playBtn = this.querySelector('.lite-loom-playbtn');
       if (!playBtn) return;
 
-      this.addEventListener('click', (e) => {
+      this.addEventListener('click', e => {
         e.preventDefault();
         e.stopPropagation();
         this.activate();
@@ -180,7 +174,9 @@ const embedUrl = `https://www.loom.com/embed/${id}?autoplay=1`;
         width: 68px;
         height: 68px;
         filter: drop-shadow(0 4px 12px oklch(0% 0 0 / 0.4));
-        transition: transform 0.2s ease, filter 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          filter 0.2s ease;
       }
 
       &:focus-visible {

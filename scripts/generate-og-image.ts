@@ -18,7 +18,7 @@ const outPath = path.join(process.cwd(), 'public', 'og-default.png');
 try {
   const png = await generateOGImage(
     { title: config.author.fullName, url: config.site.url },
-    { template: 'profile', width: 1200, height: 630 }
+    { template: 'profile', width: 1200, height: 630 },
   );
   await fs.writeFile(outPath, png);
   console.log(`Wrote ${outPath} (${png.length} bytes)`);

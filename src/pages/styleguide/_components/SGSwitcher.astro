@@ -33,7 +33,7 @@ const content = await Astro.slots.render('default');
 
 <Tabs>
   {
-    typographySystems.map((system) => (
+    typographySystems.map(system => (
       <TabItem label={system.name}>
         {system.type === 'none' && <Fragment set:html={content} />}
         {system.type === 'component' && system.component === 'LongFormProseTypography' && (

@@ -32,7 +32,7 @@ export const GET: APIRoute = async ({ props }) => {
         template: 'article',
         width: 1200,
         height: 630,
-      }
+      },
     );
 
     return new Response(ogImageBuffer as unknown as BodyInit, {

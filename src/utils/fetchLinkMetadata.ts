@@ -93,21 +93,21 @@ function extractMetaTag(html: string, names: string[]): string | null {
       // Try property="name"
       const propRegex = new RegExp(
         `<meta[^>]*property=["']${escapeRegex(name)}["'][^>]*content=["']([^"']+)["']`,
-        'i'
+        'i',
       );
       const propMatch = html.match(propRegex);
 
       // Try name="name"
       const nameRegex = new RegExp(
         `<meta[^>]*name=["']${escapeRegex(name)}["'][^>]*content=["']([^"']+)["']`,
-        'i'
+        'i',
       );
       const nameMatch = html.match(nameRegex);
 
       // Try content first, then property
       const contentRegex = new RegExp(
         `<meta[^>]*content=["']([^"']+)["'][^>]*(?:property|name)=["']${escapeRegex(name)}["']`,
-        'i'
+        'i',
       );
       const contentMatch = html.match(contentRegex);
 

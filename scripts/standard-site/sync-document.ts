@@ -112,7 +112,7 @@ function stripMarkdown(markdown: string): string {
       .replace(/^\s{0,3}>\s?/gm, '') // blockquotes
       .replace(/[*_~]{1,3}/g, '') // emphasis markers
       .replace(/<[^>]+>/g, ' ') // raw HTML tags
-      .replace(/\\([\\`*_{}[\]()#+\-.!~>])/g, '$1') // markdown backslash escapes
+      .replace(/\\([\\`*_{}[\]()#+\-.!~>])/g, '$1'), // markdown backslash escapes
   )
     .replace(/\s+/g, ' ')
     .trim();
@@ -170,7 +170,7 @@ interface DocumentRecord {
 async function uploadCoverImage(
   session: Session,
   collection: StandardSiteCollection,
-  postId: string
+  postId: string,
 ): Promise<unknown> {
   const url = `${getConfig().site.url}${getDocumentPath(collection, postId)}og-image.png`;
   const controller = new AbortController();
@@ -205,7 +205,7 @@ async function buildRecord(
   postId: string,
   pubDate: Date,
   data: Record<string, unknown>,
-  body: string
+  body: string,
 ): Promise<DocumentRecord> {
   const config = getConfig();
   const record: DocumentRecord = {
@@ -227,7 +227,7 @@ async function buildRecord(
   let textContent = stripMarkdown(body);
   if (textContent.length > MAX_TEXT_CONTENT) {
     console.warn(
-      `⚠️  ${postId}: textContent truncated from ${textContent.length} to ${MAX_TEXT_CONTENT} chars`
+      `⚠️  ${postId}: textContent truncated from ${textContent.length} to ${MAX_TEXT_CONTENT} chars`,
     );
     textContent = textContent.slice(0, MAX_TEXT_CONTENT);
   }
@@ -289,7 +289,7 @@ async function main(): Promise<void> {
   const files = all ? allPostFiles() : fileArgs;
   if (files.length === 0) {
     console.error(
-      'Usage: standard-site:sync -- <post-file…> | --all  [--delete] [--force] [--dry-run]'
+      'Usage: standard-site:sync -- <post-file…> | --all  [--delete] [--force] [--dry-run]',
     );
     process.exit(1);
   }
@@ -321,7 +321,7 @@ async function main(): Promise<void> {
         console.log(`🗑️  ${postId} → deleted ${COLLECTION}/${rkey}`);
       } catch (err) {
         console.warn(
-          `⚠️  ${postId}: delete failed (record may not exist): ${(err as Error).message}`
+          `⚠️  ${postId}: delete failed (record may not exist): ${(err as Error).message}`,
         );
       }
       continue;
@@ -351,7 +351,7 @@ async function main(): Promise<void> {
       })
     ) {
       console.log(
-        `⏭️  ${postId}: before since=${getConfig().standardSite.since}, skipping (use --force)`
+        `⏭️  ${postId}: before since=${getConfig().standardSite.since}, skipping (use --force)`,
       );
       continue;
     }

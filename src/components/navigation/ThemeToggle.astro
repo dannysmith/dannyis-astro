@@ -7,7 +7,11 @@ export interface Props {
 
 const options = [
   { value: 'light', description: 'Use light theme', icon: 'heroicons:sun-20-solid' },
-  { value: 'auto', description: 'Follow system theme', icon: 'heroicons:computer-desktop-20-solid' },
+  {
+    value: 'auto',
+    description: 'Follow system theme',
+    icon: 'heroicons:computer-desktop-20-solid',
+  },
   { value: 'dark', description: 'Use dark theme', icon: 'heroicons:moon-20-solid' },
 ] as const;
 
@@ -15,18 +19,20 @@ const { class: className } = Astro.props;
 ---
 
 <div class:list={['theme-toggle', className]} role="radiogroup" aria-label="Choose color theme">
-  {options.map(option => (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={option.value === 'auto' ? 'true' : 'false'}
-      data-theme-option={option.value}
-      title={option.description}
-    >
-      <span class="sr-only">{option.description}</span>
-      <Icon name={option.icon} aria-hidden="true" />
-    </button>
-  ))}
+  {
+    options.map(option => (
+      <button
+        type="button"
+        role="radio"
+        aria-checked={option.value === 'auto' ? 'true' : 'false'}
+        data-theme-option={option.value}
+        title={option.description}
+      >
+        <span class="sr-only">{option.description}</span>
+        <Icon name={option.icon} aria-hidden="true" />
+      </button>
+    ))
+  }
 </div>
 
 <style>
@@ -65,7 +71,8 @@ const { class: className } = Astro.props;
     padding: var(--_pad);
     position: relative;
     border-radius: var(--radius-full);
-    border: var(--border-width-hairline) solid color-mix(in oklch, var(--color-text) 12%, transparent);
+    border: var(--border-width-hairline) solid
+      color-mix(in oklch, var(--color-text) 12%, transparent);
     background: color-mix(in oklch, var(--color-background) 80%, var(--color-background-secondary));
 
     /* Sliding thumb indicator */
@@ -79,7 +86,10 @@ const { class: className } = Astro.props;
       /* Position formula: offset from left = padding + (cell width × index) */
       translate: calc(var(--_pad) + (var(--_size) + var(--_gap)) * var(--_pos)) 0;
       /* Thumb color: neutral by default, accent-tinted when light/dark selected */
-      background: var(--_thumb-bg, color-mix(in oklch, var(--color-text) 10%, var(--color-background-secondary)));
+      background: var(
+        --_thumb-bg,
+        color-mix(in oklch, var(--color-text) 10%, var(--color-background-secondary))
+      );
       transition: translate var(--duration-fast) var(--ease-in-out);
     }
 
@@ -108,18 +118,28 @@ const { class: className } = Astro.props;
       z-index: 1; /* Above the thumb */
       transition: color var(--duration-fast) var(--ease-in-out);
 
-      &[aria-checked='true'] { color: var(--color-text); }
-      &:hover { color: color-mix(in oklch, var(--color-text) 70%, transparent); }
+      &[aria-checked='true'] {
+        color: var(--color-text);
+      }
+      &:hover {
+        color: color-mix(in oklch, var(--color-text) 70%, transparent);
+      }
       &:focus-visible {
-        outline: var(--border-width-base) solid color-mix(in oklch, var(--color-accent) 65%, transparent);
+        outline: var(--border-width-base) solid
+          color-mix(in oklch, var(--color-accent) 65%, transparent);
         outline-offset: 2px;
       }
     }
 
-    & svg { width: 1.25em; height: 1.25em; }
+    & svg {
+      width: 1.25em;
+      height: 1.25em;
+    }
 
     @media (prefers-reduced-motion: reduce) {
-      &::before { transition: none; }
+      &::before {
+        transition: none;
+      }
     }
   }
 </style>
@@ -137,7 +157,7 @@ const { class: className } = Astro.props;
     updateChecked(toggle, window.theme?.current ?? 'auto');
 
     // Event delegation: single click listener for all option buttons
-    toggle.addEventListener('click', (e) => {
+    toggle.addEventListener('click', e => {
       const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-theme-option]');
       if (button) window.theme?.set(button.dataset.themeOption as 'light' | 'dark' | 'auto');
     });

@@ -9,7 +9,7 @@ const text = (value: string) => ({ type: 'text' as const, value });
 const el = (
   tagName: string,
   children: (Element | { type: 'text'; value: string })[] = [],
-  className?: string[]
+  className?: string[],
 ): Element => ({
   type: 'element',
   tagName,
@@ -197,7 +197,7 @@ describe('rehypeListDensity', () => {
             el('li', [
               el('em', [
                 text(
-                  'This entire item is emphasized and contains quite a lot of text to push the average up'
+                  'This entire item is emphasized and contains quite a lot of text to push the average up',
                 ),
               ]),
             ]),

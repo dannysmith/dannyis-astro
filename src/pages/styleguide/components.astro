@@ -140,7 +140,7 @@ const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 const allArticles = await getCollection('articles', ({ data }) => !data.draft);
 const articlesWithCovers = allArticles.filter(a => 'cover' in a.data && a.data.cover);
 const articlesWithoutCovers = allArticles.filter(
-  a => !('cover' in a.data && a.data.cover) && !a.data.styleguide
+  a => !('cover' in a.data && a.data.cover) && !a.data.styleguide,
 );
 const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCovers.slice(0, 1)];
 
@@ -155,7 +155,12 @@ const sampleNotes = allNotes.slice(0, 3);
   toc={toc}
 >
   <header>
-    <p>The components on this page are primarily used in the <strong>content</strong> of this site, most of which is markdown or MDX but some of which is HTML/Astro. All of these components are available for use in MDX files, either as JSX components or in some cases as automatic replacements for markdown syntax. </p>
+    <p>
+      The components on this page are primarily used in the <strong>content</strong> of this site, most
+      of which is markdown or MDX but some of which is HTML/Astro. All of these components are available
+      for use in MDX files, either as JSX components or in some cases as automatic replacements for markdown
+      syntax.
+    </p>
   </header>
 
   <section id="intro-paragraph" class="flow">
@@ -963,9 +968,9 @@ Provide a title to skip the fetch or override it:
     <p>
       MarkdownBlocks render raw markdown in a toggleable two-pane view: the rendered markdown on one
       side, and the source markdown on the other. They're intended for use in MDX content. Adding
-      <code>preview</code> after the language identifier in a markdown or MDX fenced code block will
-      render this component rather than the default expressive code block. Title is supported in a
-      similar way to expressive code fenced blocks. This is handled via a custom remark plugin.
+      <code>preview</code> after the language identifier in a markdown or MDX fenced code block will render
+      this component rather than the default expressive code block. Title is supported in a similar way
+      to expressive code fenced blocks. This is handled via a custom remark plugin.
     </p>
     <table>
       <thead>
@@ -1017,12 +1022,12 @@ Provide a title to skip the fetch or override it:
     <h2>FileTree</h2>
     <p>
       Filetrees work in a similar way to MarkdownBlocks, but render a tree view of a file system.
-      Highlighting and title are supported as for expressive code and icons are chosen and
-      coloured based on the file extension. Line comments support simple inline markdown so links
-      and bold/italic work as expected. If a "file" is <code>...</code> it will render as a placeholder and
-      directories are rendered as HTML details elements making them collapsible (without
-      JavaScript). The parser is glyph-agnostic: ├──, |--, +--, tabs or spaces all parse the same
-      way so long as they're properly structured.
+      Highlighting and title are supported as for expressive code and icons are chosen and coloured
+      based on the file extension. Line comments support simple inline markdown so links and
+      bold/italic work as expected. If a "file" is <code>...</code> it will render as a placeholder and
+      directories are rendered as HTML details elements making them collapsible (without JavaScript).
+      The parser is glyph-agnostic: ├──, |--, +--, tabs or spaces all parse the same way so long as they're
+      properly structured.
     </p>
     <table>
       <thead>
@@ -1083,7 +1088,10 @@ Provide a title to skip the fetch or override it:
   <section id="basic-image" class="flow">
     <h2>BasicImage</h2>
     <p>
-      The BasicImage component is used for all images in markdown content. It renders gifs as plain image elements and everything else using the Astro Picture component. It's optimised for performance and uses a placeholder while loading, as well as supporting a few additional props to control layout and styling.
+      The BasicImage component is used for all images in markdown content. It renders gifs as plain
+      image elements and everything else using the Astro Picture component. It's optimised for
+      performance and uses a placeholder while loading, as well as supporting a few additional props
+      to control layout and styling.
     </p>
     <table>
       <thead>
@@ -1111,19 +1119,27 @@ Provide a title to skip the fetch or override it:
           <td><code>framed</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
-          <td>Adds a border and subtle shadow. Intended only for use when an image's background is too similar to the page background.</td>
+          <td
+            >Adds a border and subtle shadow. Intended only for use when an image's background is
+            too similar to the page background.</td
+          >
         </tr>
         <tr>
           <td><code>caption</code></td>
           <td><code>string</code></td>
           <td>—</td>
-          <td>Visible caption, independent of the alt text. Takes precedence over <code>showAlt</code>.</td>
+          <td
+            >Visible caption, independent of the alt text. Takes precedence over <code>showAlt</code
+            >.</td
+          >
         </tr>
         <tr>
           <td><code>showAlt</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
-          <td>Show the alt text as a visible caption (fallback when no <code>caption</code> is set).</td>
+          <td
+            >Show the alt text as a visible caption (fallback when no <code>caption</code> is set).</td
+          >
         </tr>
         <tr>
           <td><code>sourceUrl</code> / <code>sourceTitle</code></td>
@@ -1135,7 +1151,9 @@ Provide a title to skip the fetch or override it:
           <td><code>bleed</code></td>
           <td><code>'left' | 'right' | 'full'</code></td>
           <td>—</td>
-          <td>When in an article layout, this allows the image to extend beyond the content column.</td>
+          <td
+            >When in an article layout, this allows the image to extend beyond the content column.</td
+          >
         </tr>
         <tr>
           <td><code>width</code> / <code>height</code></td>
@@ -1181,12 +1199,13 @@ Provide a title to skip the fetch or override it:
     <p>
       Use the <code>caption</code> prop for a caption that differs from the alt text. In
       <code>.mdx</code> content you can also add it to a plain markdown image via its title (the third
-      quoted argument); the <code>img → BasicImage</code> remapping isn't available in <code>.md</code>,
-      so there the title stays a native <code>title</code> attribute.
+      quoted argument); the <code>img → BasicImage</code> remapping isn't available in <code
+        >.md</code
+      >, so there the title stays a native <code>title</code> attribute.
     </p>
     <Code
       lang="md"
-      code={'![Accessible alt text](/src/assets/articles/styleguide-image.jpg \'Caption shown to readers\')'}
+      code={"![Accessible alt text](/src/assets/articles/styleguide-image.jpg 'Caption shown to readers')"}
     />
     <Code
       lang="mdx"
@@ -1200,7 +1219,10 @@ Provide a title to skip the fetch or override it:
       />
     </ResizableContainer>
 
-    <p>The alt text can be reused as the caption with <code>showAlt</code>, plus an optional source credit:</p>
+    <p>
+      The alt text can be reused as the caption with <code>showAlt</code>, plus an optional source
+      credit:
+    </p>
     <Code
       lang="mdx"
       code={'<BasicImage\n  src="/src/assets/articles/styleguide-image.jpg"\n  alt="Modern architectural details with natural light"\n  showAlt\n  sourceUrl="https://unsplash.com"\n  sourceTitle="Unsplash"\n/>'}
@@ -1371,8 +1393,8 @@ Provide a title to skip the fetch or override it:
   <section id="note-card" class="flow">
     <h2>NoteCard</h2>
     <p>
-      Renders a full note (with its content via slot), as used on the notes
-      index and note pages. A sourceURL shows an embed; tags render as pills.
+      Renders a full note (with its content via slot), as used on the notes index and note pages. A
+      sourceURL shows an embed; tags render as pills.
     </p>
     <table>
       <thead>
@@ -1431,12 +1453,12 @@ Provide a title to skip the fetch or override it:
         sourceURL="https://justinjackson.ca/calm-company"
       >
         <p>
-          Remote work isn't just about <em>where</em> you work — it's about <strong>how</strong> you
-          work. The best remote teams treat asynchronous communication as the foundation, not an afterthought.
+          Remote work isn't just about <em>where</em> you work — it's about <strong>how</strong> you work.
+          The best remote teams treat asynchronous communication as the foundation, not an afterthought.
         </p>
         <p>
-          When you default to async, you give people the gift of <a href="#">deep work</a>.
-          Meetings become the exception, not the rule.
+          When you default to async, you give people the gift of <a href="#">deep work</a>. Meetings
+          become the exception, not the rule.
         </p>
       </NoteCard>
     </ResizableContainer>
@@ -1449,8 +1471,8 @@ Provide a title to skip the fetch or override it:
         slug="demo-note-2"
       >
         <p>
-          Good defaults are invisible; bad defaults create friction. The best software feels like
-          it was configured just for you, even when you've changed nothing.
+          Good defaults are invisible; bad defaults create friction. The best software feels like it
+          was configured just for you, even when you've changed nothing.
         </p>
       </NoteCard>
     </ResizableContainer>
@@ -1458,12 +1480,18 @@ Provide a title to skip the fetch or override it:
 
   <section id="embeds" class="flow">
     <h2>Embeds</h2>
-    <p>A number of components are provided for embedding external content. Some of these are part of this site, while others are imported from <a href="https://astro-embed.netlify.app/">astro-embed</a>.</p>
+    <p>
+      A number of components are provided for embedding external content. Some of these are part of
+      this site, while others are imported from <a href="https://astro-embed.netlify.app/"
+        >astro-embed</a
+      >.
+    </p>
 
     <h3 id="embed-lcvid">LCVid</h3>
     <p>
-      The LCVid component renders self-hosted videos from my video platform. Metadata (title, description, duration, transcript) is fetched
-      at build time from the video's JSON and clicking the video plays it using a <a href="https://vidstack.io/">Vidstack</a> player.
+      The LCVid component renders self-hosted videos from my video platform. Metadata (title,
+      description, duration, transcript) is fetched at build time from the video's JSON and clicking
+      the video plays it using a <a href="https://vidstack.io/">Vidstack</a> player.
     </p>
     <table>
       <thead>
@@ -1519,7 +1547,10 @@ Provide a title to skip the fetch or override it:
     </ResizableContainer>
 
     <h3 id="embed-loom">Loom</h3>
-    <p>Renders a placeholder until the video is clicked to load the heavy iframe from the Loom player.</p>
+    <p>
+      Renders a placeholder until the video is clicked to load the heavy iframe from the Loom
+      player.
+    </p>
     <table>
       <thead>
         <tr>
@@ -1601,18 +1632,15 @@ Provide a title to skip the fetch or override it:
     </ResizableContainer>
 
     <h4>MastodonPost</h4>
-    <Code
-      lang="mdx"
-      code={'<MastodonPost id="https://m.webtoo.ls/@astro/112966069629573422" />'}
-    />
+    <Code lang="mdx" code={'<MastodonPost id="https://m.webtoo.ls/@astro/112966069629573422" />'} />
     <ResizableContainer>
       <MastodonPost id="https://m.webtoo.ls/@astro/112966069629573422" />
     </ResizableContainer>
 
     <h3 id="embed-video">Native &lt;video&gt;</h3>
     <p>
-      The raw HTML5 video element under the site's CSS. Self-hosted clips normally use LCVid
-      above; this is the unstyled baseline.
+      The raw HTML5 video element under the site's CSS. Self-hosted clips normally use LCVid above;
+      this is the unstyled baseline.
     </p>
     <Code
       lang="html"
@@ -1631,10 +1659,10 @@ Provide a title to skip the fetch or override it:
 
     <h3 id="embed-auto">Embed (auto-dispatch)</h3>
     <p>
-      The <code>&lt;Embed&gt;</code> component regex-matches a URL and renders the most appropriate
-      component, so in prose you can paste almost any link and get a sensible embed. It dispatches YouTube,
-      Vimeo, Tweet, Loom, v.danny.is (LCVid), GitHub Gist, Bluesky and Mastodon URLs to the components
-      above — and falls back to a <code>&lt;BookmarkCard&gt;</code> for anything it doesn't recognise.
+      The <code>&lt;Embed&gt;</code> component regex-matches a URL and renders the most appropriate component,
+      so in prose you can paste almost any link and get a sensible embed. It dispatches YouTube, Vimeo,
+      Tweet, Loom, v.danny.is (LCVid), GitHub Gist, Bluesky and Mastodon URLs to the components above
+      — and falls back to a <code>&lt;BookmarkCard&gt;</code> for anything it doesn't recognise.
     </p>
     <p>
       <em

@@ -210,7 +210,7 @@ const articleMeta = generateArticleMeta(seoData);
       }
       const resolvedTheme = apply(theme);
       document.dispatchEvent(
-        new CustomEvent('theme-changed', { detail: { theme, resolvedTheme } })
+        new CustomEvent('theme-changed', { detail: { theme, resolvedTheme } }),
       );
     };
 

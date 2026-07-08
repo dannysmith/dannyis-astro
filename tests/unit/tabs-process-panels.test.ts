@@ -42,7 +42,7 @@ describe('processPanels', () => {
     // re-wire it (SKIP stops descent).
     const nested = panel(
       'outer',
-      `<div class="tabs"><div data-tab-label="inner" role="tabpanel" id="tab-panel-99"><p>deep</p></div></div>`
+      `<div class="tabs"><div data-tab-label="inner" role="tabpanel" id="tab-panel-99"><p>deep</p></div></div>`,
     );
     const { html, panels } = processPanels(nested);
 

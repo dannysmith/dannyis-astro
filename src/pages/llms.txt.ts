@@ -85,7 +85,7 @@ function discoverStaticPages(): Array<{ path: string; title: string }> {
 
 export const GET: APIRoute = async () => {
   const articles = filterContentForListing(
-    await getCollection('articles')
+    await getCollection('articles'),
   ) as CollectionEntry<'articles'>[];
   articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 

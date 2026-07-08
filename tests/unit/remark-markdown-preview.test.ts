@@ -15,7 +15,7 @@ async function transform(source: string): Promise<Root> {
 /** Safely read an mdxJsxAttribute value by name. */
 function attr(
   node: { attributes?: { name: string; value: unknown }[] },
-  name: string
+  name: string,
 ): string | undefined {
   const a = node.attributes?.find(x => x.name === name);
   return typeof a?.value === 'string' ? a.value : undefined;
@@ -93,7 +93,7 @@ describe('remarkMarkdownPreview', () => {
 
     it('supports multiple meta attributes in any order', async () => {
       const tree = await transform(
-        '```md preview defaultView="source" title="foo.md"\nbody\n```\n'
+        '```md preview defaultView="source" title="foo.md"\nbody\n```\n',
       );
       const node = tree.children[0] as unknown as {
         attributes: { name: string; value: string }[];
@@ -134,7 +134,7 @@ describe('remarkMarkdownPreview', () => {
 
     it('leaves surrounding content untouched', async () => {
       const tree = await transform(
-        '# Before\n\n```md preview\n# inside\n```\n\nAfter paragraph.\n'
+        '# Before\n\n```md preview\n# inside\n```\n\nAfter paragraph.\n',
       );
       expect(tree.children).toHaveLength(3);
       const [before, block, after] = tree.children as unknown as { type: string }[];

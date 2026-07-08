@@ -235,7 +235,7 @@ const COLOR_BY_EXT: Record<string, IconColor> = {
 function resolveByName<T>(
   name: string,
   exact: Record<string, T>,
-  byExt: Record<string, T>
+  byExt: Record<string, T>,
 ): T | undefined {
   const lower = name.toLowerCase();
 

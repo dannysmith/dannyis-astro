@@ -50,13 +50,13 @@ describe('parseLinkPreview', () => {
   it('resolves relative favicon URLs against the page URL', () => {
     const html = `<link rel="icon" href="/favicon.ico">`;
     expect(parseLinkPreview(html, 'https://example.com/blog/post').favicon).toBe(
-      'https://example.com/favicon.ico'
+      'https://example.com/favicon.ico',
     );
   });
 
   it('returns all undefined for a page with no relevant metadata', () => {
     expect(
-      parseLinkPreview('<html><body>nothing here</body></html>', 'https://example.com/')
+      parseLinkPreview('<html><body>nothing here</body></html>', 'https://example.com/'),
     ).toEqual({
       title: undefined,
       ogTitle: undefined,
@@ -74,7 +74,7 @@ describe('parseLinkPreview', () => {
       <link rel="shortcut icon" href="https://example.com/good.ico">
     `;
     expect(parseLinkPreview(html, 'https://example.com/').favicon).toBe(
-      'https://example.com/good.ico'
+      'https://example.com/good.ico',
     );
   });
 });

@@ -135,7 +135,7 @@ const LEAD_QUOTE_EM: Record<string, number> = {
 function coverLayout(
   data: OGTemplateData,
   ctx: OGTemplateContext,
-  opts: { isNote?: boolean } = {}
+  opts: { isNote?: boolean } = {},
 ) {
   const { isNote = false } = opts;
   const title = truncateTitle(normalizeTitle(data.title || 'danny.is'), TITLE_MAX_CHARS);

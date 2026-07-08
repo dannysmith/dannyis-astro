@@ -41,13 +41,14 @@ const imageSrc =
   typeof src === 'string' && src.startsWith('/src/assets')
     ? (await images[src]()).default
     : typeof src === 'string' && src.startsWith('/assets')
-    ? (await images['/src' + src]()).default
-    : src;
+      ? (await images['/src' + src]()).default
+      : src;
 
 const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif');
 
 // For remote images without dimensions, provide reasonable defaults to prevent build errors
-const isRemoteImage = typeof src === 'string' && (src.startsWith('http') || src.startsWith('/uploads'));
+const isRemoteImage =
+  typeof src === 'string' && (src.startsWith('http') || src.startsWith('/uploads'));
 const defaultWidth = width || (isRemoteImage ? 800 : undefined);
 const defaultHeight = height || (isRemoteImage ? 400 : undefined);
 

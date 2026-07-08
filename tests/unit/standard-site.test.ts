@@ -25,12 +25,12 @@ describe('standard-site', () => {
       const a = getDocumentRkey(
         'articles',
         '2013-01-21-what-is-good-design',
-        new Date('2013-01-21')
+        new Date('2013-01-21'),
       );
       const b = getDocumentRkey(
         'articles',
         '2013-01-21-what-is-good-design',
-        new Date('2013-01-21')
+        new Date('2013-01-21'),
       );
       expect(a).toBe(b);
     });
@@ -96,7 +96,7 @@ describe('standard-site', () => {
 
     it('rejects externally-hosted posts (redirectURL)', () => {
       expect(qualifiesForStandardSite({ redirectURL: 'https://medium.com/x', pubDate })).toBe(
-        false
+        false,
       );
     });
 
@@ -115,7 +115,7 @@ describe('standard-site', () => {
         expect(getDocumentUri('articles', '2020-01-01-foo', { pubDate })).toBeNull();
       } else {
         expect(getDocumentUri('articles', '2020-01-01-foo', { pubDate })).toMatch(
-          /^at:\/\/.+\/site\.standard\.document\/[234567a-z]{13}$/
+          /^at:\/\/.+\/site\.standard\.document\/[234567a-z]{13}$/,
         );
       }
     });

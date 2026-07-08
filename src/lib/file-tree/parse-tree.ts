@@ -132,7 +132,7 @@ export function parseTree(input: string): TreeNode[] {
     if (!firstContentSeen) {
       if (parsed.contentCol !== 0) {
         throw new Error(
-          `parseTree: first content line is indented (column ${parsed.contentCol}) — there is no root entry to attach to. Line ${lineNum}: "${rawLine}"`
+          `parseTree: first content line is indented (column ${parsed.contentCol}) — there is no root entry to attach to. Line ${lineNum}: "${rawLine}"`,
         );
       }
       firstContentSeen = true;
@@ -146,7 +146,7 @@ export function parseTree(input: string): TreeNode[] {
     const parent = stack[stack.length - 1]!.node;
     if (parent.kind === 'ellipsis') {
       throw new Error(
-        `parseTree: line ${lineNum} is indented under an ellipsis entry (line ${parent.line}); ellipsis entries cannot have children. Line ${lineNum}: "${rawLine}"`
+        `parseTree: line ${lineNum} is indented under an ellipsis entry (line ${parent.line}); ellipsis entries cannot have children. Line ${lineNum}: "${rawLine}"`,
       );
     }
     upgradeToFolder(parent); // no-op if already a folder

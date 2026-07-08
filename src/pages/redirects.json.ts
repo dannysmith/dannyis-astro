@@ -45,7 +45,7 @@ export const GET: APIRoute = async () => {
   // aren't present (e.g. `tsc` in CI before `astro sync`), which drops
   // `redirectURL`. Same pattern as llms.txt.ts.
   const articles = filterContentForPage(
-    await getCollection('articles')
+    await getCollection('articles'),
   ) as CollectionEntry<'articles'>[];
   const articleRedirects: RedirectEntry[] = [];
   for (const article of articles) {

@@ -8,18 +8,20 @@ const footerProfiles = config.socialProfiles.filter(p => 'showInFooter' in p && 
 
 <section class="social-links">
   <ul class="list-reset">
-    {footerProfiles.map(profile => (
-      <li>
-        <a
-          href={profile.url}
-          title={`${profile.name} Profile`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon name={profile.icon} />
-        </a>
-      </li>
-    ))}
+    {
+      footerProfiles.map(profile => (
+        <li>
+          <a
+            href={profile.url}
+            title={`${profile.name} Profile`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name={profile.icon} />
+          </a>
+        </li>
+      ))
+    }
   </ul>
 </section>
 
@@ -39,12 +41,10 @@ const footerProfiles = config.socialProfiles.filter(p => 'showInFooter' in p && 
       aspect-ratio: 1;
       color: inherit;
       transition: background-color var(--duration-fast) var(--ease-in-out);
-
     }
 
     a:is(:hover, :active, :focus) {
       background-color: color-mix(in oklch, currentColor 15%, transparent);
     }
   }
-
 </style>

@@ -9,15 +9,15 @@ export default defineConfig({
     alias: {
       '@components': fileURLToPath(new URL('./src/components/index.ts', import.meta.url)),
       '@components/layout': fileURLToPath(
-        new URL('./src/components/layout/index.ts', import.meta.url)
+        new URL('./src/components/layout/index.ts', import.meta.url),
       ),
       '@components/navigation': fileURLToPath(
-        new URL('./src/components/navigation/index.ts', import.meta.url)
+        new URL('./src/components/navigation/index.ts', import.meta.url),
       ),
       '@components/mdx': fileURLToPath(new URL('./src/components/mdx/index.ts', import.meta.url)),
       '@components/ui': fileURLToPath(new URL('./src/components/ui/index.ts', import.meta.url)),
       '@components/icons': fileURLToPath(
-        new URL('./src/components/icons/index.ts', import.meta.url)
+        new URL('./src/components/icons/index.ts', import.meta.url),
       ),
       '@layouts': fileURLToPath(new URL('./src/layouts', import.meta.url)),
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),

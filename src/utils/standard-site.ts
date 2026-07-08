@@ -92,7 +92,7 @@ function pubDateMicros(pubDate: Date): number {
 export function getDocumentRkey(
   collection: StandardSiteCollection,
   postId: string,
-  pubDate: Date
+  pubDate: Date,
 ): string {
   const timestampMicros = pubDateMicros(pubDate);
   const clockid = hashString(`${collection}/${postId}`) % TID_CLOCKID_MAX;
@@ -140,7 +140,7 @@ export function qualifiesForStandardSite({
 export function getDocumentUri(
   collection: StandardSiteCollection,
   postId: string,
-  post: StandardSitePost
+  post: StandardSitePost,
 ): string | null {
   const { did } = getConfig().standardSite;
   if (!did || !qualifiesForStandardSite(post)) return null;

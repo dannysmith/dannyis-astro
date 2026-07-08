@@ -30,7 +30,7 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
     await page.waitForFunction(
       () => document.querySelectorAll('.notion-collection-card__anchor').length >= 5,
       null,
-      { timeout: 15000 }
+      { timeout: 15000 },
     );
 
     console.log('Content loaded, starting to scrape...');
@@ -46,8 +46,8 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
             title,
             url,
           };
-        }
-      )
+        },
+      ),
     );
 
     await browser.close();
@@ -56,7 +56,7 @@ const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
 
     if (data.length < 5) {
       console.log(
-        `Only found ${data.length} toolbox items, expected at least 5. Skipping update of toolboxPages.json.`
+        `Only found ${data.length} toolbox items, expected at least 5. Skipping update of toolboxPages.json.`,
       );
       return;
     }

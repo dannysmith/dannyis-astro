@@ -1,12 +1,18 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation, NoteCard } from '@components/layout/index';
+import {
+  BaseHead,
+  Footer,
+  LLMDiscoveryNote,
+  MainNavigation,
+  NoteCard,
+} from '@components/layout/index';
 import { FormattedDate, MarkdownContentActions } from '@components/ui/index';
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
 import { filterContentForListing } from '@utils/content';
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
 // Split notes into recent and archive
@@ -19,7 +25,7 @@ const recentNotesWithContent = await Promise.all(
   recentNotes.map(async note => {
     const { Content } = await render(note);
     return { note, Content };
-  })
+  }),
 );
 ---
 
@@ -52,7 +58,10 @@ const recentNotesWithContent = await Promise.all(
                   slug={note.id}
                 >
                   <Content components={MDX_COMPONENT_REMAPPING} />
-                  <MarkdownContentActions markdownUrl={`/notes/${note.id}.md`} disableShare={true} />
+                  <MarkdownContentActions
+                    markdownUrl={`/notes/${note.id}.md`}
+                    disableShare={true}
+                  />
                 </NoteCard>
               </div>
             ))}
@@ -84,7 +93,7 @@ const recentNotesWithContent = await Promise.all(
       }
     </main>
     <Footer />
-<style>
+    <style>
       body {
         display: grid;
         grid-template-rows: auto min-content;

@@ -147,7 +147,7 @@ describe('parseTree', () => {
 
     it('returns siblings to the correct parent after ascending out of a folder', () => {
       const input = ['root/', '├── child-folder/', '│   └── deep.txt', '└── sibling.txt'].join(
-        '\n'
+        '\n',
       );
       const result = parseTree(input);
       expect(result).toHaveLength(1);

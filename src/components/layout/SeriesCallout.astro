@@ -25,31 +25,36 @@ const show = seriesEntry && articles.length >= 2;
 
 {
   show && (
-    <Callout
-      title={`This article is part of a series`}
-      icon="heroicons:rectangle-stack-20-solid"
-      className="series-callout"
-    >
-      {seriesEntry.data.intro && <p class="series-intro">{seriesEntry.data.intro}</p>}
-      <ol class="series-list">
-        {articles.map(entry => {
-          const isCurrent = entry.id === currentId;
-          const label = `${entry.data.draft ? '[draft] ' : ''}${entry.data.title}`;
-          return (
-            <li aria-current={isCurrent ? 'true' : undefined}>
-              {isCurrent ? <strong>{label}</strong> : <a href={`/writing/${entry.id}/`}>{label}</a>}
-            </li>
-          );
-        })}
-      </ol>
-    </Callout>
-    <Spacer size="m" />
+    <>
+      <Callout
+        title={`This article is part of a series`}
+        icon="heroicons:rectangle-stack-20-solid"
+        className="series-callout"
+      >
+        {seriesEntry.data.intro && <p class="series-intro">{seriesEntry.data.intro}</p>}
+        <ol class="series-list">
+          {articles.map(entry => {
+            const isCurrent = entry.id === currentId;
+            const label = `${entry.data.draft ? '[draft] ' : ''}${entry.data.title}`;
+            return (
+              <li aria-current={isCurrent ? 'true' : undefined}>
+                {isCurrent ? (
+                  <strong>{label}</strong>
+                ) : (
+                  <a href={`/writing/${entry.id}/`}>{label}</a>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </Callout>
+      <Spacer size="m" />
+    </>
   )
 }
 
 <style>
   .series-list {
-
     li {
       margin: 0;
     }

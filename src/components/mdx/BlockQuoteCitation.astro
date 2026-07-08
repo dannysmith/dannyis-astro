@@ -16,7 +16,11 @@ const { author, title, url, small } = Astro.props;
   {
     (author || title) && (
       <figcaption class="citation">
-        {author && <>— <span class="author">{author}</span></>}
+        {author && (
+          <>
+            — <span class="author">{author}</span>
+          </>
+        )}
         {title && (
           <>
             {author && ' - '}

@@ -35,7 +35,7 @@ const highlightSet = new Set(
   (highlight ?? '')
     .split(',')
     .map(s => Number(s.trim()))
-    .filter(n => Number.isInteger(n) && n > 0)
+    .filter(n => Number.isInteger(n) && n > 0),
 );
 
 const framed = frame !== 'none';

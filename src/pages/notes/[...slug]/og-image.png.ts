@@ -31,7 +31,7 @@ export const GET: APIRoute = async ({ props }) => {
         template: 'note',
         width: 1200,
         height: 630,
-      }
+      },
     );
 
     return new Response(ogImageBuffer as unknown as BodyInit, {

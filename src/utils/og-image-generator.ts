@@ -67,7 +67,7 @@ async function loadFont(fontPath: string): Promise<ArrayBuffer> {
     const fontBuffer = await fs.readFile(fontPath);
     return fontBuffer.buffer.slice(
       fontBuffer.byteOffset,
-      fontBuffer.byteOffset + fontBuffer.byteLength
+      fontBuffer.byteOffset + fontBuffer.byteLength,
     ) as ArrayBuffer;
   } catch (error) {
     console.warn(`Failed to load font from ${fontPath}:`, error);
@@ -120,7 +120,7 @@ interface GenerateOptions {
 // Main OG image generation function
 export async function generateOGImage(
   data: OGTemplateData,
-  options: GenerateOptions = {}
+  options: GenerateOptions = {},
 ): Promise<Buffer> {
   const { template = 'default', width = 1200, height = 630 } = options;
 
@@ -193,7 +193,7 @@ export async function generateOGImage(
 async function generateFallbackImage(
   title: string,
   width: number,
-  height: number
+  height: number,
 ): Promise<Buffer> {
   // Escape HTML entities in title
   const escapedTitle = title

@@ -144,7 +144,7 @@ Final paragraph with \`inline code\`.`;
 
     const result = stripMDXElements(content);
     expect(result).toBe(
-      'Introduction This is a complex example with a link. List item 1 List item 2 This is a blockquote Final paragraph with .'
+      'Introduction This is a complex example with a link. List item 1 List item 2 This is a blockquote Final paragraph with .',
     );
   });
 });
@@ -159,7 +159,7 @@ Another paragraph here.`;
 
     const result = extractFirstMeaningfulParagraph(text);
     expect(result).toBe(
-      'This is a much longer paragraph that contains substantial content and should be selected as the first meaningful paragraph for summary generation.'
+      'This is a much longer paragraph that contains substantial content and should be selected as the first meaningful paragraph for summary generation.',
     );
   });
 
@@ -174,7 +174,7 @@ This is a proper paragraph with enough content to be considered meaningful and s
 
     const result = extractFirstMeaningfulParagraph(text);
     expect(result).toBe(
-      'This is a proper paragraph with enough content to be considered meaningful and substantial for use in a summary.'
+      'This is a proper paragraph with enough content to be considered meaningful and substantial for use in a summary.',
     );
   });
 
@@ -258,7 +258,7 @@ describe('generateSummary', () => {
 
 This is a substantial paragraph that should be extracted and used as the summary since there is no description in the frontmatter.
 
-Another paragraph here.`
+Another paragraph here.`,
     );
 
     const result = generateSummary(entry, 100);

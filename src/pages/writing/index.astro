@@ -5,7 +5,7 @@ import { FormattedDate, Pill } from '@components/ui/index';
 import { filterContentForListing } from '@utils/content';
 
 const posts = filterContentForListing(await getCollection('articles')).sort(
-  (b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+  (b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
 );
 ---
 
@@ -47,7 +47,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
       </section>
     </main>
     <Footer />
-<style>
+    <style>
       body {
         display: grid;
         grid-template-rows: auto min-content;
