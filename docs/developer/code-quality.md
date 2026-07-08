@@ -87,9 +87,9 @@ If you have persistent false positives, add them to `knip.config.ts`:
 
 ```typescript
 ignoreDependencies: [
-  'some-package', // Used at runtime but not imported
+  '@iconify-json/heroicons', // icon set consumed by astro-icon, not imported directly
+  'mermaid', // used by the rehype-mermaid plugin
 ],
-ignoreExportsUsedInFile: true, // For utility files with multiple exports
 ```
 
 **Important**: Don't over-use ignores. Most "false positives" reveal:
@@ -143,7 +143,7 @@ When asked to find related code or understand patterns across the codebase, run 
 
 #### Configuration
 
-Adjust `.jscpd.json` if needed:
-- Increase `minTokens` or `minLines` if getting too many trivial matches
-- Decrease thresholds if missing important duplicates
-- Add directories to `ignore` array for areas where duplication is expected
+Adjust `.jscpd.json` if needed. It leans on jscpd's defaults and sets only `threshold: 0`, `ignore`, and `gitignore`:
+- Add `minTokens`/`minLines` (defaults 50/5) to require larger matches and cut trivial ones
+- Raise `threshold` above `0` to tolerate a percentage of duplication
+- Add globs to the `ignore` array for areas where duplication is expected

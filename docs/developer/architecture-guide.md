@@ -137,7 +137,7 @@ document.addEventListener('astro:after-swap', initComponent);
 
 - Constants, configuration objects, schemas
 - Exported with `as const` for type inference
-- Example: `src/config/seo.ts` (AUTHOR, TITLE_TEMPLATES, SCHEMA_CONFIG)
+- Example: `src/config/mdx-components.ts` (`MDX_COMPONENT_REMAPPING`)
 
 **`src/lib/`** - Build-time plugins and scripts (runs independently)
 

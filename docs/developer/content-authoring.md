@@ -73,6 +73,7 @@ pubDate: 2025-01-15
 - `cover` - Cover image path
 - `coverAlt` - Cover image alt text
 - `sourceURL` - For notes commenting on external content
+- `series` - (articles) id of a series defined in `src/content/series.json` (add the series there first); renders a "part of a series" callout listing the other articles
 
 **Reading time** is automatically calculated (no frontmatter needed).
 

@@ -8,10 +8,11 @@ The site uses Astro's content collections with **glob loaders** and **inline-com
 
 ### Collection Configuration
 
-Three collections are defined in `src/content.config.ts` (the single source of truth for schemas, which carry inline comments):
+Four collections are defined in `src/content.config.ts` (the single source of truth for schemas, which carry inline comments):
 
 - **`articles`** and **`notes`** — markdown/MDX via a `glob` loader.
 - **`toolboxPages`** — external data via a `file` loader (see below).
+- **`series`** — article-series metadata via a `file` loader from `src/content/series.json` (schema `{ id, name, intro? }`). Drives the "part of a series" callout (`SeriesCallout`); articles opt in via the optional `series` frontmatter field, a reference to this collection.
 
 ### Glob Loader Behavior
 
@@ -201,6 +202,7 @@ Custom remark/rehype plugins modify content during build.
 - `remarkMarkdownPreview` - Transforms ` ```md preview ` blocks into a `MarkdownBlock` component
 - `remarkTreeBlock` - Transforms ` ```tree ` blocks into a `FileTree` component
 - `remarkPageComponents` - Auto-applies `MDX_COMPONENT_REMAPPING` to routed MDX pages using `Page.astro`
+- `remarkImageCaption` - Renders a markdown image's title text as a `<figcaption>`
 
 **Rehype plugins:**
 

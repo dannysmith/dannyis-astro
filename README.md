@@ -32,7 +32,8 @@ All commands are run from the root of the project, from a terminal:
 | `bun run dev`            | Starts local dev server at `localhost:4321`      |
 | `bun run build`          | Build your production site to `./dist/`          |
 | `bun run preview`        | Preview your build locally, before deploying     |
-| `bun run check`          | Run Astro type checking                          |
+| `bun run check:all`      | Run all checks: types, format, lint, and tests   |
+| `bun run check:types`    | Run TypeScript + Astro type checking             |
 | `bun run check:lint`     | Run ESLint to check for issues                   |
 | `bun run check:knip`     | Check for unused dependencies, exports, and files |
 | `bun run check:dupes`    | Check for duplicate code blocks                  |
