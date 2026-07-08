@@ -64,4 +64,31 @@ const toolboxPages = defineCollection({
   }),
 });
 
-export const collections = { articles, notes, toolboxPages, series };
+// Things I've made and am making — surfaced on /making
+const projects = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/projects' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      byline: z.string().describe('One-sentence description of what it is'),
+      // Three orthogonal status axes (see docs/tasks-todo project doc for definitions).
+      stage: z
+        .enum(['active-development', 'actively-maintained', 'finished', 'paused', 'archived'])
+        .describe('Lifecycle: am I still working on this?'),
+      audience: z
+        .enum(['public', 'public-with-dragons', 'personal-only'])
+        .describe("Who's it for, can others use it?"),
+      kind: z.enum(['proper', 'toy', 'experiment']).optional().describe('How seriously to take it'),
+      // Icon is optional for now so projects can exist before their art does;
+      // real square icons are added during the Phase 4 data cleanup.
+      icon: image().optional().describe('Square icon'),
+      image: image().optional().describe('Main graphic'),
+      website: z.url().optional(),
+      github: z.url().optional(),
+      featured: z.boolean().default(false).describe('Surface on now page / homepage'),
+      startDate: z.coerce.date().optional().describe('When I started it; drives ordering'),
+      draft: z.boolean().default(false),
+    }),
+});
+
+export const collections = { articles, notes, toolboxPages, series, projects };

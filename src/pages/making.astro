@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
+import { ProjectCard } from '@components/ui/index';
+import { groupProjectsByStage } from '@utils/content';
+
+const groups = groupProjectsByStage(await getCollection('projects'));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Making"
+      description="Projects and things Danny Smith has made and is making."
+      pageType="page"
+    />
+  </head>
+  <body>
+    <MainNavigation />
+    <main id="main" tabindex="-1" class="ui-style">
+      <LLMDiscoveryNote />
+      <h1 class="title">Making</h1>
+      {
+        groups.map(group => (
+          <section class="stage-group">
+            <h2 class="stage-heading">{group.label}</h2>
+            <div class="project-grid">
+              {group.projects.map(project => (
+                <ProjectCard project={project} />
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </main>
+    <Footer />
+    <style>
+      body {
+        display: grid;
+        grid-template-rows: auto min-content;
+      }
+
+      .title {
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 14vw, 20rem);
+        font-weight: var(--font-weight-extrabold);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+        text-align: right;
+        line-height: var(--leading-none);
+        transform: translateY(-0.2em);
+        pointer-events: none;
+      }
+
+      main {
+        padding: var(--space-s);
+        padding-block-end: var(--space-2xl);
+      }
+
+      .stage-group {
+        margin-block-start: var(--space-xl);
+      }
+
+      .stage-heading {
+        font-size: var(--font-size-sm);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+        letter-spacing: var(--tracking-wide);
+        color: var(--color-text-secondary);
+        margin-block-end: var(--space-s);
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: var(--space-s);
+      }
+    </style>
+  </body>
+</html>
