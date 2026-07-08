@@ -1,6 +1,6 @@
 ---
 title: Taskdn
-byline: Local-first task management system, based on plain markdown files
+byline: Local-first task management system based on plain markdown files
 stage: active-development
 audience: public-with-dragons
 kind: proper

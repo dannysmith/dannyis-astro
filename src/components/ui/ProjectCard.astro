@@ -37,48 +37,38 @@ const audienceHint =
 ---
 
 <article class="project-card ui-style">
-  <div class="icon">
-    {
-      icon ? (
-        <Image src={icon} alt={`${title} icon`} width={128} height={128} />
-      ) : (
-        <span class="icon-fallback" aria-hidden="true">
-          {title.charAt(0)}
-        </span>
-      )
-    }
-  </div>
+  <div class="layout">
+    <div class="identity">
+      <div class="icon">
+        {
+          icon ? (
+            <Image src={icon} alt={`${title} icon`} width={128} height={128} />
+          ) : (
+            <span class="icon-fallback" aria-hidden="true">
+              {title.charAt(0)}
+            </span>
+          )
+        }
+      </div>
 
-  <div class="body">
-    <div class="meta">
-      <Pill text={STAGE_META[stage].label} color={STAGE_META[stage].color} />
-      {audienceHint && <Pill text={audienceHint} />}
+      <div class="header">
+        <h3 class="title">{title}</h3>
+        <h4 class="byline">{byline}</h4>
+      </div>
+
+      <div class="meta">
+        <Pill text={STAGE_META[stage].label} color={STAGE_META[stage].color} />
+        {audienceHint && <Pill text={audienceHint} />}
+      </div>
     </div>
 
-    <div class="header">
-      <h3 class="title">{title}</h3>
-      <h4 class="byline">{byline}</h4>
-    </div>
+    {image && <Image class="project-image" src={image} alt="" width={1000} />}
 
     <div class="content flow">
       <Content />
       {
         (website || github) && (
           <div class="links">
-            {website && (
-              <a
-                class="project-button"
-                data-variant="primary"
-                href={website}
-                target="_blank"
-                rel="noopener"
-              >
-                <span class="label">{title} Website</span>
-                <span class="arrow" aria-hidden="true">
-                  →
-                </span>
-              </a>
-            )}
             {github && (
               <a
                 class="project-button"
@@ -94,42 +84,105 @@ const audienceHint =
                 </span>
               </a>
             )}
+            {website && (
+              <a
+                class="project-button"
+                data-variant="primary"
+                href={website}
+                target="_blank"
+                rel="noopener"
+              >
+                <span class="label">{title} Website</span>
+                <span class="arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            )}
           </div>
         )
       }
     </div>
   </div>
-
-  {image && <Image class="project-image" src={image} alt="" width={1000} />}
 </article>
 
 <style>
   .project-card {
+    container-type: inline-size;
     padding: 2rem;
     border-radius: var(--radius-lg);
     background-color: var(--color-background-secondary);
     margin: 2rem;
   }
 
+  /* Narrow (default): a single column — identity, then image, then content.
+     Source order already matches, so no reordering needed here. */
+  .layout {
+    display: grid;
+    gap: var(--space-m);
+    grid-template-areas:
+      'identity'
+      'image'
+      'content';
+  }
+
+  .identity {
+    grid-area: identity;
+  }
+  .project-image {
+    grid-area: image;
+  }
+  .content {
+    grid-area: content;
+  }
+
+  /* Wide: image moves out to the right, spanning the identity + content rows. */
+  @container (min-width: 38rem) {
+    .layout {
+      grid-template-columns: 1fr minmax(0, 20rem);
+      grid-template-areas:
+        'identity image'
+        'content  image';
+    }
+  }
+
+  /* Icon on the left, header beside it, pills pushed out to the top-right. */
+  .identity {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-s);
+  }
+
+  .meta {
+    margin-inline-start: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2xs);
+  }
+
   .header {
     font-family: var(--font-display);
+    text-wrap: wrap;
     text-transform: uppercase;
     font-feature-settings: 'case' on;
 
     h3 {
       font-size: var(--font-size-lg);
       font-weight: var(--font-weight-extrabold);
+      margin-block-start: 0;
     }
 
     h4 {
       font-size: var(--font-size-base);
       font-weight: var(--font-weight-light);
+      color: var(--color-text-secondary);
       margin-block-start: 0;
     }
   }
 
   .icon {
     --_icon-size: 4rem;
+    flex-shrink: 0;
     inline-size: var(--_icon-size);
   }
 
@@ -159,8 +212,9 @@ const audienceHint =
   .links {
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-end;
     gap: var(--space-2xs);
-    margin-block-start: var(--space-s);
+    margin-block-start: var(--space-l);
   }
 
   .project-button {
@@ -230,6 +284,9 @@ const audienceHint =
   }
 
   .project-image {
+    align-self: start;
+    inline-size: 100%;
+    block-size: auto;
     border-radius: var(--radius-md);
   }
 </style>
