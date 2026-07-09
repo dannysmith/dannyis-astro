@@ -113,7 +113,7 @@ No well, I think I'd prefer to make this a variant of our existing component Mak
 
 I'll manually edit these but we can probably write some much better content for the current projects based on their websites and some of the articles we have in this site. Let's do this together.
 
-### Phase 4 — Nav, SEO & LLM discovery
+### Phase 4 — Nav, SEO & LLM discovery [✅ DONE]
 
 - Add a projects section to `llms.txt` (`src/pages/llms.txt.ts`).
 - Confirm `/making` is in the sitemap (should be free).

@@ -9,8 +9,30 @@ import {
 } from '@components/layout/index';
 import { ProjectCard } from '@components/ui/index';
 import { getSortedProjects } from '@utils/content';
+import { getConfig } from '@config/config';
 
+const config = getConfig();
 const projects = getSortedProjects(await getCollection('projects'));
+
+// A single ItemList of generic CreativeWorks — enough for crawlers and LLMs to
+// see the projects without per-project pages or type-specific modelling.
+const projectsJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Things Danny Smith has made',
+  itemListElement: projects.map((project, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'CreativeWork',
+      name: project.data.title,
+      description: project.data.byline,
+      url: project.data.website ?? project.data.github ?? `${config.site.url}/making#${project.id}`,
+      ...(project.data.icon && { image: `${config.site.url}${project.data.icon.src}` }),
+      author: { '@type': 'Person', name: config.author.fullName, url: config.site.url },
+    },
+  })),
+};
 ---
 
 <!doctype html>
@@ -21,6 +43,7 @@ const projects = getSortedProjects(await getCollection('projects'));
       description="Projects and things Danny Smith has made and is making."
       pageType="page"
     />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(projectsJsonLd)} />
   </head>
   <body>
     <MainNavigation />
