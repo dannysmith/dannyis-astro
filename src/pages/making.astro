@@ -1,16 +1,16 @@
 ---
-import { getCollection } from 'astro:content'
+import { getCollection } from 'astro:content';
 import {
   BaseHead,
   Footer,
   Lightbox,
   LLMDiscoveryNote,
   MainNavigation,
-} from '@components/layout/index'
-import { ProjectCard } from '@components/ui/index'
-import { getSortedProjects } from '@utils/content'
+} from '@components/layout/index';
+import { ProjectCard } from '@components/ui/index';
+import { getSortedProjects } from '@utils/content';
 
-const projects = getSortedProjects(await getCollection('projects'))
+const projects = getSortedProjects(await getCollection('projects'));
 ---
 
 <!doctype html>
