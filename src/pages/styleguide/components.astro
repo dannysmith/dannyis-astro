@@ -32,7 +32,7 @@ import {
   YouTube,
 } from 'astro-embed';
 import { Code } from 'astro-expressive-code/components';
-import { ContentCard } from '@components/ui/index';
+import { ContentCard, ProjectCard } from '@components/ui/index';
 import { NoteCard } from '@components/layout/index';
 import { Image, Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
@@ -56,6 +56,7 @@ const toc = [
   { id: 'astro-image', label: 'Astro Image & Picture' },
   { id: 'content-card', label: 'ContentCard' },
   { id: 'note-card', label: 'NoteCard' },
+  { id: 'project-card', label: 'ProjectCard' },
   { id: 'embeds', label: 'Embeds' },
 ];
 
@@ -146,6 +147,10 @@ const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCov
 
 const allNotes = await getCollection('notes', ({ data }) => !data.styleguide);
 const sampleNotes = allNotes.slice(0, 3);
+
+const allProjects = await getCollection('projects', ({ data }) => !data.draft);
+const sampleProject = allProjects.find(p => p.data.image) ?? allProjects[0];
+const sampleProjects = allProjects.slice(0, 3);
 ---
 
 <StyleguideLayout
@@ -1475,6 +1480,60 @@ Provide a title to skip the fetch or override it:
           was configured just for you, even when you've changed nothing.
         </p>
       </NoteCard>
+    </ResizableContainer>
+  </section>
+
+  <section id="project-card" class="flow">
+    <h2>ProjectCard</h2>
+    <p>
+      ProjectCard renders a project from the <code>projects</code> collection, as used on the
+      <a href="/making">/making</a> page. The full card shows the icon, status pills, byline, markdown
+      body, an optional image and website/GitHub buttons. The <code>compact</code> variant is a small
+      linked tile. Both respond to their <em>container</em> width — the demos below sit in resizable containers,
+      so drag the handle to see them reflow.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>project</code></td>
+          <td><code>CollectionEntry&lt;'projects'&gt;</code></td>
+          <td>—</td>
+          <td>The project entry to render.</td>
+        </tr>
+        <tr>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Render a small linked tile (icon + title + byline) instead of the full card.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="project-card-full">Full card</h3>
+    <p>Past a wide container the image moves out to the right of everything else.</p>
+    <Code lang="mdx" code={'<ProjectCard project={project} />'} />
+    <ResizableContainer>
+      {sampleProject && <ProjectCard project={sampleProject} />}
+    </ResizableContainer>
+
+    <h3 id="project-card-compact">Compact</h3>
+    <p>
+      The <code>compact</code> prop renders a linked tile that opens the project's website (then GitHub,
+      then its <code>/making</code> anchor). The byline drops on very narrow containers.
+    </p>
+    <Code lang="mdx" code={'<ProjectCard project={project} compact />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleProjects.map(project => <ProjectCard project={project} compact />)}
+      </div>
     </ResizableContainer>
   </section>
 
