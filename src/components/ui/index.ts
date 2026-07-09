@@ -6,5 +6,6 @@ export { default as MarkdownContentActions } from './MarkdownContentActions.astr
 export { default as PersonalLogo } from './PersonalLogo.astro';
 export { default as Pill } from './Pill.astro';
 export { default as ProjectCard } from './ProjectCard.astro';
+export { default as ProjectIcon } from './ProjectIcon.astro';
 export { default as SocialLinks } from './SocialLinks.astro';
 export { default as Spinner } from './Spinner.astro';

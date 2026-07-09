@@ -4,6 +4,7 @@ import { render } from 'astro:content';
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import Pill from '@components/ui/Pill.astro';
+import ProjectIcon from '@components/ui/ProjectIcon.astro';
 
 // Types derived from the schema, so adding an enum value in content.config.ts
 // forces these maps to be updated.
@@ -69,13 +70,18 @@ const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
 
 interface Props {
   project: CollectionEntry<'projects'>;
+  /** Compact tile: icon + title + byline, the whole card links out. */
+  compact?: boolean;
 }
 
-const { project } = Astro.props;
+const { project, compact = false } = Astro.props;
 const { title, byline, stage, audience, icon, image, website, github } = project.data;
 
-// The markdown body of the project, rendered inline (no per-project pages).
-const { Content } = await render(project);
+// Compact links out to the project (website → GitHub → its /making anchor); the
+// full card renders the markdown body inline (no per-project routes).
+const compactHref = website ?? github ?? `/making#${project.id}`;
+const compactIsExternal = Boolean(website ?? github);
+const Content = compact ? null : (await render(project)).Content;
 
 // Status pill first, audience pill (when not plainly public) after.
 const audienceMeta = AUDIENCE_META[audience];
@@ -89,54 +95,63 @@ if (github)
 if (website) links.push({ href: website, variant: 'primary', label: `${title} Website` });
 ---
 
-<article class="project-card ui-style">
-  <div class="identity">
-    <div class="icon">
-      {
-        icon ? (
-          <Image src={icon} alt={`${title} icon`} width={128} height={128} />
-        ) : (
-          <span class="icon-fallback" aria-hidden="true">
-            {title.charAt(0)}
-          </span>
-        )
-      }
-    </div>
+{
+  compact ? (
+    <a
+      class="project-card-compact ui-style"
+      href={compactHref}
+      target={compactIsExternal ? '_blank' : undefined}
+      rel={compactIsExternal ? 'noopener' : undefined}
+    >
+      <ProjectIcon icon={icon} title={title} />
+      <span class="compact-text">
+        <span class="compact-title">{title}</span>
+        <span class="compact-byline">{byline}</span>
+      </span>
+    </a>
+  ) : (
+    <article class="project-card ui-style" id={project.id}>
+      <div class="identity">
+        <div class="icon">
+          <ProjectIcon icon={icon} title={title} />
+        </div>
 
-    <div class="header">
-      <h2 class="title">{title}</h2>
-      <p class="byline">{byline}</p>
-    </div>
+        <div class="header">
+          <h2 class="title">{title}</h2>
+          <p class="byline">{byline}</p>
+        </div>
 
-    <div class="meta">
-      {pills.map(pill => <Pill {...pill} />)}
-    </div>
-  </div>
-
-  {image && <Image class="project-image" src={image} alt="" width={1000} />}
-
-  <div class="content flow">
-    <Content />
-    {
-      links.length > 0 && (
-        <div class="links">
-          {links.map(link => (
-            <a
-              class="project-button"
-              data-variant={link.variant}
-              href={link.href}
-              target="_blank"
-              rel="noopener"
-            >
-              {link.icon && <Icon name={link.icon} />}
-              {link.label}
-            </a>
+        <div class="meta">
+          {pills.map(pill => (
+            <Pill {...pill} />
           ))}
         </div>
-      )
-    }
-  </div>
-</article>
+      </div>
+
+      {image && <Image class="project-image" src={image} alt="" width={1000} />}
+
+      <div class="content flow">
+        {Content && <Content />}
+        {links.length > 0 && (
+          <div class="links">
+            {links.map(link => (
+              <a
+                class="project-button"
+                data-variant={link.variant}
+                href={link.href}
+                target="_blank"
+                rel="noopener"
+              >
+                {link.icon && <Icon name={link.icon} />}
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </article>
+  )
+}
 
 <style>
   /* Narrow (default): a single column — identity, then image, then content.
@@ -153,6 +168,9 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     padding: var(--space-l);
     border-radius: var(--radius-lg);
     background-color: var(--color-background-secondary);
+
+    /* Clear the nav when linked via #id from a compact card elsewhere. */
+    scroll-margin-block-start: var(--space-xl);
   }
 
   /* Narrow: icon on the left; header and meta stacked in the column beside it. */
@@ -205,30 +223,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
   .icon {
     grid-area: icon;
     --_icon-size: 4rem;
-    inline-size: var(--_icon-size);
-  }
-
-  .icon :is(img, .icon-fallback) {
-    inline-size: 100%;
-    aspect-ratio: 1;
-    border-radius: var(--radius-md);
-  }
-
-  .icon img {
-    object-fit: cover;
-  }
-
-  .icon-fallback {
-    display: grid;
-    place-items: center;
-    background-color: var(--color-text);
-    color: var(--color-background);
-    font-family: var(--font-display);
-    font-size: calc(var(--_icon-size) * 0.55);
-    font-weight: var(--font-weight-extrabold);
-    line-height: 1;
-    text-transform: uppercase;
-    font-feature-settings: 'case' on;
   }
 
   .links {
@@ -332,6 +326,69 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
 
     .meta {
       flex-direction: row-reverse;
+    }
+  }
+
+  /* ---- Compact variant: a single clickable tile (icon + title + byline) ---- */
+  .project-card-compact {
+    --_icon-size: 3rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    overflow: hidden;
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-background-secondary);
+    text-decoration: none;
+    transition: border-color var(--duration-fast) var(--ease-in-out);
+  }
+
+  /* Accent bar that grows on hover/focus — the site's ContentCard idiom. */
+  .project-card-compact::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--border-width-thick);
+    background: var(--color-accent);
+    transition: inline-size var(--duration-fast) var(--ease-in-out);
+  }
+
+  .project-card-compact:is(:hover, :focus-visible) {
+    border-color: var(--color-accent);
+
+    &::before {
+      inline-size: var(--border-width-heavy);
+    }
+  }
+
+  .compact-text {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .compact-title {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    line-height: var(--leading-tight);
+    color: var(--color-text);
+  }
+
+  .compact-byline {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  /* Respond to the container: drop the byline once the tile gets tight. */
+  @container (max-width: 20rem) {
+    .compact-byline {
+      display: none;
     }
   }
 </style>

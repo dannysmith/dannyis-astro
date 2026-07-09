@@ -4,8 +4,6 @@ byline: 'This is just a dummy project'
 stage: active-development
 audience: public
 kind: toy
-website: https://astroeditor.danny.is
-github: https://github.com/dannysmith/astro-editor
 startDate: 2025-06-01
 ---
 

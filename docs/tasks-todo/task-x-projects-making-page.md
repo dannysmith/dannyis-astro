@@ -78,7 +78,7 @@ A `glob` md/mdx loader in `src/content/projects/` (like `articles`/`notes`, not 
 
 ## Phases
 
-### Phase 1 — Schema, data, and the `/making` page (core, v1)
+### Phase 1 — Schema, data, and the `/making` page (core, v1) [✅ DONE]
 
 The minimum that makes `/making` real.
 
@@ -103,13 +103,17 @@ The minimum that makes `/making` real.
 5. **`/making` page** (`src/pages/making.astro`): big display-type "Making" / "Stuff I Made" title matching the writing index; grouped grid of `ProjectCard`s with section headings per `stage`. Test light + dark.
 6. **Quality gates**: unit-test the ordering helper; `bun run check:all`; eyeball both themes.
 
-### Phase 2 — Compact ProjectCard
+### Phase 2 — Compact ProjectCard [✅ DONE]
 
 What we could do with a variant of the project card which can be used in all sorts of places where we don't want to actually display the full thing. Sensible thing here would be to have a prop for "compact" and have that render a small version (which is also responsive to its container) which contains just the icon, title and byline, and when clicked opens the website if it exists or if not opens the GitHub link or if neither exists it opens /making#name-of-project.
 
 No well, I think I'd prefer to make this a variant of our existing component Make things easier to maintain. I am totally open to having a separate component for this if there's a strong argument for it. We're probably not going to use this right now, but in the future I can imagine using this on the home page potentially also in my now page and perhaps in the future in articles and notes etc too (at which point we'd probs wanna move it to the mdx components dir). Let's get this wired up and looking good now. We can use scratchpad.astro to see howit looks in various circumstances.
 
-### Phase 3 — Nav, SEO & LLM discovery
+### Phase 3 — Write better descriptions of projects
+
+I'll manually edit these but we can probably write some much better content for the current projects based on their websites and some of the articles we have in this site. Let's do this together.
+
+### Phase 4 — Nav, SEO & LLM discovery
 
 - Add a projects section to `llms.txt` (`src/pages/llms.txt.ts`).
 - Confirm `/making` is in the sitemap (should be free).
@@ -117,9 +121,6 @@ No well, I think I'd prefer to make this a variant of our existing component Mak
 - Add link to making to homepage
 - Add link to making to footer and main navigation
 
-### Phase 4 — Write better descriptions of projects
-
-I'll manually edit these but we can probably write some much better content for the current projects based on their websites and some of the articles we have in this site. Let's do this together.
 
 ### Phase 5 - Deployment, CI, Checks & Documentation
 
