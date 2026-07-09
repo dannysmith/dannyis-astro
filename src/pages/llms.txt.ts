@@ -151,8 +151,12 @@ export const GET: APIRoute = async () => {
   }
   lines.push('');
 
-  // Projects (no per-project routes, so each links to its /making anchor)
-  const projects = getSortedProjects(await getCollection('projects'));
+  // Projects (no per-project routes, so each links to its /making anchor).
+  // Cast for the same reason as the articles/notes loops above: the generic
+  // helper's return would otherwise widen to its constraint type here.
+  const projects = getSortedProjects(
+    await getCollection('projects'),
+  ) as CollectionEntry<'projects'>[];
   lines.push('## Projects');
   lines.push('');
   lines.push('Things Danny has made and is making.');
