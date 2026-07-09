@@ -8,9 +8,10 @@ The site uses Astro's content collections with **glob loaders** and **inline-com
 
 ### Collection Configuration
 
-Four collections are defined in `src/content.config.ts` (the single source of truth for schemas, which carry inline comments):
+Five collections are defined in `src/content.config.ts` (the single source of truth for schemas, which carry inline comments):
 
 - **`articles`** and **`notes`** — markdown/MDX via a `glob` loader.
+- **`projects`** — the "things I've made" surfaced on `/making`, markdown/MDX via a `glob` loader (see below).
 - **`toolboxPages`** — external data via a `file` loader (see below).
 - **`series`** — article-series metadata via a `file` loader from `src/content/series.json` (schema `{ id, name, intro? }`). Drives the "part of a series" callout (`SeriesCallout`); articles opt in via the optional `series` frontmatter field, a reference to this collection.
 
@@ -31,6 +32,16 @@ The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
 - **Data file:** `src/content/toolboxPages.json`
 - **Consumption:** `ContentCard` component, toolbox test page
 - **Pattern:** JSON loader enables sourcing external API data at build time
+
+### Projects Collection
+
+The `projects` collection powers the `/making` page — a showcase of things Danny has made. It uses a `glob` md/mdx loader over `src/content/projects/`, and each project's markdown body is rendered inline. There are **no per-project routes**.
+
+- **Files:** named by slug (e.g. `astro-editor.md`, no date prefix); the filename is the project `id` and its `/making#<id>` anchor.
+- **Schema:** `title`, `byline`, three status axes (`stage`, `audience`, optional `kind`), `icon`/`image` (via `image()`), `website`/`github`, `featured`, `startDate`, `draft`. See the inline-commented source in `src/content.config.ts`.
+- **Ordering:** `getSortedProjects()` (`src/utils/content.ts`) drops drafts and sorts by `startDate` (newest first, undated on top). Consumed by `/making` and `src/pages/scratchpad.astro`.
+- **Components:** `ProjectCard` renders a project, with a `compact` prop for a small linked tile; `ProjectIcon` renders the square icon or a display-type monogram fallback.
+- **Discovery:** listed in `llms.txt` and the sitemap, and `/making` emits an `ItemList` of `CreativeWork` JSON-LD. Deliberately **excluded from RSS/JSON feeds** — projects aren't dated posts.
 
 ### Content Filtering
 
