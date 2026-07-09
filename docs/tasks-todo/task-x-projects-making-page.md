@@ -109,7 +109,7 @@ What we could do with a variant of the project card which can be used in all sor
 
 No well, I think I'd prefer to make this a variant of our existing component Make things easier to maintain. I am totally open to having a separate component for this if there's a strong argument for it. We're probably not going to use this right now, but in the future I can imagine using this on the home page potentially also in my now page and perhaps in the future in articles and notes etc too (at which point we'd probs wanna move it to the mdx components dir). Let's get this wired up and looking good now. We can use scratchpad.astro to see howit looks in various circumstances.
 
-### Phase 3 — Write better descriptions of projects
+### Phase 3 — Write better descriptions of projects [✅ DONE]
 
 I'll manually edit these but we can probably write some much better content for the current projects based on their websites and some of the articles we have in this site. Let's do this together.
 

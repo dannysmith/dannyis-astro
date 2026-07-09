@@ -12,4 +12,8 @@ featured: true
 startDate: 2025-06-01
 ---
 
-Astro Editor is a beautiful distraction-free markdown editor for working with Astro content collections, designed specifically for writing not coding. It uses your Astro config and Zod schemas to show frontmatter as proper forms, makes adding images & components easy and gets out of the way when you wanna just write.
+Astro Editor is a native desktop app for writing and editing the Markdown and MDX inside [Astro](https://astro.build/) content collections. Astro Editor reads the collection schema and turns the YAML frontmatter into proper form fields in a sidebar, so the writing interface can be minimal. It also handles fiddly stuff like dragging in images and inserting MDX components.
+
+The guiding philosophy is that publishing with Astro should happen in two modes: _writer mode_ (actually writing the words) and *coder mode* (checking it builds, committing, tweaking actual code etc). Astro Editor is optimised for the first. See [Introducing Astro Editor](/writing/introducing-astro-editor/) for more.
+
+I started on this in mid-2025 as a project to learn how to build software properly with AI, on the condition that it couldn't be a toy and had to be something I'd actually use every day. It turned out to be exactly that — I write almost everything on this site in it now. It's free and open source and used by a fair few folks daily.
