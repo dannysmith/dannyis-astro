@@ -1,0 +1,47 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  icon?: ImageMetadata;
+  title: string;
+}
+
+const { icon, title } = Astro.props;
+---
+
+{
+  icon ? (
+    <Image class="project-icon" src={icon} alt={`${title} icon`} width={128} height={128} />
+  ) : (
+    <span class="project-icon is-fallback" aria-hidden="true">
+      {title.charAt(0)}
+    </span>
+  )
+}
+
+<style>
+  /* Size is driven by an inherited custom property, so callers set --_icon-size
+     on any ancestor. */
+  .project-icon {
+    inline-size: var(--_icon-size, 4rem);
+    aspect-ratio: 1;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+  }
+
+  /* No icon → a display-type monogram of the project's initial. */
+  .is-fallback {
+    display: grid;
+    place-items: center;
+    background-color: var(--color-text);
+    color: var(--color-background);
+    font-family: var(--font-display);
+    font-size: calc(var(--_icon-size, 4rem) * 0.55);
+    font-weight: var(--font-weight-extrabold);
+    line-height: 1;
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+  }
+</style>

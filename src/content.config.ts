@@ -29,7 +29,7 @@ const articles = defineCollection({
     }),
 });
 
-// Article series metadata (drives the "part of a series" callout)
+// Article series metadata (for the "part of a series" callout)
 const series = defineCollection({
   loader: file('src/content/series.json'),
   schema: z.object({
@@ -64,4 +64,28 @@ const toolboxPages = defineCollection({
   }),
 });
 
-export const collections = { articles, notes, toolboxPages, series };
+// Things I've made and am making — surfaced on /making
+const projects = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/projects' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      byline: z.string().describe('One-sentence description of what it is'),
+      stage: z
+        .enum(['active-development', 'actively-maintained', 'finished', 'paused', 'archived'])
+        .describe('Lifecycle: am I still working on this?'),
+      audience: z
+        .enum(['public', 'public-with-dragons', 'personal-only'])
+        .describe("Who's it for, can others use it?"),
+      kind: z.enum(['proper', 'toy', 'experiment']).optional().describe('How seriously to take it'),
+      icon: image().optional().describe('Square icon'),
+      image: image().optional().describe('Main graphic'),
+      website: z.url().optional(),
+      github: z.url().optional(),
+      featured: z.boolean().default(false),
+      startDate: z.coerce.date().optional(),
+      draft: z.boolean().default(false),
+    }),
+});
+
+export const collections = { articles, notes, toolboxPages, series, projects };

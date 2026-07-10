@@ -60,3 +60,34 @@ export function getPublishedSeriesArticles<
       return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title);
     });
 }
+
+/**
+ * Filter projects for listing (drafts excluded in production, kept in dev) and
+ * return them in display order: newest first by startDate, with undated
+ * projects floating to the top, tie-broken by title.
+ *
+ * Returns a flat list — callers filter()/map() it for whatever subset they need
+ * (featured, a given stage, etc.). Mirrors the filter-then-sort pattern used for
+ * the article/note indexes.
+ */
+export function getSortedProjects<
+  T extends {
+    id: string;
+    data: {
+      draft?: boolean;
+      styleguide?: boolean;
+      title: string;
+      startDate?: Date;
+    };
+  },
+>(projects: T[], isProduction: boolean = import.meta.env.PROD): T[] {
+  return filterContentForListing(projects, isProduction).sort((a, b) => {
+    const da = a.data.startDate;
+    const db = b.data.startDate;
+    if (!da && !db) return a.data.title.localeCompare(b.data.title);
+    if (!da) return -1; // undated floats to the top
+    if (!db) return 1;
+    const byDate = db.valueOf() - da.valueOf(); // newest first
+    return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title);
+  });
+}

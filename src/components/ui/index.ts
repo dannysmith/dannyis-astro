@@ -5,5 +5,7 @@ export { default as FormattedDate } from './FormattedDate.astro';
 export { default as MarkdownContentActions } from './MarkdownContentActions.astro';
 export { default as PersonalLogo } from './PersonalLogo.astro';
 export { default as Pill } from './Pill.astro';
+export { default as ProjectCard } from './ProjectCard.astro';
+export { default as ProjectIcon } from './ProjectIcon.astro';
 export { default as SocialLinks } from './SocialLinks.astro';
 export { default as Spinner } from './Spinner.astro';

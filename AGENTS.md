@@ -94,7 +94,8 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
     ├── config/        # Centralized config (SEO, constants)
     ├── content/
     │   ├── articles/  # Long-form writing
-    │   └── notes/     # Short-form writing
+    │   ├── notes/     # Short-form writing
+    │   └── projects/  # "Things I made" — surfaced on /making
     ├── icons/         # Custom SVG icons (social, ui)
     ├── layouts/       # Page templates (Article, Note)
     ├── lib/           # Build-time plugins (runs independently)

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import { getConfig } from '@config/config';
-import { filterContentForListing } from '@utils/content';
+import { filterContentForListing, getSortedProjects } from '@utils/content';
 import nowRaw from './now.mdx?raw';
 
 // now.mdx is an MDX page (frontmatter + MDX components). For the plain-text
@@ -148,6 +148,22 @@ export const GET: APIRoute = async () => {
     // Link to the .md variant (see Articles loop above).
     const url = `${config.site.url}/notes/${note.id}.md`;
     lines.push(`- [${note.data.title}](${url})`);
+  }
+  lines.push('');
+
+  // Projects (no per-project routes, so each links to its /making anchor).
+  // Cast for the same reason as the articles/notes loops above: the generic
+  // helper's return would otherwise widen to its constraint type here.
+  const projects = getSortedProjects(
+    await getCollection('projects'),
+  ) as CollectionEntry<'projects'>[];
+  lines.push('## Projects');
+  lines.push('');
+  lines.push('Things Danny has made and is making.');
+  lines.push('');
+  for (const project of projects) {
+    const url = `${config.site.url}/making#${project.id}`;
+    lines.push(`- [${project.data.title}](${url}): ${project.data.byline}`);
   }
   lines.push('');
 

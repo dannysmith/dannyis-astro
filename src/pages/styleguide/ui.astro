@@ -87,6 +87,21 @@ const toc = [
           <td>—</td>
           <td>Override the auto-derived text colour.</td>
         </tr>
+        <tr>
+          <td><code>icon</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td
+            >An astro-icon name (e.g. <code>heroicons:check-circle-20-solid</code>) shown before the
+            text.</td
+          >
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td><code>string</code></td>
+          <td>—</td>
+          <td>Native hover tooltip; also sets <code>cursor: help</code>.</td>
+        </tr>
       </tbody>
     </table>
 
@@ -114,6 +129,33 @@ const toc = [
         <Pill text="Purple" color="var(--color-purple)" />
         <Pill text="Orange" color="var(--color-orange)" />
         <Pill text="Custom Text" color="var(--color-charcoal)" textColor="var(--color-coral)" />
+      </p>
+    </SGSwitcher>
+
+    <h3 id="pill-icon-tooltip">Icon &amp; tooltip</h3>
+    <p>
+      Pass an <code>icon</code> (any astro-icon name) for a leading glyph, and a <code>title</code> for
+      a native hover tooltip (the cursor becomes <code>help</code>). Both drive the status pills on
+      <a href="/making">/making</a>.
+    </p>
+    <Code
+      lang="astro"
+      code={`<Pill text="Finished" icon="heroicons:check-circle-20-solid" title="Done, but not necessarily kept up to date." />
+<Pill text="In active development" color="var(--color-blue)" icon="heroicons:code-bracket-20-solid" title="I'm working on this right now." />`}
+    />
+    <SGSwitcher>
+      <p>
+        <Pill
+          text="Finished"
+          icon="heroicons:check-circle-20-solid"
+          title="Done, but not necessarily kept up to date."
+        />
+        <Pill
+          text="In active development"
+          color="var(--color-blue)"
+          icon="heroicons:code-bracket-20-solid"
+          title="I'm working on this right now."
+        />
       </p>
     </SGSwitcher>
   </section>
