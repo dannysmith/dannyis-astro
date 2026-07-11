@@ -6,24 +6,24 @@
  * primitive at a time. Commands are dummy/static for now — real content search
  * (Pagefind) is a separate experiment. See docs/tasks-todo/task-1-command-palette-and-search.md
  *
- * Deliberately kept to the MINIMUM CSS/JS needed to function — everything else
- * is browser default, so we can add each piece (styling, animation, empty state,
- * group-hiding, scroll-lock…) back on purpose.
+ * Built on a native modal <dialog> + the WAI-ARIA combobox/listbox pattern:
+ * focus stays in the input, the active option is tracked via aria-activedescendant,
+ * and filtering leans on the native [hidden] attribute.
  */
-import { BaseHead, MainNavigation } from '@components/layout/index';
+import { BaseHead, MainNavigation } from '@components/layout/index'
 
 // The command list is baked into the markup at build time (no client fetch).
 // Every item is a real <a role="option">: nav items have an href (navigate
 // natively; ⌘/middle-click opens a new tab), action items are href-less and
 // carry a data-action dispatched by the script.
 type PaletteItem = {
-  id: string;
-  label: string;
-  group: 'Commands' | 'Navigation';
-  href?: string;
-  action?: 'copy-url';
-  keywords?: string; // extra text to match on, not shown
-};
+  id: string
+  label: string
+  group: 'Commands' | 'Navigation'
+  href?: string
+  action?: 'copy-url'
+  keywords?: string // extra text to match on, not shown
+}
 
 const items: PaletteItem[] = [
   // Commands
@@ -60,9 +60,9 @@ const items: PaletteItem[] = [
     href: '/rss.xml',
     keywords: 'feed subscribe',
   },
-];
+]
 
-const groups = ['Commands', 'Navigation'] as const;
+const groups = ['Commands', 'Navigation'] as const
 ---
 
 <!doctype html>
@@ -134,7 +134,6 @@ const groups = ['Commands', 'Navigation'] as const;
 <style>
   #command-palette {
     width: min(32rem, 90vw);
-    max-block-size: 70vh;
     margin-block-start: 12vh;
     padding: 0;
     overflow: hidden;
@@ -185,6 +184,9 @@ const groups = ['Commands', 'Navigation'] as const;
     outline: none;
   }
 
+  .cp-item-list {
+    margin-block-start: 0;
+  }
   /* The scroll area. min-block-size:0 lets this flex child shrink so it can
      actually scroll; overscroll-behavior stops scroll chaining to the page. */
   #cp-listbox {
@@ -201,15 +203,15 @@ const groups = ['Commands', 'Navigation'] as const;
     color: var(--color-text-secondary);
   }
 
-  .cp-item-list {
-    margin-block-start: 0;
-  }
-
   .cp-option {
     display: block;
-    width: 100%;
     padding: var(--space-2xs) var(--space-s);
     cursor: pointer;
+  }
+
+  .cp-option:hover {
+    background: var(--color-background-secondary);
+    color: inherit;
   }
 
   .cp-option[data-active] {
@@ -237,87 +239,87 @@ const groups = ['Commands', 'Navigation'] as const;
 <script>
   // Minimal command-palette behaviour. Idempotent across astro:page-load.
   function initCommandPalette() {
-    const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette');
-    if (!dialogEl || dialogEl.dataset.cpReady) return;
-    dialogEl.dataset.cpReady = 'true';
-    const dialog: HTMLDialogElement = dialogEl; // non-null alias for closures
+    const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette')
+    if (!dialogEl || dialogEl.dataset.cpReady) return
+    dialogEl.dataset.cpReady = 'true'
+    const dialog: HTMLDialogElement = dialogEl // non-null alias for closures
 
-    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!;
-    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!;
-    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')];
-    const visibleOptions = () => allOptions().filter(o => !o.hidden);
+    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!
+    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!
+    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')]
+    const visibleOptions = () => allOptions().filter(o => !o.hidden)
 
     // Track the active option via aria-activedescendant (focus stays in the input).
     function setActive(el: HTMLElement | null) {
-      allOptions().forEach(o => delete o.dataset.active);
+      allOptions().forEach(o => delete o.dataset.active)
       if (!el) {
-        input.removeAttribute('aria-activedescendant');
-        return;
+        input.removeAttribute('aria-activedescendant')
+        return
       }
-      el.dataset.active = 'true';
-      input.setAttribute('aria-activedescendant', el.id);
-      el.scrollIntoView({ block: 'nearest' });
+      el.dataset.active = 'true'
+      input.setAttribute('aria-activedescendant', el.id)
+      el.scrollIntoView({ block: 'nearest' })
     }
 
     // Filter by substring over label + hidden keywords (native [hidden] does the
     // hiding); keep the first match highlighted.
     function filter() {
-      const q = input.value.trim().toLowerCase();
+      const q = input.value.trim().toLowerCase()
       for (const o of allOptions()) {
-        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase();
-        o.hidden = q !== '' && !hay.includes(q);
+        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase()
+        o.hidden = q !== '' && !hay.includes(q)
       }
-      setActive(visibleOptions()[0] ?? null);
+      setActive(visibleOptions()[0] ?? null)
     }
 
     function open() {
-      input.value = '';
-      filter();
-      dialog.showModal();
-      input.focus();
+      input.value = ''
+      filter()
+      dialog.showModal()
+      input.focus()
     }
 
     // Global hotkey: Cmd on macOS, Ctrl elsewhere
     document.addEventListener('keydown', e => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        if (dialog.open) dialog.close();
-        else open();
+        e.preventDefault()
+        if (dialog.open) dialog.close()
+        else open()
       }
-    });
-    document.querySelectorAll('[data-cp-open]').forEach(b => b.addEventListener('click', open));
+    })
+    document.querySelectorAll('[data-cp-open]').forEach(b => b.addEventListener('click', open))
 
     // Arrow / Enter navigation, driven from the input.
-    input.addEventListener('input', filter);
+    input.addEventListener('input', filter)
     input.addEventListener('keydown', e => {
-      const opts = visibleOptions();
-      if (!opts.length) return;
-      const i = opts.findIndex(o => o.dataset.active === 'true');
+      const opts = visibleOptions()
+      if (!opts.length) return
+      const i = opts.findIndex(o => o.dataset.active === 'true')
       if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setActive(opts[(i + 1) % opts.length]);
+        e.preventDefault()
+        setActive(opts[(i + 1) % opts.length])
       } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setActive(opts[(i - 1 + opts.length) % opts.length]);
+        e.preventDefault()
+        setActive(opts[(i - 1 + opts.length) % opts.length])
       } else if (e.key === 'Enter') {
-        e.preventDefault();
-        opts[i >= 0 ? i : 0]?.click();
+        e.preventDefault()
+        opts[i >= 0 ? i : 0]?.click()
       }
-    });
+    })
 
     // Nav options are real links (navigate natively). Action options have no
     // href and carry a data-action — run it and close.
     list.addEventListener('click', e => {
-      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option');
-      if (!opt?.dataset.action) return;
-      e.preventDefault();
+      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option')
+      if (!opt?.dataset.action) return
+      e.preventDefault()
       if (opt.dataset.action === 'copy-url') {
-        navigator.clipboard?.writeText(location.href);
+        navigator.clipboard?.writeText(location.href)
       }
-      dialog.close();
-    });
+      dialog.close()
+    })
   }
 
-  initCommandPalette();
-  document.addEventListener('astro:page-load', initCommandPalette);
+  initCommandPalette()
+  document.addEventListener('astro:page-load', initCommandPalette)
 </script>
