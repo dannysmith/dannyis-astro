@@ -104,6 +104,28 @@ Danny will read over all the ported content comparing the design and structure t
 
 We may also find ourselves considering a new breadcrumb component (either specifically for /uses or more generic). It may also make sense at this point to shift from the standard Page.astro layout to a new UsesPage layout.
 
+- [x] Remove phone and watch content from software
+  - [x] Remove markdown
+  - [x] Remove now-unused images
+- [x] Update software content
+  - [x] Remove Cursor and link to article on switching to VSCode and my dotfiles repo etc. Maybe also update the coding section with some more info since I do code now.
+  - [x] Update Browser section to show I use Chrome again now and list the extensions I use with links to them
+  - [x] Swap out bartender for https://github.com/dwarvesf/hidden which I now use
+  - [x] Add Astro Editor and Taskdn at appropriate places
+  - [x] Add LoomClone at appropriate place alongside Loom
+- [x] Update desk content to reflect that I now have the ZV-1 conntected to the back of the dock via a Camlink 4K into one of the unused thunderbolt ports, not via the USB port.
+- [x] Grid component
+  - [x] We need to make the grid component work properly. This isn't really related to this change but we should do it here anyway. Idealy we should keep it fairly simple I guess maybe via rehype-unwrap-images? But we should check that works properly with the other rehype things we have to handle images/BasicImage etc in all contexts. We should port the code from rehype-unwrap-images rather than adding another dependency because its a very simple one-file project. I'd suggest we create a couple of temporary test docs to test permutations of Grid in Article, Note and Page layouts (ie crate a draft note and article and a scratchpad page etc). Whatever we do here will also mean updating some developer docs and potentially the styleguide too and I'll wanna check that images still work fine in other contexts if we add the rehype plugin.
+  - [x] Add back the grid components and check they look ok
+- [x] Tweak callout design
+  - [x] Add a hairline border under the callout heading. We'll have to eyeball this. I think this can just apply everywhere.
+- [ ] Improve content
+  - [ ] Ensure the intros to each page are more like the one to bag.mdx - ie gives some context and links to all the other uses pages in the prose there.
+  - [ ] Check over all the content for spelling, grammar and any other errors or minor improvements we can make. Not a big rewrite.
+- [ ] Header images?
+  - [ ] Consider adding a header image prop to Page.layout which is optional and works similarly to how article does it. Then add header images to the frontmatter. I think this is probs a better option than a whole new layout?
+
+
 ### Phase 4 — SEO, discovery & nav
 
 - Add `description` frontmatter to each page for `BaseHead`.
