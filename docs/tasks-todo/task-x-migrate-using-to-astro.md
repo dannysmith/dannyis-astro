@@ -72,14 +72,14 @@ Images live in `src/assets/using/` and are referenced with relative MD image syn
 
 ## Phases
 
-### Phase 1 — Scaffold routes and the landing page
+### Phase 1 — Scaffold routes and the landing page [✅ DONE]
 
 1. Create `src/pages/using/index.mdx` (landing) using `layout: '@layouts/Page.astro'`, with the intro philosophy copy and links to the four sub-pages.
 2. Create the four sub-page files as stubs (frontmatter + title) so routing/nav is real: `src/pages/using/{bag,office,software,outdoors}.mdx`.
 3. Remove `'/using'` from `src/config/redirects.ts` (this is the single source feeding both the meta-refresh fallback and the Vercel HTTP redirect — removing it there removes it everywhere). Confirm the homepage link (`src/pages/index.astro:49`, "stuff I'm **using**") now resolves internally.
 4. `bun run check:all`; eyeball `/using` in light + dark.
 
-### Phase 2 — Image pipeline
+### Phase 2 — Image pipeline [✅ DONE]
 
 The heavy lifting. For each page:
 
@@ -87,7 +87,7 @@ The heavy lifting. For each page:
 2. Save into `src/assets/using/` with sensible, stable filenames.
 3. Optimise (let Astro handle sizing; keep originals reasonable). Note any images that are low-res or should be re-shot.
 
-### Phase 3 — Port page content
+### Phase 3 — Port page content [✅ DONE]
 
 One page at a time, verbatim, using the block→component mapping above. Suggested order (simplest → richest): `outdoors` (mostly text) → `software` → `office` → `bag`.
 
