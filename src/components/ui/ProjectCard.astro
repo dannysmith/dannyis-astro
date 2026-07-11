@@ -1,23 +1,23 @@
 ---
-import type { CollectionEntry } from 'astro:content'
-import { render } from 'astro:content'
-import { Image } from 'astro:assets'
-import { Icon } from 'astro-icon/components'
-import Pill from '@components/ui/Pill.astro'
-import ProjectIcon from '@components/ui/ProjectIcon.astro'
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import Pill from '@components/ui/Pill.astro';
+import ProjectIcon from '@components/ui/ProjectIcon.astro';
 
 // Types derived from the schema, so adding an enum value in content.config.ts
 // forces these maps to be updated.
-type ProjectStage = CollectionEntry<'projects'>['data']['stage']
-type ProjectAudience = CollectionEntry<'projects'>['data']['audience']
+type ProjectStage = CollectionEntry<'projects'>['data']['stage'];
+type ProjectAudience = CollectionEntry<'projects'>['data']['audience'];
 
 // Pill metadata mirrors Pill's props (text + hover title), so it can be spread
 // straight onto <Pill>. No colour => the pill's default outline style.
 interface PillMeta {
-  text: string
-  title: string
-  color?: string
-  icon?: string
+  text: string;
+  title: string;
+  color?: string;
+  icon?: string;
 }
 
 // Stage pill — always shown.
@@ -49,7 +49,7 @@ const STAGE_META: Record<ProjectStage, PillMeta> = {
     title: "No longer working on this and don't intend to again. Probably archived on GitHub.",
     icon: 'heroicons:archive-box-20-solid',
   },
-}
+};
 
 // Audience pill — only shown when it's not plainly public.
 const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
@@ -66,33 +66,33 @@ const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
     color: 'var(--color-yellow)',
     icon: 'heroicons:lock-closed-20-solid',
   },
-}
+};
 
 interface Props {
-  project: CollectionEntry<'projects'>
+  project: CollectionEntry<'projects'>;
   /** Compact tile: icon + title + byline, the whole card links out. */
-  compact?: boolean
+  compact?: boolean;
 }
 
-const { project, compact = false } = Astro.props
-const { title, byline, stage, audience, icon, image, website, github } = project.data
+const { project, compact = false } = Astro.props;
+const { title, byline, stage, audience, icon, image, website, github } = project.data;
 
 // Compact links out to the project (website → GitHub → its /making anchor); the
 // full card renders the markdown body inline (no per-project routes).
-const compactHref = website ?? github ?? `/making#${project.id}`
-const compactIsExternal = Boolean(website ?? github)
-const Content = compact ? null : (await render(project)).Content
+const compactHref = website ?? github ?? `/making#${project.id}`;
+const compactIsExternal = Boolean(website ?? github);
+const Content = compact ? null : (await render(project)).Content;
 
 // Status pill first, audience pill (when not plainly public) after.
-const audienceMeta = AUDIENCE_META[audience]
-const pills: PillMeta[] = audienceMeta ? [STAGE_META[stage], audienceMeta] : [STAGE_META[stage]]
+const audienceMeta = AUDIENCE_META[audience];
+const pills: PillMeta[] = audienceMeta ? [STAGE_META[stage], audienceMeta] : [STAGE_META[stage]];
 
 // External links, rendered as buttons — GitHub before website.
-type ProjectLink = { href: string; variant: 'primary' | 'secondary'; label: string; icon?: string }
-const links: ProjectLink[] = []
+type ProjectLink = { href: string; variant: 'primary' | 'secondary'; label: string; icon?: string };
+const links: ProjectLink[] = [];
 if (github)
-  links.push({ href: github, variant: 'secondary', label: 'GitHub Repo', icon: 'social/github' })
-if (website) links.push({ href: website, variant: 'primary', label: `${title} Website` })
+  links.push({ href: github, variant: 'secondary', label: 'GitHub Repo', icon: 'social/github' });
+if (website) links.push({ href: website, variant: 'primary', label: `${title} Website` });
 ---
 
 {
