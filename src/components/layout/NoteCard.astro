@@ -17,6 +17,11 @@ export interface Props {
 }
 
 const { title, pubDate, sourceURL, tags = [], slug, indexAsBody = false } = Astro.props;
+
+// ISO date (YYYY-MM-DD) for Pagefind's `date` meta + recency sort — only emitted
+// when this card is the page's search body. Date-only avoids colons, which the
+// comma-separated `data-pagefind-meta` syntax would otherwise split on.
+const pubIso = pubDate.toISOString().slice(0, 10);
 ---
 
 <article
@@ -24,8 +29,17 @@ const { title, pubDate, sourceURL, tags = [], slug, indexAsBody = false } = Astr
   data-pagefind-body={indexAsBody ? true : undefined}
   data-pagefind-meta={indexAsBody ? 'type:note' : undefined}
 >
+  {
+    /* Date as a clean Pagefind meta + recency sort key (see Article.astro). Only
+      emitted when this card is the page's search body. */
+  }
+  {
+    indexAsBody && (
+      <span data-pagefind-meta={`date:${pubIso}`} data-pagefind-sort={`date:${pubIso}`} />
+    )
+  }
   <header class="note-header ui-style">
-    <a href={`/notes/${slug}/`} class="date-link date">
+    <a href={`/notes/${slug}/`} class="date-link date" data-pagefind-ignore>
       <FormattedDate date={pubDate} />
     </a>
     <h1 class="p-name title" data-pagefind-meta={indexAsBody ? 'title' : undefined}>
@@ -43,7 +57,7 @@ const { title, pubDate, sourceURL, tags = [], slug, indexAsBody = false } = Astr
   </header>
   {
     sourceURL && (
-      <div class="source-url">
+      <div class="source-url" data-pagefind-ignore>
         <Embed url={sourceURL} />
       </div>
     )

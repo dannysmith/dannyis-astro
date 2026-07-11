@@ -75,32 +75,34 @@ Separate experiment to de-risk the search infrastructure and learn the result-da
 
 **Files touched by the experiment (to consolidate/tear down in the real build):** `astro.config.mjs`, `src/pages/scratchpad.astro`, `src/layouts/Article.astro`, `src/layouts/Note.astro`, `src/components/layout/NoteCard.astro`, `src/components/layout/TableOfContents.astro`.
 
-## Phase 3 — Get the Pagefind index right
+## Phase 3 — Get the Pagefind index right ✅
 
-Indexing works; now make the index itself genuinely good — correct scoping everywhere, the right pages included, and a deliberate metadata schema. Result quality in the palette rests on this.
+Indexing works; now make the index itself genuinely good — correct scoping everywhere, the right pages included, and a deliberate metadata schema. Result quality in the palette rests on this. **Done — 195 pages indexed with clean `type`/`date` metadata; verified end-to-end.**
 
 **Audit + fix the existing scoping**
 
-- [ ] Re-check the article/note attributes from Phase 2 are correct and complete: `data-pagefind-body`, `type` meta, `title` meta, and the `data-pagefind-ignore`s (metadata line, footer-actions, TOC). Confirm `LLMDiscoveryNote`, `SeriesCallout`, and the note `Embed`/date-link behave the way we want.
-- [ ] Clean up excerpt noise: notes currently index the leading date and the embed-card text. `data-pagefind-ignore` the note date-link, and decide whether the source embed should contribute to the body at all.
+- [x] Re-checked the article/note Phase 2 attributes. Kept `SeriesCallout` in the body (mentions related articles — useful, not noise). `LLMDiscoveryNote` now carries `data-pagefind-ignore` on its own `.sr-only` `<p>` so its "For AI agents…" text is excluded on _every_ layout (it sits inside the body on `Page.astro`). `BackToTopLink` also `data-pagefind-ignore`'d at the component (chrome).
+- [x] Cleaned excerpt noise: `data-pagefind-ignore` on the note `.date-link` (kills the leading "Jul 8, 2025") **and** on the note `.source-url` embed — per the decision to index only Danny's own commentary, not the linked source's text. Note excerpts are now clean.
 
-**Decide + add the right pages** (static _content_ pages only — never chrome/utility pages)
+**Pages indexed** (decisions: MDX content pages + `/making`; **not** home, styleguide, or utility pages)
 
-- [ ] Audit `src/pages/` and decide what to index. Real candidates: home (`index.astro`), `making.astro`, and the standalone MDX pages `now.mdx`, `colophon.mdx`, `privacy.mdx`, `ai.mdx`. Explicitly **exclude** `404`, `scratchpad`, `scratchpad2`, `toolboxtest`, and `styleguide/*` (internal / `noindex`).
-- [ ] Find the single seam to add `data-pagefind-body` for the MDX pages (they likely share a layout) so it's one edit, not four.
-- [ ] `making.astro`: decide whether to index it as one `/making` result or surface individual projects (they live at `/making#{id}` — heading anchors can become `sub_results`).
+- [x] `Page.astro` was the single seam — one `data-pagefind-body` + `type:page` there covers `now`, `colophon`, `privacy`, `ai` **and** the whole `/using/*` section (the "uses" pages, 5 of them) for free.
+- [x] `making.astro` indexed as one `/making` result (`type:page`) — project titles/bylines/bodies become findable; ProjectCards are `<article id={project.id}>` so `#project` sub-result deep-links are possible.
+- [x] Home excluded (link-hub, already a nav command); `404`/`scratchpad`/`scratchpad2`/`toolboxtest`/`styleguide/*` excluded. Verified none carry a body marker.
 
-**Metadata schema — what we capture beyond Pagefind's defaults**
+**Metadata schema** (decision: title + type + publish date; no description/tags for now)
 
-- [ ] Settle the `type` taxonomy (today `article|note`; add `page`, maybe `project`) and give each newly-indexed page a sensible `type`.
-- [ ] Decide whether to index frontmatter `description` as `data-pagefind-meta="description"` (a stable result subtitle vs the match-excerpt).
-- [ ] Decide on meta for `date`, `tags`, cover `image` — plus whether to add `data-pagefind-sort="date"` for recency ordering and/or `data-pagefind-weight` to boost titles.
-- [ ] Meta vs **filter**: we group by `.meta.type` today (so `pagefind.filters()` is empty). Only switch to `data-pagefind-filter` if we actually want a faceted filter UI.
-- [ ] Confirm the indexed `url` is canonical for every type (articles `/writing/{id}/`, notes `/notes/{id}/`, pages `/{slug}/`).
+- [x] `type` taxonomy = `article | note | page`. **Gotcha:** Pagefind 1.5 does _not_ split a comma-joined `data-pagefind-meta="type:x, date:y"` — it takes the whole string as one value. So each meta must be its own element/attribute.
+- [x] `date` captured as both a clean `data-pagefind-meta="date:YYYY-MM-DD"` and a `data-pagefind-sort="date:…"` recency key, on a **dedicated empty `<span>`** inside the body (keeps it off the excerpt, sidesteps the comma bug). Date-only ISO avoids colons. Verified recency sort orders newest-first across notes + articles. Pages have no date (fine).
+- [x] Descriptions/tags **not** indexed (chosen: rely on the match-excerpt). `data-pagefind-weight` not needed — Pagefind already weights the `title`/`h1` heavily by default.
+- [x] Grouping stays on `.meta.type` (so `pagefind.filters()` is empty) — no `data-pagefind-filter` unless we later want a faceted UI.
+- [x] URLs confirmed canonical: articles `/writing/{id}/`, notes `/notes/{id}/`, pages `/{slug}/` (incl. `/using/{slug}/`), `/making/`.
 
 **Verify**
 
-- [ ] Rebuild and re-check the round-trip: page count matches the intended set, every result carries the metadata we designed, excerpts are clean. Re-measure payload if the index grew.
+- [x] Rebuilt + queried in a headless browser: 195 pages (116 notes + 69 articles + 5 using + now/colophon/privacy/ai + making), correct `type`/`date`/`title` on each, clean excerpts, working recency sort.
+
+> **Carry-forward for Phase 6:** link-post notes still get an auto-captured `meta.image` (the source's og-image) — Pagefind grabs the first body `<img>` and `data-pagefind-ignore` doesn't suppress _meta_ capture. Harmless (a nice result thumbnail), but decide deliberately whether/where result cards show a thumbnail, and whether it should be the page's own OG image instead.
 
 ## Phase 4 — Extract the Pagefind integration into `lib/`
 

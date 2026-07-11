@@ -45,7 +45,13 @@ if (heroImage) {
   </head>
   <body>
     <MainNavigation />
-    <main id="main" tabindex="-1" class="content flow">
+    <main
+      id="main"
+      tabindex="-1"
+      class="content flow"
+      data-pagefind-body
+      data-pagefind-meta="type:page"
+    >
       {
         heroSrc && heroImageAlt && (
           <div class="hero-image">
@@ -63,7 +69,7 @@ if (heroImage) {
       }
       <LLMDiscoveryNote />
       <header data-align={headingAlign ?? 'left'} data-hassubtitle={subtitle ? true : undefined}>
-        <h1 class="ui-style">
+        <h1 class="ui-style" data-pagefind-meta="title">
           {title}
         </h1>
         {subtitle && <h2 class="subtitle ui-style">{subtitle}</h2>}
