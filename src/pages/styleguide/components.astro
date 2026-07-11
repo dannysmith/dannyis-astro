@@ -835,6 +835,37 @@ Provide a title to skip the fetch or override it:
         </Grid>
       </SGSwitcher>
     </ResizableContainer>
+    <p>
+      Images placed in a Grid form a side-by-side gallery: markdown images (or <code
+        >BasicImage</code
+      >) flow into the columns, and their captions and lightbox behaviour are preserved. In content,
+      just wrap the markdown images — see the <a href="/writing/article-styleguide"
+        >article styleguide</a
+      > for the rendered version.
+    </p>
+    <Code
+      lang="mdx"
+      code={`<Grid columns={2}>
+![Alt text](./one.jpg 'A caption')
+![Alt text](./two.jpg 'Another caption')
+</Grid>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <Grid columns={2}>
+          <BasicImage
+            src="/src/assets/articles/styleguide-image.jpg"
+            alt="Wooden deck with striped columns and glass panels"
+            caption="Left"
+          />
+          <BasicImage
+            src="/src/assets/articles/styleguide-image.jpg"
+            alt="Wooden deck with striped columns and glass panels"
+            caption="Right"
+          />
+        </Grid>
+      </SGSwitcher>
+    </ResizableContainer>
 
     <h3 id="layout-spacer">Spacer</h3>
     <p>
