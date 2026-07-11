@@ -1,24 +1,20 @@
 ---
 /**
- * CommandPalette — the global ⌘/Ctrl+K command palette (Phase 5).
+ * CommandPalette — the global ⌘/Ctrl+K command palette, dropped into every layout
+ * (a separate concern from BaseHead/MainNavigation).
  *
- * A self-contained overlay dropped into every layout (a separate concern from
- * BaseHead/MainNavigation). It's the production promotion of the Phase 1
- * experiment (src/pages/scratchpad2.astro): a native modal <dialog> + the
- * WAI-ARIA combobox/listbox pattern — DOM focus stays in the input, the active
- * option is tracked via aria-activedescendant, and filtering leans on the native
- * [hidden] attribute.
+ * Built on a native modal <dialog> + the WAI-ARIA combobox/listbox pattern: DOM
+ * focus stays in the input, the active option is tracked via aria-activedescendant,
+ * and command/nav filtering leans on the native [hidden] attribute.
  *
  * Commands + navigation are baked into the markup at build time, so the palette
- * is fully functional regardless of any search index. Live content search
- * (Pagefind, via @utils/pagefind) is layered in as a third "Content" results
- * group, rendered at runtime into the same listbox and nav loop (Phase 6).
+ * works regardless of any search index. Live content search (Pagefind, via
+ * @utils/pagefind) is layered in as a third "Content" results group, rendered at
+ * runtime into the same listbox and nav loop.
  *
- * Open path: the ⌘/Ctrl+K hotkey (below) works everywhere. The dialog also has a
- * stable id, so a zero-JS <button command="show-modal" commandfor="command-palette">
- * trigger can be added wherever we decide it should live.
- *
- * See docs/tasks-todo/task-1-command-palette-and-search.md
+ * Open path: the ⌘/Ctrl+K hotkey works everywhere. The dialog has a stable id, so
+ * a zero-JS <button command="show-modal" commandfor="command-palette"> can open it
+ * from anywhere.
  */
 
 // Every item is a real <a role="option">: nav items carry an href (navigate
@@ -231,7 +227,7 @@ const groups = ['Commands', 'Navigation'] as const;
   (keyed on a build-time data-astro-cid attribute) never reaches them. Everything
   that must style dynamic options/results lives here, contained under
   #command-palette. The baked-in command/nav options match these rules too, so
-  .cp-option lives here in full rather than split across scoped + global. — Phase 6.
+  .cp-option lives here in full rather than split across scoped + global.
 -->
 <style is:global>
   #command-palette .cp-option {
@@ -309,10 +305,7 @@ const groups = ['Commands', 'Navigation'] as const;
   import { search, preloadPagefind, type SearchResult } from '@utils/pagefind';
 
   // The document-level hotkey binds once (guarded); the per-dialog wiring re-runs
-  // on astro:page-load for View Transitions — the same split Tabs.astro uses. The
-  // only JS the open path fundamentally needs is this ⌘/Ctrl+K hotkey; a visible
-  // trigger (if/when we add one) can open the dialog declaratively via the Invoker
-  // Commands API with no extra JS.
+  // on astro:page-load for View Transitions — the same split Tabs.astro uses.
   let hotkeyWired = false;
   function wireHotkey() {
     if (hotkeyWired) return;
@@ -372,21 +365,18 @@ const groups = ['Commands', 'Navigation'] as const;
       );
     }
 
-    // Render the normalized results into the Content group. The excerpt is trusted
-    // HTML (<mark> around matches, from our own indexed content).
+    // One result row. The excerpt is trusted HTML (<mark> around matches, from our
+    // own indexed content); title/type are escaped since they're plain text.
+    function resultRow(r: SearchResult, i: number) {
+      return `<li><a id="cp-result-${i}" role="option" class="cp-option cp-result" href="${r.url}" tabindex="-1">
+        <span class="cp-result-title">${escapeHtml(r.title)}</span>
+        <span class="cp-result-type">${escapeHtml(r.type)}</span>
+        <span class="cp-result-excerpt">${r.excerpt}</span>
+      </a></li>`;
+    }
+
     function renderResults(results: SearchResult[]) {
-      resultsList.innerHTML = results
-        .map(
-          (
-            r,
-            i,
-          ) => `<li><a id="cp-result-${i}" role="option" class="cp-option cp-result" href="${r.url}" tabindex="-1">
-            <span class="cp-result-title">${escapeHtml(r.title)}</span>
-            <span class="cp-result-type">${escapeHtml(r.type)}</span>
-            <span class="cp-result-excerpt">${r.excerpt}</span>
-          </a></li>`,
-        )
-        .join('');
+      resultsList.innerHTML = results.map(resultRow).join('');
     }
 
     // A token guards the post-debounce race: search() debounces, but a newer

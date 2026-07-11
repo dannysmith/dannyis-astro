@@ -17,7 +17,6 @@ import sirv from 'sirv';
  *     prior build → 404s, and search simply returns nothing; nothing else breaks.
  *
  * We run static (no adapter), so the output dir is always `dist/`.
- * See docs/tasks-todo/task-1-command-palette-and-search.md
  *
  * @returns {import('astro').AstroIntegration}
  */
