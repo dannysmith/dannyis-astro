@@ -132,7 +132,7 @@ const groups = ['Commands', 'Navigation'] as const;
               ))
             }
           </ul>
-          <p class="cp-empty">No results.</p>
+          <p class="cp-empty">No results</p>
         </div>
       </dialog>
     </main>
@@ -257,7 +257,8 @@ const groups = ['Commands', 'Navigation'] as const;
   /* Empty state: shown only when the whole list has no visible options. */
   .cp-empty {
     display: none;
-    padding: var(--space-2xs) var(--space-s);
+    padding: var(--space-s);
+    text-align: center;
     color: var(--color-text-secondary);
   }
 
