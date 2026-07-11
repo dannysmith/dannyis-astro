@@ -38,4 +38,21 @@ const { columns = 2, rows = 1, gap = 'var(--space-s)' } = Astro.props;
     grid-template-rows: repeat(var(--rows), 1fr);
     gap: var(--gap);
   }
+
+  /* The grid gap is the only spacing inside the grid, so strip the inherited
+     flow/prose top-margin from every cell's top-level element — otherwise the
+     first row sits pushed down and cells misalign. */
+  .grid-wrapper > :global(*) {
+    margin-block-start: 0;
+  }
+
+  /* BasicImage figures pin themselves to the Article prose grid's centre column
+     (grid-column: 2 / 3). Inside a Grid that would stack a gallery into one
+     column, so let figure children flow into this grid's own tracks. Relies on
+     rehype-unwrap-images having stripped the wrapping <p> so figures are direct
+     children here. */
+  .grid-wrapper > :global(.figure) {
+    grid-column: auto !important;
+    margin-inline: 0;
+  }
 </style>

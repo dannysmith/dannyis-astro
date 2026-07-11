@@ -15,6 +15,7 @@ import { remarkTreeBlock } from './src/lib/remark-tree-block.mjs';
 import { remarkPageComponents } from './src/lib/remark-page-components.mjs';
 import { remarkImageCaption } from './src/lib/remark-image-caption.mjs';
 import { rehypeListDensity } from './src/lib/rehype-list-density.mjs';
+import { rehypeUnwrapImages } from './src/lib/rehype-unwrap-images.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
 
@@ -116,6 +117,7 @@ export default defineConfig({
         remarkImageCaption,
       ],
       rehypePlugins: [
+        rehypeUnwrapImages,
         rehypeHeadingIds,
         [rehypeAutolinkHeadings, { behavior: 'append', content: { type: 'text', value: '#' } }],
         [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
