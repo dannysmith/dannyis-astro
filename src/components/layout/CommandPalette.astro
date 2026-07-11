@@ -1,0 +1,340 @@
+---
+/**
+ * CommandPalette — the global ⌘/Ctrl+K command palette (Phase 5).
+ *
+ * A self-contained overlay dropped into every layout (a separate concern from
+ * BaseHead/MainNavigation). It's the production promotion of the Phase 1
+ * experiment (src/pages/scratchpad2.astro): a native modal <dialog> + the
+ * WAI-ARIA combobox/listbox pattern — DOM focus stays in the input, the active
+ * option is tracked via aria-activedescendant, and filtering leans on the native
+ * [hidden] attribute.
+ *
+ * Phase 5 scope: commands + navigation only, baked into the markup at build time
+ * so the palette is fully functional regardless of any search index. Live content
+ * search (Pagefind, via @utils/pagefind) is wired in as its own results group in
+ * Phase 6. The full command set (Latest/Random post, Copy as Markdown, …) lands
+ * in Phase 5's later tasks.
+ *
+ * Open path: the ⌘/Ctrl+K hotkey (below) works everywhere. The dialog also has a
+ * stable id, so a zero-JS <button command="show-modal" commandfor="command-palette">
+ * trigger can be added wherever we decide it should live.
+ *
+ * See docs/tasks-todo/task-1-command-palette-and-search.md
+ */
+
+// Every item is a real <a role="option">: nav items carry an href (navigate
+// natively; ⌘/middle-click opens a new tab), action items are href-less and
+// carry a data-action dispatched by the script.
+type PaletteItem = {
+  id: string
+  label: string
+  group: 'Commands' | 'Navigation'
+  href?: string
+  action?: 'copy-url'
+  keywords?: string // extra text to match on, not shown
+}
+
+const items: PaletteItem[] = [
+  // Commands
+  {
+    id: 'cmd-copy-url',
+    label: 'Copy URL of this page',
+    group: 'Commands',
+    action: 'copy-url',
+    keywords: 'clipboard link share',
+  },
+  // Navigation
+  { id: 'nav-home', label: 'Home', group: 'Navigation', href: '/' },
+  {
+    id: 'nav-writing',
+    label: 'Writing',
+    group: 'Navigation',
+    href: '/writing',
+    keywords: 'articles blog essays',
+  },
+  { id: 'nav-notes', label: 'Notes', group: 'Navigation', href: '/notes', keywords: 'short posts' },
+  { id: 'nav-now', label: 'Now', group: 'Navigation', href: '/now', keywords: 'currently' },
+  {
+    id: 'nav-making',
+    label: 'Making',
+    group: 'Navigation',
+    href: '/making',
+    keywords: 'projects things',
+  },
+  {
+    id: 'nav-using',
+    label: 'Using',
+    group: 'Navigation',
+    href: '/using',
+    keywords: 'uses gear setup tools',
+  }
+]
+
+const groups = ['Commands', 'Navigation'] as const
+---
+
+<dialog
+  id="command-palette"
+  class="ui-style command-palette"
+  closedby="any"
+  aria-label="Command palette"
+>
+  <div class="cp-box">
+    <input
+      type="text"
+      class="cp-input"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="cp-listbox"
+      aria-autocomplete="list"
+      aria-label="Search commands and pages"
+      placeholder="Type a command or search…"
+      autocomplete="off"
+      spellcheck="false"
+      autofocus
+    />
+
+    <ul id="cp-listbox" class="list-reset" role="listbox" aria-label="Results">
+      {
+        groups.map(group => (
+          <li role="group" aria-labelledby={`cp-grouplabel-${group}`}>
+            <span id={`cp-grouplabel-${group}`} class="cp-group-label" role="presentation">
+              {group}
+            </span>
+            <ul role="presentation" class="list-reset cp-item-list">
+              {items
+                .filter(item => item.group === group)
+                .map(item => (
+                  <li>
+                    <a
+                      id={item.id}
+                      role="option"
+                      class="cp-option"
+                      href={item.href}
+                      tabindex="-1"
+                      data-action={item.action}
+                      data-keywords={item.keywords}
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="cp-empty">No results</p>
+  </div>
+</dialog>
+
+<style>
+  .command-palette {
+    width: min(32rem, 90vw);
+    margin-block-start: 12vh;
+    padding: 0;
+    overflow: hidden;
+    overscroll-behavior: contain;
+
+    opacity: 0;
+    transition:
+      opacity var(--duration-normal) var(--ease-in-out),
+      display var(--duration-normal) allow-discrete,
+      overlay var(--duration-normal) allow-discrete;
+  }
+
+  .command-palette[open] {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .command-palette[open] {
+      opacity: 0;
+    }
+  }
+
+  .command-palette::backdrop {
+    background: oklch(0% 0 0 / 0.4);
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .command-palette {
+      transition: none;
+    }
+  }
+
+  .cp-box {
+    display: flex;
+    flex-direction: column;
+    max-block-size: 70vh;
+  }
+
+  .cp-input {
+    flex: none;
+    width: 100%;
+    border: none;
+    border-block-end: var(--border-width-hairline) solid var(--color-border);
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .cp-input:focus {
+    outline: none;
+  }
+
+  .cp-item-list {
+    margin-block-start: 0;
+  }
+
+  /* The scroll area. min-block-size:0 lets this flex child shrink so it can
+     actually scroll; overscroll-behavior stops scroll chaining to the page. */
+  #cp-listbox {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .cp-group-label {
+    display: block;
+    padding: var(--space-2xs) var(--space-s);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .cp-option {
+    display: block;
+    padding: var(--space-2xs) var(--space-s);
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .cp-option:hover {
+    background: var(--color-background-secondary);
+  }
+
+  .cp-option[data-active] {
+    background: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  /* Hide a group whose options are all filtered out. */
+  #command-palette li[role='group']:not(:has(.cp-option:not([hidden]))) {
+    display: none;
+  }
+
+  .cp-empty {
+    display: none;
+    padding: var(--space-s);
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  .cp-box:not(:has(.cp-option:not([hidden]))) .cp-empty {
+    display: block;
+  }
+</style>
+
+<script>
+  // The document-level hotkey binds once (guarded); the per-dialog wiring re-runs
+  // on astro:page-load for View Transitions — the same split Tabs.astro uses. The
+  // only JS the open path fundamentally needs is this ⌘/Ctrl+K hotkey; a visible
+  // trigger (if/when we add one) can open the dialog declaratively via the Invoker
+  // Commands API with no extra JS.
+  let hotkeyWired = false
+  function wireHotkey() {
+    if (hotkeyWired) return
+    hotkeyWired = true
+    document.addEventListener('keydown', e => {
+      if (!((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) return
+      const dialog = document.querySelector<HTMLDialogElement>('#command-palette')
+      if (!dialog) return
+      e.preventDefault()
+      if (dialog.open) dialog.close()
+      else dialog.showModal()
+    })
+  }
+
+  function initCommandPalette() {
+    wireHotkey()
+
+    const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette')
+    if (!dialogEl || dialogEl.dataset.cpReady) return
+    dialogEl.dataset.cpReady = 'true'
+    const dialog: HTMLDialogElement = dialogEl // non-null alias for closures
+
+    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!
+    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!
+    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')]
+    const visibleOptions = () => allOptions().filter(o => !o.hidden)
+
+    // Track the active option via aria-activedescendant (focus stays in the input).
+    function setActive(el: HTMLElement | null) {
+      allOptions().forEach(o => delete o.dataset.active)
+      if (!el) {
+        input.removeAttribute('aria-activedescendant')
+        return
+      }
+      el.dataset.active = 'true'
+      input.setAttribute('aria-activedescendant', el.id)
+      el.scrollIntoView({ block: 'nearest' })
+    }
+
+    // Filter by substring over label + hidden keywords (native [hidden] does the
+    // hiding); keep the first match highlighted.
+    function filter() {
+      const q = input.value.trim().toLowerCase()
+      for (const o of allOptions()) {
+        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase()
+        o.hidden = q !== '' && !hay.includes(q)
+      }
+      setActive(visibleOptions()[0] ?? null)
+    }
+
+    // Reset query + highlight on close, so the next open starts fresh. <input
+    // autofocus> handles focus on open.
+    function reset() {
+      input.value = ''
+      filter()
+    }
+    dialog.addEventListener('close', reset)
+
+    // Arrow / Enter navigation, driven from the input.
+    input.addEventListener('input', filter)
+    input.addEventListener('keydown', e => {
+      const opts = visibleOptions()
+      if (!opts.length) return
+      const i = opts.findIndex(o => o.dataset.active === 'true')
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setActive(opts[(i + 1) % opts.length])
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setActive(opts[(i - 1 + opts.length) % opts.length])
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        opts[i >= 0 ? i : 0]?.click()
+      }
+    })
+
+    // Nav options are real links (navigate natively). Action options have no
+    // href and carry a data-action — run it and close.
+    list.addEventListener('click', e => {
+      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option')
+      if (!opt?.dataset.action) return
+      e.preventDefault()
+      if (opt.dataset.action === 'copy-url') {
+        navigator.clipboard?.writeText(location.href)
+      }
+      dialog.close()
+    })
+
+    reset() // initial state: empty query, first option highlighted
+  }
+
+  initCommandPalette()
+  document.addEventListener('astro:page-load', initCommandPalette)
+</script>

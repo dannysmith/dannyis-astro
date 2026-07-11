@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import {
   BaseHead,
   Footer,
+  CommandPalette,
   LLMDiscoveryNote,
   MainNavigation,
   NoteCard,
@@ -44,6 +45,7 @@ const standardSiteDocumentUri =
 
   <body>
     <MainNavigation />
+    <CommandPalette />
     <main id="main" tabindex="-1" style={`--vt-name: note-${Astro.params.slug}`}>
       <LLMDiscoveryNote />
       <NoteCard

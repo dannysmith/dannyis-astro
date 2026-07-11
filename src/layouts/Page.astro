@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import {
   BaseHead,
+  CommandPalette,
   Footer,
   LLMDiscoveryNote,
   MainNavigation,
@@ -45,6 +46,7 @@ if (heroImage) {
   </head>
   <body>
     <MainNavigation />
+    <CommandPalette />
     <main
       id="main"
       tabindex="-1"

@@ -1,5 +1,6 @@
 // Layout and structural components
 export { default as BaseHead } from './BaseHead.astro';
+export { default as CommandPalette } from './CommandPalette.astro';
 export { default as Footer } from './Footer.astro';
 export { default as InlineFootnotes } from './InlineFootnotes.astro';
 export { default as LLMDiscoveryNote } from './LLMDiscoveryNote.astro';

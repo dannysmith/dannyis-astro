@@ -114,15 +114,13 @@ Pull the inline experiment wiring out of `astro.config.mjs` into a clean, reusab
 - [x] Client helper lives in **`utils/`** (browser-side), not `lib/` (build-time plugins). Scratchpad Variant A was refactored to consume `@utils/pagefind`, which removed all its inline `any`-typed Pagefind code — lint is now fully clean. Runtime-verified end-to-end: normalized results (incl. the new `type:page` "Colophon"), combined nav loop, no console errors.
 - [x] Added focused unit tests (`tests/unit/pagefind.test.ts`): the `normalize()` `.data()`→`SearchResult` mapping (title/type fallbacks, optional-field passthrough) and the empty/whitespace-query short-circuit — the browser-independent parts. The integration module and the runtime-dependent search paths are left to Phase 7 e2e (thin glue / need a real browser; unit-mocking them is low-value).
 
-## Phase 5 — Build the command palette as a real Astro component
+## Phase 5 — Build the command palette as a real Astro component ✅
 
 Promote the `scratchpad2.astro` shell into a production component (or a small set) and wire it into the site. **No search yet** — commands + nav only, so it's fully functional regardless of index state.
 
-- [ ] Create the palette component(s) — decide single `CommandPalette.astro` vs a shell + item/group subcomponents. Likely under `components/navigation/` or `components/ui/`.
-- [ ] Carry over the proven primitives from Phase 1: native modal `<dialog>` + combobox/listbox, `aria-activedescendant` nav, `@starting-style` animation, idempotent init on `astro:page-load`, the Invoker-Commands open path + `Cmd/Ctrl+K` hotkey.
-- [ ] Wire it into the shared layout / `BaseHead` so it's on every page; decide where the visible trigger lives (nav?).
-- [ ] Implement the real commands: Latest/Random Article, Latest/Random Note, Copy URL, Copy as Markdown (reuse the `.md.ts` twins), navigation to all pages (consider the `discoverStaticPages()` glob from `llms.txt.ts` for nav targets).
-- [ ] Baseline-vs-fallback call for Invoker Commands + `closedby` (early-2026 Baseline) — rely on Baseline or add tiny JS fallbacks. The hotkey works everywhere regardless.
+- [x] Created a single **`src/components/layout/CommandPalette.astro`** (self-contained dialog + styles + script). Put it in `layout/` (not `navigation/`) to sit with the other global affordances — `MainNavigation`, `Footer`, `SkipLink`, `Lightbox`. Exported from the layout barrel.
+- [x] Carried over the Phase 1 primitives verbatim: native modal `<dialog>` + combobox/listbox, `aria-activedescendant` nav, `@starting-style` animation, idempotent init behind `data-cpReady` + a module-scoped hotkey guard (re-runs on `astro:page-load`), and the `Cmd/Ctrl+K` hotkey. Baked-in commands + nav (real targets: Home/Writing/Notes/Now/Making/Using/Colophon/RSS + a Copy-URL action).
+- [x] Wired into all 10 real pages/layouts (Article, Note, Page, BasicPage, StyleguideLayout + index, making, 404, notes/index, writing/index — each renders `<CommandPalette />` right after `<MainNavigation />`; the throwaway `scratchpad*`/`toolboxtest` are skipped). Verified via headless browser on home/note/page: opens on ⌘/Ctrl+K, filters, arrow-nav + Enter navigates, Escape closes, zero console errors. **Open decision:** no visible trigger yet — the hotkey is the only open path (a gap on mobile). The dialog has a stable id, so a zero-JS `command="show-modal"` trigger drops in wherever we decide (nav? floating button?). Needs a call before shipping.
 
 ## Phase 6 — Wire Pagefind results into the palette
 
