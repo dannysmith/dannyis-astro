@@ -7,9 +7,12 @@ export interface Props {
   icon?: string;
   emoji?: string;
   className?: string;
+  /** Give `title` more presence (larger, with a hairline rule beneath) so it
+   *  doesn't get lost above long callout bodies. No effect without a `title`. */
+  largeHeading?: boolean;
 }
 
-const { title, icon, emoji, type = 'default', className } = Astro.props;
+const { title, icon, emoji, type = 'default', className, largeHeading = false } = Astro.props;
 
 if (icon && emoji) {
   throw new Error(
@@ -20,7 +23,7 @@ if (icon && emoji) {
 
 <aside
   aria-label={title || undefined}
-  class={`callout ${className || ''}`}
+  class={`callout ${className || ''} ${largeHeading ? 'large-heading' : ''}`}
   data-callout-color={type}
 >
   {
@@ -138,5 +141,23 @@ if (icon && emoji) {
     line-height: var(--leading-snug);
     border-bottom: none;
     padding-bottom: 0;
+  }
+
+  .large-heading  {
+    .title {
+      font-size: var(--font-size-md);
+      margin-block-end: var(--space-xs);
+      font-weight: var(--font-weight-semibold);
+      padding-block-end: var(--space-3xs);
+      border-bottom: var(--border-width-hairline) solid oklch(from var(--_border) l c h / 20%);
+    }
+
+    .icon {
+      font-size: calc(var(--font-size-md) * 0.8);
+    }
+
+    .icon-wrapper {
+      margin-block-start: 0.3em;
+    }
   }
 </style>
