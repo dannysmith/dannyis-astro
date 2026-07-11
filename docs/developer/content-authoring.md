@@ -109,6 +109,8 @@ Types: `default`, `red`, `blue`, `green`, `orange`, `yellow`, `purple`
 
 Icons: Use `emoji` for text emoji or `icon` for heroicons (e.g., `icon="heroicons:exclamation-triangle"`)
 
+`largeHeading` (boolean, default `false`): gives the `title` more presence — a step larger with a hairline rule beneath — so it doesn't get lost above a long body. Needs a `title` to have any effect.
+
 **BasicImage** - Optimized images with optional full-bleed:
 
 ```mdx

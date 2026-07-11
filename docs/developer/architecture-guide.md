@@ -353,12 +353,14 @@ Four layouts in `src/layouts/`:
 
 - **`Article.astro`** — articles only.
 - **`Note.astro`** — notes only.
-- **`Page.astro`** — any simple standalone MDX page (eg `/now`, `/ai`, `/colophon`, `/privacy`). Renders a display-font uppercase title (+ optional subtitle) then your content in a centred `.flow` column. Frontmatter props: `title` (required), `subtitle?`, `description?`, and `headingAlign?`.
+- **`Page.astro`** — any simple standalone MDX page (eg `/now`, `/ai`, `/colophon`, `/privacy`, the `/using` mini-site). Renders a display-font uppercase title (+ optional subtitle) then your content in a centred `.flow` column. Frontmatter props: `title` (required), `subtitle?`, `description?`, `headingAlign?`, plus an optional full-bleed header banner via `heroImage?` (a `/src/assets/…` path, resolved and optimized the same way `BasicImage` resolves string sources) and `heroImageAlt?`.
 - **`BasicPage.astro`** — the barebones: nav, footer, your content, nothing else. Used rarely, for when you want a real page shell without `Page.astro`'s heading.
 
 ### Creating one-off pages in `src/pages/`
 
 **Simple content pages** (no real custom design) — write a routed `.mdx` like `now.mdx` / `ai.mdx`: frontmatter with `layout: '@layouts/Page.astro'` plus the props above, then markdown. All the usual MDX components are available (auto-imported via `astro-auto-import`) and the remark plugins apply — including `remarkPageComponents`, which wires up the same `a`/`img`/etc. remapping that collection content gets.
+
+**Images on pages** — put them in `src/assets/<section>/` (e.g. `src/assets/using/` for the `/using` mini-site, mirroring `src/assets/articles/`) and reference them with a relative markdown image. The `img → BasicImage` remapping optimizes them and a title string becomes a caption; wrapping a few images in a `<Grid>` lays them out as a side-by-side gallery.
 
 **Pages with bespoke designs** — make a `thing.astro` that duplicates the shell from `BasicPage.astro` and write the content/styling directly as HTML/Astro/CSS. If part of such a page is genuinely better as MDX, split it: `thing/index.astro` imports a sibling `thing/_thing.mdx` and renders its `<Content />`. Only do this when MDX really is the best tool for that content.
 

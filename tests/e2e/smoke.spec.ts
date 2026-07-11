@@ -43,6 +43,20 @@ test.describe('Critical Path Tests', () => {
     const response = await page.goto('/styleguide/');
     expect(response?.status()).toBe(200);
   });
+
+  test('using hub and sub-pages load', async ({ page }) => {
+    for (const path of [
+      '/using/',
+      '/using/bag/',
+      '/using/office/',
+      '/using/software/',
+      '/using/outdoors/',
+    ]) {
+      const response = await page.goto(path);
+      expect(response?.status(), path).toBe(200);
+      await expect(page.locator('main h1')).toBeVisible();
+    }
+  });
 });
 
 test.describe('Generated Files', () => {
