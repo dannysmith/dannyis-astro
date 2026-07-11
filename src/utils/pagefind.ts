@@ -130,11 +130,18 @@ export async function search(query: string, options: SearchOptions = {}): Promis
   const pf = await loadPagefind();
   if (!pf) return { status: 'unavailable' };
 
-  const response = await pf.debouncedSearch(query, {}, debounceMs);
-  if (response === null) return { status: 'superseded' };
+  try {
+    const response = await pf.debouncedSearch(query, {}, debounceMs);
+    if (response === null) return { status: 'superseded' };
 
-  // `response.results` holds a lightweight handle for *every* match; we only pull
-  // `.data()` for the top `limit`, but the full length is the true result count.
-  const top = await Promise.all(response.results.slice(0, limit).map(r => r.data()));
-  return { status: 'ok', results: top.map(normalize), total: response.results.length };
+    // `response.results` holds a lightweight handle for *every* match; we only pull
+    // `.data()` for the top `limit`, but the full length is the true result count.
+    const top = await Promise.all(response.results.slice(0, limit).map(r => r.data()));
+    return { status: 'ok', results: top.map(normalize), total: response.results.length };
+  } catch {
+    // A query or fragment fetch rejected (e.g. a transient network failure). The
+    // palette calls this without awaiting, so swallow it into the outcome contract
+    // rather than let an unhandled rejection escape.
+    return { status: 'unavailable' };
+  }
 }
