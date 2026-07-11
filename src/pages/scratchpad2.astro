@@ -79,16 +79,8 @@ const groups = ['Commands', 'Navigation'] as const;
     <main id="main" tabindex="-1">
       <h1>Command palette experiment</h1>
       <button type="button" data-cp-open> Search… <kbd>⌘K</kbd> </button>
-
-      <!--
-        Native modal <dialog>. showModal() gives focus-trap, ::backdrop, inert
-        background and Esc-to-close for free; closedby="any" adds click-outside
-        dismissal declaratively — the modern alternative to a JS backdrop handler.
-      -->
       <dialog id="command-palette" class="ui-style" closedby="any" aria-label="Command palette">
         <div class="cp-box">
-          <!-- Combobox: focus stays here; the active option is tracked with
-               aria-activedescendant (never real DOM focus — that would break typing). -->
           <input
             type="text"
             class="cp-input"
@@ -140,8 +132,6 @@ const groups = ['Commands', 'Navigation'] as const;
 </html>
 
 <style>
-  /* Sizing + spotlight position (near the top, not centred). Modal <dialog>
-     defaults to margin:auto both axes; overriding margin-block-start pins it up. */
   #command-palette {
     width: min(32rem, 90vw);
     max-block-size: 70vh;
@@ -149,55 +139,33 @@ const groups = ['Commands', 'Navigation'] as const;
     padding: 0;
     overflow: hidden;
 
-    /* Enter/exit animation. display + overlay need allow-discrete so the dialog
-       stays in the top layer through the exit transition. */
     opacity: 0;
-    transform: translateY(-0.5rem) scale(0.99);
     transition:
       opacity var(--duration-normal) var(--ease-in-out),
-      transform var(--duration-normal) var(--ease-in-out),
       display var(--duration-normal) allow-discrete,
       overlay var(--duration-normal) allow-discrete;
   }
 
   #command-palette[open] {
     opacity: 1;
-    transform: none;
   }
 
   @starting-style {
     #command-palette[open] {
       opacity: 0;
-      transform: translateY(-0.5rem) scale(0.99);
     }
   }
 
   #command-palette::backdrop {
-    background: oklch(0% 0 0 / 0);
-    transition:
-      background var(--duration-normal) var(--ease-in-out),
-      display var(--duration-normal) allow-discrete,
-      overlay var(--duration-normal) allow-discrete;
-  }
-
-  #command-palette[open]::backdrop {
     background: oklch(0% 0 0 / 0.4);
   }
 
-  @starting-style {
-    #command-palette[open]::backdrop {
-      background: oklch(0% 0 0 / 0);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    #command-palette,
-    #command-palette::backdrop {
+    #command-palette {
       transition: none;
     }
   }
 
-  /* Flex column: input pinned, list scrolls, empty state below. */
   .cp-box {
     display: flex;
     flex-direction: column;
@@ -254,7 +222,6 @@ const groups = ['Commands', 'Navigation'] as const;
     display: none;
   }
 
-  /* Empty state: shown only when the whole list has no visible options. */
   .cp-empty {
     display: none;
     padding: var(--space-s);
@@ -310,7 +277,7 @@ const groups = ['Commands', 'Navigation'] as const;
       input.focus();
     }
 
-    // Global hotkey: Cmd on macOS, Ctrl elsewhere. (Escape closes for free.)
+    // Global hotkey: Cmd on macOS, Ctrl elsewhere
     document.addEventListener('keydown', e => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
