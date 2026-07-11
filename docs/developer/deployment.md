@@ -37,6 +37,17 @@ Two pieces translate the static output into a working site:
 
 These are the only Vercel-shaped things in the repo — the base config, the script that finalises it, and the routing they describe. They configure headers and routing, not build behaviour; another host would express the same intent in its own config.
 
+## Search index (Pagefind)
+
+Full-text search is [Pagefind](https://pagefind.app): a static index generated **at build time** and served entirely client-side — no runtime, no serverless, consistent with "deploy anywhere". An inline integration (`src/lib/pagefind-integration.mjs`) runs Pagefind's Node indexer in the `astro:build:done` hook, writing `dist/pagefind/`. Because it rides `astro build`, the index lands in `dist/` before the Build job copies it into `.vercel/output/static/` — it ships like any other static asset, with no Vercel-specific handling. `dist/` is gitignored, so the index is never committed.
+
+Two consequences for the pipeline:
+
+- **Dev has no index unless you've built.** `astro dev` doesn't build, so the same integration's `astro:server:setup` hook serves a _previously built_ `dist/pagefind/`; with no prior build, search degrades to "unavailable" (nothing breaks). Run `bun run build` once, or use `bun run preview`, to search locally.
+- **The Check stage has no index.** Check runs in parallel with Build (see [The shape of the pipeline](#the-shape-of-the-pipeline)), so `dist/pagefind/` doesn't exist there — e2e tests must not depend on it.
+
+See [command-palette-and-search.md](./command-palette-and-search.md) for the why behind the whole setup.
+
 ## Serving `.well-known`
 
 Web- and agent-standard files (`security.txt`, the standard.site publication record, and more over time) belong at `/.well-known/…`. Two quirks shape how we get them there: **Vercel won't serve a dotfile directory** (anything under `dist/.well-known/` 404s), and **Astro won't reliably build routes placed in a dotfile directory** under `src/pages/`.

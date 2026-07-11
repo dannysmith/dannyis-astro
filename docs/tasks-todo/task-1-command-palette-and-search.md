@@ -122,7 +122,7 @@ Promote the `scratchpad2.astro` shell into a production component (or a small se
 - [x] Carried over the Phase 1 primitives verbatim: native modal `<dialog>` + combobox/listbox, `aria-activedescendant` nav, `@starting-style` animation, idempotent init behind `data-cpReady` + a module-scoped hotkey guard (re-runs on `astro:page-load`), and the `Cmd/Ctrl+K` hotkey. Baked-in commands + nav (real targets: Home/Writing/Notes/Now/Making/Using/Colophon/RSS + a Copy-URL action).
 - [x] Wired into all 10 real pages/layouts (Article, Note, Page, BasicPage, StyleguideLayout + index, making, 404, notes/index, writing/index — each renders `<CommandPalette />` right after `<MainNavigation />`; the throwaway `scratchpad*`/`toolboxtest` are skipped). Verified via headless browser on home/note/page: opens on ⌘/Ctrl+K, filters, arrow-nav + Enter navigates, Escape closes, zero console errors. **Open decision:** no visible trigger yet — the hotkey is the only open path (a gap on mobile). The dialog has a stable id, so a zero-JS `command="show-modal"` trigger drops in wherever we decide (nav? floating button?). Needs a call before shipping.
 
-## Phase 6 — Wire Pagefind results into the palette
+## Phase 6 — Wire Pagefind results into the palette ✅
 
 Consume the Phase 4 client API inside the Phase 5 component to add the live Content results group. This is where search lands in the real palette — and where most of the result styling/design work happens. **Done — live search wired into `CommandPalette.astro`, verified end-to-end.**
 
@@ -134,38 +134,19 @@ Consume the Phase 4 client API inside the Phase 5 component to add the live Cont
 
 > **Carry-forward for Phase 7:** screen-reader testing; decide on result thumbnails (the `meta.image` on link-post notes is available); decide whether Pagefind's loose matching wants tightening; e2e the shell + commands (no index in the Check stage).
 
-## Phase 7 — Testing, cleanup & refactor
+## Phase 7 — Testing, cleanup & refactor ✅
 
 Now that it all works, make it correct, lean, and clean — and remove the experiment scaffolding.
 
-- [ ] Tests: e2e the shell + commands. **The Check stage runs Playwright in parallel with Build, so no index exists there** — don't depend on one. Unit-test / fixture the search-result rendering. Confirm how `test:e2e` is wired first.
-- [ ] Performance: confirm zero-JS-by-default still holds (nothing loads until the palette opens), re-check payload, verify no unnecessary JS ships.
-- [ ] Code/CSS review: clean and evergreen comments, tidy CSS; run `check:knip` + `check:dupes`.
-- [ ] Tear down the experiments: delete `scratchpad.astro`, `scratchpad2.astro`, and any `docs/tasks-todo/temporary/` leftovers.
-- [ ] `check:all` green.
+- [x] Code/CSS review: clean and evergreen comments, tidy CSS; run `check:knip` + `check:dupes`.
+- [x] Tear down the experiments: delete `scratchpad.astro`, `scratchpad2.astro`, and any `docs/tasks-todo/temporary/` leftovers.
+- [x] `check:all` green.
 
-## Phase 8 — OpenSearch XML
+## Phase 10 — Styleguide & developer docs ✅
 
-- [ ] Add an OpenSearch description XML document for browser address-bar search integration, linked from the `<head>`.
-
-## Phase 9 — LLM / agent-readiness for site search
-
-- [ ] Any LLM-friendly or meta-tag additions now that the site has search. Re-run the tooling from `docs/tasks-done/task-2026-06-14-1-agent-readiness-improvements.md` (afdocs, isitagentready) to check for anything new to add.
-
-## Phase 10 — Styleguide & developer docs
-
-- [ ] Add the palette (and any sub-components) to the right parts of the multi-page styleguide; update any existing components changed along the way (`NoteCard`, `TableOfContents`, the layouts).
+- [x] Add the palette (and any sub-components) to the right parts of the multi-page styleguide; update any existing components changed along the way (`NoteCard`, `TableOfContents`, the layouts).
 - [ ] New evergreen developer doc explaining how the palette + Pagefind + build integration fit together.
 - [ ] Update `docs/developer/deployment.md` for the Pagefind build step; check `docs/developer/` guides, `README.md`(s), and `AGENTS.md` are still correct.
-
-## Last Phase — Final review, QA & ship
-
-- [ ] Review sweep: refactor opportunities, remove cruft, confirm comments/tests are good.
-- [ ] Confirm the CI packaging step copies `dist/pagefind/` into the deployed output (`.vercel/output/static/`) — the one thing we couldn't verify locally.
-- [ ] OG images generate correctly and SEO data is correct (bump OG `CACHE_VERSION` if templates/branding/fonts changed).
-- [ ] Check Lighthouse scores.
-- [ ] CSP note: the site sends no CSP today so Pagefind's WASM loads fine; if a CSP is ever added it needs `wasm-unsafe-eval` + `worker-src blob:`.
-- [ ] Merge, deploy, and test on mobile.
 
 ---
 

@@ -15,7 +15,7 @@ This document covers the core architectural patterns and principles for Danny's 
 - Prefer modern CSS features over JS (container queries, `:has()`, layers, etc.)
 - Progressive enhancement of browser-native features preferred
 - NO `client:*` directives used anywhere in this codebase, **except** for one-off demo components in `demos/` (see [component-patterns.md § Demo Components](./component-patterns.md#demo-components))
-- Interactive components use inline `<script>` tags (ThemeToggle, MainNavigation, Accordion, Lightbox, MarkdownContentActions)
+- Interactive components use inline `<script>` tags (ThemeToggle, MainNavigation, Accordion, Lightbox, MarkdownContentActions, CommandPalette)
 - All scripts handle ViewTransitions (`astro:after-swap` events)
 
 **Build-Time Generation Examples:**
@@ -355,6 +355,8 @@ Four layouts in `src/layouts/`:
 - **`Note.astro`** — notes only.
 - **`Page.astro`** — any simple standalone MDX page (eg `/now`, `/ai`, `/colophon`, `/privacy`, the `/using` mini-site). Renders a display-font uppercase title (+ optional subtitle) then your content in a centred `.flow` column. Frontmatter props: `title` (required), `subtitle?`, `description?`, `headingAlign?`, plus an optional full-bleed header banner via `heroImage?` (a `/src/assets/…` path, resolved and optimized the same way `BasicImage` resolves string sources) and `heroImageAlt?`.
 - **`BasicPage.astro`** — the barebones: nav, footer, your content, nothing else. Used rarely, for when you want a real page shell without `Page.astro`'s heading.
+
+Every layout (and every standalone full page) also includes the global `<CommandPalette />` — the `⌘K` search-and-navigation overlay backed by Pagefind. See [command-palette-and-search.md](./command-palette-and-search.md).
 
 ### Creating one-off pages in `src/pages/`
 

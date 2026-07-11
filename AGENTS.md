@@ -16,6 +16,7 @@ Content-first creative playground for writing and design experimentation. Built 
 - Traditional Blog with long-form articles
 - Shorter notes for quick sharing of thoughts and comments on other content
 - RSS feeds for articles, notes and both
+- Site-wide `⌘/Ctrl+K` command palette: full-text search (Pagefind) across articles/notes/pages, plus quick navigation and commands (see `docs/developer/command-palette-and-search.md`)
 - Redirects and hosting for core static assets on my domain (danny.is/avatar.jpg, danny.is/cv.pdf, danny.is/meeting -> redirects to my booking link etc)
 
 ## Core Rules
