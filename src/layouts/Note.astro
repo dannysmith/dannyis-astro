@@ -52,9 +52,10 @@ const standardSiteDocumentUri =
         sourceURL={sourceURL}
         tags={tags}
         slug={Astro.params.slug!}
+        indexAsBody
       >
         <slot />
-        <div class="footer-actions">
+        <div class="footer-actions" data-pagefind-ignore>
           <MarkdownContentActions markdownUrl={markdownUrl} />
           <BackToTopLink />
         </div>

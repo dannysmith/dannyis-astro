@@ -8,17 +8,29 @@ export interface Props {
   sourceURL?: string;
   tags?: string[];
   slug: string;
+  /**
+   * Mark this card as the Pagefind search-body for the page. Only the full
+   * note page (Note.astro) sets this — on listing pages (notes index,
+   * styleguide) the cards must stay unindexed so each note is one result.
+   */
+  indexAsBody?: boolean;
 }
 
-const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
+const { title, pubDate, sourceURL, tags = [], slug, indexAsBody = false } = Astro.props;
 ---
 
-<article class="note h-entry cq surface-white">
+<article
+  class="note h-entry cq surface-white"
+  data-pagefind-body={indexAsBody ? true : undefined}
+  data-pagefind-meta={indexAsBody ? 'type:note' : undefined}
+>
   <header class="note-header ui-style">
     <a href={`/notes/${slug}/`} class="date-link date">
       <FormattedDate date={pubDate} />
     </a>
-    <h1 class="p-name title"><a href={`/notes/${slug}/`}>{title}</a></h1>
+    <h1 class="p-name title" data-pagefind-meta={indexAsBody ? 'title' : undefined}>
+      <a href={`/notes/${slug}/`}>{title}</a>
+    </h1>
     {
       tags.length > 0 && (
         <div class="tags">

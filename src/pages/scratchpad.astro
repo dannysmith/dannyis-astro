@@ -1,8 +1,54 @@
 ---
 /**
- * Scratchpad - a noindex page for eyeballing components in isolation.
+ * Scratchpad — Pagefind search experiment (Phase 2 of the Cmd+K work).
+ *
+ * Two throwaway variants side by side so we can compare the keyboard-nav seam:
+ *
+ *   A. RAW API  — the Phase-1 combobox shell (see scratchpad2.astro) extended
+ *      with a live Results group driven by raw pagefind.search() → .data().
+ *      Commands + results live in ONE listbox with ONE nav loop; focus stays in
+ *      the input and the active row is tracked via aria-activedescendant.
+ *
+ *   B. BUILDING BLOCKS — Pagefind's own <pagefind-input>/<pagefind-summary>/
+ *      <pagefind-results> web components dropped inside a <dialog>. They bring
+ *      their own input and their own keyboard model (real DOM focus moves into
+ *      the results list; ↑ at the top returns to the input) — deliberately a
+ *      different a11y model from the combobox, which is the whole comparison.
+ *
+ * Search only works against a previously-built dist/pagefind/ (served in dev by
+ * the inline pagefind() integration's middleware). No build → search degrades to
+ * an "unavailable" note; nothing else breaks.
+ *
+ * See docs/tasks-todo/task-1-command-palette-and-search.md
  */
 import { BaseHead, MainNavigation } from '@components/layout/index';
+
+// Commands/nav baked in at build time (identical approach to scratchpad2).
+type PaletteItem = {
+  id: string;
+  label: string;
+  href?: string;
+  action?: 'copy-url';
+  keywords?: string;
+};
+
+const commands: PaletteItem[] = [
+  {
+    id: 'cmd-copy-url',
+    label: 'Copy URL of this page',
+    action: 'copy-url',
+    keywords: 'clipboard link share',
+  },
+];
+
+const navItems: PaletteItem[] = [
+  { id: 'nav-home', label: 'Home', href: '/' },
+  { id: 'nav-writing', label: 'Writing', href: '/writing', keywords: 'articles blog essays' },
+  { id: 'nav-notes', label: 'Notes', href: '/notes', keywords: 'short posts' },
+  { id: 'nav-making', label: 'Making', href: '/making', keywords: 'projects things' },
+  { id: 'nav-now', label: 'Now', href: '/now' },
+  { id: 'nav-colophon', label: 'Colophon', href: '/colophon' },
+];
 ---
 
 <!doctype html>
@@ -10,14 +56,134 @@ import { BaseHead, MainNavigation } from '@components/layout/index';
   <head>
     <BaseHead
       title="Scratchpad"
-      description="Component testing"
+      description="Pagefind search experiment"
       robotsDirective="noindex, nofollow"
     />
+    <!-- Building-block web components (variant B). is:inline so Astro leaves the
+         absolute /pagefind/ paths untouched. -->
+    <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+    <script src="/pagefind/pagefind-component-ui.js" type="module" is:inline></script>
   </head>
   <body>
     <MainNavigation />
     <main id="main" tabindex="-1">
-      <h1>Hello world</h1>
+      <h1>Pagefind search experiment</h1>
+      <p class="lede">
+        Two ways to drive Pagefind results, side by side. <kbd>⌘K</kbd> opens variant A. Search needs
+        a prior <code>bun run build</code> to have produced <code>dist/pagefind/</code>.
+      </p>
+
+      <div class="triggers">
+        <button type="button" command="show-modal" commandfor="palette-raw">
+          A · Raw API combobox <kbd>⌘K</kbd>
+        </button>
+        <button type="button" command="show-modal" commandfor="palette-blocks">
+          B · Building blocks
+        </button>
+      </div>
+
+      <!-- ============================ VARIANT A ============================ -->
+      <dialog
+        id="palette-raw"
+        class="ui-style"
+        closedby="any"
+        aria-label="Command palette (raw API)"
+      >
+        <div class="cp-box">
+          <input
+            type="text"
+            class="cp-input"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="cp-listbox"
+            aria-autocomplete="list"
+            aria-label="Search commands, pages and content"
+            placeholder="Type a command or search…"
+            autocomplete="off"
+            spellcheck="false"
+            autofocus
+          />
+
+          <ul id="cp-listbox" class="list-reset" role="listbox" aria-label="Results">
+            <!-- Commands -->
+            <li role="group" aria-labelledby="cp-grouplabel-commands">
+              <span id="cp-grouplabel-commands" class="cp-group-label" role="presentation"
+                >Commands</span
+              >
+              <ul role="presentation" class="list-reset cp-item-list">
+                {
+                  commands.map(item => (
+                    <li>
+                      <a
+                        id={item.id}
+                        role="option"
+                        class="cp-option"
+                        href={item.href}
+                        tabindex="-1"
+                        data-action={item.action}
+                        data-keywords={item.keywords}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </li>
+
+            <!-- Navigation -->
+            <li role="group" aria-labelledby="cp-grouplabel-nav">
+              <span id="cp-grouplabel-nav" class="cp-group-label" role="presentation"
+                >Navigation</span
+              >
+              <ul role="presentation" class="list-reset cp-item-list">
+                {
+                  navItems.map(item => (
+                    <li>
+                      <a
+                        id={item.id}
+                        role="option"
+                        class="cp-option"
+                        href={item.href}
+                        tabindex="-1"
+                        data-keywords={item.keywords}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </li>
+
+            <!-- Search results (populated at runtime from pagefind.search().data()) -->
+            <li role="group" aria-labelledby="cp-grouplabel-results" class="cp-results-group">
+              <span id="cp-grouplabel-results" class="cp-group-label" role="presentation"
+                >Content</span
+              >
+              <ul id="cp-results-list" role="presentation" class="list-reset cp-item-list"></ul>
+            </li>
+          </ul>
+
+          <p class="cp-empty">No results</p>
+          <p class="cp-status" role="status" aria-live="polite"></p>
+        </div>
+      </dialog>
+
+      <!-- ============================ VARIANT B ============================ -->
+      <dialog
+        id="palette-blocks"
+        class="ui-style"
+        closedby="any"
+        aria-label="Search (building blocks)"
+      >
+        <div class="cp-box cp-box--blocks">
+          <pagefind-config bundle-path="/pagefind/"></pagefind-config>
+          <pagefind-input placeholder="Search content…" autofocus></pagefind-input>
+          <pagefind-summary default-message="Type to search"></pagefind-summary>
+          <pagefind-results max-results="20" max-sub-results="2"></pagefind-results>
+        </div>
+      </dialog>
     </main>
   </body>
 </html>
@@ -27,5 +193,370 @@ import { BaseHead, MainNavigation } from '@components/layout/index';
     padding-block: var(--space-xl);
     margin-inline: auto;
     padding-inline: var(--space-m);
+    max-width: var(--measure-standard);
+  }
+
+  .lede {
+    color: var(--color-text-secondary);
+  }
+
+  .triggers {
+    display: flex;
+    gap: var(--space-s);
+    flex-wrap: wrap;
+    margin-block-start: var(--space-m);
+  }
+
+  /* ---- Shared dialog framing (variant A + B) ---- */
+  #palette-raw,
+  #palette-blocks {
+    width: min(38rem, 90vw);
+    margin-block-start: 12vh;
+    padding: 0;
+    overflow: hidden;
+
+    opacity: 0;
+    transition:
+      opacity var(--duration-normal) var(--ease-in-out),
+      display var(--duration-normal) allow-discrete,
+      overlay var(--duration-normal) allow-discrete;
+  }
+
+  #palette-raw[open],
+  #palette-blocks[open] {
+    opacity: 1;
+  }
+
+  @starting-style {
+    #palette-raw[open],
+    #palette-blocks[open] {
+      opacity: 0;
+    }
+  }
+
+  #palette-raw::backdrop,
+  #palette-blocks::backdrop {
+    background: oklch(0% 0 0 / 0.4);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #palette-raw,
+    #palette-blocks {
+      transition: none;
+    }
+  }
+
+  .cp-box {
+    display: flex;
+    flex-direction: column;
+    max-block-size: 70vh;
+  }
+
+  .cp-box--blocks {
+    padding: var(--space-s);
+    gap: var(--space-s);
+    overflow-y: auto;
+  }
+
+  .cp-input {
+    flex: none;
+    width: 100%;
+    border: none;
+    border-block-end: var(--border-width-hairline) solid var(--color-border);
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .cp-input:focus {
+    outline: none;
+  }
+
+  .cp-item-list {
+    margin-block-start: 0;
+  }
+
+  #cp-listbox {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .cp-group-label {
+    display: block;
+    padding: var(--space-2xs) var(--space-s);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .cp-empty,
+  .cp-status {
+    padding: var(--space-s);
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  .cp-empty {
+    display: none;
+  }
+
+  .cp-status:empty {
+    display: none;
   }
 </style>
+
+<!--
+  Variant A's search results are injected via innerHTML at runtime, so Astro's
+  scoped <style> (which keys off a build-time data-astro-cid attribute) never
+  reaches them. Anything that must style dynamic option/result rows lives here
+  in a global block, contained under #palette-raw. This is a real finding for the
+  production component: JS-rendered results need global (or Pagefind's own) CSS.
+-->
+<style is:global>
+  #palette-raw .cp-option {
+    display: block;
+    padding: var(--space-2xs) var(--space-s);
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #palette-raw .cp-option:hover {
+    background: var(--color-background-secondary);
+  }
+
+  #palette-raw .cp-option[data-active] {
+    background: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  /* Result rows carry title / type / excerpt. */
+  #palette-raw .cp-result {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 var(--space-s);
+    align-items: baseline;
+    padding-block: var(--space-xs);
+    border-block-start: var(--border-width-hairline) solid var(--color-border);
+  }
+
+  #palette-raw .cp-result-title {
+    font-weight: 600;
+  }
+
+  #palette-raw .cp-result-type {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  #palette-raw .cp-result-excerpt {
+    grid-column: 1 / -1;
+    margin-block-start: var(--space-3xs);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  #palette-raw .cp-option[data-active] :is(.cp-result-type, .cp-result-excerpt) {
+    color: inherit;
+  }
+
+  #palette-raw .cp-result mark {
+    background: transparent;
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  /* Hide a group whose options are all filtered out / empty. */
+  #palette-raw li[role='group']:not(:has(.cp-option:not([hidden]))) {
+    display: none;
+  }
+
+  /* "No results" only when nothing (command or result) is visible. */
+  #palette-raw .cp-box:not(:has(.cp-option:not([hidden]))) .cp-empty {
+    display: block;
+  }
+</style>
+
+<script>
+  // ---- Variant A: the Phase-1 combobox + a live pagefind Results group. ----
+  // Hotkey binds once (guarded); per-dialog wiring re-runs on astro:page-load
+  // behind a data-ready guard — the same split Tabs.astro / scratchpad2 use.
+  let hotkeyWired = false;
+  function wireHotkey() {
+    if (hotkeyWired) return;
+    hotkeyWired = true;
+    document.addEventListener('keydown', e => {
+      if (!((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) return;
+      const dialog = document.querySelector<HTMLDialogElement>('#palette-raw');
+      if (!dialog) return;
+      e.preventDefault();
+      if (dialog.open) dialog.close();
+      else dialog.showModal();
+    });
+  }
+
+  // Lazily import Pagefind's runtime once, on first interaction. Returns null if
+  // there's no built index (e.g. dev with no prior build) so search degrades.
+  let pagefindPromise: Promise<any> | null = null;
+  function loadPagefind(): Promise<any> {
+    if (!pagefindPromise) {
+      // Computed path (not a static string literal) so neither Vite's dev-server
+      // import analysis nor the production rollup build tries to resolve it — the
+      // file only exists in the built dist/pagefind/ and is fetched by the browser
+      // at runtime. BASE_URL is '/', giving '/pagefind/pagefind.js'.
+      const pagefindUrl = `${import.meta.env.BASE_URL}pagefind/pagefind.js`;
+      pagefindPromise = import(/* @vite-ignore */ pagefindUrl)
+        .then(async (pf: any) => {
+          await pf.init();
+          return pf;
+        })
+        .catch(() => null);
+    }
+    return pagefindPromise;
+  }
+
+  function initRawPalette() {
+    wireHotkey();
+
+    const dialogEl = document.querySelector<HTMLDialogElement>('#palette-raw');
+    if (!dialogEl || dialogEl.dataset.cpReady) return;
+    dialogEl.dataset.cpReady = 'true';
+    const dialog: HTMLDialogElement = dialogEl;
+
+    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!;
+    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!;
+    const resultsList = dialog.querySelector<HTMLUListElement>('#cp-results-list')!;
+    const status = dialog.querySelector<HTMLParagraphElement>('.cp-status')!;
+
+    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')];
+    const visibleOptions = () => allOptions().filter(o => !o.hidden && o.offsetParent !== null);
+
+    function setActive(el: HTMLElement | null) {
+      allOptions().forEach(o => delete o.dataset.active);
+      if (!el) {
+        input.removeAttribute('aria-activedescendant');
+        return;
+      }
+      el.dataset.active = 'true';
+      input.setAttribute('aria-activedescendant', el.id);
+      el.scrollIntoView({ block: 'nearest' });
+    }
+
+    // Local substring filter — commands/nav only. Search results are governed
+    // entirely by Pagefind, so they're exempt (never locally hidden).
+    function filterCommands(q: string) {
+      for (const o of allOptions()) {
+        if (o.classList.contains('cp-result')) continue;
+        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase();
+        o.hidden = q !== '' && !hay.includes(q);
+      }
+    }
+
+    function escapeHtml(s: string) {
+      return s.replace(
+        /[&<>"']/g,
+        c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string,
+      );
+    }
+
+    // Render top-N pagefind results into the Content group.
+    function renderResults(results: any[]) {
+      resultsList.innerHTML = results
+        .map((r, i) => {
+          const title = escapeHtml(r.meta?.title ?? r.url);
+          const type = escapeHtml(r.meta?.type ?? 'page');
+          // Excerpt already contains <mark> from our own content — trust it here.
+          const excerpt = r.excerpt ?? '';
+          return `<li><a id="cp-result-${i}" role="option" class="cp-option cp-result" href="${r.url}" tabindex="-1">
+            <span class="cp-result-title">${title}</span>
+            <span class="cp-result-type">${type}</span>
+            <span class="cp-result-excerpt">${excerpt}</span>
+          </a></li>`;
+        })
+        .join('');
+    }
+
+    let searchToken = 0;
+    async function runSearch(q: string) {
+      if (q === '') {
+        resultsList.innerHTML = '';
+        status.textContent = '';
+        setActive(visibleOptions()[0] ?? null);
+        return;
+      }
+      const token = ++searchToken;
+      const pf = await loadPagefind();
+      if (token !== searchToken) return; // superseded
+      if (!pf) {
+        status.textContent = 'Search unavailable — run a build to generate the index.';
+        return;
+      }
+      const search = await pf.debouncedSearch(q, {}, 200);
+      if (search === null || token !== searchToken) return; // debounced/superseded
+      const top = await Promise.all(search.results.slice(0, 6).map((r: any) => r.data()));
+      if (token !== searchToken) return;
+      renderResults(top);
+      status.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'}`;
+      setActive(visibleOptions()[0] ?? null);
+    }
+
+    function onInput() {
+      const q = input.value.trim().toLowerCase();
+      filterCommands(q);
+      runSearch(input.value.trim());
+      setActive(visibleOptions()[0] ?? null);
+    }
+
+    function reset() {
+      input.value = '';
+      resultsList.innerHTML = '';
+      status.textContent = '';
+      filterCommands('');
+      setActive(visibleOptions()[0] ?? null);
+    }
+    dialog.addEventListener('close', reset);
+
+    input.addEventListener('input', onInput);
+    input.addEventListener('keydown', e => {
+      const opts = visibleOptions();
+      if (!opts.length) return;
+      const i = opts.findIndex(o => o.dataset.active === 'true');
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActive(opts[(i + 1) % opts.length]);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActive(opts[(i - 1 + opts.length) % opts.length]);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        opts[i >= 0 ? i : 0]?.click();
+      }
+    });
+
+    // Nav/result options are real links (navigate natively). Action options have
+    // no href and carry a data-action — run it and close.
+    list.addEventListener('click', e => {
+      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option');
+      if (!opt?.dataset.action) return;
+      e.preventDefault();
+      if (opt.dataset.action === 'copy-url') navigator.clipboard?.writeText(location.href);
+      dialog.close();
+    });
+
+    // Prewarm Pagefind as soon as the input is focused (dialog opened).
+    input.addEventListener('focus', () => loadPagefind(), { once: true });
+
+    reset();
+  }
+
+  initRawPalette();
+  document.addEventListener('astro:page-load', initRawPalette);
+</script>

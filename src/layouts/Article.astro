@@ -87,7 +87,13 @@ const standardSiteDocumentUri =
     }
     <main id="main" tabindex="-1">
       <LLMDiscoveryNote />
-      <article class="h-entry" itemscope itemtype="https://schema.org/Article">
+      <article
+        class="h-entry"
+        itemscope
+        itemtype="https://schema.org/Article"
+        data-pagefind-body
+        data-pagefind-meta="type:article"
+      >
         {toc && <TableOfContents headings={headings} />}
         <LongFormProseTypography>
           {
@@ -106,7 +112,7 @@ const standardSiteDocumentUri =
             )
           }
           <div class="post-header">
-            <div class="metadata">
+            <div class="metadata" data-pagefind-ignore>
               <FormattedDate date={pubDate} itemprop="datePublished" />
               {
                 updatedDate && (
@@ -119,11 +125,11 @@ const standardSiteDocumentUri =
               {draft && <span class="draft-notice">🚧 Draft</span>}
             </div>
 
-            <h1 class="title p-name" itemprop="headline">{title}</h1>
+            <h1 class="title p-name" itemprop="headline" data-pagefind-meta="title">{title}</h1>
           </div>
           <SeriesCallout series={series} currentId={Astro.params.slug!} />
           <slot />
-          <div class="footer-actions">
+          <div class="footer-actions" data-pagefind-ignore>
             <MarkdownContentActions markdownUrl={markdownUrl} />
             <BackToTopLink />
           </div>
