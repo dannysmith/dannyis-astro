@@ -137,6 +137,11 @@ const groups = ['Commands', 'Navigation'] as const;
     padding: 0;
     overflow: hidden;
     overscroll-behavior: contain;
+    border: 2px solid var(--color-charcoal);
+    border-radius: var(--radius-sm);
+    box-shadow:
+      0 0.25rem 0.5rem oklch(0% 0 0 / 0.2),
+      0 1.5rem 3rem oklch(0% 0 0 / 0.5);
 
     opacity: 0;
     transition:
@@ -156,13 +161,30 @@ const groups = ['Commands', 'Navigation'] as const;
   }
 
   .command-palette::backdrop {
-    background: oklch(0% 0 0 / 0.4);
+    background: light-dark(oklch(0% 0 0 / 0.4), oklch(0% 0 0 / 0.8));
     overflow: hidden;
     overscroll-behavior: contain;
+
+    opacity: 0;
+    transition:
+      opacity var(--duration-normal) var(--ease-in-out),
+      display var(--duration-normal) allow-discrete,
+      overlay var(--duration-normal) allow-discrete;
+  }
+
+  .command-palette[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .command-palette[open]::backdrop {
+      opacity: 0;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .command-palette {
+    .command-palette,
+    .command-palette::backdrop {
       transition: none;
     }
   }
@@ -245,6 +267,7 @@ const groups = ['Commands', 'Navigation'] as const;
   #command-palette .cp-option[data-active] {
     background: var(--color-accent);
     color: var(--color-text);
+    border-color: color-mix(in oklch, var(--color-accent) 50%, transparent);
   }
 
   /* Result rows carry title / type / excerpt. */
@@ -258,7 +281,8 @@ const groups = ['Commands', 'Navigation'] as const;
   }
 
   #command-palette .cp-result-title {
-    font-weight: 600;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
   }
 
   #command-palette .cp-result-type {
@@ -284,10 +308,9 @@ const groups = ['Commands', 'Navigation'] as const;
   }
 
   #command-palette .cp-result mark {
-    background: transparent;
+    background: var(--color-highlight);
     color: inherit;
     font-weight: 700;
-    text-decoration: underline;
   }
 
   /* Hide a group whose options are all filtered out / empty. */
