@@ -33,7 +33,7 @@ export interface SearchResult {
  * or Pagefind isn't available (no index built).
  */
 export type SearchOutcome =
-  | { status: 'ok'; results: SearchResult[] }
+  | { status: 'ok'; results: SearchResult[]; total: number }
   | { status: 'superseded' }
   | { status: 'unavailable' };
 
@@ -125,7 +125,7 @@ export function normalize(d: PagefindData): SearchResult {
 export async function search(query: string, options: SearchOptions = {}): Promise<SearchOutcome> {
   const { limit = 8, debounceMs = 200 } = options;
 
-  if (query.trim() === '') return { status: 'ok', results: [] };
+  if (query.trim() === '') return { status: 'ok', results: [], total: 0 };
 
   const pf = await loadPagefind();
   if (!pf) return { status: 'unavailable' };
@@ -133,6 +133,8 @@ export async function search(query: string, options: SearchOptions = {}): Promis
   const response = await pf.debouncedSearch(query, {}, debounceMs);
   if (response === null) return { status: 'superseded' };
 
+  // `response.results` holds a lightweight handle for *every* match; we only pull
+  // `.data()` for the top `limit`, but the full length is the true result count.
   const top = await Promise.all(response.results.slice(0, limit).map(r => r.data()));
-  return { status: 'ok', results: top.map(normalize) };
+  return { status: 'ok', results: top.map(normalize), total: response.results.length };
 }

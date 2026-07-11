@@ -124,13 +124,15 @@ Promote the `scratchpad2.astro` shell into a production component (or a small se
 
 ## Phase 6 — Wire Pagefind results into the palette
 
-Consume the Phase 4 client API inside the Phase 5 component to add the live Content results group. This is where search lands in the real palette — and where most of the result styling/design work happens.
+Consume the Phase 4 client API inside the Phase 5 component to add the live Content results group. This is where search lands in the real palette — and where most of the result styling/design work happens. **Done — live search wired into `CommandPalette.astro`, verified end-to-end.**
 
-- [ ] Render a Content results group from the client search API into the same listbox, sharing the one `aria-activedescendant` nav loop (the Variant-A model from Phase 2).
-- [ ] Style result rows (title / type / excerpt, `<mark>` highlights, maybe `sub_results`). Phase 2 gotcha: JS-injected rows need **global CSS**, not scoped `<style>`.
-- [ ] Expect to **adjust the palette design** to accommodate results: grouping, empty / loading / no-results states, result density, whether descriptions or sub-results show.
-- [ ] `aria-live` result-count announcements; sensible ordering (recency vs relevance) using whatever Phase 3 metadata enabled.
-- [ ] Full accessibility pass: screen-reader testing, focus return on close.
+- [x] Added a third "Content" group to the listbox, rendered at runtime from `@utils/pagefind` (`search()`), sharing the one `aria-activedescendant` nav loop — the Variant-A model. Commands/nav filter locally by substring; results are governed entirely by Pagefind (exempt from the local filter). A per-consumer token guards the post-debounce race.
+- [x] Styled result rows (title / bold, right-aligned `type` badge, 2-line clamped `excerpt` with `<mark>`). Per the Phase 2 gotcha, all option/result styling moved into an `is:global` block (JS-injected rows never get the scoped `data-astro-cid`); the framing/input stay scoped. Sub-results not shown (kept rows compact — revisit if useful).
+- [x] Design adjustments: three groups (Commands / Navigation / Content), `cp-status` line, "No results" fallback (rarely hit — Pagefind loose-matches almost any term, so a true zero-result query is uncommon). No explicit loading state yet (results land within the ~200 ms debounce); no thumbnails/descriptions shown.
+- [x] `aria-live="polite"` status announces the **accurate total** count — the Phase 4 helper's `SearchOutcome` gained a `total` field (full match count, not just the capped `results`). Ordering is Pagefind's default **relevance**; the Phase 3 `date` sort key is available if we ever want a recency toggle.
+- [~] Focus return on close is native (`<dialog>` restores focus to the pre-open element). **Deferred to Phase 7:** a formal screen-reader pass, and a possible loading state.
+
+> **Carry-forward for Phase 7:** screen-reader testing; decide on result thumbnails (the `meta.image` on link-post notes is available); decide whether Pagefind's loose matching wants tightening; e2e the shell + commands (no index in the Check stage).
 
 ## Phase 7 — Testing, cleanup & refactor
 

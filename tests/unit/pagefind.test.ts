@@ -52,10 +52,10 @@ describe('normalize', () => {
 
 describe('search (browser-independent behaviour)', () => {
   it('short-circuits an empty query to an empty ok result without hitting the runtime', async () => {
-    await expect(search('')).resolves.toEqual({ status: 'ok', results: [] });
+    await expect(search('')).resolves.toEqual({ status: 'ok', results: [], total: 0 });
   });
 
   it('treats a whitespace-only query as empty', async () => {
-    await expect(search('   ')).resolves.toEqual({ status: 'ok', results: [] });
+    await expect(search('   ')).resolves.toEqual({ status: 'ok', results: [], total: 0 });
   });
 });
