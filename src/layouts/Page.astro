@@ -25,8 +25,17 @@ const { title, subtitle, description, headingAlign, heroImage, heroImageAlt } =
   Astro.props.frontmatter;
 
 const assetImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*');
-const heroSrc =
-  heroImage && assetImages[heroImage] ? (await assetImages[heroImage]()).default : undefined;
+let heroSrc: ImageMetadata | undefined;
+if (heroImage) {
+  const loadHero = assetImages[heroImage];
+  if (loadHero) {
+    heroSrc = (await loadHero()).default;
+  } else {
+    console.warn(
+      `[Page.astro] heroImage "${heroImage}" not found under /src/assets — no header banner rendered. Check the path.`,
+    );
+  }
+}
 ---
 
 <!doctype html>
