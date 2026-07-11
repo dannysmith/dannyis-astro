@@ -21,6 +21,7 @@ export const OG_IMAGE_PAGES: OgImagePage[] = [
   { path: '/writing', title: 'Writing' },
   { path: '/notes', title: 'Short Notes' },
   { path: '/styleguide', title: 'Site Styleguide' },
+  { path: '/making', title: "Danny's Projects" },
   { path: '/styleguide/foundations', title: 'Styleguide: Foundations' },
   { path: '/styleguide/typography', title: 'Styleguide: Typography' },
   { path: '/styleguide/components', title: 'Styleguide: Content' },
