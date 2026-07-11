@@ -104,14 +104,15 @@ Indexing works; now make the index itself genuinely good — correct scoping eve
 
 > **Carry-forward for Phase 6:** link-post notes still get an auto-captured `meta.image` (the source's og-image) — Pagefind grabs the first body `<img>` and `data-pagefind-ignore` doesn't suppress _meta_ capture. Harmless (a nice result thumbnail), but decide deliberately whether/where result cards show a thumbnail, and whether it should be the page's own OG image instead.
 
-## Phase 4 — Extract the Pagefind integration into `lib/`
+## Phase 4 — Extract the Pagefind integration into `lib/` ✅
 
-Pull the inline experiment wiring out of `astro.config.mjs` into a clean, reusable module, and define the typed client-side search API the palette will consume.
+Pull the inline experiment wiring out of `astro.config.mjs` into a clean, reusable module, and define the typed client-side search API the palette will consume. **Done — build integration in `lib/`, typed client helper in `utils/`, both dogfooded by the scratchpad.**
 
-- [ ] Move the inline `pagefind()` integration (the `astro:build:done` indexer + `astro:server:setup` dev middleware) into `src/lib/`; import it in `astro.config.mjs`.
-- [ ] Build a small typed **client search helper** (the "nice API" for the components): lazy-init + `debouncedSearch`, normalize `.data()` → a stable `{ url, title, type, excerpt, description?, … }` shape, degrade gracefully when there's no index.
-- [ ] Bake in the Phase 2 gotcha: the runtime import must use a **computed path** (`` `${import.meta.env.BASE_URL}pagefind/pagefind.js` ``), not a static literal.
-- [ ] Decide where the client helper lives — `lib/` is for build-time plugins, so the browser-side helper probably belongs in `utils/` or alongside the component, not `lib/`.
+- [x] Moved the `pagefind()` integration (both hooks) into **`src/lib/pagefind-integration.mjs`**; `astro.config.mjs` now just imports `{ pagefind }` from it (and the four Node/Pagefind imports moved with it, slimming the config). Build verified: still indexes 195 pages.
+- [x] Built the typed client helper at **`src/utils/pagefind.ts`** (`@utils/pagefind`). Exports `search(query, { limit, debounceMs })` → a `SearchOutcome` discriminated union (`ok` / `superseded` / `unavailable`), `preloadPagefind()`, and the `SearchResult` type (`{ url, title, type, excerpt, date?, image?, imageAlt? }`). Lazy-inits + memoizes the runtime (retries on failure so dev-after-build works); normalizes `.data()`; empty query → empty `ok` (no request). Kept `description` out of the shape (Phase 3 chose not to index it). `loadPagefind` stays module-private.
+- [x] Computed-path import baked into the helper (`` `${import.meta.env.BASE_URL}pagefind/pagefind.js` ``), so no static literal — verified clean under both `astro dev` and the rollup build.
+- [x] Client helper lives in **`utils/`** (browser-side), not `lib/` (build-time plugins). Scratchpad Variant A was refactored to consume `@utils/pagefind`, which removed all its inline `any`-typed Pagefind code — lint is now fully clean. Runtime-verified end-to-end: normalized results (incl. the new `type:page` "Colophon"), combined nav loop, no console errors.
+- [x] Added focused unit tests (`tests/unit/pagefind.test.ts`): the `normalize()` `.data()`→`SearchResult` mapping (title/type fallbacks, optional-field passthrough) and the empty/whitespace-query short-circuit — the browser-independent parts. The integration module and the runtime-dependent search paths are left to Phase 7 e2e (thin glue / need a real browser; unit-mocking them is low-value).
 
 ## Phase 5 — Build the command palette as a real Astro component
 

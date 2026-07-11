@@ -387,6 +387,10 @@ const navItems: PaletteItem[] = [
 
 <script>
   // ---- Variant A: the Phase-1 combobox + a live pagefind Results group. ----
+  // Search runs through the typed client helper (Phase 4) — this page also
+  // dogfoods that "nice API" ahead of the real palette component.
+  import { search, preloadPagefind, type SearchResult } from '@utils/pagefind';
+
   // Hotkey binds once (guarded); per-dialog wiring re-runs on astro:page-load
   // behind a data-ready guard — the same split Tabs.astro / scratchpad2 use.
   let hotkeyWired = false;
@@ -401,26 +405,6 @@ const navItems: PaletteItem[] = [
       if (dialog.open) dialog.close();
       else dialog.showModal();
     });
-  }
-
-  // Lazily import Pagefind's runtime once, on first interaction. Returns null if
-  // there's no built index (e.g. dev with no prior build) so search degrades.
-  let pagefindPromise: Promise<any> | null = null;
-  function loadPagefind(): Promise<any> {
-    if (!pagefindPromise) {
-      // Computed path (not a static string literal) so neither Vite's dev-server
-      // import analysis nor the production rollup build tries to resolve it — the
-      // file only exists in the built dist/pagefind/ and is fetched by the browser
-      // at runtime. BASE_URL is '/', giving '/pagefind/pagefind.js'.
-      const pagefindUrl = `${import.meta.env.BASE_URL}pagefind/pagefind.js`;
-      pagefindPromise = import(/* @vite-ignore */ pagefindUrl)
-        .then(async (pf: any) => {
-          await pf.init();
-          return pf;
-        })
-        .catch(() => null);
-    }
-    return pagefindPromise;
   }
 
   function initRawPalette() {
@@ -467,44 +451,36 @@ const navItems: PaletteItem[] = [
       );
     }
 
-    // Render top-N pagefind results into the Content group.
-    function renderResults(results: any[]) {
+    // Render the normalized results into the Content group.
+    function renderResults(results: SearchResult[]) {
       resultsList.innerHTML = results
-        .map((r, i) => {
-          const title = escapeHtml(r.meta?.title ?? r.url);
-          const type = escapeHtml(r.meta?.type ?? 'page');
-          // Excerpt already contains <mark> from our own content — trust it here.
-          const excerpt = r.excerpt ?? '';
-          return `<li><a id="cp-result-${i}" role="option" class="cp-option cp-result" href="${r.url}" tabindex="-1">
-            <span class="cp-result-title">${title}</span>
-            <span class="cp-result-type">${type}</span>
-            <span class="cp-result-excerpt">${excerpt}</span>
-          </a></li>`;
-        })
+        .map(
+          (
+            r,
+            i,
+          ) => `<li><a id="cp-result-${i}" role="option" class="cp-option cp-result" href="${r.url}" tabindex="-1">
+            <span class="cp-result-title">${escapeHtml(r.title)}</span>
+            <span class="cp-result-type">${escapeHtml(r.type)}</span>
+            <span class="cp-result-excerpt">${r.excerpt}</span>
+          </a></li>`,
+        )
         .join('');
     }
 
+    // A local token guards the post-debounce race: `search()` debounces, but a
+    // newer keystroke can still land while an older call awaits its data().
     let searchToken = 0;
     async function runSearch(q: string) {
-      if (q === '') {
-        resultsList.innerHTML = '';
-        status.textContent = '';
-        setActive(visibleOptions()[0] ?? null);
-        return;
-      }
       const token = ++searchToken;
-      const pf = await loadPagefind();
-      if (token !== searchToken) return; // superseded
-      if (!pf) {
+      const outcome = await search(q, { limit: 6 });
+      if (token !== searchToken || outcome.status === 'superseded') return;
+      if (outcome.status === 'unavailable') {
+        resultsList.innerHTML = '';
         status.textContent = 'Search unavailable — run a build to generate the index.';
         return;
       }
-      const search = await pf.debouncedSearch(q, {}, 200);
-      if (search === null || token !== searchToken) return; // debounced/superseded
-      const top = await Promise.all(search.results.slice(0, 6).map((r: any) => r.data()));
-      if (token !== searchToken) return;
-      renderResults(top);
-      status.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'}`;
+      renderResults(outcome.results);
+      status.textContent = q ? `${outcome.results.length} shown` : '';
       setActive(visibleOptions()[0] ?? null);
     }
 
@@ -552,7 +528,7 @@ const navItems: PaletteItem[] = [
     });
 
     // Prewarm Pagefind as soon as the input is focused (dialog opened).
-    input.addEventListener('focus', () => loadPagefind(), { once: true });
+    input.addEventListener('focus', () => preloadPagefind(), { once: true });
 
     reset();
   }
