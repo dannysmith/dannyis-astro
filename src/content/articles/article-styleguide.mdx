@@ -66,6 +66,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. <Notion href="https://d
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum hic a dolorem ipsa labore cum.
 </Callout>
 
+Here is one with a large heading and some richer content...
+
+<Callout title="Rich content with a large heading" icon="heroicons:document-text-20-solid" largeHeading>
+Callouts can hold anything you'd write elsewhere: **bold**, *italic* and [links](http://example.com).
+Lists work too:
+- Bullet points
+- Numbered lists
+- Any nesting you need
+</Callout>
+
 ### Grid Example
 
 <Grid columns={2} rows={2} gap="1rem">
@@ -73,6 +83,24 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. <Notion href="https://d
   <Image src={image1} alt="Grid Example 2" />
   <Image src={image1} alt="Grid Example 3" />
   <Image src={image1} alt="Grid Example 4" />
+</Grid>
+
+### Grid image gallery
+
+Markdown images (which become `BasicImage` figures) placed inside a `Grid` render as a side-by-side gallery. Captions and the lightbox are preserved, and the figures flow into the grid's columns instead of pinning to the prose column.
+
+<Grid columns={2}>
+![Wooden deck with striped columns and glass panels](../../assets/articles/styleguide-image.jpg 'A caption on the left')
+
+![Wooden deck with striped columns and glass panels](../../assets/articles/styleguide-image.jpg 'A caption on the right')
+</Grid>
+
+<Grid columns={3}>
+![Wooden deck with striped columns and glass panels](../../assets/articles/styleguide-image.jpg 'One')
+
+![Wooden deck with striped columns and glass panels](../../assets/articles/styleguide-image.jpg 'Two')
+
+![Wooden deck with striped columns and glass panels](../../assets/articles/styleguide-image.jpg 'Three')
 </Grid>
 
 ---

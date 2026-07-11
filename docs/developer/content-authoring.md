@@ -109,6 +109,8 @@ Types: `default`, `red`, `blue`, `green`, `orange`, `yellow`, `purple`
 
 Icons: Use `emoji` for text emoji or `icon` for heroicons (e.g., `icon="heroicons:exclamation-triangle"`)
 
+`largeHeading` (boolean, default `false`): gives the `title` more presence — a step larger with a hairline rule beneath — so it doesn't get lost above a long body. Needs a `title` to have any effect.
+
 **BasicImage** - Optimized images with optional full-bleed:
 
 ```mdx
@@ -132,6 +134,20 @@ the third quoted argument becomes the caption:
 
 This is `.mdx`-only: in `.md` files the `img → BasicImage` remapping doesn't run, so the
 title stays a standard HTML `title` attribute and no caption is rendered.
+
+**Image galleries** - Wrap two or more markdown images in a `<Grid>` for a side-by-side
+gallery. Captions and the lightbox still work, and the images flow into the grid's columns:
+
+```mdx
+<Grid columns={2}>
+![Alt text](./one.jpg 'A caption')
+![Alt text](./two.jpg 'Another caption')
+</Grid>
+```
+
+(This works because the `rehypeUnwrapImages` build plugin lifts each image out of its
+wrapping paragraph so the figures become direct children of the grid — see
+`docs/developer/content-system.md`.)
 
 **FileTree** - File/directory trees from a plain-text `tree` fenced code block (no import — a build-time remark plugin renders it):
 

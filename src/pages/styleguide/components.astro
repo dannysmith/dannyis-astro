@@ -240,6 +240,15 @@ const sampleProjects = allProjects.slice(0, 3);
           <td>A text emoji shown in place of an icon. Mutually exclusive with <code>icon</code>.</td
           >
         </tr>
+        <tr>
+          <td><code>largeHeading</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>
+            Gives <code>title</code> more presence so it doesn't get lost above a long body. No effect
+            without a <code>title</code>.
+          </td>
+        </tr>
       </tbody>
     </table>
 
@@ -287,7 +296,7 @@ const sampleProjects = allProjects.slice(0, 3);
     <h3 id="callout-rich">Rich content</h3>
     <Code
       lang="mdx"
-      code={`<Callout type="blue" title="Rich content" icon="heroicons:document-text-20-solid">
+      code={`<Callout type="blue" title="Rich content with a large heading" icon="heroicons:document-text-20-solid" largeHeading>
   Callouts can hold anything you'd write elsewhere: **bold**, *italics*,
   \`inline code\` and [links](/). Lists work too:
 
@@ -298,7 +307,12 @@ const sampleProjects = allProjects.slice(0, 3);
     />
     <ResizableContainer>
       <SGSwitcher>
-        <Callout type="blue" title="Rich content" icon="heroicons:document-text-20-solid">
+        <Callout
+          type="blue"
+          title="Rich content with a large heading"
+          icon="heroicons:document-text-20-solid"
+          largeHeading
+        >
           <p>
             Callouts can hold anything you'd write elsewhere: <strong>bold</strong>,
             <em>italics</em>, <code>inline code</code> and <a href="/">links</a>. Lists work too:
@@ -308,6 +322,47 @@ const sampleProjects = allProjects.slice(0, 3);
             <li>Numbered lists</li>
             <li>Any nesting you need</li>
           </ul>
+        </Callout>
+      </SGSwitcher>
+    </ResizableContainer>
+
+    <h3 id="callout-large-heading">Large heading</h3>
+    <p>
+      For callouts with a lot of content, add <code>largeHeading</code> so the <code>title</code> reads
+      as a proper heading — a step larger, with a hairline rule beneath — rather than getting lost above
+      the body. It needs a <code>title</code> to do anything, and works with either an <code
+        >emoji</code
+      > or an <code>icon</code>.
+    </p>
+    <Code
+      lang="mdx"
+      code={`<Callout type="blue" emoji="🎒" title="Some guiding principles" largeHeading>
+  A longer callout whose heading needs to stand out from the body beneath it.
+</Callout>
+
+<Callout type="green" emoji="✅" title="Some more guiding principles" largeHeading>
+  A longer callout whose heading needs to stand out from the body beneath it.
+</Callout>
+
+<Callout type="blue" icon="heroicons:globe-alt-20-solid" title="International travel" largeHeading>
+  The same treatment, this time with an astro-icon instead of an emoji.
+</Callout>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <Callout type="blue" emoji="🎒" title="Some guiding principles" largeHeading>
+          A longer callout whose heading needs to stand out from the body beneath it.
+        </Callout>
+        <Callout type="green" emoji="✅" title="Some more guiding principles" largeHeading>
+          A longer callout whose heading needs to stand out from the body beneath it.
+        </Callout>
+        <Callout
+          type="blue"
+          icon="heroicons:globe-alt-20-solid"
+          title="International travel"
+          largeHeading
+        >
+          The same treatment, this time with an astro-icon instead of an emoji.
         </Callout>
       </SGSwitcher>
     </ResizableContainer>
@@ -832,6 +887,37 @@ Provide a title to skip the fetch or override it:
           <div class="sg-panel">Column 4</div>
           <div class="sg-panel">Column 5</div>
           <div class="sg-panel">Column 6</div>
+        </Grid>
+      </SGSwitcher>
+    </ResizableContainer>
+    <p>
+      Images placed in a Grid form a side-by-side gallery: markdown images (or <code
+        >BasicImage</code
+      >) flow into the columns, and their captions and lightbox behaviour are preserved. In content,
+      just wrap the markdown images — see the <a href="/writing/article-styleguide"
+        >article styleguide</a
+      > for the rendered version.
+    </p>
+    <Code
+      lang="mdx"
+      code={`<Grid columns={2}>
+![Alt text](./one.jpg 'A caption')
+![Alt text](./two.jpg 'Another caption')
+</Grid>`}
+    />
+    <ResizableContainer>
+      <SGSwitcher>
+        <Grid columns={2}>
+          <BasicImage
+            src="/src/assets/articles/styleguide-image.jpg"
+            alt="Wooden deck with striped columns and glass panels"
+            caption="Left"
+          />
+          <BasicImage
+            src="/src/assets/articles/styleguide-image.jpg"
+            alt="Wooden deck with striped columns and glass panels"
+            caption="Right"
+          />
         </Grid>
       </SGSwitcher>
     </ResizableContainer>

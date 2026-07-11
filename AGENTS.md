@@ -120,4 +120,4 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
 
 ## Task Management
 
-**Uncompleted tasks** are in `docs/tasks-todo/`, named `task-NUM-name.md` where NUM indicates priority order. The lowest number is usually the current task. If NUM is "x", the task is unprioritised. **Completed tasks** are in `docs/tasks-done/` named task-YYYY-MM-DD-NUM-name.md ie. the completion date has been inserted after `task-`. You can run `bun task:complete TASK_NAME_OR_NUMBER` to appropriatley rename and move a task.
+**Uncompleted tasks** are in `docs/tasks-todo/`, named `task-NUM-name.md` where NUM indicates priority order. The lowest number is usually the current task. If NUM is "x", the task is unprioritised. **Completed tasks** are in `docs/tasks-done/` named task-YYYY-MM-DD-NUM-name.md ie. the completion date has been inserted after `task-`. You can run `bun task:complete TASK_NAME_OR_NUMBER` to appropriatley rename and move a task. If you need to save screenshots or temporary files associated with a task we're working on you an use `docs/tasks-todo/temporary/` which is gitignored.

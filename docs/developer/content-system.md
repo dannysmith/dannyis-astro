@@ -217,6 +217,7 @@ Custom remark/rehype plugins modify content during build.
 
 **Rehype plugins:**
 
+- `rehypeUnwrapImages` - Strips the wrapping `<p>` from any paragraph whose only content is images, so the `img → BasicImage` remapping produces clean, directly-nested `<figure>`s. Without it, a block `<figure>` inside a `<p>` is hoisted out by the HTML parser, leaving empty `<p>` siblings
 - `rehypeHeadingIds` (from `@astrojs/markdown-remark`) - Adds IDs to headings
 - `rehypeAutolinkHeadings` - Makes headings clickable
 - `rehypeExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links
