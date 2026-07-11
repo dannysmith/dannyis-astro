@@ -10,9 +10,9 @@ Short version of the agreed approach: hand-rolled native `<dialog>` + WAI-ARIA c
 
 ## How this plan is structured
 
-We start with **two throwaway experiments in scratchpad pages** — one to de-risk the UI craft, one to de-risk the search infrastructure. We do the **command palette first, together**, because it's the more interesting/learnable part and its result shapes everything else. (Note: this reverses the experiment numbering in the issue, where Pagefind is "Experiment 1".)
+We started with **two throwaway experiments in scratchpad pages** — one to de-risk the UI craft (Phase 1), one to de-risk the search infrastructure (Phase 2). Both are **done**; their findings are captured in place. (Note: this reverses the experiment numbering in the issue, where Pagefind is "Experiment 1".)
 
-Only Phases 1 and 2 are fully planned. **Everything after is numbered `X`** — deliberately provisional. Once both experiments are done we'll rewrite the back half of this doc to reflect what we actually learned (see the re-plan checkpoint).
+**Phases 3 onward are the real build**, re-planned from what the experiments taught us: get the index right → extract a clean lib API → build the palette component → wire search into it → test/clean up → the trailing polish phases. Each phase is a checklist, roughly in dependency order.
 
 ---
 
@@ -37,7 +37,7 @@ What it establishes:
 - Baking commands/nav into the component at build time works cleanly and means the palette is fully functional in dev regardless of any search index.
 - **Open questions surfaced:** Invoker Commands + `closedby` are early-2026 Baseline (Chrome/Edge 135+, Firefox 144+, Safari 26.2) — decide in the real build whether to rely on Baseline or add tiny JS fallbacks (the hotkey works everywhere regardless). `aria-live` result-count announcements and fuzzy matching were deliberately deferred.
 
-## Phase 2 — Experiment: Pagefind wiring (`scratchpad.astro`)
+## Phase 2 — Experiment: Pagefind wiring ✅ (`src/pages/scratchpad.astro`)
 
 Separate experiment to de-risk the search infrastructure and learn the result-data contract that Phase 1's results group will consume. **Done** — the live experiment is `src/pages/scratchpad.astro` (both variants side by side); the wiring lives in `astro.config.mjs` + the content layouts.
 
@@ -75,50 +75,93 @@ Separate experiment to de-risk the search infrastructure and learn the result-da
 
 **Files touched by the experiment (to consolidate/tear down in the real build):** `astro.config.mjs`, `src/pages/scratchpad.astro`, `src/layouts/Article.astro`, `src/layouts/Note.astro`, `src/components/layout/NoteCard.astro`, `src/components/layout/TableOfContents.astro`.
 
-## Phase X — Re-plan checkpoint
+## Phase 3 — Get the Pagefind index right
 
-After Phases 1 & 2, **rewrite everything below** to reflect real decisions: the chosen UI/data approach, the file/module structure, and a concrete build plan. The phases below are a provisional skeleton derived from the issue's reminders — treat them as a checklist of things not to forget, not a committed design.
+Indexing works; now make the index itself genuinely good — correct scoping everywhere, the right pages included, and a deliberate metadata schema. Result quality in the palette rests on this.
 
----
+**Audit + fix the existing scoping**
 
-## Phase X — Build the real thing
+- [ ] Re-check the article/note attributes from Phase 2 are correct and complete: `data-pagefind-body`, `type` meta, `title` meta, and the `data-pagefind-ignore`s (metadata line, footer-actions, TOC). Confirm `LLMDiscoveryNote`, `SeriesCallout`, and the note `Embed`/date-link behave the way we want.
+- [ ] Clean up excerpt noise: notes currently index the leading date and the embed-card text. `data-pagefind-ignore` the note date-link, and decide whether the source embed should contribute to the body at all.
 
-- [ ] Consolidate the two experiments into a production implementation; extract into `lib/` (build integration, any search helpers) + component files (palette component, likely under `components/navigation/` or `components/ui/`).
-- [ ] Wire the palette into the real site layout so it's available on every page.
-- [ ] Finalise the build integration + dev-mode handling from Phase 2.
-- [ ] Implement all commands for real: Latest/Random Article, Latest/Random Note, Copy URL, Copy as Markdown, navigation to all pages.
-- [ ] Full accessibility pass (screen-reader testing, `aria-live` result-count announcements, focus return).
-- [ ] Tests: e2e the shell + commands (no index needed in the Check stage); unit-test / fixture the search-result rendering. Confirm how `test:e2e` is wired first.
-- [ ] Tear down the scratchpad experiments.
+**Decide + add the right pages** (static _content_ pages only — never chrome/utility pages)
 
-## Phase X — OpenSearch XML
+- [ ] Audit `src/pages/` and decide what to index. Real candidates: home (`index.astro`), `making.astro`, and the standalone MDX pages `now.mdx`, `colophon.mdx`, `privacy.mdx`, `ai.mdx`. Explicitly **exclude** `404`, `scratchpad`, `scratchpad2`, `toolboxtest`, and `styleguide/*` (internal / `noindex`).
+- [ ] Find the single seam to add `data-pagefind-body` for the MDX pages (they likely share a layout) so it's one edit, not four.
+- [ ] `making.astro`: decide whether to index it as one `/making` result or surface individual projects (they live at `/making#{id}` — heading anchors can become `sub_results`).
+
+**Metadata schema — what we capture beyond Pagefind's defaults**
+
+- [ ] Settle the `type` taxonomy (today `article|note`; add `page`, maybe `project`) and give each newly-indexed page a sensible `type`.
+- [ ] Decide whether to index frontmatter `description` as `data-pagefind-meta="description"` (a stable result subtitle vs the match-excerpt).
+- [ ] Decide on meta for `date`, `tags`, cover `image` — plus whether to add `data-pagefind-sort="date"` for recency ordering and/or `data-pagefind-weight` to boost titles.
+- [ ] Meta vs **filter**: we group by `.meta.type` today (so `pagefind.filters()` is empty). Only switch to `data-pagefind-filter` if we actually want a faceted filter UI.
+- [ ] Confirm the indexed `url` is canonical for every type (articles `/writing/{id}/`, notes `/notes/{id}/`, pages `/{slug}/`).
+
+**Verify**
+
+- [ ] Rebuild and re-check the round-trip: page count matches the intended set, every result carries the metadata we designed, excerpts are clean. Re-measure payload if the index grew.
+
+## Phase 4 — Extract the Pagefind integration into `lib/`
+
+Pull the inline experiment wiring out of `astro.config.mjs` into a clean, reusable module, and define the typed client-side search API the palette will consume.
+
+- [ ] Move the inline `pagefind()` integration (the `astro:build:done` indexer + `astro:server:setup` dev middleware) into `src/lib/`; import it in `astro.config.mjs`.
+- [ ] Build a small typed **client search helper** (the "nice API" for the components): lazy-init + `debouncedSearch`, normalize `.data()` → a stable `{ url, title, type, excerpt, description?, … }` shape, degrade gracefully when there's no index.
+- [ ] Bake in the Phase 2 gotcha: the runtime import must use a **computed path** (`` `${import.meta.env.BASE_URL}pagefind/pagefind.js` ``), not a static literal.
+- [ ] Decide where the client helper lives — `lib/` is for build-time plugins, so the browser-side helper probably belongs in `utils/` or alongside the component, not `lib/`.
+
+## Phase 5 — Build the command palette as a real Astro component
+
+Promote the `scratchpad2.astro` shell into a production component (or a small set) and wire it into the site. **No search yet** — commands + nav only, so it's fully functional regardless of index state.
+
+- [ ] Create the palette component(s) — decide single `CommandPalette.astro` vs a shell + item/group subcomponents. Likely under `components/navigation/` or `components/ui/`.
+- [ ] Carry over the proven primitives from Phase 1: native modal `<dialog>` + combobox/listbox, `aria-activedescendant` nav, `@starting-style` animation, idempotent init on `astro:page-load`, the Invoker-Commands open path + `Cmd/Ctrl+K` hotkey.
+- [ ] Wire it into the shared layout / `BaseHead` so it's on every page; decide where the visible trigger lives (nav?).
+- [ ] Implement the real commands: Latest/Random Article, Latest/Random Note, Copy URL, Copy as Markdown (reuse the `.md.ts` twins), navigation to all pages (consider the `discoverStaticPages()` glob from `llms.txt.ts` for nav targets).
+- [ ] Baseline-vs-fallback call for Invoker Commands + `closedby` (early-2026 Baseline) — rely on Baseline or add tiny JS fallbacks. The hotkey works everywhere regardless.
+
+## Phase 6 — Wire Pagefind results into the palette
+
+Consume the Phase 4 client API inside the Phase 5 component to add the live Content results group. This is where search lands in the real palette — and where most of the result styling/design work happens.
+
+- [ ] Render a Content results group from the client search API into the same listbox, sharing the one `aria-activedescendant` nav loop (the Variant-A model from Phase 2).
+- [ ] Style result rows (title / type / excerpt, `<mark>` highlights, maybe `sub_results`). Phase 2 gotcha: JS-injected rows need **global CSS**, not scoped `<style>`.
+- [ ] Expect to **adjust the palette design** to accommodate results: grouping, empty / loading / no-results states, result density, whether descriptions or sub-results show.
+- [ ] `aria-live` result-count announcements; sensible ordering (recency vs relevance) using whatever Phase 3 metadata enabled.
+- [ ] Full accessibility pass: screen-reader testing, focus return on close.
+
+## Phase 7 — Testing, cleanup & refactor
+
+Now that it all works, make it correct, lean, and clean — and remove the experiment scaffolding.
+
+- [ ] Tests: e2e the shell + commands. **The Check stage runs Playwright in parallel with Build, so no index exists there** — don't depend on one. Unit-test / fixture the search-result rendering. Confirm how `test:e2e` is wired first.
+- [ ] Performance: confirm zero-JS-by-default still holds (nothing loads until the palette opens), re-check payload, verify no unnecessary JS ships.
+- [ ] Code/CSS review: clean and evergreen comments, tidy CSS; run `check:knip` + `check:dupes`.
+- [ ] Tear down the experiments: delete `scratchpad.astro`, `scratchpad2.astro`, and any `docs/tasks-todo/temporary/` leftovers.
+- [ ] `check:all` green.
+
+## Phase 8 — OpenSearch XML
 
 - [ ] Add an OpenSearch description XML document for browser address-bar search integration, linked from the `<head>`.
 
-## Phase X — LLM / agent-readiness for site search
+## Phase 9 — LLM / agent-readiness for site search
 
 - [ ] Any LLM-friendly or meta-tag additions now that the site has search. Re-run the tooling from `docs/tasks-done/task-2026-06-14-1-agent-readiness-improvements.md` (afdocs, isitagentready) to check for anything new to add.
 
-## Phase X — Styleguide
+## Phase 10 — Styleguide & developer docs
 
-- [ ] Add the palette (and any new sub-components) to the correct parts of the multi-page styleguide; update any existing components we changed.
+- [ ] Add the palette (and any sub-components) to the right parts of the multi-page styleguide; update any existing components changed along the way (`NoteCard`, `TableOfContents`, the layouts).
+- [ ] New evergreen developer doc explaining how the palette + Pagefind + build integration fit together.
+- [ ] Update `docs/developer/deployment.md` for the Pagefind build step; check `docs/developer/` guides, `README.md`(s), and `AGENTS.md` are still correct.
 
-## Phase X — Developer docs
+## Last Phase — Final review, QA & ship
 
-- [ ] New evergreen developer doc explaining how the palette + Pagefind + build integration work.
-- [ ] Update `docs/developer/deployment.md` for the Pagefind build step, and check `docs/developer/` guides, `README.md`(s), and `AGENTS.md` are still correct.
-
-## Phase X — Final review & QA sweep
-
-Mostly checks that can be batched at the end:
-
-- [ ] Review sweep: refactor opportunities, remove cruft, clean up CSS, ensure comments are good and evergreen, add any missing tests.
-- [ ] Ensure OG images generate correctly and SEO data is all correct (bump OG `CACHE_VERSION` if templates/branding/fonts changed).
+- [ ] Review sweep: refactor opportunities, remove cruft, confirm comments/tests are good.
+- [ ] Confirm the CI packaging step copies `dist/pagefind/` into the deployed output (`.vercel/output/static/`) — the one thing we couldn't verify locally.
+- [ ] OG images generate correctly and SEO data is correct (bump OG `CACHE_VERSION` if templates/branding/fonts changed).
 - [ ] Check Lighthouse scores.
-- [ ] Future-CSP note: site currently sends no CSP so Pagefind's WASM loads fine; if a CSP is ever added it needs `wasm-unsafe-eval` + `worker-src blob:`.
-
-## Phase X — Ship
-
+- [ ] CSP note: the site sends no CSP today so Pagefind's WASM loads fine; if a CSP is ever added it needs `wasm-unsafe-eval` + `worker-src blob:`.
 - [ ] Merge, deploy, and test on mobile.
 
 ---
