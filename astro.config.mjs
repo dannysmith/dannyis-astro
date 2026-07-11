@@ -16,6 +16,7 @@ import { remarkPageComponents } from './src/lib/remark-page-components.mjs';
 import { remarkImageCaption } from './src/lib/remark-image-caption.mjs';
 import { rehypeListDensity } from './src/lib/rehype-list-density.mjs';
 import { rehypeUnwrapImages } from './src/lib/rehype-unwrap-images.mjs';
+import { pagefind } from './src/lib/pagefind-integration.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
 
@@ -98,6 +99,7 @@ export default defineConfig({
     }),
     icon(),
     react(),
+    pagefind(),
   ],
   markdown: {
     // syntaxHighlight stays at the markdown level — `unified()` does not accept

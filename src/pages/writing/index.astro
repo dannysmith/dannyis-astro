@@ -1,6 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
+import {
+  BaseHead,
+  CommandPalette,
+  Footer,
+  LLMDiscoveryNote,
+  MainNavigation,
+} from '@components/layout/index';
 import { FormattedDate, Pill } from '@components/ui/index';
 import { filterContentForListing } from '@utils/content';
 
@@ -20,6 +26,7 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
   </head>
   <body>
     <MainNavigation />
+    <CommandPalette />
     <main id="main" tabindex="-1" class="ui-style">
       <LLMDiscoveryNote />
       <h1 class="title">Writing</h1>

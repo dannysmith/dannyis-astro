@@ -43,7 +43,7 @@ const toc = buildToc(headings);
 
 {
   toc.length > 0 && (
-    <aside class="toc-wrapper">
+    <aside class="toc-wrapper" data-pagefind-ignore>
       <nav class="toc" aria-label="Table of contents">
         <ul class="toc-list">
           {toc.map(heading => (

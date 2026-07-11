@@ -1,5 +1,10 @@
 ---
-import { BaseHead, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
+import {
+  BaseHead,
+  CommandPalette,
+  LLMDiscoveryNote,
+  MainNavigation,
+} from '@components/layout/index';
 import { getConfig } from '@config/config';
 
 const config = getConfig();
@@ -12,6 +17,7 @@ const config = getConfig();
   </head>
   <body itemtype="https://schema.org/ProfilePage" itemscope>
     <MainNavigation />
+    <CommandPalette />
     <main
       id="main"
       tabindex="-1"

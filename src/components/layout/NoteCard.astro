@@ -8,17 +8,43 @@ export interface Props {
   sourceURL?: string;
   tags?: string[];
   slug: string;
+  /**
+   * Mark this card as the Pagefind search-body for the page. Only the full
+   * note page (Note.astro) sets this — on listing pages (notes index,
+   * styleguide) the cards must stay unindexed so each note is one result.
+   */
+  indexAsBody?: boolean;
 }
 
-const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
+const { title, pubDate, sourceURL, tags = [], slug, indexAsBody = false } = Astro.props;
+
+// ISO date (YYYY-MM-DD) for Pagefind's `date` meta + recency sort — only emitted
+// when this card is the page's search body. Date-only avoids colons, which the
+// comma-separated `data-pagefind-meta` syntax would otherwise split on.
+const pubIso = pubDate.toISOString().slice(0, 10);
 ---
 
-<article class="note h-entry cq surface-white">
+<article
+  class="note h-entry cq surface-white"
+  data-pagefind-body={indexAsBody ? true : undefined}
+  data-pagefind-meta={indexAsBody ? 'type:note' : undefined}
+>
+  {
+    /* Date as a clean Pagefind meta + recency sort key (see Article.astro). Only
+      emitted when this card is the page's search body. */
+  }
+  {
+    indexAsBody && (
+      <span data-pagefind-meta={`date:${pubIso}`} data-pagefind-sort={`date:${pubIso}`} />
+    )
+  }
   <header class="note-header ui-style">
-    <a href={`/notes/${slug}/`} class="date-link date">
+    <a href={`/notes/${slug}/`} class="date-link date" data-pagefind-ignore>
       <FormattedDate date={pubDate} />
     </a>
-    <h1 class="p-name title"><a href={`/notes/${slug}/`}>{title}</a></h1>
+    <h1 class="p-name title" data-pagefind-meta={indexAsBody ? 'title' : undefined}>
+      <a href={`/notes/${slug}/`}>{title}</a>
+    </h1>
     {
       tags.length > 0 && (
         <div class="tags">
@@ -31,7 +57,7 @@ const { title, pubDate, sourceURL, tags = [], slug } = Astro.props;
   </header>
   {
     sourceURL && (
-      <div class="source-url">
+      <div class="source-url" data-pagefind-ignore>
         <Embed url={sourceURL} />
       </div>
     )

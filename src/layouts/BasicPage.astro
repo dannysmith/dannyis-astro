@@ -1,5 +1,11 @@
 ---
-import { BaseHead, Footer, LLMDiscoveryNote, MainNavigation } from '@components/layout/index';
+import {
+  BaseHead,
+  CommandPalette,
+  Footer,
+  LLMDiscoveryNote,
+  MainNavigation,
+} from '@components/layout/index';
 const { frontmatter } = Astro.props;
 ---
 
@@ -10,6 +16,7 @@ const { frontmatter } = Astro.props;
   </head>
   <body>
     <MainNavigation />
+    <CommandPalette />
     <main id="main" tabindex="-1" class="content">
       <LLMDiscoveryNote />
       <slot />

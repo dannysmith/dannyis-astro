@@ -1,6 +1,7 @@
 ---
 import {
   BaseHead,
+  CommandPalette,
   Footer,
   Lightbox,
   LLMDiscoveryNote,
@@ -40,6 +41,7 @@ const { title, description, current, toc = [] } = Astro.props;
   </head>
   <body>
     <MainNavigation />
+    <CommandPalette />
     <div class:list={['styleguide-body', { 'has-toc': toc.length > 0 }]}>
       {
         toc.length > 0 && (

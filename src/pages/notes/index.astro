@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import {
   BaseHead,
+  CommandPalette,
   Footer,
   LLMDiscoveryNote,
   MainNavigation,
@@ -40,6 +41,7 @@ const recentNotesWithContent = await Promise.all(
   </head>
   <body>
     <MainNavigation />
+    <CommandPalette />
     <main id="main" tabindex="-1">
       <LLMDiscoveryNote />
       <h1 class="title ui-style">Notes</h1>

@@ -1,0 +1,478 @@
+---
+/**
+ * CommandPalette — the global ⌘/Ctrl+K command palette, dropped into every layout
+ * (a separate concern from BaseHead/MainNavigation).
+ *
+ * Built on a native modal <dialog> + the WAI-ARIA combobox/listbox pattern: DOM
+ * focus stays in the input, the active option is tracked via aria-activedescendant,
+ * and command/nav filtering leans on the native [hidden] attribute.
+ *
+ * Commands + navigation are baked into the markup at build time, so the palette
+ * works regardless of any search index. Live content search (Pagefind, via
+ * @utils/pagefind) is layered in as a third "Content" results group, rendered at
+ * runtime into the same listbox and nav loop.
+ *
+ * Open path: the ⌘/Ctrl+K hotkey works everywhere. The dialog has a stable id, so
+ * a zero-JS <button command="show-modal" commandfor="command-palette"> can open it
+ * from anywhere.
+ */
+
+// Every item is a real <a role="option">: nav items carry an href (navigate
+// natively; ⌘/middle-click opens a new tab), action items are href-less and
+// carry a data-action dispatched by the script.
+type PaletteItem = {
+  id: string;
+  label: string;
+  group: 'Commands' | 'Navigation';
+  href?: string;
+  action?: 'copy-url';
+  keywords?: string; // extra text to match on, not shown
+};
+
+const items: PaletteItem[] = [
+  // Commands
+  {
+    id: 'cmd-copy-url',
+    label: 'Copy URL of this page',
+    group: 'Commands',
+    action: 'copy-url',
+    keywords: 'clipboard link share',
+  },
+  // Navigation
+  { id: 'nav-home', label: 'Home', group: 'Navigation', href: '/' },
+  {
+    id: 'nav-writing',
+    label: 'Writing',
+    group: 'Navigation',
+    href: '/writing',
+    keywords: 'articles blog essays',
+  },
+  { id: 'nav-notes', label: 'Notes', group: 'Navigation', href: '/notes', keywords: 'short posts' },
+  { id: 'nav-now', label: 'Now', group: 'Navigation', href: '/now', keywords: 'currently' },
+  {
+    id: 'nav-making',
+    label: 'Making',
+    group: 'Navigation',
+    href: '/making',
+    keywords: 'projects things',
+  },
+  {
+    id: 'nav-using',
+    label: 'Using',
+    group: 'Navigation',
+    href: '/using',
+    keywords: 'uses gear setup tools',
+  },
+];
+
+const groups = ['Commands', 'Navigation'] as const;
+---
+
+<dialog
+  id="command-palette"
+  class="ui-style command-palette"
+  closedby="any"
+  aria-label="Command palette"
+>
+  <div class="cp-box">
+    <input
+      type="text"
+      class="cp-input"
+      role="combobox"
+      aria-expanded="true"
+      aria-controls="cp-listbox"
+      aria-autocomplete="list"
+      aria-label="Search commands and pages"
+      placeholder="Type a command or search…"
+      autocomplete="off"
+      spellcheck="false"
+      autofocus
+    />
+
+    <ul id="cp-listbox" class="list-reset" role="listbox" aria-label="Results">
+      {
+        groups.map(group => (
+          <li role="group" aria-labelledby={`cp-grouplabel-${group}`}>
+            <span id={`cp-grouplabel-${group}`} class="cp-group-label" role="presentation">
+              {group}
+            </span>
+            <ul role="presentation" class="list-reset cp-item-list">
+              {items
+                .filter(item => item.group === group)
+                .map(item => (
+                  <li>
+                    <a
+                      id={item.id}
+                      role="option"
+                      class="cp-option"
+                      href={item.href}
+                      tabindex="-1"
+                      data-action={item.action}
+                      data-keywords={item.keywords}
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </li>
+        ))
+      }
+
+      <!-- Live content search (Pagefind), rendered at runtime from @utils/pagefind. -->
+      <li role="group" aria-labelledby="cp-grouplabel-content" class="cp-results-group">
+        <span id="cp-grouplabel-content" class="cp-group-label" role="presentation">Content</span>
+        <ul id="cp-results-list" role="presentation" class="list-reset cp-item-list"></ul>
+      </li>
+    </ul>
+    <p class="cp-empty">No results</p>
+    <p class="cp-status" role="status" aria-live="polite"></p>
+  </div>
+</dialog>
+
+<style>
+  .command-palette {
+    width: min(32rem, 90vw);
+    margin-block-start: 12vh;
+    padding: 0;
+    overflow: hidden;
+    overscroll-behavior: contain;
+    border: 2px solid var(--color-charcoal);
+    border-radius: var(--radius-sm);
+    box-shadow:
+      0 0.25rem 0.5rem oklch(0% 0 0 / 0.2),
+      0 1.5rem 3rem oklch(0% 0 0 / 0.5);
+
+    opacity: 0;
+    transition:
+      opacity var(--duration-normal) var(--ease-in-out),
+      display var(--duration-normal) allow-discrete,
+      overlay var(--duration-normal) allow-discrete;
+  }
+
+  .command-palette[open] {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .command-palette[open] {
+      opacity: 0;
+    }
+  }
+
+  .command-palette::backdrop {
+    background: light-dark(oklch(0% 0 0 / 0.4), oklch(0% 0 0 / 0.8));
+    overflow: hidden;
+    overscroll-behavior: contain;
+
+    opacity: 0;
+    transition:
+      opacity var(--duration-normal) var(--ease-in-out),
+      display var(--duration-normal) allow-discrete,
+      overlay var(--duration-normal) allow-discrete;
+  }
+
+  .command-palette[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .command-palette[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .command-palette,
+    .command-palette::backdrop {
+      transition: none;
+    }
+  }
+
+  .cp-box {
+    display: flex;
+    flex-direction: column;
+    max-block-size: 70vh;
+  }
+
+  .cp-input {
+    flex: none;
+    width: 100%;
+    border: none;
+    border-block-end: var(--border-width-hairline) solid var(--color-border);
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .cp-input:focus {
+    outline: none;
+  }
+
+  .cp-item-list {
+    margin-block-start: 0;
+  }
+
+  /* The scroll area. min-block-size:0 lets this flex child shrink so it can
+     actually scroll; overscroll-behavior stops scroll chaining to the page. */
+  #cp-listbox {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .cp-group-label {
+    display: block;
+    padding: var(--space-2xs) var(--space-s);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .cp-empty,
+  .cp-status {
+    display: none;
+    padding: var(--space-s);
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  /* cp-empty's visibility is driven from the global block below (it depends on the
+     JS-injected result options). cp-status shows whenever it has text. */
+  .cp-status:not(:empty) {
+    display: block;
+  }
+</style>
+
+<!--
+  Result rows are injected via innerHTML at runtime, so Astro's scoped <style>
+  (keyed on a build-time data-astro-cid attribute) never reaches them. Everything
+  that must style dynamic options/results lives here, contained under
+  #command-palette. The baked-in command/nav options match these rules too, so
+  .cp-option lives here in full rather than split across scoped + global.
+-->
+<style is:global>
+  #command-palette .cp-option {
+    display: block;
+    padding: var(--space-2xs) var(--space-s);
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #command-palette .cp-option:hover {
+    background: var(--color-background-secondary);
+  }
+
+  #command-palette .cp-option[data-active] {
+    background: var(--color-accent);
+    color: var(--color-text);
+    border-color: color-mix(in oklch, var(--color-accent) 50%, transparent);
+  }
+
+  /* Result rows carry title / type / excerpt. */
+  #command-palette .cp-result {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 var(--space-s);
+    align-items: baseline;
+    padding-block: var(--space-xs);
+    border-block-start: var(--border-width-hairline) solid var(--color-border);
+  }
+
+  #command-palette .cp-result-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+  }
+
+  #command-palette .cp-result-type {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  #command-palette .cp-result-excerpt {
+    grid-column: 1 / -1;
+    margin-block-start: var(--space-3xs);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  #command-palette .cp-option[data-active] :is(.cp-result-type, .cp-result-excerpt) {
+    color: inherit;
+  }
+
+  #command-palette .cp-result mark {
+    background: var(--color-highlight);
+    color: inherit;
+    font-weight: 700;
+  }
+
+  /* Hide a group whose options are all filtered out / empty. */
+  #command-palette li[role='group']:not(:has(.cp-option:not([hidden]))) {
+    display: none;
+  }
+
+  /* "No results" only when nothing (command or result) is visible. */
+  #command-palette .cp-box:not(:has(.cp-option:not([hidden]))) .cp-empty {
+    display: block;
+  }
+</style>
+
+<script>
+  import { search, preloadPagefind, type SearchResult } from '@utils/pagefind';
+
+  // The document-level hotkey binds once (guarded); the per-dialog wiring re-runs
+  // on astro:page-load for View Transitions — the same split Tabs.astro uses.
+  let hotkeyWired = false;
+  function wireHotkey() {
+    if (hotkeyWired) return;
+    hotkeyWired = true;
+    document.addEventListener('keydown', e => {
+      if (!((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) return;
+      const dialog = document.querySelector<HTMLDialogElement>('#command-palette');
+      if (!dialog) return;
+      e.preventDefault();
+      if (dialog.open) dialog.close();
+      else dialog.showModal();
+    });
+  }
+
+  function initCommandPalette() {
+    wireHotkey();
+
+    const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette');
+    if (!dialogEl || dialogEl.dataset.cpReady) return;
+    dialogEl.dataset.cpReady = 'true';
+    const dialog: HTMLDialogElement = dialogEl; // non-null alias for closures
+
+    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!;
+    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!;
+    const resultsList = dialog.querySelector<HTMLUListElement>('#cp-results-list')!;
+    const status = dialog.querySelector<HTMLParagraphElement>('.cp-status')!;
+    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')];
+    const visibleOptions = () => allOptions().filter(o => !o.hidden);
+
+    // Track the active option via aria-activedescendant (focus stays in the input).
+    function setActive(el: HTMLElement | null) {
+      allOptions().forEach(o => delete o.dataset.active);
+      if (!el) {
+        input.removeAttribute('aria-activedescendant');
+        return;
+      }
+      el.dataset.active = 'true';
+      input.setAttribute('aria-activedescendant', el.id);
+      el.scrollIntoView({ block: 'nearest' });
+    }
+
+    // Substring-filter the baked-in command/nav options (native [hidden] hides
+    // them). Search-result options are governed entirely by Pagefind, so they're
+    // exempt (never locally hidden).
+    function filterCommands(q: string) {
+      for (const o of allOptions()) {
+        if (o.classList.contains('cp-result')) continue;
+        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase();
+        o.hidden = q !== '' && !hay.includes(q);
+      }
+    }
+
+    function escapeHtml(s: string) {
+      return s.replace(
+        /[&<>"']/g,
+        c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string,
+      );
+    }
+
+    // One result row. The excerpt is trusted HTML (<mark> around matches, from our
+    // own indexed content); title/type are escaped since they're plain text.
+    function resultRow(r: SearchResult, i: number) {
+      return `<li><a id="cp-result-${i}" role="option" class="cp-option cp-result" href="${r.url}" tabindex="-1">
+        <span class="cp-result-title">${escapeHtml(r.title)}</span>
+        <span class="cp-result-type">${escapeHtml(r.type)}</span>
+        <span class="cp-result-excerpt">${r.excerpt}</span>
+      </a></li>`;
+    }
+
+    function renderResults(results: SearchResult[]) {
+      resultsList.innerHTML = results.map(resultRow).join('');
+    }
+
+    // A token guards the post-debounce race: search() debounces, but a newer
+    // keystroke can still land while an older call awaits its data().
+    let searchToken = 0;
+    async function runSearch(query: string) {
+      const token = ++searchToken;
+      const outcome = await search(query, { limit: 6 });
+      if (token !== searchToken || outcome.status === 'superseded') return;
+      if (outcome.status === 'unavailable') {
+        resultsList.innerHTML = '';
+        status.textContent = 'Search is unavailable right now.';
+        return;
+      }
+      renderResults(outcome.results);
+      status.textContent =
+        outcome.total > 0 ? `${outcome.total} result${outcome.total === 1 ? '' : 's'}` : '';
+      setActive(visibleOptions()[0] ?? null);
+    }
+
+    function onInput() {
+      const query = input.value.trim();
+      filterCommands(query.toLowerCase());
+      runSearch(query);
+      setActive(visibleOptions()[0] ?? null);
+    }
+
+    // Reset query, results + highlight on close, so the next open starts fresh.
+    // <input autofocus> handles focus on open.
+    function reset() {
+      input.value = '';
+      resultsList.innerHTML = '';
+      status.textContent = '';
+      filterCommands('');
+      setActive(visibleOptions()[0] ?? null);
+    }
+    dialog.addEventListener('close', reset);
+
+    input.addEventListener('input', onInput);
+    input.addEventListener('keydown', e => {
+      const opts = visibleOptions();
+      if (!opts.length) return;
+      const i = opts.findIndex(o => o.dataset.active === 'true');
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActive(opts[(i + 1) % opts.length]);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActive(opts[(i - 1 + opts.length) % opts.length]);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        opts[i >= 0 ? i : 0]?.click();
+      }
+    });
+
+    // Nav options are real links (navigate natively). Action options have no
+    // href and carry a data-action — run it and close.
+    list.addEventListener('click', e => {
+      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option');
+      if (!opt?.dataset.action) return;
+      e.preventDefault();
+      if (opt.dataset.action === 'copy-url') {
+        navigator.clipboard?.writeText(location.href);
+      }
+      dialog.close();
+    });
+
+    // Prewarm Pagefind once the input is focused (i.e. the dialog just opened).
+    input.addEventListener('focus', () => preloadPagefind(), { once: true });
+
+    reset(); // initial state: empty query, first option highlighted
+  }
+
+  initCommandPalette();
+  document.addEventListener('astro:page-load', initCommandPalette);
+</script>

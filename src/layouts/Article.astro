@@ -9,6 +9,7 @@ import {
   Lightbox,
   LLMDiscoveryNote,
   LongFormProseTypography,
+  CommandPalette,
   MainNavigation,
   SeriesCallout,
   TableOfContents,
@@ -51,6 +52,10 @@ const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
 // Root-relative URL of the raw markdown twin (served by [...slug].md.ts).
 const markdownUrl = `${Astro.url.pathname.replace(/\/$/, '')}.md`;
 
+// ISO date (YYYY-MM-DD) for Pagefind's `date` meta + recency sort. Date-only
+// avoids colons, which the comma-separated `data-pagefind-meta` syntax splits on.
+const pubIso = pubDate.toISOString().slice(0, 10);
+
 // standard.site document AT-URI for the <head> verification link tag (null for
 // drafts, styleguides, or posts before the configured cutoff).
 const standardSiteDocumentUri =
@@ -78,6 +83,7 @@ const standardSiteDocumentUri =
 
   <body>
     <MainNavigation />
+    <CommandPalette />
     {
       platform && redirectURL && (
         <div class="spinner-overlay">
@@ -87,7 +93,19 @@ const standardSiteDocumentUri =
     }
     <main id="main" tabindex="-1">
       <LLMDiscoveryNote />
-      <article class="h-entry" itemscope itemtype="https://schema.org/Article">
+      <article
+        class="h-entry"
+        itemscope
+        itemtype="https://schema.org/Article"
+        data-pagefind-body
+        data-pagefind-meta="type:article"
+      >
+        {
+          /* Date as a clean Pagefind meta + recency sort key. A dedicated empty
+            element keeps it off the body text and avoids comma-joining metas
+            (Pagefind 1.5 doesn't split `data-pagefind-meta="a:x, b:y"`). */
+        }
+        <span data-pagefind-meta={`date:${pubIso}`} data-pagefind-sort={`date:${pubIso}`}></span>
         {toc && <TableOfContents headings={headings} />}
         <LongFormProseTypography>
           {
@@ -106,7 +124,7 @@ const standardSiteDocumentUri =
             )
           }
           <div class="post-header">
-            <div class="metadata">
+            <div class="metadata" data-pagefind-ignore>
               <FormattedDate date={pubDate} itemprop="datePublished" />
               {
                 updatedDate && (
@@ -119,11 +137,11 @@ const standardSiteDocumentUri =
               {draft && <span class="draft-notice">🚧 Draft</span>}
             </div>
 
-            <h1 class="title p-name" itemprop="headline">{title}</h1>
+            <h1 class="title p-name" itemprop="headline" data-pagefind-meta="title">{title}</h1>
           </div>
           <SeriesCallout series={series} currentId={Astro.params.slug!} />
           <slot />
-          <div class="footer-actions">
+          <div class="footer-actions" data-pagefind-ignore>
             <MarkdownContentActions markdownUrl={markdownUrl} />
             <BackToTopLink />
           </div>

@@ -1,18 +1,8 @@
 ---
 /**
- * Scratchpad - a noindex page for eyeballing components in isolation.
- * Currently: the compact (and full) ProjectCard variants.
+ * Scratchpad — a noindex page for eyeballing components in isolation.
  */
-import { getCollection } from 'astro:content';
 import { BaseHead, MainNavigation } from '@components/layout/index';
-import { ProjectCard } from '@components/ui/index';
-
-const projects = await getCollection('projects');
-const byId = (id: string) => projects.find(p => p.id === id)!;
-
-const astroEditor = byId('astro-editor'); // website + github → website
-const loomclone = byId('loomclone'); // github only → github
-const toolbox = byId('the-toolbox'); // website only → website
 ---
 
 <!doctype html>
@@ -27,74 +17,15 @@ const toolbox = byId('the-toolbox'); // website only → website
   <body>
     <MainNavigation />
     <main id="main" tabindex="-1">
-      <h1>Compact ProjectCard</h1>
-
-      <h2>Stacked, full width</h2>
-      <div class="stack">
-        <ProjectCard project={astroEditor} compact />
-        <ProjectCard project={loomclone} compact />
-        <ProjectCard project={toolbox} compact />
-      </div>
-
-      <h2>Auto-fill grid (each tile is its own container)</h2>
-      <div class="tile-grid">
-        {
-          projects.map(p => (
-            <div class="cq">
-              <ProjectCard project={p} compact />
-            </div>
-          ))
-        }
-      </div>
-
-      <h2>Fixed container widths — byline drops at ≤ 20rem</h2>
-      <div class="widths">
-        <div class="cq" style="inline-size: 24rem">
-          <ProjectCard project={astroEditor} compact />
-        </div>
-        <div class="cq" style="inline-size: 18rem">
-          <ProjectCard project={astroEditor} compact />
-        </div>
-        <div class="cq" style="inline-size: 13rem">
-          <ProjectCard project={astroEditor} compact />
-        </div>
-      </div>
-
-      <h2>Full card, for reference</h2>
-      <div class="cq">
-        <ProjectCard project={astroEditor} />
-      </div>
+      <h1>Hello world</h1>
     </main>
   </body>
 </html>
 
 <style>
   main {
-    margin: 0 auto;
-    padding: var(--space-m);
-    max-width: 100ch;
-    display: flow-root;
-  }
-
-  h2 {
-    margin-block: var(--space-xl) var(--space-s);
-  }
-
-  .stack {
-    display: grid;
-    gap: var(--space-s);
-  }
-
-  .tile-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-    gap: var(--space-s);
-  }
-
-  .widths {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: start;
-    gap: var(--space-s);
+    padding-block: var(--space-xl);
+    margin-inline: auto;
+    padding-inline: var(--space-m);
   }
 </style>

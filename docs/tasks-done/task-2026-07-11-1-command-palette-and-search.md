@@ -1,0 +1,217 @@
+# Task: Command Palette & Site Search
+
+Build a `Cmd/Ctrl+K` command palette overlay that supports both **navigation/commands** and **full-text search** across articles, notes, and pages. Fully keyboard-navigable and accessible; zero-JS-by-default (nothing loads until the palette opens); no React.
+
+All research, rationale, decisions, references and the full reminders checklist live in the issue — that's the source of truth, this doc is the plan of work:
+
+**[GitHub issue #41 — Keyboard Search & Command Palette](https://github.com/dannysmith/dannyis-astro/issues/41)**
+
+Short version of the agreed approach: hand-rolled native `<dialog>` + WAI-ARIA combobox palette, backed by **Pagefind** for content search, wired via an inline `astro:build:done` integration. Commands/nav baked into the component at build time.
+
+## How this plan is structured
+
+We started with **two throwaway experiments in scratchpad pages** — one to de-risk the UI craft (Phase 1), one to de-risk the search infrastructure (Phase 2). Both are **done**; their findings are captured in place. (Note: this reverses the experiment numbering in the issue, where Pagefind is "Experiment 1".)
+
+**Phases 3 onward are the real build**, re-planned from what the experiments taught us: get the index right → extract a clean lib API → build the palette component → wire search into it → test/clean up → the trailing polish phases. Each phase is a checklist, roughly in dependency order.
+
+---
+
+## Phase 1 — Experiment: hand-rolled command palette ✅ (`src/pages/scratchpad2.astro`)
+
+**Done.** A working, accessible command-palette shell built up one native primitive at a time, no framework. Commands/nav are dummy/static for now — real content search (Pagefind) is Phase 2. The live example is **`src/pages/scratchpad2.astro`**; it's the reference for how the production component gets built later.
+
+What it establishes:
+
+- **Native modal `<dialog>` + `showModal()`** gives focus-trap, `::backdrop`, `inert` background and Esc-to-close for free. `closedby="any"` adds click-outside dismissal declaratively (no JS). A single CSS rule (`overflow: hidden`) plus the `.ui-style` utility handle framing.
+- **WAI-ARIA combobox/listbox pattern.** Input is `role="combobox"`; DOM focus stays in the input the whole time; the active option is tracked via `aria-activedescendant` + a `[data-active]` style hook (never real focus, so typing never breaks). Groups are `role="group"` with `role="presentation"` labels.
+- **Commands baked in at build time.** A typed `PaletteItem[]` in frontmatter renders to markup — no client fetch. Every option is a real `<a role="option">`: nav items carry an `href` (native link → ⌘/middle-click opens a new tab), action items are href-less and carry a `data-action`. (We chose all-`<a>` over an `<a>`/`<button>` split for uniformity; `role="option"` makes the element choice behavioural, not semantic.)
+- **Filter-as-you-type** over label + a hidden `data-keywords` field, leaning on the native `[hidden]` attribute for hiding (no CSS needed for the hide itself). Empty groups collapse via `:has()`; a "No results" state shows when everything filters out (also `:has()`).
+- **Keyboard nav** — arrow/Enter driven from the input (`scrollIntoView({block:'nearest'})` keeps the active row visible); Escape/click-outside close.
+- **Minimal fade animation** — opacity only, in and out, via `@starting-style` + `transition-behavior: allow-discrete` on `display`/`overlay` (keeps the dialog in the top layer through the exit so the dim backdrop rides along); `prefers-reduced-motion` turns it off.
+- **Idempotent init (codebase convention).** The document-level hotkey is bound once behind a module-scoped guard (`wireHotkey`, mirroring `Tabs.astro`'s `wireDelegation`); per-dialog wiring re-runs on `astro:page-load` behind a `data-cpReady` guard — safe under View Transitions.
+- **Zero-JS open path.** The visible trigger opens the dialog via the **Invoker Commands API** (`command="show-modal"`), and `<input autofocus>` handles focus on open — both with no JS. The only JS the open path fundamentally needs is the global `Cmd/Ctrl+K` hotkey (~10 lines), since there's no declarative way to bind a global shortcut.
+
+**Key findings for the real build:**
+
+- The whole thing is ~85 lines of dependency-free JS + ~70 lines of CSS. Everything the old command-palette libraries did (top layer, focus trap, inert, Esc, animation, light-dismiss) is now platform-native.
+- Baking commands/nav into the component at build time works cleanly and means the palette is fully functional in dev regardless of any search index.
+- **Open questions surfaced:** Invoker Commands + `closedby` are early-2026 Baseline (Chrome/Edge 135+, Firefox 144+, Safari 26.2) — decide in the real build whether to rely on Baseline or add tiny JS fallbacks (the hotkey works everywhere regardless). `aria-live` result-count announcements and fuzzy matching were deliberately deferred.
+
+## Phase 2 — Experiment: Pagefind wiring ✅ (`src/pages/scratchpad.astro`)
+
+Separate experiment to de-risk the search infrastructure and learn the result-data contract that Phase 1's results group will consume. **Done** — the live experiment is `src/pages/scratchpad.astro` (both variants side by side); the wiring lives in `astro.config.mjs` + the content layouts.
+
+- [x] Add `pagefind` and an inline `astro:build:done` integration in `astro.config` that runs Pagefind's Node API over `dist/`, emitting `dist/pagefind/`. Done as an inline `pagefind()` integration (crib of `astro-pagefind`, not a dep) with two hooks: `astro:build:done` (index `dist/` → `dist/pagefind/`, throws on any index error) and `astro:server:setup` (serve prebuilt `/pagefind/*` in dev via `sirv`). Added `pagefind` + `sirv` as **devDependencies**. `dist/` is already gitignored, so the index stays uncommitted; it lands in `dist/` before CI copies it onward.
+- [x] Index scoping on the real layouts. `data-pagefind-body` + `data-pagefind-meta="type:article|note"` on the article/note content region; `data-pagefind-meta="title"` on the `<h1>`; `data-pagefind-ignore` on the metadata line, footer-actions, and the TOC. **`NoteCard` gained an explicit `indexAsBody` prop** set only by `Note.astro` — the notes-index and styleguide reuse the same card and must stay unindexed, so blanket-marking `NoteCard` would wrongly index the listing page. (Adding `data-pagefind-body` anywhere makes Pagefind index _only_ pages that carry it, which conveniently excludes all chrome + listing + non-content pages for free.)
+- [x] Build + verify the full round-trip. **185 pages indexed** (116 notes + 69 articles; drafts and all chrome/listing pages excluded). The build log's "219 pages" is total HTML files _scanned_ by `addDirectory`; the entry manifest's `page_count:185` is what carries a body marker. Verified by driving `astro preview` in a headless browser: real, well-ranked results with correct `/writing/…` and `/notes/…` URLs.
+- [x] Drive results two ways and compare. Built both on `scratchpad.astro`: (A) raw `pagefind.search()` → `.data()` rendered into the Phase-1 combobox listbox, and (B) the building-block web components. **Decision: raw API** (see below). The building blocks came from `pagefind-component-ui.js` (`<pagefind-input>`/`<pagefind-results>`/`<pagefind-summary>`/`<pagefind-config>`), _not_ `pagefind-modular-ui.js` (which is a class-based JS API). They render into **light DOM** (not shadow), so they're styleable/inspectable.
+- [x] Record the shape of the `.data()` object (the contract Phase 1 consumes):
+  ```js
+  {
+    url,
+    excerpt,        // HTML string with <mark> around matches
+    plain_excerpt,  // same, no markup
+    meta: { title, type: "article"|"note", image?, image_alt? },
+    sub_results: [{ title, url, excerpt, plain_excerpt, ... }],  // heading-anchored sections
+    word_count, content, raw_content, anchors, weighted_locations, locations, filters
+  }
+  ```
+  The palette needs only `url`, `meta.title`, `meta.type` (grouping key), and `excerpt`.
+- [x] Assess styling reach + measure payload. Payload (measured): **~161 KB one-time core** (`pagefind.js` 45 KB + `pagefind-worker.js` 41 KB + `wasm.en.pagefind` 73 KB + meta), cached after first use; then **~32 KB per alphabetical index shard** (shared across many queries) + a tiny fragment (0.15–5 KB) per rendered result. First-ever search ≈ ~200 KB; later searches a few KB–35 KB. In line with the "~100 KB typical" expectation.
+- [x] Dev mode. The `astro:server:setup` middleware serves a previously-built `dist/pagefind/` via `sirv` — verified all bundle files 200 under `astro dev`. No prior build → the palette's lazy `import()` catches and shows a "search unavailable" note; nothing else breaks.
+
+**Deliverable / learnings captured:**
+
+- **Decision — build the real palette on the RAW API (Variant A), not the building blocks.** Only the raw API composes into the Phase-1 combobox: commands + nav + content results share **one `<input>`, one listbox, one `aria-activedescendant` nav loop**, with full control over grouping and result-row markup. The building-block `<pagefind-results>` brings its **own `<input>` and a real-DOM-focus nav model** (↓ moves focus _into_ the list; ↑ at the top returns to the input) that structurally fights the combobox. The blocks are polished out-of-the-box but are a self-contained search box — parked as a possible future standalone `/search` page. Raw API is also lighter (`pagefind.js` ~45 KB core vs `pagefind-component-ui.js` ~175 KB + CSS).
+- **No separate `search-index.json` needed** — Pagefind covers title + full-text + `type`. Confirmed.
+- **Grouping uses `data-pagefind-meta`, read via `.meta.type`** (so `pagefind.filters()` is empty — expected). A real _faceted filter_ UI would instead need `data-pagefind-filter="type:…"`. Deferrable.
+
+**Gotchas for the production build (bit us during the experiment):**
+
+1. **Dynamic-import path must be a computed expression, not a static string literal.** `import('/pagefind/pagefind.js')` fails both Vite's dev-server import analysis _and_ the rollup build (unresolvable from `src/`); `@vite-ignore` alone is insufficient and `rollupOptions.external` only covers the build, not dev. Use `` import(/* @vite-ignore */ `${import.meta.env.BASE_URL}pagefind/pagefind.js`) `` — the expression defeats static analysis in both, and needs no `external` entry.
+2. **JS-injected result rows don't get Astro's scoped-CSS `data-astro-cid` attribute**, so scoped `<style>` never reaches them (they render unstyled). Style dynamic result rows with an `is:global` block (or a dedicated stylesheet / Pagefind's own CSS). Baked-in commands/nav are fine scoped.
+3. **Note excerpts include the leading date + embed-card text** — consider `data-pagefind-ignore` on the note date-link to clean excerpts.
+4. Building-block components load from `pagefind-component-ui.{js,css}` and render into **light DOM**.
+
+**Files touched by the experiment (to consolidate/tear down in the real build):** `astro.config.mjs`, `src/pages/scratchpad.astro`, `src/layouts/Article.astro`, `src/layouts/Note.astro`, `src/components/layout/NoteCard.astro`, `src/components/layout/TableOfContents.astro`.
+
+## Phase 3 — Get the Pagefind index right ✅
+
+Indexing works; now make the index itself genuinely good — correct scoping everywhere, the right pages included, and a deliberate metadata schema. Result quality in the palette rests on this. **Done — 195 pages indexed with clean `type`/`date` metadata; verified end-to-end.**
+
+**Audit + fix the existing scoping**
+
+- [x] Re-checked the article/note Phase 2 attributes. Kept `SeriesCallout` in the body (mentions related articles — useful, not noise). `LLMDiscoveryNote` now carries `data-pagefind-ignore` on its own `.sr-only` `<p>` so its "For AI agents…" text is excluded on _every_ layout (it sits inside the body on `Page.astro`). `BackToTopLink` also `data-pagefind-ignore`'d at the component (chrome).
+- [x] Cleaned excerpt noise: `data-pagefind-ignore` on the note `.date-link` (kills the leading "Jul 8, 2025") **and** on the note `.source-url` embed — per the decision to index only Danny's own commentary, not the linked source's text. Note excerpts are now clean.
+
+**Pages indexed** (decisions: MDX content pages + `/making`; **not** home, styleguide, or utility pages)
+
+- [x] `Page.astro` was the single seam — one `data-pagefind-body` + `type:page` there covers `now`, `colophon`, `privacy`, `ai` **and** the whole `/using/*` section (the "uses" pages, 5 of them) for free.
+- [x] `making.astro` indexed as one `/making` result (`type:page`) — project titles/bylines/bodies become findable; ProjectCards are `<article id={project.id}>` so `#project` sub-result deep-links are possible.
+- [x] Home excluded (link-hub, already a nav command); `404`/`scratchpad`/`scratchpad2`/`toolboxtest`/`styleguide/*` excluded. Verified none carry a body marker.
+
+**Metadata schema** (decision: title + type + publish date; no description/tags for now)
+
+- [x] `type` taxonomy = `article | note | page`. **Gotcha:** Pagefind 1.5 does _not_ split a comma-joined `data-pagefind-meta="type:x, date:y"` — it takes the whole string as one value. So each meta must be its own element/attribute.
+- [x] `date` captured as both a clean `data-pagefind-meta="date:YYYY-MM-DD"` and a `data-pagefind-sort="date:…"` recency key, on a **dedicated empty `<span>`** inside the body (keeps it off the excerpt, sidesteps the comma bug). Date-only ISO avoids colons. Verified recency sort orders newest-first across notes + articles. Pages have no date (fine).
+- [x] Descriptions/tags **not** indexed (chosen: rely on the match-excerpt). `data-pagefind-weight` not needed — Pagefind already weights the `title`/`h1` heavily by default.
+- [x] Grouping stays on `.meta.type` (so `pagefind.filters()` is empty) — no `data-pagefind-filter` unless we later want a faceted UI.
+- [x] URLs confirmed canonical: articles `/writing/{id}/`, notes `/notes/{id}/`, pages `/{slug}/` (incl. `/using/{slug}/`), `/making/`.
+
+**Verify**
+
+- [x] Rebuilt + queried in a headless browser: 195 pages (116 notes + 69 articles + 5 using + now/colophon/privacy/ai + making), correct `type`/`date`/`title` on each, clean excerpts, working recency sort.
+
+> **Carry-forward for Phase 6:** link-post notes still get an auto-captured `meta.image` (the source's og-image) — Pagefind grabs the first body `<img>` and `data-pagefind-ignore` doesn't suppress _meta_ capture. Harmless (a nice result thumbnail), but decide deliberately whether/where result cards show a thumbnail, and whether it should be the page's own OG image instead.
+
+## Phase 4 — Extract the Pagefind integration into `lib/` ✅
+
+Pull the inline experiment wiring out of `astro.config.mjs` into a clean, reusable module, and define the typed client-side search API the palette will consume. **Done — build integration in `lib/`, typed client helper in `utils/`, both dogfooded by the scratchpad.**
+
+- [x] Moved the `pagefind()` integration (both hooks) into **`src/lib/pagefind-integration.mjs`**; `astro.config.mjs` now just imports `{ pagefind }` from it (and the four Node/Pagefind imports moved with it, slimming the config). Build verified: still indexes 195 pages.
+- [x] Built the typed client helper at **`src/utils/pagefind.ts`** (`@utils/pagefind`). Exports `search(query, { limit, debounceMs })` → a `SearchOutcome` discriminated union (`ok` / `superseded` / `unavailable`), `preloadPagefind()`, and the `SearchResult` type (`{ url, title, type, excerpt, date?, image?, imageAlt? }`). Lazy-inits + memoizes the runtime (retries on failure so dev-after-build works); normalizes `.data()`; empty query → empty `ok` (no request). Kept `description` out of the shape (Phase 3 chose not to index it). `loadPagefind` stays module-private.
+- [x] Computed-path import baked into the helper (`` `${import.meta.env.BASE_URL}pagefind/pagefind.js` ``), so no static literal — verified clean under both `astro dev` and the rollup build.
+- [x] Client helper lives in **`utils/`** (browser-side), not `lib/` (build-time plugins). Scratchpad Variant A was refactored to consume `@utils/pagefind`, which removed all its inline `any`-typed Pagefind code — lint is now fully clean. Runtime-verified end-to-end: normalized results (incl. the new `type:page` "Colophon"), combined nav loop, no console errors.
+- [x] Added focused unit tests (`tests/unit/pagefind.test.ts`): the `normalize()` `.data()`→`SearchResult` mapping (title/type fallbacks, optional-field passthrough) and the empty/whitespace-query short-circuit — the browser-independent parts. The integration module and the runtime-dependent search paths are left to Phase 7 e2e (thin glue / need a real browser; unit-mocking them is low-value).
+
+## Phase 5 — Build the command palette as a real Astro component ✅
+
+Promote the `scratchpad2.astro` shell into a production component (or a small set) and wire it into the site. **No search yet** — commands + nav only, so it's fully functional regardless of index state.
+
+- [x] Created a single **`src/components/layout/CommandPalette.astro`** (self-contained dialog + styles + script). Put it in `layout/` (not `navigation/`) to sit with the other global affordances — `MainNavigation`, `Footer`, `SkipLink`, `Lightbox`. Exported from the layout barrel.
+- [x] Carried over the Phase 1 primitives verbatim: native modal `<dialog>` + combobox/listbox, `aria-activedescendant` nav, `@starting-style` animation, idempotent init behind `data-cpReady` + a module-scoped hotkey guard (re-runs on `astro:page-load`), and the `Cmd/Ctrl+K` hotkey. Baked-in commands + nav (real targets: Home/Writing/Notes/Now/Making/Using/Colophon/RSS + a Copy-URL action).
+- [x] Wired into all 10 real pages/layouts (Article, Note, Page, BasicPage, StyleguideLayout + index, making, 404, notes/index, writing/index — each renders `<CommandPalette />` right after `<MainNavigation />`; the throwaway `scratchpad*`/`toolboxtest` are skipped). Verified via headless browser on home/note/page: opens on ⌘/Ctrl+K, filters, arrow-nav + Enter navigates, Escape closes, zero console errors. **Open decision:** no visible trigger yet — the hotkey is the only open path (a gap on mobile). The dialog has a stable id, so a zero-JS `command="show-modal"` trigger drops in wherever we decide (nav? floating button?). Needs a call before shipping.
+
+## Phase 6 — Wire Pagefind results into the palette ✅
+
+Consume the Phase 4 client API inside the Phase 5 component to add the live Content results group. This is where search lands in the real palette — and where most of the result styling/design work happens. **Done — live search wired into `CommandPalette.astro`, verified end-to-end.**
+
+- [x] Added a third "Content" group to the listbox, rendered at runtime from `@utils/pagefind` (`search()`), sharing the one `aria-activedescendant` nav loop — the Variant-A model. Commands/nav filter locally by substring; results are governed entirely by Pagefind (exempt from the local filter). A per-consumer token guards the post-debounce race.
+- [x] Styled result rows (title / bold, right-aligned `type` badge, 2-line clamped `excerpt` with `<mark>`). Per the Phase 2 gotcha, all option/result styling moved into an `is:global` block (JS-injected rows never get the scoped `data-astro-cid`); the framing/input stay scoped. Sub-results not shown (kept rows compact — revisit if useful).
+- [x] Design adjustments: three groups (Commands / Navigation / Content), `cp-status` line, "No results" fallback (rarely hit — Pagefind loose-matches almost any term, so a true zero-result query is uncommon). No explicit loading state yet (results land within the ~200 ms debounce); no thumbnails/descriptions shown.
+- [x] `aria-live="polite"` status announces the **accurate total** count — the Phase 4 helper's `SearchOutcome` gained a `total` field (full match count, not just the capped `results`). Ordering is Pagefind's default **relevance**; the Phase 3 `date` sort key is available if we ever want a recency toggle.
+- [~] Focus return on close is native (`<dialog>` restores focus to the pre-open element). **Deferred to Phase 7:** a formal screen-reader pass, and a possible loading state.
+
+> **Carry-forward for Phase 7:** screen-reader testing; decide on result thumbnails (the `meta.image` on link-post notes is available); decide whether Pagefind's loose matching wants tightening; e2e the shell + commands (no index in the Check stage).
+
+## Phase 7 — Testing, cleanup & refactor ✅
+
+Now that it all works, make it correct, lean, and clean — and remove the experiment scaffolding.
+
+- [x] Code/CSS review: clean and evergreen comments, tidy CSS; run `check:knip` + `check:dupes`.
+- [x] Tear down the experiments: delete `scratchpad.astro`, `scratchpad2.astro`, and any `docs/tasks-todo/temporary/` leftovers.
+- [x] `check:all` green.
+
+## Phase 10 — Styleguide & developer docs ✅
+
+- [x] Add the palette (and any sub-components) to the right parts of the multi-page styleguide; update any existing components changed along the way (`NoteCard`, `TableOfContents`, the layouts).
+- [ ] New evergreen developer doc explaining how the palette + Pagefind + build integration fit together.
+- [ ] Update `docs/developer/deployment.md` for the Pagefind build step; check `docs/developer/` guides, `README.md`(s), and `AGENTS.md` are still correct.
+
+---
+
+# Reference appendix
+
+Everything below is copied/distilled from [issue #41](https://github.com/dannysmith/dannyis-astro/issues/41) and our research so this doc is self-contained across sessions. The issue remains the canonical source if anything conflicts.
+
+## The decision, in detail
+
+**Hand-rolled native `<dialog>` + WAI-ARIA combobox palette (~50 lines of dependency-free JS), backed by Pagefind for full-text content search. No React.**
+
+- **UI:** native `<dialog>` + `showModal()` gives focus-trap, `::backdrop`, `inert`, and Esc-to-close *for free* (all of which `show()` does NOT provide — must use `showModal()`). ARIA **combobox-with-listbox** pattern: DOM focus stays on the input, the active option is tracked via `aria-activedescendant` (roving tabindex would break typing). CSS `@starting-style` + `transition-behavior: allow-discrete` for open/close animation; gate on `prefers-reduced-motion`. Invoker Commands API (`command="show-modal"`) can open the dialog with zero JS from a visible button, but the `Cmd/Ctrl+K` global hotkey always needs a few lines of JS.
+- **Search:** Pagefind — Rust→WASM, runs post-build, shards its index alphabetically so the browser fetches only the chunks a query touches (~100 KB typical total payload incl. WASM). `search()` returns lightweight handles for *all* matches; `.data()` pulls one fragment per result you actually render. It's the default search in Astro Starlight.
+- **Data:** commands / nav / recent-posts are **server-rendered into the component at build time** (so they work in dev regardless of index freshness). Likely **no separate `search-index.json` needed** — Pagefind covers title + full-text. "Copy as Markdown" reuses the existing `.md.ts` endpoints.
+
+## Key technical notes
+
+- **Where Pagefind runs:** inline `astro:build:done` integration → `pagefind.Node` API over `dist/` → `dist/pagefind/`. Our build runs in **CI (GitHub Actions), not on Vercel** (`vercel deploy --prebuilt` just hosts prebuilt output), so the hook is the right mechanism — it travels with `astro build` on any host/CI, keeping the build host-agnostic. Output must land in `dist/` before the CI step copies it into `.vercel/output/static/`. `dist/` is already gitignored, so the generated index stays uncommitted (consistent with "don't commit generated assets").
+- **No CSP today** — the security headers in `vercel.output-config.json` are `x-content-type-options`, `x-frame-options: DENY`, `referrer-policy`, `permissions-policy`, and a `link` header; there is **no `Content-Security-Policy`**, so Pagefind's WASM loads without header changes. If a CSP is ever added it needs `wasm-unsafe-eval` + `worker-src blob:`.
+- **View transitions not in use** — only a comment in `MarkdownBlock.astro` references `astro:page-load`. No re-bind gotcha today, but the codebase convention is to make init scripts idempotent on `astro:page-load` — follow it.
+- **Pagefind index scoping attributes:** `data-pagefind-body` (restrict indexing to real content, excludes nav/footer/chrome), `data-pagefind-ignore` (exclude elements), `data-pagefind-meta="type:article"` (carry content type into results for grouping/faceting), `data-pagefind-weight` (boost e.g. titles).
+- **Pagefind custom-UI API shape** (the contract Phase 1 consumes):
+  ```js
+  const pagefind = await import("/pagefind/pagefind.js");
+  await pagefind.init();
+  const search = await pagefind.debouncedSearch(query, {}, 300); // null if superseded
+  const top = await Promise.all(search.results.slice(0, 8).map(r => r.data()));
+  // each item: { url, excerpt, meta:{title,image,...}, sub_results:[{title,url,excerpt}] }
+  // extras: pagefind.preload("s"), pagefind.filters(), search(q,{filters}), search(q,{sort})
+  ```
+- **CI test interaction:** `check:all` runs Playwright in the **Check** stage, which runs *in parallel with Build* and produces **no Pagefind index**. So e2e the shell + commands (no index needed); unit-test / fixture the search-result rendering.
+
+## Repo grounding (existing infrastructure to reuse)
+
+- `src/pages/redirects.json.ts` — the idiomatic `.json.ts` endpoint pattern (`export const prerender = true`, `APIRoute` `GET` returning a `Response`) if we ever do need a JSON index. A single JSON file needs **no** `getStaticPaths`.
+- `src/pages/writing/[...slug].md.ts` & `src/pages/notes/[...slug].md.ts` — existing per-page Markdown twins → "Copy as Markdown" is basically free.
+- `src/pages/llms.txt.ts` — static-page auto-discovery via `import.meta.glob` (`discoverStaticPages()`), useful if we want to enumerate nav targets.
+- `src/lib/remark-reading-time.mjs` — the `mdast-util-to-string` frontmatter-injection pattern to copy **if** we ever need build-time plaintext (`mdast-util-to-string@^4` is already a dep). Handles MDX gracefully (component children contribute text; bare islands contribute nothing and never throw — unlike the Container-API path in `rss.xml.js`, which must skip island-bearing entries).
+- `src/utils/content.ts` — `filterContentForListing` / `getSortedProjects` (drops drafts in prod, keeps them in dev). **Gotcha:** cast collection results `as CollectionEntry<'...'>[]` (generic filter collapses in CI before `astro sync`).
+- Content volume at time of research: **79 articles + 117 notes + 4 projects (~200 docs)**. URLs: articles `/writing/{id}/`, notes `/notes/{id}/`, projects `/making#{id}`.
+
+## Open questions (settle during the experiments)
+
+- **Building-block components vs raw JS API** — reuse Pagefind's `<pagefind-input>`/`<pagefind-results>` inside our dialog (less maintenance) or render from raw `.data()` (full control)? Decide on the keyboard-nav-composition seam in Phase 2. *(Danny's steer: keep the building blocks genuinely in play, don't pre-reject them.)*
+- **Metadata JSON — needed at all?** Probably not, if Pagefind covers search and commands are baked in at build time.
+- **Dev-mode approach** — serve prebuilt `dist/pagefind/` via middleware vs degrade to no results.
+
+## References & resources
+
+**Reference implementations (inspiration, not dependencies):**
+- Astro Starlight `Search.astro` — canonical native-`<dialog>` + idle-loaded-Pagefind pattern: https://github.com/withastro/starlight/blob/main/packages/starlight/components/Search.astro
+- `astro-pagefind` (shishkin) — small codebase; crib the `astro:build:done` hook + dev-server middleware: https://github.com/shishkin/astro-pagefind
+- `accessible-astro-launcher` — zero-dep, no-React, WCAG 2.2 AA combobox palette (nav + action items): https://github.com/incluud/accessible-astro-launcher
+- seanmcp.com — personal Astro palette, explicitly no React/kbar: https://www.seanmcp.com/articles/new-command-palette/
+
+**Pagefind:**
+- Docs & API: https://pagefind.app/ · https://pagefind.app/docs/api/ · https://pagefind.app/docs/components/
+- Guides: https://toolchew.com/en/how-to-add-search-astro/ · https://flaviocopes.com/static-site-search-pagefind/ · https://dteather.com/blogs/astro-search-bar/ · https://lilting.ch/en/articles/pagefind-astro-search
+
+**Platform / a11y:**
+- WAI-ARIA APG combobox pattern: https://www.w3.org/WAI/ARIA/apg/patterns/combobox/ (+ autocomplete-list example: https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/)
+- Invoker Commands API: https://developer.mozilla.org/en-US/docs/Web/API/Invoker_Commands_API
+- `<dialog>`: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog
+- `<dialog>` entry/exit animations: https://developer.chrome.com/blog/entry-exit-animations
+- awesome-command-palette: https://github.com/stefanjudis/awesome-command-palette
+- Reusing a Pagefind index outside Starlight (Macwright): https://macwright.com/2024/04/03/starlight-search-everywhere
+
+**Considered & rejected:** MiniSearch/Fuse/Lunr/FlexSearch (in-memory, load the full index eagerly — Pagefind's chunking is the whole point); Orama (eager, overkill unless we want vector/semantic later); Stork (unmaintained, superseded by Pagefind); Algolia/Typesense/Meilisearch (reintroduce a backend); building our own Rust/WASM (Pagefind already *is* that, more mature); cmdk/kbar (React-only).
