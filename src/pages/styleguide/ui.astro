@@ -15,6 +15,7 @@ import { ThemeToggle } from '@components/navigation/index';
 import { Footer } from '@components/layout/index';
 
 const toc = [
+  { id: 'command-palette-component', label: 'CommandPalette' },
   { id: 'personal-logo', label: 'PersonalLogo' },
   { id: 'pill', label: 'Pill' },
   { id: 'spinner', label: 'Spinner' },
@@ -38,6 +39,28 @@ const toc = [
       files.
     </p>
   </header>
+
+  <section id="command-palette-component" class="flow">
+    <h2>CommandPalette</h2>
+    <p>
+      The global command palette — a native modal <code>&lt;dialog&gt;</code> built on the WAI-ARIA combobox
+      pattern. It offers baked-in commands and navigation, plus live full-text search across the site
+      (Pagefind). It's dropped into every layout (a separate concern from the header nav), so it's already
+      on this page: press <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>, or use the button below. It takes no
+      props — the commands and navigation are defined in the component itself.
+    </p>
+    <p>
+      The dialog exposes a stable <code>id</code> of <code>command-palette</code>, so any element
+      can open it with zero JavaScript via the Invoker Commands API:
+    </p>
+    <Code
+      lang="astro"
+      code={'<button type="button" command="show-modal" commandfor="command-palette">\n  Search…\n</button>'}
+    />
+    <button type="button" command="show-modal" commandfor="command-palette">
+      Open command palette
+    </button>
+  </section>
 
   <section id="personal-logo" class="flow">
     <h2>PersonalLogo</h2>
