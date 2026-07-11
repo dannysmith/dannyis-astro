@@ -1,0 +1,268 @@
+---
+/**
+ * Scratchpad 2 — command-palette experiment (Phase 1 of the Cmd+K work).
+ *
+ * A noindex page for building up the hand-rolled command palette one native
+ * primitive at a time. Commands are dummy/static for now — real content search
+ * (Pagefind) is a separate experiment. See docs/tasks-todo/task-1-command-palette-and-search.md
+ *
+ * Deliberately kept to the MINIMUM CSS/JS needed to function — everything else
+ * is browser default, so we can add each piece (styling, animation, empty state,
+ * group-hiding, scroll-lock…) back on purpose.
+ */
+import { BaseHead, MainNavigation } from '@components/layout/index'
+
+// The command list is baked into the markup at build time (no client fetch).
+// Every item is a real <a role="option">: nav items have an href (navigate
+// natively; ⌘/middle-click opens a new tab), action items are href-less and
+// carry a data-action dispatched by the script.
+type PaletteItem = {
+  id: string
+  label: string
+  group: 'Commands' | 'Navigation'
+  href?: string
+  action?: 'copy-url'
+  keywords?: string // extra text to match on, not shown
+}
+
+const items: PaletteItem[] = [
+  // Commands
+  {
+    id: 'cmd-copy-url',
+    label: 'Copy URL of this page',
+    group: 'Commands',
+    action: 'copy-url',
+    keywords: 'clipboard link share',
+  },
+  // Navigation
+  { id: 'nav-home', label: 'Home', group: 'Navigation', href: '/' },
+  {
+    id: 'nav-writing',
+    label: 'Writing',
+    group: 'Navigation',
+    href: '/writing',
+    keywords: 'articles blog essays',
+  },
+  { id: 'nav-notes', label: 'Notes', group: 'Navigation', href: '/notes', keywords: 'short posts' },
+  {
+    id: 'nav-making',
+    label: 'Making',
+    group: 'Navigation',
+    href: '/making',
+    keywords: 'projects things',
+  },
+  { id: 'nav-now', label: 'Now', group: 'Navigation', href: '/now' },
+  { id: 'nav-colophon', label: 'Colophon', group: 'Navigation', href: '/colophon' },
+  {
+    id: 'nav-rss',
+    label: 'RSS feed',
+    group: 'Navigation',
+    href: '/rss.xml',
+    keywords: 'feed subscribe',
+  },
+]
+
+const groups = ['Commands', 'Navigation'] as const
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Scratchpad 2"
+      description="Command palette experiment"
+      robotsDirective="noindex, nofollow"
+    />
+  </head>
+  <body>
+    <MainNavigation />
+    <main id="main" tabindex="-1">
+      <h1>Command palette experiment</h1>
+      <button type="button" data-cp-open> Search… <kbd>⌘K</kbd> </button>
+
+      <dialog id="command-palette" class="ui-style"aria-label="Command palette">
+        <!-- Combobox: focus stays here; the active option is tracked with
+             aria-activedescendant (never real DOM focus — that would break typing). -->
+        <input
+          type="text"
+          class="cp-input"
+          role="combobox"
+          aria-expanded="true"
+          aria-controls="cp-listbox"
+          aria-autocomplete="list"
+          aria-label="Search commands and pages"
+          placeholder="Type a command or search…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+
+        <ul id="cp-listbox" class="list-reset" role="listbox" aria-label="Results">
+          {
+            groups.map(group => (
+              <li role="group" aria-labelledby={`cp-grouplabel-${group}`}>
+                <span id={`cp-grouplabel-${group}`} class="cp-group-label" role="presentation">
+                  {group}
+                </span>
+                <ul role="presentation" class="list-reset cp-item-list">
+                  {items
+                    .filter(item => item.group === group)
+                    .map(item => (
+                      <li>
+                        <a
+                          id={item.id}
+                          role="option"
+                          class="cp-option"
+                          href={item.href}
+                          tabindex="-1"
+                          data-action={item.action}
+                          data-keywords={item.keywords}
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
+      </dialog>
+    </main>
+  </body>
+</html>
+
+<style>
+  /* Minimal layout — just enough to read as a palette. */
+  #command-palette {
+    width: min(32rem, 90vw);
+    padding: 0;
+  }
+
+  .cp-input {
+    width: 100%;
+    border: none;
+    border-block-end: var(--border-width-hairline) solid var(--color-border);
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .cp-input:focus {
+    outline: none;
+  }
+
+  .cp-group-label {
+    display: block;
+    padding: var(--space-2xs) var(--space-s);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .cp-item-list {
+    margin-block-start: 0;
+  }
+
+  .cp-option {
+    display: block;
+    width: 100%;
+    padding: var(--space-2xs) var(--space-s);
+    cursor: pointer;
+  }
+
+  .cp-option[data-active] {
+    background: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  /* Hide a group whose options are all filtered out. */
+  #command-palette li[role='group']:not(:has(.cp-option:not([hidden]))) {
+    display: none;
+  }
+</style>
+
+<script>
+  // Minimal command-palette behaviour. Idempotent across astro:page-load.
+  function initCommandPalette() {
+    const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette')
+    if (!dialogEl || dialogEl.dataset.cpReady) return
+    dialogEl.dataset.cpReady = 'true'
+    const dialog: HTMLDialogElement = dialogEl // non-null alias for closures
+
+    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!
+    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!
+    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')]
+    const visibleOptions = () => allOptions().filter(o => !o.hidden)
+
+    // Track the active option via aria-activedescendant (focus stays in the input).
+    function setActive(el: HTMLElement | null) {
+      allOptions().forEach(o => delete o.dataset.active)
+      if (!el) {
+        input.removeAttribute('aria-activedescendant')
+        return
+      }
+      el.dataset.active = 'true'
+      input.setAttribute('aria-activedescendant', el.id)
+      el.scrollIntoView({ block: 'nearest' })
+    }
+
+    // Filter by substring over label + hidden keywords (native [hidden] does the
+    // hiding); keep the first match highlighted.
+    function filter() {
+      const q = input.value.trim().toLowerCase()
+      for (const o of allOptions()) {
+        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase()
+        o.hidden = q !== '' && !hay.includes(q)
+      }
+      setActive(visibleOptions()[0] ?? null)
+    }
+
+    function open() {
+      input.value = ''
+      filter()
+      dialog.showModal()
+      input.focus()
+    }
+
+    // Global hotkey: Cmd on macOS, Ctrl elsewhere. (Escape closes for free.)
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        if (dialog.open) dialog.close()
+        else open()
+      }
+    })
+    document.querySelectorAll('[data-cp-open]').forEach(b => b.addEventListener('click', open))
+
+    // Arrow / Enter navigation, driven from the input.
+    input.addEventListener('input', filter)
+    input.addEventListener('keydown', e => {
+      const opts = visibleOptions()
+      if (!opts.length) return
+      const i = opts.findIndex(o => o.dataset.active === 'true')
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setActive(opts[(i + 1) % opts.length])
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setActive(opts[(i - 1 + opts.length) % opts.length])
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        opts[i >= 0 ? i : 0]?.click()
+      }
+    })
+
+    // Nav options are real links (navigate natively). Action options have no
+    // href and carry a data-action — run it and close.
+    list.addEventListener('click', e => {
+      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option')
+      if (!opt?.dataset.action) return
+      e.preventDefault()
+      if (opt.dataset.action === 'copy-url') {
+        navigator.clipboard?.writeText(location.href)
+      }
+      dialog.close()
+    })
+  }
+
+  initCommandPalette()
+  document.addEventListener('astro:page-load', initCommandPalette)
+</script>
