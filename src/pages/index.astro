@@ -2,6 +2,7 @@
 import {
   BaseHead,
   CommandPalette,
+  Footer,
   LLMDiscoveryNote,
   MainNavigation,
 } from '@components/layout/index';
@@ -110,6 +111,7 @@ const config = getConfig();
         main {
           display: grid;
           grid-template-columns: 1rem auto 1fr;
+          min-block-size: 100svh;
         }
 
         h1 {
@@ -170,5 +172,6 @@ const config = getConfig();
         }
       </style>
     </main>
+    <Footer />
   </body>
 </html>
