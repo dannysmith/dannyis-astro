@@ -4,6 +4,8 @@ import sitemap from '@astrojs/sitemap';
 
 import { satteri, satteriHeadingIdsPlugin } from '@astrojs/markdown-satteri';
 import { satteriMdxImports } from './src/lib/satteri-mdx-imports.mjs';
+import { satteriReadingTime } from './src/lib/satteri-reading-time.mjs';
+import { satteriFootnoteDetector } from './src/lib/satteri-footnote-detector.mjs';
 import { satteriMarkdownPreview } from './src/lib/satteri-markdown-preview.mjs';
 import { satteriTreeBlock } from './src/lib/satteri-tree-block.mjs';
 import { satteriImageCaption } from './src/lib/satteri-image-caption.mjs';
@@ -11,6 +13,8 @@ import { satteriUnwrapImages } from './src/lib/satteri-unwrap-images.mjs';
 import { satteriAutolinkHeadings } from './src/lib/satteri-autolink-headings.mjs';
 import { satteriExternalLinks } from './src/lib/satteri-external-links.mjs';
 import { satteriListDensity } from './src/lib/satteri-list-density.mjs';
+import { satteriMermaid } from './src/lib/satteri-mermaid.mjs';
+import { mermaidConfig } from './src/config/mermaid.js';
 import { pagefind } from './src/lib/pagefind-integration.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
@@ -90,25 +94,17 @@ export default defineConfig({
       type: 'shiki',
       excludeLangs: ['mermaid'],
     },
-    // Sätteri migration in progress (issue #132). The old unified() plugins in
-    // src/lib/ are kept on disk (unloaded) for reference until the port is done.
-    //
-    // TODO — still to port to Sätteri:
-    //   Task 4:
-    //   - [x] remark-markdown-preview  → satteri-markdown-preview
-    //   - [x] remark-tree-block        → satteri-tree-block
-    //   - [x] remark-image-caption     → satteri-image-caption (now HAST-stage)
-    //   - [x] rehype-unwrap-images     → satteri-unwrap-images
-    //   - [x] rehype-external-links    → satteri-external-links
-    //   - [x] rehype-autolink-headings → satteri-autolink-headings
-    //   - [x] rehype-list-density      → satteri-list-density
-    //   Task 5:
-    //   - [ ] remark-reading-time      (minutesRead — approach TBD; mdx@7 DOES
-    //         round-trip ctx.data.astro.frontmatter writes, unlike v6)
-    //   - [ ] remark-footnote-detector (hasFootnotes — same)
-    //   - [ ] mermaid                  (@xingwangzhe/satteri-mermaid)
+    // The full Sätteri plugin suite (issue #132) — every plugin lives in
+    // src/lib/satteri-*.mjs with a unit suite in tests/unit. MDAST plugins run
+    // first (array order), then MDAST→HAST conversion, then HAST plugins.
+    // Expressive Code hooks in via its own Sätteri-aware HAST plugin, and the
+    // built-in image-collection/heading-IDs passes run after ours.
     processor: satteri({
       mdastPlugins: [
+        // Reading time first: it measures the document as parsed, before
+        // satteriMdxImports queues its injected import statements.
+        satteriReadingTime(),
+        satteriFootnoteDetector(),
         satteriMdxImports({ componentNames: mdxComponentNames }),
         satteriMarkdownPreview(),
         satteriTreeBlock(),
@@ -126,6 +122,7 @@ export default defineConfig({
         satteriImageCaption(),
         satteriExternalLinks(),
         satteriListDensity(),
+        satteriMermaid({ mermaidConfig }),
       ],
     }),
   },
