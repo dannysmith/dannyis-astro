@@ -43,7 +43,10 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
                     {post.data.title}
                     {post.data.draft && <span class="draft-marker"> 🚧</span>}
                     {post.data.platform && (
-                      <Pill text={post.data.platform} color="var(--color-green)" />
+                      <>
+                        {' '}
+                        <Pill text={post.data.platform} color="var(--color-green)" />
+                      </>
                     )}
                   </h2>
                 </a>
