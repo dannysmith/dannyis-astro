@@ -33,11 +33,11 @@ Outcome: `satteri-mdx-imports` rebuilt on the shared `defineRootPlugin` helper (
 
 ## Phase X - Final checks
 
-- [ ] Delete task 1 doc
-- [ ] Complete task 2 doc as-is
-- [ ] Merge task docs 3-5 into one doc and simpleify them so they're actually useful as a historical record and don't have tons of crap in them, then complete the consilidated doc
-- [ ] Delete any leftovers we don;t need any more
-- [ ] Run check:all
-- [ ] Final smoke test by user in dev server
+- [x] Delete task 1 doc
+- [x] Complete task 2 doc as-is
+- [x] Merge task docs 3-5 into one doc and simpleify them so they're actually useful as a historical record and don't have tons of crap in them, then complete the consilidated doc
+- [x] Delete any leftovers we don;t need any more
+- [x] Run check:all
+- [x] Final smoke test by user in dev server
 
 At this point we will open a PR and see what CI and CodeRabbit have to say. Task 6 doc should be left where it is for now.
