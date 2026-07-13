@@ -1,6 +1,6 @@
 /**
  * Sätteri MDAST plugin to transform `tree` fenced code blocks into a FileTree
- * component. (Port of `remark-tree-block.mjs`.)
+ * component.
  *
  * Authors write a standard fenced code block with `tree` as the language.
  * The block body is a `tree(1)`-style plain-text file tree:

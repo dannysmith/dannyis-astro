@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mdxToJs, markdownToHtml } from 'satteri';
 import { satteriMdxImports } from '../../src/lib/satteri-mdx-imports.mjs';
+import { astroData } from './satteri-helpers';
 
 const NAMES = ['Callout', 'Grid'];
 
@@ -8,18 +9,6 @@ const BARREL_IMPORT = /import\s*\{\s*Callout,\s*Grid\s*\}\s*from\s*['"]@componen
 const REMAPPING_IMPORT =
   /import\s*\{\s*MDX_COMPONENT_REMAPPING\s*\}\s*from\s*['"]@config\/mdx-components['"]/;
 const COMPONENTS_EXPORT = /export\s+const\s+components\s*=\s*MDX_COMPONENT_REMAPPING/;
-
-/** The `data.astro` bag as `@astrojs/mdx` seeds it before plugins run. */
-function astroData(frontmatter: Record<string, unknown> = {}) {
-  return {
-    astro: {
-      frontmatter,
-      headings: [],
-      localImagePaths: new Set<string>(),
-      remoteImagePaths: new Set<string>(),
-    },
-  };
-}
 
 /**
  * Compile MDX the way `@astrojs/mdx` does: parsed frontmatter seeded into

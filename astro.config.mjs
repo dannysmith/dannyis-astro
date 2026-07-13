@@ -88,13 +88,12 @@ export default defineConfig({
   markdown: {
     // syntaxHighlight stays at the markdown level; the processor reads it from
     // there (Sätteri wires it into its own highlight HAST plugin, respecting
-    // excludeLangs). Heading IDs/slugs are native to @astrojs/markdown-satteri
-    // (github-slugger), so no plugin is needed for them.
+    // excludeLangs).
     syntaxHighlight: {
       type: 'shiki',
       excludeLangs: ['mermaid'],
     },
-    // The full Sätteri plugin suite (issue #132) — every plugin lives in
+    // The full Sätteri plugin suite — every plugin lives in
     // src/lib/satteri-*.mjs with a unit suite in tests/unit. MDAST plugins run
     // first (array order), then MDAST→HAST conversion, then HAST plugins.
     // Expressive Code hooks in via its own Sätteri-aware HAST plugin, and the

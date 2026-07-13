@@ -1,6 +1,5 @@
 /**
  * Sätteri HAST plugin to turn a markdown image's title into a figure caption.
- * (Port of `remark-image-caption.mjs`.)
  *
  * Authors write a standard markdown image with the optional title string:
  *
@@ -13,11 +12,9 @@
  * `showAlt` (see `src/components/mdx/BasicImage.astro`). The original `title`
  * is removed so it doesn't also emit a redundant HTML `title` attribute.
  *
- * Why the HAST stage (the old plugin worked on MDAST `hProperties`)?
- * `@astrojs/mdx`'s img→component plugin runs *after* user `hastPlugins` and
- * copies every `img` property verbatim into JSX attributes, so a property set
- * here is guaranteed to arrive as a component prop — no reliance on Sätteri's
- * mdast→hast conversion honouring `data.hProperties`.
+ * Why the HAST stage? `@astrojs/mdx`'s img→component plugin runs *after* user
+ * `hastPlugins` and copies every `img` property verbatim into JSX attributes,
+ * so a property set here is guaranteed to arrive as a component prop.
  *
  * MDX-only: the `img -> BasicImage` remapping is an MDX feature and never
  * fires in plain `.md` files, so this transform is gated via

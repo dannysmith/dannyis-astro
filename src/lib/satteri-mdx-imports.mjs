@@ -1,48 +1,30 @@
 /**
  * Sätteri MDAST plugin: module-level ESM injection for MDX.
  *
- * Replaces two things the `unified()` pipeline used to do, folded into one
- * plugin because they share the same "inject a module-level `mdxjsEsm` node at
- * the top of the document, once" mechanism:
+ * Two injections share the "insert an `mdxjsEsm` node at the top of the
+ * document, once" mechanism:
  *
- * 1. **Auto-imports** (was the `astro-auto-import` integration). Injects
- *    `import { Accordion, Callout, … } from '@components/mdx'` into *every*
- *    `.mdx` file so content never needs explicit imports. The component list is
- *    derived from the barrel in `astro.config.mjs` (single source of truth) and
- *    passed in as `componentNames`.
- *    Consequence (unchanged from before): never explicitly import from
- *    `@components/mdx` in `.mdx` — the auto-injected import would collide
- *    (duplicate declaration).
+ * 1. **Auto-imports.** Injects `import { Callout, … } from '@components/mdx'`
+ *    into every `.mdx` file so content never writes explicit imports. The
+ *    component list is derived from the barrel in `astro.config.mjs` (single
+ *    source of truth) and passed in as `componentNames`. Consequence: content
+ *    must never import from `@components/mdx` itself — the auto-injected
+ *    import would collide (duplicate declaration).
  *
- * 2. **Page components** (was `src/lib/remark-page-components.mjs`). Routed
- *    `.mdx` pages using the `Page.astro` layout render themselves and hand the
- *    result to the layout via `<slot />`, so the layout can't apply
- *    `MDX_COMPONENT_REMAPPING` the way `.astro` pages do with
- *    `<Content components={…} />`. For those pages we inject
- *    `import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
- *     export const components = MDX_COMPONENT_REMAPPING;`
- *    so element/component remapping applies. Skipped if the page already
+ * 2. **Page components.** Routed `.mdx` pages using the `Page.astro` layout
+ *    render themselves and hand the result to the layout via `<slot />`, so
+ *    the layout can't apply `MDX_COMPONENT_REMAPPING` the way `.astro` pages
+ *    do with `<Content components={…} />`. For those pages we also inject
+ *    `export const components = MDX_COMPONENT_REMAPPING`. Skipped if the page
  *    declares its own `export const components`.
  *
- * ## Mechanics
- *
- * A module-level `mdxjsEsm` node compiles through Sätteri's oxc MDX path from
- * a bare `value` string alone — no hand-built estree needed (proven in the
- * Task 1 spike; the old `remark-page-components` had to build one).
- *
- * Injection happens once per document, from the first visited node: Sätteri
- * walks pre-order, so the first visitor to fire is on a direct child of the
- * root. We subscribe to every node type that can appear at the root, climb to
- * the root via `ctx.parent()`, scan its children for an author-declared
- * `export const components`, and prepend our ESM nodes. The frontmatter
- * `layout` is read from `ctx.data.astro.frontmatter` — `@astrojs/mdx` seeds
- * the parsed frontmatter there before plugins run.
- *
- * Registered as a factory so the fire-once flag resets between documents.
+ * A module-level `mdxjsEsm` node compiles from a bare `value` string alone —
+ * no hand-built estree needed. The frontmatter `layout` is read from
+ * `ctx.data.astro.frontmatter`, which Astro seeds before plugins run.
  */
-import { defineMdastPlugin } from 'satteri';
+import { defineRootPlugin } from './satteri-root-plugin.mjs';
 
-/** A module-level ESM node from a source string (no estree needed). */
+/** A module-level ESM node from a source string. */
 function esm(value) {
   return { type: 'mdxjsEsm', value };
 }
@@ -83,63 +65,29 @@ export function satteriMdxImports({
   remappingName = 'MDX_COMPONENT_REMAPPING',
   pageLayout = 'Page.astro',
 }) {
-  // Factory: called once per document, so `done` resets between files.
-  return () => {
-    let done = false;
+  return defineRootPlugin('satteri-mdx-imports', (root, ctx) => {
+    if (ctx.sourceFormat !== 'mdx') return;
 
-    function inject(node, ctx) {
-      if (done) return;
-      if (ctx.sourceFormat !== 'mdx') return;
-      done = true;
+    const nodes = [];
 
-      let root = ctx.parent(node);
-      while (root && root.type !== 'root') root = ctx.parent(root);
-      if (!root) return;
-
-      const nodes = [];
-
-      // 1. Auto-import every barrel component into every .mdx file.
-      if (componentNames.length) {
-        nodes.push(esm(`import { ${componentNames.join(', ')} } from '${componentsFrom}';`));
-      }
-
-      // 2. For Page.astro-layout pages without their own components export,
-      //    apply the element/component remapping.
-      const layout = ctx.data.astro?.frontmatter?.layout;
-      if (
-        typeof layout === 'string' &&
-        layout.split('/').pop() === pageLayout &&
-        !hasComponentsExport(root.children)
-      ) {
-        nodes.push(
-          esm(
-            `import { ${remappingName} } from '${remappingFrom}';\n` +
-              `export const components = ${remappingName};`,
-          ),
-        );
-      }
-
-      if (nodes.length) ctx.prependChild(root, nodes);
+    if (componentNames.length) {
+      nodes.push(esm(`import { ${componentNames.join(', ')} } from '${componentsFrom}';`));
     }
 
-    return defineMdastPlugin({
-      name: 'satteri-mdx-imports',
-      // Every node type that can appear as a direct child of the root — the
-      // first one visited (pre-order) triggers the one-shot injection.
-      yaml: inject,
-      mdxjsEsm: inject,
-      heading: inject,
-      paragraph: inject,
-      blockquote: inject,
-      list: inject,
-      code: inject,
-      html: inject,
-      table: inject,
-      thematicBreak: inject,
-      definition: inject,
-      footnoteDefinition: inject,
-      mdxJsxFlowElement: inject,
-      mdxFlowExpression: inject,
-    });
-  };
+    const layout = ctx.data.astro?.frontmatter?.layout;
+    if (
+      typeof layout === 'string' &&
+      layout.split('/').pop() === pageLayout &&
+      !hasComponentsExport(root.children)
+    ) {
+      nodes.push(
+        esm(
+          `import { ${remappingName} } from '${remappingFrom}';\n` +
+            `export const components = ${remappingName};`,
+        ),
+      );
+    }
+
+    if (nodes.length) ctx.prependChild(root, nodes);
+  });
 }

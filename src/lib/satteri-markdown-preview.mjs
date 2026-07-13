@@ -1,6 +1,6 @@
 /**
  * Sätteri MDAST plugin to transform `md preview` fenced code blocks into a
- * MarkdownBlock component. (Port of `remark-markdown-preview.mjs`.)
+ * MarkdownBlock component.
  *
  * This is the mechanism that powers the <MarkdownBlock> experience. Authors
  * write a standard fenced code block with `md` as the language and `preview`

@@ -1,20 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { markdownToHtml, mdxToJs } from 'satteri';
 import { satteriReadingTime } from '../../src/lib/satteri-reading-time.mjs';
+import { astroData } from './satteri-helpers';
 
 type Frontmatter = Record<string, unknown>;
-
-/** The `data.astro` bag the processor seeds before plugins run. */
-function astroData(frontmatter: Frontmatter = {}) {
-  return {
-    astro: {
-      frontmatter,
-      headings: [],
-      localImagePaths: new Set<string>(),
-      remoteImagePaths: new Set<string>(),
-    },
-  };
-}
 
 async function readMd(source: string): Promise<Frontmatter> {
   const data = astroData();

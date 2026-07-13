@@ -1,36 +1,27 @@
 /**
  * Sätteri HAST plugin to render ```mermaid fences into inline SVG at build
- * time. (Replaces `rehype-mermaid`, keeping its zero-client-JS behaviour.)
+ * time — no client-side JavaScript.
  *
- * Uses `mermaid-isomorphic` — the same headless-browser (Playwright) renderer
- * `rehype-mermaid` is built on — and replaces the `<pre>` with the rendered
- * `<svg>` (the equivalent of rehype-mermaid's default "inline-svg" strategy).
- * The SVG keeps mermaid's `mermaid-…` id, which the site styles via
- * `svg[id^='mermaid-']` in `global.css`.
+ * Renders via `mermaid-isomorphic` (headless Playwright browser) and replaces
+ * the `<pre>` with the rendered `<svg>`. The SVG keeps mermaid's `mermaid-…`
+ * id, which the site styles via `svg[id^='mermaid-']` in `global.css`.
  *
  * The SVG string is spliced in byte-for-byte, never parsed into hast
- * elements — parsing it (hast-util-from-html) camelCases SVG presentation
- * attributes (`marker-end` → `markerEnd`) and Sätteri's serializer only maps
- * some of them back, which silently dropped every arrowhead. The verbatim
- * mechanism differs per format:
+ * elements — parsing it camelCases SVG presentation attributes
+ * (`marker-end` → `markerEnd`) and Sätteri's serializer only maps some of
+ * them back, which silently drops arrowheads. The verbatim mechanism differs
+ * per format:
  * - `.md`: a `raw` hast node — the HTML renderer emits its value untouched.
  * - `.mdx`: a `raw` node would be COMPILED TO ESCAPED TEXT (the JSX compiler
  *   has no raw-HTML output), so return a `Fragment` JSX element carrying the
  *   SVG via `set:html` — the same mechanism `@astrojs/mdx`'s own
  *   `optimizeStatic` uses; Astro's MDX runtime always provides `Fragment`.
  *
- * Notes:
- * - Sätteri visitors may be async, and a filtered visitor's return value
- *   replaces the visited node — the two capabilities that make a build-time
- *   port possible (the community package `@xingwangzhe/satteri-mermaid` is
- *   client-side: it ships the diagram source for the browser to render,
- *   which violates this site's no-runtime-JS rule).
- * - Mermaid fences must be excluded from syntax highlighting
- *   (`markdown.syntaxHighlight.excludeLangs: ['mermaid']`) so this plugin
- *   receives the untouched `<pre><code>` (Expressive Code also leaves it
- *   alone). The fence language arrives as `data.lang` on the code element,
- *   same as the built-in highlight plugin reads it.
- * - A render failure throws and fails the build, matching rehype-mermaid.
+ * Mermaid fences must be excluded from syntax highlighting
+ * (`markdown.syntaxHighlight.excludeLangs: ['mermaid']`) so this plugin
+ * receives the untouched `<pre><code>`; the fence language arrives as
+ * `data.lang` on the code element. A render failure throws, failing the
+ * build.
  *
  * @param {object} [opts]
  * @param {object} [opts.mermaidConfig] Mermaid theme/config object passed to

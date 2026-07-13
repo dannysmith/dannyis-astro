@@ -1,6 +1,5 @@
 /**
  * Sätteri HAST plugin to unwrap images from their surrounding paragraph.
- * (Port of `rehype-unwrap-images.mjs`.)
  *
  * Markdown renders a lone image as `<p><img></p>`. When our `img -> BasicImage`
  * remapping (see `src/config/mdx-components`) turns that image into a block-level
@@ -18,7 +17,7 @@
  *
  * Logic vendored from `rehype-unwrap-images` (MIT © Titus Wormer and
  * contributors, https://github.com/rehypejs/rehype-unwrap-images) with its
- * `hast-util-whitespace` dependency inlined, same as the old plugin.
+ * `hast-util-whitespace` dependency inlined.
  */
 import { defineHastPlugin } from 'satteri';
 

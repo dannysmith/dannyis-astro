@@ -2,20 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { markdownToHtml } from 'satteri';
 import { satteriHeadingIdsPlugin } from '@astrojs/markdown-satteri';
 import { satteriAutolinkHeadings } from '../../src/lib/satteri-autolink-headings.mjs';
+import { astroData } from './satteri-helpers';
 
 type Heading = { depth: number; slug: string; text: string };
-
-/** The `data.astro` bag the processor seeds before plugins run. */
-function astroData() {
-  return {
-    astro: {
-      frontmatter: {},
-      headings: [] as Heading[],
-      localImagePaths: new Set<string>(),
-      remoteImagePaths: new Set<string>(),
-    },
-  };
-}
 
 /**
  * Render with the production plugin order: heading-IDs (factory, as in our

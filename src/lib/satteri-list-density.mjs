@@ -1,6 +1,5 @@
 /**
  * Sätteri HAST plugin to detect lists with long/paragraph-like items.
- * (Port of `rehype-list-density.mjs`.)
  *
  * Adds the class `long-list-items` to top-level ul/ol elements where the
  * average text length per list item exceeds a threshold. This allows CSS

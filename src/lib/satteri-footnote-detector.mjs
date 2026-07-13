@@ -1,6 +1,5 @@
 /**
  * Sätteri MDAST plugin to detect footnotes in Markdown/MDX content.
- * (Port of `remark-footnote-detector.mjs`.)
  *
  * Checks at build time whether the content contains any footnote definitions
  * (the `[^label]: content` part) and writes the result to the frontmatter bag

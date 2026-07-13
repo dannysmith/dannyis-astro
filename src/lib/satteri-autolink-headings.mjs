@@ -1,6 +1,5 @@
 /**
  * Sätteri HAST plugin to append a hover anchor link to every heading.
- * (Replaces `rehype-autolink-headings`.)
  *
  * Appends `<a href="#slug" aria-label="Link to “…”"></a>` to `h1`–`h6`. The
  * `#` glyph is rendered via CSS `::after` (see the heading-anchor rules in

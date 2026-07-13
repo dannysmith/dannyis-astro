@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { markdownToHtml, mdxToJs } from 'satteri';
 import { satteriMermaid } from '../../src/lib/satteri-mermaid.mjs';
 import { mermaidConfig } from '../../src/config/mermaid.js';
+import { astroData } from './satteri-helpers';
 
 const DIAGRAM = '```mermaid\ngraph TD;\n  A-->B;\n  A-->C;\n```\n';
 
@@ -49,14 +50,7 @@ describe('satteriMermaid', () => {
     async () => {
       const result = await mdxToJs(DIAGRAM, {
         hastPlugins: [satteriMermaid({ mermaidConfig })],
-        data: {
-          astro: {
-            frontmatter: {},
-            headings: [],
-            localImagePaths: new Set<string>(),
-            remoteImagePaths: new Set<string>(),
-          },
-        },
+        data: astroData(),
       });
       expect(result.code).toContain('"set:html"');
       expect(result.code).toContain('marker-end=');

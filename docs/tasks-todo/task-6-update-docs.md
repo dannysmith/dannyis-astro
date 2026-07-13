@@ -21,12 +21,14 @@ We'll need to upgrade the developer docs, READMEs, AGENTS.md and the like to acc
 - `README.md` had no stale references. `remarkPluginFrontmatter` mentions stay — that's still the live Astro API name.
 
 
-## Phase 2 - Review
+## Phase 2 - Review [DONE]
 
-- [ ] Review all the new satteri files in lib for:
-  - [ ] Any opportunities to clean up/refactor the code without affecting functionality
-  - [ ] The initial comments should clearly describe what the thing does and why it exists, and potentially use JSDOC format if that seems actually helpful, but should NOT be "AI slop" comments with tons of useless detail and non-evergreen references to phases, tasks, findings etc or repetitions of stuff obvious from the code below
-- [ ] Review all other new files we've written on this branch in a similar way. Keep things simple and concise.
+- [x] Review all the new satteri files in lib for:
+  - [x] Any opportunities to clean up/refactor the code without affecting functionality
+  - [x] The initial comments should clearly describe what the thing does and why it exists, and potentially use JSDOC format if that seems actually helpful, but should NOT be "AI slop" comments with tons of useless detail and non-evergreen references to phases, tasks, findings etc or repetitions of stuff obvious from the code below
+- [x] Review all other new files we've written on this branch in a similar way. Keep things simple and concise.
+
+Outcome: `satteri-mdx-imports` rebuilt on the shared `defineRootPlugin` helper (was duplicating its fire-once/climb-to-root mechanism and visitor-key list); all plugin headers de-slopped (dropped "Port of…" lines, task/spike/old-plugin references, community-package comparison) while keeping evergreen constraints (raw-splice rule, factory requirements, CSS-glyph rationale, vendored-code attribution); test suites share a new `tests/unit/satteri-helpers.ts` (`astroData`, `mdastCapturer`, `attr`/`hasAttr` were copy-pasted across 7 files); config comments trimmed of issue refs and one contradictory sentence. Left alone deliberately: the 9-line jscpd overlap between the two fence plugins (parallel by design; a shared factory would couple them) and pre-existing knip/jscpd noise in untouched files.
 
 
 ## Phase X - Final checks

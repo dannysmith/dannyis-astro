@@ -1,18 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mdxToJs, markdownToHtml } from 'satteri';
 import { satteriImageCaption } from '../../src/lib/satteri-image-caption.mjs';
-
-/** The `data.astro` bag as `@astrojs/mdx` seeds it before plugins run. */
-function astroData() {
-  return {
-    astro: {
-      frontmatter: {},
-      headings: [],
-      localImagePaths: new Set<string>(),
-      remoteImagePaths: new Set<string>(),
-    },
-  };
-}
+import { astroData } from './satteri-helpers';
 
 /** Compile MDX with the plugin and return the compiled JS. */
 async function compileMdx(source: string): Promise<string> {

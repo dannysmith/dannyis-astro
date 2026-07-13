@@ -1,49 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { mdxToJs, markdownToHtml, defineMdastPlugin } from 'satteri';
+import { mdxToJs, markdownToHtml } from 'satteri';
 import { satteriMarkdownPreview } from '../../src/lib/satteri-markdown-preview.mjs';
+import { astroData, attr, mdastCapturer } from './satteri-helpers';
 
-type JsxNode = { type: string; name?: string; attributes?: { name: string; value: unknown }[] };
-type CodeNode = { type: string; lang?: string | null };
-
-/** The `data.astro` bag as `@astrojs/mdx` seeds it before plugins run. */
-function astroData() {
-  return {
-    astro: {
-      frontmatter: {},
-      headings: [],
-      localImagePaths: new Set<string>(),
-      remoteImagePaths: new Set<string>(),
-    },
-  };
-}
-
-/**
- * Compile MDX with the plugin followed by a capture plugin (later plugins
- * visit earlier plugins' replacement nodes), returning what came through.
- */
+/** Compile MDX with the plugin followed by a capture plugin. */
 async function transform(source: string) {
-  const jsx: JsxNode[] = [];
-  const code: CodeNode[] = [];
-  const capturer = defineMdastPlugin({
-    name: 'capturer',
-    mdxJsxFlowElement(node: unknown) {
-      jsx.push(structuredClone(node) as JsxNode);
-    },
-    code(node: unknown) {
-      code.push(structuredClone(node) as CodeNode);
-    },
-  });
+  const capturer = mdastCapturer();
   const result = await mdxToJs(source, {
-    mdastPlugins: [satteriMarkdownPreview(), capturer],
+    mdastPlugins: [satteriMarkdownPreview(), capturer.plugin],
     data: astroData(),
   });
-  return { jsx, code, compiled: result.code };
-}
-
-/** Safely read an mdxJsxAttribute value by name. */
-function attr(node: JsxNode, name: string): string | undefined {
-  const a = node.attributes?.find(x => x.name === name);
-  return typeof a?.value === 'string' ? a.value : undefined;
+  return { jsx: capturer.jsx, code: capturer.code, compiled: result.code };
 }
 
 describe('satteriMarkdownPreview', () => {
