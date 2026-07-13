@@ -1,21 +1,9 @@
 import { defineConfig, svgoOptimizer } from 'astro/config';
-import AutoImport from 'astro-auto-import';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
-import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeExternalLinks from 'rehype-external-links';
-import rehypeMermaid from 'rehype-mermaid';
-import { mermaidConfig } from './src/config/mermaid.js';
-import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
-import { remarkFootnoteDetector } from './src/lib/remark-footnote-detector.mjs';
-import { remarkMarkdownPreview } from './src/lib/remark-markdown-preview.mjs';
-import { remarkTreeBlock } from './src/lib/remark-tree-block.mjs';
-import { remarkPageComponents } from './src/lib/remark-page-components.mjs';
-import { remarkImageCaption } from './src/lib/remark-image-caption.mjs';
-import { rehypeListDensity } from './src/lib/rehype-list-density.mjs';
-import { rehypeUnwrapImages } from './src/lib/rehype-unwrap-images.mjs';
+import { satteri } from '@astrojs/markdown-satteri';
+import { satteriMdxImports } from './src/lib/satteri-mdx-imports.mjs';
 import { pagefind } from './src/lib/pagefind-integration.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
@@ -36,6 +24,7 @@ const codeTheme = ExpressiveCodeTheme.fromJSONString(codeThemeJson);
 // need an explicit import in content. We derive the list from the barrel
 // itself (single source of truth) and keep only PascalCase exports — this
 // naturally excludes anything not meant to be hand-written as a `<Component>`.
+// The list feeds the satteriMdxImports plugin registered in `markdown` below.
 // Consequence: never explicitly import from `@components/mdx` in .mdx files —
 // the auto-injected import would collide (duplicate declaration).
 const mdxBarrelPath = './src/components/mdx/index.ts';
@@ -53,17 +42,6 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       exclude: ['@resvg/resvg-js'],
-    },
-    build: {
-      rollupOptions: {
-        // @astrojs/mdx ships a dynamically-imported satteri processor module that
-        // statically imports `satteri` + `@astrojs/markdown-satteri` (an optional
-        // peer dep we don't install while on the unified() processor). Rollup
-        // walks the dynamic import and warns it can't resolve them; @astrojs/react's
-        // onwarn escalates that to a build failure. The satteri branch is dead code
-        // for us, so marking these external is safe. (Removed in Task 3.)
-        external: ['satteri', '@astrojs/markdown-satteri'],
-      },
     },
   },
   image: {
@@ -85,11 +63,6 @@ export default defineConfig({
         },
       },
     }),
-    // Auto-import every MDX component (derived from the barrel above) so none
-    // need an explicit import in content. MUST come before mdx() below.
-    AutoImport({
-      imports: [{ [mdxBarrelPath]: mdxComponentNames }],
-    }),
     mdx({ gfm: true, smartypants: true }),
     sitemap({
       filter: page =>
@@ -102,30 +75,34 @@ export default defineConfig({
     pagefind(),
   ],
   markdown: {
-    // syntaxHighlight stays at the markdown level — `unified()` does not accept
-    // it. The processor passes it through untouched. MDX v6 extends this
-    // processor automatically (unlike v5, which only read the legacy arrays).
+    // syntaxHighlight stays at the markdown level; the processor reads it from
+    // there (Sätteri wires it into its own highlight HAST plugin, respecting
+    // excludeLangs). Heading IDs/slugs are native to @astrojs/markdown-satteri
+    // (github-slugger), so no plugin is needed for them.
     syntaxHighlight: {
       type: 'shiki',
       excludeLangs: ['mermaid'],
     },
-    processor: unified({
-      remarkPlugins: [
-        remarkReadingTime,
-        remarkFootnoteDetector,
-        remarkMarkdownPreview,
-        remarkTreeBlock,
-        remarkPageComponents,
-        remarkImageCaption,
-      ],
-      rehypePlugins: [
-        rehypeUnwrapImages,
-        rehypeHeadingIds,
-        [rehypeAutolinkHeadings, { behavior: 'append', content: { type: 'text', value: '#' } }],
-        [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
-        [rehypeMermaid, { mermaidConfig }],
-        rehypeListDensity,
-      ],
+    // Sätteri migration in progress (issue #132). The old unified() plugins in
+    // src/lib/ are kept on disk (unloaded) for reference until the port is done.
+    //
+    // TODO — still to port to Sätteri:
+    //   Task 4:
+    //   - [ ] remark-markdown-preview  (```md preview fences → <markdown-preview>)
+    //   - [ ] remark-tree-block        (```tree fences → <file-tree>)
+    //   - [ ] remark-image-caption     (image title → caption prop on BasicImage)
+    //   - [ ] rehype-unwrap-images     (strip <p> wrapper around lone images)
+    //   - [ ] rehype-external-links    (target=_blank + rel on external links)
+    //   - [ ] rehype-autolink-headings (append # anchor; must slug ids itself —
+    //         the native heading-ids plugin always runs AFTER user hastPlugins)
+    //   - [ ] rehype-list-density      (long-list-items class on prose-y lists)
+    //   Task 5:
+    //   - [ ] remark-reading-time      (minutesRead — approach TBD; mdx@7 DOES
+    //         round-trip ctx.data.astro.frontmatter writes, unlike v6)
+    //   - [ ] remark-footnote-detector (hasFootnotes — same)
+    //   - [ ] mermaid                  (@xingwangzhe/satteri-mermaid)
+    processor: satteri({
+      mdastPlugins: [satteriMdxImports({ componentNames: mdxComponentNames })],
     }),
   },
   redirects,
