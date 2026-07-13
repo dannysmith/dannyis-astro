@@ -81,7 +81,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "globals": "^17.7.0",
     "gray-matter": "^4.0.3",
-    "jscpd": "^4.2.5",
+    "jscpd": "^5.0.12",
     "knip": "^6.26.0",
     "pagefind": "^1.5.2",
     "playwright": "^1.61.1",
