@@ -1,5 +1,7 @@
 # Task 4: Port Content-Transform Plugins to Sätteri
 
+> **STATUS: code complete, all programmatic checks green — awaiting Danny's manual review of Phases 3–4 (Phases 1–2 already eyeballed and committed).** See **Completion notes** at the bottom, including Sätteri plugin-API learnings for future work.
+
 ## Overview
 
 With the site building on Sätteri (Task 2), restore the content-transform plugins one group at a time, **verifying each against real content in both themes** before moving on. These are the mechanical ports — grouped into phases by theme, simplest first.
@@ -53,3 +55,25 @@ Verify: long-item lists get generous spacing; short/nested lists unaffected.
 - Plugins: `src/lib/remark-markdown-preview.mjs`, `remark-tree-block.mjs`, `remark-image-caption.mjs`, `rehype-unwrap-images.mjs`, `rehype-list-density.mjs`
 - `BasicImage`: `src/components/mdx/BasicImage.astro`
 - Sätteri HAST example (external-links): <https://satteri.bruits.org/docs/>
+
+---
+
+## Completion notes
+
+### What shipped
+
+All seven plugins ported as `src/lib/satteri-*.mjs` (old files untouched on disk), each with a unit suite driving the real Sätteri compile API (`markdownToHtml`/`mdxToJs`) — 72 new tests across the seven suites. Registered in `astro.config.mjs`:
+
+- **mdastPlugins:** `satteriMdxImports` → `satteriMarkdownPreview` → `satteriTreeBlock` (fence plugins gated to `.mdx` via `ctx.sourceFormat`).
+- **hastPlugins:** `() => satteriHeadingIdsPlugin()` (factory! see below) → `satteriAutolinkHeadings` → `satteriUnwrapImages` → `satteriImageCaption` → `satteriExternalLinks` → `satteriListDensity`.
+- `_typography.css`: heading-anchor `#` glyph now CSS-generated (`::after`) — the anchor is an empty `<a href="#slug" aria-label="Link to “…”">` so the trailing native heading-IDs run records clean TOC text. Verified: TOC entries in `speeding-up-astro-builds` have no `#` suffix; anchors render inside headings.
+- External links: verified `target`/`rel` on external `.md` links, danny.is links untouched (SmartLink-aligned semantics, as agreed).
+- Captions/unwrap: figcaptions carry image-title text; zero empty `<p></p>`; Grid gets `<figure>` as direct children. Fence components render in all pages using them (EC's `language "tree"` warnings gone).
+
+### ⚠️ Sätteri plugin-API learnings (for future plugins)
+
+- **`ctx.replaceNode(node, newNode)` takes a SINGLE node** — no array support (unlike `insertBefore`/`insertAfter`/`prependChild`). To replace one node with several: `ctx.insertBefore(node, array)` + `ctx.removeNode(node)`.
+- **Read-only nodes can't be re-inserted as new content**, and `structuredClone` on them leaks internal fields (`_resolver`, `_id`) that make the op-stream encoder throw. Hand-roll a plain spec-shape copy (see `toPlain` in `satteri-unwrap-images.mjs`).
+- **`satteriHeadingIdsPlugin()` builds its slugger at construction** — registering a bare instance in config would leak slug dedup across every document in the build (`my-heading-1`, `-2`, …). Register the factory form `() => satteriHeadingIdsPlugin()`. Covered by a unit test (two documents, same heading → same slug).
+- hast property names use the unified camelCase convention (`ariaLabel` → `aria-label`, `className` → `class`) and serialize correctly.
+- A later plugin's visitors DO fire on nodes freshly built by an earlier plugin (used by the test-suite "capture plugin" pattern: register a recorder plugin after the one under test and `structuredClone` what it sees).
