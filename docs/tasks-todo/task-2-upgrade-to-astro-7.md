@@ -1,6 +1,6 @@
 # Task 2: Upgrade to Astro 7 (staying on `unified()`)
 
-> **STATUS: DONE.** Site is on Astro 7.0.8 / Vite 8, still on the `unified()` pipeline, `bun run build` + `bun run check:all` green. Merged to `main` via PR to verify CI + deploy. See **Completion notes** below for what actually happened and the context Task 3 needs.
+> **STATUS: DONE & SHIPPED.** Site is on Astro 7.0.8 / Vite 8, still on the `unified()` pipeline. Merged to `main`, deployed to production, and verified working live. `bun run build` + `bun run check:all` green. See **Completion notes** below for what actually happened and the context Tasks 3–5 need — in particular the **phantom-dependency gotcha**, which will very likely recur during the Sätteri cutover.
 
 ## Overview
 
@@ -52,7 +52,22 @@ Astro 7's Rust `.astro` compiler is stricter (unclosed/malformed tags now error;
 ## Completion notes
 
 ### Final versions
-Astro **7.0.8**, `@astrojs/mdx` **7.0.3**, `@astrojs/react` **6.0.1**, `@astrojs/markdown-remark` **7.2.1**, `@astrojs/rss` **4.0.19**, **Vite 8.1.4** (deduped to a single copy across the tree). Still on `markdown.processor: unified({...})` — Sätteri is **not** installed yet (Task 3).
+Astro **7.0.8**, `@astrojs/mdx` **7.0.3**, `@astrojs/react` **6.0.1**, `@astrojs/markdown-remark` **7.2.1**, `@astrojs/rss` **4.0.19**, **Vite 8.1.4** (deduped to a single copy across the tree). Plus explicit `rehype` / `unist-util-visit` / `@types/hast` (see phantom-dep note below). Still on `markdown.processor: unified({...})` — Sätteri is **not** installed yet (Task 3).
+
+### ⚠️ Phantom-dependency gotcha — READ BEFORE Task 3
+
+The PR's **first CI run failed on both jobs while everything passed locally** — a stale-`node_modules`-vs-frozen-lockfile trap that will very likely recur during the Sätteri cutover:
+
+- `src/lib/tabs/process-panels.ts` imports `rehype`, `unist-util-visit`, and `hast` (types), but **none were declared in `package.json`.** Astro **6** supplied `rehype` (+ `unist-util-visit`) *transitively*, so the phantom imports resolved locally and on Astro-6 CI.
+- **Astro 7 dropped `rehype` from its own dependencies**, so it vanished from `bun.lock`. Local builds kept passing on **leftover** `node_modules`, but CI's `bun install --frozen-lockfile` produces a clean tree → `rehype` unresolved → **Build** fails (`Rolldown failed to resolve import "rehype"`, escalated to an error by `@astrojs/react`'s `onwarn`) and **Check** fails (`tsc … error TS2307: Cannot find module 'rehype'`).
+- **Fix:** declared `rehype` + `unist-util-visit` (dependencies) and `@types/hast` (dev) explicitly.
+
+**Why this bites again in Tasks 3–5:** the cutover **removes** `@astrojs/markdown-remark`, `astro-auto-import`, `rehype-autolink-headings`, `rehype-external-links`, `rehype-mermaid`, and the `unified()` processor. Any of those may be the *transitive* provider of a package our own `src/` code imports directly — removing them can expose the **next** phantom dep exactly the same way. Rule of thumb: **anything `src/` imports must be a declared dependency.**
+
+**Verification practice — do this before every push once you start removing deps:** reproduce CI's clean environment; a green build on a stale `node_modules` proves nothing.
+```
+rm -rf node_modules && bun install --frozen-lockfile && bun run build && bun run check:all
+```
 
 ### What went smoothly
 - `bunx @astrojs/upgrade` handled the `astro` + `@astrojs/*` bumps. No `.astro` Rust-compiler strictness errors surfaced (no unclosed-tag fixes needed).
@@ -61,7 +76,8 @@ Astro **7.0.8**, `@astrojs/mdx` **7.0.3**, `@astrojs/react` **6.0.1**, `@astrojs
 
 ### Fixes made along the way (context for Task 3)
 - **`getContainerRenderer`** moved to `@astrojs/mdx/container-renderer` in the 3 RSS files (old root import deprecated in v7).
-- **Playwright e2e / dev server:** Astro 7 auto-backgrounds `astro dev` when it detects an agent, breaking Playwright's web server. Fixed in `playwright.config.ts` with `ASTRO_DEV_BACKGROUND=1` (forces foreground) + a `url` health-check. **Also:** bumping `playwright` requires `bunx playwright install` (build-time mermaid rendering via `rehype-mermaid` uses the headless browser). CI handles this (cache keyed on `bun.lock`); it only bites locally.
+- **Playwright e2e / dev server:** Astro 7 auto-backgrounds `astro dev` when it detects an agent, breaking Playwright's web server. Fixed in `playwright.config.ts` by setting `ASTRO_DEV_BACKGROUND=1` via the webServer `env` property (forces foreground) + a `url` health-check. **Also:** bumping `playwright` requires `bunx playwright install` (build-time mermaid rendering via `rehype-mermaid` uses the headless browser). CI handles this (cache keyed on `bun.lock`); it only bites locally.
+- **CodeRabbit review nitpicks folded in:** playwright `env` property (above); styleguide TOC `@supports` tightened to `(scroll-target-group: auto) and selector(:target-current)`. (CodeRabbit also flagged `astro@7.0.8` as "unavailable" — a false positive; 7.0.8 is the published latest.)
 - **Dependency alignment** (same PR): `sharp` → **0.35.3** (Astro 7 supports `^0.34 || ^0.35`); the `vitest` bump collapsed the tree to a single **Vite 8**; plus routine minor/patch bumps. Prettier 3.9 reformatted 2 files (union-type collapsing).
 - **ESLint `.astro` tooling → v3** (`eslint-plugin-astro@3` + `astro-eslint-parser@3` + new `eslint-plugin-jsx-a11y@6.10.2` peer). Gotchas that persist:
   - `astro-eslint-parser@3`'s Rust parser **crashes on a self-closing `<script … />`**. `src/components/mdx/Embed.astro` was changed to an explicitly-closed `<script>…</script>`. **Don't reintroduce self-closing `<script/>` in `.astro` files.**
