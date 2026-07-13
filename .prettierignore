@@ -5,3 +5,6 @@
 # Content — prose managed manually
 *.md
 *.mdx
+
+# Gitignored scratch area for in-progress task work
+docs/tasks-todo/temporary/
