@@ -88,7 +88,6 @@ If you have persistent false positives, add them to `knip.config.ts`:
 ```typescript
 ignoreDependencies: [
   '@iconify-json/heroicons', // icon set consumed by astro-icon, not imported directly
-  'mermaid', // used by the rehype-mermaid plugin
 ],
 ```
 

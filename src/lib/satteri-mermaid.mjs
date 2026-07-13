@@ -33,8 +33,8 @@
  * - A render failure throws and fails the build, matching rehype-mermaid.
  *
  * @param {object} [opts]
- * @param {import('mermaid').MermaidConfig} [opts.mermaidConfig] Theme/config
- *   passed to mermaid (see `src/config/mermaid.js`).
+ * @param {object} [opts.mermaidConfig] Mermaid theme/config object passed to
+ *   the renderer (see `src/config/mermaid.js`).
  */
 import { createMermaidRenderer } from 'mermaid-isomorphic';
 import { defineHastPlugin } from 'satteri';

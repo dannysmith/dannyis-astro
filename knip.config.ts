@@ -8,5 +8,5 @@ export default {
     'tests/**/*.{test,spec}.ts',
   ],
   project: ['src/**/*.{ts,tsx,astro}', 'scripts/**/*.{ts,js}', 'tests/**/*.ts'],
-  ignoreDependencies: ['@iconify-json/heroicons', 'mermaid'],
+  ignoreDependencies: ['@iconify-json/heroicons'],
 } satisfies KnipConfig;

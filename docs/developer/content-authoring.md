@@ -79,7 +79,7 @@ pubDate: 2025-01-15
 
 ## MDX Components
 
-Every component exported from `src/components/mdx/index.ts` is **auto-imported** into all `.mdx` content (via `astro-auto-import`, configured in `astro.config.mjs`). Just use them — no `import` line needed.
+Every component exported from `src/components/mdx/index.ts` is **auto-imported** into all `.mdx` content (via the `satteri-mdx-imports` plugin, configured in `astro.config.mjs`). Just use them — no `import` line needed.
 
 > **Don't import these explicitly.** Adding `import { Callout } from '@components/mdx';` to an `.mdx` file collides with the auto-injected import and breaks the build (`Identifier "Callout" has already been declared`). Only import things that _aren't_ in that barrel (e.g. image assets, or a one-off component from elsewhere).
 
@@ -145,11 +145,11 @@ gallery. Captions and the lightbox still work, and the images flow into the grid
 </Grid>
 ```
 
-(This works because the `rehypeUnwrapImages` build plugin lifts each image out of its
+(This works because the `satteri-unwrap-images` build plugin lifts each image out of its
 wrapping paragraph so the figures become direct children of the grid — see
 `docs/developer/content-system.md`.)
 
-**FileTree** - File/directory trees from a plain-text `tree` fenced code block (no import — a build-time remark plugin renders it):
+**FileTree** - File/directory trees from a plain-text `tree` fenced code block (no import — a build-time markdown plugin renders it):
 
 ````md
 ```tree title="src/" {3}
