@@ -8,6 +8,16 @@ The public visual styleguide for danny.is (served at `/styleguide`). Reference f
 - Do not make edits in here without the user's explicit permission.
 - Do not rewrite any of the explanatory prose in here without the user explicitly asking you to.
 
+## Table of contents (per-page `toc`)
+
+Each routed page defines a `const toc = [{ id, label }, …]` and passes it to `StyleguideLayout`, which renders a sticky sidebar. Highlighting-as-you-scroll is a **CSS-only scroll-spy** (`scroll-target-group` / `:target-current`) — experimental, Chrome 140+ only, and a pure progressive enhancement (it simply doesn't highlight in other browsers).
+
+When you add, remove, or reorder a **major section heading** on a page, update that page's `toc` to match:
+
+- Every `toc` entry's `id` must equal the `id` on the section it points to (usually `<section id="…">`), or it can never be highlighted.
+- Keep `toc` entries in **document order** so the highlight moves top-to-bottom as you scroll.
+- Conversely, a major section with **no** `toc` entry won't be tracked — add one.
+
 ## Directory structure
 
 Each routed page is a top-level `.astro` file; underscore-prefixed directories are helpers and are not routed:

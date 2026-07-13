@@ -56,12 +56,12 @@ export default defineConfig({
     },
     build: {
       rollupOptions: {
-        // @astrojs/mdx v6 ships a dynamically-imported satteri processor module
-        // that statically imports `satteri` + `@astrojs/markdown-satteri` (an
-        // optional peer dep we don't install). Rollup walks the dynamic import
-        // and warns it can't resolve them; @astrojs/react's onwarn escalates
-        // that to a build failure. We use the unified() processor, so the
-        // satteri branch is dead code — marking these external is safe.
+        // @astrojs/mdx ships a dynamically-imported satteri processor module that
+        // statically imports `satteri` + `@astrojs/markdown-satteri` (an optional
+        // peer dep we don't install while on the unified() processor). Rollup
+        // walks the dynamic import and warns it can't resolve them; @astrojs/react's
+        // onwarn escalates that to a build failure. The satteri branch is dead code
+        // for us, so marking these external is safe. (Removed in Task 3.)
         external: ['satteri', '@astrojs/markdown-satteri'],
       },
     },
