@@ -46,8 +46,10 @@
     font-size: var(--font-size-base);
   }
 
-  /* Heading anchor links (injected by rehype-autolink-headings).
-     A floating "#" after the heading, revealed on hover/focus. */
+  /* Heading anchor links (injected by satteri-autolink-headings).
+     A floating "#" after the heading, revealed on hover/focus. The anchor is
+     empty and the glyph is CSS-generated: literal text inside the heading
+     would pollute the TOC text recorded by the heading-IDs plugin. */
   :is(h1, h2, h3, h4, h5, h6) > a[href^='#'] {
     margin-left: 0.3em;
     font-size: 0.7em;
@@ -55,6 +57,10 @@
     text-decoration: none;
     opacity: 0;
     transition: opacity var(--duration-fast) var(--ease-in-out);
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) > a[href^='#']::after {
+    content: '#';
   }
 
   :is(h1, h2, h3, h4, h5, h6):hover > a[href^='#'],

@@ -2,12 +2,15 @@ import { defineConfig, svgoOptimizer } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
-import { satteri } from '@astrojs/markdown-satteri';
+import { satteri, satteriHeadingIdsPlugin } from '@astrojs/markdown-satteri';
 import { satteriMdxImports } from './src/lib/satteri-mdx-imports.mjs';
 import { satteriMarkdownPreview } from './src/lib/satteri-markdown-preview.mjs';
 import { satteriTreeBlock } from './src/lib/satteri-tree-block.mjs';
 import { satteriImageCaption } from './src/lib/satteri-image-caption.mjs';
 import { satteriUnwrapImages } from './src/lib/satteri-unwrap-images.mjs';
+import { satteriAutolinkHeadings } from './src/lib/satteri-autolink-headings.mjs';
+import { satteriExternalLinks } from './src/lib/satteri-external-links.mjs';
+import { satteriListDensity } from './src/lib/satteri-list-density.mjs';
 import { pagefind } from './src/lib/pagefind-integration.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
@@ -96,10 +99,9 @@ export default defineConfig({
     //   - [x] remark-tree-block        → satteri-tree-block
     //   - [x] remark-image-caption     → satteri-image-caption (now HAST-stage)
     //   - [x] rehype-unwrap-images     → satteri-unwrap-images
-    //   - [ ] rehype-external-links    (target=_blank + rel on external links)
-    //   - [ ] rehype-autolink-headings (append # anchor; must slug ids itself —
-    //         the native heading-ids plugin always runs AFTER user hastPlugins)
-    //   - [ ] rehype-list-density      (long-list-items class on prose-y lists)
+    //   - [x] rehype-external-links    → satteri-external-links
+    //   - [x] rehype-autolink-headings → satteri-autolink-headings
+    //   - [x] rehype-list-density      → satteri-list-density
     //   Task 5:
     //   - [ ] remark-reading-time      (minutesRead — approach TBD; mdx@7 DOES
     //         round-trip ctx.data.astro.frontmatter writes, unlike v6)
@@ -111,7 +113,20 @@ export default defineConfig({
         satteriMarkdownPreview(),
         satteriTreeBlock(),
       ],
-      hastPlugins: [satteriUnwrapImages(), satteriImageCaption()],
+      hastPlugins: [
+        // Heading IDs must exist before the autolink plugin reads them. The
+        // built-in heading-IDs pass runs AFTER user plugins (hardcoded), so we
+        // register it here too — the officially supported idempotent pattern
+        // (withastro/astro#17165); the trailing run respects our ids. MUST be
+        // a factory: the plugin builds its slugger at construction, so a
+        // shared instance would leak slug dedup across documents.
+        () => satteriHeadingIdsPlugin(),
+        satteriAutolinkHeadings(),
+        satteriUnwrapImages(),
+        satteriImageCaption(),
+        satteriExternalLinks(),
+        satteriListDensity(),
+      ],
     }),
   },
   redirects,
