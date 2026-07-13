@@ -32,9 +32,7 @@ type ContentType = 'article' | 'note' | 'tool' | 'custom';
 interface Props {
   /** Content collection entry - auto-extracts all data */
   content?:
-    | CollectionEntry<'articles'>
-    | CollectionEntry<'notes'>
-    | CollectionEntry<'toolboxPages'>;
+    CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'toolboxPages'>;
 
   /** Manual props for custom/slot usage (when no content prop) */
   href?: string;

@@ -227,8 +227,7 @@ const hasMetaRow = showMeta || showOpenLink;
 
     loadVidstack().then(() => {
       const player = wrapper.querySelector('media-player') as
-        | (HTMLElement & { play: () => Promise<void> })
-        | null;
+        (HTMLElement & { play: () => Promise<void> }) | null;
       if (!player) return;
 
       player.addEventListener('error', () => showUnavailable(figure), { once: true });
