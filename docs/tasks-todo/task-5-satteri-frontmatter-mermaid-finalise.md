@@ -12,7 +12,9 @@ Restore the last two feature groups — frontmatter-writing plugins and Mermaid 
 
 **Task 1 finding:** the `ctx.data.astro.frontmatter` write-back works for `.md` but is **silently dropped for `.mdx`** (`@astrojs/mdx` v6 exports `frontmatter` from the original parsed YAML and never reads the Sätteri data bag back). Porting `remark-reading-time` / `remark-footnote-detector` as-is would lose `minutesRead` / `hasFootnotes` on all **76 `.mdx` files** (23 articles + 53 notes).
 
-**Approach:** compute both **outside** the markdown pipeline, from `entry.body` (raw markdown), so it's format-agnostic and works uniformly for `.md` and `.mdx`. This deletes both remark plugins entirely.
+**⚠️ Task 3 finding — the above is FIXED in `@astrojs/mdx` v7:** its Sätteri path seeds `data.astro.frontmatter` into `mdxToJs` and exports the **read-back** value, so frontmatter writes round-trip for `.mdx` too. Both approaches are now viable — **re-evaluate here** (per Danny): (a) port both as small Sätteri MDAST plugins writing to the frontmatter bag (closest to today), or (b) compute from `entry.body` outside the pipeline and delete both plugins. Weigh: (b) is pipeline-independent and simpler config, but `entry.body` includes raw MDX/ESM syntax in the word count where (a) counts rendered text; and routed `.mdx` pages (not collections) have no `entry.body`, though only collections use these values today.
+
+**Approach (pre-finding, now one of two options):** compute both **outside** the markdown pipeline, from `entry.body` (raw markdown), so it's format-agnostic and works uniformly for `.md` and `.mdx`. This deletes both remark plugins entirely.
 
 - **Reading time** — a shared util (`reading-time` over `entry.body`) called where entries are loaded/rendered (content-collection config `transform`, or the Article/Note layouts + `writing/[...slug]/index.astro`, which already read `minutesRead`).
 - **Footnote detection** — derive `hasFootnotes` from `entry.body` (e.g. presence of `[^…]:` definitions) in the same place.

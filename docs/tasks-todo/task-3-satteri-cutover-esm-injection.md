@@ -1,5 +1,7 @@
 # Task 3: Cutover — MDX ESM Auto-Injection + Flip to Sätteri
 
+> **STATUS: DONE.** All programmatic checks green; manually verified by Danny in the dev server. The site builds on Sätteri (`satteri@0.9.5` / `@astrojs/markdown-satteri@0.3.4`). See **Completion notes** at the bottom — including two findings from `@astrojs/mdx` v7's Sätteri wiring that reshape Tasks 4 and 5.
+
 ## Overview
 
 Build the one foundational plugin the whole migration hinges on — **module-level ESM injection into MDX** — and then **flip the live processor to `satteri()`**. After this task the site builds on Sätteri. Remaining features (captions, autolinks, reading-time, mermaid, …) will be *degraded but building*, and restored one at a time in Tasks 3–4, each verified against real content.
@@ -54,6 +56,38 @@ We build our own rather than depend on `@bhdouglass/satteri-auto-imports@0.0.1` 
 
 ## References
 
-- Current config: `astro.config.ts`
+- Current config: `astro.config.mjs`
 - Current plugins: `src/lib/remark-page-components.mjs`
 - Reference impl: `@bhdouglass/satteri-auto-imports` — <https://gitlab.com/bhdouglass/satteri-plugins>
+
+---
+
+## Completion notes
+
+### What shipped
+
+- **`src/lib/satteri-mdx-imports.mjs`** — one MDAST plugin covering both Phase 1 (barrel auto-imports) and Phase 2 (Page.astro `export const components`), with unit tests in `tests/unit/satteri-mdx-imports.test.ts` (12 tests, run against the real `mdxToJs`/`markdownToHtml` compile API — Sätteri plugins are pleasantly unit-testable this way).
+- `astro.config.mjs` flipped to `satteri()`. Deleted from config: `AutoImport` integration, `rehypeHeadingIds`, all unified plugin registrations, the vite `rollupOptions.external` hack. The old `src/lib/remark-*`/`rehype-*` plugins **stay on disk unloaded** (with their unit tests still passing) as reference until the migration completes — per Danny. `astro-auto-import` and the rehype packages stay in `package.json` until the Task 5 dependency cleanup.
+- A `TODO` checklist comment in `astro.config.mjs` tracks the unported plugins for Tasks 4–5.
+
+### Improvements over the spike draft (`temporary/satteri-spike/satteri-mdx-imports.mjs.reference`)
+
+- Reads `layout` from **`ctx.data.astro.frontmatter`** (seeded by `@astrojs/mdx` v7 before plugins run) instead of gray-matter-parsing the raw `yaml` node — no extra dependency.
+- Detects a user's own `export const components` by scanning `root.children` at injection time (via `node.parseExpression()` with a regex fallback) — the draft's visitor-ordering approach missed an ESM node placed *after* the first block. Injection itself: climb to root via `ctx.parent()`, `ctx.prependChild(root, nodes)`.
+- Gates on `ctx.sourceFormat === 'mdx'` instead of sniffing `fileURL`.
+
+### ⚠️ Finding 1 — mdx@7 DOES round-trip frontmatter writes (reshapes Task 5)
+
+Task 1's caveat ("frontmatter injection silently dropped for `.mdx`") was true of `@astrojs/mdx` **v6** but is **fixed in v7**: `dist/satteri/index.js` seeds `data: { astro: { frontmatter } }` into `mdxToJs` and exports the **read-back** `result.data.astro.frontmatter` (with an `isFrontmatterValid` guard). So `minutesRead`/`hasFootnotes` *could* be ported as ordinary Sätteri plugins writing to the frontmatter bag — the entry.body approach is no longer forced. Re-evaluate in Task 5.
+
+### ⚠️ Finding 2 — native heading-IDs run AFTER user hastPlugins (reshapes Task 4)
+
+In both the `.md` (`satteri-processor.js`) and `.mdx` wiring, plugin order is hardcoded: highlight → **user hastPlugins** → image marker/component → **heading-IDs** → (mdx only) astro metadata. So Task 4's "autolink must run after native heading-IDs" is impossible via ordering. Fix: the autolink plugin slugs headings itself (github-slugger, already a transitive dep of `@astrojs/markdown-satteri`) and sets `id`; the native plugin respects an existing `id` and still records it into `astro.headings` for TOCs.
+
+### Verification
+
+- `bun run build` green **first try** — zero Sätteri parser-strictness fallout across all 124 `.md` + 76 `.mdx` files; 208 pages.
+- Built-output spot checks: `<Callout>` renders as component; heading `id`s native; `/now` links render through SmartLink (`class="external"` + target/rel) proving the injected `export const components` works; native GFM footnotes render; no `undefined` leaks from the missing `minutesRead`.
+- Expected degradations confirmed (all restored in Tasks 4–5): md-preview/tree/mermaid fences render as plain code blocks (EC warns `language "tree" … not found` at build — goes away in Task 4); no heading anchors; no `target="_blank"` on external links in plain-`.md` content (`.mdx` unaffected — SmartLink does it); no image captions/unwrapping; no `minutesRead`/`hasFootnotes`.
+- `bun run check:all` green (incl. 14/14 e2e) **in a clean env** (`rm -rf node_modules && bun install --frozen-lockfile`) — no phantom deps exposed.
+- Build no longer needs a headless browser (that was `rehype-mermaid`) — CI's playwright install still needed for e2e only.

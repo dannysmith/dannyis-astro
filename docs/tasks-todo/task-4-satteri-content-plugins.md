@@ -29,7 +29,7 @@ Verify: lone images render as clean `<figure>` with captions; `Grid` layout with
 ### Phase 3 — Links & headings (easy reimplements)
 
 - **`rehype-external-links`** replacement (HAST) — Sätteri docs ship this as their example: filter `element` `["a"]`, add `target="_blank"` + `rel="noopener noreferrer"` for external hosts. Add the external-host check.
-- **`rehype-autolink-headings`** replacement (HAST) — filter `h1`–`h6`, append an `<a href="#id">#</a>`. **Must run after** the native heading-IDs plugin so `id` exists (order in `hastPlugins`).
+- **`rehype-autolink-headings`** replacement (HAST) — filter `h1`–`h6`, append an `<a href="#id">#</a>`. **⚠️ Task 3 finding: running after the native heading-IDs plugin is impossible** — both the `.md` and `.mdx` wiring hardcode heading-IDs *after* user `hastPlugins`. Instead our plugin must slug headings itself (`github-slugger`, matching the native logic) and set `id`; the native plugin respects an existing `id` and still records it into `astro.headings` for TOCs.
 
 Verify: external links open in new tab with rel; heading anchors present and clickable; internal links untouched.
 
