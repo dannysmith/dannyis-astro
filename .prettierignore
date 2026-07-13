@@ -8,3 +8,9 @@
 
 # Gitignored scratch area for in-progress task work
 docs/tasks-todo/temporary/
+
+# Its gist embed needs an explicitly-closed <script></script> (a self-closing
+# <script/> crashes astro-eslint-parser v3). prettier keeps re-collapsing it to a
+# self-close and prettier-ignore comments don't work in .astro
+# (prettier-plugin-astro#410), so the whole file is excluded. Format it by hand.
+src/components/mdx/Embed.astro
