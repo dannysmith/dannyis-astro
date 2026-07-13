@@ -182,12 +182,14 @@ const { title, description, current, toc = [] } = Astro.props;
           margin-block-end: var(--space-3xs);
         }
 
-        .sg-toc ul {
-          scroll-target-group: auto;
-        }
+        @supports (scroll-target-group: auto) and selector(:target-current) {
+          .sg-toc ul {
+            scroll-target-group: auto;
+          }
 
-        .sg-toc a:target-current {
-          color: var(--color-accent);
+          .sg-toc a:target-current {
+            color: var(--color-accent);
+          }
         }
       }
 
