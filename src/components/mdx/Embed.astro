@@ -102,7 +102,10 @@ const embed = resolveEmbedType(url);
 {embed.type === 'vimeo' && <Vimeo id={embed.id} />}
 {embed.type === 'loom' && <Loom id={embed.id} />}
 {embed.type === 'lcvid' && <LCVid src={embed.src} className={className} />}
-{embed.type === 'gist' && <script is:inline src={`https://gist.github.com/${embed.id}.js`} />}
+{/* NOTE: <script> is explicitly closed (not self-closed) because a self-closing <script/> crashes
+    astro-eslint-parser v3. prettier-ignore comments don't work in .astro (prettier-plugin-astro#410),
+    so this file is listed in .prettierignore to stop prettier re-collapsing it to a self-close. */}
+{embed.type === 'gist' && <script is:inline src={`https://gist.github.com/${embed.id}.js`}></script>}
 {embed.type === 'bluesky' && <BlueskyPost id={embed.url} />}
 {embed.type === 'mastodon' && <MastodonPost id={embed.url} />}
 {embed.type === 'bookmark' && <BookmarkCard url={embed.url} className={className} />}
