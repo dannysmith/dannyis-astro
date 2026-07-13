@@ -4,6 +4,10 @@ import sitemap from '@astrojs/sitemap';
 
 import { satteri } from '@astrojs/markdown-satteri';
 import { satteriMdxImports } from './src/lib/satteri-mdx-imports.mjs';
+import { satteriMarkdownPreview } from './src/lib/satteri-markdown-preview.mjs';
+import { satteriTreeBlock } from './src/lib/satteri-tree-block.mjs';
+import { satteriImageCaption } from './src/lib/satteri-image-caption.mjs';
+import { satteriUnwrapImages } from './src/lib/satteri-unwrap-images.mjs';
 import { pagefind } from './src/lib/pagefind-integration.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
@@ -88,10 +92,10 @@ export default defineConfig({
     //
     // TODO — still to port to Sätteri:
     //   Task 4:
-    //   - [ ] remark-markdown-preview  (```md preview fences → <markdown-preview>)
-    //   - [ ] remark-tree-block        (```tree fences → <file-tree>)
-    //   - [ ] remark-image-caption     (image title → caption prop on BasicImage)
-    //   - [ ] rehype-unwrap-images     (strip <p> wrapper around lone images)
+    //   - [x] remark-markdown-preview  → satteri-markdown-preview
+    //   - [x] remark-tree-block        → satteri-tree-block
+    //   - [x] remark-image-caption     → satteri-image-caption (now HAST-stage)
+    //   - [x] rehype-unwrap-images     → satteri-unwrap-images
     //   - [ ] rehype-external-links    (target=_blank + rel on external links)
     //   - [ ] rehype-autolink-headings (append # anchor; must slug ids itself —
     //         the native heading-ids plugin always runs AFTER user hastPlugins)
@@ -102,7 +106,12 @@ export default defineConfig({
     //   - [ ] remark-footnote-detector (hasFootnotes — same)
     //   - [ ] mermaid                  (@xingwangzhe/satteri-mermaid)
     processor: satteri({
-      mdastPlugins: [satteriMdxImports({ componentNames: mdxComponentNames })],
+      mdastPlugins: [
+        satteriMdxImports({ componentNames: mdxComponentNames }),
+        satteriMarkdownPreview(),
+        satteriTreeBlock(),
+      ],
+      hastPlugins: [satteriUnwrapImages(), satteriImageCaption()],
     }),
   },
   redirects,
