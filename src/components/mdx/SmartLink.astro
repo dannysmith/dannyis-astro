@@ -1,12 +1,12 @@
 ---
 export interface Props {
-  href: string;
-  [key: string]: any;
+  href: string
+  [key: string]: any
 }
 
-const { href, ...props } = Astro.props;
+const { href, ...props } = Astro.props
 
-const isExternal = href?.startsWith('http') && !href.includes('danny.is');
+const isExternal = href?.startsWith('http') && !href.includes('danny.is')
 ---
 
 <a
@@ -18,9 +18,14 @@ const isExternal = href?.startsWith('http') && !href.includes('danny.is');
 >
 
 <style>
+  .external {
+    position: relative;
+    padding-inline-end: 0.37em;
+  }
+
   .external::after {
     content: '↗';
-    display: inline-block;
+    position: absolute;
     font-family:
       system-ui,
       -apple-system,
@@ -29,6 +34,7 @@ const isExternal = href?.startsWith('http') && !href.includes('danny.is');
     font-weight: 600;
     vertical-align: 0.5em;
     margin-inline-start: 0.1em;
+    translate: 0 0.25em;
     opacity: 0.5;
   }
 </style>
