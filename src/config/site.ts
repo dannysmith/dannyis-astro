@@ -119,12 +119,6 @@ export const CONFIG = {
       url: 'https://betterat.work',
       description: 'Consulting practice',
     },
-    {
-      id: 'toolbox',
-      name: 'Toolbox',
-      url: 'https://betterat.work/toolbox',
-      description: 'Collection of tools and frameworks',
-    },
   ],
 
   // Organization (for schema.org - the consulting business)

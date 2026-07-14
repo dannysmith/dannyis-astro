@@ -25,7 +25,7 @@ const ABOUT_CONTENT = `Danny helps companies build healthy remote teams and opti
 This site serves as Danny's corner of the web - a place to share thoughts, experiences, and work, as well as a creative playground for experimenting with CSS, HTML, and AI-assisted development.`;
 
 // Pages to exclude from "Other Pages" (matched against URL path)
-const EXCLUDED_PAGES = ['/scratchpad/', '/toolboxtest/', '/404/'];
+const EXCLUDED_PAGES = ['/scratchpad/', '/404/'];
 
 // Styleguide pages get their own section below, with hand-written titles, and
 // are excluded from the auto-discovered "Other Pages" list.

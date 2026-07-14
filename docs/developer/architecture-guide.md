@@ -270,7 +270,6 @@ Redirects configured in `src/config/redirects.ts` - DO NOT BREAK THESE URLs:
 - `/linkedin` → LinkedIn profile
 - `/youtube` → YouTube channel
 - `/working` → `https://betterat.work`
-- `/toolbox` → `https://betterat.work/toolbox`
 - `/using` → Notion doc (tools Danny uses)
 - `/remote`, `/rtotd` → Notion doc (remote work tips)
 - `/music`, `/singing` → music/singing YouTube (`youtube.com/dannysmithblues`)

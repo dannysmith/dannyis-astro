@@ -28,6 +28,7 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
   data-notion-id={data.notionId}
   data-display-order={data.displayOrder}
   data-category={data.category}
+  style={`view-transition-name: tool-${tool.id}`}
 >
   <a href={data.url} class="card-link">
     <div class="card-cover">
@@ -103,9 +104,9 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
       position: absolute;
       inset-block: 0;
       inset-inline-start: 0;
-      width: var(--border-width-thick);
+      inline-size: var(--border-width-thick);
       background: var(--_border-color);
-      transition: width var(--duration-fast) var(--ease-in-out);
+      transition: inline-size var(--duration-fast) var(--ease-in-out);
       z-index: 1;
     }
 
@@ -114,7 +115,7 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
       border-color: var(--_border-color);
 
       &::before {
-        width: var(--border-width-heavy);
+        inline-size: var(--border-width-heavy);
       }
     }
   }

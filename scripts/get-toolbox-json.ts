@@ -10,7 +10,7 @@
 //
 // See https://github.com/dannysmith/dannyis-astro/issues/47 for background.
 
-import { writeFile, readFile, mkdir } from 'fs/promises';
+import { writeFile, readFile, mkdir, rename } from 'fs/promises';
 import { join, dirname } from 'path';
 
 const OUTPUT_PATH = join(process.cwd(), 'src', 'content', 'toolboxPages.json');
@@ -18,6 +18,8 @@ const BAW_BASE_URL = 'https://betterat.work';
 const NOTION_V3 = 'https://www.notion.so/api/v3';
 const NOTION_SITE_BASE = 'https://dannysmith.notion.site';
 const MIN_EXPECTED_TOOLS = 5;
+const FETCH_TIMEOUT_MS = 30_000;
+const FETCH_ATTEMPTS = 2;
 
 // Fallbacks if discovery from the flight data ever fails (current live values).
 const FALLBACK_IDS = {
@@ -40,6 +42,21 @@ interface ToolboxPage {
   created: string; // ISO datetime
   lastEdited: string; // ISO datetime
   displayOrder: number; // gallery order on betterat.work
+}
+
+/** Fetch with a timeout, retrying once on network errors or 5xx responses. */
+async function fetchWithRetry(url: string, init?: RequestInit): Promise<Response> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(url, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+      if (res.status < 500 || attempt === FETCH_ATTEMPTS) return res;
+      console.warn(`${url} returned ${res.status}, retrying...`);
+    } catch (error) {
+      if (attempt === FETCH_ATTEMPTS) throw error;
+      console.warn(`Fetch failed for ${url} (${error}), retrying...`);
+    }
+    await new Promise(resolve => setTimeout(resolve, 5_000));
+  }
 }
 
 /** Extract and concatenate all RSC flight chunks: self.__next_f.push([1,"..."]) */
@@ -92,7 +109,7 @@ function unwrapRecord(entry: unknown): Record<string, unknown> | null {
 
 async function fetchSuperIndex() {
   console.log(`Fetching ${BAW_BASE_URL}/tool/ ...`);
-  const res = await fetch(`${BAW_BASE_URL}/tool/`);
+  const res = await fetchWithRetry(`${BAW_BASE_URL}/tool/`);
   if (!res.ok) throw new Error(`betterat.work returned ${res.status}`);
   const html = await res.text();
 
@@ -136,7 +153,7 @@ async function fetchSuperIndex() {
 
 async function fetchNotionRows(ids: typeof FALLBACK_IDS) {
   console.log('Querying Notion v3 queryCollection (unauthenticated) ...');
-  const res = await fetch(`${NOTION_V3}/queryCollection`, {
+  const res = await fetchWithRetry(`${NOTION_V3}/queryCollection`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
@@ -163,6 +180,11 @@ async function fetchNotionRows(ids: typeof FALLBACK_IDS) {
     Object.entries(schema).find(([, s]) => s.name === name)?.[0] ?? null;
   const categoryKey = keyFor('Category');
   const summaryKey = keyFor('AI Summary');
+  if (!categoryKey || !summaryKey) {
+    throw new Error(
+      `Could not resolve property keys from the Notion schema (Category: ${categoryKey}, AI Summary: ${summaryKey}). Has the database schema changed?`,
+    );
+  }
 
   const rows = new Map<
     string, // notion UUID
@@ -173,11 +195,14 @@ async function fetchNotionRows(ids: typeof FALLBACK_IDS) {
     if (!block) continue;
     const properties = (block.properties ?? {}) as Record<string, unknown>;
     rows.set(id, {
-      category: categoryKey ? richTextToPlain(properties[categoryKey]) : undefined,
-      summary: summaryKey ? richTextToPlain(properties[summaryKey]) : undefined,
+      category: richTextToPlain(properties[categoryKey]),
+      summary: richTextToPlain(properties[summaryKey]),
       created: block.created_time as number | undefined,
       edited: block.last_edited_time as number | undefined,
     });
+  }
+  if (rows.size === 0) {
+    throw new Error('queryCollection returned no database rows. Has the response shape changed?');
   }
   console.log(`Found ${rows.size} rows in the Notion database`);
   return rows;
@@ -190,8 +215,18 @@ async function fetchNotionRows(ids: typeof FALLBACK_IDS) {
     const orderIndex = new Map(galleryOrder.map((slug, i) => [slug, i]));
 
     const unmatched = [...tools.keys()].filter(uuid => !rows.has(uuid));
+    if (unmatched.length > tools.size * 0.2) {
+      // A broken join would strip category/summary from most entries — fail
+      // loudly rather than committing a degraded file.
+      throw new Error(
+        `${unmatched.length}/${tools.size} tools have no matching Notion row. Data looks degraded; leaving toolboxPages.json untouched.`,
+      );
+    }
     if (unmatched.length > 0) {
       console.warn(`Warning: ${unmatched.length} tools have no matching Notion row:`, unmatched);
+    }
+    if (galleryOrder.length === 0) {
+      console.warn('Warning: could not read gallery order — displayOrder will be arbitrary');
     }
 
     const data: ToolboxPage[] = [...tools.entries()]
@@ -217,10 +252,14 @@ async function fetchNotionRows(ids: typeof FALLBACK_IDS) {
       .sort((a, b) => a.displayOrder - b.displayOrder);
 
     if (data.length < MIN_EXPECTED_TOOLS) {
-      console.log(
-        `Only found ${data.length} toolbox items, expected at least ${MIN_EXPECTED_TOOLS}. Skipping update of toolboxPages.json.`,
+      throw new Error(
+        `Only found ${data.length} toolbox items, expected at least ${MIN_EXPECTED_TOOLS}. Leaving toolboxPages.json untouched.`,
       );
-      return;
+    }
+    for (const item of data) {
+      if (!item.id || !item.title || !item.url) {
+        throw new Error(`Scraped entry is missing required fields: ${JSON.stringify(item)}`);
+      }
     }
 
     const newDataString = JSON.stringify(data, null, 2) + '\n';
@@ -235,7 +274,9 @@ async function fetchNotionRows(ids: typeof FALLBACK_IDS) {
     }
 
     await mkdir(dirname(OUTPUT_PATH), { recursive: true });
-    await writeFile(OUTPUT_PATH, newDataString);
+    // Write to a temp file and rename so a crash mid-write can't corrupt the real file
+    await writeFile(`${OUTPUT_PATH}.tmp`, newDataString);
+    await rename(`${OUTPUT_PATH}.tmp`, OUTPUT_PATH);
     console.log(`Successfully wrote ${data.length} items to toolboxPages.json`);
   } catch (error) {
     console.error('Error:', error);

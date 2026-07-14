@@ -78,7 +78,6 @@ export default defineConfig({
     sitemap({
       filter: page =>
         !page.startsWith('https://danny.is/scratchpad') &&
-        !page.startsWith('https://danny.is/toolboxtest') &&
         !page.startsWith('https://danny.is/redirects.json'),
     }),
     icon(),
