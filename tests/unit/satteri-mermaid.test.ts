@@ -65,7 +65,8 @@ describe('satteriMermaid', () => {
       const html = await render(DIAGRAM);
       expect(html).toContain('var(--mermaid-');
       // Every sentinel must be gone from the SVG — except as a var() fallback.
-      const withoutVars = html.replace(/var\(--mermaid-[^)]+\)/g, '');
+      // The fallback may itself contain one paren pair (e.g. an rgba() value).
+      const withoutVars = html.replace(/var\(--mermaid-(?:[^()]|\([^()]*\))*\)/g, '');
       for (const [sentinel] of mermaidColorReplacements) {
         expect(withoutVars).not.toContain(sentinel);
       }

@@ -38,6 +38,7 @@ astro-embed-tweet {
   .twitter-tweet {
     --tc-border-color: var(--color-border);
     --tc-padding: var(--space-m);
+
     max-width: 34rem;
     border-radius: var(--radius-md);
     background: var(--color-background-secondary);

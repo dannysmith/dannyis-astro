@@ -64,6 +64,7 @@ export const mermaidColorReplacements = [
  */
 const fontsDir = new URL('../../public/fonts/', import.meta.url);
 const figtreeFile = readdirSync(fontsDir).find(file => /^Figtree-v.*\.woff2$/.test(file));
+if (!figtreeFile) throw new Error(`No Figtree-v*.woff2 font found in ${fontsDir.pathname}`);
 const fontFaceCss =
   "@font-face{font-family:'Figtree';" +
   `src:url(data:font/woff2;base64,${readFileSync(new URL(figtreeFile, fontsDir)).toString('base64')}) format('woff2');` +
