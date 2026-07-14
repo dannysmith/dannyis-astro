@@ -34,6 +34,7 @@ import {
 import { Code } from 'astro-expressive-code/components';
 import { ContentCard, ProjectCard } from '@components/ui/index';
 import { NoteCard } from '@components/layout/index';
+import { Content as MermaidContent } from './_snippets/mermaid.mdx';
 import { Image, Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import styleguideImage from '@assets/articles/styleguide-image.jpg';
@@ -52,6 +53,7 @@ const toc = [
   { id: 'code-blocks', label: 'Code blocks' },
   { id: 'markdown-block', label: 'MarkdownBlock' },
   { id: 'file-tree', label: 'FileTree' },
+  { id: 'mermaid', label: 'Mermaid diagrams' },
   { id: 'basic-image', label: 'BasicImage' },
   { id: 'astro-image', label: 'Astro Image & Picture' },
   { id: 'content-card', label: 'ContentCard' },
@@ -1174,6 +1176,29 @@ Provide a title to skip the fetch or override it:
     <ResizableContainer>
       <FileTree code={fileTreeExample} title="Recording storage" highlight="6" />
     </ResizableContainer>
+  </section>
+
+  <section id="mermaid" class="flow">
+    <h2>Mermaid diagrams</h2>
+    <p>
+      Fenced code blocks with the <code>mermaid</code> language render to inline SVGs at build time.
+      Diagrams are theme-aware as the baked-in colours are rewritten to
+      <code>--mermaid-*</code> CSS variables (defined in <code>_mermaid.css</code>),
+      so they follow the palette in both light and dark mode, and labels are set in
+      the site's UI font. Theming lives in <code>src/config/mermaid.js</code>.
+    </p>
+    <Code
+      lang="md"
+      code={fence(
+        'mermaid',
+        `graph TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Debug]
+    D --> B`,
+      )}
+    />
+    <MermaidContent />
   </section>
 
   <section id="basic-image" class="flow">
