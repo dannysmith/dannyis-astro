@@ -4,7 +4,8 @@
 /*
  * Runtime palette for the build-time-rendered diagrams: satteri-mermaid
  * rewrites the baked sentinel colors from src/config/mermaid.js to these
- * variables, so the two files must list the same names.
+ * variables, so the two files must list the same names. Everything derives
+ * from the _foundation.css tokens, so palette changes flow through.
  */
 
 svg[id^='mermaid-'] {
@@ -16,30 +17,46 @@ svg[id^='mermaid-'] {
   height: auto;
   background-color: var(--color-background-secondary);
 
-  /* Surfaces: elevated above the container in dark mode */
-  --mermaid-beige: light-dark(#faf6ef, oklch(from var(--color-charcoal) calc(l + 0.08) c h));
-  --mermaid-beige-secondary: light-dark(
-    #f5ede8,
+  /* Surfaces (node/actor fills): elevated above the container in dark mode */
+  --mermaid-surface: light-dark(
+    var(--color-beige),
+    oklch(from var(--color-charcoal) calc(l + 0.08) c h)
+  );
+  --mermaid-surface-secondary: light-dark(
+    oklch(from var(--color-beige) calc(l - 0.02) c h),
     oklch(from var(--color-charcoal) calc(l + 0.05) c h)
   );
-  --mermaid-beige-tertiary: light-dark(
-    #f8f3ed,
+  --mermaid-surface-tertiary: light-dark(
+    oklch(from var(--color-beige) calc(l - 0.01) c h),
     oklch(from var(--color-charcoal) calc(l + 0.065) c h)
   );
 
-  /* Text and lines */
-  --mermaid-ink: var(--color-text);
-  --mermaid-charcoal: var(--color-text);
+  --mermaid-text: var(--color-text);
 
-  /* Edge-label background masks the line it sits on, so it tracks the container */
-  --mermaid-white: light-dark(var(--color-white), var(--color-background-secondary));
+  /* Edge-label masks and diagram background track the container */
+  --mermaid-background: light-dark(var(--color-white), var(--color-background-secondary));
+  --mermaid-label-background: oklch(from var(--color-background-secondary) l c h / 60%);
 
-  /* Accents */
+  /* Accents: the site palette (each token is itself light-dark() aware) */
   --mermaid-coral: var(--color-coral);
   --mermaid-purple: var(--color-purple);
   --mermaid-green: var(--color-green);
   --mermaid-yellow: var(--color-yellow);
-  --mermaid-yellow-light: light-dark(#fff9e6, oklch(32% 0.05 var(--hue-yellow)));
-  --mermaid-error-background: light-dark(#ffebee, oklch(30% 0.08 25));
-  --mermaid-error-text: light-dark(#c62828, oklch(72% 0.17 25));
+  --mermaid-blue: var(--color-blue);
+  --mermaid-pink: var(--color-pink);
+  --mermaid-orange: var(--color-orange);
+
+  --mermaid-note-background: light-dark(
+    oklch(97% 0.04 var(--hue-yellow)),
+    oklch(32% 0.05 var(--hue-yellow))
+  );
+
+  --mermaid-error-background: light-dark(
+    oklch(96% 0.03 var(--hue-coral)),
+    oklch(30% 0.08 var(--hue-coral))
+  );
+  --mermaid-error-text: light-dark(
+    oklch(55% 0.19 var(--hue-coral)),
+    oklch(72% 0.15 var(--hue-coral))
+  );
 }

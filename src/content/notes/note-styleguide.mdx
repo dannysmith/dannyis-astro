@@ -260,6 +260,30 @@ classDiagram
     }
 ```
 
+### State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+    note right of Crash: Ouch!
+```
+
+### Pie Chart
+
+```mermaid
+pie title Pets adopted by volunteers
+    "Dogs" : 386
+    "Cats" : 85
+    "Rats" : 35
+    "Birds" : 21
+    "Fish" : 15
+```
+
 ## Table Example
 
 | Name  | Role      | Notes           |

@@ -55,9 +55,10 @@ describe('satteriMermaid', () => {
     async () => {
       const html = await render(DIAGRAM);
       expect(html).toContain('var(--mermaid-');
-      // Every sentinel from the config palette must be gone from the SVG.
-      for (const [hex] of mermaidColorReplacements) {
-        expect(html).not.toContain(hex);
+      // Every sentinel must be gone from the SVG — except as a var() fallback.
+      const withoutVars = html.replace(/var\(--mermaid-[^)]+\)/g, '');
+      for (const [sentinel] of mermaidColorReplacements) {
+        expect(withoutVars).not.toContain(sentinel);
       }
     },
   );
