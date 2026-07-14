@@ -224,7 +224,7 @@ MDAST plugins run first (array order), then MDAST→HAST conversion, then HAST p
 - `satteriImageCaption` - Moves a markdown image's title text onto a `caption` prop (rendered as `<figcaption>` by `BasicImage`)
 - `satteriExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links (SmartLink semantics: http(s) and not danny.is)
 - `satteriListDensity` - Adds `long-list-items` class to lists with paragraph-like items
-- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`, themed by `src/config/mermaid.js`
+- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`. Theme-aware: sentinel colors from `src/config/mermaid.js` are rewritten to `--mermaid-*` variables defined in `src/styles/_mermaid.css` (see comments in those files for how and why)
 
 **Location rationale:** Build-time plugins are kept in `src/lib/` separate from runtime utilities (`src/utils/`) and one-off scripts (`scripts/`). They run during the build process before any component code executes.
 

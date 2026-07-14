@@ -1,18 +1,29 @@
 import { describe, it, expect } from 'vitest';
 import { markdownToHtml, mdxToJs } from 'satteri';
 import { satteriMermaid } from '../../src/lib/satteri-mermaid.mjs';
-import { mermaidConfig } from '../../src/config/mermaid.js';
+import {
+  mermaidConfig,
+  mermaidColorReplacements,
+  mermaidFontCss,
+} from '../../src/config/mermaid.js';
 import { astroData } from './satteri-helpers';
 
 const DIAGRAM = '```mermaid\ngraph TD;\n  A-->B;\n  A-->C;\n```\n';
 
+const pluginOptions = {
+  mermaidConfig,
+  colorReplacements: mermaidColorReplacements,
+  css: mermaidFontCss,
+};
+
 /**
- * Render through the real pipeline. Rendering spins up a headless browser via
- * mermaid-isomorphic, so these tests are slower than the other plugin suites.
+ * Render through the real pipeline with the production options. Rendering
+ * spins up a headless browser via mermaid-isomorphic, so these tests are
+ * slower than the other plugin suites.
  */
 async function render(source: string): Promise<string> {
   const result = await markdownToHtml(source, {
-    hastPlugins: [satteriMermaid({ mermaidConfig })],
+    hastPlugins: [satteriMermaid(pluginOptions)],
   });
   return result.html;
 }
@@ -37,6 +48,25 @@ describe('satteriMermaid', () => {
       expect(html).not.toContain('markerEnd');
     },
   );
+
+  it(
+    'rewrites baked sentinel colors to --mermaid-* CSS variables',
+    { timeout: 30_000 },
+    async () => {
+      const html = await render(DIAGRAM);
+      expect(html).toContain('var(--mermaid-');
+      // Every sentinel from the config palette must be gone from the SVG.
+      for (const [hex] of mermaidColorReplacements) {
+        expect(html).not.toContain(hex);
+      }
+    },
+  );
+
+  it('renders labels in the site UI font, not arial', { timeout: 30_000 }, async () => {
+    const html = await render(DIAGRAM);
+    expect(html).toContain('Figtree');
+    expect(html).not.toMatch(/font-family:\s*arial/i);
+  });
 
   it('leaves other code fences alone', { timeout: 30_000 }, async () => {
     const html = await render('```js\nconst a = 1;\n```\n');

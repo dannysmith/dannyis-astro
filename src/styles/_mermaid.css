@@ -1,0 +1,45 @@
+/* ============================================
+   MERMAID DIAGRAMS
+   ============================================ */
+/*
+ * Runtime palette for the build-time-rendered diagrams: satteri-mermaid
+ * rewrites the baked sentinel colors from src/config/mermaid.js to these
+ * variables, so the two files must list the same names.
+ */
+
+svg[id^='mermaid-'] {
+  display: block;
+  margin: var(--space-l) auto;
+  padding: var(--space-m);
+  border-radius: var(--radius-sm);
+  max-width: 100%;
+  height: auto;
+  background-color: var(--color-background-secondary);
+
+  /* Surfaces: elevated above the container in dark mode */
+  --mermaid-beige: light-dark(#faf6ef, oklch(from var(--color-charcoal) calc(l + 0.08) c h));
+  --mermaid-beige-secondary: light-dark(
+    #f5ede8,
+    oklch(from var(--color-charcoal) calc(l + 0.05) c h)
+  );
+  --mermaid-beige-tertiary: light-dark(
+    #f8f3ed,
+    oklch(from var(--color-charcoal) calc(l + 0.065) c h)
+  );
+
+  /* Text and lines */
+  --mermaid-ink: var(--color-text);
+  --mermaid-charcoal: var(--color-text);
+
+  /* Edge-label background masks the line it sits on, so it tracks the container */
+  --mermaid-white: light-dark(var(--color-white), var(--color-background-secondary));
+
+  /* Accents */
+  --mermaid-coral: var(--color-coral);
+  --mermaid-purple: var(--color-purple);
+  --mermaid-green: var(--color-green);
+  --mermaid-yellow: var(--color-yellow);
+  --mermaid-yellow-light: light-dark(#fff9e6, oklch(32% 0.05 var(--hue-yellow)));
+  --mermaid-error-background: light-dark(#ffebee, oklch(30% 0.08 25));
+  --mermaid-error-text: light-dark(#c62828, oklch(72% 0.17 25));
+}

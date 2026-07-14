@@ -14,7 +14,7 @@ import { satteriAutolinkHeadings } from './src/lib/satteri-autolink-headings.mjs
 import { satteriExternalLinks } from './src/lib/satteri-external-links.mjs';
 import { satteriListDensity } from './src/lib/satteri-list-density.mjs';
 import { satteriMermaid } from './src/lib/satteri-mermaid.mjs';
-import { mermaidConfig } from './src/config/mermaid.js';
+import { mermaidConfig, mermaidColorReplacements, mermaidFontCss } from './src/config/mermaid.js';
 import { pagefind } from './src/lib/pagefind-integration.mjs';
 import icon from 'astro-icon';
 import { redirects } from './src/config/redirects.ts';
@@ -121,7 +121,11 @@ export default defineConfig({
         satteriImageCaption(),
         satteriExternalLinks(),
         satteriListDensity(),
-        satteriMermaid({ mermaidConfig }),
+        satteriMermaid({
+          mermaidConfig,
+          colorReplacements: mermaidColorReplacements,
+          css: mermaidFontCss,
+        }),
       ],
     }),
   },
