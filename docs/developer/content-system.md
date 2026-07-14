@@ -222,9 +222,9 @@ MDAST plugins run first (array order), then MDAST→HAST conversion, then HAST p
 - `satteriAutolinkHeadings` - Appends an empty anchor to each heading (the `#` glyph is CSS-generated so TOC text stays clean)
 - `satteriUnwrapImages` - Strips the wrapping `<p>` from any paragraph whose only content is images, so the `img → BasicImage` remapping produces clean, directly-nested `<figure>`s. Without it, a block `<figure>` inside a `<p>` is hoisted out by the HTML parser, leaving empty `<p>` siblings
 - `satteriImageCaption` - Moves a markdown image's title text onto a `caption` prop (rendered as `<figcaption>` by `BasicImage`)
-- `satteriExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links (SmartLink semantics: http(s) and not danny.is)
+- `satteriExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links (SmartLink semantics: absolute http(s) URL whose host isn't danny.is or a subdomain)
 - `satteriListDensity` - Adds `long-list-items` class to lists with paragraph-like items
-- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`, themed by `src/config/mermaid.js`
+- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`. Theme-aware: sentinel colors from `src/config/mermaid.js` are rewritten to `--mermaid-*` variables defined in `src/styles/_mermaid.css` (see comments in those files for how and why)
 
 **Location rationale:** Build-time plugins are kept in `src/lib/` separate from runtime utilities (`src/utils/`) and one-off scripts (`scripts/`). They run during the build process before any component code executes.
 

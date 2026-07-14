@@ -47,6 +47,8 @@ Great for keeping notes concise while providing depth when needed.
 
 <Embed url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
 
+<Embed url="https://youtu.be/Em4lbLf09M0" />
+
 ## LCVid (self-hosted video)
 
 Default rendering — title, meta and description fetched from [v.danny.is](https://v.danny.is):
@@ -260,6 +262,30 @@ classDiagram
     }
 ```
 
+### State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+    note right of Crash: Ouch!
+```
+
+### Pie Chart
+
+```mermaid
+pie title Pets adopted by volunteers
+    "Dogs" : 386
+    "Cats" : 85
+    "Rats" : 35
+    "Birds" : 21
+    "Fish" : 15
+```
+
 ## Table Example
 
 | Name  | Role      | Notes           |
@@ -267,6 +293,24 @@ classDiagram
 | Alice | Designer  | Likes Figma     |
 | Bob   | Developer | Typescript fan  |
 | Carol | Writer    | Markdown wizard |
+
+### Tabular data
+
+When the table contains numbers, lean on alignment markers in the header row so figures line up on their last digit. The same trick works for currency, percentages, or timings.
+
+| Component        | Files |  LOC | Bundle (KB) |
+| ---------------- | ----: | ---: | ----------: |
+| Article layout   |     6 |  412 |        18.2 |
+| Note layout      |     4 |  281 |        12.7 |
+| Markdown preview |     1 |  198 |         9.4 |
+| Image components |     3 |  327 |        15.1 |
+
+| Component        | Files |
+| ---------------- | ----: |
+| Article layout   |     6 |
+| Note layout      |     4 |
+| Markdown preview |     1 |
+| Image components |     3 |
 
 ---
 

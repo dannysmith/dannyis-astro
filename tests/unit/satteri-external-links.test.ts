@@ -28,6 +28,16 @@ describe('satteriExternalLinks', () => {
     expect(html).not.toContain('rel=');
   });
 
+  it('leaves danny.is subdomain links alone', async () => {
+    const html = await render('[video](https://v.danny.is/some-video)\n');
+    expect(html).not.toContain('target=');
+  });
+
+  it('treats an external host with danny.is in the path as external', async () => {
+    const html = await render('[ext](https://example.com/danny.is-article)\n');
+    expect(html).toContain('target="_blank"');
+  });
+
   it('leaves relative internal links alone', async () => {
     const html = await render('[writing](/writing)\n');
     expect(html).not.toContain('target=');

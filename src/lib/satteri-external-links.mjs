@@ -3,8 +3,8 @@
  *
  * Adds `target="_blank"` + `rel="noopener noreferrer"` to links that leave
  * the site. "External" deliberately mirrors SmartLink's semantics
- * (`src/components/mdx/SmartLink.astro`): the href starts with `http` and
- * does not contain `danny.is`.
+ * (`src/components/mdx/SmartLink.astro`): an absolute http(s) URL whose host
+ * isn't danny.is or a subdomain.
  *
  * In practice this only affects plain `.md` content — in `.mdx` the
  * `a -> SmartLink` remapping computes the same attributes itself (the
@@ -19,8 +19,9 @@ export function satteriExternalLinks() {
       filter: ['a'],
       visit(node, ctx) {
         const href = node.properties?.href;
-        if (typeof href !== 'string') return;
-        if (!href.startsWith('http') || href.includes('danny.is')) return;
+        if (typeof href !== 'string' || !/^https?:\/\//.test(href)) return;
+        const { hostname } = new URL(href);
+        if (hostname === 'danny.is' || hostname.endsWith('.danny.is')) return;
 
         ctx.setProperty(node, 'target', '_blank');
         ctx.setProperty(node, 'rel', 'noopener noreferrer');

@@ -1,5 +1,6 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
+import { WrappedTable } from '@components/mdx/index';
 ---
 
 <StyleguideLayout
@@ -32,7 +33,7 @@ import StyleguideLayout from './_layout/StyleguideLayout.astro';
   </p>
   <p>This main styleguide is split into five sections...</p>
 
-  <table>
+  <WrappedTable>
     <thead>
       <tr>
         <th>Section</th>
@@ -68,5 +69,5 @@ import StyleguideLayout from './_layout/StyleguideLayout.astro';
         </td>
       </tr>
     </tbody>
-  </table>
+  </WrappedTable>
 </StyleguideLayout>

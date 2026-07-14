@@ -1,8 +1,13 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
-import { SmartLink, SmallCaps, Highlight, ResizableContainer } from '@components/mdx/index';
-import WrappedTable from '@components/mdx/WrappedTable.astro';
+import {
+  SmartLink,
+  SmallCaps,
+  Highlight,
+  ResizableContainer,
+  WrappedTable,
+} from '@components/mdx/index';
 import { InlineFootnotes } from '@components/layout/index';
 import { Content as ChecklistContent } from './_snippets/checklist.mdx';
 import { Content as ListDensityContent } from './_snippets/list-density.mdx';
@@ -41,7 +46,7 @@ const toc = [
     <p>Here's how inline text elements are styled...</p>
 
     <SGSwitcher>
-      <table>
+      <WrappedTable>
         <thead>
           <tr>
             <th>Element</th>
@@ -210,7 +215,7 @@ const toc = [
             <td></td>
           </tr>
         </tbody>
-      </table>
+      </WrappedTable>
     </SGSwitcher>
 
     <h3 id="manual-inline">Manual inline components</h3>
@@ -218,7 +223,7 @@ const toc = [
       The following inline Astro components are available for use in MDX files or other Astro pages.
     </p>
     <SGSwitcher>
-      <table>
+      <WrappedTable>
         <thead>
           <tr>
             <th>Component</th>
@@ -241,7 +246,7 @@ const toc = [
             <td><!-- shares .highlight styling with <mark> --></td>
           </tr>
         </tbody>
-      </table>
+      </WrappedTable>
     </SGSwitcher>
   </section>
 
@@ -418,7 +423,7 @@ const toc = [
     <p>
       Lists earn their vertical rhythm based on how long their items are. A list of short bullets
       gets tight spacing, while a list whose items run long — essentially paragraphs in their own
-      right — gets the more generous spacing that paragraphs receive. A build-time rehype plugin
+      right — gets the more generous spacing that paragraphs receive. A build-time Sätteri plugin
       measures the average length of each list's items and adds the <code>.long-list-items</code> class
       when it crosses a threshold.
     </p>
@@ -471,7 +476,7 @@ const toc = [
     <h3 id="tables-basic">Basic table</h3>
     <ResizableContainer>
       <SGSwitcher>
-        <table>
+        <WrappedTable>
           <caption>Quarterly results</caption>
           <thead>
             <tr>
@@ -501,14 +506,14 @@ const toc = [
               <td>$54,600</td>
             </tr>
           </tbody>
-        </table>
+        </WrappedTable>
       </SGSwitcher>
     </ResizableContainer>
 
     <h3 id="tables-mixed">Mixed-content cells</h3>
     <ResizableContainer>
       <SGSwitcher>
-        <table>
+        <WrappedTable>
           <thead>
             <tr>
               <th>Property</th>
@@ -533,7 +538,7 @@ const toc = [
               <td>Default tracking for body text</td>
             </tr>
           </tbody>
-        </table>
+        </WrappedTable>
       </SGSwitcher>
     </ResizableContainer>
 
@@ -708,7 +713,7 @@ const toc = [
           delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
           doloribus.
         </p>
-        <table>
+        <WrappedTable>
           <thead>
             <tr>
               <th>Approach</th>
@@ -733,7 +738,7 @@ const toc = [
               <td>Memorable when it's worth it</td>
             </tr>
           </tbody>
-        </table>
+        </WrappedTable>
 
         <h4>One more thing</h4>
         <p>
