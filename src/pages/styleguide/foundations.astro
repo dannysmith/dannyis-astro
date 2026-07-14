@@ -1,7 +1,7 @@
 ---
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGTypeSpecimen from './_components/SGTypeSpecimen.astro';
-import { ColorSwatch } from '@components/mdx/index';
+import { ColorSwatch, WrappedTable } from '@components/mdx/index';
 
 const toc = [
   { id: 'colour', label: 'Colour System' },
@@ -77,7 +77,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       colours to a minimum to avoid ending up with a large unwieldy palette of very specific colours that
       are only used in one place.
     </p>
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Token</th>
@@ -272,7 +272,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>Subtle borders and dividers</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
   </section>
 
   <section id="design-tokens" class="flow">
@@ -288,7 +288,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       are set in pixels so they don't scale with the base font size while radii are mostly set in
       rems so they do.
     </p>
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Variable</th>
@@ -359,8 +359,8 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>Used as a design element, so scales with the root font size</td>
         </tr>
       </tbody>
-    </table>
-    <table>
+    </WrappedTable>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Variable</th>
@@ -403,12 +403,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>Infinite radius for fully rounding into a pill or circle regardless of size.</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
     <p>
       I don't use shadows heavily but there are two custom properties available if I need to create
       depth and elevation.
     </p>
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Variable</th>
@@ -429,7 +429,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           </td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
   </section>
 
   <section id="typography-spacing" class="flow">
@@ -514,7 +514,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       are used in most places, I also use <code>em</code>s in certain contexts where I want text
       sized relative to that of its parent context.
     </p>
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Preview</th>
@@ -564,7 +564,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>Used for large display copy</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <h3 id="spacing">Spacing Scale</h3>
     <p>
@@ -572,7 +572,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       the same base values as the type scale. Using the custom properties below to set margins, padding
       and the like will ensure they scale in concert with the fluid type.
     </p>
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Variable</th>
@@ -617,7 +617,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td><div class="spacing-bar" style="width: var(--space-3xl)"></div></td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <h3 id="font-weights">Font Weights</h3>
     <p>
@@ -626,7 +626,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       >. These design tokens provide common stops to help keep the weight scale consistent across
       the site, but it's fine to use intermediate weights when needed.
     </p>
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Literata</th>
@@ -694,7 +694,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>900</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <h3 id="leading-tracking">Leading & Tracking</h3>
     <p>
@@ -702,7 +702,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
         >--tracking-*</code
       > CSS custom properties.
     </p>
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Variable</th>
@@ -757,8 +757,8 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           >
         </tr>
       </tbody>
-    </table>
-    <table>
+    </WrappedTable>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Variable</th>
@@ -796,7 +796,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           >
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <h3 id="measure">Measure</h3>
     <p>
@@ -813,7 +813,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
       classes available.
     </p>
 
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Class</th>
@@ -899,7 +899,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <td>Removes list styling for navigation/UI lists.</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
   </section>
 </StyleguideLayout>
 

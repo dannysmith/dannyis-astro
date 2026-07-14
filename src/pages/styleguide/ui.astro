@@ -2,7 +2,7 @@
 import StyleguideLayout from './_layout/StyleguideLayout.astro';
 import SGSwitcher from './_components/SGSwitcher.astro';
 import { Code } from 'astro-expressive-code/components';
-import { ResizableContainer } from '@components/mdx/index';
+import { ResizableContainer, WrappedTable } from '@components/mdx/index';
 import {
   FormattedDate,
   MarkdownContentActions,
@@ -82,7 +82,7 @@ const toc = [
       from the background with <code>color-mix()</code>.
     </p>
 
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Prop</th>
@@ -126,7 +126,7 @@ const toc = [
           <td>Native hover tooltip; also sets <code>cursor: help</code>.</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <h3 id="pill-default">Default</h3>
     <Code lang="astro" code={'<Pill text="Default" />'} />
@@ -190,7 +190,7 @@ const toc = [
       CSS length.
     </p>
 
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Prop</th>
@@ -207,7 +207,7 @@ const toc = [
           <td>Width and height as a CSS length.</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <Code
       lang="astro"
@@ -258,7 +258,7 @@ const toc = [
       link only appears on devices that support the Web Share API.
     </p>
 
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Prop</th>
@@ -281,7 +281,7 @@ const toc = [
           <td>Hide the share link entirely, even where the Web Share API exists.</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <Code lang="astro" code={'<MarkdownContentActions markdownUrl="/example.md" />'} />
     <SGSwitcher>
@@ -296,7 +296,7 @@ const toc = [
       label (e.g. <em>Jun 12, 2025</em>). Used for publication dates across the site.
     </p>
 
-    <table>
+    <WrappedTable>
       <thead>
         <tr>
           <th>Prop</th>
@@ -319,7 +319,7 @@ const toc = [
           <td>Optional microdata <code>itemprop</code> attribute.</td>
         </tr>
       </tbody>
-    </table>
+    </WrappedTable>
 
     <Code lang="astro" code={"<FormattedDate date={new Date('2025-06-12')} />"} />
     <SGSwitcher>
