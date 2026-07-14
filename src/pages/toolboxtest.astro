@@ -1,22 +1,63 @@
 ---
-import { getCollection } from 'astro:content';
-import { BaseHead, Footer, MainNavigation } from '@components/layout/index';
-import { ContentCard } from '@components/ui/index';
+import { getCollection } from 'astro:content'
+import {
+  BaseHead,
+  Footer,
+  MainNavigation,
+  CommandPalette,
+  LLMDiscoveryNote,
+} from '@components/layout/index'
+import { ToolCard } from '@components/ui/index'
 
-const toolboxPages = await getCollection('toolboxPages');
+// One grid, newest-updated first
+const toolboxPages = (await getCollection('toolboxPages')).sort(
+  (a, b) => b.data.lastEdited.getTime() - a.data.lastEdited.getTime(),
+)
+
+const categories = [
+  ...new Set(toolboxPages.map(t => t.data.category).filter((c): c is string => Boolean(c))),
+].sort()
+
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+
+// CSS-only filtering: checking a category radio hides every card that isn't in
+// that category. The rules are generated at build time from the known categories.
+const filterCss = categories
+  .map(
+    c =>
+      `main:has(#filter-${slugify(c)}:checked) .tool-card:not([data-category="${c}"]) { display: none; }`,
+  )
+  .join('\n')
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <BaseHead title="Toolbox Test" pageType="page" robotsDirective="noindex, nofollow" />
+    <style is:inline set:html={filterCss}></style>
   </head>
   <body>
     <MainNavigation />
-    <main id="main" tabindex="-1">
-      <h1 class="title">Remote Working Toolbox</h1>
+    <CommandPalette />
+    <main id="main" tabindex="-1" class="ui-style">
+      <LLMDiscoveryNote />
+      <h1 class="title">The Toolbox</h1>
+
+      <nav class="filters ui-style" aria-label="Filter tools by category">
+        <input type="radio" name="category-filter" id="filter-all" checked />
+        <label for="filter-all">All</label>
+        {
+          categories.map(category => (
+            <>
+              <input type="radio" name="category-filter" id={`filter-${slugify(category)}`} />
+              <label for={`filter-${slugify(category)}`}>{category}</label>
+            </>
+          ))
+        }
+      </nav>
+
       <section class="toolbox-grid">
-        {toolboxPages.map(toolboxPage => <ContentCard content={toolboxPage} compact={true} />)}
+        {toolboxPages.map(toolboxPage => <ToolCard tool={toolboxPage} />)}
       </section>
     </main>
     <Footer />
@@ -24,21 +65,75 @@ const toolboxPages = await getCollection('toolboxPages');
 </html>
 
 <style>
-  main {
-    padding: var(--space-m);
-    margin: 0 auto;
+  .title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 20rem);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    text-align: right;
+    line-height: var(--leading-none);
+    transform: translateY(-0.2em);
+    pointer-events: none;
   }
 
-  .title {
-    text-align: center;
-    margin-bottom: var(--space-m);
-    font-size: 3rem;
-    text-transform: uppercase;
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2xs);
+    margin: 0 auto;
+    margin-block-end: var(--space-m);
+    padding: var(--space-m);
+    max-width: 1600px;
+
+    /* Visually hidden but still focusable, so the labels act as tabs */
+    & input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+
+    & label {
+      padding: 0.4em 0.9em 0.3em;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      line-height: 1;
+      text-transform: uppercase;
+      font-feature-settings: 'case' on;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-secondary);
+      border: var(--border-width-hairline) solid var(--color-border);
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      transition:
+        color var(--duration-fast) var(--ease-in-out),
+        background-color var(--duration-fast) var(--ease-in-out);
+
+      &:hover {
+        color: var(--color-text);
+        border-color: var(--color-text-secondary);
+      }
+    }
+
+    & input:checked + label {
+      color: var(--color-background);
+      background-color: var(--color-text);
+      border-color: var(--color-text);
+    }
+
+    & input:focus-visible + label {
+      outline: var(--border-width-base) solid var(--color-accent);
+      outline-offset: 2px;
+    }
   }
 
   .toolbox-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: var(--space-m);
+    margin-inline: var(--space-l);
+    margin-block-end: var(--space-xl);
   }
 </style>

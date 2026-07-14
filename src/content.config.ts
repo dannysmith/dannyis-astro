@@ -54,13 +54,25 @@ const notes = defineCollection({
   }),
 });
 
-// Links to "Tool pages" pulled from http://betterat.work/toolbox
+// "Tool pages" from the Remote Working Toolbox — metadata scraped from betterat.work
+// (super.so) and the underlying Notion database by `bun run scrape-toolbox`.
+// See scripts/get-toolbox-json.ts and https://github.com/dannysmith/dannyis-astro/issues/47
 const toolboxPages = defineCollection({
   loader: file('src/content/toolboxPages.json'),
   schema: z.object({
-    id: z.string(),
+    id: z.string().describe('URL slug, e.g. "ask-channels-in-slack"'),
     title: z.string(),
-    url: z.url(),
+    url: z.url().describe('Canonical public URL (betterat.work)'),
+    notionId: z.string().describe('Notion page UUID (dashed)'),
+    notionUrl: z.url().describe('Public notion.site URL for the same page'),
+    emoji: z.string().optional().describe('Page icon when it is an emoji'),
+    iconUrl: z.url().optional().describe('Page icon when it is an image'),
+    coverImage: z.url().optional(),
+    category: z.string().optional(),
+    summary: z.string().optional(),
+    created: z.coerce.date(),
+    lastEdited: z.coerce.date(),
+    displayOrder: z.number().describe('Gallery order on betterat.work'),
   }),
 });
 

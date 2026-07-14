@@ -27,9 +27,9 @@ See `content-authoring.md` for file naming conventions and schema reference.
 
 The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
 
-- **Source:** `scripts/get-toolbox-json.ts` (run via `bun run scrape-toolbox`) - Fetches and processes toolbox data
-- **Auto-refresh:** `.github/workflows/update-toolbox.yml` runs the scrape on a daily cron (and on demand) and commits any changes
-- **Data file:** `src/content/toolboxPages.json`
+- **Source:** `scripts/get-toolbox-json.ts` (run via `bun run scrape-toolbox`) — two unauthenticated fetches, joined on the Notion page UUID: the betterat.work `/tool/` index (super.so embeds a Notion-ish recordMap as Next.js RSC flight data, giving title/slug/UUID/icon/cover/dates/order) and Notion's unofficial v3 `queryCollection` API (giving category and summary). Background: [#47](https://github.com/dannysmith/dannyis-astro/issues/47)
+- **Auto-refresh:** `.github/workflows/update-toolbox.yml` runs the scrape on a weekly cron (and on demand) and commits any changes
+- **Data file:** `src/content/toolboxPages.json` — entry `id` is the URL slug; `emoji`/`iconUrl` are mutually exclusive representations of the page icon
 - **Consumption:** `ContentCard` component, toolbox test page
 - **Pattern:** JSON loader enables sourcing external API data at build time
 

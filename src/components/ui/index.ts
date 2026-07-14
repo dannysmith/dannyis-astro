@@ -9,3 +9,4 @@ export { default as ProjectCard } from './ProjectCard.astro';
 export { default as ProjectIcon } from './ProjectIcon.astro';
 export { default as SocialLinks } from './SocialLinks.astro';
 export { default as Spinner } from './Spinner.astro';
+export { default as ToolCard } from './ToolCard.astro';
