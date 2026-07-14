@@ -60,3 +60,9 @@ svg[id^='mermaid-'] {
     oklch(72% 0.15 var(--hue-coral))
   );
 }
+
+/* Rounded corners on boxy shapes (rx is a CSS property on SVG2 rects) */
+svg[id^='mermaid-'] :is(.node, .cluster) rect,
+svg[id^='mermaid-'] :is(rect.actor, rect.note) {
+  rx: var(--radius-sm);
+}

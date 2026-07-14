@@ -74,6 +74,8 @@ export const mermaidConfig = {
   theme: 'base',
   // Matches --font-ui. Must be top-level: mermaid-isomorphic defaults it to arial.
   fontFamily: "'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+  // Don't repeat the actor boxes at the bottom of sequence diagrams.
+  sequence: { mirrorActors: false },
   themeVariables: {
     // Primary colors for flowchart nodes
     primaryColor: colors.surface,

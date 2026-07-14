@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { markdownToHtml, mdxToJs } from 'satteri';
 import { satteriMermaid } from '../../src/lib/satteri-mermaid.mjs';
@@ -29,6 +30,14 @@ async function render(source: string): Promise<string> {
 }
 
 describe('satteriMermaid', () => {
+  it('has a _mermaid.css definition for every replacement variable', () => {
+    const css = readFileSync(new URL('../../src/styles/_mermaid.css', import.meta.url), 'utf8');
+    for (const [, replacement] of mermaidColorReplacements) {
+      const [, name] = replacement.match(/^var\((--mermaid-[a-z-]+),/)!;
+      expect(css, `${name} is missing from _mermaid.css`).toContain(`${name}:`);
+    }
+  });
+
   it('renders a mermaid fence to inline SVG at build time', { timeout: 30_000 }, async () => {
     const html = await render(DIAGRAM);
     expect(html).toContain('<svg');
