@@ -68,14 +68,14 @@ const posts = filterContentForListing(await getCollection('articles'));
 
 ### Reading Time Injection
 
-Reading time is **NOT from SEO utilities** - it's injected automatically by a remark plugin at build time.
+Reading time is **NOT from SEO utilities** - it's injected automatically by a Sätteri plugin at build time.
 
-**File:** `src/lib/remark-reading-time.mjs`
+**File:** `src/lib/satteri-reading-time.mjs`
 
 **What it does:**
-- Runs during MDX processing at build time
+- Runs during markdown/MDX processing at build time
 - Calculates reading time using the `reading-time` package (200 words per minute)
-- Injects `minutesRead` into frontmatter automatically
+- Injects `minutesRead` into frontmatter automatically (via the `ctx.data.astro.frontmatter` bag)
 
 **How to access:**
 ```typescript
@@ -91,7 +91,7 @@ const readingTime = remarkPluginFrontmatter.minutesRead; // "5 min read"
 **Type:** String (e.g., `"3 min read"`), not a number
 
 **Important notes:**
-- Configured in `astro.config.mjs` under `markdown.remarkPlugins`
+- Registered in `astro.config.mjs` in the `satteri()` processor's `mdastPlugins`
 - Injected during markdown parsing, NOT from `@utils/seo` functions
 - Located in `src/lib/` with other build-time utilities
 - See JSDoc comments in the file for implementation details
@@ -200,39 +200,33 @@ Markdown export endpoints (`.md.ts` files) convert rendered content back to mark
 
 ## Markdown Plugins Configuration
 
-Custom remark/rehype plugins modify content during build.
+Markdown and MDX are processed by **[Sätteri](https://satteri.bruits.org/)** (Astro's native Rust-based pipeline, the default since Astro 7), configured as `markdown.processor: satteri({...})` in `astro.config.mjs`. All plugins are custom, live in `src/lib/satteri-*.mjs`, and each has a unit suite in `tests/unit/` driving the real Sätteri compile API. Remark/rehype plugins do NOT run under Sätteri — its plugin model is `defineMdastPlugin`/`defineHastPlugin` with read-only nodes mutated via a `ctx` object (see the JSDoc in any plugin, and the API learnings recorded in the plugin files' comments).
 
 **File:** `astro.config.mjs`
 
-### Active Plugins
+### Pipeline order
 
-**Remark plugins** (all custom, in `src/lib/`):
+MDAST plugins run first (array order), then MDAST→HAST conversion, then HAST plugins. Expressive Code hooks in via its own Sätteri-aware HAST plugin, and the built-in image-collection and heading-IDs passes run *after* user plugins (hardcoded).
 
-- `remarkReadingTime` - Injects `minutesRead` into frontmatter
-- `remarkFootnoteDetector` - Flags whether content contains footnotes
-- `remarkMarkdownPreview` - Transforms ` ```md preview ` blocks into a `MarkdownBlock` component
-- `remarkTreeBlock` - Transforms ` ```tree ` blocks into a `FileTree` component
-- `remarkPageComponents` - Auto-applies `MDX_COMPONENT_REMAPPING` to routed MDX pages using `Page.astro`
-- `remarkImageCaption` - Renders a markdown image's title text as a `<figcaption>`
+**MDAST plugins:**
 
-**Rehype plugins:**
+- `satteriReadingTime` - Injects `minutesRead` into frontmatter (registered first so it measures the document before ESM injection)
+- `satteriFootnoteDetector` - Flags whether content contains footnotes (`hasFootnotes`)
+- `satteriMdxImports` - Injects the `@components/mdx` barrel import into every `.mdx` file (replaces the old `astro-auto-import` integration) AND auto-applies `MDX_COMPONENT_REMAPPING` to routed MDX pages using `Page.astro`
+- `satteriMarkdownPreview` - Transforms ` ```md preview ` blocks into a `MarkdownBlock` component
+- `satteriTreeBlock` - Transforms ` ```tree ` blocks into a `FileTree` component
 
-- `rehypeUnwrapImages` - Strips the wrapping `<p>` from any paragraph whose only content is images, so the `img → BasicImage` remapping produces clean, directly-nested `<figure>`s. Without it, a block `<figure>` inside a `<p>` is hoisted out by the HTML parser, leaving empty `<p>` siblings
-- `rehypeHeadingIds` (from `@astrojs/markdown-remark`) - Adds IDs to headings
-- `rehypeAutolinkHeadings` - Makes headings clickable
-- `rehypeExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links
-- `rehypeMermaid` - Renders Mermaid diagrams
-- `rehypeListDensity` (custom) - Adds `long-list-items` class to lists with paragraph-like items
+**HAST plugins:**
 
-### Reading Time Plugin
+- `satteriHeadingIdsPlugin` (from `@astrojs/markdown-satteri`, registered as a factory) - Adds IDs to headings early so the autolink plugin can read them; the built-in trailing run respects them
+- `satteriAutolinkHeadings` - Appends an empty anchor to each heading (the `#` glyph is CSS-generated so TOC text stays clean)
+- `satteriUnwrapImages` - Strips the wrapping `<p>` from any paragraph whose only content is images, so the `img → BasicImage` remapping produces clean, directly-nested `<figure>`s. Without it, a block `<figure>` inside a `<p>` is hoisted out by the HTML parser, leaving empty `<p>` siblings
+- `satteriImageCaption` - Moves a markdown image's title text onto a `caption` prop (rendered as `<figcaption>` by `BasicImage`)
+- `satteriExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links (SmartLink semantics: http(s) and not danny.is)
+- `satteriListDensity` - Adds `long-list-items` class to lists with paragraph-like items
+- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`, themed by `src/config/mermaid.js`
 
-**File:** `src/lib/remark-reading-time.mjs`
-
-**Purpose:** Automatically calculates and injects reading time into frontmatter during MDX processing.
-
-**Location rationale:** Build-time utilities (remark/rehype plugins) are kept in `src/lib/` separate from runtime utilities (`src/utils/`) and one-off scripts (`scripts/`). This plugin runs during the build process before any component code executes.
-
-**Documentation:** See "Reading Time Injection" section above for usage details and JSDoc comments in the file for implementation.
+**Location rationale:** Build-time plugins are kept in `src/lib/` separate from runtime utilities (`src/utils/`) and one-off scripts (`scripts/`). They run during the build process before any component code executes.
 
 ## Build Configuration
 
@@ -242,7 +236,7 @@ Custom remark/rehype plugins modify content during build.
 
 - **Redirects:** Configured in `src/config/redirects.ts` plus per-page `redirectURL` frontmatter (see [architecture-guide.md § Redirects](./architecture-guide.md#redirects))
 - **Vite optimizations:** Excludes `@resvg/resvg-js`
-- **Markdown plugins:** Remark + rehype configuration
+- **Markdown plugins:** Sätteri processor + plugin configuration
 - **Expressive Code:** Custom theme loaded from `src/config/code-theme.json`, with no frame box-shadow
 
 ## External Dependencies
@@ -251,7 +245,7 @@ See `package.json` for the full list. The non-obvious ones:
 
 - **Image generation** uses **satori** (JSX → SVG) then **@resvg/resvg-js** (SVG → PNG), with **sharp** as a fallback renderer if Satori fails.
 - **RSS** renders MDX via Astro's experimental **Container API**.
-- Markdown processing is driven by the custom remark/rehype plugins listed under [Markdown Plugins Configuration](#markdown-plugins-configuration) above.
+- Markdown processing is driven by the custom Sätteri plugins listed under [Markdown Plugins Configuration](#markdown-plugins-configuration) above. Mermaid diagrams render at build time via **mermaid-isomorphic** (headless Playwright browser).
 
 ## See Also
 

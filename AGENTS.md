@@ -64,8 +64,8 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
 
 ## Tech Stack
 
-- **Framework:** Astro 6.4+ with TypeScript (strict mode)
-- **Content:** MDX with content collections, RSS feeds via Container API
+- **Framework:** Astro 7+ with TypeScript (strict mode)
+- **Content:** MDX with content collections, RSS feeds via Container API. Markdown/MDX processed by Sätteri (Astro's native pipeline) with custom plugins in `src/lib/satteri-*.mjs` — remark/rehype plugins do not run
 - **Styling:** Custom CSS with layers, CSS variables for theming
 - **Icons:** astro-icon with Heroicons
 - **Testing:** Vitest (unit) + Playwright (e2e)

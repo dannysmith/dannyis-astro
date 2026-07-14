@@ -1,5 +1,5 @@
 /**
- * Remark plugin to transform `tree` fenced code blocks into a FileTree
+ * Sätteri MDAST plugin to transform `tree` fenced code blocks into a FileTree
  * component.
  *
  * Authors write a standard fenced code block with `tree` as the language.
@@ -12,16 +12,21 @@
  *         └── helper.ts
  *     ```
  *
- * At build time, this plugin walks the MDAST, finds matching code nodes,
- * and rewrites them into `mdxJsxFlowElement` nodes referencing the
- * `file-tree` tag. That tag is remapped to the FileTree Astro component
- * via MDX_COMPONENT_REMAPPING, which receives the raw tree text as a
- * `code` prop (plus optional `title`, `frame` and `highlight`).
+ * At build time, the `code` visitor rewrites matching nodes into
+ * `mdxJsxFlowElement` nodes referencing the `file-tree` tag. That tag is
+ * remapped to the FileTree Astro component via MDX_COMPONENT_REMAPPING,
+ * which receives the raw tree text as a `code` prop (plus optional `title`,
+ * `frame` and `highlight`).
  *
- * This mirrors the `remark-markdown-preview` plugin — fenced code blocks
+ * This mirrors the `satteri-markdown-preview` plugin — fenced code blocks
  * are the only place in MDX where raw content survives compilation
  * verbatim, and a dashed custom element name (`file-tree`) is treated by
  * MDX as an HTML tag, matching the existing remapping pattern.
+ *
+ * MDX-only (`ctx.sourceFormat`): the tag remapping is an MDX feature, so in
+ * plain `.md` the fence stays an ordinary code block. Runs at the MDAST
+ * stage, so Expressive Code (a HAST plugin under Sätteri) never sees the
+ * transformed fence.
  *
  * Meta string syntax supported (Expressive-Code-compatible where it
  * makes sense):
@@ -33,10 +38,8 @@
  * value falls back to the default framed rendering. Highlight ranges are
  * expanded, de-duplicated and sorted here, then passed to the component
  * as a comma-separated string (e.g. `highlight="2,5,6,7"`).
- *
- * @returns {Function} Remark transformer function
  */
-import { visit } from 'unist-util-visit';
+import { defineMdastPlugin } from 'satteri';
 
 /**
  * Expand a highlight spec like `2,5-7` into a sorted, de-duplicated array
@@ -89,10 +92,11 @@ function parseMeta(meta) {
   return result;
 }
 
-export function remarkTreeBlock() {
-  return function (tree) {
-    visit(tree, 'code', (node, index, parent) => {
-      if (!parent || typeof index !== 'number') return;
+export function satteriTreeBlock() {
+  return defineMdastPlugin({
+    name: 'satteri-tree-block',
+    code(node, ctx) {
+      if (ctx.sourceFormat !== 'mdx') return;
       if (node.lang !== 'tree') return;
 
       const meta = parseMeta(node.meta);
@@ -115,12 +119,12 @@ export function remarkTreeBlock() {
         });
       }
 
-      parent.children[index] = {
+      return {
         type: 'mdxJsxFlowElement',
         name: 'file-tree',
         attributes,
         children: [],
       };
-    });
-  };
+    },
+  });
 }

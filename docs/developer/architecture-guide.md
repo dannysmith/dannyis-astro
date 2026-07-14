@@ -141,10 +141,10 @@ document.addEventListener('astro:after-swap', initComponent);
 
 **`src/lib/`** - Build-time plugins and scripts (runs independently)
 
-- Remark/rehype plugins configured in `astro.config.mjs`
+- Sätteri markdown plugins (`satteri-*.mjs`) configured in `astro.config.mjs`
 - Build scripts that run before Astro processes content
 - Not imported by other files - configured externally
-- Example: `src/lib/remark-reading-time.mjs` (remark plugin for reading time)
+- Example: `src/lib/satteri-reading-time.mjs` (Sätteri plugin for reading time)
 
 **`src/utils/`** - Shared helper functions (imported throughout codebase)
 
@@ -295,7 +295,7 @@ All RSS feeds, markdown export endpoints, and page routes use these centralized 
 
 ### External Link Security
 
-All external links must include security attributes. Markdown links get automatic security via `rehype-external-links`:
+All external links must include security attributes. Markdown links get automatic security via the `satteri-external-links` plugin (plain `.md`) and the `a → SmartLink` remapping (`.mdx`):
 
 For HTML in components, **always include** security attributes:
 
@@ -318,7 +318,7 @@ For HTML in components, **always include** security attributes:
 
 ### Reading Time Injection
 
-Reading time is automatically calculated by a remark plugin (`remark-reading-time.mjs`) and injected into frontmatter as `minutesRead`. Access via `entry.data.minutesRead` - it's **NOT available** through `@utils/seo` functions.
+Reading time is automatically calculated by a Sätteri plugin (`satteri-reading-time.mjs`) and injected into frontmatter as `minutesRead`. Access via `entry.data.minutesRead` - it's **NOT available** through `@utils/seo` functions.
 
 📖 **See [content-system.md § Reading Time Injection](./content-system.md#reading-time-injection) for implementation details**
 
@@ -360,7 +360,7 @@ Every layout (and every standalone full page) also includes the global `<Command
 
 ### Creating one-off pages in `src/pages/`
 
-**Simple content pages** (no real custom design) — write a routed `.mdx` like `now.mdx` / `ai.mdx`: frontmatter with `layout: '@layouts/Page.astro'` plus the props above, then markdown. All the usual MDX components are available (auto-imported via `astro-auto-import`) and the remark plugins apply — including `remarkPageComponents`, which wires up the same `a`/`img`/etc. remapping that collection content gets.
+**Simple content pages** (no real custom design) — write a routed `.mdx` like `now.mdx` / `ai.mdx`: frontmatter with `layout: '@layouts/Page.astro'` plus the props above, then markdown. All the usual MDX components are available (auto-imported by the `satteri-mdx-imports` plugin) and the markdown plugins apply — the same plugin also wires up the `a`/`img`/etc. remapping that collection content gets for any page using the `Page.astro` layout.
 
 **Images on pages** — put them in `src/assets/<section>/` (e.g. `src/assets/using/` for the `/using` mini-site, mirroring `src/assets/articles/`) and reference them with a relative markdown image. The `img → BasicImage` remapping optimizes them and a title string becomes a caption; wrapping a few images in a `<Grid>` lays them out as a side-by-side gallery.
 
