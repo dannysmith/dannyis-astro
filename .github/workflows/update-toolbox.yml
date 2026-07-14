@@ -112,7 +112,7 @@ jobs:
         with:
           script: |
             const title = 'Toolbox Data Scraper Failing';
-            const body = \`The toolbox data scraper has failed \${process.env.FAILURE_COUNT} consecutive times.
+            const body = `The toolbox data scraper has failed ${process.env.FAILURE_COUNT} consecutive times.
 
             This means the data from https://betterat.work/tool/ is not being updated on the site.
 
@@ -123,7 +123,7 @@ jobs:
 
             **Action needed**: Debug and fix the scraping script.
 
-            This issue was automatically created by the GitHub Action.\`;
+            This issue was automatically created by the GitHub Action.`;
 
             // Check if issue already exists
             const existingIssues = await github.rest.issues.listForRepo({

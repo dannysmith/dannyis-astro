@@ -160,7 +160,7 @@ async function fetchNotionRows(ids: typeof FALLBACK_IDS) {
       source: { type: 'collection', id: ids.collectionId, spaceId: ids.spaceId },
       collectionView: { id: ids.viewId, spaceId: ids.spaceId },
       loader: {
-        reducers: { collection_group_results: { type: 'results', limit: 100 } },
+        reducers: { collection_group_results: { type: 'results', limit: 1000 } },
         searchQuery: '',
         userTimeZone: 'Europe/London',
         type: 'reducer',
