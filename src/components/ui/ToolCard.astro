@@ -1,26 +1,26 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { FormattedDate } from '@components/ui/index';
+import type { CollectionEntry } from 'astro:content'
+import { FormattedDate } from '@components/ui/index'
 
 // Rich card for Remote Working Toolbox pages. Experimental: deliberately surfaces
 // every field in the toolboxPages collection so we can see the data in situ —
 // may later be thinned down or merged into ContentCard.
 
 interface Props {
-  tool: CollectionEntry<'toolboxPages'>;
+  tool: CollectionEntry<'toolboxPages'>
 }
 
-const { tool } = Astro.props;
-const { data } = tool;
+const { tool } = Astro.props
+const { data } = tool
 
 // Tint the category badge from the standard palette, cycling by a hash of the
 // category name so colours are stable however many categories exist.
-const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
-const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`;
+const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue']
+const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
+const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`
 
 // Only show "Updated" when it differs from the created date at day granularity
-const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString();
+const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString()
 ---
 
 <article
@@ -131,10 +131,16 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     }
   }
 
-  /* Thin cover strip; overlays sit in its corners */
+  /* Thin cover strip; overlays sit in its corners. The height cap stops the
+     3:1 ratio producing an enormous cover in very wide containers. */
   .card-cover {
     position: relative;
+    /* Explicit width so aspect-ratio derives the height (which the cap then
+       clamps) — with auto width the box would derive width from the capped
+       height instead and stop filling the card. */
+    inline-size: 100%;
     aspect-ratio: 3 / 1;
+    max-block-size: 10rem;
   }
 
   .cover-badge {
@@ -228,16 +234,22 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
 
   /* Narrow containers: drop the cover (and its overlays) and the summary */
   @container (width < 350px) {
-    :is(.card-cover, .card-summary) {
+    .tool-card {
+      --_icon-size: 1.8rem;
+    }
+
+    .cover-badge {
+      font-size: calc(var(--font-size-xs) * 0.8);
+    }
+
+    .card-summary {
+      font-size: var(--font-size-xs);
+      -webkit-line-clamp: 9;
+      line-clamp: 9;
+    }
+
+    .notion-link {
       display: none;
-    }
-
-    .card-icon {
-      margin-block-start: var(--space-2xs);
-    }
-
-    .card-title {
-      font-size: var(--font-size-sm);
     }
   }
 </style>

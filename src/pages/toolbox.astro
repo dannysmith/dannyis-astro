@@ -84,6 +84,7 @@ const filterCss = categories
           to hybrid or office-based teams too.
         </p>
       </div>
+
       <nav class="filters" aria-label="Filter tools by category">
         <input type="radio" name="category-filter" id="filter-all" checked />
         <label for="filter-all">All</label>
@@ -120,95 +121,95 @@ const filterCss = categories
         });
       });
     </script>
+
+    <style>
+      .title {
+        font-family: var(--font-display);
+        font-size: clamp(3rem, 10vw, 20rem);
+        font-weight: var(--font-weight-extrabold);
+        text-transform: uppercase;
+        font-feature-settings: 'case' on;
+        text-align: right;
+        line-height: var(--leading-none);
+        translate: 0 -0.2em;
+        pointer-events: none;
+      }
+
+      .header {
+        max-inline-size: 130ch;
+        margin-inline: var(--space-l);
+        margin-block-end: var(--space-xl);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-light);
+        line-height: var(--leading-normal);
+      }
+
+      .intro {
+        font-size: var(--font-size-md);
+        margin-block-end: var(--space-m);
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-2xs);
+        margin-inline: auto;
+        margin-block-end: var(--space-m);
+        padding: var(--space-m);
+        max-inline-size: 1600px;
+
+        /* Visually hidden but still focusable, so the labels act as tabs */
+        & input {
+          position: absolute;
+          inline-size: 1px;
+          block-size: 1px;
+          opacity: 0;
+        }
+
+        & label {
+          padding: 0.4em 0.9em 0.3em;
+          font-size: var(--font-size-xs);
+          font-weight: var(--font-weight-medium);
+          line-height: 1;
+          text-transform: uppercase;
+          font-feature-settings: 'case' on;
+          letter-spacing: var(--tracking-wide);
+          color: var(--color-text-secondary);
+          border: var(--border-width-hairline) solid var(--color-border);
+          border-radius: var(--radius-xs);
+          cursor: pointer;
+          transition:
+            color var(--duration-fast) var(--ease-in-out),
+            background-color var(--duration-fast) var(--ease-in-out),
+            border-color var(--duration-fast) var(--ease-in-out);
+
+          &:hover {
+            color: var(--color-text);
+            border-color: var(--color-text-secondary);
+          }
+        }
+
+        & input:checked + label {
+          color: var(--color-background);
+          background-color: var(--color-text);
+          border-color: var(--color-text);
+        }
+
+        & input:focus-visible + label {
+          outline: var(--border-width-base) solid var(--color-accent);
+          outline-offset: 2px;
+        }
+      }
+
+      .toolbox-grid {
+        display: grid;
+        /* min(380px, 100%) so the grid can't overflow viewports narrower than a column */
+        grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
+        gap: var(--space-m);
+        margin-inline: var(--space-l);
+        margin-block-end: var(--space-xl);
+      }
+    </style>
   </body>
 </html>
-
-<style>
-  .title {
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 10vw, 20rem);
-    font-weight: var(--font-weight-extrabold);
-    text-transform: uppercase;
-    font-feature-settings: 'case' on;
-    text-align: right;
-    line-height: var(--leading-none);
-    translate: 0 -0.2em;
-    pointer-events: none;
-  }
-
-  .header {
-    max-inline-size: 130ch;
-    margin-inline: var(--space-l);
-    margin-block-end: var(--space-xl);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-light);
-    line-height: var(--leading-normal);
-  }
-
-  .intro {
-    font-size: var(--font-size-md);
-    margin-block-end: var(--space-m);
-  }
-
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-2xs);
-    margin-inline: auto;
-    margin-block-end: var(--space-m);
-    padding: var(--space-m);
-    max-inline-size: 1600px;
-
-    /* Visually hidden but still focusable, so the labels act as tabs */
-    & input {
-      position: absolute;
-      inline-size: 1px;
-      block-size: 1px;
-      opacity: 0;
-    }
-
-    & label {
-      padding: 0.4em 0.9em 0.3em;
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-medium);
-      line-height: 1;
-      text-transform: uppercase;
-      font-feature-settings: 'case' on;
-      letter-spacing: var(--tracking-wide);
-      color: var(--color-text-secondary);
-      border: var(--border-width-hairline) solid var(--color-border);
-      border-radius: var(--radius-xs);
-      cursor: pointer;
-      transition:
-        color var(--duration-fast) var(--ease-in-out),
-        background-color var(--duration-fast) var(--ease-in-out),
-        border-color var(--duration-fast) var(--ease-in-out);
-
-      &:hover {
-        color: var(--color-text);
-        border-color: var(--color-text-secondary);
-      }
-    }
-
-    & input:checked + label {
-      color: var(--color-background);
-      background-color: var(--color-text);
-      border-color: var(--color-text);
-    }
-
-    & input:focus-visible + label {
-      outline: var(--border-width-base) solid var(--color-accent);
-      outline-offset: 2px;
-    }
-  }
-
-  .toolbox-grid {
-    display: grid;
-    /* min(380px, 100%) so the grid can't overflow viewports narrower than a column */
-    grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
-    gap: var(--space-m);
-    margin-inline: var(--space-l);
-    margin-block-end: var(--space-xl);
-  }
-</style>
