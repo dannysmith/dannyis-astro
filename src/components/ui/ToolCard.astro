@@ -2,13 +2,29 @@
 import type { CollectionEntry } from 'astro:content';
 import { FormattedDate } from '@components/ui/index';
 
-// Rich card for Remote Working Toolbox pages. Experimental: deliberately surfaces
-// every field in the toolboxPages collection so we can see the data in situ —
-// may later be thinned down or merged into ContentCard.
-
+/**
+ * Card for a page from the Remote Working Toolbox (`toolboxPages` collection).
+ * Links out to the tool on betterat.work.
+ *
+ * Variants:
+ * - **Full** (default) — cover image with "Tool" and category badges, a
+ *   Notion-style overlapping icon, title, truncated summary, and a footer
+ *   with dates and a "View in Notion" link.
+ * - **Compact** — a single clickable tile: icon, title and a category byline.
+ *   Deliberately similar to ProjectCard's compact tile.
+ *
+ * Each card is its own size container, so both variants adapt to the width
+ * they're rendered at — see the `@container` rules at the end of each
+ * variant's style section.
+ *
+ * Usage:
+ *   <ToolCard tool={entry} />
+ *   <ToolCard tool={entry} compact />
+ */
 interface Props {
+  /** A `toolboxPages` collection entry */
   tool: CollectionEntry<'toolboxPages'>;
-  /** Compact tile: icon + title + category byline, the whole tile links out. */
+  /** Render the compact tile instead of the full card */
   compact?: boolean;
 }
 
@@ -27,7 +43,7 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
 
 {
   compact ? (
-    <a class="tool-card-compact ui-style cq" href={data.url} data-category={data.category}>
+    <a class="tool-card-compact ui-style cq" href={data.url}>
       {(data.emoji || data.iconUrl) && (
         <span class="compact-icon">
           {data.emoji ?? <img src={data.iconUrl} alt="" loading="lazy" />}
@@ -44,7 +60,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     <article
       class="tool-card ui-style cq"
       data-notion-id={data.notionId}
-      data-display-order={data.displayOrder}
       data-category={data.category}
       style={`view-transition-name: tool-${tool.id}`}
     >
@@ -99,20 +114,21 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
 }
 
 <style>
-  .tool-card {
+  /* =====================================================================
+     Shared shell — both variants are a bordered tile with a left accent
+     bar that grows on hover/focus (the site's card idiom, as ContentCard).
+     ===================================================================== */
+  .tool-card,
+  .tool-card-compact {
     --_border-color: var(--color-green);
-    --_icon-size: 2.5rem;
 
     position: relative;
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
     background-color: var(--color-background-secondary);
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
-    overflow: hidden;
     transition: border-color var(--duration-fast) var(--ease-in-out);
 
-    /* Left accent border - pseudo-element grows on hover/focus (as ContentCard) */
     &::before {
       content: '';
       position: absolute;
@@ -124,7 +140,10 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
       z-index: 1;
     }
 
+    /* :focus-visible catches the compact tile (itself a link); :has() catches
+       focus on the full card's inner links. */
     &:hover,
+    &:focus-visible,
     &:has(:focus-visible) {
       border-color: var(--_border-color);
 
@@ -132,6 +151,25 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
         inline-size: var(--border-width-heavy);
       }
     }
+  }
+
+  /* Image icons fill the icon box in both variants; emoji size via font-size */
+  :is(.card-icon, .compact-icon) img {
+    display: block;
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+    object-fit: contain;
+    border-radius: var(--radius-xs);
+  }
+
+  /* =====================================================================
+     Full variant
+     ===================================================================== */
+  .tool-card {
+    --_icon-size: 2.5rem;
+
+    display: flex;
+    flex-direction: column;
   }
 
   /* The link grows so the footer always sits at the bottom of the card,
@@ -193,14 +231,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     margin-inline-start: var(--space-s);
     font-size: var(--_icon-size);
     line-height: 1;
-
-    & img {
-      display: block;
-      inline-size: var(--_icon-size);
-      block-size: var(--_icon-size);
-      object-fit: contain;
-      border-radius: var(--radius-xs);
-    }
   }
 
   /* Title and summary spacing lean on the .ui-style defaults */
@@ -246,42 +276,38 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     text-underline-offset: 0.2em;
   }
 
-  /* ---- Compact variant: a single clickable tile (icon + title + byline),
-     mirroring ProjectCard's compact tile ---- */
+  /* Narrow full card: shrink the icon, badges and summary; drop the link */
+  @container (width < 350px) {
+    .card-icon {
+      --_icon-size: 1.8rem;
+    }
+
+    .cover-badge {
+      font-size: calc(var(--font-size-xs) * 0.8);
+    }
+
+    .card-summary {
+      font-size: var(--font-size-xs);
+      -webkit-line-clamp: 9;
+      line-clamp: 9;
+    }
+
+    .notion-link {
+      display: none;
+    }
+  }
+
+  /* =====================================================================
+     Compact variant — a single clickable tile (icon + title + byline)
+     ===================================================================== */
   .tool-card-compact {
-    --_border-color: var(--color-green);
     --_icon-size: 3rem;
 
-    position: relative;
     display: flex;
     align-items: center;
     gap: var(--space-s);
     padding: var(--space-s);
-    overflow: hidden;
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background-color: var(--color-background-secondary);
     text-decoration: none;
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-
-    /* Accent bar that grows on hover/focus — the site's card idiom */
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: var(--border-width-thick);
-      background: var(--_border-color);
-      transition: inline-size var(--duration-fast) var(--ease-in-out);
-    }
-
-    &:is(:hover, :focus-visible) {
-      border-color: var(--_border-color);
-
-      &::before {
-        inline-size: var(--border-width-heavy);
-      }
-    }
   }
 
   .compact-icon {
@@ -292,16 +318,8 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     /* Fixed box keeps titles aligned in a stack; emoji glyphs render larger
        than same-size images, so they get a smaller font-size within it. */
     inline-size: var(--_icon-size);
-    font-size: 2.25rem;
+    font-size: calc(var(--_icon-size) * 0.75);
     line-height: 1;
-
-    & img {
-      display: block;
-      inline-size: var(--_icon-size);
-      block-size: var(--_icon-size);
-      object-fit: contain;
-      border-radius: var(--radius-xs);
-    }
   }
 
   .compact-text {
@@ -325,30 +343,9 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     text-wrap: pretty;
   }
 
-  /* Drop the byline once the tile gets tight (the tile is its own container) */
-  @container (max-width: 20rem) {
+  /* Narrow tile: drop the byline */
+  @container (width < 20rem) {
     .compact-byline {
-      display: none;
-    }
-  }
-
-  /* Narrow containers: drop the cover (and its overlays) and the summary */
-  @container (width < 350px) {
-    .tool-card {
-      --_icon-size: 1.8rem;
-    }
-
-    .cover-badge {
-      font-size: calc(var(--font-size-xs) * 0.8);
-    }
-
-    .card-summary {
-      font-size: var(--font-size-xs);
-      -webkit-line-clamp: 9;
-      line-clamp: 9;
-    }
-
-    .notion-link {
       display: none;
     }
   }
