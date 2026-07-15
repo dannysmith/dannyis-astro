@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       issues: write
+      actions: write # To dispatch the CI workflow
 
     steps:
       - name: Checkout repository
@@ -56,6 +57,15 @@ jobs:
           git add src/content/toolboxPages.json
           git commit -m "Bot: Update toolbox data from betterat.work"
           git push
+
+      # Pushes made with GITHUB_TOKEN don't generate workflow-triggering events
+      # (GitHub's anti-loop protection), so the CI workflow would never build and
+      # deploy the bot commit. Dispatch it explicitly instead.
+      - name: Trigger CI deploy for the bot commit
+        if: steps.scrape.outputs.scrape_success == 'true' && steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --ref main
 
       - name: Reset failure counter on success
         if: steps.scrape.outputs.scrape_success == 'true'
