@@ -33,7 +33,7 @@ import {
   YouTube,
 } from 'astro-embed';
 import { Code } from 'astro-expressive-code/components';
-import { ContentCard, ProjectCard } from '@components/ui/index';
+import { ContentCard, ProjectCard, ToolCard } from '@components/ui/index';
 import { NoteCard } from '@components/layout/index';
 import { Content as MermaidContent } from './_snippets/mermaid.mdx';
 import { Image, Picture } from 'astro:assets';
@@ -60,6 +60,7 @@ const toc = [
   { id: 'content-card', label: 'ContentCard' },
   { id: 'note-card', label: 'NoteCard' },
   { id: 'project-card', label: 'ProjectCard' },
+  { id: 'tool-card', label: 'ToolCard' },
   { id: 'embeds', label: 'Embeds' },
 ];
 
@@ -154,6 +155,14 @@ const sampleNotes = allNotes.slice(0, 3);
 const allProjects = await getCollection('projects', ({ data }) => !data.draft);
 const sampleProject = allProjects.find(p => p.data.image) ?? allProjects[0];
 const sampleProjects = allProjects.slice(0, 3);
+
+// One tool with an emoji icon and one with an image icon — the first valid of
+// each, so the demos don't depend on any particular tool existing.
+const allToolboxPages = await getCollection('toolboxPages');
+const sampleTools = [
+  allToolboxPages.find(t => t.data.emoji),
+  allToolboxPages.find(t => t.data.iconUrl),
+].filter((t): t is NonNullable<typeof t> => Boolean(t));
 ---
 
 <StyleguideLayout
@@ -1656,6 +1665,69 @@ Provide a title to skip the fetch or override it:
         {sampleProjects.map(project => <ProjectCard project={project} compact />)}
       </div>
     </ResizableContainer>
+  </section>
+
+  <section id="tool-card" class="flow">
+    <h2>ToolCard</h2>
+    <p>
+      ToolCard renders a page from the <code>toolboxPages</code> collection — the Remote Working Toolbox
+      shown on <a href="/toolbox">/toolbox</a> — and links out to the tool on betterat.work. The full
+      card shows the cover image with "Tool" and category badges, a Notion-style overlapping icon (an
+      emoji or an image), the title, a truncated summary and a footer with dates and a Notion link. The
+      <code>compact</code> variant is a small linked tile. Both respond to their <em>container</em> width
+      — drag the handles below to see them adapt.
+    </p>
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>tool</code></td>
+          <td><code>CollectionEntry&lt;'toolboxPages'&gt;</code></td>
+          <td>—</td>
+          <td>The toolbox entry to render.</td>
+        </tr>
+        <tr>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td
+            >Render a small linked tile (icon + title + category byline) instead of the full card.</td
+          >
+        </tr>
+      </tbody>
+    </WrappedTable>
+
+    <h3 id="tool-card-full">Full card</h3>
+    <p>
+      Below 350px of container width the icon, badges and summary shrink and the Notion link is
+      dropped.
+    </p>
+    <Code lang="mdx" code={'<ToolCard tool={tool} />'} />
+    <SGSwitcher>
+      <ResizableContainer>
+        <div style="display: grid; gap: var(--space-s);">
+          {sampleTools.map(tool => <ToolCard tool={tool} />)}
+        </div>
+      </ResizableContainer>
+    </SGSwitcher>
+
+    <h3 id="tool-card-compact">Compact</h3>
+    <p>The byline drops on very narrow containers.</p>
+    <Code lang="mdx" code={'<ToolCard tool={tool} compact />'} />
+    <SGSwitcher>
+      <ResizableContainer>
+        <div style="display: grid; gap: var(--space-s);">
+          {sampleTools.map(tool => <ToolCard tool={tool} compact />)}
+        </div>
+      </ResizableContainer>
+    </SGSwitcher>
   </section>
 
   <section id="embeds" class="flow">
