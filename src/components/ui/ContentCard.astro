@@ -68,6 +68,7 @@ if (content) {
 
   if (collection === 'toolboxPages') {
     href = config.getUrl('', data.url);
+    summary = data.summary ?? null;
     contentType = 'tool';
   } else {
     const slug = data.slug || id.replace(/\.(md|mdx)$/, '');

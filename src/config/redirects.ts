@@ -14,7 +14,6 @@ export const redirects: Record<string, string> = {
   // proper redirect rather than HTML.
   '/linkedin': 'https://www.linkedin.com/in/dannyasmith',
   '/working': 'https://betterat.work',
-  '/toolbox': 'https://betterat.work/toolbox',
 
   '/remote': 'https://dannysmith.notion.site/Remote-Working-Tips-821f025d73cb4d93a661abc93822fb14',
   '/rtotd': 'https://dannysmith.notion.site/Remote-Working-Tips-821f025d73cb4d93a661abc93822fb14',

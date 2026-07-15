@@ -1,0 +1,352 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { FormattedDate } from '@components/ui/index';
+
+/**
+ * Card for a page from the Remote Working Toolbox (`toolboxPages` collection).
+ * Links out to the tool on betterat.work.
+ *
+ * Variants:
+ * - **Full** (default) — cover image with "Tool" and category badges, a
+ *   Notion-style overlapping icon, title, truncated summary, and a footer
+ *   with dates and a "View in Notion" link.
+ * - **Compact** — a single clickable tile: icon, title and a category byline.
+ *   Deliberately similar to ProjectCard's compact tile.
+ *
+ * Each card is its own size container, so both variants adapt to the width
+ * they're rendered at — see the `@container` rules at the end of each
+ * variant's style section.
+ *
+ * Usage:
+ *   <ToolCard tool={entry} />
+ *   <ToolCard tool={entry} compact />
+ */
+interface Props {
+  /** A `toolboxPages` collection entry */
+  tool: CollectionEntry<'toolboxPages'>;
+  /** Render the compact tile instead of the full card */
+  compact?: boolean;
+}
+
+const { tool, compact = false } = Astro.props;
+const { data } = tool;
+
+// Tint the category badge from the standard palette, cycling by a hash of the
+// category name so colours are stable however many categories exist.
+const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
+const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`;
+
+// Only show "Updated" when it differs from the created date at day granularity
+const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString();
+---
+
+{
+  compact ? (
+    <a class="tool-card-compact ui-style cq" href={data.url}>
+      {(data.emoji || data.iconUrl) && (
+        <span class="compact-icon">
+          {data.emoji ?? <img src={data.iconUrl} alt="" loading="lazy" />}
+        </span>
+      )}
+      <span class="compact-text">
+        <span class="compact-title">{data.title}</span>
+        <span class="compact-byline">
+          {data.category ? `Tool filed under ${data.category}` : 'Tool'}
+        </span>
+      </span>
+    </a>
+  ) : (
+    <article
+      class="tool-card ui-style cq"
+      data-notion-id={data.notionId}
+      data-category={data.category}
+      style={`view-transition-name: tool-${tool.id}`}
+    >
+      <a href={data.url} class="card-link">
+        <div class="card-cover">
+          {data.coverImage && (
+            <img
+              class="img-cover"
+              src={data.coverImage}
+              alt=""
+              width="600"
+              height="200"
+              loading="lazy"
+            />
+          )}
+          <span class="cover-badge type-badge">Tool</span>
+          {data.category && (
+            <span class="cover-badge category-badge" style={`--_badge-color: ${categoryColor}`}>
+              {data.category}
+            </span>
+          )}
+        </div>
+
+        {(data.emoji || data.iconUrl) && (
+          <span class="card-icon">
+            {data.emoji ?? <img src={data.iconUrl} alt="" loading="lazy" />}
+          </span>
+        )}
+
+        <div class="card-content">
+          <h3 class="card-title">{data.title}</h3>
+          {data.summary && <p class="card-summary">{data.summary}</p>}
+        </div>
+      </a>
+
+      <footer class="card-footer">
+        <span>
+          Added <FormattedDate date={data.created} />
+          {!updatedSameDay && (
+            <>
+              {' '}
+              · Updated <FormattedDate date={data.lastEdited} />
+            </>
+          )}
+        </span>
+        <a class="notion-link" href={data.notionUrl}>
+          View in Notion
+        </a>
+      </footer>
+    </article>
+  )
+}
+
+<style>
+  /* =====================================================================
+     Shared shell — both variants are a bordered tile with a left accent
+     bar that grows on hover/focus (the site's card idiom, as ContentCard).
+     ===================================================================== */
+  .tool-card,
+  .tool-card-compact {
+    --_border-color: var(--color-green);
+
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--duration-fast) var(--ease-in-out);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      inline-size: var(--border-width-thick);
+      background: var(--_border-color);
+      transition: inline-size var(--duration-fast) var(--ease-in-out);
+      z-index: 1;
+    }
+
+    /* :focus-visible catches the compact tile (itself a link); :has() catches
+       focus on the full card's inner links. */
+    &:hover,
+    &:focus-visible,
+    &:has(:focus-visible) {
+      border-color: var(--_border-color);
+
+      &::before {
+        inline-size: var(--border-width-heavy);
+      }
+    }
+  }
+
+  /* Image icons fill the icon box in both variants; emoji size via font-size */
+  :is(.card-icon, .compact-icon) img {
+    display: block;
+    inline-size: var(--_icon-size);
+    block-size: var(--_icon-size);
+    object-fit: contain;
+    border-radius: var(--radius-xs);
+  }
+
+  /* =====================================================================
+     Full variant
+     ===================================================================== */
+  .tool-card {
+    --_icon-size: 2.5rem;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The link grows so the footer always sits at the bottom of the card,
+     however tall the grid row is. */
+  .card-link {
+    flex-grow: 1;
+
+    &:focus-visible {
+      outline: var(--border-width-base) solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Thin cover strip; overlays sit in its corners. The height cap stops the
+     3:1 ratio producing an enormous cover in very wide containers. */
+  .card-cover {
+    position: relative;
+    /* Explicit width so aspect-ratio derives the height (which the cap then
+       clamps) — with auto width the box would derive width from the capped
+       height instead and stop filling the card. */
+    inline-size: 100%;
+    aspect-ratio: 3 / 1;
+    max-block-size: 10rem;
+  }
+
+  .cover-badge {
+    position: absolute;
+    padding: 0.4em 0.7em 0.3em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-white);
+    background-color: oklch(0% 0 0 / 55%);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-xs);
+  }
+
+  .type-badge {
+    inset-block-start: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+  }
+
+  .category-badge {
+    inset-block-end: var(--space-2xs);
+    inset-inline-end: var(--space-2xs);
+    /* Same dark translucent treatment as the base badge, tinted per category */
+    background-color: oklch(from var(--_badge-color) 35% c h / 80%);
+  }
+
+  /* Icon half-overlaps the bottom edge of the cover, Notion-style */
+  .card-icon {
+    position: relative;
+    display: block;
+    inline-size: fit-content;
+    margin-block-start: calc(var(--_icon-size) / -2);
+    margin-inline-start: var(--space-s);
+    font-size: var(--_icon-size);
+    line-height: 1;
+  }
+
+  /* Title and summary spacing lean on the .ui-style defaults */
+  .card-content {
+    padding-block: var(--space-2xs) var(--space-s);
+    padding-inline: var(--space-s);
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .card-summary {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+
+    /* Truncate exceptionally long summaries (longest today is ~12 lines) */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 12;
+    line-clamp: 12;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-s);
+    border-block-start: var(--border-width-hairline) solid var(--color-border);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  /* .ui-style strips link underlines; restore one for the secondary link */
+  .notion-link {
+    text-decoration-line: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Narrow full card: shrink the icon, badges and summary; drop the link */
+  @container (width < 350px) {
+    .card-icon {
+      --_icon-size: 1.8rem;
+    }
+
+    .cover-badge {
+      font-size: calc(var(--font-size-xs) * 0.8);
+    }
+
+    .card-summary {
+      font-size: var(--font-size-xs);
+      -webkit-line-clamp: 9;
+      line-clamp: 9;
+    }
+
+    .notion-link {
+      display: none;
+    }
+  }
+
+  /* =====================================================================
+     Compact variant — a single clickable tile (icon + title + byline)
+     ===================================================================== */
+  .tool-card-compact {
+    --_icon-size: 3rem;
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    text-decoration: none;
+  }
+
+  .compact-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Fixed box keeps titles aligned in a stack; emoji glyphs render larger
+       than same-size images, so they get a smaller font-size within it. */
+    inline-size: var(--_icon-size);
+    font-size: calc(var(--_icon-size) * 0.75);
+    line-height: 1;
+  }
+
+  .compact-text {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .compact-title {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    line-height: var(--leading-tight);
+    color: var(--color-text);
+  }
+
+  .compact-byline {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  /* Narrow tile: drop the byline */
+  @container (width < 20rem) {
+    .compact-byline {
+      display: none;
+    }
+  }
+</style>

@@ -6,7 +6,7 @@ audience: public
 kind: proper
 icon: ../../assets/projects/toolbox-icon.png
 image: ../../assets/projects/toolbox-image.png
-website: https://betterat.work/toolbox
+website: https://danny.is/toolbox
 ---
 
 The Toolbox is an ever-growing collection of best practices, tools and advice on work, management, culture-building, leadership and communication – mostly aimed at remote and distributed teams, though plenty of it applies anywhere. It covers everything from running better meetings and async communication to facilitation, coaching and personal productivity.
