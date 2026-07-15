@@ -1,19 +1,5 @@
 [
   {
-    "id": "zzz-scrape-test",
-    "title": "ZZZ Scrape Test",
-    "url": "https://betterat.work/tool/zzz-scrape-test",
-    "notionId": "39e0f5f6-f29d-803a-8a7f-fbc74df03dea",
-    "notionUrl": "https://dannysmith.notion.site/39e0f5f6f29d803a8a7ffbc74df03dea",
-    "emoji": "🕺",
-    "coverImage": "https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/e0ee372d-85fa-482d-a205-d6b9ece0a86b/toolbox_header/public",
-    "category": "Agile",
-    "summary": "Dummy AI summary here, innit!",
-    "created": "2026-07-15T02:28:30.272Z",
-    "lastEdited": "2026-07-15T02:30:48.357Z",
-    "displayOrder": 0
-  },
-  {
     "id": "writing-good-evergreen-documents",
     "title": "Writing Good Evergreen Documents",
     "url": "https://betterat.work/tool/writing-good-evergreen-documents",
@@ -25,7 +11,7 @@
     "summary": "Writing Good Evergreen Documents provides guidance on creating effective and user-friendly documents in a Wiki-type system. It emphasizes core principles such as clarity, aesthetics, simplicity, self-explanation, and future-proofing. The document also offers practical tips on writing style and structuring documents, along with a note on using AI tools for writing assistance.",
     "created": "2024-02-26T23:17:54.574Z",
     "lastEdited": "2024-02-26T23:55:00.189Z",
-    "displayOrder": 1
+    "displayOrder": 0
   },
   {
     "id": "follow-the-sun",
@@ -39,7 +25,7 @@
     "summary": "The concept of \"Follow The Sun\" refers to the seamless handoff of work across globally distributed teams, ensuring continuous progress without the need for late-night or early-morning meetings. It relies on effective project management, clear handoff practices, well-planned meetings, and maintaining connections within time zones. These pillars enable collaboration and trust, empowering teams to work efficiently while respecting individual schedules.",
     "created": "2024-02-26T19:09:57.845Z",
     "lastEdited": "2024-02-26T20:26:49.278Z",
-    "displayOrder": 2
+    "displayOrder": 1
   },
   {
     "id": "sharing-appreciation",
@@ -53,7 +39,7 @@
     "summary": "Showing appreciation at work and encouraging others to do the same is crucial. Establishing simple systems, like a shoutouts channel and appreciation week, can help foster a positive and grateful culture in the organization. Spread the love and make everyone feel valued and appreciated.",
     "created": "2024-02-26T20:25:59.822Z",
     "lastEdited": "2024-02-26T21:15:55.181Z",
-    "displayOrder": 3
+    "displayOrder": 2
   },
   {
     "id": "coaching-vs-mentoring-an-introduction-to-both",
@@ -67,7 +53,7 @@
     "summary": "Coaching and mentoring are essential skills for leaders and managers, each serving distinct purposes. While coaching focuses on facilitating personal development through deep listening and powerful questioning, mentoring emphasizes sharing knowledge and experiences to inspire growth.",
     "created": "2024-02-24T21:52:23.390Z",
     "lastEdited": "2024-02-26T19:08:31.116Z",
-    "displayOrder": 4
+    "displayOrder": 3
   },
   {
     "id": "designing-asynchronous-lessons-for-remote-learning",
@@ -81,7 +67,7 @@
     "summary": "Asynchronous lessons provide flexibility for learners, allowing them to engage with material at their own pace. This guide outlines essential principles, structures, and strategies for designing effective asynchronous lessons that promote understanding, reflection, and action in a remote learning environment.",
     "created": "2024-02-24T21:14:17.605Z",
     "lastEdited": "2025-02-26T15:20:50.747Z",
-    "displayOrder": 5
+    "displayOrder": 4
   },
   {
     "id": "the-four-obsessions-of-an-extraordinary-executive",
@@ -95,7 +81,7 @@
     "summary": "In \"The Four Obsessions of an Extraordinary Executive,\" Patrick Lencioni outlines four key areas that highly effective companies focus on to achieve success: building a cohesive leadership team, creating organizational clarity, over-communicating organizational clarity, and reinforcing it through human systems. These obsessions serve as valuable tools for leaders striving for excellence.",
     "created": "2024-02-24T20:21:20.104Z",
     "lastEdited": "2024-02-24T21:05:05.105Z",
-    "displayOrder": 6
+    "displayOrder": 5
   },
   {
     "id": "daily-standups",
@@ -109,7 +95,7 @@
     "summary": "Daily stand-ups are essential for team alignment, allowing members to share updates on their work, plans, and any blockers. Whether synchronous via video calls or asynchronous through chat tools, the goal remains to keep everyone informed and engaged.",
     "created": "2023-08-01T02:49:46.374Z",
     "lastEdited": "2023-09-06T12:48:27.351Z",
-    "displayOrder": 7
+    "displayOrder": 6
   },
   {
     "id": "task-boards",
@@ -123,7 +109,7 @@
     "summary": "This document provides an introduction to task boards, a tool commonly used by agile teams to manage their workload. It explains what task boards are, why they work well, and how to use them effectively. The document also includes tips for breaking down tasks, definitions of done, and further reading resources.",
     "created": "2023-08-01T02:46:21.857Z",
     "lastEdited": "2023-09-06T12:48:28.069Z",
-    "displayOrder": 8
+    "displayOrder": 7
   },
   {
     "id": "introduction-to-agile",
@@ -137,7 +123,7 @@
     "summary": "Agile is a development process that helps teams deliver projects faster and with fewer defects. It offers a way to quickly identify and adjust for issues, making it a great fit for organizations looking to transform their project management and operations in the digital workplace.",
     "created": "2023-08-01T02:44:50.415Z",
     "lastEdited": "2023-09-06T12:48:31.102Z",
-    "displayOrder": 9
+    "displayOrder": 8
   },
   {
     "id": "managing-attention-and-time",
@@ -151,7 +137,7 @@
     "summary": "This document provides guidance on managing attention and time when working in a distributed team environment. It covers topics including task and time management, prioritizing tasks, and optimizing focus and attention. The document also offers tips for effective communication with team members and includes additional resources for further reading.",
     "created": "2023-08-01T02:40:17.430Z",
     "lastEdited": "2023-09-06T13:00:12.168Z",
-    "displayOrder": 10
+    "displayOrder": 9
   },
   {
     "id": "personal-routines",
@@ -165,7 +151,7 @@
     "summary": "This document provides guidance on designing personal routines for remote work to help promote health and happiness. It outlines different approaches to designing routines, what to consider when doing so, and provides additional ideas and resources for crafting the perfect remote workday.",
     "created": "2023-08-01T02:37:26.525Z",
     "lastEdited": "2023-09-06T13:00:12.168Z",
-    "displayOrder": 11
+    "displayOrder": 10
   },
   {
     "id": "taking-care-of-yourself",
@@ -179,7 +165,7 @@
     "summary": "This document provides advice on how to take care of yourself while working remotely. It covers topics such as setting expectations, managing notifications, dealing with isolation and loneliness, and staying fit and healthy. The advice is not exhaustive, but it can help you maintain your health and well-being while working remotely.",
     "created": "2023-08-01T02:33:36.340Z",
     "lastEdited": "2023-09-06T13:00:12.168Z",
-    "displayOrder": 12
+    "displayOrder": 11
   },
   {
     "id": "your-physical-environment",
@@ -193,7 +179,7 @@
     "summary": "This document provides guidance on creating an effective physical work environment, with a focus on remote work. It includes tips on setting up a home office, working on the go, and taking advantage of the benefits of working from home.",
     "created": "2023-08-01T02:26:19.511Z",
     "lastEdited": "2023-09-06T13:00:12.168Z",
-    "displayOrder": 13
+    "displayOrder": 12
   },
   {
     "id": "loom-pals",
@@ -207,7 +193,7 @@
     "summary": "Loom Pals is a modern take on the classic pen pal concept, but instead of letters, you send short Loom videos to connect with friends and colleagues. Simply record a 2-5 minute video, ask some questions, and wait for their response. It's a great way to stay in touch when you don't have time for a synchronous call.",
     "created": "2023-08-01T01:53:33.483Z",
     "lastEdited": "2023-09-06T12:55:36.355Z",
-    "displayOrder": 14
+    "displayOrder": 13
   },
   {
     "id": "irl-socialising-for-remote-teams",
@@ -221,7 +207,7 @@
     "summary": "IRL Socialising for Remote Teams provides practical ideas for fostering real-life connections among distributed teams. Suggestions include local meetups, co-working spaces, workations, vacation visits, retreats, and funding non-work social activities. Encouraging these interactions can strengthen relationships and build a sense of community within remote organizations.",
     "created": "2023-08-01T01:55:53.479Z",
     "lastEdited": "2024-02-26T22:21:03.956Z",
-    "displayOrder": 15
+    "displayOrder": 14
   },
   {
     "id": "socialising-in-remote-teams",
@@ -235,7 +221,7 @@
     "summary": "Learn how to intentionally create opportunities for remote teams to socialize and build strong connections in this document. The guide provides tips for synchronous and asynchronous socializing, including the use of Slack channels and crew chats.",
     "created": "2023-08-01T01:35:13.110Z",
     "lastEdited": "2023-09-06T12:55:36.355Z",
-    "displayOrder": 16
+    "displayOrder": 15
   },
   {
     "id": "the-async-week",
@@ -249,7 +235,7 @@
     "summary": "This document outlines the concept of an Async Week, a useful tool for remote teams to build their asynchronous communication habits. The rules are simple: no meetings, except for certain exceptions, and encourage the use of DND in Slack. Afterwards, a survey can be conducted to assess how the week went and identify areas for improvement.",
     "created": "2023-08-01T01:17:04.816Z",
     "lastEdited": "2023-09-06T12:56:55.563Z",
-    "displayOrder": 17
+    "displayOrder": 16
   },
   {
     "id": "google-workspace",
@@ -263,7 +249,7 @@
     "summary": "This document provides a brief overview of Google Workspace, including its commonly used applications and tips for working with Google Docs. It also includes a checklist for configuring your Google account and links to helpful tutorials provided by Google.",
     "created": "2023-08-01T01:05:49.272Z",
     "lastEdited": "2023-09-06T12:59:47.293Z",
-    "displayOrder": 18
+    "displayOrder": 17
   },
   {
     "id": "office-365",
@@ -277,7 +263,7 @@
     "summary": "This document provides an overview of Office 365 and its apps, as well as tips for setting up and working with documents. It covers topics such as configuring your Microsoft 365 account, creating and storing documents, and using Word for collaboration.",
     "created": "2023-08-01T01:03:11.308Z",
     "lastEdited": "2023-09-06T12:59:47.293Z",
-    "displayOrder": 19
+    "displayOrder": 18
   },
   {
     "id": "creating-managing-and-archiving-slack-channels",
@@ -291,7 +277,7 @@
     "summary": "Creating, managing, and archiving Slack channels is essential for maintaining organized communication within teams. This guide outlines best practices for channel creation, management, and archiving, ensuring that all users can contribute to a streamlined and effective Slack environment.",
     "created": "2023-07-31T21:46:50.861Z",
     "lastEdited": "2026-07-14T20:22:00.048Z",
-    "displayOrder": 20
+    "displayOrder": 19
   },
   {
     "id": "writing-good-slack-messages",
@@ -305,7 +291,7 @@
     "summary": "This document provides guidelines for writing effective Slack messages, with tips on formatting, using links, and tagging people. It emphasizes the importance of clear requests and deadlines, as well as acknowledging receipt of messages. The document also advises using one message per topic and editing messages when necessary.",
     "created": "2023-07-31T20:55:23.890Z",
     "lastEdited": "2023-09-06T12:47:56.659Z",
-    "displayOrder": 21
+    "displayOrder": 20
   },
   {
     "id": "core-channels-in-slack",
@@ -319,7 +305,7 @@
     "summary": "This document provides suggestions for establishing core Slack channels, including their purpose and example messages. These channels, prefixed with core-, are meant for company-wide announcements, random chatter, shoutouts, and more.",
     "created": "2023-07-31T20:53:39.705Z",
     "lastEdited": "2023-09-06T12:47:57.413Z",
-    "displayOrder": 22
+    "displayOrder": 21
   },
   {
     "id": "emoji-conventions-in-slack",
@@ -333,7 +319,7 @@
     "summary": "This document outlines the importance of using Emoji reactions in Slack and provides a list of conventions that some companies have established for certain Emoji. By using these Emoji reactions, distributed teams can provide non-verbal feedback and quickly communicate agreement, disagreement, completion, and more.",
     "created": "2023-07-31T20:45:58.291Z",
     "lastEdited": "2023-09-06T12:47:57.829Z",
-    "displayOrder": 23
+    "displayOrder": 22
   },
   {
     "id": "good-video-calls",
@@ -347,7 +333,7 @@
     "summary": "This document provides tips for conducting effective video calls, including optimizing video quality, using gallery mode for group calls, and avoiding hybrid calls. It also emphasizes the importance of using video to communicate via facial expressions and body language in order to build relationships.",
     "created": "2023-01-30T21:12:11.634Z",
     "lastEdited": "2023-09-06T12:50:07.723Z",
-    "displayOrder": 24
+    "displayOrder": 23
   },
   {
     "id": "meeting-checkins",
@@ -361,7 +347,7 @@
     "summary": "Start your meetings with a check-in to set the tone and ensure everyone feels heard. Use a structured approach where each person shares their current rating out of ten, one word to describe their feeling, and the name of someone else on the call who hasn't checked in yet. This quick and inclusive activity helps establish openness and presence in the meeting.",
     "created": "2023-01-30T20:47:26.641Z",
     "lastEdited": "2024-02-26T23:16:44.449Z",
-    "displayOrder": 25
+    "displayOrder": 24
   },
   {
     "id": "the-seven-essential-coaching-questions",
@@ -375,7 +361,7 @@
     "summary": "The Seven Essential Coaching Questions is a collection of practical, easy-to-use questions that Michael Bungay Stanier outlines in his book, The Coaching Habit. They're designed to help managers and team members alike to effectively and confidently coach each other. This document provides an overview of the questions and offers some general advice on how to use them.",
     "created": "2023-07-31T20:02:38.736Z",
     "lastEdited": "2023-09-06T12:59:00.853Z",
-    "displayOrder": 26
+    "displayOrder": 25
   },
   {
     "id": "team-forming-workshops",
@@ -389,7 +375,7 @@
     "summary": "Team forming workshops are designed to establish mutual understanding, define team principles, and clarify the team's vision and mission. By fostering open communication and collaboration, these workshops help new teams navigate challenges and build a strong foundation for effective teamwork.",
     "created": "2023-06-01T13:06:45.573Z",
     "lastEdited": "2025-03-03T14:45:57.320Z",
-    "displayOrder": 27
+    "displayOrder": 26
   },
   {
     "id": "asynchronous-working",
@@ -403,7 +389,7 @@
     "summary": "This document outlines the benefits and key principles of asynchronous working, which is a deliberate design of working methods with a minimum of synchronous communication. It also provides examples of asynchronous communication tools and highlights the importance of documentation and over-sharing.",
     "created": "2023-06-01T01:19:18.072Z",
     "lastEdited": "2023-09-06T12:56:55.563Z",
-    "displayOrder": 28
+    "displayOrder": 27
   },
   {
     "id": "meetings",
@@ -417,7 +403,7 @@
     "summary": "This collection offers essential advice on conducting effective meetings within remote organizations, emphasizing the importance of asynchronous communication, establishing clear conventions, defining meeting goals, and utilizing structured agendas to maximize the value of synchronous meeting time.",
     "created": "2023-06-01T01:11:35.483Z",
     "lastEdited": "2024-03-29T19:06:01.424Z",
-    "displayOrder": 29
+    "displayOrder": 28
   },
   {
     "id": "focus-fridays",
@@ -431,7 +417,7 @@
     "summary": "This document outlines the concept of \"Focus Fridays\" - a strategy for creating uninterrupted time for deep work by declaring one day a week free of internal meetings. The rules are simple, and the benefits include better focus, improved communication habits, and a more productive workweek.",
     "created": "2023-06-01T00:13:34.845Z",
     "lastEdited": "2023-09-06T12:52:19.847Z",
-    "displayOrder": 30
+    "displayOrder": 29
   },
   {
     "id": "all-hands-meetings",
@@ -445,7 +431,7 @@
     "summary": "This document outlines how to run effective All-Hands meetings, which are an opportunity to bring the entire company together to reinforce company vision, values, and objectives, and to share updates and successes from each department. The document provides a template for asynchronous updates and a suggested agenda for the meeting. Additionally, the document provides tips for encouraging participation and engagement in large company meetings.",
     "created": "2023-05-31T22:39:20.012Z",
     "lastEdited": "2023-09-06T12:52:20.992Z",
-    "displayOrder": 31
+    "displayOrder": 30
   },
   {
     "id": "games-for-remote-teams",
@@ -459,7 +445,7 @@
     "summary": "This document provides tips and resources for incorporating remote-friendly games into team meetings, workshops, and all-hands meetings. These games can help improve team collaboration, critical thinking, and decision-making, while also fostering camaraderie and a sense of team. Use this document as a tool to enhance your team-building activities.",
     "created": "2023-05-31T22:24:19.884Z",
     "lastEdited": "2023-09-06T12:52:21.509Z",
-    "displayOrder": 32
+    "displayOrder": 31
   },
   {
     "id": "fundamental-workshopping-tools",
@@ -473,7 +459,7 @@
     "summary": "Fundamental Workshopping Tools provides two key techniques for effective workshop facilitation: Individual Thinking → Collective Thinking and Divergent → Convergent Thinking. These tools encourage independent reflection, diverse idea generation, and focused problem-solving, making workshops more productive and inclusive.",
     "created": "2023-05-31T21:39:55.789Z",
     "lastEdited": "2024-02-24T21:51:02.750Z",
-    "displayOrder": 33
+    "displayOrder": 32
   },
   {
     "id": "workshops-brainstorming-sessions",
@@ -487,7 +473,7 @@
     "summary": "This document provides guidelines for facilitating successful workshops and brainstorming sessions. Collaboration and visual tools are key, and having a clear goal and structure is essential. A facilitator should lead the session, and pre-read materials can help ensure everyone is prepared.",
     "created": "2023-05-31T20:21:37.499Z",
     "lastEdited": "2023-09-06T12:52:30.399Z",
-    "displayOrder": 34
+    "displayOrder": 33
   },
   {
     "id": "recurring-team-meetings",
@@ -501,7 +487,7 @@
     "summary": "This document provides best practices for conducting effective and productive remote team meetings. It includes key principles and guidelines for structuring team meetings, as well as suggestions for building agendas, assigning facilitators, and recording calls. The document also offers tips for scheduling meetings across time zones and provides links to additional resources for further reading.",
     "created": "2023-05-31T20:10:15.067Z",
     "lastEdited": "2023-09-06T12:52:32.693Z",
-    "displayOrder": 35
+    "displayOrder": 34
   },
   {
     "id": "asynchronous-status-meetings",
@@ -515,7 +501,7 @@
     "summary": "This document provides guidance on using asynchronous status meetings to free up synchronous meeting time and allow for well-structured updates, spotlights and guest contributions. It outlines the benefits of this approach and provides tips for structuring and scheduling these meetings.",
     "created": "2023-05-31T19:08:36.332Z",
     "lastEdited": "2023-09-06T12:52:33.819Z",
-    "displayOrder": 36
+    "displayOrder": 35
   },
   {
     "id": "social-calls",
@@ -529,7 +515,7 @@
     "summary": "This document provides guidance on how to build social connections remotely, including tips on booking social calls, suggested conversation topics, and tools like Donut that can help arrange social calls between team members. Social calls are an important way to build trust and strong teams in a remote environment.",
     "created": "2023-05-31T18:54:29.884Z",
     "lastEdited": "2023-09-06T12:52:34.719Z",
-    "displayOrder": 37
+    "displayOrder": 36
   },
   {
     "id": "unblock-me-sessions",
@@ -543,7 +529,7 @@
     "summary": "This document provides guidance on how to quickly unblock yourself and your team by holding ad-hoc meetings, also known as \"Unblock Me Sessions\". With the right people and a short video call, you can replace longer conversations on other platforms and keep your team moving forward efficiently. The document includes tips on how to make the most of these sessions and avoid disrupting others' workdays.",
     "created": "2023-05-31T18:45:42.052Z",
     "lastEdited": "2023-09-06T12:52:35.157Z",
-    "displayOrder": 38
+    "displayOrder": 37
   },
   {
     "id": "pair-working",
@@ -557,7 +543,7 @@
     "summary": "Pair working can be a powerful tool for solving problems and fostering collaboration, especially for remote teams. This document provides tips for effective pair working, including tools to use and best practices for communicating and working together.",
     "created": "2023-05-31T18:37:59.942Z",
     "lastEdited": "2023-09-06T12:52:35.549Z",
-    "displayOrder": 39
+    "displayOrder": 38
   },
   {
     "id": "choosing-a-time-for-meetings",
@@ -571,7 +557,7 @@
     "summary": "This document provides tips for scheduling meetings, especially in distributed teams. It includes advice on who needs to be there, when to schedule, and how to send an invitation. The \"8-18-1800\" rule is discussed, along with considerations for recurring meetings and working across time zones.",
     "created": "2023-05-31T18:11:42.148Z",
     "lastEdited": "2023-09-06T12:52:36.204Z",
-    "displayOrder": 40
+    "displayOrder": 39
   },
   {
     "id": "using-your-calendar-effectively",
@@ -585,7 +571,7 @@
     "summary": "Using your calendar effectively is crucial, especially in distributed teams. This document provides valuable tips on managing calendars, including exposing your calendar, subscribing to others' calendars, scheduling meetings, blocking out personal time, and handling meeting invites. By following these practices, you can optimize your calendar management and enhance collaboration in remote settings.",
     "created": "2023-05-31T18:02:17.130Z",
     "lastEdited": "2024-03-29T19:08:40.737Z",
-    "displayOrder": 41
+    "displayOrder": 40
   },
   {
     "id": "decision-meetings",
@@ -599,7 +585,7 @@
     "summary": "Decision Meetings are a valuable tool for making thoughtful decisions in a short amount of time. This document provides a process for conducting Decision Meetings and highlights the benefits of up-front preparation. By using this tool, teams can save time and ensure that decisions are documented and communicated effectively.",
     "created": "2023-05-31T17:55:21.211Z",
     "lastEdited": "2023-09-06T12:52:38.814Z",
-    "displayOrder": 42
+    "displayOrder": 41
   },
   {
     "id": "making-decisions",
@@ -613,7 +599,7 @@
     "summary": "This document provides three principles to guide decision-making in distributed teams. Treat decisions as reversible by default, make decisions at the lowest level possible, and identify a decision owner early to save time and avoid back and forth. Use these principles to make better decisions and streamline the decision-making process.",
     "created": "2023-05-31T17:51:00.383Z",
     "lastEdited": "2023-09-06T12:56:55.563Z",
-    "displayOrder": 43
+    "displayOrder": 42
   },
   {
     "id": "writing-proposals",
@@ -627,7 +613,7 @@
     "summary": "This document provides guidance on writing effective proposals in an asynchronous work environment. Learn how to make small proposals that are simple yet effective, and how to structure proposals for more complex decisions. Mastering proposal writing is an essential skill for distributed teams.",
     "created": "2023-05-31T17:32:02.702Z",
     "lastEdited": "2023-09-06T12:56:55.563Z",
-    "displayOrder": 44
+    "displayOrder": 43
   },
   {
     "id": "the-keeper-test",
@@ -641,7 +627,7 @@
     "summary": "Use the Keeper Test to evaluate how important each person on your team is to the team's success. By asking yourself if you would fight to keep each team member, you can identify areas where improvement is needed and make strategic decisions about personnel. However, this test is subjective and should be used with caution to avoid creating a culture of fear or bias.",
     "created": "2023-04-03T10:17:26.581Z",
     "lastEdited": "2023-09-06T12:57:06.680Z",
-    "displayOrder": 45
+    "displayOrder": 44
   },
   {
     "id": "formally-established-teams",
@@ -655,7 +641,7 @@
     "summary": "This document provides guidelines on how to formally establish teams in a company, including defining what a team is, clarifying membership rules, creating a clear mission, selecting a team lead, and using a descriptive name. The document also offers a process for establishing a new team.",
     "created": "2023-03-29T23:24:35.267Z",
     "lastEdited": "2023-09-06T12:55:36.355Z",
-    "displayOrder": 46
+    "displayOrder": 45
   },
   {
     "id": "intro-to-figjam",
@@ -669,7 +655,7 @@
     "summary": "FigJam is a digital white-boarding tool by Figma that is perfect for remote collaboration. It allows teams to work simultaneously in the same file and is designed for interactive white-boarding sessions. FigJam is a useful tool for distributed teams and can help increase the efficiency and effectiveness of meetings and workshops.",
     "created": "2023-02-16T23:52:10.296Z",
     "lastEdited": "2023-09-06T12:59:47.293Z",
-    "displayOrder": 47
+    "displayOrder": 46
   },
   {
     "id": "loom",
@@ -683,7 +669,7 @@
     "summary": "Loom is a video recording and sharing tool that allows users to easily capture, edit, and share videos with others. With its simple and intuitive interface, Loom is ideal for creating quick and engaging video content for a variety of purposes, from tutorials and product demos to team meetings and customer support.",
     "created": "2023-02-16T23:20:40.640Z",
     "lastEdited": "2023-09-06T12:59:47.293Z",
-    "displayOrder": 48
+    "displayOrder": 47
   },
   {
     "id": "a-working-with-me-page",
@@ -697,7 +683,7 @@
     "summary": "This is a guide on how to create a \"working with me\" page to help your team get to know you better. It includes a list of things to include and the benefits of having such a page. You can use the Notion template provided to customize your own page and make it useful for your colleagues.",
     "created": "2023-02-16T22:25:24.968Z",
     "lastEdited": "2023-09-06T12:56:55.563Z",
-    "displayOrder": 49
+    "displayOrder": 48
   },
   {
     "id": "screen-sharing",
@@ -711,7 +697,7 @@
     "summary": "This document provides tips for presenting via screen-sharing during video calls or recordings. It emphasizes the importance of considering the same skills and techniques as in-person presenting, while also outlining a few additional things to keep in mind.",
     "created": "2023-02-16T22:08:59.883Z",
     "lastEdited": "2023-09-06T12:50:07.723Z",
-    "displayOrder": 50
+    "displayOrder": 49
   },
   {
     "id": "dealing-with-interruptions-to-video-calls",
@@ -725,7 +711,7 @@
     "summary": "This document offers tips for dealing with interruptions during video calls, such as those caused by children or pets. It emphasizes that these interruptions can be seen as a positive way to build relationships in remote teams.",
     "created": "2023-02-16T22:03:32.842Z",
     "lastEdited": "2023-09-06T12:50:07.723Z",
-    "displayOrder": 51
+    "displayOrder": 50
   },
   {
     "id": "eye-contact-speech-on-video-calls",
@@ -739,7 +725,7 @@
     "summary": "This resource provides tips for improving eye contact and speech during video calls. Topics covered include the importance of eye contact, rate of speech, pauses, tone, hand gestures, and facial expressions. The goal is to help remote workers make a positive and engaging impression on video calls.",
     "created": "2023-02-16T21:56:16.428Z",
     "lastEdited": "2023-09-06T12:50:07.723Z",
-    "displayOrder": 52
+    "displayOrder": 51
   },
   {
     "id": "audio-on-video-calls",
@@ -753,7 +739,7 @@
     "summary": "This document provides tips and tricks for improving audio quality on video calls, whether you're working from a home office or on the go. It includes advice on choosing the right microphone, using noise-cancelling headphones, and adjusting volume and etiquette.",
     "created": "2023-02-16T21:30:46.189Z",
     "lastEdited": "2023-09-06T12:50:07.723Z",
-    "displayOrder": 53
+    "displayOrder": 52
   },
   {
     "id": "slack-statuses",
@@ -767,7 +753,7 @@
     "summary": "Slack statuses are a useful way to communicate your availability and status without sending messages. This document provides a guide to creating and documenting Slack statuses, with examples and tips for use. It also includes links to resources for further information.",
     "created": "2023-02-16T20:58:01.701Z",
     "lastEdited": "2023-09-06T12:54:28.111Z",
-    "displayOrder": 54
+    "displayOrder": 53
   },
   {
     "id": "slack-channel-prefixes",
@@ -781,7 +767,7 @@
     "summary": "This document provides guidelines for naming and categorizing Slack channels to help organizations better manage their channels. The recommended channel naming conventions aim to make channel purposes clear, simple, and consistent, with standardized, descriptive prefixes to aid filtering and searching. The document also outlines the categories of channels, including core, team-specific, project-specific, and more, to help organizations keep their channels organized.",
     "created": "2023-07-31T20:54:56.719Z",
     "lastEdited": "2023-09-06T12:47:57.038Z",
-    "displayOrder": 55
+    "displayOrder": 54
   },
   {
     "id": "slack-setting-expectations",
@@ -795,7 +781,7 @@
     "summary": "This document outlines best practices for using Slack effectively, including expectations around responding to messages, following good etiquette, and being mindful of noise. It emphasizes the importance of communication and collaboration while promoting respect, kindness, and consideration in all interactions.",
     "created": "2023-07-31T20:59:40.041Z",
     "lastEdited": "2023-09-06T12:47:56.266Z",
-    "displayOrder": 56
+    "displayOrder": 55
   },
   {
     "id": "slack-basics",
@@ -809,7 +795,7 @@
     "summary": "Slack is a channel-based messaging platform used by distributed teams to communicate effectively. With Slack, users can connect all their software tools and services, find the information they need, and work together more efficiently. This document provides an overview of the basics of using Slack, including messaging, public and private channels, threads, mentions, and profile settings.",
     "created": "2023-07-31T20:38:41.965Z",
     "lastEdited": "2023-09-06T12:47:58.389Z",
-    "displayOrder": 57
+    "displayOrder": 56
   },
   {
     "id": "feedback",
@@ -823,7 +809,7 @@
     "summary": "This document provides insights and exercises on giving and receiving feedback. It emphasizes the importance of constructive feedback and the impact it can have on building a culture of openness and trust in remote teams. The document also offers practical tips on how to give and receive feedback, including choosing the right medium for delivery.",
     "created": "2023-08-01T01:09:57.297Z",
     "lastEdited": "2023-09-06T12:57:17.126Z",
-    "displayOrder": 58
+    "displayOrder": 57
   },
   {
     "id": "ask-channels-in-slack",
@@ -837,7 +823,7 @@
     "summary": "This document outlines the benefits of creating \"ask channels\" on Slack for larger teams. By creating specific channels for external inquiries, teams can keep their internal channels clear for important communication. The document also provides tips on how to name and manage these channels effectively.",
     "created": "2023-07-31T21:20:33.171Z",
     "lastEdited": "2023-09-06T12:47:55.829Z",
-    "displayOrder": 59
+    "displayOrder": 58
   },
   {
     "id": "building-relationships-in-remote-teams",
@@ -851,7 +837,7 @@
     "summary": "This document provides insights on building and maintaining strong relationships in remote teams, emphasizing the importance of trust, respect, self-awareness, inclusion, and open communication. It also presents practical tips and further reading resources for developing effective work relationships.",
     "created": "2023-08-01T01:56:38.071Z",
     "lastEdited": "2023-09-06T12:55:36.355Z",
-    "displayOrder": 60
+    "displayOrder": 59
   },
   {
     "id": "the-role-of-a-facilitator",
@@ -865,7 +851,7 @@
     "summary": "The Role of a Facilitator: Explore the important skills and principles behind effective facilitation. Learn how facilitators guide conversations, listen actively, ask thought-provoking questions, empathize with participants, and adapt to changing dynamics. Enhance your facilitation abilities and create a positive and productive group environment.",
     "created": "2024-02-24T21:33:27.511Z",
     "lastEdited": "2024-02-24T21:51:59.437Z",
-    "displayOrder": 61
+    "displayOrder": 60
   },
   {
     "id": "how-learning-works",
@@ -879,7 +865,7 @@
     "summary": "Learning is a complex process that involves change and the acquisition of new knowledge, skills, and attitudes. This document provides an introduction to the principles of learning, emphasizing the importance of learner-centered experiences and the impact of the learning environment. It also explores the role of reflection, motivation, and goal-directed practice in enhancing learning outcomes. Additionally, it discusses the experiential learning cycle and the benefits of group learning.",
     "created": "2024-02-24T21:05:11.066Z",
     "lastEdited": "2024-02-24T21:32:09.854Z",
-    "displayOrder": 62
+    "displayOrder": 61
   },
   {
     "id": "the-five-dysfunctions-of-a-team",
@@ -893,7 +879,7 @@
     "summary": "In his book \"The Five Dysfunctions of a Team,\" Patrick Lencioni identifies five key dysfunctions that hinder team effectiveness: absence of trust, fear of conflict, lack of commitment, avoidance of accountability, and inattention to results. These dysfunctions often build on each other, starting with a lack of trust. Addressing these issues is crucial for teams to achieve success and improve collaboration.",
     "created": "2024-02-24T19:40:54.165Z",
     "lastEdited": "2024-02-24T21:04:59.390Z",
-    "displayOrder": 63
+    "displayOrder": 62
   },
   {
     "id": "warning-orders",
@@ -907,7 +893,7 @@
     "summary": "Use warning orders to give people advance notice of upcoming changes or operations, even when the details aren't fully formed. This tool is useful in both military and business settings, allowing people to prepare and take action when necessary. A warning order should include a brief background, the change or options being considered, actions people need to take, and a timeline.",
     "created": "2023-08-25T16:44:16.632Z",
     "lastEdited": "2023-09-06T12:56:55.563Z",
-    "displayOrder": 64
+    "displayOrder": 63
   },
   {
     "id": "lean-documentation",
@@ -921,7 +907,7 @@
     "summary": "This document explains the importance of clear and concise documentation for asynchronous teams. It outlines three properties of good internal documentation and provides an example of a process for creating \"lean\" documentation that can be improved over time.",
     "created": "2023-08-01T02:20:04.914Z",
     "lastEdited": "2023-09-06T12:57:19.766Z",
-    "displayOrder": 65
+    "displayOrder": 64
   },
   {
     "id": "handoff",
@@ -935,7 +921,7 @@
     "summary": "Handoff is a powerful process of putting down work to be picked up by others or your future self, allowing you to capture \"open loops\" and maintain a better work-life balance. It is crucial for any organization, especially globally distributed companies. Good handoff involves providing enough information and context for seamless continuation of tasks and projects.",
     "created": "2024-02-26T19:57:17.815Z",
     "lastEdited": "2024-02-26T20:24:48.277Z",
-    "displayOrder": 66
+    "displayOrder": 65
   },
   {
     "id": "the-7-levels-of-delegation",
@@ -949,7 +935,7 @@
     "summary": "The 7 Levels of Delegation is a practical framework that helps leaders find the right balance between micromanagement and complete control. It offers seven levels of delegation, ranging from telling to delegating, allowing leaders to adapt their approach based on the expertise and context of their team members. This model promotes distributed control and empowers teams to make decisions effectively.",
     "created": "2024-06-21T15:28:36.314Z",
     "lastEdited": "2024-06-21T15:58:39.287Z",
-    "displayOrder": 67
+    "displayOrder": 66
   },
   {
     "id": "directly-responsible-individuals",
@@ -963,7 +949,7 @@
     "summary": "Directly Responsible Individuals (DRIs) are individuals assigned to specific projects, targets, or initiatives. They are accountable for the success of their assigned tasks and are responsible for coordinating resources, making decisions, setting expectations, and managing risks. Learn more about DRIs in GitLab's comprehensive guide on Directly Responsible Individuals (DRI).",
     "created": "2024-02-27T00:07:43.434Z",
     "lastEdited": "2024-02-27T00:18:47.034Z",
-    "displayOrder": 68
+    "displayOrder": 67
   },
   {
     "id": "formatting-documents-in-notion",
@@ -977,7 +963,7 @@
     "summary": "This guide provides essential formatting tips and best practices for creating documents in Notion. It covers headings, emojis, lists, callouts, and more, ensuring clarity and readability while utilizing Notion's powerful features effectively.",
     "created": "2024-02-26T23:23:50.463Z",
     "lastEdited": "2024-10-08T16:50:24.808Z",
-    "displayOrder": 69
+    "displayOrder": 68
   },
   {
     "id": "meeting-checkouts",
@@ -991,6 +977,6 @@
     "summary": "Meeting Checkouts is a collection of quick and effective ways to wrap up meetings. It provides various formats for checkouts based on the desired outcomes, such as reflection, uplifting the mood, lightening the mood, and grounding the group. These checkouts help foster a positive and productive end to meetings, leaving participants with a sense of closure and connection to the real world.",
     "created": "2024-02-26T22:39:58.837Z",
     "lastEdited": "2024-02-26T23:16:25.567Z",
-    "displayOrder": 70
+    "displayOrder": 69
   }
 ]
