@@ -1,88 +1,102 @@
 ---
-import type { CollectionEntry } from 'astro:content'
-import { FormattedDate } from '@components/ui/index'
+import type { CollectionEntry } from 'astro:content';
+import { FormattedDate } from '@components/ui/index';
 
 // Rich card for Remote Working Toolbox pages. Experimental: deliberately surfaces
 // every field in the toolboxPages collection so we can see the data in situ —
 // may later be thinned down or merged into ContentCard.
 
 interface Props {
-  tool: CollectionEntry<'toolboxPages'>
+  tool: CollectionEntry<'toolboxPages'>;
+  /** Compact tile: icon + title + category byline, the whole tile links out. */
+  compact?: boolean;
 }
 
-const { tool } = Astro.props
-const { data } = tool
+const { tool, compact = false } = Astro.props;
+const { data } = tool;
 
 // Tint the category badge from the standard palette, cycling by a hash of the
 // category name so colours are stable however many categories exist.
-const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue']
-const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
-const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`
+const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
+const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`;
 
 // Only show "Updated" when it differs from the created date at day granularity
-const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString()
+const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString();
 ---
 
-<article
-  class="tool-card ui-style cq"
-  data-notion-id={data.notionId}
-  data-display-order={data.displayOrder}
-  data-category={data.category}
-  style={`view-transition-name: tool-${tool.id}`}
->
-  <a href={data.url} class="card-link">
-    <div class="card-cover">
-      {
-        data.coverImage && (
-          <img
-            class="img-cover"
-            src={data.coverImage}
-            alt=""
-            width="600"
-            height="200"
-            loading="lazy"
-          />
-        )
-      }
-      <span class="cover-badge type-badge">Tool</span>
-      {
-        data.category && (
-          <span class="cover-badge category-badge" style={`--_badge-color: ${categoryColor}`}>
-            {data.category}
-          </span>
-        )
-      }
-    </div>
-
-    {
-      (data.emoji || data.iconUrl) && (
-        <span class="card-icon">
+{
+  compact ? (
+    <a class="tool-card-compact ui-style cq" href={data.url} data-category={data.category}>
+      {(data.emoji || data.iconUrl) && (
+        <span class="compact-icon">
           {data.emoji ?? <img src={data.iconUrl} alt="" loading="lazy" />}
         </span>
-      )
-    }
+      )}
+      <span class="compact-text">
+        <span class="compact-title">{data.title}</span>
+        <span class="compact-byline">
+          {data.category ? `Tool filed under ${data.category}` : 'Tool'}
+        </span>
+      </span>
+    </a>
+  ) : (
+    <article
+      class="tool-card ui-style cq"
+      data-notion-id={data.notionId}
+      data-display-order={data.displayOrder}
+      data-category={data.category}
+      style={`view-transition-name: tool-${tool.id}`}
+    >
+      <a href={data.url} class="card-link">
+        <div class="card-cover">
+          {data.coverImage && (
+            <img
+              class="img-cover"
+              src={data.coverImage}
+              alt=""
+              width="600"
+              height="200"
+              loading="lazy"
+            />
+          )}
+          <span class="cover-badge type-badge">Tool</span>
+          {data.category && (
+            <span class="cover-badge category-badge" style={`--_badge-color: ${categoryColor}`}>
+              {data.category}
+            </span>
+          )}
+        </div>
 
-    <div class="card-content">
-      <h3 class="card-title">{data.title}</h3>
-      {data.summary && <p class="card-summary">{data.summary}</p>}
-    </div>
-  </a>
+        {(data.emoji || data.iconUrl) && (
+          <span class="card-icon">
+            {data.emoji ?? <img src={data.iconUrl} alt="" loading="lazy" />}
+          </span>
+        )}
 
-  <footer class="card-footer">
-    <span>
-      Added <FormattedDate date={data.created} />
-      {
-        !updatedSameDay && (
-          <>
-            {' '}
-            · Updated <FormattedDate date={data.lastEdited} />
-          </>
-        )
-      }
-    </span>
-    <a class="notion-link" href={data.notionUrl}>View in Notion</a>
-  </footer>
-</article>
+        <div class="card-content">
+          <h3 class="card-title">{data.title}</h3>
+          {data.summary && <p class="card-summary">{data.summary}</p>}
+        </div>
+      </a>
+
+      <footer class="card-footer">
+        <span>
+          Added <FormattedDate date={data.created} />
+          {!updatedSameDay && (
+            <>
+              {' '}
+              · Updated <FormattedDate date={data.lastEdited} />
+            </>
+          )}
+        </span>
+        <a class="notion-link" href={data.notionUrl}>
+          View in Notion
+        </a>
+      </footer>
+    </article>
+  )
+}
 
 <style>
   .tool-card {
@@ -230,6 +244,92 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
   .notion-link {
     text-decoration-line: underline;
     text-underline-offset: 0.2em;
+  }
+
+  /* ---- Compact variant: a single clickable tile (icon + title + byline),
+     mirroring ProjectCard's compact tile ---- */
+  .tool-card-compact {
+    --_border-color: var(--color-green);
+    --_icon-size: 3rem;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    overflow: hidden;
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-background-secondary);
+    text-decoration: none;
+    transition: border-color var(--duration-fast) var(--ease-in-out);
+
+    /* Accent bar that grows on hover/focus — the site's card idiom */
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      inline-size: var(--border-width-thick);
+      background: var(--_border-color);
+      transition: inline-size var(--duration-fast) var(--ease-in-out);
+    }
+
+    &:is(:hover, :focus-visible) {
+      border-color: var(--_border-color);
+
+      &::before {
+        inline-size: var(--border-width-heavy);
+      }
+    }
+  }
+
+  .compact-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Fixed box keeps titles aligned in a stack; emoji glyphs render larger
+       than same-size images, so they get a smaller font-size within it. */
+    inline-size: var(--_icon-size);
+    font-size: 2.25rem;
+    line-height: 1;
+
+    & img {
+      display: block;
+      inline-size: var(--_icon-size);
+      block-size: var(--_icon-size);
+      object-fit: contain;
+      border-radius: var(--radius-xs);
+    }
+  }
+
+  .compact-text {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .compact-title {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    line-height: var(--leading-tight);
+    color: var(--color-text);
+  }
+
+  .compact-byline {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  /* Drop the byline once the tile gets tight (the tile is its own container) */
+  @container (max-width: 20rem) {
+    .compact-byline {
+      display: none;
+    }
   }
 
   /* Narrow containers: drop the cover (and its overlays) and the summary */

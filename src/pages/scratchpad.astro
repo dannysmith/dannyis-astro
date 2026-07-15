@@ -37,6 +37,13 @@ const imageIconTool = toolboxPages.find(
       <ResizableContainer initialWidth="420px" minWidth="220px">
         {imageIconTool && <ToolCard tool={imageIconTool} />}
       </ResizableContainer>
+
+      <h2>ToolCard (compact — all {toolboxPages.length} tools)</h2>
+      <ResizableContainer initialWidth="600px" minWidth="180px">
+        <div class="compact-stack">
+          {toolboxPages.map(tool => <ToolCard tool={tool} compact />)}
+        </div>
+      </ResizableContainer>
     </main>
   </body>
 </html>
@@ -52,5 +59,11 @@ const imageIconTool = toolboxPages.find(
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
     }
+  }
+
+  .compact-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
   }
 </style>
