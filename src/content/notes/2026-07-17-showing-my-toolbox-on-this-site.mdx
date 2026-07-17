@@ -33,7 +33,7 @@ Whereas `/toolbox` used to redirect to my work site, it now renders [a page](/to
 
 ## How does it work?
 
-Aside from the toolbox page itself, there are four parts to this: a new JSON-type content collection, a `ToolCard` component, a script which creates or updates the content collection and a GitHub Action workflow to run the script.
+Aside from the toolbox page itself, there are four parts to this: a new JSON-type content collection, a `ToolCard` component, a script which creates or updates the content collection and a GitHub Actions workflow to run the script.
 
 ### The content collection
 
@@ -76,13 +76,13 @@ Both variants should respond well inside containers of any size thanks to modern
 
 ### The toolbox page
 
-The cards are laid out using CSS grid on the [actual page](/toolbox) and can be filtered by category using the buttons at the top. The filter buttons are actually labelled radio buttons which hide and unhide tool cards with CSS a bit like this.
+The cards are laid out using CSS grid on the [actual page](/toolbox) and can be filtered by category using the buttons at the top. The filter buttons are actually labelled radio buttons which hide and unhide tool cards with CSS a bit like this:
 
 ```css
 main:has(#filter-remote-work:checked) .tool-card:not([data-category="Remote Work"]) { display: none; }
 ```
 
-The only client-side javascript in any of this is ~10 lines which enhance filtered cards by triggering browser **view transitions** when filters are changed.
+The only client-side JavaScript in any of this is ~10 lines which enhance filtered cards by triggering browser **view transitions** when filters are changed.
 
 I still feel a huge sense of wonderment at how easy it is to create robust, responsive components and layouts like this with **so little CSS**! `ToolCard.astro` contains ~170 lines and `toolbox.astro` only ~75, though both obviously lean on global styles.
 
@@ -95,7 +95,7 @@ By far the most interesting challenge here was how to populate `toolboxPages.jso
 I settled on a [simple GH Actions workflow](https://github.com/dannysmith/dannyis-astro/blob/main/.github/workflows/update-toolbox.yml) which executes a script to grab the data, compare it with the current JSON file and commit any changes to `main` (triggering a rebuild & deployment).
 
 <Callout>
-This currently runs weekly or whenever I manually trigger it. I should probably look into *also* firing it whenever content in the notion database actually changes via a webhook or something.
+This currently runs weekly or whenever I manually trigger it. I should probably look into *also* firing it whenever content in the Notion database actually changes via a webhook or something.
 </Callout>
 
 The [`get-toolbox-json.ts`](https://github.com/dannysmith/dannyis-astro/blob/31e95233f6ff38bb7bd20a348f6a0ccfffa6d46c/scripts/get-toolbox-json.ts) script has to fetch stuff from two sources:
@@ -140,18 +140,18 @@ Turns out these props contain a very *Notion-ish* record map with a block for ev
 }
 ```
 
-I say *Notion-ish* because it's kinda halfway between Notion's internal format and what I'd expect Super to need for rendering a gallery like this as HTML. The blocks are keyed by Super's slugs while titles keep Notion's rich-text format (arrays of `[text, annotations]` segments). Compared with the data available from scraping the server-rendered HTML this is way more useful for our needs. Doubly so because `blockID` is the actual Notion UUID for the toolpage in question.
+I say *Notion-ish* because it's kinda halfway between Notion's internal format and what I'd expect Super to need for rendering a gallery like this as HTML. The blocks are keyed by Super's slugs while titles keep Notion's rich-text format (arrays of `[text, annotations]` segments). Compared with the data available from scraping the server-rendered HTML, this is way more useful for our needs. Doubly so because `blockId` is the actual Notion UUID for the tool page in question.
 
-We also get a few bits that are **only** available from the super-rendered site: 
+We also get a few bits that are **only** available from the Super-rendered site:
 
-1. The tool page's cannonical URI on `betterat.work`, plus confirmation it's been properly synced & published by Super.
-2. A `coverImage` URL hosted on Super's CDN. Notion's API returns covers as signed S3 URLs which obviously expire quickly. Super's whole job is turning Notion stuff into a *proper* websites, so they serve these kinda static assets the way any *server-of-websites* should... behind a CDN with all the appropriate cacheing and whatnot.
+1. The tool page's canonical URI on `betterat.work`, plus confirmation it's been properly synced & published by Super.
+2. A `coverImage` URL hosted on Super's CDN. Notion's API returns covers as signed S3 URLs which obviously expire quickly. Super's whole job is turning Notion stuff into *proper* websites, so they serve these kinda static assets the way any *server-of-websites* should... behind a CDN with all the appropriate caching and whatnot.
 3. Same 👆 for icons which are image URLs not emoji strings.
 4. Metadata like *display order*, `collectionId`, `viewId` and `spaceId` which we can use later on.
 
 ### What we get from the Notion API
 
-The script also makes a single unauthenticated POST to `https://www.notion.so/api/v3/queryCollection` – an (officially) undocumented endpoint uesd by Notion's own apps. The request includes the collection and view we discovered above, plus a "reducer" asking for up to 1000 rows:
+The script also makes a single unauthenticated POST to `https://www.notion.so/api/v3/queryCollection` – an (officially) undocumented endpoint used by Notion's own apps. The request includes the collection and view we discovered above, plus a "reducer" asking for up to 1000 rows:
 
 ```json
 {
@@ -198,8 +198,8 @@ Between these two requests we've got more than enough data to populate our `tool
 
 ---
 
-<em>**PS**. Two years ago this whole approach would've felt scary because it's so obviously mega brittle. Relying on an unofficial undocumented Notion API is bad enough, but at least it's *actually an API*. The way I'm scraping data from Super's Next.js app here feels all sorts of wrong and *obviously unreliable*. Except in the year 2026 I'm cool with that because I know that when this inevitably breaks I can ask a friendly robot to fix it and it'll do so far better than I ever wold've.</em>
+<em>**PS**. Two years ago this whole approach would've felt scary because it's so obviously mega brittle. Relying on an unofficial undocumented Notion API is bad enough, but at least it's *actually an API*. The way I'm scraping data from Super's Next.js app here feels all sorts of wrong and *obviously unreliable*. Except in the year 2026 I'm cool with that because I know that when this inevitably breaks I can ask a friendly robot to fix it and it'll do so far better than I ever would've.</em>
 
 ---
 
-<em>**PPS**. If you read the **PS** above and didn't instinctively assume all this is fault-tolerant-by-design, non-blocking for working builds, made to fail greacefully with sensible feedback and **excplicitly** bounded (with big *brittle thing which will probs break a bunch in the future and that's okay* vibes)... **you probably shoudn't be using AI to build janky things like this at all**, even on a silly personal website like this one. But also: you absulutely should be building janky things like this with your own fingers if it feels interesting and fun. If that's you HMU on [bluesky](https://bsky.app/profile/danny.is) so I can send some high-fives.</em>
+<em>**PPS**. If you read the **PS** above and didn't instinctively assume all this is fault-tolerant-by-design, non-blocking for working builds, made to fail gracefully with sensible feedback and **explicitly** bounded (with big *brittle thing which will probs break a bunch in the future and that's okay* vibes)... **you probably shouldn't be using AI to build janky things like this at all**, even on a silly personal website like this one. But also: you absolutely should be building janky things like this with your own fingers if it feels interesting and fun. If that's you, HMU on [bluesky](https://bsky.app/profile/danny.is) so I can send some high-fives.</em>
