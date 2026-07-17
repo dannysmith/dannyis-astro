@@ -4,13 +4,13 @@ slug: upgrading-astro-7-switching-satteri
 pubDate: 2026-07-15
 ---
 
-I've just upgraded this site to [Astro 7](https://astro.build/blog/astro-7/), including switching from remark to [Sätteri](https://satteri.bruits.org/), which is now the default markdown parser.
+I've just upgraded this site to [Astro 7](https://astro.build/blog/astro-7/), including the switch from remark to the new Astro default, [Sätteri](https://satteri.bruits.org/).
 
-The actual [Astro upgrade](https://github.com/dannysmith/dannyis-astro/commit/e0db857f4fac0d00e08b4029e21bf9b65135dc08) was pretty painless since I did it before switching the markdown parser. The switch to Sätteri was a little more complex because I had a bunch of remark plugins which needed migrating to [MDAST or HAST](https://satteri.bruits.org/docs/plugins/) plugins. This is exactly the sort of job that AI coding agents make fairly painless.
+The actual [Astro upgrade](https://github.com/dannysmith/dannyis-astro/commit/e0db857f4fac0d00e08b4029e21bf9b65135dc08) was fairly painless since I did it before swapping out the markdown parser. The switch to Sätteri was a little more complex because I had a bunch of remark and rehype plugins which needed migrating to the [MDAST or HAST](https://satteri.bruits.org/docs/plugins/) plugins Sätteri uses.
 
 ## MDAST Plugins
 
-I now have the following MDAST plugins on this site. These work on the markdown syntax tree (ie nodes represent markdown/MDX syntax).
+I now have the following MDAST plugins on this site, which work on the markdown syntax tree.
 
 - **Reading time**. `satteriReadingTime` injects `minutesRead` into the frontmatter for articles. It's registered first so it measures the document before any ESM injection.
 - **Footnotes**. `satteriFootnoteDetector` detects whether content contains footnotes and adds `hasFootnotes` if it does. I use this to conditionally inject styling and javascript for showing inline footnotes on pages where it's needed.
@@ -19,7 +19,7 @@ I now have the following MDAST plugins on this site. These work on the markdown 
 
 ## HAST Plugins
 
-These work on the *HTML* syntax tree and so transform the HTML *after* Sätteri has done its stuff.
+These work on the *HTML* syntax tree and to transform the HTML *after* Sätteri has done its stuff.
 
 - **Heading ID Links**. `satteriAutolinkHeadings` appends a `#` link to headings in content pages so it's easy for folks to copy a URL to any heading.
 - **Image Unwrapper**. I have a `<BasicImage>` component which accepts a bunch of props to control how images are displayed and wraps Astro's `Picture` component, often rendering a `<figure>` with a caption. Markdown image tags are remapped to use this automatically and since I often use markdown images inside other MDX components like `<Grid>`, I ended up with a bunch of issues where the image tags were getting wrapped in `<p>`s and then hoisted out by Astro's HTML parser leaving lots of empty `<p></p>` elements within wrappers like `Grid`. This broke a lot of layout stuff, so `satteriUnwrapImages` strips the wrapping `<p>` from any paragraph whose only content is images, so the img → BasicImage remapping produces clean, directly-nested `<figure>`s.
