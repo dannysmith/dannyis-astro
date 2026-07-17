@@ -6,12 +6,6 @@ slug: loomclone-part-2
 series: loomclone
 ---
 
-<Callout>
-This is the first in a series of articles covering my new video platform:
-
-1. Part 1 - [Introducing my very own loom](/writing/loomclone-part-1)
-2. Part 2 - **How my personal Loom works – an overview**
-</Callout>
 
 ## The recording lifecycle, a walkthrough
 
@@ -103,10 +97,6 @@ When the server receives a `POST` to `/:id/complete` it already has all the segm
 ### 1. Healing
 
 Healing is the recovery mechanism for HLS segments that didn't make it during live recording. The server knows what segments it has on disk and now it has the client’s segments log it can compare the two and ask the client to resend any segments it’s missing or thinks are corrupted. Whenever the client finishes resending segments for a video it will finish by re-triggering the *complete* process and sending a new `recording.json`.
-
-<Callout>
-The *heal loop* runs after every recording, but it also runs against all videos recorded in the last three days whenever the macOS app reconnects to the server. It walks the local recordings folder for any video within the last 3 days where `recording.json` shows segments with `uploaded: false` and resends them. This catches any recordings where the app quit before healing finished, or where the network dropped and never came back.
-</Callout>
 
 ### 2. Restitching
 

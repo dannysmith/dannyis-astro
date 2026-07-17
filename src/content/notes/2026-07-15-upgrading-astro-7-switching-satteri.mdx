@@ -1,0 +1,31 @@
+---
+title: Upgrading to Astro 7 and switching to Sätteri
+slug: upgrading-astro-7-switching-satteri
+pubDate: 2026-07-15
+---
+
+I've just upgraded this site to [Astro 7](https://astro.build/blog/astro-7/), including switching from remark to [Sätteri](https://satteri.bruits.org/), which is now the default markdown parser.
+
+The actual [Astro upgrade](https://github.com/dannysmith/dannyis-astro/commit/e0db857f4fac0d00e08b4029e21bf9b65135dc08) was pretty painless since I did it before switching the markdown parser. The switch to Sätteri was a little more complex because I had a bunch of remark plugins which needed migrating to [MDAST or HAST](https://satteri.bruits.org/docs/plugins/) plugins. This is exactly the sort of job that AI coding agents make fairly painless.
+
+## MDAST Plugins
+
+I now have the following MDAST plugins on this site. These work on the markdown syntax tree (ie nodes represent markdown/MDX syntax).
+
+- **Reading time**. `satteriReadingTime` injects `minutesRead` into the frontmatter for articles. It's registered first so it measures the document before any ESM injection.
+- **Footnotes**. `satteriFootnoteDetector` detects whether content contains footnotes and adds `hasFootnotes` if it does. I use this to conditionally inject styling and javascript for showing inline footnotes on pages where it's needed.
+- **Auto-import MDX components**. `satteriMdxImports` injects imports for all my [MDX components](https://github.com/dannysmith/dannyis-astro/tree/main/src/components/mdx) (things like `<Callout>`) into every mdx file, replacing the `astro-auto-import` plugin I [wrote about before](/notes/less-painful-editing-in-astro). It also auto-applies `MDX_COMPONENT_REMAPPING` to any MDX pages using `Page.astro`.
+- **Markdown Preview & FileTrees**. `satteriMarkdownPreview` and `satteriTreeBlock` transform fenced code blocks for [markdown previews and file trees into their respective components](/writing/2026-05-28-work-on-this-site/#new-fence-based-components).
+
+## HAST Plugins
+
+These work on the *HTML* syntax tree and so transform the HTML *after* Sätteri has done its stuff.
+
+- **Heading ID Links**. `satteriAutolinkHeadings` appends a `#` link to headings in content pages so it's easy for folks to copy a URL to any heading.
+- **Image Unwrapper**. I have a `<BasicImage>` component which accepts a bunch of props to control how images are displayed and wraps Astro's `Picture` component, often rendering a `<figure>` with a caption. Markdown image tags are remapped to use this automatically and since I often use markdown images inside other MDX components like `<Grid>`, I ended up with a bunch of issues where the image tags were getting wrapped in `<p>`s and then hoisted out by Astro's HTML parser leaving lots of empty `<p></p>` elements within wrappers like `Grid`. This broke a lot of layout stuff, so `satteriUnwrapImages` strips the wrapping `<p>` from any paragraph whose only content is images, so the img → BasicImage remapping produces clean, directly-nested `<figure>`s.
+- **Image Captions**. `satteriImageCaption` lets me use CommonMark's title attribute: `![alt](./image.jpg "This caption")` injects `This caption` as `BasicImage`'s caption prop if present.
+- **External links**. External links in MDX files already render a [`SmartLink`](https://github.com/dannysmith/dannyis-astro/blob/main/src/components/mdx/SmartLink.astro) component which adds `target="_blank" rel="noopener noreferrer"` to external links. `satteriExternalLinks` does this for links in plain markdown files.
+- **List density**. `satteriListDensity` adds a `long-list-items` class to HTML lists where the list items are more like paragraphs than short bullet lists. I use this to increase the space between list items.
+- **Mermaid diagrams**. `satteriMermaid` renders mermaid fenced code blocks to inline SVGs at build time via [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic). The colours from `src/config/mermaid.js` are rewritten to `--mermaid-*` CSS variables which use `light-dark()` so the SVGs respond to changes in theme.
+
+I didn't take any measurements but it feels like switching to Astro 7, Sätteri and Vite 8 has sped up my builds a little, and the process of rewriting the plugins above definitely helped to clean up and simplify the codebase a little.
