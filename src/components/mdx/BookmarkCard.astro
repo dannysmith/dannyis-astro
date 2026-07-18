@@ -1,20 +1,20 @@
 ---
-import { fetchLinkMetadata } from '@utils/fetchLinkMetadata';
+import { fetchLinkMetadata } from '@utils/fetchLinkMetadata'
 
 export interface Props {
-  url: string;
-  className?: string;
+  url: string
+  className?: string
 }
 
-const { url, className = '' } = Astro.props;
+const { url, className = '' } = Astro.props
 
 // Fetch metadata at build time
-const metadata = await fetchLinkMetadata(url);
+const metadata = await fetchLinkMetadata(url)
 
 // If metadata fetch fails, provide a minimal fallback
-let domain: string | null = null;
+let domain: string | null = null
 try {
-  domain = new URL(url).hostname.replace('www.', '');
+  domain = new URL(url).hostname.replace('www.', '')
 } catch {
   // Malformed URL - leave domain as null
 }
@@ -25,10 +25,10 @@ const fallbackMetadata = {
   title: url,
   description: null,
   image: null,
-};
+}
 
-const data = metadata || fallbackMetadata;
-const isFallback = !metadata;
+const data = metadata || fallbackMetadata
+const isFallback = !metadata
 ---
 
 <div class={`bookmark-card cq ${className}`}>

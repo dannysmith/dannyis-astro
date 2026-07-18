@@ -11,15 +11,15 @@
  * parsed — before `satteri-mdx-imports` queues its injected import
  * statements, which would otherwise inflate the word count.
  */
-import getReadingTime from 'reading-time';
-import { defineRootPlugin } from './satteri-root-plugin.mjs';
+import getReadingTime from 'reading-time'
+import { defineRootPlugin } from './satteri-root-plugin.mjs'
 
 export function satteriReadingTime() {
   return defineRootPlugin('satteri-reading-time', (root, ctx) => {
-    const frontmatter = ctx.data.astro?.frontmatter;
-    if (!frontmatter) return;
+    const frontmatter = ctx.data.astro?.frontmatter
+    if (!frontmatter) return
 
-    const textOnPage = ctx.textContent(root);
-    frontmatter.minutesRead = getReadingTime(textOnPage).text;
-  });
+    const textOnPage = ctx.textContent(root)
+    frontmatter.minutesRead = getReadingTime(textOnPage).text
+  })
 }

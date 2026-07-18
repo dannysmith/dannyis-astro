@@ -1,4 +1,4 @@
-import type { KnipConfig } from 'knip';
+import type { KnipConfig } from 'knip'
 
 export default {
   entry: [
@@ -9,4 +9,4 @@ export default {
   ],
   project: ['src/**/*.{ts,tsx,astro}', 'scripts/**/*.{ts,js}', 'tests/**/*.ts'],
   ignoreDependencies: ['@iconify-json/heroicons'],
-} satisfies KnipConfig;
+} satisfies KnipConfig

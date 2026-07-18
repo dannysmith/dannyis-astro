@@ -1,11 +1,11 @@
 ---
 interface Props {
-  href: string;
-  variant?: 'primary' | 'secondary';
-  inline?: boolean;
+  href: string
+  variant?: 'primary' | 'secondary'
+  inline?: boolean
 }
 
-const { href, variant = 'primary', inline = false } = Astro.props;
+const { href, variant = 'primary', inline = false } = Astro.props
 ---
 
 <span class:list={[{ 'button-link-container': !inline }]}>

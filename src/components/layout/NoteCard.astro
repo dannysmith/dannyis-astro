@@ -1,27 +1,27 @@
 ---
-import { FormattedDate, Pill } from '@components/ui/index';
-import { Embed } from '@components/mdx/index';
+import { FormattedDate, Pill } from '@components/ui/index'
+import { Embed } from '@components/mdx/index'
 
 export interface Props {
-  title: string;
-  pubDate: Date;
-  sourceURL?: string;
-  tags?: string[];
-  slug: string;
+  title: string
+  pubDate: Date
+  sourceURL?: string
+  tags?: string[]
+  slug: string
   /**
    * Mark this card as the Pagefind search-body for the page. Only the full
    * note page (Note.astro) sets this — on listing pages (notes index,
    * styleguide) the cards must stay unindexed so each note is one result.
    */
-  indexAsBody?: boolean;
+  indexAsBody?: boolean
 }
 
-const { title, pubDate, sourceURL, tags = [], slug, indexAsBody = false } = Astro.props;
+const { title, pubDate, sourceURL, tags = [], slug, indexAsBody = false } = Astro.props
 
 // ISO date (YYYY-MM-DD) for Pagefind's `date` meta + recency sort — only emitted
 // when this card is the page's search body. Date-only avoids colons, which the
 // comma-separated `data-pagefind-meta` syntax would otherwise split on.
-const pubIso = pubDate.toISOString().slice(0, 10);
+const pubIso = pubDate.toISOString().slice(0, 10)
 ---
 
 <article

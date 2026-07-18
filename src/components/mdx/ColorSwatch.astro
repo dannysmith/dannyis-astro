@@ -1,12 +1,12 @@
 ---
 export interface Props {
-  color: string /** CSS color value or variable */;
-  name?: string /** Label shown inside the swatch */;
-  class?: string /** Additional classes */;
+  color: string /** CSS color value or variable */
+  name?: string /** Label shown inside the swatch */
+  class?: string /** Additional classes */
 }
 
-const { color, name, class: className } = Astro.props;
-const value = color.replace(/^var\((.+)\)$/, '$1');
+const { color, name, class: className } = Astro.props
+const value = color.replace(/^var\((.+)\)$/, '$1')
 ---
 
 <div
@@ -23,35 +23,35 @@ const value = color.replace(/^var\((.+)\)$/, '$1');
 
 <script is:inline>
   {
-    const swatch = document.currentScript.previousElementSibling;
+    const swatch = document.currentScript.previousElementSibling
 
     /* Get the hex value of the swatch */
     const getHex = () => {
-      const ctx = document.createElement('canvas').getContext('2d');
-      ctx.fillStyle = getComputedStyle(swatch).backgroundColor;
-      ctx.fillRect(0, 0, 1, 1);
-      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    };
+      const ctx = document.createElement('canvas').getContext('2d')
+      ctx.fillStyle = getComputedStyle(swatch).backgroundColor
+      ctx.fillRect(0, 0, 1, 1)
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+    }
 
     /* Copy the hex value to the clipboard */
     const copy = async () => {
-      if (!navigator.clipboard?.writeText) return;
+      if (!navigator.clipboard?.writeText) return
       try {
-        await navigator.clipboard.writeText(getHex());
+        await navigator.clipboard.writeText(getHex())
       } catch {
         /* Clipboard access denied - fail silently */
       }
-    };
+    }
 
     /* Add event listeners to the swatch */
-    swatch.addEventListener('click', copy);
+    swatch.addEventListener('click', copy)
     swatch.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        copy();
+        e.preventDefault()
+        copy()
       }
-    });
+    })
   }
 </script>
 

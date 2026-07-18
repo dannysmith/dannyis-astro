@@ -5,39 +5,39 @@
  * All configuration comes from getConfig().
  */
 
-import { getConfig } from '@config/config';
+import { getConfig } from '@config/config'
 
 // Types
 
-export type PageType = 'article' | 'note' | 'page';
+export type PageType = 'article' | 'note' | 'page'
 
 export interface SEOData {
-  title: string;
-  description?: string;
-  image?: string;
-  type: 'website' | 'article';
-  pageType?: PageType;
-  pubDate?: Date;
-  updatedDate?: Date;
-  tags?: string[];
+  title: string
+  description?: string
+  image?: string
+  type: 'website' | 'article'
+  pageType?: PageType
+  pubDate?: Date
+  updatedDate?: Date
+  tags?: string[]
 }
 
 // Public Functions
 
 export function generatePageTitle(title: string, pageType?: PageType): string {
-  const config = getConfig();
+  const config = getConfig()
 
   // Don't modify the homepage title or if no pageType is specified
   if (!pageType || title === config.site.name) {
-    return title;
+    return title
   }
 
-  const template = config.pageTitleTemplates[pageType] || config.pageTitleTemplates.default;
-  return template.replace('{title}', title);
+  const template = config.pageTitleTemplates[pageType] || config.pageTitleTemplates.default
+  return template.replace('{title}', title)
 }
 
 export function generateMetaDescription(description?: string): string | undefined {
-  return description?.trim() || undefined;
+  return description?.trim() || undefined
 }
 
 /**
@@ -48,8 +48,8 @@ export function generateJSONLD(
   canonicalUrl: string,
   ogImageUrl: string,
 ): Record<string, unknown> {
-  const config = getConfig();
-  const siteUrl = config.site.url;
+  const config = getConfig()
+  const siteUrl = config.site.url
 
   const personSchema = {
     '@type': 'Person' as const,
@@ -66,7 +66,7 @@ export function generateJSONLD(
       '@type': 'Organization',
       '@id': `${siteUrl}/#organization`,
     },
-  };
+  }
 
   const organizationSchema = {
     '@type': 'Organization' as const,
@@ -79,7 +79,7 @@ export function generateJSONLD(
       '@type': 'Person',
       '@id': `${siteUrl}/#person`,
     },
-  };
+  }
 
   const websiteSchema = {
     '@type': 'WebSite' as const,
@@ -91,19 +91,19 @@ export function generateJSONLD(
       '@type': 'Person',
       '@id': `${siteUrl}/#person`,
     },
-  };
+  }
 
-  const baseGraph: Record<string, unknown>[] = [personSchema, organizationSchema, websiteSchema];
+  const baseGraph: Record<string, unknown>[] = [personSchema, organizationSchema, websiteSchema]
 
   // Add article/blog posting schema for content pages
   if (pageData.pageType === 'article' || pageData.pageType === 'note') {
-    baseGraph.push(generateArticleSchema(pageData, canonicalUrl, ogImageUrl));
+    baseGraph.push(generateArticleSchema(pageData, canonicalUrl, ogImageUrl))
   }
 
   return {
     '@context': 'https://schema.org',
     '@graph': baseGraph,
-  };
+  }
 }
 
 /**
@@ -114,8 +114,8 @@ function generateArticleSchema(
   canonicalUrl: string,
   ogImageUrl: string,
 ): Record<string, unknown> {
-  const config = getConfig();
-  const siteUrl = config.site.url;
+  const config = getConfig()
+  const siteUrl = config.site.url
 
   const articleSchema: Record<string, unknown> = {
     '@type': 'BlogPosting',
@@ -136,26 +136,26 @@ function generateArticleSchema(
       '@id': canonicalUrl,
     },
     inLanguage: config.site.locale.replace('_', '-'), // Convert en_GB to en-GB
-  };
+  }
 
   // Add publication date if available
   if (pageData.pubDate) {
-    articleSchema.datePublished = pageData.pubDate.toISOString();
+    articleSchema.datePublished = pageData.pubDate.toISOString()
   }
 
   // Add modification date (falls back to publication date)
   if (pageData.updatedDate) {
-    articleSchema.dateModified = pageData.updatedDate.toISOString();
+    articleSchema.dateModified = pageData.updatedDate.toISOString()
   } else if (pageData.pubDate) {
-    articleSchema.dateModified = pageData.pubDate.toISOString();
+    articleSchema.dateModified = pageData.pubDate.toISOString()
   }
 
   // Add keywords if tags are available
   if (pageData.tags && pageData.tags.length > 0) {
-    articleSchema.keywords = pageData.tags.join(', ');
+    articleSchema.keywords = pageData.tags.join(', ')
   }
 
-  return articleSchema;
+  return articleSchema
 }
 
 /**
@@ -164,20 +164,20 @@ function generateArticleSchema(
 export function generateArticleMeta(
   pageData: SEOData,
 ): Array<{ property: string; content: string }> {
-  if (pageData.type !== 'article') return [];
+  if (pageData.type !== 'article') return []
 
-  const config = getConfig();
+  const config = getConfig()
 
   const metaTags: Array<{ property: string; content: string }> = [
     { property: 'article:author', content: config.author.fullName },
-  ];
+  ]
 
   // Add publication date
   if (pageData.pubDate) {
     metaTags.push({
       property: 'article:published_time',
       content: pageData.pubDate.toISOString(),
-    });
+    })
   }
 
   // Add modification date
@@ -185,29 +185,29 @@ export function generateArticleMeta(
     metaTags.push({
       property: 'article:modified_time',
       content: pageData.updatedDate.toISOString(),
-    });
+    })
   }
 
   // Add tags
   if (pageData.tags) {
     pageData.tags.forEach(tag => {
-      metaTags.push({ property: 'article:tag', content: tag });
-    });
+      metaTags.push({ property: 'article:tag', content: tag })
+    })
   }
 
-  return metaTags;
+  return metaTags
 }
 
 /**
  * Generate OpenGraph image URL
  */
 export function generateOGImageUrl(image: string | undefined, baseUrl: string): string {
-  const config = getConfig();
+  const config = getConfig()
 
   if (image) {
-    return new URL(image, baseUrl).toString();
+    return new URL(image, baseUrl).toString()
   }
-  return new URL(config.seo.defaultOgImage, baseUrl).toString();
+  return new URL(config.seo.defaultOgImage, baseUrl).toString()
 }
 
 /**
@@ -223,5 +223,5 @@ export function validateSEOData(data: Partial<SEOData>): SEOData {
     pubDate: data.pubDate,
     updatedDate: data.updatedDate,
     tags: data.tags || [],
-  };
+  }
 }

@@ -1,6 +1,6 @@
 ---
-import StyleguideLayout from './_layout/StyleguideLayout.astro';
-import SGSwitcher from './_components/SGSwitcher.astro';
+import StyleguideLayout from './_layout/StyleguideLayout.astro'
+import SGSwitcher from './_components/SGSwitcher.astro'
 import {
   Accordion,
   BasicImage,
@@ -22,23 +22,15 @@ import {
   TabItem,
   Tabs,
   WrappedTable,
-} from '@components/mdx/index';
-import {
-  BaselineStatus,
-  BlueskyPost,
-  Gist,
-  MastodonPost,
-  Tweet,
-  Vimeo,
-  YouTube,
-} from 'astro-embed';
-import { Code } from 'astro-expressive-code/components';
-import { ContentCard, ProjectCard, ToolCard } from '@components/ui/index';
-import { NoteCard } from '@components/layout/index';
-import { Content as MermaidContent } from './_snippets/mermaid.mdx';
-import { Image, Picture } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import styleguideImage from '@assets/articles/styleguide-image.jpg';
+} from '@components/mdx/index'
+import { BaselineStatus, BlueskyPost, Gist, MastodonPost, Tweet, Vimeo, YouTube } from 'astro-embed'
+import { Code } from 'astro-expressive-code/components'
+import { ContentCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { NoteCard } from '@components/layout/index'
+import { Content as MermaidContent } from './_snippets/mermaid.mdx'
+import { Image, Picture } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import styleguideImage from '@assets/articles/styleguide-image.jpg'
 
 const toc = [
   { id: 'intro-paragraph', label: 'IntroParagraph' },
@@ -62,14 +54,14 @@ const toc = [
   { id: 'project-card', label: 'ProjectCard' },
   { id: 'tool-card', label: 'ToolCard' },
   { id: 'embeds', label: 'Embeds' },
-];
+]
 
 // Sample data for the code-display blocks below — kept in the frontmatter to
 // avoid heavy backtick-escaping in the markup. `fence()` builds the "you write
 // this in MDX" fenced-code string from a code body so it stays in sync with the
 // rendered output.
 const fence = (lang: string, body: string, meta = '') =>
-  '```' + lang + (meta ? ` ${meta}` : '') + '\n' + body + '\n```';
+  '```' + lang + (meta ? ` ${meta}` : '') + '\n' + body + '\n```'
 
 const codeExamples = {
   basic: `const colors = ['coral', 'blue', 'green'];
@@ -112,7 +104,7 @@ bun run dev`,
 
   wrap: `// This is a very long comment that demonstrates how word wrapping works in code blocks when the content exceeds the available width of the container
 const message = 'Long strings will also wrap nicely to the next line while preserving the indentation level of the original line';`,
-};
+}
 
 const markdownBlockSample = `## Included markdown
 
@@ -123,7 +115,7 @@ A paragraph with **bold**, _italic_, \`inline code\`, and a
 - two
 - three
 
-> A short quotation from elsewhere.`;
+> A short quotation from elsewhere.`
 
 const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 ├── init.mp4                # HLS initialisation segment (codec headers)
@@ -138,31 +130,31 @@ const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
     ├── thumbnail.jpg        # auto-selected best frame
     ├── captions.srt         # subtitles
     ├── words.json           # per-word transcript timings used by the editor
-    └── notes.md             # human notes about the recording`;
+    └── notes.md             # human notes about the recording`
 
 // Sample content-collection entries for the card demos. Mirrors the old
 // styleguide: prefer a couple of articles with cover images for visual testing.
-const allArticles = await getCollection('articles', ({ data }) => !data.draft);
-const articlesWithCovers = allArticles.filter(a => 'cover' in a.data && a.data.cover);
+const allArticles = await getCollection('articles', ({ data }) => !data.draft)
+const articlesWithCovers = allArticles.filter(a => 'cover' in a.data && a.data.cover)
 const articlesWithoutCovers = allArticles.filter(
   a => !('cover' in a.data && a.data.cover) && !a.data.styleguide,
-);
-const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCovers.slice(0, 1)];
+)
+const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCovers.slice(0, 1)]
 
-const allNotes = await getCollection('notes', ({ data }) => !data.styleguide);
-const sampleNotes = allNotes.slice(0, 3);
+const allNotes = await getCollection('notes', ({ data }) => !data.styleguide)
+const sampleNotes = allNotes.slice(0, 3)
 
-const allProjects = await getCollection('projects', ({ data }) => !data.draft);
-const sampleProject = allProjects.find(p => p.data.image) ?? allProjects[0];
-const sampleProjects = allProjects.slice(0, 3);
+const allProjects = await getCollection('projects', ({ data }) => !data.draft)
+const sampleProject = allProjects.find(p => p.data.image) ?? allProjects[0]
+const sampleProjects = allProjects.slice(0, 3)
 
 // One tool with an emoji icon and one with an image icon — the first valid of
 // each, so the demos don't depend on any particular tool existing.
-const allToolboxPages = await getCollection('toolboxPages');
+const allToolboxPages = await getCollection('toolboxPages')
 const sampleTools = [
   allToolboxPages.find(t => t.data.emoji),
   allToolboxPages.find(t => t.data.iconUrl),
-].filter((t): t is NonNullable<typeof t> => Boolean(t));
+].filter((t): t is NonNullable<typeof t> => Boolean(t))
 ---
 
 <StyleguideLayout

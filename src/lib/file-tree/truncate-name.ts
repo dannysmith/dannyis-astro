@@ -14,22 +14,22 @@
  * attribute) so nothing is lost to a reader who wants it.
  */
 
-const ELLIPSIS = '…';
+const ELLIPSIS = '…'
 
 export function truncateFileName(name: string, max = 100): string {
-  if (name.length <= max) return name;
+  if (name.length <= max) return name
 
-  const lastDot = name.lastIndexOf('.');
-  const hasExtension = lastDot > 0 && lastDot < name.length - 1;
-  const ext = hasExtension ? name.slice(lastDot) : '';
+  const lastDot = name.lastIndexOf('.')
+  const hasExtension = lastDot > 0 && lastDot < name.length - 1
+  const ext = hasExtension ? name.slice(lastDot) : ''
 
-  const keep = max - ELLIPSIS.length - ext.length;
+  const keep = max - ELLIPSIS.length - ext.length
 
   // Pathological: the extension alone is ~as long as the budget. Fall back
   // to a plain head truncation so we never return more than ~max chars.
   if (keep < 1) {
-    return name.slice(0, Math.max(1, max - ELLIPSIS.length)) + ELLIPSIS;
+    return name.slice(0, Math.max(1, max - ELLIPSIS.length)) + ELLIPSIS
   }
 
-  return name.slice(0, keep) + ELLIPSIS + ext;
+  return name.slice(0, keep) + ELLIPSIS + ext
 }

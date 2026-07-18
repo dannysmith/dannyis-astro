@@ -1,26 +1,26 @@
 ---
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
-import { Callout, Spacer } from '@components/mdx/index';
-import { getPublishedSeriesArticles } from '@utils/content';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content'
+import { Callout, Spacer } from '@components/mdx/index'
+import { getPublishedSeriesArticles } from '@utils/content'
 
 interface Props {
   /** The `series` reference from the current article's frontmatter (if any). */
-  series: CollectionEntry<'articles'>['data']['series'];
+  series: CollectionEntry<'articles'>['data']['series']
   /** The current article's id, so it can be marked in the list. */
-  currentId: string;
+  currentId: string
 }
 
-const { series, currentId } = Astro.props;
+const { series, currentId } = Astro.props
 
-const seriesEntry = series ? await getEntry(series) : undefined;
+const seriesEntry = series ? await getEntry(series) : undefined
 const articles = seriesEntry
   ? getPublishedSeriesArticles(seriesEntry.data.id, await getCollection('articles'))
-  : [];
+  : []
 
 // A "part of a series" box listing only the current article is pointless, so
 // only render once there are at least two entries. In production drafts are
 // filtered out; in development they show prefixed with "[draft]".
-const show = seriesEntry && articles.length >= 2;
+const show = seriesEntry && articles.length >= 2
 ---
 
 {
@@ -34,8 +34,8 @@ const show = seriesEntry && articles.length >= 2;
         {seriesEntry.data.intro && <p class="series-intro">{seriesEntry.data.intro}</p>}
         <ol class="series-list">
           {articles.map(entry => {
-            const isCurrent = entry.id === currentId;
-            const label = `${entry.data.draft ? '[draft] ' : ''}${entry.data.title}`;
+            const isCurrent = entry.id === currentId
+            const label = `${entry.data.draft ? '[draft] ' : ''}${entry.data.title}`
             return (
               <li aria-current={isCurrent ? 'true' : undefined}>
                 {isCurrent ? (
@@ -44,7 +44,7 @@ const show = seriesEntry && articles.length >= 2;
                   <a href={`/writing/${entry.id}/`}>{label}</a>
                 )}
               </li>
-            );
+            )
           })}
         </ol>
       </Callout>

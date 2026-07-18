@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -21,4 +21,4 @@ export default defineConfig({
     // human or an agent runs the tests.
     env: { ASTRO_DEV_BACKGROUND: '1' },
   },
-});
+})

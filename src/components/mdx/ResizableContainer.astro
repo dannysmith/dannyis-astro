@@ -1,14 +1,14 @@
 ---
 export interface Props {
   /** Starting width (CSS value, e.g., '400px' or '50%') */
-  initialWidth?: string;
+  initialWidth?: string
   /** Minimum resize width */
-  minWidth?: string;
+  minWidth?: string
   /** Maximum resize width */
-  maxWidth?: string;
+  maxWidth?: string
 }
 
-const { initialWidth = '100%', minWidth = '200px', maxWidth = '100%' } = Astro.props;
+const { initialWidth = '100%', minWidth = '200px', maxWidth = '100%' } = Astro.props
 ---
 
 <div

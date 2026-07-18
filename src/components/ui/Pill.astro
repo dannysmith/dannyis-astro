@@ -1,17 +1,17 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { Icon } from 'astro-icon/components'
 
 export interface Props {
-  text: string;
-  color?: string;
-  textColor?: string;
+  text: string
+  color?: string
+  textColor?: string
   /** Optional astro-icon name (e.g. "heroicons:check-circle-20-solid") shown before the text */
-  icon?: string;
+  icon?: string
   /** Optional native tooltip shown on hover */
-  title?: string;
+  title?: string
 }
 
-const { text, color, textColor, icon, title } = Astro.props;
+const { text, color, textColor, icon, title } = Astro.props
 
 // Only create style object if props are provided
 const style =
@@ -20,7 +20,7 @@ const style =
         ...(color && { '--local-pill-bg': color }),
         ...(textColor && { '--local-pill-fg': textColor }),
       }
-    : undefined;
+    : undefined
 ---
 
 <span class="pill" style={style} title={title}>

@@ -21,4 +21,4 @@ export const redirects: Record<string, string> = {
   '/youtube': 'https://www.youtube.com/channel/UCp0vO-4tetByUhsVijyt2jA',
   '/music': 'https://youtube.com/dannysmithblues',
   '/singing': 'https://youtube.com/dannysmithblues',
-};
+}

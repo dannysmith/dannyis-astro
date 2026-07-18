@@ -10,7 +10,7 @@
  * This substitutes for `rehype-external-links`, which only runs on the
  * site's main markdown pipeline — comment strings don't pass through it.
  */
-import { Marked } from 'marked';
+import { Marked } from 'marked'
 
 /** HTML-escape untrusted string values before interpolating into attributes. */
 function escapeAttr(value: string): string {
@@ -19,26 +19,26 @@ function escapeAttr(value: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/'/g, '&#39;')
 }
 
 // Configured once at module load. Only `parseInline` (a read-only
 // operation) is called afterward, so sharing the instance across
 // concurrent SSR renders is safe.
-const md = new Marked({ gfm: true, async: false });
+const md = new Marked({ gfm: true, async: false })
 md.use({
   renderer: {
     link({ href, title, tokens }) {
-      const text = this.parser.parseInline(tokens);
-      const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href);
-      const hrefAttr = escapeAttr(href ?? '');
-      const titleAttr = title ? ` title="${escapeAttr(title)}"` : '';
-      const securityAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
-      return `<a href="${hrefAttr}"${titleAttr}${securityAttrs}>${text}</a>`;
+      const text = this.parser.parseInline(tokens)
+      const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href)
+      const hrefAttr = escapeAttr(href ?? '')
+      const titleAttr = title ? ` title="${escapeAttr(title)}"` : ''
+      const securityAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : ''
+      return `<a href="${hrefAttr}"${titleAttr}${securityAttrs}>${text}</a>`
     },
   },
-});
+})
 
 export function renderInlineMarkdown(text: string): string {
-  return md.parseInline(text.trim()) as string;
+  return md.parseInline(text.trim()) as string
 }

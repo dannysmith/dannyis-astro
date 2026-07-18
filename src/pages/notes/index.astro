@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection, render } from 'astro:content'
 import {
   BaseHead,
   CommandPalette,
@@ -7,27 +7,27 @@ import {
   LLMDiscoveryNote,
   MainNavigation,
   NoteCard,
-} from '@components/layout/index';
-import { FormattedDate, MarkdownContentActions } from '@components/ui/index';
-import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components';
-import { filterContentForListing } from '@utils/content';
+} from '@components/layout/index'
+import { FormattedDate, MarkdownContentActions } from '@components/ui/index'
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
+import { filterContentForListing } from '@utils/content'
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+)
 
 // Split notes into recent and archive
-const numberOfRecentNotes = 5;
-const recentNotes = notes.slice(0, numberOfRecentNotes);
-const olderNotes = notes.slice(numberOfRecentNotes);
+const numberOfRecentNotes = 5
+const recentNotes = notes.slice(0, numberOfRecentNotes)
+const olderNotes = notes.slice(numberOfRecentNotes)
 
 // Render the recent notes content
 const recentNotesWithContent = await Promise.all(
   recentNotes.map(async note => {
-    const { Content } = await render(note);
-    return { note, Content };
+    const { Content } = await render(note)
+    return { note, Content }
   }),
-);
+)
 ---
 
 <!doctype html>

@@ -1,22 +1,22 @@
 ---
-import { CONFIG } from '@config/site';
-import { fetchLoomCloneVideo, resolveJsonUrl } from '@utils/fetchLoomCloneVideo';
+import { CONFIG } from '@config/site'
+import { fetchLoomCloneVideo, resolveJsonUrl } from '@utils/fetchLoomCloneVideo'
 
 export interface Props {
   /** Full URL, absolute path or bare slug pointing at a v.danny.is video. */
-  src: string;
+  src: string
   /** Override the title fetched from the JSON. */
-  title?: string;
+  title?: string
   /** Override the description fetched from the JSON. */
-  description?: string;
+  description?: string
   /** Override the player aspect ratio (e.g. "16 / 9"). Defaults to the video's actual width/height. */
-  aspectRatio?: string;
-  showTitle?: boolean;
-  showDescription?: boolean;
-  showMeta?: boolean;
-  showOpenLink?: boolean;
-  showTranscript?: boolean;
-  className?: string;
+  aspectRatio?: string
+  showTitle?: boolean
+  showDescription?: boolean
+  showMeta?: boolean
+  showOpenLink?: boolean
+  showTranscript?: boolean
+  className?: string
 }
 
 const {
@@ -30,35 +30,35 @@ const {
   showOpenLink = true,
   showTranscript = false,
   className = '',
-} = Astro.props;
+} = Astro.props
 
-const baseUrl = CONFIG.videos.baseUrl;
-const jsonUrl = resolveJsonUrl(src, baseUrl);
+const baseUrl = CONFIG.videos.baseUrl
+const jsonUrl = resolveJsonUrl(src, baseUrl)
 
-let video;
+let video
 try {
-  video = await fetchLoomCloneVideo(jsonUrl);
+  video = await fetchLoomCloneVideo(jsonUrl)
 } catch (err) {
-  const message = err instanceof Error ? err.message : String(err);
-  throw new Error(`<LCVid src="${src}"> ${message}`, { cause: err });
+  const message = err instanceof Error ? err.message : String(err)
+  throw new Error(`<LCVid src="${src}"> ${message}`, { cause: err })
 }
 
-const title = titleOverride ?? video.title ?? '';
-const description = descriptionOverride ?? video.description ?? '';
-const aspectRatio = aspectRatioOverride ?? `${video.width} / ${video.height}`;
+const title = titleOverride ?? video.title ?? ''
+const description = descriptionOverride ?? video.description ?? ''
+const aspectRatio = aspectRatioOverride ?? `${video.width} / ${video.height}`
 
 const recordedDate = new Date(video.completedAt).toLocaleDateString('en-GB', {
   day: 'numeric',
   month: 'long',
   year: 'numeric',
-});
+})
 
 const descriptionParagraphs = description
   .split(/\n\n+/)
   .map(p => p.trim())
-  .filter(Boolean);
+  .filter(Boolean)
 
-const hasMetaRow = showMeta || showOpenLink;
+const hasMetaRow = showMeta || showOpenLink
 ---
 
 <figure class:list={['lcvid', className]} data-lcvid>
@@ -170,96 +170,96 @@ const hasMetaRow = showMeta || showOpenLink;
 </figure>
 
 <script>
-  let vidstackReady: Promise<void> | null = null;
+  let vidstackReady: Promise<void> | null = null
 
   function loadVidstack(): Promise<void> {
-    if (vidstackReady) return vidstackReady;
+    if (vidstackReady) return vidstackReady
 
     const styles = [
       'https://cdn.vidstack.io/player/theme.css',
       'https://cdn.vidstack.io/player/video.css',
-    ];
+    ]
     for (const href of styles) {
       if (!document.querySelector(`link[href="${href}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        document.head.appendChild(link);
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = href
+        document.head.appendChild(link)
       }
     }
 
-    const moduleSrc = 'https://cdn.vidstack.io/player';
+    const moduleSrc = 'https://cdn.vidstack.io/player'
     if (!document.querySelector(`script[type="module"][src="${moduleSrc}"]`)) {
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = moduleSrc;
-      document.head.appendChild(script);
+      const script = document.createElement('script')
+      script.type = 'module'
+      script.src = moduleSrc
+      document.head.appendChild(script)
     }
 
-    vidstackReady = customElements.whenDefined('media-player').then(() => undefined);
-    return vidstackReady;
+    vidstackReady = customElements.whenDefined('media-player').then(() => undefined)
+    return vidstackReady
   }
 
   function showUnavailable(figure: HTMLElement) {
-    const wrapper = figure.querySelector<HTMLElement>('.lcvid-player');
-    if (!wrapper) return;
-    wrapper.innerHTML = '<div class="lcvid-unavailable" role="status">Video unavailable</div>';
+    const wrapper = figure.querySelector<HTMLElement>('.lcvid-player')
+    if (!wrapper) return
+    wrapper.innerHTML = '<div class="lcvid-unavailable" role="status">Video unavailable</div>'
   }
 
   function activate(figure: HTMLElement) {
-    if (figure.dataset.activated === 'true') return;
-    figure.dataset.activated = 'true';
+    if (figure.dataset.activated === 'true') return
+    figure.dataset.activated = 'true'
 
-    const wrapper = figure.querySelector<HTMLElement>('.lcvid-player');
-    const facade = figure.querySelector<HTMLButtonElement>('.lcvid-facade');
-    const template = figure.querySelector<HTMLTemplateElement>('.lcvid-template');
-    if (!wrapper || !facade || !template) return;
+    const wrapper = figure.querySelector<HTMLElement>('.lcvid-player')
+    const facade = figure.querySelector<HTMLButtonElement>('.lcvid-facade')
+    const template = figure.querySelector<HTMLTemplateElement>('.lcvid-template')
+    if (!wrapper || !facade || !template) return
 
-    const fragment = template.content.cloneNode(true) as DocumentFragment;
+    const fragment = template.content.cloneNode(true) as DocumentFragment
     // Set autoplay on the player BEFORE insertion. Combined with the user's
     // click gesture, this lets Vidstack start playback as soon as it upgrades
     // the element — even if our async module load outlasts the gesture window.
-    const playerNode = fragment.querySelector('media-player');
-    playerNode?.setAttribute('autoplay', '');
+    const playerNode = fragment.querySelector('media-player')
+    playerNode?.setAttribute('autoplay', '')
 
-    facade.remove();
-    wrapper.appendChild(fragment);
+    facade.remove()
+    wrapper.appendChild(fragment)
 
     loadVidstack().then(() => {
       const player = wrapper.querySelector('media-player') as
-        (HTMLElement & { play: () => Promise<void> }) | null;
-      if (!player) return;
+        (HTMLElement & { play: () => Promise<void> }) | null
+      if (!player) return
 
-      player.addEventListener('error', () => showUnavailable(figure), { once: true });
+      player.addEventListener('error', () => showUnavailable(figure), { once: true })
 
       // Belt-and-braces alongside the autoplay attr: if Vidstack loaded
       // synchronously enough to still be inside the click gesture, this fires.
       // If the gesture is gone, the attr is the fallback.
       player.play().catch(() => {
         /* gesture lost — autoplay attr is our fallback */
-      });
-    });
+      })
+    })
   }
 
   function warmVidstack() {
     // Idempotent — called on first hover/focus of any facade so that by the
     // time the user clicks, the module is already loaded and play() runs
     // synchronously inside the click handler (preserving the user gesture).
-    loadVidstack();
+    loadVidstack()
   }
 
   function init() {
     document.querySelectorAll<HTMLElement>('[data-lcvid]').forEach(figure => {
-      const facade = figure.querySelector<HTMLButtonElement>('.lcvid-facade');
-      if (!facade) return;
-      facade.addEventListener('click', () => activate(figure));
-      facade.addEventListener('pointerenter', warmVidstack, { once: true, passive: true });
-      facade.addEventListener('focus', warmVidstack, { once: true });
-    });
+      const facade = figure.querySelector<HTMLButtonElement>('.lcvid-facade')
+      if (!facade) return
+      facade.addEventListener('click', () => activate(figure))
+      facade.addEventListener('pointerenter', warmVidstack, { once: true, passive: true })
+      facade.addEventListener('focus', warmVidstack, { once: true })
+    })
   }
 
-  if (document.readyState !== 'loading') init();
-  else document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState !== 'loading') init()
+  else document.addEventListener('DOMContentLoaded', init)
 </script>
 
 <style>

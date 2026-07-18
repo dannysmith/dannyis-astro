@@ -1,44 +1,44 @@
 ---
-import type { MarkdownHeading } from 'astro';
+import type { MarkdownHeading } from 'astro'
 
 export interface Props {
-  headings: MarkdownHeading[];
+  headings: MarkdownHeading[]
 }
 
 interface TocHeading extends MarkdownHeading {
-  subheadings: TocHeading[];
+  subheadings: TocHeading[]
 }
 
-const { headings } = Astro.props;
+const { headings } = Astro.props
 
 // Build nested structure from flat headings array
 function buildToc(flatHeadings: MarkdownHeading[]): TocHeading[] {
-  const toc: TocHeading[] = [];
-  const parentHeadings = new Map<number, TocHeading>();
+  const toc: TocHeading[] = []
+  const parentHeadings = new Map<number, TocHeading>()
 
   // Include H2 and H3 only (ignore H4+)
   flatHeadings
     .filter(h => h.depth >= 2 && h.depth <= 3)
     .forEach(h => {
-      const heading: TocHeading = { ...h, subheadings: [] };
-      parentHeadings.set(heading.depth, heading);
+      const heading: TocHeading = { ...h, subheadings: [] }
+      parentHeadings.set(heading.depth, heading)
 
       if (heading.depth === 2) {
-        toc.push(heading);
+        toc.push(heading)
       } else {
-        const parent = parentHeadings.get(heading.depth - 1);
+        const parent = parentHeadings.get(heading.depth - 1)
         if (parent) {
-          parent.subheadings.push(heading);
+          parent.subheadings.push(heading)
         } else {
-          toc.push(heading);
+          toc.push(heading)
         }
       }
-    });
+    })
 
-  return toc;
+  return toc
 }
 
-const toc = buildToc(headings);
+const toc = buildToc(headings)
 ---
 
 {
@@ -184,139 +184,139 @@ const toc = buildToc(headings);
   // Key insight: highlight the LAST heading that has scrolled past the reading threshold
   // This correctly handles "reading a long section where the heading has scrolled away"
 
-  const linkStarts = new WeakMap<HTMLAnchorElement, number>();
-  const linkEnds = new WeakMap<HTMLAnchorElement, number>();
+  const linkStarts = new WeakMap<HTMLAnchorElement, number>()
+  const linkEnds = new WeakMap<HTMLAnchorElement, number>()
 
-  let defined = false;
-  let resizeObserver: ResizeObserver | null = null;
+  let defined = false
+  let resizeObserver: ResizeObserver | null = null
 
   interface TocItem {
-    link: HTMLAnchorElement;
-    target: HTMLElement;
-    li: HTMLLIElement;
+    link: HTMLAnchorElement
+    target: HTMLElement
+    li: HTMLLIElement
   }
 
   function initToc() {
-    resizeObserver?.disconnect();
+    resizeObserver?.disconnect()
 
-    const toc = document.querySelector<HTMLElement>('.toc');
-    const tocPath = document.querySelector<SVGPathElement>('.toc-marker path');
+    const toc = document.querySelector<HTMLElement>('.toc')
+    const tocPath = document.querySelector<SVGPathElement>('.toc-marker path')
 
-    if (!toc || !tocPath) return;
+    if (!toc || !tocPath) return
 
-    if (defined) return;
-    defined = true;
+    if (defined) return
+    defined = true
 
-    const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a.toc-link'));
-    if (links.length === 0) return;
+    const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a.toc-link'))
+    if (links.length === 0) return
 
     // Build list of TOC items with their target headings
-    const tocItems: TocItem[] = [];
+    const tocItems: TocItem[] = []
     links.forEach(link => {
-      const targetId = link.getAttribute('href')?.slice(1);
-      const target = targetId ? document.getElementById(targetId) : null;
-      const li = link.closest('li');
+      const targetId = link.getAttribute('href')?.slice(1)
+      const target = targetId ? document.getElementById(targetId) : null
+      const li = link.closest('li')
       if (target && li) {
-        tocItems.push({ link, target, li: li as HTMLLIElement });
+        tocItems.push({ link, target, li: li as HTMLLIElement })
       }
-    });
+    })
 
     function drawPath() {
-      if (!tocPath) return;
+      if (!tocPath) return
 
-      const pathData: (string | number)[] = [];
-      let left = 0;
+      const pathData: (string | number)[] = []
+      let left = 0
 
       links.forEach((link, i) => {
-        const x = link.offsetLeft;
-        const y = link.offsetTop;
-        const height = link.offsetHeight;
+        const x = link.offsetLeft
+        const y = link.offsetTop
+        const height = link.offsetHeight
 
         if (i === 0) {
-          linkStarts.set(link, 0);
-          pathData.push('M', x, y, 'L', x, y + height);
+          linkStarts.set(link, 0)
+          pathData.push('M', x, y, 'L', x, y + height)
         } else {
-          if (left !== x) pathData.push('L', left, y);
-          pathData.push('L', x, y);
-          tocPath.setAttribute('d', pathData.join(' '));
-          linkStarts.set(link, tocPath.getTotalLength());
-          pathData.push('L', x, y + height);
+          if (left !== x) pathData.push('L', left, y)
+          pathData.push('L', x, y)
+          tocPath.setAttribute('d', pathData.join(' '))
+          linkStarts.set(link, tocPath.getTotalLength())
+          pathData.push('L', x, y + height)
         }
 
-        left = x;
-        tocPath.setAttribute('d', pathData.join(' '));
-        linkEnds.set(link, tocPath.getTotalLength());
-      });
+        left = x
+        tocPath.setAttribute('d', pathData.join(' '))
+        linkEnds.set(link, tocPath.getTotalLength())
+      })
     }
 
     function updatePath() {
-      if (!tocPath) return;
+      if (!tocPath) return
 
-      const pathLength = tocPath.getTotalLength();
-      const activeLink = toc!.querySelector<HTMLAnchorElement>('a.toc-link.active');
+      const pathLength = tocPath.getTotalLength()
+      const activeLink = toc!.querySelector<HTMLAnchorElement>('a.toc-link.active')
 
       if (activeLink) {
-        const start = linkStarts.get(activeLink) ?? 0;
-        const end = linkEnds.get(activeLink) ?? 0;
-        tocPath.style.display = 'inline';
-        tocPath.setAttribute('stroke-dasharray', `1 ${start} ${end - start} ${pathLength}`);
+        const start = linkStarts.get(activeLink) ?? 0
+        const end = linkEnds.get(activeLink) ?? 0
+        tocPath.style.display = 'inline'
+        tocPath.setAttribute('stroke-dasharray', `1 ${start} ${end - start} ${pathLength}`)
       } else {
-        tocPath.style.display = 'none';
+        tocPath.style.display = 'none'
       }
     }
 
     function sync() {
       // Reading threshold: ~33% from top of viewport
       // Headings become active when they enter upper third (where eyes typically read)
-      const threshold = window.innerHeight * 0.33;
+      const threshold = window.innerHeight * 0.33
 
       // Find the last heading that has scrolled past the threshold
       // This is the section we're currently "in"
-      let activeItem: TocItem | null = null;
+      let activeItem: TocItem | null = null
 
       for (const item of tocItems) {
-        const rect = item.target.getBoundingClientRect();
+        const rect = item.target.getBoundingClientRect()
         if (rect.top <= threshold) {
-          activeItem = item;
+          activeItem = item
         } else {
           // Headings are in document order, so once we find one below threshold, stop
-          break;
+          break
         }
       }
 
       // Clear all active states
       tocItems.forEach(item => {
-        item.link.classList.remove('active');
-        item.li.classList.remove('visible');
-      });
+        item.link.classList.remove('active')
+        item.li.classList.remove('visible')
+      })
 
       // Set the active one
       if (activeItem) {
-        activeItem.link.classList.add('active');
-        activeItem.li.classList.add('visible');
+        activeItem.link.classList.add('active')
+        activeItem.li.classList.add('visible')
       }
 
-      updatePath();
+      updatePath()
     }
 
     // Handle layout changes
     resizeObserver = new ResizeObserver(() => {
-      drawPath();
-      updatePath();
-    });
-    resizeObserver.observe(toc);
+      drawPath()
+      updatePath()
+    })
+    resizeObserver.observe(toc)
 
     // Scroll listener
-    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('scroll', sync, { passive: true })
 
     // Initial setup
-    drawPath();
-    sync();
+    drawPath()
+    sync()
   }
 
-  initToc();
+  initToc()
   document.addEventListener('astro:after-swap', () => {
-    defined = false;
-    initToc();
-  });
+    defined = false
+    initToc()
+  })
 </script>

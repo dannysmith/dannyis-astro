@@ -1,61 +1,61 @@
-import { experimental_AstroContainer as AstroContainer } from 'astro/container';
-import { getContainerRenderer as getMDXRenderer } from '@astrojs/mdx/container-renderer';
-import { loadRenderers } from 'astro:container';
-import { getCollection, render } from 'astro:content';
-import rss from '@astrojs/rss';
-import { getConfig } from '@config/config';
-import { filterContentForListing } from '@utils/content';
+import { experimental_AstroContainer as AstroContainer } from 'astro/container'
+import { getContainerRenderer as getMDXRenderer } from '@astrojs/mdx/container-renderer'
+import { loadRenderers } from 'astro:container'
+import { getCollection, render } from 'astro:content'
+import rss from '@astrojs/rss'
+import { getConfig } from '@config/config'
+import { filterContentForListing } from '@utils/content'
 
 export async function GET(context) {
   // Initialize Container API for MDX rendering
   // Note: React components in MDX will be skipped (caught by try/catch below)
-  const renderers = await loadRenderers([getMDXRenderer()]);
-  const container = await AstroContainer.create({ renderers });
+  const renderers = await loadRenderers([getMDXRenderer()])
+  const container = await AstroContainer.create({ renderers })
 
   // Get articles and notes with filtering
   const articles = filterContentForListing(await getCollection('articles')).map(post => ({
     ...post,
     type: 'article',
-  }));
+  }))
 
   const notes = filterContentForListing(await getCollection('notes')).map(note => ({
     ...note,
     type: 'note',
-  }));
+  }))
 
   // Combine and sort by publication date
-  let all = articles.concat(notes);
-  all.sort((b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+  let all = articles.concat(notes)
+  all.sort((b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
 
   // Process items with full MDX rendering
-  const items = [];
+  const items = []
   for (const item of all) {
     try {
-      const { Content } = await render(item);
-      const content = await container.renderToString(Content);
+      const { Content } = await render(item)
+      const content = await container.renderToString(Content)
 
       items.push({
         ...item.data,
         link: item.type === 'note' ? `/notes/${item.id}/` : `/writing/${item.id}/`,
         content,
-      });
+      })
     } catch {
       // Only the MDX renderer is available in this feed context, so entries whose
       // content includes a React island (e.g. a client:only demo) can't be
       // rendered here. Omit them from the feed rather than failing the build.
       console.warn(
         `RSS: omitting "${item.id}" — its content includes a component that can't render in a feed.`,
-      );
-      continue;
+      )
+      continue
     }
   }
 
-  const config = getConfig();
+  const config = getConfig()
 
   return rss({
     title: `${config.site.name} - Articles & Notes`,
     description: config.descriptions.site,
     site: context.site,
     items,
-  });
+  })
 }

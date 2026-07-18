@@ -12,22 +12,22 @@
  * syntax (e.g., `[^1]`) that appears inside code blocks or inline code —
  * a body-text regex could not.
  */
-import { defineRootPlugin } from './satteri-root-plugin.mjs';
+import { defineRootPlugin } from './satteri-root-plugin.mjs'
 
 /** Recursively check whether any node in the subtree has the given type. */
 function hasNodeType(node, type) {
-  if (node.type === type) return true;
+  if (node.type === type) return true
   if (node.children) {
-    return node.children.some(child => hasNodeType(child, type));
+    return node.children.some(child => hasNodeType(child, type))
   }
-  return false;
+  return false
 }
 
 export function satteriFootnoteDetector() {
   return defineRootPlugin('satteri-footnote-detector', (root, ctx) => {
-    const frontmatter = ctx.data.astro?.frontmatter;
-    if (!frontmatter) return;
+    const frontmatter = ctx.data.astro?.frontmatter
+    if (!frontmatter) return
 
-    frontmatter.hasFootnotes = hasNodeType(root, 'footnoteDefinition');
-  });
+    frontmatter.hasFootnotes = hasNodeType(root, 'footnoteDefinition')
+  })
 }

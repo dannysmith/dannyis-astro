@@ -8,7 +8,7 @@
  * Usage: import { getConfig } from '@config/config';
  */
 
-import { CONFIG } from './site';
+import { CONFIG } from './site'
 
 const resolvedConfig = {
   ...CONFIG,
@@ -28,10 +28,10 @@ const resolvedConfig = {
     twitterCardType: 'summary_large_image' as const,
     defaultOgImage: '/og-default.png',
   },
-} as const;
+} as const
 
 export function getConfig() {
-  return resolvedConfig;
+  return resolvedConfig
 }
 
-export type SiteConfig = ReturnType<typeof getConfig>;
+export type SiteConfig = ReturnType<typeof getConfig>

@@ -1,10 +1,10 @@
-import satori from 'satori';
-import sharp from 'sharp';
-import { Resvg } from '@resvg/resvg-js';
-import { createHash } from 'node:crypto';
-import fs from 'fs/promises';
-import path from 'path';
-import { templates, type OGTemplateData } from '@utils/og-templates.js';
+import satori from 'satori'
+import sharp from 'sharp'
+import { Resvg } from '@resvg/resvg-js'
+import { createHash } from 'node:crypto'
+import fs from 'fs/promises'
+import path from 'path'
+import { templates, type OGTemplateData } from '@utils/og-templates.js'
 
 // Astro does not cache endpoint output, so every build re-runs satori + resvg
 // for every post (~90s on this site). We cache the rendered PNGs ourselves,
@@ -15,64 +15,64 @@ import { templates, type OGTemplateData } from '@utils/og-templates.js';
 // (og-branding.ts), the baked background (src/assets/og/background.svg), or
 // the embedded fonts change — those aren't part of the per-image key, so a
 // bump is how we invalidate every cached image at once.
-const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'og-cache');
-const CACHE_VERSION = 'v5';
+const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'og-cache')
+const CACHE_VERSION = 'v5'
 
 // The decorative blobs background never changes per page, so we rasterise the
 // source SVG to a PNG once per build (per output size) and reuse the data URI.
-const BACKGROUND_SVG = path.join(process.cwd(), 'src', 'assets', 'og', 'background.svg');
-const backgroundCache = new Map<string, Promise<string>>();
+const BACKGROUND_SVG = path.join(process.cwd(), 'src', 'assets', 'og', 'background.svg')
+const backgroundCache = new Map<string, Promise<string>>()
 
 function getBackgroundDataUri(width: number, height: number): Promise<string> {
-  const key = `${width}x${height}`;
-  let pending = backgroundCache.get(key);
+  const key = `${width}x${height}`
+  let pending = backgroundCache.get(key)
   if (!pending) {
     pending = (async () => {
-      const svg = await fs.readFile(BACKGROUND_SVG);
-      const png = await sharp(svg, { density: 200 }).resize(width, height).png().toBuffer();
-      return `data:image/png;base64,${png.toString('base64')}`;
-    })();
-    backgroundCache.set(key, pending);
+      const svg = await fs.readFile(BACKGROUND_SVG)
+      const png = await sharp(svg, { density: 200 }).resize(width, height).png().toBuffer()
+      return `data:image/png;base64,${png.toString('base64')}`
+    })()
+    backgroundCache.set(key, pending)
   }
-  return pending;
+  return pending
 }
 
 // Embed the avatar as a data URI rather than letting satori fetch it over the
 // network at build time — the file is local, and a network round-trip per
 // build (which can fail and leave the avatar missing) is both fragile and slow.
-const AVATAR_PNG = path.join(process.cwd(), 'public', 'avatar-circle.png');
-let avatarUriPromise: Promise<string> | null = null;
+const AVATAR_PNG = path.join(process.cwd(), 'public', 'avatar-circle.png')
+let avatarUriPromise: Promise<string> | null = null
 
 function getAvatarDataUri(): Promise<string> {
   if (!avatarUriPromise) {
     avatarUriPromise = (async () => {
-      const png = await fs.readFile(AVATAR_PNG);
-      return `data:image/png;base64,${png.toString('base64')}`;
-    })();
+      const png = await fs.readFile(AVATAR_PNG)
+      return `data:image/png;base64,${png.toString('base64')}`
+    })()
   }
-  return avatarUriPromise;
+  return avatarUriPromise
 }
 
 // Font type definition matching Satori's expected format
 interface Font {
-  name: string;
-  data: ArrayBuffer;
-  weight: 400 | 700;
-  style: 'normal';
+  name: string
+  data: ArrayBuffer
+  weight: 400 | 700
+  style: 'normal'
 }
 
 // Font loading utility
 async function loadFont(fontPath: string): Promise<ArrayBuffer> {
   try {
-    const fontBuffer = await fs.readFile(fontPath);
+    const fontBuffer = await fs.readFile(fontPath)
     return fontBuffer.buffer.slice(
       fontBuffer.byteOffset,
       fontBuffer.byteOffset + fontBuffer.byteLength,
-    ) as ArrayBuffer;
+    ) as ArrayBuffer
   } catch (error) {
-    console.warn(`Failed to load font from ${fontPath}:`, error);
+    console.warn(`Failed to load font from ${fontPath}:`, error)
     // Return empty buffer as fallback
-    return new ArrayBuffer(0);
+    return new ArrayBuffer(0)
   }
 }
 
@@ -86,35 +86,35 @@ const FONT_FILES: Array<{ name: string; file: string; weight: 400 | 700 }> = [
   // The site's monospace (used for code); a static 400 instance derived from
   // the @fontsource-variable/fira-code WOFF2. Used for the URL on covers.
   { name: 'Fira Code', file: 'FiraCode-Regular.ttf', weight: 400 },
-];
+]
 
 // Load fonts with fallbacks
 async function loadFonts(): Promise<Font[]> {
-  const fonts: Font[] = [];
+  const fonts: Font[] = []
   for (const { name, file, weight } of FONT_FILES) {
-    const fontPath = path.join(process.cwd(), 'public', 'fonts', file);
+    const fontPath = path.join(process.cwd(), 'public', 'fonts', file)
     try {
-      const data = await loadFont(fontPath);
+      const data = await loadFont(fontPath)
       if (data.byteLength > 0) {
-        fonts.push({ name, data, weight, style: 'normal' });
+        fonts.push({ name, data, weight, style: 'normal' })
       }
     } catch (error) {
-      console.warn(`Font ${file} not found:`, error);
+      console.warn(`Font ${file} not found:`, error)
     }
   }
 
   if (fonts.length === 0) {
-    console.warn('No custom fonts loaded, using system defaults');
+    console.warn('No custom fonts loaded, using system defaults')
   }
 
-  return fonts;
+  return fonts
 }
 
 // Generate options for Satori
 interface GenerateOptions {
-  template?: 'article' | 'note' | 'default' | 'profile';
-  width?: number;
-  height?: number;
+  template?: 'article' | 'note' | 'default' | 'profile'
+  width?: number
+  height?: number
 }
 
 // Main OG image generation function
@@ -122,40 +122,40 @@ export async function generateOGImage(
   data: OGTemplateData,
   options: GenerateOptions = {},
 ): Promise<Buffer> {
-  const { template = 'default', width = 1200, height = 630 } = options;
+  const { template = 'default', width = 1200, height = 630 } = options
 
   // Content-addressed cache key: any change to the data, template, or
   // dimensions produces a different key, so edits regenerate the image.
   const cacheKey = createHash('sha256')
     .update(JSON.stringify({ data, template, width, height, v: CACHE_VERSION }))
-    .digest('hex');
-  const cachePath = path.join(CACHE_DIR, `${cacheKey}.png`);
+    .digest('hex')
+  const cachePath = path.join(CACHE_DIR, `${cacheKey}.png`)
 
   // Cache hit — return the previously rendered PNG.
   try {
-    return await fs.readFile(cachePath);
+    return await fs.readFile(cachePath)
   } catch {
     // Miss (or unreadable) — fall through and generate.
   }
 
   try {
     // Load fonts
-    const fonts = await loadFonts();
+    const fonts = await loadFonts()
 
     // Get the template function
-    const templateFn = templates[template];
+    const templateFn = templates[template]
     if (!templateFn) {
-      throw new Error(`Template "${template}" not found`);
+      throw new Error(`Template "${template}" not found`)
     }
 
     // Bake the decorative background + avatar (memoised, computed once).
     const [background, avatar] = await Promise.all([
       getBackgroundDataUri(width, height),
       getAvatarDataUri(),
-    ]);
+    ])
 
     // Generate the React element structure
-    const element = templateFn(data, { background, avatar });
+    const element = templateFn(data, { background, avatar })
 
     // Generate SVG using Satori
     // @ts-expect-error - satori accepts { type, props } objects at runtime, but types only expose ReactNode
@@ -163,29 +163,29 @@ export async function generateOGImage(
       width,
       height,
       fonts,
-    });
+    })
 
     // Convert SVG to PNG using Resvg
-    const resvg = new Resvg(svg);
-    const pngData = resvg.render();
-    const pngBuffer = Buffer.from(pngData.asPng());
+    const resvg = new Resvg(svg)
+    const pngData = resvg.render()
+    const pngBuffer = Buffer.from(pngData.asPng())
 
     // Cache the successful render (best-effort; never fail a build over this).
     // The Sharp fallback below is intentionally not cached so a transient
     // satori failure doesn't persist a degraded image across builds.
     try {
-      await fs.mkdir(CACHE_DIR, { recursive: true });
-      await fs.writeFile(cachePath, pngBuffer);
+      await fs.mkdir(CACHE_DIR, { recursive: true })
+      await fs.writeFile(cachePath, pngBuffer)
     } catch (cacheError) {
-      console.warn('Failed to write OG image cache:', cacheError);
+      console.warn('Failed to write OG image cache:', cacheError)
     }
 
-    return pngBuffer;
+    return pngBuffer
   } catch (error) {
-    console.error('Satori failed, falling back to Sharp:', error);
+    console.error('Satori failed, falling back to Sharp:', error)
 
     // Fallback to Sharp-based image generation
-    return await generateFallbackImage(data.title, width, height);
+    return await generateFallbackImage(data.title, width, height)
   }
 }
 
@@ -201,7 +201,7 @@ async function generateFallbackImage(
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/'/g, '&#39;')
 
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
@@ -219,7 +219,7 @@ async function generateFallbackImage(
         danny.is
       </text>
     </svg>
-  `;
+  `
 
-  return await sharp(Buffer.from(svg)).png().toBuffer();
+  return await sharp(Buffer.from(svg)).png().toBuffer()
 }

@@ -1,7 +1,7 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import type { MarkdownHeading } from 'astro';
-import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content'
+import type { MarkdownHeading } from 'astro'
+import { Image } from 'astro:assets'
 import {
   BaseHead,
   Footer,
@@ -13,20 +13,15 @@ import {
   MainNavigation,
   SeriesCallout,
   TableOfContents,
-} from '@components/layout/index';
-import {
-  BackToTopLink,
-  FormattedDate,
-  MarkdownContentActions,
-  Spinner,
-} from '@components/ui/index';
-import { getDocumentUri } from '@utils/standard-site';
+} from '@components/layout/index'
+import { BackToTopLink, FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index'
+import { getDocumentUri } from '@utils/standard-site'
 
 type Props = CollectionEntry<'articles'>['data'] & {
-  readingTime: string;
-  headings: MarkdownHeading[];
-  hasFootnotes?: boolean;
-};
+  readingTime: string
+  headings: MarkdownHeading[]
+  hasFootnotes?: boolean
+}
 const {
   title,
   description,
@@ -44,23 +39,23 @@ const {
   toc,
   hasFootnotes,
   series,
-} = Astro.props;
+} = Astro.props
 
 // Build OG image path for this article
-const ogImage = `/writing/${Astro.params.slug}/og-image.png`;
+const ogImage = `/writing/${Astro.params.slug}/og-image.png`
 
 // Root-relative URL of the raw markdown twin (served by [...slug].md.ts).
-const markdownUrl = `${Astro.url.pathname.replace(/\/$/, '')}.md`;
+const markdownUrl = `${Astro.url.pathname.replace(/\/$/, '')}.md`
 
 // ISO date (YYYY-MM-DD) for Pagefind's `date` meta + recency sort. Date-only
 // avoids colons, which the comma-separated `data-pagefind-meta` syntax splits on.
-const pubIso = pubDate.toISOString().slice(0, 10);
+const pubIso = pubDate.toISOString().slice(0, 10)
 
 // standard.site document AT-URI for the <head> verification link tag (null for
 // drafts, styleguides, or posts before the configured cutoff).
 const standardSiteDocumentUri =
   getDocumentUri('articles', Astro.params.slug!, { draft, styleguide, redirectURL, pubDate }) ??
-  undefined;
+  undefined
 ---
 
 <!doctype html>

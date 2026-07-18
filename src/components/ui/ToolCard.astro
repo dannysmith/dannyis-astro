@@ -1,6 +1,6 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { FormattedDate } from '@components/ui/index';
+import type { CollectionEntry } from 'astro:content'
+import { FormattedDate } from '@components/ui/index'
 
 /**
  * Card for a page from the Remote Working Toolbox (`toolboxPages` collection).
@@ -23,22 +23,22 @@ import { FormattedDate } from '@components/ui/index';
  */
 interface Props {
   /** A `toolboxPages` collection entry */
-  tool: CollectionEntry<'toolboxPages'>;
+  tool: CollectionEntry<'toolboxPages'>
   /** Render the compact tile instead of the full card */
-  compact?: boolean;
+  compact?: boolean
 }
 
-const { tool, compact = false } = Astro.props;
-const { data } = tool;
+const { tool, compact = false } = Astro.props
+const { data } = tool
 
 // Tint the category badge from the standard palette, cycling by a hash of the
 // category name so colours are stable however many categories exist.
-const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
-const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`;
+const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue']
+const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
+const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`
 
 // Only show "Updated" when it differs from the created date at day granularity
-const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString();
+const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString()
 ---
 
 {

@@ -1,10 +1,10 @@
 ---
 interface Props {
-  markdownUrl: string;
-  disableShare?: boolean;
+  markdownUrl: string
+  disableShare?: boolean
 }
 
-const { markdownUrl, disableShare = false } = Astro.props;
+const { markdownUrl, disableShare = false } = Astro.props
 ---
 
 <div class="markdown-actions" data-disable-share={disableShare ? 'true' : undefined}>
@@ -30,22 +30,22 @@ const { markdownUrl, disableShare = false } = Astro.props;
 </div>
 
 <script>
-  const container = document.querySelector('.markdown-actions');
-  const disableShare = container?.hasAttribute('data-disable-share');
+  const container = document.querySelector('.markdown-actions')
+  const disableShare = container?.hasAttribute('data-disable-share')
 
-  const shareLink = disableShare ? null : document.getElementById('share-post');
-  const shareSeparator = disableShare ? null : document.getElementById('share-separator');
-  const copyLink = document.getElementById('copy-markdown');
+  const shareLink = disableShare ? null : document.getElementById('share-post')
+  const shareSeparator = disableShare ? null : document.getElementById('share-separator')
+  const copyLink = document.getElementById('copy-markdown')
 
   async function copyMarkdown(url: string) {
     try {
-      const response = await fetch(url);
-      const markdown = await response.text();
-      await navigator.clipboard.writeText(markdown);
-      showFlashNotification('page copied as markdown to clipboard');
+      const response = await fetch(url)
+      const markdown = await response.text()
+      await navigator.clipboard.writeText(markdown)
+      showFlashNotification('page copied as markdown to clipboard')
     } catch (err) {
-      console.error('Failed to copy markdown:', err);
-      alert('Failed to copy markdown to clipboard');
+      console.error('Failed to copy markdown:', err)
+      alert('Failed to copy markdown to clipboard')
     }
   }
 
@@ -54,41 +54,41 @@ const { markdownUrl, disableShare = false } = Astro.props;
       await navigator.share({
         title: document.title,
         url: window.location.href,
-      });
+      })
     } catch (err) {
       if (err instanceof Error && err.name !== 'AbortError') {
-        console.error('Failed to share:', err);
+        console.error('Failed to share:', err)
       }
     }
   }
 
   function showFlashNotification(message: string) {
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.className = 'flash-notification';
+    const notification = document.createElement('div')
+    notification.textContent = message
+    notification.className = 'flash-notification'
 
-    document.body.appendChild(notification);
+    document.body.appendChild(notification)
 
     setTimeout(() => {
-      notification.style.animation = 'slideOut 0.3s ease-out forwards';
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
+      notification.style.animation = 'slideOut 0.3s ease-out forwards'
+      setTimeout(() => notification.remove(), 300)
+    }, 3000)
   }
 
   if ('share' in navigator && shareLink && shareSeparator) {
-    shareLink.style.display = shareSeparator.style.display = 'inline';
+    shareLink.style.display = shareSeparator.style.display = 'inline'
     shareLink.addEventListener('click', e => {
-      e.preventDefault();
-      sharePost();
-    });
+      e.preventDefault()
+      sharePost()
+    })
   }
 
   if (copyLink) {
     copyLink.addEventListener('click', e => {
-      e.preventDefault();
-      const url = copyLink.getAttribute('data-url');
-      if (url) copyMarkdown(url);
-    });
+      e.preventDefault()
+      const url = copyLink.getAttribute('data-url')
+      if (url) copyMarkdown(url)
+    })
   }
 </script>
 

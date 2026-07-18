@@ -1,15 +1,15 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+import type { HTMLAttributes } from 'astro/types'
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<'a'>
 
-const { href, class: className, ...props } = Astro.props;
+const { href, class: className, ...props } = Astro.props
 
-const { pathname } = Astro.url;
+const { pathname } = Astro.url
 let isActive =
   (href === '/' && pathname === '/') ||
   ((String(pathname) || '').replace(/\/$/, '').includes(String(href) || '') &&
-    String(href).length > 1);
+    String(href).length > 1)
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>

@@ -29,8 +29,8 @@
  * the sentinels are unique hex tokens, and mermaid's colors land in the SVG's
  * own <style> block, where var() resolves.
  */
-import { createMermaidRenderer } from 'mermaid-isomorphic';
-import { defineHastPlugin } from 'satteri';
+import { createMermaidRenderer } from 'mermaid-isomorphic'
+import { defineHastPlugin } from 'satteri'
 
 /**
  * @param {object} [opts]
@@ -43,12 +43,12 @@ import { defineHastPlugin } from 'satteri';
  */
 export function satteriMermaid({ mermaidConfig, colorReplacements = [], css } = {}) {
   // One renderer shared across every document in the build.
-  const renderer = createMermaidRenderer();
+  const renderer = createMermaidRenderer()
 
   // Each visit renders a single diagram, so the renderer's per-batch index is
   // always 0 — a shared counter keeps ids unique when a page has several
   // diagrams (duplicate ids would collide the SVGs' internal marker refs).
-  let count = 0;
+  let count = 0
 
   return defineHastPlugin({
     name: 'satteri-mermaid',
@@ -57,33 +57,33 @@ export function satteriMermaid({ mermaidConfig, colorReplacements = [], css } = 
       async visit(node, ctx) {
         const codeChild = node.children?.find(
           child => child.type === 'element' && child.tagName === 'code',
-        );
-        if (!codeChild || codeChild.data?.lang !== 'mermaid') return;
+        )
+        if (!codeChild || codeChild.data?.lang !== 'mermaid') return
 
-        const diagram = ctx.textContent(codeChild).replace(/\n$/, '');
+        const diagram = ctx.textContent(codeChild).replace(/\n$/, '')
         const [result] = await renderer([diagram], {
           css,
           mermaidConfig,
           prefix: `mermaid-${count++}`,
-        });
+        })
         if (result.status !== 'fulfilled') {
           throw new Error(
             `Mermaid rendering failed in ${ctx.fileURL ?? 'inline content'}: ${result.reason}`,
-          );
+          )
         }
 
-        let svg = result.value.svg;
-        for (const [from, to] of colorReplacements) svg = svg.replaceAll(from, to);
+        let svg = result.value.svg
+        for (const [from, to] of colorReplacements) svg = svg.replaceAll(from, to)
         if (ctx.sourceFormat === 'mdx') {
           return {
             type: 'mdxJsxFlowElement',
             name: 'Fragment',
             attributes: [{ type: 'mdxJsxAttribute', name: 'set:html', value: svg }],
             children: [],
-          };
+          }
         }
-        return { type: 'raw', value: svg };
+        return { type: 'raw', value: svg }
       },
     },
-  });
+  })
 }

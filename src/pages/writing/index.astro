@@ -1,18 +1,18 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection } from 'astro:content'
 import {
   BaseHead,
   CommandPalette,
   Footer,
   LLMDiscoveryNote,
   MainNavigation,
-} from '@components/layout/index';
-import { FormattedDate, Pill } from '@components/ui/index';
-import { filterContentForListing } from '@utils/content';
+} from '@components/layout/index'
+import { FormattedDate, Pill } from '@components/ui/index'
+import { filterContentForListing } from '@utils/content'
 
 const posts = filterContentForListing(await getCollection('articles')).sort(
   (b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
-);
+)
 ---
 
 <!doctype html>

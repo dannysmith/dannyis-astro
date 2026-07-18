@@ -18,11 +18,11 @@
  * `heroicons:folder-open`.
  */
 
-const FALLBACK_FILE_ICON = 'heroicons:document';
+const FALLBACK_FILE_ICON = 'heroicons:document'
 // Folders use the solid variants — filled folders read better at small sizes
 // and make folders pop against the outline file icons.
-const FOLDER_ICON = 'heroicons:folder-solid';
-const FOLDER_OPEN_ICON = 'heroicons:folder-open-solid';
+const FOLDER_ICON = 'heroicons:folder-solid'
+const FOLDER_OPEN_ICON = 'heroicons:folder-open-solid'
 
 /**
  * Exact filename matches (lowercased keys). These take precedence over
@@ -47,7 +47,7 @@ const EXACT_FILENAMES: Record<string, string> = {
   'yarn.lock': 'simple-icons:yarn',
   'pnpm-lock.yaml': 'simple-icons:pnpm',
   '.nvmrc': 'simple-icons:nodedotjs',
-};
+}
 
 /**
  * Extension → icon, keyed without the leading dot (lowercased). Order in
@@ -129,7 +129,7 @@ const EXTENSIONS: Record<string, string> = {
   txt: 'heroicons:document-text',
   pdf: 'heroicons:document-text',
   log: 'heroicons:document-text',
-};
+}
 
 /**
  * Coarse colour buckets for file icons, used purely as a skim aid (named
@@ -137,7 +137,7 @@ const EXTENSIONS: Record<string, string> = {
  * design tokens in FileTreeNodes.astro; all are `light-dark()` so they
  * adapt per theme automatically.
  */
-export type IconColor = 'blue' | 'red' | 'green' | 'orange' | 'purple' | 'neutral';
+export type IconColor = 'blue' | 'red' | 'green' | 'orange' | 'purple' | 'neutral'
 
 /** Exact-filename colour overrides (lowercased keys). */
 const COLOR_BY_FILENAME: Record<string, IconColor> = {
@@ -158,7 +158,7 @@ const COLOR_BY_FILENAME: Record<string, IconColor> = {
   'yarn.lock': 'orange',
   'pnpm-lock.yaml': 'orange',
   '.nvmrc': 'orange',
-};
+}
 
 /** Extension → colour bucket (keyed without the leading dot, lowercased). */
 const COLOR_BY_EXT: Record<string, IconColor> = {
@@ -225,7 +225,7 @@ const COLOR_BY_EXT: Record<string, IconColor> = {
   txt: 'neutral',
   pdf: 'neutral',
   log: 'neutral',
-};
+}
 
 /**
  * Resolve a value for a filename: exact filename match (case-insensitive)
@@ -237,32 +237,32 @@ function resolveByName<T>(
   exact: Record<string, T>,
   byExt: Record<string, T>,
 ): T | undefined {
-  const lower = name.toLowerCase();
+  const lower = name.toLowerCase()
 
-  const exactHit = exact[lower];
-  if (exactHit !== undefined) return exactHit;
+  const exactHit = exact[lower]
+  if (exactHit !== undefined) return exactHit
 
-  let rest = lower;
+  let rest = lower
   while (true) {
-    const dot = rest.indexOf('.');
-    if (dot === -1) break;
-    const ext = rest.slice(dot + 1);
-    const extHit = byExt[ext];
-    if (extHit !== undefined) return extHit;
-    rest = ext;
+    const dot = rest.indexOf('.')
+    if (dot === -1) break
+    const ext = rest.slice(dot + 1)
+    const extHit = byExt[ext]
+    if (extHit !== undefined) return extHit
+    rest = ext
   }
 
-  return undefined;
+  return undefined
 }
 
 export function iconForFolder(open = false): string {
-  return open ? FOLDER_OPEN_ICON : FOLDER_ICON;
+  return open ? FOLDER_OPEN_ICON : FOLDER_ICON
 }
 
 export function iconForFile(name: string): string {
-  return resolveByName(name, EXACT_FILENAMES, EXTENSIONS) ?? FALLBACK_FILE_ICON;
+  return resolveByName(name, EXACT_FILENAMES, EXTENSIONS) ?? FALLBACK_FILE_ICON
 }
 
 export function colorForFile(name: string): IconColor {
-  return resolveByName(name, COLOR_BY_FILENAME, COLOR_BY_EXT) ?? 'neutral';
+  return resolveByName(name, COLOR_BY_FILENAME, COLOR_BY_EXT) ?? 'neutral'
 }

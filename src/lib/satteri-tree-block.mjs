@@ -39,7 +39,7 @@
  * expanded, de-duplicated and sorted here, then passed to the component
  * as a comma-separated string (e.g. `highlight="2,5,6,7"`).
  */
-import { defineMdastPlugin } from 'satteri';
+import { defineMdastPlugin } from 'satteri'
 
 /**
  * Expand a highlight spec like `2,5-7` into a sorted, de-duplicated array
@@ -48,24 +48,24 @@ import { defineMdastPlugin } from 'satteri';
  * are ignored.
  */
 function parseHighlightRanges(spec) {
-  const lines = new Set();
+  const lines = new Set()
   for (const part of spec.split(',')) {
-    const trimmed = part.trim();
-    if (!trimmed) continue;
-    const range = trimmed.match(/^(\d+)-(\d+)$/);
+    const trimmed = part.trim()
+    if (!trimmed) continue
+    const range = trimmed.match(/^(\d+)-(\d+)$/)
     if (range) {
-      let start = Number(range[1]);
-      let end = Number(range[2]);
-      if (start > end) [start, end] = [end, start];
+      let start = Number(range[1])
+      let end = Number(range[2])
+      if (start > end) [start, end] = [end, start]
       for (let i = start; i <= end; i++) {
-        if (i > 0) lines.add(i);
+        if (i > 0) lines.add(i)
       }
     } else if (/^\d+$/.test(trimmed)) {
-      const n = Number(trimmed);
-      if (n > 0) lines.add(n);
+      const n = Number(trimmed)
+      if (n > 0) lines.add(n)
     }
   }
-  return [...lines].sort((a, b) => a - b);
+  return [...lines].sort((a, b) => a - b)
 }
 
 /**
@@ -73,42 +73,42 @@ function parseHighlightRanges(spec) {
  * then `key="value"` pairs (`title`, `frame`) from the remainder.
  */
 function parseMeta(meta) {
-  const result = { highlight: [] };
-  if (!meta) return result;
+  const result = { highlight: [] }
+  if (!meta) return result
 
-  let rest = meta;
+  let rest = meta
 
-  const brace = rest.match(/\{([^}]*)\}/);
+  const brace = rest.match(/\{([^}]*)\}/)
   if (brace) {
-    result.highlight = parseHighlightRanges(brace[1]);
-    rest = rest.slice(0, brace.index) + rest.slice(brace.index + brace[0].length);
+    result.highlight = parseHighlightRanges(brace[1])
+    rest = rest.slice(0, brace.index) + rest.slice(brace.index + brace[0].length)
   }
 
-  const regex = /(\w+)="([^"]*)"/g;
-  let match;
+  const regex = /(\w+)="([^"]*)"/g
+  let match
   while ((match = regex.exec(rest)) !== null) {
-    result[match[1]] = match[2];
+    result[match[1]] = match[2]
   }
-  return result;
+  return result
 }
 
 export function satteriTreeBlock() {
   return defineMdastPlugin({
     name: 'satteri-tree-block',
     code(node, ctx) {
-      if (ctx.sourceFormat !== 'mdx') return;
-      if (node.lang !== 'tree') return;
+      if (ctx.sourceFormat !== 'mdx') return
+      if (node.lang !== 'tree') return
 
-      const meta = parseMeta(node.meta);
+      const meta = parseMeta(node.meta)
 
-      const attributes = [{ type: 'mdxJsxAttribute', name: 'code', value: node.value }];
+      const attributes = [{ type: 'mdxJsxAttribute', name: 'code', value: node.value }]
 
       if (typeof meta.title === 'string' && meta.title.length > 0) {
-        attributes.push({ type: 'mdxJsxAttribute', name: 'title', value: meta.title });
+        attributes.push({ type: 'mdxJsxAttribute', name: 'title', value: meta.title })
       }
 
       if (meta.frame === 'none') {
-        attributes.push({ type: 'mdxJsxAttribute', name: 'frame', value: 'none' });
+        attributes.push({ type: 'mdxJsxAttribute', name: 'frame', value: 'none' })
       }
 
       if (meta.highlight.length > 0) {
@@ -116,7 +116,7 @@ export function satteriTreeBlock() {
           type: 'mdxJsxAttribute',
           name: 'highlight',
           value: meta.highlight.join(','),
-        });
+        })
       }
 
       return {
@@ -124,7 +124,7 @@ export function satteriTreeBlock() {
         name: 'file-tree',
         attributes,
         children: [],
-      };
+      }
     },
-  });
+  })
 }

@@ -11,9 +11,9 @@
 
 export interface OgImagePage {
   /** Page route, no trailing slash, e.g. "/now". */
-  path: string;
+  path: string
   /** Cover text (rendered uppercase). */
-  title: string;
+  title: string
 }
 
 export const OG_IMAGE_PAGES: OgImagePage[] = [
@@ -36,16 +36,16 @@ export const OG_IMAGE_PAGES: OgImagePage[] = [
   { path: '/privacy', title: 'Privacy Policy' },
   { path: '/colophon', title: 'Colophon' },
   { path: '/ai', title: 'AI Statement' },
-];
+]
 
 /** Strip a trailing slash (but keep the root "/"). */
 function normalizePath(pathname: string): string {
-  return pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname;
+  return pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
 }
 
 function getOgImagePage(pathname: string): OgImagePage | undefined {
-  const path = normalizePath(pathname);
-  return OG_IMAGE_PAGES.find(page => page.path === path);
+  const path = normalizePath(pathname)
+  return OG_IMAGE_PAGES.find(page => page.path === path)
 }
 
 /**
@@ -53,6 +53,6 @@ function getOgImagePage(pathname: string): OgImagePage | undefined {
  * `<page>/og-image.png`), or undefined if the page isn't registered.
  */
 export function getOgImageUrlForPath(pathname: string): string | undefined {
-  const page = getOgImagePage(pathname);
-  return page ? `${page.path}/og-image.png` : undefined;
+  const page = getOgImagePage(pathname)
+  return page ? `${page.path}/og-image.png` : undefined
 }

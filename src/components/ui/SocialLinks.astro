@@ -1,9 +1,9 @@
 ---
-import { Icon } from 'astro-icon/components';
-import { getConfig } from '@config/config';
+import { Icon } from 'astro-icon/components'
+import { getConfig } from '@config/config'
 
-const config = getConfig();
-const footerProfiles = config.socialProfiles.filter(p => 'showInFooter' in p && p.showInFooter);
+const config = getConfig()
+const footerProfiles = config.socialProfiles.filter(p => 'showInFooter' in p && p.showInFooter)
 ---
 
 <section class="social-links">

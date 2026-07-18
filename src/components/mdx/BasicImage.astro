@@ -1,18 +1,18 @@
 ---
-import { Picture } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import { Picture } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
 
 interface Props {
-  src: string;
-  height?: number;
-  width?: number;
-  bleed?: 'left' | 'right' | 'full';
-  alt?: string;
-  showAlt?: boolean;
-  caption?: string;
-  sourceUrl?: string;
-  sourceTitle?: string;
-  framed?: boolean;
+  src: string
+  height?: number
+  width?: number
+  bleed?: 'left' | 'right' | 'full'
+  alt?: string
+  showAlt?: boolean
+  caption?: string
+  sourceUrl?: string
+  sourceTitle?: string
+  framed?: boolean
 }
 
 const {
@@ -26,15 +26,15 @@ const {
   sourceUrl,
   sourceTitle,
   framed = false,
-} = Astro.props;
+} = Astro.props
 
 // A caption (explicit prop, or markdown image title) takes precedence over the
 // alt text. `showAlt` falls back to rendering the alt as the caption.
-const captionText = caption || (showAlt ? alt : '');
-const showCaption = Boolean(captionText);
+const captionText = caption || (showAlt ? alt : '')
+const showCaption = Boolean(captionText)
 
 // Use glob import to get all images
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*');
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/**/*')
 
 // Handle both "/src/assets" (from content editors) and "/assets" paths
 const imageSrc =
@@ -42,15 +42,15 @@ const imageSrc =
     ? (await images[src]()).default
     : typeof src === 'string' && src.startsWith('/assets')
       ? (await images['/src' + src]()).default
-      : src;
+      : src
 
-const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif');
+const isGif = typeof src === 'string' && src.toLowerCase().endsWith('.gif')
 
 // For remote images without dimensions, provide reasonable defaults to prevent build errors
 const isRemoteImage =
-  typeof src === 'string' && (src.startsWith('http') || src.startsWith('/uploads'));
-const defaultWidth = width || (isRemoteImage ? 800 : undefined);
-const defaultHeight = height || (isRemoteImage ? 400 : undefined);
+  typeof src === 'string' && (src.startsWith('http') || src.startsWith('/uploads'))
+const defaultWidth = width || (isRemoteImage ? 800 : undefined)
+const defaultHeight = height || (isRemoteImage ? 400 : undefined)
 
 // Match the actual rendered width so browsers pick a sensibly-sized variant.
 // Prose column caps at --measure-standard (70ch ≈ 700px); bleeds span wider.
@@ -59,7 +59,7 @@ const sizes =
     ? '100vw'
     : bleed === 'left' || bleed === 'right'
       ? '(min-width: 1024px) 1000px, 100vw'
-      : '(min-width: 768px) 700px, 100vw';
+      : '(min-width: 768px) 700px, 100vw'
 ---
 
 <figure

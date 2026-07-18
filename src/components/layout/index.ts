@@ -1,15 +1,15 @@
 // Layout and structural components
-export { default as BaseHead } from './BaseHead.astro';
-export { default as CommandPalette } from './CommandPalette.astro';
-export { default as Footer } from './Footer.astro';
-export { default as InlineFootnotes } from './InlineFootnotes.astro';
-export { default as LLMDiscoveryNote } from './LLMDiscoveryNote.astro';
-export { default as MainNavigation } from './MainNavigation.astro';
-export { default as NoteCard } from './NoteCard.astro';
-export { default as Lightbox } from './Lightbox.astro';
-export { default as SeriesCallout } from './SeriesCallout.astro';
-export { default as SkipLink } from './SkipLink.astro';
-export { default as TableOfContents } from './TableOfContents.astro';
+export { default as BaseHead } from './BaseHead.astro'
+export { default as CommandPalette } from './CommandPalette.astro'
+export { default as Footer } from './Footer.astro'
+export { default as InlineFootnotes } from './InlineFootnotes.astro'
+export { default as LLMDiscoveryNote } from './LLMDiscoveryNote.astro'
+export { default as MainNavigation } from './MainNavigation.astro'
+export { default as NoteCard } from './NoteCard.astro'
+export { default as Lightbox } from './Lightbox.astro'
+export { default as SeriesCallout } from './SeriesCallout.astro'
+export { default as SkipLink } from './SkipLink.astro'
+export { default as TableOfContents } from './TableOfContents.astro'
 
 // Typography wrapper components
-export { default as LongFormProseTypography } from './LongFormProseTypography.astro';
+export { default as LongFormProseTypography } from './LongFormProseTypography.astro'

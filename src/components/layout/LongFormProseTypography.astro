@@ -1,10 +1,10 @@
 ---
 export interface Props {
-  class?: string;
-  [key: string]: any;
+  class?: string
+  [key: string]: any
 }
 
-const { class: className, ...props } = Astro.props;
+const { class: className, ...props } = Astro.props
 ---
 
 <div class={`longform-prose cq flow ${className || ''}`} {...props}>

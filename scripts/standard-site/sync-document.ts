@@ -34,34 +34,34 @@
 
 /* global fetch, setTimeout, clearTimeout, AbortController */
 
-import { readFileSync, readdirSync } from 'node:fs';
-import { basename, join } from 'node:path';
-import matter from 'gray-matter';
-import { getConfig } from '../../src/config/config.ts';
+import { readFileSync, readdirSync } from 'node:fs'
+import { basename, join } from 'node:path'
+import matter from 'gray-matter'
+import { getConfig } from '../../src/config/config.ts'
 import {
   getDocumentRkey,
   getDocumentPath,
   qualifiesForStandardSite,
   type StandardSiteCollection,
-} from '../../src/utils/standard-site.ts';
-import { login, type Session } from './auth.ts';
+} from '../../src/utils/standard-site.ts'
+import { login, type Session } from './auth.ts'
 
-const COLLECTION = 'site.standard.document';
+const COLLECTION = 'site.standard.document'
 const DIRS: Record<StandardSiteCollection, string> = {
   articles: 'src/content/articles',
   notes: 'src/content/notes',
-};
+}
 // Dated post files (date prefix, optional slug). Excludes styleguides and other
 // non-dated files so --all never pushes a bogus record.
-const POST_FILE_RE = /(^|\/)\d{4}-\d{2}-\d{2}(-.+)?\.mdx?$/;
+const POST_FILE_RE = /(^|\/)\d{4}-\d{2}-\d{2}(-.+)?\.mdx?$/
 
 // Keep textContent well under atproto's per-record size ceiling; truncate very
 // long posts rather than failing the putRecord.
-const MAX_TEXT_CONTENT = 50_000;
+const MAX_TEXT_CONTENT = 50_000
 // Lexicon coverImage blob cap.
-const MAX_BLOB_BYTES = 1_000_000;
+const MAX_BLOB_BYTES = 1_000_000
 // Give up on a stuck OG-image fetch rather than hanging the whole sync.
-const OG_FETCH_TIMEOUT_MS = 15_000;
+const OG_FETCH_TIMEOUT_MS = 15_000
 
 /** Decode HTML entities (named + numeric) to their characters for plaintext. */
 function decodeEntities(text: string): string {
@@ -84,18 +84,18 @@ function decodeEntities(text: string): string {
     trade: '™',
     pound: '£',
     euro: '€',
-  };
+  }
   const fromCode = (m: string, code: number) => {
     try {
-      return String.fromCodePoint(code);
+      return String.fromCodePoint(code)
     } catch {
-      return m;
+      return m
     }
-  };
+  }
   return text
     .replace(/&#x([0-9a-fA-F]+);/g, (m, hex) => fromCode(m, parseInt(hex, 16)))
     .replace(/&#(\d+);/g, (m, dec) => fromCode(m, parseInt(dec, 10)))
-    .replace(/&([a-zA-Z][a-zA-Z0-9]*);/g, (m, name) => named[name] ?? m);
+    .replace(/&([a-zA-Z][a-zA-Z0-9]*);/g, (m, name) => named[name] ?? m)
 }
 
 /** Reduce markdown/MDX to a plaintext approximation for the document's textContent. */
@@ -115,14 +115,14 @@ function stripMarkdown(markdown: string): string {
       .replace(/\\([\\`*_{}[\]()#+\-.!~>])/g, '$1'), // markdown backslash escapes
   )
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim()
 }
 
 /** The collection a content file belongs to (from its path). */
 function collectionFromPath(file: string): StandardSiteCollection | null {
-  if (file.includes('content/articles')) return 'articles';
-  if (file.includes('content/notes')) return 'notes';
-  return null;
+  if (file.includes('content/articles')) return 'articles'
+  if (file.includes('content/notes')) return 'notes'
+  return null
 }
 
 /**
@@ -131,35 +131,35 @@ function collectionFromPath(file: string): StandardSiteCollection | null {
  * match what the site renders, or build and sync disagree on rkey + path.
  */
 function canonicalPostId(file: string, data: Record<string, unknown>): string {
-  if (typeof data.slug === 'string' && data.slug) return data.slug;
-  return basename(file).replace(/\.mdx?$/, '');
+  if (typeof data.slug === 'string' && data.slug) return data.slug
+  return basename(file).replace(/\.mdx?$/, '')
 }
 
 /** Every dated post file across both collections. */
 function allPostFiles(): string[] {
-  const files: string[] = [];
+  const files: string[] = []
   for (const dir of Object.values(DIRS)) {
     for (const f of readdirSync(dir, { recursive: true })) {
-      const rel = String(f);
-      if (POST_FILE_RE.test(rel)) files.push(join(dir, rel));
+      const rel = String(f)
+      if (POST_FILE_RE.test(rel)) files.push(join(dir, rel))
     }
   }
-  return files;
+  return files
 }
 
 interface DocumentRecord {
-  $type: 'site.standard.document';
-  site: string;
-  title: string;
-  publishedAt: string;
-  path: string;
-  description?: string;
-  tags?: string[];
-  textContent?: string;
-  updatedAt?: string;
-  coverImage?: unknown; // BlobRef from uploadBlob
+  $type: 'site.standard.document'
+  site: string
+  title: string
+  publishedAt: string
+  path: string
+  description?: string
+  tags?: string[]
+  textContent?: string
+  updatedAt?: string
+  coverImage?: unknown // BlobRef from uploadBlob
   // putRecord types `record` with an open index signature; satisfy it.
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 /**
@@ -172,30 +172,30 @@ async function uploadCoverImage(
   collection: StandardSiteCollection,
   postId: string,
 ): Promise<unknown> {
-  const url = `${getConfig().site.url}${getDocumentPath(collection, postId)}og-image.png`;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), OG_FETCH_TIMEOUT_MS);
+  const url = `${getConfig().site.url}${getDocumentPath(collection, postId)}og-image.png`
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), OG_FETCH_TIMEOUT_MS)
   try {
-    const res = await fetch(url, { signal: controller.signal });
+    const res = await fetch(url, { signal: controller.signal })
     if (!res.ok) {
-      console.warn(`⚠️  ${postId}: OG image ${res.status} at ${url}, skipping coverImage`);
-      return undefined;
+      console.warn(`⚠️  ${postId}: OG image ${res.status} at ${url}, skipping coverImage`)
+      return undefined
     }
-    const bytes = new Uint8Array(await res.arrayBuffer());
+    const bytes = new Uint8Array(await res.arrayBuffer())
     if (bytes.byteLength > MAX_BLOB_BYTES) {
-      console.warn(`⚠️  ${postId}: OG image ${bytes.byteLength}B > 1MB, skipping coverImage`);
-      return undefined;
+      console.warn(`⚠️  ${postId}: OG image ${bytes.byteLength}B > 1MB, skipping coverImage`)
+      return undefined
     }
-    const up = await session.agent.uploadBlob(bytes, { encoding: 'image/png' });
-    return up.data.blob;
+    const up = await session.agent.uploadBlob(bytes, { encoding: 'image/png' })
+    return up.data.blob
   } catch (err) {
     const reason = controller.signal.aborted
       ? `timed out after ${OG_FETCH_TIMEOUT_MS}ms`
-      : (err as Error).message;
-    console.warn(`⚠️  ${postId}: OG image fetch failed (${reason}), skipping coverImage`);
-    return undefined;
+      : (err as Error).message
+    console.warn(`⚠️  ${postId}: OG image fetch failed (${reason}), skipping coverImage`)
+    return undefined
   } finally {
-    clearTimeout(timer);
+    clearTimeout(timer)
   }
 }
 
@@ -207,139 +207,139 @@ async function buildRecord(
   data: Record<string, unknown>,
   body: string,
 ): Promise<DocumentRecord> {
-  const config = getConfig();
+  const config = getConfig()
   const record: DocumentRecord = {
     $type: 'site.standard.document',
     site: config.standardSite.publicationUri || config.site.url,
     title: String(data.title ?? ''),
     publishedAt: pubDate.toISOString(),
     path: getDocumentPath(collection, postId),
-  };
+  }
   if (typeof data.description === 'string' && data.description) {
-    record.description = data.description;
+    record.description = data.description
   }
   if (Array.isArray(data.tags) && data.tags.length > 0) {
-    record.tags = data.tags.map(t => String(t));
+    record.tags = data.tags.map(t => String(t))
   }
   if (data.updatedDate) {
-    record.updatedAt = new Date(data.updatedDate as string).toISOString();
+    record.updatedAt = new Date(data.updatedDate as string).toISOString()
   }
-  let textContent = stripMarkdown(body);
+  let textContent = stripMarkdown(body)
   if (textContent.length > MAX_TEXT_CONTENT) {
     console.warn(
       `⚠️  ${postId}: textContent truncated from ${textContent.length} to ${MAX_TEXT_CONTENT} chars`,
-    );
-    textContent = textContent.slice(0, MAX_TEXT_CONTENT);
+    )
+    textContent = textContent.slice(0, MAX_TEXT_CONTENT)
   }
   if (textContent) {
-    record.textContent = textContent;
+    record.textContent = textContent
   }
   if (session) {
-    const cover = await uploadCoverImage(session, collection, postId);
-    if (cover) record.coverImage = cover;
+    const cover = await uploadCoverImage(session, collection, postId)
+    if (cover) record.coverImage = cover
   }
-  return record;
+  return record
 }
 
 /** Enumerate and delete every record in the collection — the full backfill undo. */
 async function deleteEntireCollection(session: Session, dryRun: boolean): Promise<void> {
   if (dryRun) {
-    console.log(`🔎 Would delete every record in ${COLLECTION} (dry run)`);
-    return;
+    console.log(`🔎 Would delete every record in ${COLLECTION} (dry run)`)
+    return
   }
-  let cursor: string | undefined;
-  let count = 0;
+  let cursor: string | undefined
+  let count = 0
   do {
     const res = await session.agent.com.atproto.repo.listRecords({
       repo: session.did,
       collection: COLLECTION,
       limit: 100,
       cursor,
-    });
+    })
     for (const rec of res.data.records) {
-      const rkey = rec.uri.split('/').pop()!;
+      const rkey = rec.uri.split('/').pop()!
       await session.agent.com.atproto.repo.deleteRecord({
         repo: session.did,
         collection: COLLECTION,
         rkey,
-      });
-      count++;
+      })
+      count++
     }
-    cursor = res.data.cursor;
-  } while (cursor);
-  console.log(`🗑️  Deleted ${count} record(s) from ${COLLECTION}`);
+    cursor = res.data.cursor
+  } while (cursor)
+  console.log(`🗑️  Deleted ${count} record(s) from ${COLLECTION}`)
 }
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
-  const dryRun = args.includes('--dry-run');
-  const all = args.includes('--all');
-  const force = args.includes('--force');
-  const del = args.includes('--delete');
-  const fileArgs = args.filter(a => !a.startsWith('--'));
+  const args = process.argv.slice(2)
+  const dryRun = args.includes('--dry-run')
+  const all = args.includes('--all')
+  const force = args.includes('--force')
+  const del = args.includes('--delete')
+  const fileArgs = args.filter(a => !a.startsWith('--'))
 
-  const session = dryRun ? null : await login();
+  const session = dryRun ? null : await login()
 
   // Full-collection wipe (true undo) — independent of source files / keys.
   if (del && all) {
-    await deleteEntireCollection(session!, dryRun);
-    return;
+    await deleteEntireCollection(session!, dryRun)
+    return
   }
 
-  const files = all ? allPostFiles() : fileArgs;
+  const files = all ? allPostFiles() : fileArgs
   if (files.length === 0) {
     console.error(
       'Usage: standard-site:sync -- <post-file…> | --all  [--delete] [--force] [--dry-run]',
-    );
-    process.exit(1);
+    )
+    process.exit(1)
   }
 
   for (const file of files) {
-    const collection = collectionFromPath(file);
+    const collection = collectionFromPath(file)
     if (!collection) {
-      console.warn(`⚠️  ${file}: not under a known content collection, skipping`);
-      continue;
+      console.warn(`⚠️  ${file}: not under a known content collection, skipping`)
+      continue
     }
 
-    const raw = readFileSync(file, 'utf-8');
-    const { data, content } = matter(raw);
-    const postId = canonicalPostId(file, data);
-    const pubDate = new Date(data.pubDate as string);
-    const rkey = getDocumentRkey(collection, postId, pubDate);
+    const raw = readFileSync(file, 'utf-8')
+    const { data, content } = matter(raw)
+    const postId = canonicalPostId(file, data)
+    const pubDate = new Date(data.pubDate as string)
+    const rkey = getDocumentRkey(collection, postId, pubDate)
 
     if (del) {
       if (dryRun) {
-        console.log(`🔎 ${postId} → would delete ${COLLECTION}/${rkey}`);
-        continue;
+        console.log(`🔎 ${postId} → would delete ${COLLECTION}/${rkey}`)
+        continue
       }
       try {
         await session!.agent.com.atproto.repo.deleteRecord({
           repo: session!.did,
           collection: COLLECTION,
           rkey,
-        });
-        console.log(`🗑️  ${postId} → deleted ${COLLECTION}/${rkey}`);
+        })
+        console.log(`🗑️  ${postId} → deleted ${COLLECTION}/${rkey}`)
       } catch (err) {
         console.warn(
           `⚠️  ${postId}: delete failed (record may not exist): ${(err as Error).message}`,
-        );
+        )
       }
-      continue;
+      continue
     }
 
     if (data.draft === true) {
-      console.log(`⏭️  ${postId}: draft, skipping`);
-      continue;
+      console.log(`⏭️  ${postId}: draft, skipping`)
+      continue
     }
     if (data.styleguide === true) {
-      console.log(`⏭️  ${postId}: styleguide, skipping`);
-      continue;
+      console.log(`⏭️  ${postId}: styleguide, skipping`)
+      continue
     }
     // Externally-hosted posts (their page just redirects off-site) never get a
     // record — not even with --force.
     if (data.redirectURL) {
-      console.log(`⏭️  ${postId}: external (redirectURL), skipping`);
-      continue;
+      console.log(`⏭️  ${postId}: external (redirectURL), skipping`)
+      continue
     }
     if (
       !force &&
@@ -352,16 +352,16 @@ async function main(): Promise<void> {
     ) {
       console.log(
         `⏭️  ${postId}: before since=${getConfig().standardSite.since}, skipping (use --force)`,
-      );
-      continue;
+      )
+      continue
     }
 
-    const record = await buildRecord(session, collection, postId, pubDate, data, content);
+    const record = await buildRecord(session, collection, postId, pubDate, data, content)
 
     if (dryRun) {
-      console.log(`📄 ${postId} → ${COLLECTION}/${rkey}`);
-      console.log(JSON.stringify(record, null, 2));
-      continue;
+      console.log(`📄 ${postId} → ${COLLECTION}/${rkey}`)
+      console.log(JSON.stringify(record, null, 2))
+      continue
     }
 
     await session!.agent.com.atproto.repo.putRecord({
@@ -369,12 +369,12 @@ async function main(): Promise<void> {
       collection: COLLECTION,
       rkey,
       record,
-    });
-    console.log(`✅ ${postId} → at://${session!.did}/${COLLECTION}/${rkey}`);
+    })
+    console.log(`✅ ${postId} → at://${session!.did}/${COLLECTION}/${rkey}`)
   }
 }
 
 main().catch(err => {
-  console.error('❌ sync-document failed:', err);
-  process.exit(1);
-});
+  console.error('❌ sync-document failed:', err)
+  process.exit(1)
+})

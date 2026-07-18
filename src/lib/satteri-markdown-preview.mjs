@@ -38,48 +38,48 @@
  *   ```md preview defaultView="source"
  *   ```markdown preview
  */
-import { defineMdastPlugin } from 'satteri';
+import { defineMdastPlugin } from 'satteri'
 
-const MARKDOWN_LANGS = new Set(['md', 'markdown']);
+const MARKDOWN_LANGS = new Set(['md', 'markdown'])
 
 /**
  * Parse a fenced code block meta string into a simple object.
  * Supports bare flags (`preview`) and quoted key="value" pairs (`title="foo"`).
  */
 function parseMeta(meta) {
-  if (!meta) return {};
-  const result = {};
+  if (!meta) return {}
+  const result = {}
   // Matches: key="value" OR bareFlag
-  const regex = /(\w+)="([^"]*)"|(\w+)/g;
-  let match;
+  const regex = /(\w+)="([^"]*)"|(\w+)/g
+  let match
   while ((match = regex.exec(meta)) !== null) {
     if (match[1]) {
-      result[match[1]] = match[2];
+      result[match[1]] = match[2]
     } else if (match[3]) {
-      result[match[3]] = true;
+      result[match[3]] = true
     }
   }
-  return result;
+  return result
 }
 
 export function satteriMarkdownPreview() {
   return defineMdastPlugin({
     name: 'satteri-markdown-preview',
     code(node, ctx) {
-      if (ctx.sourceFormat !== 'mdx') return;
-      if (!node.lang || !MARKDOWN_LANGS.has(node.lang)) return;
+      if (ctx.sourceFormat !== 'mdx') return
+      if (!node.lang || !MARKDOWN_LANGS.has(node.lang)) return
 
-      const meta = parseMeta(node.meta);
-      if (!meta.preview) return;
+      const meta = parseMeta(node.meta)
+      if (!meta.preview) return
 
-      const attributes = [{ type: 'mdxJsxAttribute', name: 'code', value: node.value }];
+      const attributes = [{ type: 'mdxJsxAttribute', name: 'code', value: node.value }]
 
       if (typeof meta.title === 'string' && meta.title.length > 0) {
         attributes.push({
           type: 'mdxJsxAttribute',
           name: 'title',
           value: meta.title,
-        });
+        })
       }
 
       if (meta.defaultView === 'source' || meta.defaultView === 'rendered') {
@@ -87,7 +87,7 @@ export function satteriMarkdownPreview() {
           type: 'mdxJsxAttribute',
           name: 'defaultView',
           value: meta.defaultView,
-        });
+        })
       }
 
       return {
@@ -95,7 +95,7 @@ export function satteriMarkdownPreview() {
         name: 'markdown-preview',
         attributes,
         children: [],
-      };
+      }
     },
-  });
+  })
 }

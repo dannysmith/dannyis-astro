@@ -9,37 +9,37 @@
  * line up whether or not the row is expandable. Open/closed folder icons
  * are both rendered and toggled with CSS off the <details open> state.
  */
-import { Icon } from 'astro-icon/components';
-import { iconForFile, iconForFolder, colorForFile } from '@lib/file-tree/lookup-icon';
-import { renderInlineMarkdown } from '@lib/file-tree/markdown';
-import { truncateFileName } from '@lib/file-tree/truncate-name';
-import type { TreeNode } from '@lib/file-tree/parse-tree';
+import { Icon } from 'astro-icon/components'
+import { iconForFile, iconForFolder, colorForFile } from '@lib/file-tree/lookup-icon'
+import { renderInlineMarkdown } from '@lib/file-tree/markdown'
+import { truncateFileName } from '@lib/file-tree/truncate-name'
+import type { TreeNode } from '@lib/file-tree/parse-tree'
 
 interface Props {
-  nodes: TreeNode[];
-  highlight: Set<number>;
+  nodes: TreeNode[]
+  highlight: Set<number>
   /** Indent depth (in --ft-indent units) of the rows in this list. Used to
    *  offset the comment column so all comments align regardless of nesting. */
-  depth?: number;
+  depth?: number
   /** True for the root list. Root folders aren't indented; nested ones are. */
-  isRoot?: boolean;
+  isRoot?: boolean
 }
 
-const { nodes, highlight, depth = 0, isRoot = true } = Astro.props;
+const { nodes, highlight, depth = 0, isRoot = true } = Astro.props
 
 /** Truncate names a touch past a typical max line. */
-const NAME_MAX = 50;
+const NAME_MAX = 50
 
 /** Extra anchor attributes for external links. */
 function externalAttrs(href: string): Record<string, string> {
-  return /^https?:\/\//i.test(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+  return /^https?:\/\//i.test(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 }
 ---
 
 <ul role="list" class="ft-list list-reset">
   {
     nodes.map(node => {
-      const highlighted = highlight.has(node.line);
+      const highlighted = highlight.has(node.line)
 
       if (node.kind === 'ellipsis') {
         return (
@@ -56,12 +56,12 @@ function externalAttrs(href: string): Record<string, string> {
               )}
             </span>
           </li>
-        );
+        )
       }
 
-      const displayName = truncateFileName(node.name, NAME_MAX);
+      const displayName = truncateFileName(node.name, NAME_MAX)
       // Expose the full name on hover only when we've shortened it.
-      const fullNameTitle = displayName === node.name ? undefined : node.name;
+      const fullNameTitle = displayName === node.name ? undefined : node.name
       const nameEl = node.href ? (
         <a class="ft-name" href={node.href} title={fullNameTitle} {...externalAttrs(node.href)}>
           {displayName}
@@ -70,11 +70,11 @@ function externalAttrs(href: string): Record<string, string> {
         <span class="ft-name" title={fullNameTitle}>
           {displayName}
         </span>
-      );
+      )
 
       if (node.kind === 'folder') {
         // Nested folders sit one step deeper than their list; root folders don't.
-        const folderDepth = isRoot ? depth : depth + 1;
+        const folderDepth = isRoot ? depth : depth + 1
         return (
           <li class:list={['ft-item', 'ft-folder', { 'is-highlighted': highlighted }]}>
             <details open>
@@ -100,7 +100,7 @@ function externalAttrs(href: string): Record<string, string> {
               />
             </details>
           </li>
-        );
+        )
       }
 
       // file
@@ -120,7 +120,7 @@ function externalAttrs(href: string): Record<string, string> {
             )}
           </span>
         </li>
-      );
+      )
     })
   }
 </ul>

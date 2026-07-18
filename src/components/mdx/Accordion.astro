@@ -1,10 +1,10 @@
 ---
 export interface Props {
-  header: string;
-  open?: boolean;
+  header: string
+  open?: boolean
 }
 
-const { header, open = false } = Astro.props;
+const { header, open = false } = Astro.props
 ---
 
 <details class="accordion" open={open}>

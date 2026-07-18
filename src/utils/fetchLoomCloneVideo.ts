@@ -12,49 +12,49 @@
 /* global fetch */
 
 export interface LoomCloneSource {
-  height: number;
-  width: number;
-  type: string;
-  url: string;
+  height: number
+  width: number
+  type: string
+  url: string
 }
 
 export interface LoomCloneUrls {
-  page: string;
-  raw: string;
-  hls: string;
-  poster: string;
-  embed: string;
-  json: string;
-  md: string;
-  mp4: string;
-  captions: string | null;
-  storyboard: string | null;
-  storyboardImage: string | null;
+  page: string
+  raw: string
+  hls: string
+  poster: string
+  embed: string
+  json: string
+  md: string
+  mp4: string
+  captions: string | null
+  storyboard: string | null
+  storyboardImage: string | null
 }
 
 export interface LoomCloneVideo {
-  id: string;
-  slug: string;
-  status: string;
-  visibility: 'public' | 'unlisted' | 'private';
-  title: string | null;
-  description: string | null;
-  durationSeconds: number;
-  durationFormatted: string;
-  source: 'recorded' | 'uploaded';
-  width: number;
-  height: number;
-  aspectRatio: number;
-  sources: LoomCloneSource[];
-  transcript: string | null;
-  createdAt: string;
-  updatedAt: string;
-  completedAt: string;
-  url: string;
-  urls: LoomCloneUrls;
+  id: string
+  slug: string
+  status: string
+  visibility: 'public' | 'unlisted' | 'private'
+  title: string | null
+  description: string | null
+  durationSeconds: number
+  durationFormatted: string
+  source: 'recorded' | 'uploaded'
+  width: number
+  height: number
+  aspectRatio: number
+  sources: LoomCloneSource[]
+  transcript: string | null
+  createdAt: string
+  updatedAt: string
+  completedAt: string
+  url: string
+  urls: LoomCloneUrls
 }
 
-const cache = new Map<string, Promise<LoomCloneVideo>>();
+const cache = new Map<string, Promise<LoomCloneVideo>>()
 
 /**
  * Resolve a `src` prop to the canonical JSON endpoint URL.
@@ -62,69 +62,67 @@ const cache = new Map<string, Promise<LoomCloneVideo>>();
  * or bare slug (`foo`). Strips any trailing extension or sub-path.
  */
 export function resolveJsonUrl(src: string, baseUrl: string): string {
-  let path: string;
+  let path: string
 
   if (/^https?:\/\//i.test(src)) {
     try {
-      path = new URL(src).pathname;
+      path = new URL(src).pathname
     } catch {
-      throw new Error(`invalid URL "${src}"`);
+      throw new Error(`invalid URL "${src}"`)
     }
   } else {
-    path = src;
+    path = src
   }
 
   // Take the first path segment, strip any trailing extension.
   const slug = path
     .replace(/^\/+/, '')
     .split('/')[0]
-    .replace(/\.(json|md|mp4)$/, '');
+    .replace(/\.(json|md|mp4)$/, '')
 
   if (!/^[a-z0-9](-?[a-z0-9])*$/.test(slug)) {
-    throw new Error(`could not extract a valid slug from "${src}"`);
+    throw new Error(`could not extract a valid slug from "${src}"`)
   }
 
-  const trimmedBase = baseUrl.replace(/\/+$/, '');
-  return `${trimmedBase}/${slug}.json`;
+  const trimmedBase = baseUrl.replace(/\/+$/, '')
+  return `${trimmedBase}/${slug}.json`
 }
 
 export async function fetchLoomCloneVideo(jsonUrl: string): Promise<LoomCloneVideo> {
-  const existing = cache.get(jsonUrl);
-  if (existing) return existing;
+  const existing = cache.get(jsonUrl)
+  if (existing) return existing
 
-  const promise = doFetch(jsonUrl);
-  cache.set(jsonUrl, promise);
+  const promise = doFetch(jsonUrl)
+  cache.set(jsonUrl, promise)
   // Evict rejected promises so a transient failure doesn't poison the cache
   // for the remainder of the process (matters most in long-lived dev servers).
-  promise.catch(() => cache.delete(jsonUrl));
-  return promise;
+  promise.catch(() => cache.delete(jsonUrl))
+  return promise
 }
 
 async function doFetch(jsonUrl: string): Promise<LoomCloneVideo> {
-  let response: Response;
+  let response: Response
   try {
-    response = await fetch(jsonUrl, { redirect: 'follow' });
+    response = await fetch(jsonUrl, { redirect: 'follow' })
   } catch (err) {
     throw new Error(
       `network error fetching ${jsonUrl}: ${err instanceof Error ? err.message : String(err)}`,
       { cause: err },
-    );
+    )
   }
 
   if (response.status === 404) {
-    throw new Error(
-      `video not found at ${jsonUrl} (404). Was it deleted, renamed or made private?`,
-    );
+    throw new Error(`video not found at ${jsonUrl} (404). Was it deleted, renamed or made private?`)
   }
   if (!response.ok) {
-    throw new Error(`fetch failed (${response.status} ${response.statusText}) for ${jsonUrl}`);
+    throw new Error(`fetch failed (${response.status} ${response.statusText}) for ${jsonUrl}`)
   }
 
-  const data = (await response.json()) as LoomCloneVideo;
+  const data = (await response.json()) as LoomCloneVideo
 
   if (data.visibility === 'private') {
-    throw new Error(`video at ${jsonUrl} is private — refusing to embed`);
+    throw new Error(`video at ${jsonUrl} is private — refusing to embed`)
   }
 
-  return data;
+  return data
 }

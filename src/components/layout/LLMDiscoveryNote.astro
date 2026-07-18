@@ -7,9 +7,9 @@
 // HTML→markdown converters strip display:none content, but clipped text
 // survives, which is what agent tooling reads.
 // See https://agentdocsspec.com/spec/#llms-txt-directive-html
-import { getConfig } from '@config/config';
+import { getConfig } from '@config/config'
 
-const llmsTxtUrl = `${getConfig().site.url}/llms.txt`;
+const llmsTxtUrl = `${getConfig().site.url}/llms.txt`
 ---
 
 <p class="sr-only" data-pagefind-ignore>

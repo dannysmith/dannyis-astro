@@ -2,16 +2,16 @@
 /**
  * Scratchpad — a noindex page for eyeballing components in isolation.
  */
-import { getCollection } from 'astro:content';
-import { BaseHead, MainNavigation } from '@components/layout/index';
-import { ToolCard } from '@components/ui/index';
-import ResizableContainer from '@components/mdx/ResizableContainer.astro';
+import { getCollection } from 'astro:content'
+import { BaseHead, MainNavigation } from '@components/layout/index'
+import { ToolCard } from '@components/ui/index'
+import ResizableContainer from '@components/mdx/ResizableContainer.astro'
 
-const toolboxPages = await getCollection('toolboxPages');
-const emojiTool = toolboxPages.find(t => t.id === 'writing-good-evergreen-documents');
+const toolboxPages = await getCollection('toolboxPages')
+const emojiTool = toolboxPages.find(t => t.id === 'writing-good-evergreen-documents')
 const imageIconTool = toolboxPages.find(
   t => t.id === 'creating-managing-and-archiving-slack-channels',
-);
+)
 ---
 
 <!doctype html>

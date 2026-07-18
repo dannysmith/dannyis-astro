@@ -1,17 +1,17 @@
 ---
-import StyleguideLayout from './_layout/StyleguideLayout.astro';
-import SGSwitcher from './_components/SGSwitcher.astro';
+import StyleguideLayout from './_layout/StyleguideLayout.astro'
+import SGSwitcher from './_components/SGSwitcher.astro'
 import {
   SmartLink,
   SmallCaps,
   Highlight,
   ResizableContainer,
   WrappedTable,
-} from '@components/mdx/index';
-import { InlineFootnotes } from '@components/layout/index';
-import { Content as ChecklistContent } from './_snippets/checklist.mdx';
-import { Content as ListDensityContent } from './_snippets/list-density.mdx';
-import { Content as FootnotesContent } from './_snippets/footnotes.mdx';
+} from '@components/mdx/index'
+import { InlineFootnotes } from '@components/layout/index'
+import { Content as ChecklistContent } from './_snippets/checklist.mdx'
+import { Content as ListDensityContent } from './_snippets/list-density.mdx'
+import { Content as FootnotesContent } from './_snippets/footnotes.mdx'
 
 const toc = [
   { id: 'inline', label: 'Inline elements' },
@@ -23,7 +23,7 @@ const toc = [
   { id: 'tables', label: 'Tables' },
   { id: 'footnotes', label: 'Footnotes' },
   { id: 'realistic', label: 'Realistic example' },
-];
+]
 ---
 
 <StyleguideLayout

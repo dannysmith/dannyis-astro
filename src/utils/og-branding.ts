@@ -1,5 +1,5 @@
-import { getConfig } from '@config/config';
+import { getConfig } from '@config/config'
 
-const config = getConfig();
+const config = getConfig()
 
-export const OG_HANDLE = config.author.twitter;
+export const OG_HANDLE = config.author.twitter
