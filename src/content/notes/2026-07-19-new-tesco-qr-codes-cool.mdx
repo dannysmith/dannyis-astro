@@ -1,0 +1,22 @@
+---
+title: The new tesco QR codes are cool
+sourceURL: https://youtu.be/ukK7lEWoQVA
+pubDate: 2026-07-19
+---
+
+As Chris explains in this video, Tesco are clearly trialling a new QR code which can replace traditional barcodes and also contain info for stock management like the expiry date.
+
+The cool thing here is thay they are **also scannable by customers** which open the product's URL on thetesco website. They do this by encoding this data as a URL which includes the [GTIN](https://en.wikipedia.org/wiki/Global_Trade_Item_Number) (from traditional barcodes), batch number and expiry date like this:
+
+```
+https://tesco.com/<GTIN>/<betch number>?17=<expiry date>
+```
+
+Here's an example:
+
+```
+https://tesco.com/01/05051277937280/10/101150200?17=260505
+```
+
+Their checkouts and other readers can extract the bits they need and when a customer scans it this URL just redirects to the correct product URL.
+
