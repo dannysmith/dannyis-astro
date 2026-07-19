@@ -10,6 +10,7 @@ import {
   Callout,
   Center,
   ColorSwatch,
+  ContentCard,
   Embed,
   FileTree,
   Grid,
@@ -25,7 +26,7 @@ import {
 } from '@components/mdx/index'
 import { BaselineStatus, BlueskyPost, Gist, MastodonPost, Tweet, Vimeo, YouTube } from 'astro-embed'
 import { Code } from 'astro-expressive-code/components'
-import { ContentCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
 import { Content as MermaidContent } from './_snippets/mermaid.mdx'
 import { Image, Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
@@ -1422,10 +1423,11 @@ Provide a title to skip the fetch or override it:
   <section id="content-card" class="flow">
     <h2>ContentCard</h2>
     <p>
-      ContentCards are used to link to articles, notes and toolbox pages across the site. They can
-      auto-extract metadata from a collection entry or accept manual props for custom usage. The
-      card's accent colour and label are determined by the content type: coral for articles, blue
-      for notes, green for tools and purple for custom.
+      ContentCard renders any content-collection item as its card, from just a
+      <code>"collection/id"</code> string — sugar for use in MDX content, where you don't have the entry
+      to hand. It looks the entry up and dispatches to the right card component (ArticleCard, NoteCard,
+      ToolCard or ProjectCard), passing <code>compact</code> through. An unknown collection or id fails
+      the build with a clear error.
     </p>
     <WrappedTable>
       <thead>
@@ -1438,74 +1440,52 @@ Provide a title to skip the fetch or override it:
       </thead>
       <tbody>
         <tr>
-          <td><code>content</code></td>
-          <td><code>CollectionEntry&lt;'articles' | 'notes' | 'toolboxPages'&gt;</code></td>
-          <td>—</td>
-          <td>A collection entry; auto-extracts title, date, summary, image and type.</td>
-        </tr>
-        <tr>
-          <td><code>href</code> / <code>title</code> / <code>date</code></td>
-          <td><code>string</code> / <code>string</code> / <code>Date</code></td>
-          <td>—</td>
-          <td>Manual props when not passing a <code>content</code> entry.</td>
-        </tr>
-        <tr>
-          <td><code>type</code></td>
-          <td><code>'article' | 'note' | 'tool' | 'custom'</code></td>
-          <td><code>'custom'</code></td>
-          <td>Sets the label and accent colour (manual usage).</td>
+          <td><code>item</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>
+            <code>"collection/id"</code>, where collection is one of <code>articles</code>,
+            <code>notes</code>, <code>toolboxPages</code> or <code>projects</code>.
+          </td>
         </tr>
         <tr>
           <td><code>compact</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
-          <td>Hide the image and summary regardless of width.</td>
+          <td>Render the card's compact tile variant instead of the full card.</td>
         </tr>
       </tbody>
     </WrappedTable>
 
-    <h3 id="content-card-articles">Articles</h3>
-    <Code lang="mdx" code={'<ContentCard content={article} />'} />
+    <h3 id="content-card-full">Full cards</h3>
+    <Code lang="mdx" code={'<ContentCard item="articles/my-article-slug" />'} />
     <ResizableContainer>
       <div style="display: grid; gap: var(--space-s);">
-        {sampleArticles.map(article => <ContentCard content={article} />)}
-      </div>
-    </ResizableContainer>
-
-    <h3 id="content-card-notes">Notes</h3>
-    <p>
-      Notes get a blue accent border (set via <code>--color-blue</code> in the component's config):
-    </p>
-    <ResizableContainer>
-      <div style="display: grid; gap: var(--space-s);">
-        {sampleNotes.map(note => <ContentCard content={note} />)}
+        {sampleArticles.slice(0, 1).map(article => <ContentCard item={`articles/${article.id}`} />)}
+        {sampleTools.slice(0, 1).map(tool => <ContentCard item={`toolboxPages/${tool.id}`} />)}
       </div>
     </ResizableContainer>
 
     <h3 id="content-card-compact">Compact</h3>
-    <p>
-      The <code>compact</code> prop hides the image and summary (cards also compact below 350px):
-    </p>
-    <Code lang="mdx" code={'<ContentCard content={article} compact />'} />
+    <Code lang="mdx" code={'<ContentCard item="notes/some-note" compact />'} />
     <ResizableContainer>
       <div style="display: grid; gap: var(--space-s);">
-        {sampleArticles.slice(0, 2).map(article => <ContentCard content={article} compact />)}
-      </div>
-    </ResizableContainer>
-
-    <h3 id="content-card-custom">Custom (manual props)</h3>
-    <Code
-      lang="mdx"
-      code={'<ContentCard\n  href="/example"\n  title="Custom card example"\n  date={new Date(\'2024-01-15\')}\n  type="custom"\n/>'}
-    />
-    <ResizableContainer>
-      <div style="display: grid; gap: var(--space-s);">
-        <ContentCard
-          href="/example"
-          title="Custom card example"
-          date={new Date('2024-01-15')}
-          type="custom"
-        />
+        {
+          sampleArticles
+            .slice(0, 1)
+            .map(article => <ContentCard item={`articles/${article.id}`} compact />)
+        }
+        {sampleNotes.slice(0, 1).map(note => <ContentCard item={`notes/${note.id}`} compact />)}
+        {
+          sampleTools
+            .slice(0, 1)
+            .map(tool => <ContentCard item={`toolboxPages/${tool.id}`} compact />)
+        }
+        {
+          sampleProjects
+            .slice(0, 1)
+            .map(project => <ContentCard item={`projects/${project.id}`} compact />)
+        }
       </div>
     </ResizableContainer>
   </section>

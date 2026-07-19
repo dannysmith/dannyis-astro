@@ -5,6 +5,7 @@ import Notion from './Notion.astro'
 import Grid from './Grid.astro'
 import Callout from './Callout.astro'
 import BookmarkCard from './BookmarkCard.astro'
+import ContentCard from './ContentCard.astro'
 import Embed from './Embed.astro'
 import LCVid from './LCVid.astro'
 import Loom from './Loom.astro'
@@ -32,6 +33,7 @@ export {
   Notion,
   Grid,
   BookmarkCard,
+  ContentCard,
   Embed,
   Callout,
   LCVid,

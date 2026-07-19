@@ -7,7 +7,8 @@
  */
 import { getCollection } from 'astro:content'
 import { BaseHead, MainNavigation } from '@components/layout/index'
-import { ArticleCard, ContentCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { ArticleCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import ContentCard from '@components/mdx/ContentCard.astro'
 import ResizableContainer from '@components/mdx/ResizableContainer.astro'
 import { filterContentForListing } from '@utils/content'
 
@@ -138,26 +139,23 @@ const sampleNote = notes.find(n => n.id === '2026-07-15-moving-uses-pages-site')
         </div>
       </ResizableContainer>
 
-      <h2>ContentCard (article with cover)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {articleWithCover && <ContentCard content={articleWithCover} />}
+      <h2>ContentCard dispatcher (one per collection)</h2>
+      <ResizableContainer initialWidth="700px" minWidth="220px">
+        <div class="compact-stack">
+          {articleWithCover && <ContentCard item={`articles/${articleWithCover.id}`} />}
+          <ContentCard item={`notes/${sampleNote.id}`} />
+          {emojiTool && <ContentCard item={`toolboxPages/${emojiTool.id}`} />}
+          {sampleProject && <ContentCard item={`projects/${sampleProject.id}`} />}
+        </div>
       </ResizableContainer>
 
-      <h2>ContentCard (article without cover)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {articleNoCover && <ContentCard content={articleNoCover} />}
-      </ResizableContainer>
-
-      <h2>ContentCard (note)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        <ContentCard content={sampleNote} />
-      </ResizableContainer>
-
-      <h2>ContentCard (compact)</h2>
+      <h2>ContentCard dispatcher (compact, one per collection)</h2>
       <ResizableContainer initialWidth="600px" minWidth="180px">
         <div class="compact-stack">
-          {articles.slice(0, 2).map(article => <ContentCard content={article} compact />)}
-          <ContentCard content={sampleNote} compact />
+          {articleWithCover && <ContentCard item={`articles/${articleWithCover.id}`} compact />}
+          <ContentCard item={`notes/${sampleNote.id}`} compact />
+          {emojiTool && <ContentCard item={`toolboxPages/${emojiTool.id}`} compact />}
+          {sampleProject && <ContentCard item={`projects/${sampleProject.id}`} compact />}
         </div>
       </ResizableContainer>
     </main>
