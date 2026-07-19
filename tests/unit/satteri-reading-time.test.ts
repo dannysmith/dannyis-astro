@@ -7,13 +7,13 @@ type Frontmatter = Record<string, unknown>
 
 async function readMd(source: string): Promise<Frontmatter> {
   const data = astroData()
-  await markdownToHtml(source, { mdastPlugins: [satteriReadingTime()], data })
+  markdownToHtml(source, { mdastPlugins: [satteriReadingTime()], data })
   return data.astro.frontmatter
 }
 
 async function readMdx(source: string): Promise<Frontmatter> {
   const data = astroData()
-  await mdxToJs(source, { mdastPlugins: [satteriReadingTime()], data })
+  mdxToJs(source, { mdastPlugins: [satteriReadingTime()], data })
   return data.astro.frontmatter
 }
 
@@ -38,7 +38,7 @@ describe('satteriReadingTime', () => {
 
   it('preserves other frontmatter values', async () => {
     const data = astroData({ title: 'Kept' })
-    await markdownToHtml('Some text.\n', { mdastPlugins: [satteriReadingTime()], data })
+    markdownToHtml('Some text.\n', { mdastPlugins: [satteriReadingTime()], data })
     expect(data.astro.frontmatter.title).toBe('Kept')
     expect(data.astro.frontmatter.minutesRead).toBe('1 min read')
   })

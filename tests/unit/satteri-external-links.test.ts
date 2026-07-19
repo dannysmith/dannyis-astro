@@ -4,7 +4,7 @@ import { satteriExternalLinks } from '../../src/lib/satteri-external-links.mjs'
 
 /** Render markdown through the real pipeline with the plugin registered. */
 async function render(source: string): Promise<string> {
-  const result = await markdownToHtml(source, {
+  const result = markdownToHtml(source, {
     hastPlugins: [satteriExternalLinks()],
   })
   return result.html

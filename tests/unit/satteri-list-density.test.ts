@@ -7,7 +7,7 @@ const LONG =
 
 /** Render markdown through the real pipeline with the plugin registered. */
 async function render(source: string, options?: { threshold?: number }): Promise<string> {
-  const result = await markdownToHtml(source, {
+  const result = markdownToHtml(source, {
     hastPlugins: [satteriListDensity(options)],
   })
   return result.html
@@ -35,7 +35,7 @@ describe('satteriListDensity', () => {
           },
         },
       })
-      const result = await markdownToHtml(`- ${LONG}\n- ${LONG}\n`, {
+      const result = markdownToHtml(`- ${LONG}\n- ${LONG}\n`, {
         hastPlugins: [addClass, satteriListDensity()],
       })
       expect(result.html).toContain('existing-class')

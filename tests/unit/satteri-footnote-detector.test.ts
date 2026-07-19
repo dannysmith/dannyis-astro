@@ -7,7 +7,7 @@ type Frontmatter = Record<string, unknown>
 
 async function readMd(source: string): Promise<Frontmatter> {
   const data = astroData()
-  await markdownToHtml(source, { mdastPlugins: [satteriFootnoteDetector()], data })
+  markdownToHtml(source, { mdastPlugins: [satteriFootnoteDetector()], data })
   return data.astro.frontmatter
 }
 
@@ -34,7 +34,7 @@ describe('satteriFootnoteDetector', () => {
 
   it('detects footnotes in MDX too', async () => {
     const data = astroData()
-    await mdxToJs('Text.[^a]\n\n[^a]: An MDX footnote.\n', {
+    mdxToJs('Text.[^a]\n\n[^a]: An MDX footnote.\n', {
       mdastPlugins: [satteriFootnoteDetector()],
       data,
     })

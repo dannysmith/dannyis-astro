@@ -67,7 +67,7 @@ describe('satteriAutolinkHeadings', () => {
   })
 
   it('leaves headings without an id untouched', async () => {
-    const result = await markdownToHtml('## No Ids Here\n', {
+    const result = markdownToHtml('## No Ids Here\n', {
       hastPlugins: [satteriAutolinkHeadings()],
       data: astroData(),
     })

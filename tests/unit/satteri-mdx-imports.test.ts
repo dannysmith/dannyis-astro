@@ -21,7 +21,7 @@ async function compile(
     componentNames = NAMES,
   }: { frontmatter?: Record<string, unknown>; componentNames?: string[] } = {},
 ): Promise<string> {
-  const result = await mdxToJs(source, {
+  const result = mdxToJs(source, {
     mdastPlugins: [satteriMdxImports({ componentNames })],
     data: astroData(frontmatter),
   })
@@ -59,7 +59,7 @@ describe('satteriMdxImports', () => {
     it('resets between documents (factory form)', async () => {
       const plugin = satteriMdxImports({ componentNames: NAMES })
       for (const source of ['# Doc one\n', '# Doc two\n']) {
-        const result = await mdxToJs(source, {
+        const result = mdxToJs(source, {
           mdastPlugins: [plugin],
           data: astroData(),
         })
@@ -73,7 +73,7 @@ describe('satteriMdxImports', () => {
     })
 
     it('does not inject into plain markdown', async () => {
-      const result = await markdownToHtml('# Hi\n\nSome text.\n', {
+      const result = markdownToHtml('# Hi\n\nSome text.\n', {
         mdastPlugins: [satteriMdxImports({ componentNames: NAMES })],
         data: astroData(),
       })

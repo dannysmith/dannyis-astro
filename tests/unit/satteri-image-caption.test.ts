@@ -5,7 +5,7 @@ import { astroData } from './satteri-helpers'
 
 /** Compile MDX with the plugin and return the compiled JS. */
 async function compileMdx(source: string): Promise<string> {
-  const result = await mdxToJs(source, {
+  const result = mdxToJs(source, {
     hastPlugins: [satteriImageCaption()],
     data: astroData(),
   })
@@ -32,7 +32,7 @@ describe('satteriImageCaption', () => {
   })
 
   it('does nothing in plain markdown (title renders as a title attribute)', async () => {
-    const result = await markdownToHtml('![Alt text](https://example.com/a.jpg "A title.")\n', {
+    const result = markdownToHtml('![Alt text](https://example.com/a.jpg "A title.")\n', {
       hastPlugins: [satteriImageCaption()],
     })
     expect(result.html).toContain('title="A title."')

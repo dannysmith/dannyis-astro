@@ -4,7 +4,7 @@ import { satteriUnwrapImages } from '../../src/lib/satteri-unwrap-images.mjs'
 
 /** Render markdown through the real pipeline with the plugin registered. */
 async function render(source: string): Promise<string> {
-  const result = await markdownToHtml(source, {
+  const result = markdownToHtml(source, {
     hastPlugins: [satteriUnwrapImages()],
   })
   return result.html
