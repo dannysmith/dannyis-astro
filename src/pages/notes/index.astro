@@ -1,15 +1,13 @@
 ---
-import { getCollection, render } from 'astro:content'
+import { getCollection } from 'astro:content'
 import {
   BaseHead,
   CommandPalette,
   Footer,
   LLMDiscoveryNote,
   MainNavigation,
-  NoteCard,
 } from '@components/layout/index'
-import { FormattedDate, MarkdownContentActions } from '@components/ui/index'
-import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
+import { FormattedDate, NoteCard } from '@components/ui/index'
 import { filterContentForListing } from '@utils/content'
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
@@ -20,14 +18,6 @@ const notes = filterContentForListing(await getCollection('notes')).sort(
 const numberOfRecentNotes = 5
 const recentNotes = notes.slice(0, numberOfRecentNotes)
 const olderNotes = notes.slice(numberOfRecentNotes)
-
-// Render the recent notes content
-const recentNotesWithContent = await Promise.all(
-  recentNotes.map(async note => {
-    const { Content } = await render(note)
-    return { note, Content }
-  }),
-)
 ---
 
 <!doctype html>
@@ -48,23 +38,11 @@ const recentNotesWithContent = await Promise.all(
 
       <!-- Recent Notes as Cards (prose styling for content) -->
       {
-        recentNotesWithContent.length > 0 && (
+        recentNotes.length > 0 && (
           <section class="recent-notes" aria-label="Recent Notes">
-            {recentNotesWithContent.map(({ note, Content }) => (
+            {recentNotes.map(note => (
               <div class="note-container cq" style={`--vt-name: note-${note.id}`}>
-                <NoteCard
-                  title={note.data.title}
-                  pubDate={note.data.pubDate}
-                  sourceURL={note.data.sourceURL}
-                  tags={note.data.tags}
-                  slug={note.id}
-                >
-                  <Content components={MDX_COMPONENT_REMAPPING} />
-                  <MarkdownContentActions
-                    markdownUrl={`/notes/${note.id}.md`}
-                    disableShare={true}
-                  />
-                </NoteCard>
+                <NoteCard item={note} />
               </div>
             ))}
           </section>

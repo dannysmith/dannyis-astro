@@ -5,11 +5,10 @@
  * Currently: all card components (NoteCard, ProjectCard, ToolCard,
  * ContentCard) in their full and compact variants, for the card review.
  */
-import { getCollection, render } from 'astro:content'
-import { BaseHead, MainNavigation, NoteCard } from '@components/layout/index'
-import { ArticleCard, ContentCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { getCollection } from 'astro:content'
+import { BaseHead, MainNavigation } from '@components/layout/index'
+import { ArticleCard, ContentCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
 import ResizableContainer from '@components/mdx/ResizableContainer.astro'
-import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
 import { filterContentForListing } from '@utils/content'
 
 // --- Sample content ---
@@ -37,7 +36,6 @@ const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 )
 const sampleNote = notes.find(n => n.id === '2026-07-15-moving-uses-pages-site') ?? notes[0]
-const { Content: SampleNoteContent } = await render(sampleNote)
 ---
 
 <!doctype html>
@@ -101,15 +99,14 @@ const { Content: SampleNoteContent } = await render(sampleNote)
 
       <h2>NoteCard (full — primary display)</h2>
       <ResizableContainer initialWidth="700px" minWidth="220px">
-        <NoteCard
-          title={sampleNote.data.title}
-          pubDate={sampleNote.data.pubDate}
-          sourceURL={sampleNote.data.sourceURL}
-          tags={sampleNote.data.tags}
-          slug={sampleNote.id}
-        >
-          <SampleNoteContent components={MDX_COMPONENT_REMAPPING} />
-        </NoteCard>
+        <NoteCard item={sampleNote} />
+      </ResizableContainer>
+
+      <h2>NoteCard (compact — recent 5)</h2>
+      <ResizableContainer initialWidth="600px" minWidth="180px">
+        <div class="compact-stack">
+          {notes.slice(0, 5).map(note => <NoteCard item={note} compact />)}
+        </div>
       </ResizableContainer>
 
       <h2>ProjectCard (full — primary display)</h2>

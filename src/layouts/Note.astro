@@ -6,25 +6,30 @@ import {
   CommandPalette,
   LLMDiscoveryNote,
   MainNavigation,
-  NoteCard,
 } from '@components/layout/index'
-import { BackToTopLink, MarkdownContentActions } from '@components/ui/index'
+import { NoteCard } from '@components/ui/index'
+import { generateSummary } from '@utils/content-summary'
 import { getDocumentUri } from '@utils/standard-site'
 
-type Props = CollectionEntry<'notes'>['data']
+interface Props {
+  note: CollectionEntry<'notes'>
+}
 
-const { title, pubDate, description, sourceURL, tags, draft, styleguide } = Astro.props
+const { note } = Astro.props
+const { title, pubDate, draft, styleguide, tags } = note.data
+
+const description = note.data.description?.trim() || generateSummary(note)
 
 // Build OG image path for this note
-const ogImage = `/notes/${Astro.params.slug}/og-image.png`
+const ogImage = `/notes/${note.id}/og-image.png`
 
 // Root-relative URL of the raw markdown twin (served by [...slug].md.ts).
-const markdownUrl = `${Astro.url.pathname.replace(/\/$/, '')}.md`
+const markdownUrl = `/notes/${note.id}.md`
 
 // standard.site document AT-URI for the <head> verification link tag (null for
 // drafts, styleguides, or posts before the configured cutoff).
 const standardSiteDocumentUri =
-  getDocumentUri('notes', Astro.params.slug!, { draft, styleguide, pubDate }) ?? undefined
+  getDocumentUri('notes', note.id, { draft, styleguide, pubDate }) ?? undefined
 ---
 
 <!doctype html>
@@ -46,22 +51,9 @@ const standardSiteDocumentUri =
   <body>
     <MainNavigation />
     <CommandPalette />
-    <main id="main" tabindex="-1" style={`--vt-name: note-${Astro.params.slug}`}>
+    <main id="main" tabindex="-1" style={`--vt-name: note-${note.id}`}>
       <LLMDiscoveryNote />
-      <NoteCard
-        title={title}
-        pubDate={pubDate}
-        sourceURL={sourceURL}
-        tags={tags}
-        slug={Astro.params.slug!}
-        indexAsBody
-      >
-        <slot />
-        <div class="footer-actions" data-pagefind-ignore>
-          <MarkdownContentActions markdownUrl={markdownUrl} />
-          <BackToTopLink />
-        </div>
-      </NoteCard>
+      <NoteCard item={note} standalone />
     </main>
 
     <Footer />
@@ -82,12 +74,6 @@ const standardSiteDocumentUri =
         .note {
           max-width: var(--measure-standard);
         }
-      }
-
-      .footer-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
       }
     </style>
   </body>

@@ -25,8 +25,7 @@ import {
 } from '@components/mdx/index'
 import { BaselineStatus, BlueskyPost, Gist, MastodonPost, Tweet, Vimeo, YouTube } from 'astro-embed'
 import { Code } from 'astro-expressive-code/components'
-import { ContentCard, ProjectCard, ToolCard } from '@components/ui/index'
-import { NoteCard } from '@components/layout/index'
+import { ContentCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
 import { Content as MermaidContent } from './_snippets/mermaid.mdx'
 import { Image, Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
@@ -143,6 +142,9 @@ const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCov
 
 const allNotes = await getCollection('notes', ({ data }) => !data.styleguide)
 const sampleNotes = allNotes.slice(0, 3)
+// Real entries for the NoteCard demos: one with a source URL and tags, one plain
+const noteWithSource = allNotes.find(n => n.data.sourceURL && n.data.tags?.length) ?? allNotes[0]
+const noteMinimal = allNotes.find(n => !n.data.sourceURL && !n.data.tags?.length) ?? allNotes[1]
 
 const allProjects = await getCollection('projects', ({ data }) => !data.draft)
 const sampleProject = allProjects.find(p => p.data.image) ?? allProjects[0]
@@ -1511,8 +1513,8 @@ Provide a title to skip the fetch or override it:
   <section id="note-card" class="flow">
     <h2>NoteCard</h2>
     <p>
-      Renders a full note (with its content via slot), as used on the notes index and note pages. A
-      sourceURL shows an embed; tags render as pills.
+      Renders a full note (rendering its content itself), as used on the notes index and note pages.
+      A sourceURL shows an embed; tags render as pills.
     </p>
     <WrappedTable>
       <thead>
@@ -1525,83 +1527,43 @@ Provide a title to skip the fetch or override it:
       </thead>
       <tbody>
         <tr>
-          <td><code>title</code></td>
-          <td><code>string</code></td>
+          <td><code>item</code></td>
+          <td><code>CollectionEntry&lt;'notes'&gt;</code></td>
           <td><em>required</em></td>
-          <td>The note title.</td>
+          <td
+            >The note entry to render — content, title, date, tags and sourceURL all come from it.</td
+          >
         </tr>
         <tr>
-          <td><code>pubDate</code></td>
-          <td><code>Date</code></td>
-          <td><em>required</em></td>
-          <td>Publication date.</td>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td
+            >Render a small linked tile (title + "Note · date" byline) instead of the full card.</td
+          >
         </tr>
         <tr>
-          <td><code>slug</code></td>
-          <td><code>string</code></td>
-          <td><em>required</em></td>
-          <td>Links to <code>/notes/&lt;slug&gt;/</code>.</td>
-        </tr>
-        <tr>
-          <td><code>sourceURL</code></td>
-          <td><code>string</code></td>
-          <td>—</td>
-          <td>If set, an embed of the source is shown.</td>
-        </tr>
-        <tr>
-          <td><code>tags</code></td>
-          <td><code>string[]</code></td>
-          <td><code>[]</code></td>
-          <td>Rendered as pills below the title.</td>
-        </tr>
-        <tr>
-          <td><code>indexAsBody</code></td>
+          <td><code>standalone</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
           <td>
-            Marks the card as the Pagefind search body so the note gets indexed. Set only on the
-            standalone note page; listing pages leave it off so each note stays a single result.
+            The card is the note's own page: marks it as the Pagefind search body, enables sharing
+            and adds a back-to-top link. Listing pages leave it off so each note stays a single
+            search result.
           </td>
         </tr>
       </tbody>
     </WrappedTable>
 
-    <h3 id="note-card-full">With tags &amp; source URL</h3>
-    <Code
-      lang="mdx"
-      code={"<NoteCard\n  title=\"On the nature of remote work\"\n  pubDate={new Date('2024-03-15')}\n  slug=\"demo-note-1\"\n  tags={['remote-work', 'culture', 'async']}\n  sourceURL=\"https://justinjackson.ca/calm-company\"\n>\n  Remote work isn't just about *where* you work…\n</NoteCard>"}
-    />
+    <h3 id="note-card-full">Full card</h3>
+    <Code lang="mdx" code={'<NoteCard item={note} />'} />
     <ResizableContainer>
-      <NoteCard
-        title="On the nature of remote work"
-        pubDate={new Date('2024-03-15')}
-        slug="demo-note-1"
-        tags={['remote-work', 'culture', 'async']}
-        sourceURL="https://justinjackson.ca/calm-company"
-      >
-        <p>
-          Remote work isn't just about <em>where</em> you work — it's about <strong>how</strong> you work.
-          The best remote teams treat asynchronous communication as the foundation, not an afterthought.
-        </p>
-        <p>
-          When you default to async, you give people the gift of <a href="#">deep work</a>. Meetings
-          become the exception, not the rule.
-        </p>
-      </NoteCard>
+      <NoteCard item={noteWithSource} />
     </ResizableContainer>
 
-    <h3 id="note-card-minimal">Minimal</h3>
+    <h3 id="note-card-minimal">Minimal (no tags or source URL)</h3>
     <ResizableContainer>
-      <NoteCard
-        title="A quick thought on defaults"
-        pubDate={new Date('2024-06-22')}
-        slug="demo-note-2"
-      >
-        <p>
-          Good defaults are invisible; bad defaults create friction. The best software feels like it
-          was configured just for you, even when you've changed nothing.
-        </p>
-      </NoteCard>
+      <NoteCard item={noteMinimal} />
     </ResizableContainer>
   </section>
 
