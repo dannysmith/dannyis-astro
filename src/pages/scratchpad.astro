@@ -7,7 +7,7 @@
  */
 import { getCollection, render } from 'astro:content'
 import { BaseHead, MainNavigation, NoteCard } from '@components/layout/index'
-import { ContentCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { ArticleCard, ContentCard, ProjectCard, ToolCard } from '@components/ui/index'
 import ResizableContainer from '@components/mdx/ResizableContainer.astro'
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
 import { filterContentForListing } from '@utils/content'
@@ -27,6 +27,11 @@ const articles = filterContentForListing(await getCollection('articles')).sort(
 )
 const articleWithCover = articles.find(a => a.data.cover)
 const articleNoCover = articles.find(a => !a.data.cover)
+const articlePlatform = articles.find(a => a.data.platform)
+const articleSeries = articles.find(a => a.data.series)
+const articleUpdated = articles.find(
+  a => a.data.updatedDate && a.data.updatedDate.toDateString() !== a.data.pubDate.toDateString(),
+)
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -48,6 +53,51 @@ const { Content: SampleNoteContent } = await render(sampleNote)
     <MainNavigation />
     <main id="main" tabindex="-1">
       <h1>Card components</h1>
+
+      <h2>ArticleCard (with cover)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        {articleWithCover && <ArticleCard item={articleWithCover} />}
+      </ResizableContainer>
+
+      <h2>ArticleCard (without cover)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        {articleNoCover && <ArticleCard item={articleNoCover} />}
+      </ResizableContainer>
+
+      <h2>ArticleCard (external platform)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        {articlePlatform && <ArticleCard item={articlePlatform} />}
+      </ResizableContainer>
+
+      <h2>ArticleCard (part of a series)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        {articleSeries && <ArticleCard item={articleSeries} />}
+      </ResizableContainer>
+
+      <h2>ArticleCard (with updated date)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        {
+          articleUpdated ? (
+            <ArticleCard item={articleUpdated} />
+          ) : (
+            <p>No article with a distinct updatedDate found.</p>
+          )
+        }
+      </ResizableContainer>
+
+      <h2>ArticleCard (grid of 4)</h2>
+      <ResizableContainer initialWidth="900px" minWidth="260px">
+        <div class="card-grid">
+          {articles.slice(0, 4).map(article => <ArticleCard item={article} />)}
+        </div>
+      </ResizableContainer>
+
+      <h2>ArticleCard (compact — recent 6)</h2>
+      <ResizableContainer initialWidth="600px" minWidth="180px">
+        <div class="compact-stack">
+          {articles.slice(0, 6).map(article => <ArticleCard item={article} compact />)}
+        </div>
+      </ResizableContainer>
 
       <h2>NoteCard (full — primary display)</h2>
       <ResizableContainer initialWidth="700px" minWidth="220px">
@@ -134,5 +184,11 @@ const { Content: SampleNoteContent } = await render(sampleNote)
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    gap: var(--space-s);
   }
 </style>
