@@ -12,7 +12,7 @@
  *
  * @see https://mermaid.js.org/config/theming.html
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs'
 
 /**
  * Sentinel palette (light-mode values). Each value is a find-and-replace
@@ -43,9 +43,9 @@ const colors = {
   noteBackground: '#fff9e6',
   errorBackground: '#ffebee',
   errorText: '#c62828',
-};
+}
 
-const cssVar = name => `--mermaid-${name.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`)}`;
+const cssVar = name => `--mermaid-${name.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`)}`
 
 /** [bakedColor, cssVarWithFallback] pairs applied to the rendered SVG string. */
 export const mermaidColorReplacements = [
@@ -54,7 +54,7 @@ export const mermaidColorReplacements = [
   // `background` at 50% alpha, so it escapes the sentinel rewrite. Matched as
   // serialized — verify after mermaid upgrades (render-test script).
   ['rgba(255, 255, 255, 0.5)', 'var(--mermaid-label-background, rgba(255, 255, 255, 0.5))'],
-];
+]
 
 /**
  * The build-time Chromium measures label boxes with the fonts it has loaded;
@@ -62,14 +62,14 @@ export const mermaidColorReplacements = [
  * inlined as a data: stylesheet for the renderer, with font-display:block so
  * Chromium loads it before measuring.
  */
-const fontsDir = new URL('../../public/fonts/', import.meta.url);
-const figtreeFile = readdirSync(fontsDir).find(file => /^Figtree-v.*\.woff2$/.test(file));
-if (!figtreeFile) throw new Error(`No Figtree-v*.woff2 font found in ${fontsDir.pathname}`);
+const fontsDir = new URL('../../public/fonts/', import.meta.url)
+const figtreeFile = readdirSync(fontsDir).find(file => /^Figtree-v.*\.woff2$/.test(file))
+if (!figtreeFile) throw new Error(`No Figtree-v*.woff2 font found in ${fontsDir.pathname}`)
 const fontFaceCss =
   "@font-face{font-family:'Figtree';" +
   `src:url(data:font/woff2;base64,${readFileSync(new URL(figtreeFile, fontsDir)).toString('base64')}) format('woff2');` +
-  'font-weight:300 900;font-style:normal;font-display:block;}';
-export const mermaidFontCss = `data:text/css;base64,${Buffer.from(fontFaceCss).toString('base64')}`;
+  'font-weight:300 900;font-style:normal;font-display:block;}'
+export const mermaidFontCss = `data:text/css;base64,${Buffer.from(fontFaceCss).toString('base64')}`
 
 export const mermaidConfig = {
   theme: 'base',
@@ -149,4 +149,4 @@ export const mermaidConfig = {
     errorBkgColor: colors.errorBackground,
     errorTextColor: colors.errorText,
   },
-};
+}

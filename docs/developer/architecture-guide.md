@@ -158,7 +158,7 @@ document.addEventListener('astro:after-swap', initComponent);
 
 - `layout/` - Structural (BaseHead, Footer, MainNavigation)
 - `navigation/` - Navigation-specific (NavLink, ThemeToggle)
-- `ui/` - Reusable utilities (ContentCard, FormattedDate, Pill)
+- `ui/` - Reusable utilities and the card family (ArticleCard, NoteCard, ProjectCard, ToolCard, FormattedDate, Pill)
 - `mdx/` - Available in MDX content (Callout, Embed, BasicImage)
 - `demos/` - One-off interactive demos for articles/notes (React allowed here)
 - Use barrel exports (`index.ts`) for clean imports

@@ -1,8 +1,8 @@
-import type { APIRoute } from 'astro';
-import { getConfig } from '@config/config';
+import type { APIRoute } from 'astro'
+import { getConfig } from '@config/config'
 
 export const GET: APIRoute = () => {
-  const config = getConfig();
+  const config = getConfig()
 
   const content = `/* AUTHOR */
 
@@ -13,11 +13,11 @@ export const GET: APIRoute = () => {
 /* META */
 
 	Built with: AstroJS & CSS.
-`;
+`
 
   return new Response(content, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
     },
-  });
-};
+  })
+}

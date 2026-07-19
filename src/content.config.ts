@@ -1,6 +1,6 @@
-import { defineCollection, reference } from 'astro:content';
-import { z } from 'astro/zod';
-import { file, glob } from 'astro/loaders';
+import { defineCollection, reference } from 'astro:content'
+import { z } from 'astro/zod'
+import { file, glob } from 'astro/loaders'
 
 // Long-form Articles
 const articles = defineCollection({
@@ -27,7 +27,7 @@ const articles = defineCollection({
         .optional()
         .describe('Series this article belongs to (id from series.json)'),
     }),
-});
+})
 
 // Article series metadata (for the "part of a series" callout)
 const series = defineCollection({
@@ -37,7 +37,7 @@ const series = defineCollection({
     name: z.string(),
     intro: z.string().optional(),
   }),
-});
+})
 
 // Short-form Notes, often about other people's content
 const notes = defineCollection({
@@ -52,7 +52,7 @@ const notes = defineCollection({
     tags: z.array(z.string()).optional(),
     styleguide: z.boolean().optional().describe('Styleguide page; excluded from RSS and indexes'),
   }),
-});
+})
 
 // "Tool pages" from the Remote Working Toolbox — metadata scraped from betterat.work
 // (super.so) and the underlying Notion database by `bun run scrape-toolbox`.
@@ -74,7 +74,7 @@ const toolboxPages = defineCollection({
     lastEdited: z.coerce.date(),
     displayOrder: z.number().describe('Gallery order on betterat.work'),
   }),
-});
+})
 
 // Things I've made and am making — surfaced on /making
 const projects = defineCollection({
@@ -98,6 +98,6 @@ const projects = defineCollection({
       startDate: z.coerce.date().optional(),
       draft: z.boolean().default(false),
     }),
-});
+})
 
-export const collections = { articles, notes, toolboxPages, series, projects };
+export const collections = { articles, notes, toolboxPages, series, projects }

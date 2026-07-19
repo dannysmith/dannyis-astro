@@ -1,9 +1,9 @@
 ---
-import { Icon } from 'astro-icon/components';
-import { NavLink, ThemeToggle } from '@components/navigation/index';
-import { PersonalLogo } from '@components/ui/index';
-import SkipLink from './SkipLink.astro';
-const isDev = import.meta.env.MODE === 'development';
+import { Icon } from 'astro-icon/components'
+import { NavLink, ThemeToggle } from '@components/navigation/index'
+import { PersonalLogo } from '@components/ui/index'
+import SkipLink from './SkipLink.astro'
+const isDev = import.meta.env.MODE === 'development'
 ---
 
 <SkipLink />
@@ -99,33 +99,33 @@ const isDev = import.meta.env.MODE === 'development';
 </style>
 
 <script>
-  const nav = document.querySelector<HTMLElement>('.main-navigation');
-  const openBtn = document.querySelector<HTMLButtonElement>('.nav-open');
-  const closeBtn = document.querySelector<HTMLButtonElement>('.nav-close');
+  const nav = document.querySelector<HTMLElement>('.main-navigation')
+  const openBtn = document.querySelector<HTMLButtonElement>('.nav-open')
+  const closeBtn = document.querySelector<HTMLButtonElement>('.nav-close')
 
   const closeNav = (returnFocus = false) => {
-    nav?.classList.remove('open');
-    nav?.setAttribute('inert', '');
-    openBtn?.setAttribute('aria-expanded', 'false');
-    if (returnFocus) openBtn?.focus();
-  };
+    nav?.classList.remove('open')
+    nav?.setAttribute('inert', '')
+    openBtn?.setAttribute('aria-expanded', 'false')
+    if (returnFocus) openBtn?.focus()
+  }
 
   const openNav = () => {
-    nav?.classList.add('open');
-    nav?.removeAttribute('inert');
-    openBtn?.setAttribute('aria-expanded', 'true');
-    closeBtn?.focus();
-  };
+    nav?.classList.add('open')
+    nav?.removeAttribute('inert')
+    openBtn?.setAttribute('aria-expanded', 'true')
+    closeBtn?.focus()
+  }
 
-  closeBtn?.addEventListener('click', () => closeNav(true));
-  document.querySelector('main')?.addEventListener('click', () => closeNav());
-  document.querySelector('footer')?.addEventListener('click', () => closeNav());
-  openBtn?.addEventListener('click', openNav);
+  closeBtn?.addEventListener('click', () => closeNav(true))
+  document.querySelector('main')?.addEventListener('click', () => closeNav())
+  document.querySelector('footer')?.addEventListener('click', () => closeNav())
+  openBtn?.addEventListener('click', openNav)
 
   // Close on Escape key
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && nav?.classList.contains('open')) {
-      closeNav(true);
+      closeNav(true)
     }
-  });
+  })
 </script>

@@ -1,7 +1,7 @@
 ---
-import StyleguideLayout from './_layout/StyleguideLayout.astro';
-import SGTypeSpecimen from './_components/SGTypeSpecimen.astro';
-import { ColorSwatch, WrappedTable } from '@components/mdx/index';
+import StyleguideLayout from './_layout/StyleguideLayout.astro'
+import SGTypeSpecimen from './_components/SGTypeSpecimen.astro'
+import { ColorSwatch, WrappedTable } from '@components/mdx/index'
 
 const toc = [
   { id: 'colour', label: 'Colour System' },
@@ -14,9 +14,9 @@ const toc = [
   { id: 'leading-tracking', label: 'Leading & tracking' },
   { id: 'measure', label: 'Measure' },
   { id: 'utility-classes', label: 'Utility classes' },
-];
+]
 
-const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 ---
 
 <StyleguideLayout

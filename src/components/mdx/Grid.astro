@@ -19,12 +19,12 @@
  * Example: <Grid columns={3} gap="var(--space-m)">...</Grid>
  */
 export interface Props {
-  columns?: number;
-  rows?: number;
-  gap?: string;
+  columns?: number
+  rows?: number
+  gap?: string
 }
 
-const { columns = 2, rows = 1, gap = 'var(--space-s)' } = Astro.props;
+const { columns = 2, rows = 1, gap = 'var(--space-s)' } = Astro.props
 ---
 
 <div class="grid-wrapper">

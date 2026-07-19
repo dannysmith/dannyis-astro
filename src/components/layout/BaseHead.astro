@@ -1,8 +1,8 @@
 ---
 // Import the fonts and global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
-import '@fontsource-variable/fira-code/index.css';
-import '../../styles/global.css';
+import '@fontsource-variable/fira-code/index.css'
+import '../../styles/global.css'
 
 // Import SEO utilities and configuration
 import {
@@ -12,49 +12,49 @@ import {
   generateArticleMeta,
   generateOGImageUrl,
   validateSEOData,
-} from '@utils/seo';
-import { getConfig } from '@config/config';
-import { getOgImageUrlForPath } from '@config/og-images';
+} from '@utils/seo'
+import { getConfig } from '@config/config'
+import { getOgImageUrlForPath } from '@config/og-images'
 
 interface Props {
-  title: string;
-  description?: string;
-  image?: string; // If provided, use as OG image. Otherwise, use default static image.
-  type?: 'website' | 'article'; // 'website' (default) or 'article'
-  pageType?: 'article' | 'note' | 'page'; // For title template differentiation
+  title: string
+  description?: string
+  image?: string // If provided, use as OG image. Otherwise, use default static image.
+  type?: 'website' | 'article' // 'website' (default) or 'article'
+  pageType?: 'article' | 'note' | 'page' // For title template differentiation
   // Optional props that may be passed by article/note layouts
-  pubDate?: Date;
-  updatedDate?: Date;
-  tags?: string[];
+  pubDate?: Date
+  updatedDate?: Date
+  tags?: string[]
   // Override the global robots directive (e.g. "noindex" for 404 or playground pages)
-  robotsDirective?: string;
+  robotsDirective?: string
   // standard.site (AT Protocol) document AT-URI, for the verification link tag
   // on qualifying article/note pages (see src/utils/standard-site.ts).
-  standardSiteDocumentUri?: string;
+  standardSiteDocumentUri?: string
   // Root-relative URL of the raw markdown twin for this page, for the
   // text/markdown alternate link tag (article/note pages only).
-  markdownUrl?: string;
+  markdownUrl?: string
 }
 
-const config = getConfig();
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const robotsDirective = Astro.props.robotsDirective ?? config.seo.robotsDirective;
-const isHomepage = Astro.url.pathname === '/';
-const { standardSiteDocumentUri, markdownUrl } = Astro.props;
+const config = getConfig()
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const robotsDirective = Astro.props.robotsDirective ?? config.seo.robotsDirective
+const isHomepage = Astro.url.pathname === '/'
+const { standardSiteDocumentUri, markdownUrl } = Astro.props
 
 // Validate and extract props
-const seoData = validateSEOData(Astro.props);
+const seoData = validateSEOData(Astro.props)
 
 // Generate all SEO values using utilities
-const pageTitle = generatePageTitle(seoData.title, seoData.pageType);
-const metaDescription = generateMetaDescription(seoData.description);
+const pageTitle = generatePageTitle(seoData.title, seoData.pageType)
+const metaDescription = generateMetaDescription(seoData.description)
 // Articles/notes pass an explicit `image`. Otherwise, standalone pages
 // registered in og-images.ts get their generated cover; everything else
 // (home, utility pages) falls back to the static default.
-const pageOgImage = getOgImageUrlForPath(Astro.url.pathname);
-const ogImageUrl = generateOGImageUrl(seoData.image ?? pageOgImage, Astro.url.toString());
-const jsonLD = generateJSONLD(seoData, canonicalURL.toString(), ogImageUrl);
-const articleMeta = generateArticleMeta(seoData);
+const pageOgImage = getOgImageUrlForPath(Astro.url.pathname)
+const ogImageUrl = generateOGImageUrl(seoData.image ?? pageOgImage, Astro.url.toString())
+const jsonLD = generateJSONLD(seoData, canonicalURL.toString(), ogImageUrl)
+const articleMeta = generateArticleMeta(seoData)
 ---
 
 <!-- Global Metadata -->
@@ -178,54 +178,52 @@ const articleMeta = generateArticleMeta(seoData);
 
 <!-- Theme script: inline + render-blocking so the correct theme is set before first paint (no flash) -->
 <script is:inline>
-  (function () {
-    const root = document.documentElement;
-    const mq = matchMedia('(prefers-color-scheme: dark)');
+  ;(function () {
+    const root = document.documentElement
+    const mq = matchMedia('(prefers-color-scheme: dark)')
 
     // Saved preference: 'light' | 'dark' | 'auto' (the default when unset or storage is unavailable).
     const current = () => {
       try {
-        return localStorage.getItem('theme') || 'auto';
+        return localStorage.getItem('theme') || 'auto'
       } catch {
-        return 'auto';
+        return 'auto'
       }
-    };
+    }
 
     // 'auto' follows the OS; an explicit choice wins.
-    const resolve = theme => (theme === 'auto' ? (mq.matches ? 'dark' : 'light') : theme);
+    const resolve = theme => (theme === 'auto' ? (mq.matches ? 'dark' : 'light') : theme)
 
     // colorScheme drives the CSS (light-dark() reads it); data-theme is a styling/debug hook.
     const apply = theme => {
-      const resolved = resolve(theme);
-      root.dataset.theme = root.style.colorScheme = resolved;
-      return resolved;
-    };
+      const resolved = resolve(theme)
+      root.dataset.theme = root.style.colorScheme = resolved
+      return resolved
+    }
 
     const set = theme => {
-      if (theme !== 'auto' && theme !== 'light' && theme !== 'dark') return;
+      if (theme !== 'auto' && theme !== 'light' && theme !== 'dark') return
       try {
-        localStorage.setItem('theme', theme);
+        localStorage.setItem('theme', theme)
       } catch {
         // ignore unavailable storage
       }
-      const resolvedTheme = apply(theme);
-      document.dispatchEvent(
-        new CustomEvent('theme-changed', { detail: { theme, resolvedTheme } }),
-      );
-    };
+      const resolvedTheme = apply(theme)
+      document.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme, resolvedTheme } }))
+    }
 
     // Public API consumed by ThemeToggle.
     window.theme = {
       get current() {
-        return current();
+        return current()
       },
       set,
-    };
+    }
 
-    apply(current());
-    mq.addEventListener('change', () => current() === 'auto' && apply('auto'));
-    document.addEventListener('astro:after-swap', () => apply(current()));
-  })();
+    apply(current())
+    mq.addEventListener('change', () => current() === 'auto' && apply('auto'))
+    document.addEventListener('astro:after-swap', () => apply(current()))
+  })()
 </script>
 
 <!-- Speculation Rules for faster navigation -->

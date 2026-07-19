@@ -1,0 +1,165 @@
+---
+import { type CollectionEntry, render } from 'astro:content'
+import { BackToTopLink, FormattedDate, MarkdownContentActions, Pill } from '@components/ui/index'
+import { Embed } from '@components/mdx/index'
+import CompactCardTile from './CompactCardTile.astro'
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
+
+/**
+ * The primary display for a note (`notes` collection). Notes are always shown
+ * as these cards, so the full variant is self-contained: it renders the whole
+ * MDX body itself, plus the markdown/share actions.
+ *
+ * Variants:
+ * - **Full** (default) — the note idiom: white raised surface, dot grid, top
+ *   accent bar; header (date, title, tag pills), optional sourceURL embed,
+ *   then the rendered content and actions.
+ * - **Compact** — the shared CompactCardTile: title with a "Note · date"
+ *   byline and blue accent.
+ *
+ * Usage:
+ *   <NoteCard item={entry} />            — listings (share disabled)
+ *   <NoteCard item={entry} standalone /> — the note's own page
+ *   <NoteCard item={entry} compact />
+ */
+interface Props {
+  /** A `notes` collection entry */
+  item: CollectionEntry<'notes'>
+  /** Render the compact tile instead of the full card */
+  compact?: boolean
+  /**
+   * This card is the note's own page (the Note layout): marks it as the
+   * Pagefind search-body (listings must stay unindexed so each note is one
+   * result), enables sharing and adds a back-to-top link.
+   */
+  standalone?: boolean
+}
+
+const { item, compact = false, standalone = false } = Astro.props
+const { title, pubDate, sourceURL, tags = [] } = item.data
+
+const href = `/notes/${item.id}/`
+// Root-relative URL of the raw markdown twin (served by [...slug].md.ts).
+const markdownUrl = `/notes/${item.id}.md`
+const Content = compact ? null : (await render(item)).Content
+
+// ISO date (YYYY-MM-DD) for Pagefind's `date` meta + recency sort — only emitted
+// when this card is the page's search body. Date-only avoids colons, which the
+// comma-separated `data-pagefind-meta` syntax would otherwise split on.
+const pubIso = pubDate.toISOString().slice(0, 10)
+
+// Compact byline, e.g. "Note · Jul 15, 2026"
+const byline = `Note · ${pubDate.toLocaleDateString('en-us', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+})}`
+---
+
+{
+  compact ? (
+    <CompactCardTile href={href} title={title} byline={byline} accentColor="var(--color-blue)" />
+  ) : (
+    <article
+      class="note h-entry cq surface-white"
+      data-pagefind-body={standalone ? true : undefined}
+      data-pagefind-meta={standalone ? 'type:note' : undefined}
+    >
+      {/* Date as a clean Pagefind meta + recency sort key (see Article.astro). Only
+          emitted when this card is the page's search body. */}
+      {standalone && (
+        <span data-pagefind-meta={`date:${pubIso}`} data-pagefind-sort={`date:${pubIso}`} />
+      )}
+      <header class="note-header ui-style">
+        <a href={href} class="date-link date" data-pagefind-ignore>
+          <FormattedDate date={pubDate} />
+        </a>
+        <h1 class="p-name title" data-pagefind-meta={standalone ? 'title' : undefined}>
+          <a href={href}>{title}</a>
+        </h1>
+        {tags.length > 0 && (
+          <div class="tags">
+            {tags.map(tag => (
+              <Pill text={tag} />
+            ))}
+          </div>
+        )}
+      </header>
+      {sourceURL && (
+        <div class="source-url" data-pagefind-ignore>
+          <Embed url={sourceURL} />
+        </div>
+      )}
+      <div class="note-content p-content flow">
+        {Content && <Content components={MDX_COMPONENT_REMAPPING} />}
+        <div class="footer-actions" data-pagefind-ignore>
+          <MarkdownContentActions markdownUrl={markdownUrl} disableShare={!standalone} />
+          {standalone && <BackToTopLink />}
+        </div>
+      </div>
+    </article>
+  )
+}
+
+<style>
+  .note {
+    width: 100%;
+    padding: var(--space-m);
+    border-radius: var(--radius-sm);
+    border-top: var(--border-width-accent) solid light-dark(var(--color-black), var(--color-accent));
+
+    background-image: radial-gradient(
+      light-dark(color-mix(in oklch, var(--color-coral) 20%, transparent), transparent) 0.5px,
+      transparent 0
+    );
+    background-size: var(--space-xs) var(--space-xs);
+    color: var(--color-text);
+    filter: var(--shadow-medium);
+
+    /* View transition support - uses CSS variable set via inline style */
+    view-transition-name: var(--vt-name, none);
+    view-transition-class: note-card;
+  }
+
+  .note-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    min-width: 0;
+  }
+
+  .date-link {
+    color: var(--color-text-secondary);
+  }
+
+  .date {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--tracking-wider);
+  }
+
+  h1.title {
+    font-size: var(--font-size-lg);
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--border-width-base) solid var(--color-accent);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+
+  .source-url,
+  .note-content {
+    margin-top: var(--space-m);
+  }
+
+  .footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>

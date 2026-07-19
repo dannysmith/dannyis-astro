@@ -1,10 +1,10 @@
 ---
 interface Props {
-  size?: '3xs' | '2xs' | 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl' | '3xl';
-  height?: string;
+  size?: '3xs' | '2xs' | 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl' | '3xl'
+  height?: string
 }
 
-const { size = 'm', height } = Astro.props;
+const { size = 'm', height } = Astro.props
 ---
 
 <div class:list={['spacer', `size-${size}`]} style={height ? `height: ${height};` : undefined}>

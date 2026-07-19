@@ -1,27 +1,27 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection } from 'astro:content'
 import {
   BaseHead,
   Footer,
   MainNavigation,
   CommandPalette,
   LLMDiscoveryNote,
-} from '@components/layout/index';
-import { ToolCard } from '@components/ui/index';
+} from '@components/layout/index'
+import { ToolCard } from '@components/ui/index'
 
 // One grid, newest-updated first
 const toolboxPages = (await getCollection('toolboxPages')).sort(
   (a, b) => b.data.lastEdited.getTime() - a.data.lastEdited.getTime(),
-);
+)
 
 const categories = [
   ...new Set(toolboxPages.map(t => t.data.category).filter((c): c is string => Boolean(c))),
-].sort();
+].sort()
 
-const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
 const DESCRIPTION =
-  'An ever-growing collection of best practices, tools and advice on work, management, culture-building, leadership and communication – geared towards remote and distributed teams.';
+  'An ever-growing collection of best practices, tools and advice on work, management, culture-building, leadership and communication – geared towards remote and distributed teams.'
 
 // A single ItemList of generic CreativeWorks, matching the pattern on /making.
 const toolboxJsonLd = {
@@ -38,7 +38,7 @@ const toolboxJsonLd = {
       url: tool.data.url,
     },
   })),
-};
+}
 
 // CSS-only filtering: checking a category radio hides every card that isn't in
 // that category. The rules are generated at build time from the known categories.
@@ -47,7 +47,7 @@ const filterCss = categories
     c =>
       `main:has(#filter-${slugify(c)}:checked) .tool-card:not([data-category="${c}"]) { display: none; }`,
   )
-  .join('\n');
+  .join('\n')
 ---
 
 <!doctype html>
@@ -99,7 +99,7 @@ const filterCss = categories
       </nav>
 
       <section class="toolbox-grid">
-        {toolboxPages.map(toolboxPage => <ToolCard tool={toolboxPage} />)}
+        {toolboxPages.map(toolboxPage => <ToolCard item={toolboxPage} />)}
       </section>
     </main>
     <Footer />
@@ -109,17 +109,17 @@ const filterCss = categories
       // browser animates cards morphing/fading between filter states. The actual
       // filtering (and the instant fallback) is pure CSS via the radios.
       document.querySelector('.filters')?.addEventListener('click', event => {
-        const label = event.target instanceof Element ? event.target.closest('label') : null;
-        if (!label) return;
-        const input = document.getElementById(label.htmlFor);
-        if (!(input instanceof HTMLInputElement) || input.checked) return;
+        const label = event.target instanceof Element ? event.target.closest('label') : null
+        if (!label) return
+        const input = document.getElementById(label.htmlFor)
+        if (!(input instanceof HTMLInputElement) || input.checked) return
         if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches)
-          return;
-        event.preventDefault();
+          return
+        event.preventDefault()
         document.startViewTransition(() => {
-          input.checked = true;
-        });
-      });
+          input.checked = true
+        })
+      })
     </script>
 
     <style>

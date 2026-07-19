@@ -1,12 +1,13 @@
 // Small, reusable UI utility components
-export { default as BackToTopLink } from './BackToTopLink.astro';
-export { default as ContentCard } from './ContentCard.astro';
-export { default as FormattedDate } from './FormattedDate.astro';
-export { default as MarkdownContentActions } from './MarkdownContentActions.astro';
-export { default as PersonalLogo } from './PersonalLogo.astro';
-export { default as Pill } from './Pill.astro';
-export { default as ProjectCard } from './ProjectCard.astro';
-export { default as ProjectIcon } from './ProjectIcon.astro';
-export { default as SocialLinks } from './SocialLinks.astro';
-export { default as Spinner } from './Spinner.astro';
-export { default as ToolCard } from './ToolCard.astro';
+export { default as ArticleCard } from './ArticleCard.astro'
+export { default as BackToTopLink } from './BackToTopLink.astro'
+export { default as FormattedDate } from './FormattedDate.astro'
+export { default as MarkdownContentActions } from './MarkdownContentActions.astro'
+export { default as NoteCard } from './NoteCard.astro'
+export { default as PersonalLogo } from './PersonalLogo.astro'
+export { default as Pill } from './Pill.astro'
+export { default as ProjectCard } from './ProjectCard.astro'
+export { default as ProjectIcon } from './ProjectIcon.astro'
+export { default as SocialLinks } from './SocialLinks.astro'
+export { default as Spinner } from './Spinner.astro'
+export { default as ToolCard } from './ToolCard.astro'

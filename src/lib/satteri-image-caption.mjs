@@ -21,7 +21,7 @@
  * `ctx.sourceFormat`. In `.md` the title is left untouched and renders as a
  * standard HTML `title` attribute.
  */
-import { defineHastPlugin } from 'satteri';
+import { defineHastPlugin } from 'satteri'
 
 export function satteriImageCaption() {
   return defineHastPlugin({
@@ -29,14 +29,14 @@ export function satteriImageCaption() {
     element: {
       filter: ['img'],
       visit(node, ctx) {
-        if (ctx.sourceFormat !== 'mdx') return;
+        if (ctx.sourceFormat !== 'mdx') return
 
-        const title = node.properties?.title;
-        if (typeof title !== 'string' || title.length === 0) return;
+        const title = node.properties?.title
+        if (typeof title !== 'string' || title.length === 0) return
 
-        ctx.setProperty(node, 'caption', title);
-        ctx.setProperty(node, 'title', null);
+        ctx.setProperty(node, 'caption', title)
+        ctx.setProperty(node, 'title', null)
       },
     },
-  });
+  })
 }

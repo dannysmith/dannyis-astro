@@ -19,7 +19,7 @@
  * contributors, https://github.com/rehypejs/rehype-unwrap-images) with its
  * `hast-util-whitespace` dependency inlined.
  */
-import { defineHastPlugin } from 'satteri';
+import { defineHastPlugin } from 'satteri'
 
 export function satteriUnwrapImages() {
   return defineHastPlugin({
@@ -27,19 +27,19 @@ export function satteriUnwrapImages() {
     element: {
       filter: ['p'],
       visit(node, ctx) {
-        const relevant = node.children.filter(child => !isWhitespace(child));
+        const relevant = node.children.filter(child => !isWhitespace(child))
         if (relevant.length > 0 && relevant.every(isImageContent)) {
           // Sätteri nodes are read-only views over Rust memory — they can't be
           // re-inserted directly (and `replaceNode` only takes a single node),
           // so lift plain spec-shaped copies of the children out and drop the
           // wrapper. Later plugins (e.g. the native img→component one) still
           // visit freshly-built nodes.
-          ctx.insertBefore(node, node.children.map(toPlain));
-          ctx.removeNode(node);
+          ctx.insertBefore(node, node.children.map(toPlain))
+          ctx.removeNode(node)
         }
       },
     },
-  });
+  })
 }
 
 /**
@@ -47,29 +47,29 @@ export function satteriUnwrapImages() {
  * object (`structuredClone` would drag internal view fields along with it).
  */
 function toPlain(node) {
-  const plain = { type: node.type };
+  const plain = { type: node.type }
   if (node.type === 'element') {
-    plain.tagName = node.tagName;
-    plain.properties = { ...node.properties };
-    plain.children = node.children.map(toPlain);
+    plain.tagName = node.tagName
+    plain.properties = { ...node.properties }
+    plain.children = node.children.map(toPlain)
   } else if ('value' in node && node.value != null) {
-    plain.value = node.value;
+    plain.value = node.value
   }
-  return plain;
+  return plain
 }
 
 /** An `<img>`, or an `<a>` whose only content is image(s). */
 function isImageContent(node) {
-  if (node.type !== 'element') return false;
-  if (node.tagName === 'img') return true;
+  if (node.type !== 'element') return false
+  if (node.tagName === 'img') return true
   if (node.tagName === 'a') {
-    const relevant = node.children.filter(child => !isWhitespace(child));
-    return relevant.length > 0 && relevant.every(isImageContent);
+    const relevant = node.children.filter(child => !isWhitespace(child))
+    return relevant.length > 0 && relevant.every(isImageContent)
   }
-  return false;
+  return false
 }
 
 /** A text node containing only whitespace. */
 function isWhitespace(node) {
-  return node.type === 'text' && /^\s*$/.test(node.value);
+  return node.type === 'text' && /^\s*$/.test(node.value)
 }

@@ -1,23 +1,23 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { Icon } from 'astro-icon/components'
 
 export interface Props {
-  title?: string;
-  type?: 'default' | 'red' | 'blue' | 'green' | 'orange' | 'yellow' | 'purple';
-  icon?: string;
-  emoji?: string;
-  className?: string;
+  title?: string
+  type?: 'default' | 'red' | 'blue' | 'green' | 'orange' | 'yellow' | 'purple'
+  icon?: string
+  emoji?: string
+  className?: string
   /** Give `title` more presence (larger, with a hairline rule beneath) so it
    *  doesn't get lost above long callout bodies. No effect without a `title`. */
-  largeHeading?: boolean;
+  largeHeading?: boolean
 }
 
-const { title, icon, emoji, type = 'default', className, largeHeading = false } = Astro.props;
+const { title, icon, emoji, type = 'default', className, largeHeading = false } = Astro.props
 
 if (icon && emoji) {
   throw new Error(
     'Callout: Cannot use both icon and emoji props. Use either icon (for astro-icons) or emoji (for text emojis).',
-  );
+  )
 }
 ---
 

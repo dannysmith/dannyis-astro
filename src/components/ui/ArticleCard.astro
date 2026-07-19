@@ -1,0 +1,304 @@
+---
+import { type CollectionEntry, getEntry, render } from 'astro:content'
+import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
+import { FormattedDate, Pill } from '@components/ui/index'
+import CompactCardTile from './CompactCardTile.astro'
+import { generateSummary } from '@utils/content-summary'
+
+/**
+ * Card linking to an article (`articles` collection) — the article itself
+ * lives at /writing/{slug}/, this card shows the pertinent info and points
+ * there. Intended for grids and other collection-index contexts.
+ *
+ * Variants:
+ * - **Full** (default) — optional cover with an "Article" badge (and platform
+ *   badge for externally-published pieces), title, summary, and a footer with
+ *   dates, series indicator and reading time.
+ * - **Compact** — the shared CompactCardTile: title with an
+ *   "Article · date · reading time" byline.
+ *
+ * Each card is its own size container, so both variants adapt to the width
+ * they're rendered at.
+ *
+ * Usage:
+ *   <ArticleCard item={entry} />
+ *   <ArticleCard item={entry} compact />
+ */
+interface Props {
+  /** An `articles` collection entry */
+  item: CollectionEntry<'articles'>
+  /** Render the compact tile instead of the full card */
+  compact?: boolean
+}
+
+const { item, compact = false } = Astro.props
+const { data } = item
+
+// The glob loader already uses a custom `slug` frontmatter field as the
+// entry id when one is set, so id alone is always the right URL segment.
+const href = `/writing/${item.id}/`
+const summary = generateSummary(item, 200)
+
+// Reading time is injected into the frontmatter bag by satteri-reading-time,
+// so it's only available via render()
+const { remarkPluginFrontmatter } = await render(item)
+const minutesRead = remarkPluginFrontmatter.minutesRead as string | undefined
+
+// Only show "Updated" when it differs from the publish date at day granularity
+const updatedDate =
+  data.updatedDate && data.updatedDate.toDateString() !== data.pubDate.toDateString()
+    ? data.updatedDate
+    : undefined
+
+const series = data.series ? await getEntry(data.series) : undefined
+
+// Compact byline, e.g. "Article · Jul 15, 2026 · 5 min read"
+const bylineDate = data.pubDate.toLocaleDateString('en-us', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+})
+const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
+---
+
+{
+  compact ? (
+    <CompactCardTile href={href} title={data.title} byline={byline} />
+  ) : (
+    <article class="article-card ui-style cq">
+      <a href={href} class="card-link">
+        {data.cover && (
+          <div class="card-cover">
+            <Image src={data.cover} alt={data.coverAlt ?? ''} width={600} />
+            <span class="cover-badge type-badge">Article</span>
+            {data.platform && <span class="cover-badge platform-badge">{data.platform}</span>}
+          </div>
+        )}
+
+        <div class="card-content">
+          {!data.cover && (
+            <div class="card-meta">
+              <span class="type-label">Article</span>
+              {data.platform && <Pill text={data.platform} color="var(--color-green)" />}
+            </div>
+          )}
+          <h3 class="card-title">
+            {data.title}
+            {data.draft && <span aria-hidden="true"> 🚧</span>}
+          </h3>
+          <p class="card-summary">{summary}</p>
+        </div>
+      </a>
+
+      <footer class="card-footer">
+        <span class="footer-dates">
+          <FormattedDate date={data.pubDate} />
+          {updatedDate && (
+            <span class="footer-item" title="Last updated">
+              <Icon name="heroicons:arrow-path-20-solid" />
+              <FormattedDate date={updatedDate} />
+            </span>
+          )}
+        </span>
+        <span class="footer-extras">
+          {series && (
+            <span class="footer-item" title={`Part of the ${series.data.name} series`}>
+              <Icon name="heroicons:numbered-list-20-solid" />
+              Series
+            </span>
+          )}
+          {minutesRead && (
+            <span class="footer-item">
+              <Icon name="heroicons:clock-20-solid" />
+              {minutesRead}
+            </span>
+          )}
+        </span>
+      </footer>
+    </article>
+  )
+}
+
+<style>
+  /* Shell — bordered tile with a left accent bar that grows on hover/focus
+     (the site's card idiom, as ToolCard and CompactCardTile). */
+  .article-card {
+    --_border-color: var(--color-accent);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--duration-fast) var(--ease-in-out);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      inline-size: var(--border-width-thick);
+      background: var(--_border-color);
+      transition: inline-size var(--duration-fast) var(--ease-in-out);
+      z-index: 1;
+    }
+
+    &:hover,
+    &:has(:focus-visible) {
+      border-color: var(--_border-color);
+
+      &::before {
+        inline-size: var(--border-width-heavy);
+      }
+    }
+  }
+
+  /* The link grows so the footer always sits at the bottom of the card,
+     however tall the grid row is. */
+  .card-link {
+    flex-grow: 1;
+
+    &:focus-visible {
+      outline: var(--border-width-base) solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Cover crops to a wide strip; badges sit in its corners. The height cap
+     stops the ratio producing an enormous cover in very wide containers. */
+  .card-cover {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 2 / 1;
+    max-block-size: 12rem;
+  }
+
+  /* Pin the image to the (capped) cover box. Astro's responsive-image styles
+     (`responsiveStyles: true` → unlayered, zero-specificity :where() rules)
+     would otherwise size the img by its own aspect ratio and overflow the box
+     — the .img-cover utility loses to them because it lives in a cascade
+     layer, but this scoped rule is unlayered so it wins. */
+  .card-cover :global(img) {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .cover-badge {
+    position: absolute;
+    padding: 0.4em 0.7em 0.3em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-white);
+    background-color: oklch(0% 0 0 / 55%);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-xs);
+  }
+
+  .type-badge {
+    inset-block-start: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+  }
+
+  /* Same dark translucent treatment, tinted to match the platform pill used
+     on the writing index. */
+  .platform-badge {
+    inset-block-end: var(--space-2xs);
+    inset-inline-end: var(--space-2xs);
+    background-color: oklch(from var(--color-green) 35% c h / 80%);
+  }
+
+  .card-content {
+    padding: var(--space-s);
+  }
+
+  /* Coverless cards get the type label (and platform pill) as a meta row */
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-2xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .type-label {
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    letter-spacing: var(--tracking-wide);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .card-summary {
+    margin-block-start: var(--space-2xs);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+
+    /* Summaries are ≤200 chars, but clamp defensively */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-s);
+    padding: var(--space-2xs) var(--space-s);
+    border-block-start: var(--border-width-hairline) solid var(--color-border);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .footer-dates,
+  .footer-extras {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-xs);
+  }
+
+  .footer-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+
+    & svg {
+      inline-size: 1em;
+      block-size: 1em;
+    }
+  }
+
+  /* Narrow full card: shrink the badges and summary */
+  @container (width < 350px) {
+    .cover-badge {
+      font-size: calc(var(--font-size-xs) * 0.8);
+    }
+
+    .card-summary {
+      font-size: var(--font-size-xs);
+    }
+  }
+</style>

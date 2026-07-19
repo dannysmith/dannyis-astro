@@ -71,77 +71,77 @@
       .querySelectorAll<HTMLAnchorElement>('a[data-footnote-ref]:not([data-inline-footnote-init])')
       .forEach(elm => {
         // Mark as initialized to avoid re-processing after view transitions
-        elm.setAttribute('data-inline-footnote-init', '');
+        elm.setAttribute('data-inline-footnote-init', '')
 
-        const footnoteId = elm.getAttribute('href')?.slice(1);
-        if (!footnoteId) return;
-        const footnoteElement = document.getElementById(footnoteId);
+        const footnoteId = elm.getAttribute('href')?.slice(1)
+        if (!footnoteId) return
+        const footnoteElement = document.getElementById(footnoteId)
 
         // Find the closest block-level parent (p, div, li, etc.)
         const closestBlock = elm.closest(
           'p, .intro-paragraph, li, blockquote, div.longform-prose > *',
-        );
-        if (!closestBlock || !footnoteElement?.children.length) return;
+        )
+        if (!closestBlock || !footnoteElement?.children.length) return
 
-        const inlineFootNoteContainer = document.createElement('div');
-        inlineFootNoteContainer.classList.add('inline-footnote-container');
-        inlineFootNoteContainer.style.display = 'none';
+        const inlineFootNoteContainer = document.createElement('div')
+        inlineFootNoteContainer.classList.add('inline-footnote-container')
+        inlineFootNoteContainer.style.display = 'none'
 
         // Close button
-        const closeBtn = document.createElement('button');
-        closeBtn.classList.add('inline-footnote-close');
-        closeBtn.innerHTML = '×';
-        closeBtn.setAttribute('aria-label', 'Close footnote');
+        const closeBtn = document.createElement('button')
+        closeBtn.classList.add('inline-footnote-close')
+        closeBtn.innerHTML = '×'
+        closeBtn.setAttribute('aria-label', 'Close footnote')
         closeBtn.addEventListener('click', () => {
-          inlineFootNoteContainer.style.display = 'none';
-        });
+          inlineFootNoteContainer.style.display = 'none'
+        })
 
-        inlineFootNoteContainer.appendChild(closeBtn);
+        inlineFootNoteContainer.appendChild(closeBtn)
 
         // Clone all child elements (supports multi-paragraph footnotes)
         for (const child of footnoteElement.children) {
-          inlineFootNoteContainer.appendChild(child.cloneNode(true));
+          inlineFootNoteContainer.appendChild(child.cloneNode(true))
         }
 
         // Insert label and jump link inline within paragraph content
-        const paragraphs = inlineFootNoteContainer.querySelectorAll('p');
+        const paragraphs = inlineFootNoteContainer.querySelectorAll('p')
         if (paragraphs.length) {
-          const footnoteNum = elm.textContent || '';
+          const footnoteNum = elm.textContent || ''
 
-          const label = document.createElement('span');
-          label.className = 'inline-footnote-label';
-          label.textContent = `${footnoteNum}. `;
-          paragraphs[0].prepend(label);
+          const label = document.createElement('span')
+          label.className = 'inline-footnote-label'
+          label.textContent = `${footnoteNum}. `
+          paragraphs[0].prepend(label)
 
-          const jumpLink = document.createElement('a');
-          jumpLink.className = 'inline-footnote-jump';
-          jumpLink.href = `#${footnoteId}`;
-          jumpLink.textContent = ' ↓';
-          paragraphs[paragraphs.length - 1].append(jumpLink);
+          const jumpLink = document.createElement('a')
+          jumpLink.className = 'inline-footnote-jump'
+          jumpLink.href = `#${footnoteId}`
+          jumpLink.textContent = ' ↓'
+          paragraphs[paragraphs.length - 1].append(jumpLink)
         }
 
         // Insert after the block (or after any existing inline footnotes to preserve order)
         if (closestBlock.tagName === 'LI') {
-          closestBlock.appendChild(inlineFootNoteContainer);
+          closestBlock.appendChild(inlineFootNoteContainer)
         } else {
-          let insertAfter: Element = closestBlock;
+          let insertAfter: Element = closestBlock
           while (insertAfter.nextElementSibling?.classList.contains('inline-footnote-container')) {
-            insertAfter = insertAfter.nextElementSibling;
+            insertAfter = insertAfter.nextElementSibling
           }
-          insertAfter.insertAdjacentElement('afterend', inlineFootNoteContainer);
+          insertAfter.insertAdjacentElement('afterend', inlineFootNoteContainer)
         }
 
         elm.addEventListener('click', e => {
-          e.preventDefault();
+          e.preventDefault()
           inlineFootNoteContainer.style.display =
-            inlineFootNoteContainer.style.display === 'none' ? 'block' : 'none';
-        });
-      });
+            inlineFootNoteContainer.style.display === 'none' ? 'block' : 'none'
+        })
+      })
   }
 
   // Run on initial load
-  initInlineFootnotes();
+  initInlineFootnotes()
 
   // Re-run after Astro view transitions
-  document.addEventListener('astro:page-load', initInlineFootnotes);
+  document.addEventListener('astro:page-load', initInlineFootnotes)
 </script>

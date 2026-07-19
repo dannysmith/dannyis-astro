@@ -21,7 +21,7 @@
  * Headings without an `id` (heading-IDs not registered upstream) are left
  * untouched rather than given a dead link.
  */
-import { defineHastPlugin } from 'satteri';
+import { defineHastPlugin } from 'satteri'
 
 export function satteriAutolinkHeadings() {
   return defineHastPlugin({
@@ -29,10 +29,10 @@ export function satteriAutolinkHeadings() {
     element: {
       filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
       visit(node, ctx) {
-        const id = node.properties?.id;
-        if (typeof id !== 'string' || id.length === 0) return;
+        const id = node.properties?.id
+        if (typeof id !== 'string' || id.length === 0) return
 
-        const text = ctx.textContent(node).trim();
+        const text = ctx.textContent(node).trim()
         ctx.appendChild(node, {
           type: 'element',
           tagName: 'a',
@@ -41,8 +41,8 @@ export function satteriAutolinkHeadings() {
             ariaLabel: text ? `Link to “${text}”` : 'Link to this section',
           },
           children: [],
-        });
+        })
       },
     },
-  });
+  })
 }

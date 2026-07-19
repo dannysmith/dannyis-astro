@@ -16,7 +16,7 @@
 export function filterContentForPage<
   T extends { id: string; data: { draft?: boolean; styleguide?: boolean } },
 >(entries: T[], isProduction: boolean = import.meta.env.PROD): T[] {
-  return isProduction ? entries.filter(entry => entry.data.draft !== true) : entries;
+  return isProduction ? entries.filter(entry => entry.data.draft !== true) : entries
 }
 
 /**
@@ -30,8 +30,8 @@ export function filterContentForPage<
 export function filterContentForListing<
   T extends { id: string; data: { draft?: boolean; styleguide?: boolean } },
 >(entries: T[], isProduction: boolean = import.meta.env.PROD): T[] {
-  const draftFilter = (entry: T) => (isProduction ? entry.data.draft !== true : true);
-  return entries.filter(entry => draftFilter(entry) && !entry.data.styleguide);
+  const draftFilter = (entry: T) => (isProduction ? entry.data.draft !== true : true)
+  return entries.filter(entry => draftFilter(entry) && !entry.data.styleguide)
 }
 
 /**
@@ -43,22 +43,22 @@ export function filterContentForListing<
  */
 export function getPublishedSeriesArticles<
   T extends {
-    id: string;
+    id: string
     data: {
-      draft?: boolean;
-      styleguide?: boolean;
-      title: string;
-      pubDate: Date;
-      series?: { id: string };
-    };
+      draft?: boolean
+      styleguide?: boolean
+      title: string
+      pubDate: Date
+      series?: { id: string }
+    }
   },
 >(seriesId: string, allArticles: T[], isProduction: boolean = import.meta.env.PROD): T[] {
   return filterContentForListing(allArticles, isProduction)
     .filter(entry => entry.data.series?.id === seriesId)
     .sort((a, b) => {
-      const byDate = a.data.pubDate.valueOf() - b.data.pubDate.valueOf();
-      return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title);
-    });
+      const byDate = a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+      return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title)
+    })
 }
 
 /**
@@ -72,22 +72,22 @@ export function getPublishedSeriesArticles<
  */
 export function getSortedProjects<
   T extends {
-    id: string;
+    id: string
     data: {
-      draft?: boolean;
-      styleguide?: boolean;
-      title: string;
-      startDate?: Date;
-    };
+      draft?: boolean
+      styleguide?: boolean
+      title: string
+      startDate?: Date
+    }
   },
 >(projects: T[], isProduction: boolean = import.meta.env.PROD): T[] {
   return filterContentForListing(projects, isProduction).sort((a, b) => {
-    const da = a.data.startDate;
-    const db = b.data.startDate;
-    if (!da && !db) return a.data.title.localeCompare(b.data.title);
-    if (!da) return -1; // undated floats to the top
-    if (!db) return 1;
-    const byDate = db.valueOf() - da.valueOf(); // newest first
-    return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title);
-  });
+    const da = a.data.startDate
+    const db = b.data.startDate
+    if (!da && !db) return a.data.title.localeCompare(b.data.title)
+    if (!da) return -1 // undated floats to the top
+    if (!db) return 1
+    const byDate = db.valueOf() - da.valueOf() // newest first
+    return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title)
+  })
 }

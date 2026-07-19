@@ -9,11 +9,11 @@
  * To extend, add more mappings to this object (e.g., code: CustomCode).
  * Components must accept standard HTML element props.
  */
-import SmartLink from '@components/mdx/SmartLink.astro';
-import BasicImage from '@components/mdx/BasicImage.astro';
-import MarkdownBlock from '@components/mdx/MarkdownBlock.astro';
-import FileTree from '@components/mdx/file-tree/FileTree.astro';
-import WrappedTable from '@components/mdx/WrappedTable.astro';
+import SmartLink from '@components/mdx/SmartLink.astro'
+import BasicImage from '@components/mdx/BasicImage.astro'
+import MarkdownBlock from '@components/mdx/MarkdownBlock.astro'
+import FileTree from '@components/mdx/file-tree/FileTree.astro'
+import WrappedTable from '@components/mdx/WrappedTable.astro'
 
 export const MDX_COMPONENT_REMAPPING = {
   a: SmartLink,
@@ -21,4 +21,4 @@ export const MDX_COMPONENT_REMAPPING = {
   table: WrappedTable,
   'markdown-preview': MarkdownBlock,
   'file-tree': FileTree,
-} as const;
+} as const

@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { DatePicker } from '@dannysmith/datepicker';
-import '@dannysmith/datepicker/styles.css';
-import { format } from 'date-fns';
+import { useState } from 'react'
+import { DatePicker } from '@dannysmith/datepicker'
+import '@dannysmith/datepicker/styles.css'
+import { format } from 'date-fns'
 
 const styles = {
   wrapper: {
@@ -22,10 +22,10 @@ const styles = {
     padding: 'var(--space-2xs)',
     borderRadius: 'var(--radius-sm)',
   },
-};
+}
 
 export function DatePickerDemo() {
-  const [date, setDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState<Date | null>(new Date())
 
   return (
     <div style={styles.wrapper}>
@@ -34,5 +34,5 @@ export function DatePickerDemo() {
       </p>
       <DatePicker value={date} onCommit={setDate} showClearButton autoFocus={false} />
     </div>
-  );
+  )
 }

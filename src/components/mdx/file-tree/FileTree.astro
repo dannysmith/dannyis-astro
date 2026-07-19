@@ -13,33 +13,33 @@
  *
  * Collapse/expand is native <details>/<summary> — zero runtime JS.
  */
-import { parseTree } from '@lib/file-tree/parse-tree';
-import FileTreeNodes from '@components/mdx/file-tree/FileTreeNodes.astro';
+import { parseTree } from '@lib/file-tree/parse-tree'
+import FileTreeNodes from '@components/mdx/file-tree/FileTreeNodes.astro'
 
 interface Props {
   /** Raw tree text. */
-  code: string;
+  code: string
   /** Optional label shown in the frame header. */
-  title?: string;
+  title?: string
   /** `"none"` drops the frame; anything else keeps the default frame. */
-  frame?: string;
+  frame?: string
   /** Comma-separated 1-based line numbers to highlight (e.g. "2,5,6,7"). */
-  highlight?: string;
+  highlight?: string
 }
 
-const { code, title, frame, highlight } = Astro.props;
+const { code, title, frame, highlight } = Astro.props
 
-const tree = parseTree(code);
+const tree = parseTree(code)
 
 const highlightSet = new Set(
   (highlight ?? '')
     .split(',')
     .map(s => Number(s.trim()))
     .filter(n => Number.isInteger(n) && n > 0),
-);
+)
 
-const framed = frame !== 'none';
-const label = title ? `File tree: ${title}` : 'File tree';
+const framed = frame !== 'none'
+const label = title ? `File tree: ${title}` : 'File tree'
 ---
 
 {

@@ -14,26 +14,26 @@
  * @param {Object} options
  * @param {number} [options.threshold=120] - Average chars per item to trigger class
  */
-import { defineHastPlugin } from 'satteri';
+import { defineHastPlugin } from 'satteri'
 
 /**
  * Get the text length of a node, excluding nested lists
  */
 function getDirectTextLength(node) {
-  let length = 0;
+  let length = 0
   for (const child of node.children || []) {
     if (child.type === 'text') {
-      length += child.value.length;
+      length += child.value.length
     } else if (child.type === 'element' && child.tagName !== 'ul' && child.tagName !== 'ol') {
       // Recurse into inline elements (em, strong, a, code, etc.) but not lists
-      length += getDirectTextLength(child);
+      length += getDirectTextLength(child)
     }
   }
-  return length;
+  return length
 }
 
 export function satteriListDensity(options = {}) {
-  const threshold = options.threshold ?? 120;
+  const threshold = options.threshold ?? 120
 
   return defineHastPlugin({
     name: 'satteri-list-density',
@@ -41,30 +41,30 @@ export function satteriListDensity(options = {}) {
       filter: ['ul', 'ol'],
       visit(node, ctx) {
         // Skip if nested inside a list item (not a top-level list)
-        if (ctx.parent(node)?.tagName === 'li') return;
+        if (ctx.parent(node)?.tagName === 'li') return
 
         // Get all direct li children
-        const items = node.children.filter(c => c.type === 'element' && c.tagName === 'li');
-        if (items.length === 0) return;
+        const items = node.children.filter(c => c.type === 'element' && c.tagName === 'li')
+        if (items.length === 0) return
 
         // Calculate total text length across all items
-        let totalChars = 0;
+        let totalChars = 0
         for (const li of items) {
-          totalChars += getDirectTextLength(li);
+          totalChars += getDirectTextLength(li)
         }
 
-        const avgChars = totalChars / items.length;
+        const avgChars = totalChars / items.length
 
         if (avgChars > threshold) {
-          const existing = node.properties?.className;
+          const existing = node.properties?.className
           const classes = Array.isArray(existing)
             ? existing
             : existing
               ? String(existing).split(/\s+/)
-              : [];
-          ctx.setProperty(node, 'className', [...classes, 'long-list-items']);
+              : []
+          ctx.setProperty(node, 'className', [...classes, 'long-list-items'])
         }
       },
     },
-  });
+  })
 }

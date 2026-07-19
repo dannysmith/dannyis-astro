@@ -170,19 +170,11 @@ Typed custom properties enable two things untyped variables can't: smooth animat
 Components can also declare their own scoped typed properties for transitions on internal state:
 
 ```css
-/* ContentCard.astro - smooth colour transition on hover */
-@property --_border-color {
+/* ThemeToggle.astro - smooth thumb colour transitions */
+@property --_thumb-bg {
   syntax: '<color>';
   inherits: false; /* scoped to this component, won't leak to children */
-  initial-value: oklch(70% 0.18 25);
-}
-
-.content-card {
-  --_border-color: var(--color-accent);
-  &::before {
-    background: var(--_border-color);
-    transition: background var(--duration-fast) var(--ease-in-out);
-  }
+  initial-value: transparent;
 }
 ```
 

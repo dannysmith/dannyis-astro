@@ -30,7 +30,7 @@ The `toolboxPages` collection uses a JSON loader via Astro's `file()` loader:
 - **Source:** `scripts/get-toolbox-json.ts` (run via `bun run scrape-toolbox`) — two unauthenticated fetches, joined on the Notion page UUID: the betterat.work `/tool/` index (super.so embeds a Notion-ish recordMap as Next.js RSC flight data, giving title/slug/UUID/icon/cover/dates/order) and Notion's unofficial v3 `queryCollection` API (giving category and summary). Background: [#47](https://github.com/dannysmith/dannyis-astro/issues/47)
 - **Auto-refresh:** `.github/workflows/update-toolbox.yml` runs the scrape on a weekly cron (and on demand) and commits any changes
 - **Data file:** `src/content/toolboxPages.json` — entry `id` is the URL slug; `emoji`/`iconUrl` are mutually exclusive representations of the page icon
-- **Consumption:** the `/toolbox` page, rendered with the `ToolCard` component (`ContentCard` also supports the collection)
+- **Consumption:** the `/toolbox` page, rendered with the `ToolCard` component (also renderable anywhere in MDX via the `ContentCard` dispatcher)
 - **Pattern:** JSON loader enables sourcing external API data at build time
 
 ### Projects Collection
@@ -196,7 +196,7 @@ Markdown export endpoints (`.md.ts` files) convert rendered content back to mark
 
 ### Utility Functions
 
-`src/utils/content-summary.ts` exposes `generateSummary(entry, maxLength)` (used by `ContentCard`) plus its helpers for stripping MDX, extracting the first meaningful paragraph, sentence-aware truncation, and validation. See the file for signatures.
+`src/utils/content-summary.ts` exposes `generateSummary(entry, maxLength)` (used by `ArticleCard` and the Note layout) plus its helpers for stripping MDX, extracting the first meaningful paragraph, sentence-aware truncation, and validation. See the file for signatures.
 
 ## Markdown Plugins Configuration
 
@@ -250,4 +250,4 @@ See `package.json` for the full list. The non-obvious ones:
 ## See Also
 
 - [architecture-guide.md](./architecture-guide.md) - Core Principles for organizational rules
-- [component-patterns.md](./component-patterns.md) - ContentCard component and other component details
+- [component-patterns.md](./component-patterns.md) - Card components and other component details

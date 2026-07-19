@@ -19,16 +19,16 @@
  * Reference: https://standard.site/
  */
 
-import type { APIRoute } from 'astro';
-import { getConfig } from '@config/config';
+import type { APIRoute } from 'astro'
+import { getConfig } from '@config/config'
 
-export const prerender = true;
+export const prerender = true
 
 export const GET: APIRoute = () => {
-  const { publicationUri } = getConfig().standardSite;
+  const { publicationUri } = getConfig().standardSite
 
   if (!publicationUri) {
-    return new Response(null, { status: 404 });
+    return new Response(null, { status: 404 })
   }
 
   return new Response(publicationUri, {
@@ -36,5 +36,5 @@ export const GET: APIRoute = () => {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
     },
-  });
-};
+  })
+}

@@ -1,6 +1,6 @@
 ---
-import StyleguideLayout from './_layout/StyleguideLayout.astro';
-import SGSwitcher from './_components/SGSwitcher.astro';
+import StyleguideLayout from './_layout/StyleguideLayout.astro'
+import SGSwitcher from './_components/SGSwitcher.astro'
 import {
   Accordion,
   BasicImage,
@@ -10,6 +10,7 @@ import {
   Callout,
   Center,
   ColorSwatch,
+  ContentCard,
   Embed,
   FileTree,
   Grid,
@@ -22,23 +23,14 @@ import {
   TabItem,
   Tabs,
   WrappedTable,
-} from '@components/mdx/index';
-import {
-  BaselineStatus,
-  BlueskyPost,
-  Gist,
-  MastodonPost,
-  Tweet,
-  Vimeo,
-  YouTube,
-} from 'astro-embed';
-import { Code } from 'astro-expressive-code/components';
-import { ContentCard, ProjectCard, ToolCard } from '@components/ui/index';
-import { NoteCard } from '@components/layout/index';
-import { Content as MermaidContent } from './_snippets/mermaid.mdx';
-import { Image, Picture } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import styleguideImage from '@assets/articles/styleguide-image.jpg';
+} from '@components/mdx/index'
+import { BaselineStatus, BlueskyPost, Gist, MastodonPost, Tweet, Vimeo, YouTube } from 'astro-embed'
+import { Code } from 'astro-expressive-code/components'
+import { ArticleCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { Content as MermaidContent } from './_snippets/mermaid.mdx'
+import { Image, Picture } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import styleguideImage from '@assets/articles/styleguide-image.jpg'
 
 const toc = [
   { id: 'intro-paragraph', label: 'IntroParagraph' },
@@ -57,19 +49,20 @@ const toc = [
   { id: 'mermaid', label: 'Mermaid diagrams' },
   { id: 'basic-image', label: 'BasicImage' },
   { id: 'astro-image', label: 'Astro Image & Picture' },
+  { id: 'article-card', label: 'ArticleCard' },
   { id: 'content-card', label: 'ContentCard' },
   { id: 'note-card', label: 'NoteCard' },
   { id: 'project-card', label: 'ProjectCard' },
   { id: 'tool-card', label: 'ToolCard' },
   { id: 'embeds', label: 'Embeds' },
-];
+]
 
 // Sample data for the code-display blocks below — kept in the frontmatter to
 // avoid heavy backtick-escaping in the markup. `fence()` builds the "you write
 // this in MDX" fenced-code string from a code body so it stays in sync with the
 // rendered output.
 const fence = (lang: string, body: string, meta = '') =>
-  '```' + lang + (meta ? ` ${meta}` : '') + '\n' + body + '\n```';
+  '```' + lang + (meta ? ` ${meta}` : '') + '\n' + body + '\n```'
 
 const codeExamples = {
   basic: `const colors = ['coral', 'blue', 'green'];
@@ -112,7 +105,7 @@ bun run dev`,
 
   wrap: `// This is a very long comment that demonstrates how word wrapping works in code blocks when the content exceeds the available width of the container
 const message = 'Long strings will also wrap nicely to the next line while preserving the indentation level of the original line';`,
-};
+}
 
 const markdownBlockSample = `## Included markdown
 
@@ -123,7 +116,7 @@ A paragraph with **bold**, _italic_, \`inline code\`, and a
 - two
 - three
 
-> A short quotation from elsewhere.`;
+> A short quotation from elsewhere.`
 
 const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 ├── init.mp4                # HLS initialisation segment (codec headers)
@@ -138,31 +131,34 @@ const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
     ├── thumbnail.jpg        # auto-selected best frame
     ├── captions.srt         # subtitles
     ├── words.json           # per-word transcript timings used by the editor
-    └── notes.md             # human notes about the recording`;
+    └── notes.md             # human notes about the recording`
 
 // Sample content-collection entries for the card demos. Mirrors the old
 // styleguide: prefer a couple of articles with cover images for visual testing.
-const allArticles = await getCollection('articles', ({ data }) => !data.draft);
-const articlesWithCovers = allArticles.filter(a => 'cover' in a.data && a.data.cover);
+const allArticles = await getCollection('articles', ({ data }) => !data.draft)
+const articlesWithCovers = allArticles.filter(a => 'cover' in a.data && a.data.cover)
 const articlesWithoutCovers = allArticles.filter(
   a => !('cover' in a.data && a.data.cover) && !a.data.styleguide,
-);
-const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCovers.slice(0, 1)];
+)
+const sampleArticles = [...articlesWithCovers.slice(0, 2), ...articlesWithoutCovers.slice(0, 1)]
 
-const allNotes = await getCollection('notes', ({ data }) => !data.styleguide);
-const sampleNotes = allNotes.slice(0, 3);
+const allNotes = await getCollection('notes', ({ data }) => !data.styleguide)
+const sampleNotes = allNotes.slice(0, 3)
+// Real entries for the NoteCard demos: one with a source URL and tags, one plain
+const noteWithSource = allNotes.find(n => n.data.sourceURL && n.data.tags?.length) ?? allNotes[0]
+const noteMinimal = allNotes.find(n => !n.data.sourceURL && !n.data.tags?.length) ?? allNotes[1]
 
-const allProjects = await getCollection('projects', ({ data }) => !data.draft);
-const sampleProject = allProjects.find(p => p.data.image) ?? allProjects[0];
-const sampleProjects = allProjects.slice(0, 3);
+const allProjects = await getCollection('projects', ({ data }) => !data.draft)
+const sampleProject = allProjects.find(p => p.data.image) ?? allProjects[0]
+const sampleProjects = allProjects.slice(0, 3)
 
 // One tool with an emoji icon and one with an image icon — the first valid of
 // each, so the demos don't depend on any particular tool existing.
-const allToolboxPages = await getCollection('toolboxPages');
+const allToolboxPages = await getCollection('toolboxPages')
 const sampleTools = [
   allToolboxPages.find(t => t.data.emoji),
   allToolboxPages.find(t => t.data.iconUrl),
-].filter((t): t is NonNullable<typeof t> => Boolean(t));
+].filter((t): t is NonNullable<typeof t> => Boolean(t))
 ---
 
 <StyleguideLayout
@@ -1425,13 +1421,16 @@ Provide a title to skip the fetch or override it:
     />
   </section>
 
-  <section id="content-card" class="flow">
-    <h2>ContentCard</h2>
+  <section id="article-card" class="flow">
+    <h2>ArticleCard</h2>
     <p>
-      ContentCards are used to link to articles, notes and toolbox pages across the site. They can
-      auto-extract metadata from a collection entry or accept manual props for custom usage. The
-      card's accent colour and label are determined by the content type: coral for articles, blue
-      for notes, green for tools and purple for custom.
+      ArticleCard links to an article from the <code>articles</code> collection — the article itself lives
+      at <code>/writing/…</code>, the card shows the pertinent info and points there. Intended for
+      grids and other collection-index contexts. The full card shows an optional cover with an
+      "Article" badge (plus a platform badge for externally-published pieces; coverless cards get a
+      meta row instead), the title, a summary and a footer with dates, a series indicator and
+      reading time. The <code>compact</code> variant is a small linked tile. Both respond to their
+      <em>container</em> width — drag the handles below to see them adapt.
     </p>
     <WrappedTable>
       <thead>
@@ -1444,74 +1443,107 @@ Provide a title to skip the fetch or override it:
       </thead>
       <tbody>
         <tr>
-          <td><code>content</code></td>
-          <td><code>CollectionEntry&lt;'articles' | 'notes' | 'toolboxPages'&gt;</code></td>
-          <td>—</td>
-          <td>A collection entry; auto-extracts title, date, summary, image and type.</td>
-        </tr>
-        <tr>
-          <td><code>href</code> / <code>title</code> / <code>date</code></td>
-          <td><code>string</code> / <code>string</code> / <code>Date</code></td>
-          <td>—</td>
-          <td>Manual props when not passing a <code>content</code> entry.</td>
-        </tr>
-        <tr>
-          <td><code>type</code></td>
-          <td><code>'article' | 'note' | 'tool' | 'custom'</code></td>
-          <td><code>'custom'</code></td>
-          <td>Sets the label and accent colour (manual usage).</td>
+          <td><code>item</code></td>
+          <td><code>CollectionEntry&lt;'articles'&gt;</code></td>
+          <td><em>required</em></td>
+          <td>The article entry to render.</td>
         </tr>
         <tr>
           <td><code>compact</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
-          <td>Hide the image and summary regardless of width.</td>
+          <td>
+            Render a small linked tile (title + "Article · date · reading time" byline) instead of
+            the full card.
+          </td>
         </tr>
       </tbody>
     </WrappedTable>
 
-    <h3 id="content-card-articles">Articles</h3>
-    <Code lang="mdx" code={'<ContentCard content={article} />'} />
+    <h3 id="article-card-full">Full card</h3>
+    <Code lang="mdx" code={'<ArticleCard item={article} />'} />
     <ResizableContainer>
       <div style="display: grid; gap: var(--space-s);">
-        {sampleArticles.map(article => <ContentCard content={article} />)}
+        {sampleArticles.map(article => <ArticleCard item={article} />)}
       </div>
     </ResizableContainer>
 
-    <h3 id="content-card-notes">Notes</h3>
-    <p>
-      Notes get a blue accent border (set via <code>--color-blue</code> in the component's config):
-    </p>
+    <h3 id="article-card-compact">Compact</h3>
+    <p>The byline drops on very narrow containers.</p>
+    <Code lang="mdx" code={'<ArticleCard item={article} compact />'} />
     <ResizableContainer>
       <div style="display: grid; gap: var(--space-s);">
-        {sampleNotes.map(note => <ContentCard content={note} />)}
+        {sampleArticles.map(article => <ArticleCard item={article} compact />)}
+      </div>
+    </ResizableContainer>
+  </section>
+
+  <section id="content-card" class="flow">
+    <h2>ContentCard</h2>
+    <p>
+      ContentCard renders any content-collection item as its card, from just a
+      <code>"collection/id"</code> string — sugar for use in MDX content, where you don't have the entry
+      to hand. It looks the entry up and dispatches to the right card component (ArticleCard, NoteCard,
+      ToolCard or ProjectCard), passing <code>compact</code> through. An unknown collection or id fails
+      the build with a clear error.
+    </p>
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>item</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>
+            <code>"collection/id"</code>, where collection is one of <code>articles</code>,
+            <code>notes</code>, <code>toolboxPages</code> or <code>projects</code>.
+          </td>
+        </tr>
+        <tr>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Render the card's compact tile variant instead of the full card.</td>
+        </tr>
+      </tbody>
+    </WrappedTable>
+
+    <h3 id="content-card-full">Full cards</h3>
+    <Code lang="mdx" code={'<ContentCard item="articles/my-article-slug" />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.slice(0, 1).map(article => <ContentCard item={`articles/${article.id}`} />)}
+        {sampleTools.slice(0, 1).map(tool => <ContentCard item={`toolboxPages/${tool.id}`} />)}
       </div>
     </ResizableContainer>
 
     <h3 id="content-card-compact">Compact</h3>
-    <p>
-      The <code>compact</code> prop hides the image and summary (cards also compact below 350px):
-    </p>
-    <Code lang="mdx" code={'<ContentCard content={article} compact />'} />
+    <Code lang="mdx" code={'<ContentCard item="notes/some-note" compact />'} />
     <ResizableContainer>
       <div style="display: grid; gap: var(--space-s);">
-        {sampleArticles.slice(0, 2).map(article => <ContentCard content={article} compact />)}
-      </div>
-    </ResizableContainer>
-
-    <h3 id="content-card-custom">Custom (manual props)</h3>
-    <Code
-      lang="mdx"
-      code={'<ContentCard\n  href="/example"\n  title="Custom card example"\n  date={new Date(\'2024-01-15\')}\n  type="custom"\n/>'}
-    />
-    <ResizableContainer>
-      <div style="display: grid; gap: var(--space-s);">
-        <ContentCard
-          href="/example"
-          title="Custom card example"
-          date={new Date('2024-01-15')}
-          type="custom"
-        />
+        {
+          sampleArticles
+            .slice(0, 1)
+            .map(article => <ContentCard item={`articles/${article.id}`} compact />)
+        }
+        {sampleNotes.slice(0, 1).map(note => <ContentCard item={`notes/${note.id}`} compact />)}
+        {
+          sampleTools
+            .slice(0, 1)
+            .map(tool => <ContentCard item={`toolboxPages/${tool.id}`} compact />)
+        }
+        {
+          sampleProjects
+            .slice(0, 1)
+            .map(project => <ContentCard item={`projects/${project.id}`} compact />)
+        }
       </div>
     </ResizableContainer>
   </section>
@@ -1519,8 +1551,8 @@ Provide a title to skip the fetch or override it:
   <section id="note-card" class="flow">
     <h2>NoteCard</h2>
     <p>
-      Renders a full note (with its content via slot), as used on the notes index and note pages. A
-      sourceURL shows an embed; tags render as pills.
+      Renders a full note (rendering its content itself), as used on the notes index and note pages.
+      A sourceURL shows an embed; tags render as pills.
     </p>
     <WrappedTable>
       <thead>
@@ -1533,83 +1565,43 @@ Provide a title to skip the fetch or override it:
       </thead>
       <tbody>
         <tr>
-          <td><code>title</code></td>
-          <td><code>string</code></td>
+          <td><code>item</code></td>
+          <td><code>CollectionEntry&lt;'notes'&gt;</code></td>
           <td><em>required</em></td>
-          <td>The note title.</td>
+          <td
+            >The note entry to render — content, title, date, tags and sourceURL all come from it.</td
+          >
         </tr>
         <tr>
-          <td><code>pubDate</code></td>
-          <td><code>Date</code></td>
-          <td><em>required</em></td>
-          <td>Publication date.</td>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td
+            >Render a small linked tile (title + "Note · date" byline) instead of the full card.</td
+          >
         </tr>
         <tr>
-          <td><code>slug</code></td>
-          <td><code>string</code></td>
-          <td><em>required</em></td>
-          <td>Links to <code>/notes/&lt;slug&gt;/</code>.</td>
-        </tr>
-        <tr>
-          <td><code>sourceURL</code></td>
-          <td><code>string</code></td>
-          <td>—</td>
-          <td>If set, an embed of the source is shown.</td>
-        </tr>
-        <tr>
-          <td><code>tags</code></td>
-          <td><code>string[]</code></td>
-          <td><code>[]</code></td>
-          <td>Rendered as pills below the title.</td>
-        </tr>
-        <tr>
-          <td><code>indexAsBody</code></td>
+          <td><code>standalone</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
           <td>
-            Marks the card as the Pagefind search body so the note gets indexed. Set only on the
-            standalone note page; listing pages leave it off so each note stays a single result.
+            The card is the note's own page: marks it as the Pagefind search body, enables sharing
+            and adds a back-to-top link. Listing pages leave it off so each note stays a single
+            search result.
           </td>
         </tr>
       </tbody>
     </WrappedTable>
 
-    <h3 id="note-card-full">With tags &amp; source URL</h3>
-    <Code
-      lang="mdx"
-      code={"<NoteCard\n  title=\"On the nature of remote work\"\n  pubDate={new Date('2024-03-15')}\n  slug=\"demo-note-1\"\n  tags={['remote-work', 'culture', 'async']}\n  sourceURL=\"https://justinjackson.ca/calm-company\"\n>\n  Remote work isn't just about *where* you work…\n</NoteCard>"}
-    />
+    <h3 id="note-card-full">Full card</h3>
+    <Code lang="mdx" code={'<NoteCard item={note} />'} />
     <ResizableContainer>
-      <NoteCard
-        title="On the nature of remote work"
-        pubDate={new Date('2024-03-15')}
-        slug="demo-note-1"
-        tags={['remote-work', 'culture', 'async']}
-        sourceURL="https://justinjackson.ca/calm-company"
-      >
-        <p>
-          Remote work isn't just about <em>where</em> you work — it's about <strong>how</strong> you work.
-          The best remote teams treat asynchronous communication as the foundation, not an afterthought.
-        </p>
-        <p>
-          When you default to async, you give people the gift of <a href="#">deep work</a>. Meetings
-          become the exception, not the rule.
-        </p>
-      </NoteCard>
+      <NoteCard item={noteWithSource} />
     </ResizableContainer>
 
-    <h3 id="note-card-minimal">Minimal</h3>
+    <h3 id="note-card-minimal">Minimal (no tags or source URL)</h3>
     <ResizableContainer>
-      <NoteCard
-        title="A quick thought on defaults"
-        pubDate={new Date('2024-06-22')}
-        slug="demo-note-2"
-      >
-        <p>
-          Good defaults are invisible; bad defaults create friction. The best software feels like it
-          was configured just for you, even when you've changed nothing.
-        </p>
-      </NoteCard>
+      <NoteCard item={noteMinimal} />
     </ResizableContainer>
   </section>
 
@@ -1649,9 +1641,9 @@ Provide a title to skip the fetch or override it:
 
     <h3 id="project-card-full">Full card</h3>
     <p>Past a wide container the image moves out to the right of everything else.</p>
-    <Code lang="mdx" code={'<ProjectCard project={project} />'} />
+    <Code lang="mdx" code={'<ProjectCard item={project} />'} />
     <ResizableContainer>
-      {sampleProject && <ProjectCard project={sampleProject} />}
+      {sampleProject && <ProjectCard item={sampleProject} />}
     </ResizableContainer>
 
     <h3 id="project-card-compact">Compact</h3>
@@ -1659,10 +1651,10 @@ Provide a title to skip the fetch or override it:
       The <code>compact</code> prop renders a linked tile that opens the project's website (then GitHub,
       then its <code>/making</code> anchor). The byline drops on very narrow containers.
     </p>
-    <Code lang="mdx" code={'<ProjectCard project={project} compact />'} />
+    <Code lang="mdx" code={'<ProjectCard item={project} compact />'} />
     <ResizableContainer>
       <div style="display: grid; gap: var(--space-s);">
-        {sampleProjects.map(project => <ProjectCard project={project} compact />)}
+        {sampleProjects.map(project => <ProjectCard item={project} compact />)}
       </div>
     </ResizableContainer>
   </section>
@@ -1709,22 +1701,22 @@ Provide a title to skip the fetch or override it:
       Below 350px of container width the icon, badges and summary shrink and the Notion link is
       dropped.
     </p>
-    <Code lang="mdx" code={'<ToolCard tool={tool} />'} />
+    <Code lang="mdx" code={'<ToolCard item={tool} />'} />
     <SGSwitcher>
       <ResizableContainer>
         <div style="display: grid; gap: var(--space-s);">
-          {sampleTools.map(tool => <ToolCard tool={tool} />)}
+          {sampleTools.map(tool => <ToolCard item={tool} />)}
         </div>
       </ResizableContainer>
     </SGSwitcher>
 
     <h3 id="tool-card-compact">Compact</h3>
     <p>The byline drops on very narrow containers.</p>
-    <Code lang="mdx" code={'<ToolCard tool={tool} compact />'} />
+    <Code lang="mdx" code={'<ToolCard item={tool} compact />'} />
     <SGSwitcher>
       <ResizableContainer>
         <div style="display: grid; gap: var(--space-s);">
-          {sampleTools.map(tool => <ToolCard tool={tool} compact />)}
+          {sampleTools.map(tool => <ToolCard item={tool} compact />)}
         </div>
       </ResizableContainer>
     </SGSwitcher>

@@ -17,17 +17,17 @@
  *
  * Excluded from the sitemap (astro.config) and not listed in llms.txt.
  */
-import type { APIRoute } from 'astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
-import { redirects as manualRedirects } from '@config/redirects';
-import { filterContentForPage } from '@utils/content';
+import type { APIRoute } from 'astro'
+import { getCollection, type CollectionEntry } from 'astro:content'
+import { redirects as manualRedirects } from '@config/redirects'
+import { filterContentForPage } from '@utils/content'
 
-export const prerender = true;
+export const prerender = true
 
 interface RedirectEntry {
-  source: string;
-  destination: string;
-  status: number;
+  source: string
+  destination: string
+  status: number
 }
 
 export const GET: APIRoute = async () => {
@@ -36,7 +36,7 @@ export const GET: APIRoute = async () => {
     source,
     destination,
     status: 302,
-  }));
+  }))
 
   // Cross-posted articles that redirect elsewhere. filterContentForPage matches
   // the /writing route's getStaticPaths (non-drafts), so every source has a page.
@@ -46,24 +46,24 @@ export const GET: APIRoute = async () => {
   // `redirectURL`. Same pattern as llms.txt.ts.
   const articles = filterContentForPage(
     await getCollection('articles'),
-  ) as CollectionEntry<'articles'>[];
-  const articleRedirects: RedirectEntry[] = [];
+  ) as CollectionEntry<'articles'>[]
+  const articleRedirects: RedirectEntry[] = []
   for (const article of articles) {
     if (article.data.redirectURL) {
       articleRedirects.push({
         source: `/writing/${article.id}`,
         destination: article.data.redirectURL,
         status: 302,
-      });
+      })
     }
   }
 
   const body = {
     version: 1,
     redirects: [...manual, ...articleRedirects],
-  };
+  }
 
   return new Response(JSON.stringify(body, null, 2), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
-  });
-};
+  })
+}

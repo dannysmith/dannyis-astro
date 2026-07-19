@@ -10,27 +10,27 @@
  *   ATPROTO_SERVICE       – PDS / entryway URL (default: https://bsky.social)
  */
 
-import { AtpAgent } from '@atproto/api';
+import { AtpAgent } from '@atproto/api'
 
 export interface Session {
-  agent: AtpAgent;
-  did: string;
+  agent: AtpAgent
+  did: string
 }
 
 export async function login(): Promise<Session> {
-  const password = process.env.ATPROTO_APP_PASSWORD;
+  const password = process.env.ATPROTO_APP_PASSWORD
   if (!password) {
-    throw new Error('ATPROTO_APP_PASSWORD environment variable is required');
+    throw new Error('ATPROTO_APP_PASSWORD environment variable is required')
   }
-  const identifier = process.env.ATPROTO_HANDLE || 'danny.is';
-  const service = process.env.ATPROTO_SERVICE || 'https://bsky.social';
+  const identifier = process.env.ATPROTO_HANDLE || 'danny.is'
+  const service = process.env.ATPROTO_SERVICE || 'https://bsky.social'
 
-  const agent = new AtpAgent({ service });
-  await agent.login({ identifier, password });
+  const agent = new AtpAgent({ service })
+  await agent.login({ identifier, password })
 
-  const did = agent.session?.did;
+  const did = agent.session?.did
   if (!did) {
-    throw new Error('Login succeeded but no DID was returned');
+    throw new Error('Login succeeded but no DID was returned')
   }
-  return { agent, did };
+  return { agent, did }
 }

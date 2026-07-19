@@ -1,8 +1,8 @@
-import type { APIRoute } from 'astro';
-import { getConfig } from '@config/config';
+import type { APIRoute } from 'astro'
+import { getConfig } from '@config/config'
 
 export const GET: APIRoute = () => {
-  const config = getConfig();
+  const config = getConfig()
 
   const manifest = {
     name: config.site.name,
@@ -30,11 +30,11 @@ export const GET: APIRoute = () => {
         purpose: 'any',
       },
     ],
-  };
+  }
 
   return new Response(JSON.stringify(manifest, null, 2), {
     headers: {
       'Content-Type': 'application/manifest+json',
     },
-  });
-};
+  })
+}

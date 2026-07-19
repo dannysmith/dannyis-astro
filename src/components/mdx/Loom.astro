@@ -5,53 +5,53 @@
  * Similar approach to lite-youtube-embed.
  */
 export interface Props {
-  id: string;
+  id: string
   /** Optional custom poster image URL. Falls back to oEmbed thumbnail or styled placeholder. */
-  poster?: string;
-  className?: string;
+  poster?: string
+  className?: string
 }
 
 interface LoomOEmbed {
-  title: string;
-  description: string;
-  thumbnail_url: string;
-  width: number;
-  height: number;
-  duration: number;
+  title: string
+  description: string
+  thumbnail_url: string
+  width: number
+  height: number
+  duration: number
 }
 
-const { id, poster, className = '' } = Astro.props;
+const { id, poster, className = '' } = Astro.props
 
-let thumbnail: string | null = poster || null;
-let title: string | null = null;
-let duration: number | null = null;
-let aspectRatio = '16 / 9';
+let thumbnail: string | null = poster || null
+let title: string | null = null
+let duration: number | null = null
+let aspectRatio = '16 / 9'
 
 // Always fetch oEmbed to get title and duration
 try {
-  const oembedUrl = `https://www.loom.com/v1/oembed?url=https://www.loom.com/share/${id}`;
-  const response = await fetch(oembedUrl);
+  const oembedUrl = `https://www.loom.com/v1/oembed?url=https://www.loom.com/share/${id}`
+  const response = await fetch(oembedUrl)
 
   if (response.ok) {
-    const data: LoomOEmbed = await response.json();
+    const data: LoomOEmbed = await response.json()
 
     // Only use non-empty title
     if (data.title?.trim()) {
-      title = data.title.trim();
+      title = data.title.trim()
     }
 
     // Only use positive duration
     if (data.duration > 0) {
-      duration = data.duration;
+      duration = data.duration
     }
 
     // Use oEmbed thumbnail if no custom poster and not the generic placeholder
     if (!poster && data.thumbnail_url && !data.thumbnail_url.includes('slack-protected-video')) {
-      thumbnail = data.thumbnail_url;
+      thumbnail = data.thumbnail_url
     }
 
     if (data.width && data.height) {
-      aspectRatio = `${data.width} / ${data.height}`;
+      aspectRatio = `${data.width} / ${data.height}`
     }
   }
 } catch {
@@ -60,18 +60,18 @@ try {
 
 // Format duration as m:ss or h:mm:ss
 function formatDuration(seconds: number): string {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
 
   if (h > 0) {
-    return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
   }
-  return `${m}:${s.toString().padStart(2, '0')}`;
+  return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-const formattedDuration = duration ? formatDuration(duration) : null;
-const embedUrl = `https://www.loom.com/embed/${id}?autoplay=1`;
+const formattedDuration = duration ? formatDuration(duration) : null
+const embedUrl = `https://www.loom.com/embed/${id}?autoplay=1`
 ---
 
 <lite-loom
@@ -95,49 +95,49 @@ const embedUrl = `https://www.loom.com/embed/${id}?autoplay=1`;
 
 <script>
   class LiteLoom extends HTMLElement {
-    private activated = false;
+    private activated = false
 
     connectedCallback() {
-      const playBtn = this.querySelector('.lite-loom-playbtn');
-      if (!playBtn) return;
+      const playBtn = this.querySelector('.lite-loom-playbtn')
+      if (!playBtn) return
 
       this.addEventListener('click', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.activate();
-      });
+        e.preventDefault()
+        e.stopPropagation()
+        this.activate()
+      })
 
       playBtn.addEventListener('keydown', (e: Event) => {
-        const keyEvent = e as KeyboardEvent;
+        const keyEvent = e as KeyboardEvent
         if (keyEvent.key === 'Enter' || keyEvent.key === ' ') {
-          e.preventDefault();
-          this.activate();
+          e.preventDefault()
+          this.activate()
         }
-      });
+      })
     }
 
     activate() {
-      if (this.activated) return;
-      this.activated = true;
+      if (this.activated) return
+      this.activated = true
 
-      const embedUrl = this.dataset.embedUrl;
-      const title = this.dataset.title || 'Loom video';
-      if (!embedUrl) return;
+      const embedUrl = this.dataset.embedUrl
+      const title = this.dataset.title || 'Loom video'
+      if (!embedUrl) return
 
-      const iframe = document.createElement('iframe');
-      iframe.src = embedUrl;
-      iframe.title = title;
-      iframe.allow = 'autoplay; fullscreen';
-      iframe.allowFullscreen = true;
+      const iframe = document.createElement('iframe')
+      iframe.src = embedUrl
+      iframe.title = title
+      iframe.allow = 'autoplay; fullscreen'
+      iframe.allowFullscreen = true
 
-      this.classList.add('lite-loom-activated');
-      this.appendChild(iframe);
-      iframe.focus();
+      this.classList.add('lite-loom-activated')
+      this.appendChild(iframe)
+      iframe.focus()
     }
   }
 
   if (!customElements.get('lite-loom')) {
-    customElements.define('lite-loom', LiteLoom);
+    customElements.define('lite-loom', LiteLoom)
   }
 </script>
 

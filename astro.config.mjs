@@ -1,35 +1,35 @@
-import { defineConfig, svgoOptimizer } from 'astro/config';
-import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
+import { defineConfig, svgoOptimizer } from 'astro/config'
+import mdx from '@astrojs/mdx'
+import sitemap from '@astrojs/sitemap'
 
-import { satteri, satteriHeadingIdsPlugin } from '@astrojs/markdown-satteri';
-import { satteriMdxImports } from './src/lib/satteri-mdx-imports.mjs';
-import { satteriReadingTime } from './src/lib/satteri-reading-time.mjs';
-import { satteriFootnoteDetector } from './src/lib/satteri-footnote-detector.mjs';
-import { satteriMarkdownPreview } from './src/lib/satteri-markdown-preview.mjs';
-import { satteriTreeBlock } from './src/lib/satteri-tree-block.mjs';
-import { satteriImageCaption } from './src/lib/satteri-image-caption.mjs';
-import { satteriUnwrapImages } from './src/lib/satteri-unwrap-images.mjs';
-import { satteriAutolinkHeadings } from './src/lib/satteri-autolink-headings.mjs';
-import { satteriExternalLinks } from './src/lib/satteri-external-links.mjs';
-import { satteriListDensity } from './src/lib/satteri-list-density.mjs';
-import { satteriMermaid } from './src/lib/satteri-mermaid.mjs';
-import { mermaidConfig, mermaidColorReplacements, mermaidFontCss } from './src/config/mermaid.js';
-import { pagefind } from './src/lib/pagefind-integration.mjs';
-import icon from 'astro-icon';
-import { redirects } from './src/config/redirects.ts';
+import { satteri, satteriHeadingIdsPlugin } from '@astrojs/markdown-satteri'
+import { satteriMdxImports } from './src/lib/satteri-mdx-imports.mjs'
+import { satteriReadingTime } from './src/lib/satteri-reading-time.mjs'
+import { satteriFootnoteDetector } from './src/lib/satteri-footnote-detector.mjs'
+import { satteriMarkdownPreview } from './src/lib/satteri-markdown-preview.mjs'
+import { satteriTreeBlock } from './src/lib/satteri-tree-block.mjs'
+import { satteriImageCaption } from './src/lib/satteri-image-caption.mjs'
+import { satteriUnwrapImages } from './src/lib/satteri-unwrap-images.mjs'
+import { satteriAutolinkHeadings } from './src/lib/satteri-autolink-headings.mjs'
+import { satteriExternalLinks } from './src/lib/satteri-external-links.mjs'
+import { satteriListDensity } from './src/lib/satteri-list-density.mjs'
+import { satteriMermaid } from './src/lib/satteri-mermaid.mjs'
+import { mermaidConfig, mermaidColorReplacements, mermaidFontCss } from './src/config/mermaid.js'
+import { pagefind } from './src/lib/pagefind-integration.mjs'
+import icon from 'astro-icon'
+import { redirects } from './src/config/redirects.ts'
 
-import { readFileSync } from 'fs';
-import expressiveCode, { ExpressiveCodeTheme } from 'astro-expressive-code';
+import { readFileSync } from 'fs'
+import expressiveCode, { ExpressiveCodeTheme } from 'astro-expressive-code'
 
-import react from '@astrojs/react';
+import react from '@astrojs/react'
 
 // Load custom code theme
 const codeThemeJson = readFileSync(
   new URL('./src/config/code-theme.json', import.meta.url),
   'utf-8',
-);
-const codeTheme = ExpressiveCodeTheme.fromJSONString(codeThemeJson);
+)
+const codeTheme = ExpressiveCodeTheme.fromJSONString(codeThemeJson)
 
 // Auto-import every component the MDX barrel exports, so none of them ever
 // need an explicit import in content. We derive the list from the barrel
@@ -38,13 +38,13 @@ const codeTheme = ExpressiveCodeTheme.fromJSONString(codeThemeJson);
 // The list feeds the satteriMdxImports plugin registered in `markdown` below.
 // Consequence: never explicitly import from `@components/mdx` in .mdx files —
 // the auto-injected import would collide (duplicate declaration).
-const mdxBarrelPath = './src/components/mdx/index.ts';
+const mdxBarrelPath = './src/components/mdx/index.ts'
 const mdxComponentNames = readFileSync(new URL(mdxBarrelPath, import.meta.url), 'utf-8')
   .match(/export\s*\{([^}]*)\}/)[1]
   .replace(/\/\/[^\n]*/g, '') // strip line comments (e.g. `// Typography`)
   .split(/[,\n]/)
   .map(name => name.trim())
-  .filter(name => /^[A-Z][A-Za-z0-9]*$/.test(name));
+  .filter(name => /^[A-Z][A-Za-z0-9]*$/.test(name))
 
 // https://astro.build/config
 export default defineConfig({
@@ -129,4 +129,4 @@ export default defineConfig({
     }),
   },
   redirects,
-});
+})

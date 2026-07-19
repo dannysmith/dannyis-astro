@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection } from 'astro:content'
 import {
   BaseHead,
   Footer,
@@ -7,13 +7,13 @@ import {
   Lightbox,
   LLMDiscoveryNote,
   MainNavigation,
-} from '@components/layout/index';
-import { ProjectCard } from '@components/ui/index';
-import { getSortedProjects } from '@utils/content';
-import { getConfig } from '@config/config';
+} from '@components/layout/index'
+import { ProjectCard } from '@components/ui/index'
+import { getSortedProjects } from '@utils/content'
+import { getConfig } from '@config/config'
 
-const config = getConfig();
-const projects = getSortedProjects(await getCollection('projects'));
+const config = getConfig()
+const projects = getSortedProjects(await getCollection('projects'))
 
 // A single ItemList of generic CreativeWorks — enough for crawlers and LLMs to
 // see the projects without per-project pages or type-specific modelling.
@@ -33,7 +33,7 @@ const projectsJsonLd = {
       author: { '@type': 'Person', name: config.author.fullName, url: config.site.url },
     },
   })),
-};
+}
 ---
 
 <!doctype html>
@@ -60,7 +60,7 @@ const projectsJsonLd = {
       <h1 class="title" data-pagefind-meta="title">Making</h1>
       <p class="intro">Some of the stuff I've been making recently</p>
       <div class="projects cq">
-        {projects.map(project => <ProjectCard project={project} />)}
+        {projects.map(project => <ProjectCard item={project} />)}
       </div>
     </main>
     <Footer />

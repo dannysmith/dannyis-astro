@@ -1,6 +1,7 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { FormattedDate } from '@components/ui/index';
+import type { CollectionEntry } from 'astro:content'
+import { FormattedDate } from '@components/ui/index'
+import CompactCardTile from './CompactCardTile.astro'
 
 /**
  * Card for a page from the Remote Working Toolbox (`toolboxPages` collection).
@@ -10,58 +11,52 @@ import { FormattedDate } from '@components/ui/index';
  * - **Full** (default) — cover image with "Tool" and category badges, a
  *   Notion-style overlapping icon, title, truncated summary, and a footer
  *   with dates and a "View in Notion" link.
- * - **Compact** — a single clickable tile: icon, title and a category byline.
- *   Deliberately similar to ProjectCard's compact tile.
+ * - **Compact** — the shared CompactCardTile: icon, title and category byline.
  *
  * Each card is its own size container, so both variants adapt to the width
- * they're rendered at — see the `@container` rules at the end of each
- * variant's style section.
+ * they're rendered at.
  *
  * Usage:
- *   <ToolCard tool={entry} />
- *   <ToolCard tool={entry} compact />
+ *   <ToolCard item={entry} />
+ *   <ToolCard item={entry} compact />
  */
 interface Props {
   /** A `toolboxPages` collection entry */
-  tool: CollectionEntry<'toolboxPages'>;
+  item: CollectionEntry<'toolboxPages'>
   /** Render the compact tile instead of the full card */
-  compact?: boolean;
+  compact?: boolean
 }
 
-const { tool, compact = false } = Astro.props;
-const { data } = tool;
+const { item, compact = false } = Astro.props
+const { data } = item
 
 // Tint the category badge from the standard palette, cycling by a hash of the
 // category name so colours are stable however many categories exist.
-const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue'];
-const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`;
+const CATEGORY_COLORS = ['coral', 'pink', 'orange', 'purple', 'yellow', 'green', 'blue']
+const hash = [...(data.category ?? '')].reduce((acc, ch) => acc + ch.charCodeAt(0), 0)
+const categoryColor = `var(--color-${CATEGORY_COLORS[hash % CATEGORY_COLORS.length]})`
 
 // Only show "Updated" when it differs from the created date at day granularity
-const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString();
+const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateString()
 ---
 
 {
   compact ? (
-    <a class="tool-card-compact ui-style cq" href={data.url}>
-      {(data.emoji || data.iconUrl) && (
-        <span class="compact-icon">
-          {data.emoji ?? <img src={data.iconUrl} alt="" loading="lazy" />}
-        </span>
-      )}
-      <span class="compact-text">
-        <span class="compact-title">{data.title}</span>
-        <span class="compact-byline">
-          {data.category ? `Tool filed under ${data.category}` : 'Tool'}
-        </span>
-      </span>
-    </a>
+    <CompactCardTile
+      href={data.url}
+      title={data.title}
+      byline={data.category ? `Tool filed under ${data.category}` : 'Tool'}
+      accentColor="var(--color-green)"
+    >
+      {data.emoji ??
+        (data.iconUrl && <img class="compact-icon-img" src={data.iconUrl} alt="" loading="lazy" />)}
+    </CompactCardTile>
   ) : (
     <article
       class="tool-card ui-style cq"
       data-notion-id={data.notionId}
       data-category={data.category}
-      style={`view-transition-name: tool-${tool.id}`}
+      style={`view-transition-name: tool-${item.id}`}
     >
       <a href={data.url} class="card-link">
         <div class="card-cover">
@@ -115,11 +110,10 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
 
 <style>
   /* =====================================================================
-     Shared shell — both variants are a bordered tile with a left accent
-     bar that grows on hover/focus (the site's card idiom, as ContentCard).
+     Full variant shell — a bordered tile with a left accent bar that grows
+     on hover/focus (the site's card idiom, as CompactCardTile).
      ===================================================================== */
-  .tool-card,
-  .tool-card-compact {
+  .tool-card {
     --_border-color: var(--color-green);
 
     position: relative;
@@ -140,10 +134,7 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
       z-index: 1;
     }
 
-    /* :focus-visible catches the compact tile (itself a link); :has() catches
-       focus on the full card's inner links. */
     &:hover,
-    &:focus-visible,
     &:has(:focus-visible) {
       border-color: var(--_border-color);
 
@@ -153,8 +144,11 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     }
   }
 
-  /* Image icons fill the icon box in both variants; emoji size via font-size */
-  :is(.card-icon, .compact-icon) img {
+  /* Image icons fill the icon box; emoji size comes from font-size. The
+     compact-icon-img rule targets the icon slotted into CompactCardTile,
+     which sets the inherited --_icon-size. */
+  .card-icon img,
+  .compact-icon-img {
     display: block;
     inline-size: var(--_icon-size);
     block-size: var(--_icon-size);
@@ -162,9 +156,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     border-radius: var(--radius-xs);
   }
 
-  /* =====================================================================
-     Full variant
-     ===================================================================== */
   .tool-card {
     --_icon-size: 2.5rem;
 
@@ -293,59 +284,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     }
 
     .notion-link {
-      display: none;
-    }
-  }
-
-  /* =====================================================================
-     Compact variant — a single clickable tile (icon + title + byline)
-     ===================================================================== */
-  .tool-card-compact {
-    --_icon-size: 3rem;
-
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-    padding: var(--space-s);
-    text-decoration: none;
-  }
-
-  .compact-icon {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Fixed box keeps titles aligned in a stack; emoji glyphs render larger
-       than same-size images, so they get a smaller font-size within it. */
-    inline-size: var(--_icon-size);
-    font-size: calc(var(--_icon-size) * 0.75);
-    line-height: 1;
-  }
-
-  .compact-text {
-    display: flex;
-    flex-direction: column;
-    min-inline-size: 0;
-  }
-
-  .compact-title {
-    font-family: var(--font-display);
-    font-weight: var(--font-weight-extrabold);
-    text-transform: uppercase;
-    font-feature-settings: 'case' on;
-    line-height: var(--leading-tight);
-    color: var(--color-text);
-  }
-
-  .compact-byline {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    text-wrap: pretty;
-  }
-
-  /* Narrow tile: drop the byline */
-  @container (width < 20rem) {
-    .compact-byline {
       display: none;
     }
   }

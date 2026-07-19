@@ -18,17 +18,17 @@
  * `panels` metadata, so the buttons ship in the static HTML and the browser
  * only toggles state.
  */
-import type { Element, Root } from 'hast';
-import { rehype } from 'rehype';
-import { SKIP, visit } from 'unist-util-visit';
+import type { Element, Root } from 'hast'
+import { rehype } from 'rehype'
+import { SKIP, visit } from 'unist-util-visit'
 
 export interface Panel {
   /** Visible tab label, read from `data-tab-label`. */
-  label: string;
+  label: string
   /** `id` of the `<button role="tab">`; the panel's `aria-labelledby`. */
-  tabId: string;
+  tabId: string
   /** `id` of the panel; the button's `aria-controls`. */
-  panelId: string;
+  panelId: string
 }
 
 /**
@@ -36,43 +36,43 @@ export interface Panel {
  * more than one `<Tabs>`. Ids only need to be unique within a page; a shared
  * counter guarantees that without coordination between instances.
  */
-let counter = 0;
+let counter = 0
 
 export function processPanels(html: string): { html: string; panels: Panel[] } {
-  const panels: Panel[] = [];
+  const panels: Panel[] = []
 
   const file = rehype()
     .data('settings', { fragment: true })
     .use(() => (tree: Root) => {
       visit(tree, 'element', (node: Element) => {
-        const props = node.properties;
-        if (!props || props.dataTabLabel == null) return;
+        const props = node.properties
+        if (!props || props.dataTabLabel == null) return
 
-        const label = String(props.dataTabLabel);
-        const n = ++counter;
-        const tabId = `tab-${n}`;
-        const panelId = `tab-panel-${n}`;
-        const isFirst = panels.length === 0;
+        const label = String(props.dataTabLabel)
+        const n = ++counter
+        const tabId = `tab-${n}`
+        const panelId = `tab-panel-${n}`
+        const isFirst = panels.length === 0
 
-        props.role = 'tabpanel';
-        props.id = panelId;
-        props.ariaLabelledby = tabId;
+        props.role = 'tabpanel'
+        props.id = panelId
+        props.ariaLabelledby = tabId
         // First panel is the active one; the rest start hidden. The no-JS CSS
         // fallback un-hides them, and the runtime collapses them once enhanced.
         if (isFirst) {
-          props.tabIndex = 0;
+          props.tabIndex = 0
         } else {
-          props.hidden = true;
+          props.hidden = true
         }
 
-        panels.push({ label, tabId, panelId });
+        panels.push({ label, tabId, panelId })
 
         // Don't descend: a nested <Tabs> inside this panel was already wired
         // by its own render pass.
-        return SKIP;
-      });
+        return SKIP
+      })
     })
-    .processSync(html);
+    .processSync(html)
 
-  return { html: String(file), panels };
+  return { html: String(file), panels }
 }

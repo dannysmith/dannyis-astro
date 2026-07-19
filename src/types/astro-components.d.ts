@@ -3,11 +3,11 @@
 
 // Astro component type definition
 type AstroComponent = {
-  (props: Record<string, unknown>): unknown;
-  isAstroComponentFactory?: boolean;
-};
+  (props: Record<string, unknown>): unknown
+  isAstroComponentFactory?: boolean
+}
 
 declare module '*.astro' {
-  const Component: AstroComponent;
-  export default Component;
+  const Component: AstroComponent
+  export default Component
 }

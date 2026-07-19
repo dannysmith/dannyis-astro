@@ -19,18 +19,18 @@
  *   and labelled — readable for print/SEO/no-JS.
  * - The runtime is a single pair of delegated listeners that only toggle state.
  */
-import { processPanels } from '@lib/tabs/process-panels';
+import { processPanels } from '@lib/tabs/process-panels'
 
 export interface Props {
   /** Optional class for custom styling */
-  class?: string;
+  class?: string
 }
 
-const { class: className } = Astro.props;
+const { class: className } = Astro.props
 
 // Render the slot, then wire each panel and collect button metadata at build
 // time. Component content inside a TabItem is already final HTML by now.
-const { html, panels } = processPanels(await Astro.slots.render('default'));
+const { html, panels } = processPanels(await Astro.slots.render('default'))
 ---
 
 <div class:list={['tabs', className]} data-tabs>
@@ -132,92 +132,92 @@ const { html, panels } = processPanels(await Astro.slots.render('default'));
 
   /** Activate `tab` within its `tablist`: update roving tabindex + panels. */
   function activate(tablist: HTMLElement, tab: HTMLElement) {
-    const container = tablist.closest<HTMLElement>('[data-tabs]');
-    if (!container) return;
+    const container = tablist.closest<HTMLElement>('[data-tabs]')
+    if (!container) return
 
-    const controls = tab.getAttribute('aria-controls');
+    const controls = tab.getAttribute('aria-controls')
 
     tablist.querySelectorAll<HTMLElement>('[role="tab"]').forEach(t => {
-      const selected = t === tab;
-      t.setAttribute('aria-selected', String(selected));
-      t.setAttribute('tabindex', selected ? '0' : '-1');
-    });
+      const selected = t === tab
+      t.setAttribute('aria-selected', String(selected))
+      t.setAttribute('tabindex', selected ? '0' : '-1')
+    })
 
     container.querySelectorAll<HTMLElement>('[role="tabpanel"]').forEach(panel => {
-      const active = panel.id === controls;
-      panel.toggleAttribute('hidden', !active);
+      const active = panel.id === controls
+      panel.toggleAttribute('hidden', !active)
       if (active) {
-        panel.setAttribute('tabindex', '0');
+        panel.setAttribute('tabindex', '0')
       } else {
-        panel.removeAttribute('tabindex');
+        panel.removeAttribute('tabindex')
       }
-    });
+    })
   }
 
   /** Resolve the tab a UI event targeted, or null. */
   function tabFrom(event: Event): HTMLElement | null {
-    const target = event.target as HTMLElement | null;
-    return target?.closest<HTMLElement>('[role="tab"]') ?? null;
+    const target = event.target as HTMLElement | null
+    return target?.closest<HTMLElement>('[role="tab"]') ?? null
   }
 
-  let wired = false;
+  let wired = false
   function wireDelegation() {
-    if (wired) return;
-    wired = true;
+    if (wired) return
+    wired = true
 
     document.addEventListener('click', event => {
-      const tab = tabFrom(event);
-      const tablist = tab?.closest<HTMLElement>('[role="tablist"]');
-      if (!tab || !tablist) return;
-      activate(tablist, tab);
-      tab.focus();
-    });
+      const tab = tabFrom(event)
+      const tablist = tab?.closest<HTMLElement>('[role="tablist"]')
+      if (!tab || !tablist) return
+      activate(tablist, tab)
+      tab.focus()
+    })
 
     document.addEventListener('keydown', event => {
-      const tab = tabFrom(event);
-      const tablist = tab?.closest<HTMLElement>('[role="tablist"]');
-      if (!tab || !tablist) return;
+      const tab = tabFrom(event)
+      const tablist = tab?.closest<HTMLElement>('[role="tablist"]')
+      if (!tab || !tablist) return
 
-      const tabs = Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]'));
-      const current = tabs.indexOf(tab);
-      let next: HTMLElement | undefined;
+      const tabs = Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]'))
+      const current = tabs.indexOf(tab)
+      let next: HTMLElement | undefined
 
       switch (event.key) {
         case 'ArrowLeft':
-          next = tabs[(current - 1 + tabs.length) % tabs.length];
-          break;
+          next = tabs[(current - 1 + tabs.length) % tabs.length]
+          break
         case 'ArrowRight':
-          next = tabs[(current + 1) % tabs.length];
-          break;
+          next = tabs[(current + 1) % tabs.length]
+          break
         case 'Home':
-          next = tabs[0];
-          break;
+          next = tabs[0]
+          break
         case 'End':
-          next = tabs[tabs.length - 1];
-          break;
+          next = tabs[tabs.length - 1]
+          break
         default:
-          return;
+          return
       }
 
-      if (!next) return;
-      event.preventDefault();
-      activate(tablist, next);
-      next.focus();
-    });
+      if (!next) return
+      event.preventDefault()
+      activate(tablist, next)
+      next.focus()
+    })
   }
 
   // Enhance: reveal the tablist and let the native `hidden` collapse inactive
   // panels. No per-panel work — the server-rendered state is already correct.
   function initTabs() {
-    wireDelegation();
+    wireDelegation()
     document
       .querySelectorAll<HTMLElement>('[data-tabs]:not(.tabs-initialized)')
-      .forEach(el => el.classList.add('tabs-initialized'));
+      .forEach(el => el.classList.add('tabs-initialized'))
   }
 
-  initTabs();
+  initTabs()
 
   // Re-run after Astro page transitions (View Transitions). The document-level
   // listeners persist; only the new DOM needs the `.tabs-initialized` class.
-  document.addEventListener('astro:page-load', initTabs);
+  document.addEventListener('astro:page-load', initTabs)
 </script>

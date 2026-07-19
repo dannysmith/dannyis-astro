@@ -1,48 +1,48 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test.describe('Critical Path Tests', () => {
   test('homepage loads successfully', async ({ page }) => {
-    const response = await page.goto('/');
-    expect(response?.status()).toBeLessThan(400);
-    await expect(page).toHaveTitle(/Danny Smith/);
-  });
+    const response = await page.goto('/')
+    expect(response?.status()).toBeLessThan(400)
+    await expect(page).toHaveTitle(/Danny Smith/)
+  })
 
   test('writing page loads and has articles', async ({ page }) => {
-    await page.goto('/writing');
+    await page.goto('/writing')
 
     // Verify writing page has article listings
-    const articles = page.locator('section li');
-    expect(await articles.count()).toBeGreaterThan(0);
+    const articles = page.locator('section li')
+    expect(await articles.count()).toBeGreaterThan(0)
 
     // Check page has the expected structure
-    await expect(page.locator('main h1')).toHaveText('Writing');
-  });
+    await expect(page.locator('main h1')).toHaveText('Writing')
+  })
 
   test('RSS feed returns valid XML', async ({ page }) => {
-    const response = await page.goto('/rss.xml');
+    const response = await page.goto('/rss.xml')
 
-    expect(response?.status()).toBe(200);
-    const contentType = response?.headers()['content-type'];
-    expect(contentType).toMatch(/xml|rss/);
+    expect(response?.status()).toBe(200)
+    const contentType = response?.headers()['content-type']
+    expect(contentType).toMatch(/xml|rss/)
 
-    const content = await response?.text();
-    expect(content).toContain('<?xml');
-    expect(content).toContain('<rss');
-    expect(content).toContain('</rss>');
-  });
+    const content = await response?.text()
+    expect(content).toContain('<?xml')
+    expect(content).toContain('<rss')
+    expect(content).toContain('</rss>')
+  })
 
   test('404 page works correctly', async ({ page }) => {
-    const response = await page.goto('/this-does-not-exist');
-    expect(response?.status()).toBe(404);
+    const response = await page.goto('/this-does-not-exist')
+    expect(response?.status()).toBe(404)
 
-    const pageContent = await page.textContent('body');
-    expect(pageContent).toMatch(/404|not found/i);
-  });
+    const pageContent = await page.textContent('body')
+    expect(pageContent).toMatch(/404|not found/i)
+  })
 
   test('styleguide page loads successfully', async ({ page }) => {
-    const response = await page.goto('/styleguide/');
-    expect(response?.status()).toBe(200);
-  });
+    const response = await page.goto('/styleguide/')
+    expect(response?.status()).toBe(200)
+  })
 
   test('using hub and sub-pages load', async ({ page }) => {
     for (const path of [
@@ -52,95 +52,95 @@ test.describe('Critical Path Tests', () => {
       '/using/software/',
       '/using/outdoors/',
     ]) {
-      const response = await page.goto(path);
-      expect(response?.status(), path).toBe(200);
-      await expect(page.locator('main h1')).toBeVisible();
+      const response = await page.goto(path)
+      expect(response?.status(), path).toBe(200)
+      await expect(page.locator('main h1')).toBeVisible()
     }
-  });
-});
+  })
+})
 
 test.describe('Generated Files', () => {
   test('llms.txt has expected sections', async ({ page }) => {
-    const response = await page.goto('/llms.txt');
-    expect(response?.status()).toBe(200);
+    const response = await page.goto('/llms.txt')
+    expect(response?.status()).toBe(200)
 
-    const content = await response?.text();
-    expect(content).toContain('# Danny Smith');
-    expect(content).toContain('## Articles');
-    expect(content).toContain('## Notes');
-    expect(content).toContain('## Other Pages');
-    expect(content).toContain('## External');
-  });
+    const content = await response?.text()
+    expect(content).toContain('# Danny Smith')
+    expect(content).toContain('## Articles')
+    expect(content).toContain('## Notes')
+    expect(content).toContain('## Other Pages')
+    expect(content).toContain('## External')
+  })
 
   test('site.webmanifest returns valid JSON', async ({ page }) => {
-    const response = await page.goto('/site.webmanifest');
-    expect(response?.status()).toBe(200);
+    const response = await page.goto('/site.webmanifest')
+    expect(response?.status()).toBe(200)
 
-    const contentType = response?.headers()['content-type'];
-    expect(contentType).toContain('application/manifest+json');
+    const contentType = response?.headers()['content-type']
+    expect(contentType).toContain('application/manifest+json')
 
-    const content = await response?.text();
-    const manifest = JSON.parse(content || '{}');
-    expect(manifest.name).toBe('Danny Smith');
-    expect(manifest.short_name).toBe('danny.is');
-    expect(manifest.icons).toBeInstanceOf(Array);
-    expect(manifest.icons.length).toBeGreaterThan(0);
-  });
+    const content = await response?.text()
+    const manifest = JSON.parse(content || '{}')
+    expect(manifest.name).toBe('Danny Smith')
+    expect(manifest.short_name).toBe('danny.is')
+    expect(manifest.icons).toBeInstanceOf(Array)
+    expect(manifest.icons.length).toBeGreaterThan(0)
+  })
 
   test('humans.txt contains author info', async ({ page }) => {
-    const response = await page.goto('/humans.txt');
-    expect(response?.status()).toBe(200);
+    const response = await page.goto('/humans.txt')
+    expect(response?.status()).toBe(200)
 
-    const content = await response?.text();
-    expect(content).toContain('Danny Smith');
-    expect(content).toContain('London');
-    expect(content).toContain('https://danny.is');
-  });
-});
+    const content = await response?.text()
+    expect(content).toContain('Danny Smith')
+    expect(content).toContain('London')
+    expect(content).toContain('https://danny.is')
+  })
+})
 
 test.describe('Content Filtering Tests', () => {
   test('styleguide article renders individually', async ({ page }) => {
-    const response = await page.goto('/writing/article-styleguide/');
-    expect(response?.status()).toBe(200);
-    await expect(page.locator('h1').first()).toBeVisible();
-  });
+    const response = await page.goto('/writing/article-styleguide/')
+    expect(response?.status()).toBe(200)
+    await expect(page.locator('h1').first()).toBeVisible()
+  })
 
   test('styleguide note renders individually', async ({ page }) => {
-    const response = await page.goto('/notes/note-styleguide/');
-    expect(response?.status()).toBe(200);
-    await expect(page.locator('main h1')).toBeVisible();
-  });
+    const response = await page.goto('/notes/note-styleguide/')
+    expect(response?.status()).toBe(200)
+    await expect(page.locator('main h1')).toBeVisible()
+  })
 
   test('writing page excludes styleguide even in development', async ({ page }) => {
-    await page.goto('/writing');
+    await page.goto('/writing')
 
     // Even in development, styleguide content is excluded from listings
     // Just verify there are articles shown
-    const articles = page.locator('main li');
-    expect(await articles.count()).toBeGreaterThan(0);
+    const articles = page.locator('main li')
+    expect(await articles.count()).toBeGreaterThan(0)
 
     // Check that styleguide content is NOT in the listing
-    const pageContent = await page.textContent('main');
-    expect(pageContent).not.toMatch(/Article Styleguide/i); // Should be excluded
-  });
+    const pageContent = await page.textContent('main')
+    expect(pageContent).not.toMatch(/Article Styleguide/i) // Should be excluded
+  })
 
   test('notes page shows content in development', async ({ page }) => {
-    await page.goto('/notes');
+    await page.goto('/notes')
 
     // Verify there are notes shown
-    const notes = page.locator('article');
-    expect(await notes.count()).toBeGreaterThan(0);
-  });
+    const notes = page.locator('article')
+    expect(await notes.count()).toBeGreaterThan(0)
+  })
 
   test('RSS feeds include content in development', async ({ page }) => {
-    const response = await page.goto('/rss.xml');
-    const content = await response?.text();
+    const response = await page.goto('/rss.xml')
+    const content = await response?.text()
 
     // Should contain items
-    expect(content).toContain('<item>');
+    expect(content).toContain('<item>')
 
     // Basic XML structure
-    expect(content).toContain('<?xml');
-    expect(content).toContain('<rss');
-  });
-});
+    expect(content).toContain('<?xml')
+    expect(content).toContain('<rss')
+  })
+})

@@ -6,20 +6,20 @@ import {
   Lightbox,
   LLMDiscoveryNote,
   MainNavigation,
-} from '@components/layout/index';
-import { BackToTopLink } from '@components/ui/index';
+} from '@components/layout/index'
+import { BackToTopLink } from '@components/ui/index'
 
 interface Props {
-  title: string;
-  description?: string;
-  current?: 'overview' | 'foundations' | 'typography' | 'components' | 'ui' | 'html';
-  toc?: Array<{ id: string; label: string }>;
+  title: string
+  description?: string
+  current?: 'overview' | 'foundations' | 'typography' | 'components' | 'ui' | 'html'
+  toc?: Array<{ id: string; label: string }>
 }
 
 interface StyleguideSection {
-  slug: string;
-  href: string;
-  label: string;
+  slug: string
+  href: string
+  label: string
 }
 
 const STYLEGUIDE_SECTIONS: StyleguideSection[] = [
@@ -29,9 +29,9 @@ const STYLEGUIDE_SECTIONS: StyleguideSection[] = [
   { slug: 'components', href: '/styleguide/components', label: 'Content' },
   { slug: 'ui', href: '/styleguide/ui', label: 'UI' },
   { slug: 'html', href: '/styleguide/html', label: 'HTML' },
-];
+]
 
-const { title, description, current, toc = [] } = Astro.props;
+const { title, description, current, toc = [] } = Astro.props
 ---
 
 <!doctype html>
@@ -62,7 +62,7 @@ const { title, description, current, toc = [] } = Astro.props;
           <ul class="list-reset">
             {
               STYLEGUIDE_SECTIONS.map(({ slug, href, label }) => {
-                const isActive = slug === current;
+                const isActive = slug === current
                 return (
                   <li>
                     <a
@@ -73,7 +73,7 @@ const { title, description, current, toc = [] } = Astro.props;
                       {label}
                     </a>
                   </li>
-                );
+                )
               })
             }
           </ul>

@@ -151,4 +151,4 @@ export const CONFIG = {
     // first post (2012-06-05) so the whole backfilled corpus qualifies.
     since: '2000-01-01',
   },
-} as const;
+} as const

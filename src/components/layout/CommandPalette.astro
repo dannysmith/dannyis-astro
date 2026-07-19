@@ -21,13 +21,13 @@
 // natively; ⌘/middle-click opens a new tab), action items are href-less and
 // carry a data-action dispatched by the script.
 type PaletteItem = {
-  id: string;
-  label: string;
-  group: 'Commands' | 'Navigation';
-  href?: string;
-  action?: 'copy-url';
-  keywords?: string; // extra text to match on, not shown
-};
+  id: string
+  label: string
+  group: 'Commands' | 'Navigation'
+  href?: string
+  action?: 'copy-url'
+  keywords?: string // extra text to match on, not shown
+}
 
 const items: PaletteItem[] = [
   // Commands
@@ -70,9 +70,9 @@ const items: PaletteItem[] = [
     href: '/using',
     keywords: 'uses gear setup tools',
   },
-];
+]
 
-const groups = ['Commands', 'Navigation'] as const;
+const groups = ['Commands', 'Navigation'] as const
 ---
 
 <dialog
@@ -332,49 +332,49 @@ const groups = ['Commands', 'Navigation'] as const;
 </style>
 
 <script>
-  import { search, preloadPagefind, type SearchResult } from '@utils/pagefind';
+  import { search, preloadPagefind, type SearchResult } from '@utils/pagefind'
 
   // The document-level hotkey binds once (guarded); the per-dialog wiring re-runs
   // on astro:page-load for View Transitions — the same split Tabs.astro uses.
-  let hotkeyWired = false;
+  let hotkeyWired = false
   function wireHotkey() {
-    if (hotkeyWired) return;
-    hotkeyWired = true;
+    if (hotkeyWired) return
+    hotkeyWired = true
     document.addEventListener('keydown', e => {
-      if (!((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) return;
-      const dialog = document.querySelector<HTMLDialogElement>('#command-palette');
-      if (!dialog) return;
-      e.preventDefault();
-      if (dialog.open) dialog.close();
-      else dialog.showModal();
-    });
+      if (!((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) return
+      const dialog = document.querySelector<HTMLDialogElement>('#command-palette')
+      if (!dialog) return
+      e.preventDefault()
+      if (dialog.open) dialog.close()
+      else dialog.showModal()
+    })
   }
 
   function initCommandPalette() {
-    wireHotkey();
+    wireHotkey()
 
-    const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette');
-    if (!dialogEl || dialogEl.dataset.cpReady) return;
-    dialogEl.dataset.cpReady = 'true';
-    const dialog: HTMLDialogElement = dialogEl; // non-null alias for closures
+    const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette')
+    if (!dialogEl || dialogEl.dataset.cpReady) return
+    dialogEl.dataset.cpReady = 'true'
+    const dialog: HTMLDialogElement = dialogEl // non-null alias for closures
 
-    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!;
-    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!;
-    const resultsList = dialog.querySelector<HTMLUListElement>('#cp-results-list')!;
-    const status = dialog.querySelector<HTMLParagraphElement>('.cp-status')!;
-    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')];
-    const visibleOptions = () => allOptions().filter(o => !o.hidden);
+    const input = dialog.querySelector<HTMLInputElement>('.cp-input')!
+    const list = dialog.querySelector<HTMLUListElement>('#cp-listbox')!
+    const resultsList = dialog.querySelector<HTMLUListElement>('#cp-results-list')!
+    const status = dialog.querySelector<HTMLParagraphElement>('.cp-status')!
+    const allOptions = () => [...dialog.querySelectorAll<HTMLElement>('.cp-option')]
+    const visibleOptions = () => allOptions().filter(o => !o.hidden)
 
     // Track the active option via aria-activedescendant (focus stays in the input).
     function setActive(el: HTMLElement | null) {
-      allOptions().forEach(o => delete o.dataset.active);
+      allOptions().forEach(o => delete o.dataset.active)
       if (!el) {
-        input.removeAttribute('aria-activedescendant');
-        return;
+        input.removeAttribute('aria-activedescendant')
+        return
       }
-      el.dataset.active = 'true';
-      input.setAttribute('aria-activedescendant', el.id);
-      el.scrollIntoView({ block: 'nearest' });
+      el.dataset.active = 'true'
+      input.setAttribute('aria-activedescendant', el.id)
+      el.scrollIntoView({ block: 'nearest' })
     }
 
     // Substring-filter the baked-in command/nav options (native [hidden] hides
@@ -382,9 +382,9 @@ const groups = ['Commands', 'Navigation'] as const;
     // exempt (never locally hidden).
     function filterCommands(q: string) {
       for (const o of allOptions()) {
-        if (o.classList.contains('cp-result')) continue;
-        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase();
-        o.hidden = q !== '' && !hay.includes(q);
+        if (o.classList.contains('cp-result')) continue
+        const hay = `${o.textContent ?? ''} ${o.dataset.keywords ?? ''}`.toLowerCase()
+        o.hidden = q !== '' && !hay.includes(q)
       }
     }
 
@@ -392,7 +392,7 @@ const groups = ['Commands', 'Navigation'] as const;
       return s.replace(
         /[&<>"']/g,
         c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string,
-      );
+      )
     }
 
     // One result row. The excerpt is trusted HTML (<mark> around matches, from our
@@ -402,84 +402,84 @@ const groups = ['Commands', 'Navigation'] as const;
         <span class="cp-result-title">${escapeHtml(r.title)}</span>
         <span class="cp-result-type">${escapeHtml(r.type)}</span>
         <span class="cp-result-excerpt">${r.excerpt}</span>
-      </a></li>`;
+      </a></li>`
     }
 
     function renderResults(results: SearchResult[]) {
-      resultsList.innerHTML = results.map(resultRow).join('');
+      resultsList.innerHTML = results.map(resultRow).join('')
     }
 
     // A token guards the post-debounce race: search() debounces, but a newer
     // keystroke can still land while an older call awaits its data().
-    let searchToken = 0;
+    let searchToken = 0
     async function runSearch(query: string) {
-      const token = ++searchToken;
-      const outcome = await search(query, { limit: 6 });
-      if (token !== searchToken || outcome.status === 'superseded') return;
+      const token = ++searchToken
+      const outcome = await search(query, { limit: 6 })
+      if (token !== searchToken || outcome.status === 'superseded') return
       if (outcome.status === 'unavailable') {
-        resultsList.innerHTML = '';
-        status.textContent = 'Search is unavailable right now.';
-        return;
+        resultsList.innerHTML = ''
+        status.textContent = 'Search is unavailable right now.'
+        return
       }
-      renderResults(outcome.results);
+      renderResults(outcome.results)
       status.textContent =
-        outcome.total > 0 ? `${outcome.total} result${outcome.total === 1 ? '' : 's'}` : '';
-      setActive(visibleOptions()[0] ?? null);
+        outcome.total > 0 ? `${outcome.total} result${outcome.total === 1 ? '' : 's'}` : ''
+      setActive(visibleOptions()[0] ?? null)
     }
 
     function onInput() {
-      const query = input.value.trim();
-      filterCommands(query.toLowerCase());
-      runSearch(query);
-      setActive(visibleOptions()[0] ?? null);
+      const query = input.value.trim()
+      filterCommands(query.toLowerCase())
+      runSearch(query)
+      setActive(visibleOptions()[0] ?? null)
     }
 
     // Reset query, results + highlight on close, so the next open starts fresh.
     // <input autofocus> handles focus on open.
     function reset() {
-      input.value = '';
-      resultsList.innerHTML = '';
-      status.textContent = '';
-      filterCommands('');
-      setActive(visibleOptions()[0] ?? null);
+      input.value = ''
+      resultsList.innerHTML = ''
+      status.textContent = ''
+      filterCommands('')
+      setActive(visibleOptions()[0] ?? null)
     }
-    dialog.addEventListener('close', reset);
+    dialog.addEventListener('close', reset)
 
-    input.addEventListener('input', onInput);
+    input.addEventListener('input', onInput)
     input.addEventListener('keydown', e => {
-      const opts = visibleOptions();
-      if (!opts.length) return;
-      const i = opts.findIndex(o => o.dataset.active === 'true');
+      const opts = visibleOptions()
+      if (!opts.length) return
+      const i = opts.findIndex(o => o.dataset.active === 'true')
       if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setActive(opts[(i + 1) % opts.length]);
+        e.preventDefault()
+        setActive(opts[(i + 1) % opts.length])
       } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setActive(opts[(i - 1 + opts.length) % opts.length]);
+        e.preventDefault()
+        setActive(opts[(i - 1 + opts.length) % opts.length])
       } else if (e.key === 'Enter') {
-        e.preventDefault();
-        opts[i >= 0 ? i : 0]?.click();
+        e.preventDefault()
+        opts[i >= 0 ? i : 0]?.click()
       }
-    });
+    })
 
     // Nav options are real links (navigate natively). Action options have no
     // href and carry a data-action — run it and close.
     list.addEventListener('click', e => {
-      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option');
-      if (!opt?.dataset.action) return;
-      e.preventDefault();
+      const opt = (e.target as HTMLElement).closest<HTMLElement>('.cp-option')
+      if (!opt?.dataset.action) return
+      e.preventDefault()
       if (opt.dataset.action === 'copy-url') {
-        navigator.clipboard?.writeText(location.href);
+        navigator.clipboard?.writeText(location.href)
       }
-      dialog.close();
-    });
+      dialog.close()
+    })
 
     // Prewarm Pagefind once the input is focused (i.e. the dialog just opened).
-    input.addEventListener('focus', () => preloadPagefind(), { once: true });
+    input.addEventListener('focus', () => preloadPagefind(), { once: true })
 
-    reset(); // initial state: empty query, first option highlighted
+    reset() // initial state: empty query, first option highlighted
   }
 
-  initCommandPalette();
-  document.addEventListener('astro:page-load', initCommandPalette);
+  initCommandPalette()
+  document.addEventListener('astro:page-load', initCommandPalette)
 </script>

@@ -10,7 +10,7 @@
  * `a -> SmartLink` remapping computes the same attributes itself (the
  * properties set here are spread into SmartLink and match what it renders).
  */
-import { defineHastPlugin } from 'satteri';
+import { defineHastPlugin } from 'satteri'
 
 export function satteriExternalLinks() {
   return defineHastPlugin({
@@ -18,14 +18,14 @@ export function satteriExternalLinks() {
     element: {
       filter: ['a'],
       visit(node, ctx) {
-        const href = node.properties?.href;
-        if (typeof href !== 'string' || !/^https?:\/\//.test(href)) return;
-        const { hostname } = new URL(href);
-        if (hostname === 'danny.is' || hostname.endsWith('.danny.is')) return;
+        const href = node.properties?.href
+        if (typeof href !== 'string' || !/^https?:\/\//.test(href)) return
+        const { hostname } = new URL(href)
+        if (hostname === 'danny.is' || hostname.endsWith('.danny.is')) return
 
-        ctx.setProperty(node, 'target', '_blank');
-        ctx.setProperty(node, 'rel', 'noopener noreferrer');
+        ctx.setProperty(node, 'target', '_blank')
+        ctx.setProperty(node, 'rel', 'noopener noreferrer')
       },
     },
-  });
+  })
 }

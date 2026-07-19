@@ -14,22 +14,22 @@
  */
 interface Props {
   /** Font family name, e.g. "Literata". */
-  family: string;
+  family: string
   /** Optional URL to the font's home; the family name links to it when set. */
-  url?: string;
+  url?: string
   /** Short usage label, e.g. "Long-form prose". */
-  usageTitle: string;
+  usageTitle: string
   /** CSS custom property that applies the font, e.g. "--font-prose". */
-  cssVar: string;
+  cssVar: string
   /** Optional prose describing how/why the face is used (also accepted via slot). */
-  description?: string;
+  description?: string
   /** Render the heading sample as display caps */
-  caps?: boolean;
+  caps?: boolean
 }
 
-const { family, url, usageTitle, cssVar, description, caps } = Astro.props;
+const { family, url, usageTitle, cssVar, description, caps } = Astro.props
 
-const hasDescription = description != null || Astro.slots.has('default');
+const hasDescription = description != null || Astro.slots.has('default')
 ---
 
 <div class="specimen" style={`--specimen-font: var(${cssVar})`}>

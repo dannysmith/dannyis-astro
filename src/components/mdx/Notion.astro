@@ -1,56 +1,56 @@
 ---
-import { fetchLinkPreview } from '@utils/fetchLinkPreview';
-import { Icon } from 'astro-icon/components';
+import { fetchLinkPreview } from '@utils/fetchLinkPreview'
+import { Icon } from 'astro-icon/components'
 
 export interface Props {
-  href: string;
-  title?: string; // Allow manual title override
+  href: string
+  title?: string // Allow manual title override
 }
 
-const { href, title: manualTitle } = Astro.props;
+const { href, title: manualTitle } = Astro.props
 
 // Variables with defaults
-let title = manualTitle || 'Notion Page';
-let hasFavicon = false;
-let faviconImageURL = '';
-let emoji = '';
+let title = manualTitle || 'Notion Page'
+let hasFavicon = false
+let faviconImageURL = ''
+let emoji = ''
 
 try {
   // Only fetch if no manual title provided
   if (!manualTitle) {
-    const meta = await fetchLinkPreview(href);
-    title = meta.title || 'Notion Page';
+    const meta = await fetchLinkPreview(href)
+    title = meta.title || 'Notion Page'
 
     // Clean title
     if (title?.endsWith('| Notion')) {
-      title = title.slice(0, title.lastIndexOf('| Notion')).trim();
+      title = title.slice(0, title.lastIndexOf('| Notion')).trim()
     }
 
     // Get faviconImageURL or emoji
-    const faviconURL = meta.favicon;
+    const faviconURL = meta.favicon
 
     if (faviconURL && faviconURL.includes('amazonaws.com')) {
-      hasFavicon = true;
-      faviconImageURL = faviconURL;
+      hasFavicon = true
+      faviconImageURL = faviconURL
     } else {
-      const decodedURL = decodeURIComponent(faviconURL || '');
+      const decodedURL = decodeURIComponent(faviconURL || '')
 
       // Regex pattern to match most common emojis
       const emojiRegex =
-        /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\u200D|\uFE0E|\uFE0F|\p{Extended_Pictographic})/gu;
+        /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\u200D|\uFE0E|\uFE0F|\p{Extended_Pictographic})/gu
 
-      const matches = decodedURL.match(emojiRegex) as Array<string>;
+      const matches = decodedURL.match(emojiRegex) as Array<string>
 
       if (matches?.length > 0) {
-        hasFavicon = true;
-        emoji = matches[0];
+        hasFavicon = true
+        emoji = matches[0]
       }
     }
   }
 } catch (error) {
-  console.warn(`Failed to fetch Notion page data for ${href}:`, error);
+  console.warn(`Failed to fetch Notion page data for ${href}:`, error)
   // Fallback to manual title or default
-  title = manualTitle || 'Notion Page';
+  title = manualTitle || 'Notion Page'
 }
 ---
 

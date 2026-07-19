@@ -1,8 +1,8 @@
 ---
-import { Icon } from 'astro-icon/components';
+import { Icon } from 'astro-icon/components'
 
 export interface Props {
-  class?: string;
+  class?: string
 }
 
 const options = [
@@ -13,9 +13,9 @@ const options = [
     icon: 'heroicons:computer-desktop-20-solid',
   },
   { value: 'dark', description: 'Use dark theme', icon: 'heroicons:moon-20-solid' },
-] as const;
+] as const
 
-const { class: className } = Astro.props;
+const { class: className } = Astro.props
 ---
 
 <div class:list={['theme-toggle', className]} role="radiogroup" aria-label="Choose color theme">
@@ -151,31 +151,31 @@ const { class: className } = Astro.props;
    * Relies on window.theme API (from theme script in <head>) for persistence.
    */
   function initThemeToggle() {
-    const toggle = document.querySelector<HTMLElement>('.theme-toggle');
-    if (!toggle) return;
+    const toggle = document.querySelector<HTMLElement>('.theme-toggle')
+    if (!toggle) return
 
-    updateChecked(toggle, window.theme?.current ?? 'auto');
+    updateChecked(toggle, window.theme?.current ?? 'auto')
 
     // Event delegation: single click listener for all option buttons
     toggle.addEventListener('click', e => {
-      const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-theme-option]');
-      if (button) window.theme?.set(button.dataset.themeOption as 'light' | 'dark' | 'auto');
-    });
+      const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-theme-option]')
+      if (button) window.theme?.set(button.dataset.themeOption as 'light' | 'dark' | 'auto')
+    })
   }
 
   function updateChecked(toggle: HTMLElement, theme: string) {
     toggle.querySelectorAll<HTMLButtonElement>('[data-theme-option]').forEach(btn => {
-      btn.setAttribute('aria-checked', btn.dataset.themeOption === theme ? 'true' : 'false');
-    });
+      btn.setAttribute('aria-checked', btn.dataset.themeOption === theme ? 'true' : 'false')
+    })
   }
 
   // Sync with external theme changes (e.g., other toggles or system preference changes)
   document.addEventListener('theme-changed', (e: CustomEvent) => {
-    const toggle = document.querySelector<HTMLElement>('.theme-toggle');
-    if (toggle) updateChecked(toggle, e.detail?.theme ?? 'auto');
-  });
+    const toggle = document.querySelector<HTMLElement>('.theme-toggle')
+    if (toggle) updateChecked(toggle, e.detail?.theme ?? 'auto')
+  })
 
   // Initialize on page load and after Astro view transitions
-  document.addEventListener('DOMContentLoaded', initThemeToggle);
-  document.addEventListener('astro:after-swap', initThemeToggle);
+  document.addEventListener('DOMContentLoaded', initThemeToggle)
+  document.addEventListener('astro:after-swap', initThemeToggle)
 </script>

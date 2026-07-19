@@ -11,7 +11,7 @@
  *
  * Returned in factory form so the fire-once flag resets between documents.
  */
-import { defineMdastPlugin } from 'satteri';
+import { defineMdastPlugin } from 'satteri'
 
 /** Every node type that can appear as a direct child of the mdast root. */
 const ROOT_CHILD_TYPES = [
@@ -29,7 +29,7 @@ const ROOT_CHILD_TYPES = [
   'footnoteDefinition',
   'mdxJsxFlowElement',
   'mdxFlowExpression',
-];
+]
 
 /**
  * @param {string} name  Plugin name.
@@ -37,20 +37,20 @@ const ROOT_CHILD_TYPES = [
  */
 export function defineRootPlugin(name, fn) {
   return () => {
-    let done = false;
+    let done = false
 
     function visit(node, ctx) {
-      if (done) return;
-      done = true;
+      if (done) return
+      done = true
 
-      let root = ctx.parent(node);
-      while (root && root.type !== 'root') root = ctx.parent(root);
-      if (root) fn(root, ctx);
+      let root = ctx.parent(node)
+      while (root && root.type !== 'root') root = ctx.parent(root)
+      if (root) fn(root, ctx)
     }
 
     return defineMdastPlugin({
       name,
       ...Object.fromEntries(ROOT_CHILD_TYPES.map(type => [type, visit])),
-    });
-  };
+    })
+  }
 }

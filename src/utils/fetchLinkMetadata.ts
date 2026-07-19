@@ -6,11 +6,11 @@
 /* global fetch */
 
 export interface LinkMetadata {
-  url: string;
-  title: string | null;
-  description: string | null;
-  image: string | null;
-  domain: string;
+  url: string
+  title: string | null
+  description: string | null
+  image: string | null
+  domain: string
 }
 
 /**
@@ -20,8 +20,8 @@ export interface LinkMetadata {
 export async function fetchLinkMetadata(url: string): Promise<LinkMetadata | null> {
   try {
     // Parse URL to extract domain
-    const urlObj = new URL(url);
-    const domain = urlObj.hostname.replace('www.', '');
+    const urlObj = new URL(url)
+    const domain = urlObj.hostname.replace('www.', '')
 
     // Fetch with browser-like headers to avoid 403s
     const response = await fetch(url, {
@@ -38,14 +38,14 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata | nul
       redirect: 'follow',
       // Set a reasonable timeout
       signal: AbortSignal.timeout(10000),
-    });
+    })
 
     if (!response.ok) {
-      console.warn(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
-      return null;
+      console.warn(`Failed to fetch ${url}: ${response.status} ${response.statusText}`)
+      return null
     }
 
-    const html = await response.text();
+    const html = await response.text()
 
     // Extract metadata from HTML
     const metadata: LinkMetadata = {
@@ -60,19 +60,19 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata | nul
       ]),
       description: extractMetaTag(html, ['og:description', 'twitter:description', 'description']),
       image: extractMetaTag(html, ['og:image', 'twitter:image']),
-    };
+    }
 
     // Ensure we have at least a title
     if (!metadata.title) {
-      metadata.title = domain;
+      metadata.title = domain
     }
 
-    return metadata;
+    return metadata
   } catch (error) {
     if (error instanceof Error) {
-      console.warn(`Error fetching metadata for ${url}:`, error.message);
+      console.warn(`Error fetching metadata for ${url}:`, error.message)
     }
-    return null;
+    return null
   }
 }
 
@@ -81,53 +81,53 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata | nul
  */
 function extractMetaTag(html: string, names: string[]): string | null {
   for (const name of names) {
-    let value: string | null = null;
+    let value: string | null = null
 
     // Special case for <title> tag
     if (name === '<title>') {
-      const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+      const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i)
       if (titleMatch) {
-        value = titleMatch[1];
+        value = titleMatch[1]
       }
     } else {
       // Try property="name"
       const propRegex = new RegExp(
         `<meta[^>]*property=["']${escapeRegex(name)}["'][^>]*content=["']([^"']+)["']`,
         'i',
-      );
-      const propMatch = html.match(propRegex);
+      )
+      const propMatch = html.match(propRegex)
 
       // Try name="name"
       const nameRegex = new RegExp(
         `<meta[^>]*name=["']${escapeRegex(name)}["'][^>]*content=["']([^"']+)["']`,
         'i',
-      );
-      const nameMatch = html.match(nameRegex);
+      )
+      const nameMatch = html.match(nameRegex)
 
       // Try content first, then property
       const contentRegex = new RegExp(
         `<meta[^>]*content=["']([^"']+)["'][^>]*(?:property|name)=["']${escapeRegex(name)}["']`,
         'i',
-      );
-      const contentMatch = html.match(contentRegex);
+      )
+      const contentMatch = html.match(contentRegex)
 
-      value = propMatch?.[1] || nameMatch?.[1] || contentMatch?.[1] || null;
+      value = propMatch?.[1] || nameMatch?.[1] || contentMatch?.[1] || null
     }
 
     if (value) {
       // Decode HTML entities and clean up
-      return decodeHtmlEntities(value.trim());
+      return decodeHtmlEntities(value.trim())
     }
   }
 
-  return null;
+  return null
 }
 
 /**
  * Escape special regex characters
  */
 function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 /**
@@ -142,7 +142,7 @@ function decodeHtmlEntities(text: string): string {
     '&#39;': "'",
     '&apos;': "'",
     '&nbsp;': ' ',
-  };
+  }
 
-  return text.replace(/&[#\w]+;/g, entity => entities[entity] || entity);
+  return text.replace(/&[#\w]+;/g, entity => entities[entity] || entity)
 }

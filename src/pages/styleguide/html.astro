@@ -1,14 +1,14 @@
 ---
-import StyleguideLayout from './_layout/StyleguideLayout.astro';
-import SGSwitcher from './_components/SGSwitcher.astro';
-import { ResizableContainer } from '@components/mdx/index';
-import styleguideImage from '@assets/articles/styleguide-image.jpg';
+import StyleguideLayout from './_layout/StyleguideLayout.astro'
+import SGSwitcher from './_components/SGSwitcher.astro'
+import { ResizableContainer } from '@components/mdx/index'
+import styleguideImage from '@assets/articles/styleguide-image.jpg'
 
 const toc = [
   { id: 'forms', label: 'Forms' },
   { id: 'definition-lists', label: 'Definition lists' },
   { id: 'figure', label: 'Figure & figcaption' },
-];
+]
 ---
 
 <StyleguideLayout
@@ -338,9 +338,9 @@ const toc = [
     function preventDemoFormSubmits() {
       document
         .querySelectorAll<HTMLFormElement>('.styleguide-content form')
-        .forEach(form => form.addEventListener('submit', event => event.preventDefault()));
+        .forEach(form => form.addEventListener('submit', event => event.preventDefault()))
     }
-    preventDemoFormSubmits();
-    document.addEventListener('astro:page-load', preventDemoFormSubmits);
+    preventDemoFormSubmits()
+    document.addEventListener('astro:page-load', preventDemoFormSubmits)
   </script>
 </StyleguideLayout>

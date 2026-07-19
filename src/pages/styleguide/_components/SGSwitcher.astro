@@ -13,22 +13,22 @@
  * - Default (no flow)  — bare, no wrapper
  * - UI Style           — `.ui-style` (spacing/most styles stripped)
  */
-import { Tabs, TabItem } from '@components/mdx/index';
-import { LongFormProseTypography } from '@components/layout/index';
+import { Tabs, TabItem } from '@components/mdx/index'
+import { LongFormProseTypography } from '@components/layout/index'
 
 type TypographySystem =
   | { name: string; type: 'none' }
   | { name: string; type: 'component'; component: 'LongFormProseTypography' }
-  | { name: string; type: 'class'; className: string };
+  | { name: string; type: 'class'; className: string }
 
 const typographySystems: TypographySystem[] = [
   { name: 'Default (flow)', type: 'class', className: 'flow' },
   { name: 'Long form Prose', type: 'component', component: 'LongFormProseTypography' },
   { name: 'Default (no flow)', type: 'none' },
   { name: 'UI Style', type: 'class', className: 'ui-style' },
-];
+]
 
-const content = await Astro.slots.render('default');
+const content = await Astro.slots.render('default')
 ---
 
 <Tabs>

@@ -22,11 +22,11 @@
  * no hand-built estree needed. The frontmatter `layout` is read from
  * `ctx.data.astro.frontmatter`, which Astro seeds before plugins run.
  */
-import { defineRootPlugin } from './satteri-root-plugin.mjs';
+import { defineRootPlugin } from './satteri-root-plugin.mjs'
 
 /** A module-level ESM node from a source string. */
 function esm(value) {
-  return { type: 'mdxjsEsm', value };
+  return { type: 'mdxjsEsm', value }
 }
 
 /** True if `program` (ESTree) declares a module-level `const components`. */
@@ -36,18 +36,18 @@ function programDeclaresComponents(program) {
       statement.type === 'ExportNamedDeclaration' &&
       statement.declaration?.type === 'VariableDeclaration' &&
       statement.declaration.declarations.some(declarator => declarator.id?.name === 'components'),
-  );
+  )
 }
 
 /** True if any module-level ESM among `children` exports `components`. */
 function hasComponentsExport(children) {
   return children.some(node => {
-    if (node.type !== 'mdxjsEsm') return false;
+    if (node.type !== 'mdxjsEsm') return false
     // Prefer the parsed program; fall back to a source-text check.
-    const program = typeof node.parseExpression === 'function' ? node.parseExpression() : null;
-    if (program) return programDeclaresComponents(program);
-    return /export\s+const\s+components\b/.test(node.value ?? '');
-  });
+    const program = typeof node.parseExpression === 'function' ? node.parseExpression() : null
+    if (program) return programDeclaresComponents(program)
+    return /export\s+const\s+components\b/.test(node.value ?? '')
+  })
 }
 
 /**
@@ -66,15 +66,15 @@ export function satteriMdxImports({
   pageLayout = 'Page.astro',
 }) {
   return defineRootPlugin('satteri-mdx-imports', (root, ctx) => {
-    if (ctx.sourceFormat !== 'mdx') return;
+    if (ctx.sourceFormat !== 'mdx') return
 
-    const nodes = [];
+    const nodes = []
 
     if (componentNames.length) {
-      nodes.push(esm(`import { ${componentNames.join(', ')} } from '${componentsFrom}';`));
+      nodes.push(esm(`import { ${componentNames.join(', ')} } from '${componentsFrom}';`))
     }
 
-    const layout = ctx.data.astro?.frontmatter?.layout;
+    const layout = ctx.data.astro?.frontmatter?.layout
     if (
       typeof layout === 'string' &&
       layout.split('/').pop() === pageLayout &&
@@ -85,9 +85,9 @@ export function satteriMdxImports({
           `import { ${remappingName} } from '${remappingFrom}';\n` +
             `export const components = ${remappingName};`,
         ),
-      );
+      )
     }
 
-    if (nodes.length) ctx.prependChild(root, nodes);
-  });
+    if (nodes.length) ctx.prependChild(root, nodes)
+  })
 }
