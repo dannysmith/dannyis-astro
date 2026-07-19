@@ -61,13 +61,13 @@ The `url` points at the tool's page on *betterat.work* and the `notionId` is Not
 A new **ToolCard** component requires a `CollectionEntry<'toolboxPages'>` prop and looks like this:
 
 <ResizableContainer>
-  <ToolCard tool={exampleTool} />
+  <ToolCard item={exampleTool} />
 </ResizableContainer>
 
 An optional `compact` boolean prop produces:
 
 <ResizableContainer>
-  <ToolCard tool={exampleTool} compact />
+  <ToolCard item={exampleTool} compact />
 </ResizableContainer>
 
 Both variants should respond well inside containers of any size thanks to modern CSS and container queries.

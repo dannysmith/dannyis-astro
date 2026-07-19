@@ -1,17 +1,38 @@
 ---
 /**
  * Scratchpad — a noindex page for eyeballing components in isolation.
+ *
+ * Currently: all card components (NoteCard, ProjectCard, ToolCard,
+ * ContentCard) in their full and compact variants, for the card review.
  */
-import { getCollection } from 'astro:content'
-import { BaseHead, MainNavigation } from '@components/layout/index'
-import { ToolCard } from '@components/ui/index'
+import { getCollection, render } from 'astro:content'
+import { BaseHead, MainNavigation, NoteCard } from '@components/layout/index'
+import { ContentCard, ProjectCard, ToolCard } from '@components/ui/index'
 import ResizableContainer from '@components/mdx/ResizableContainer.astro'
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
+import { filterContentForListing } from '@utils/content'
 
+// --- Sample content ---
 const toolboxPages = await getCollection('toolboxPages')
 const emojiTool = toolboxPages.find(t => t.id === 'writing-good-evergreen-documents')
 const imageIconTool = toolboxPages.find(
   t => t.id === 'creating-managing-and-archiving-slack-channels',
 )
+
+const projects = await getCollection('projects')
+const sampleProject = projects.find(p => p.id === 'astro-editor')
+
+const articles = filterContentForListing(await getCollection('articles')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)
+const articleWithCover = articles.find(a => a.data.cover)
+const articleNoCover = articles.find(a => !a.data.cover)
+
+const notes = filterContentForListing(await getCollection('notes')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)
+const sampleNote = notes.find(n => n.id === '2026-07-15-moving-uses-pages-site') ?? notes[0]
+const { Content: SampleNoteContent } = await render(sampleNote)
 ---
 
 <!doctype html>
@@ -26,22 +47,70 @@ const imageIconTool = toolboxPages.find(
   <body>
     <MainNavigation />
     <main id="main" tabindex="-1">
-      <h1>Hello world</h1>
+      <h1>Card components</h1>
+
+      <h2>NoteCard (full — primary display)</h2>
+      <ResizableContainer initialWidth="700px" minWidth="220px">
+        <NoteCard
+          title={sampleNote.data.title}
+          pubDate={sampleNote.data.pubDate}
+          sourceURL={sampleNote.data.sourceURL}
+          tags={sampleNote.data.tags}
+          slug={sampleNote.id}
+        >
+          <SampleNoteContent components={MDX_COMPONENT_REMAPPING} />
+        </NoteCard>
+      </ResizableContainer>
+
+      <h2>ProjectCard (full — primary display)</h2>
+      <ResizableContainer initialWidth="900px" minWidth="220px">
+        {sampleProject && <ProjectCard item={sampleProject} />}
+      </ResizableContainer>
+
+      <h2>ProjectCard (compact — all {projects.length} projects)</h2>
+      <ResizableContainer initialWidth="600px" minWidth="180px">
+        <div class="compact-stack">
+          {projects.map(project => <ProjectCard item={project} compact />)}
+        </div>
+      </ResizableContainer>
 
       <h2>ToolCard (emoji icon)</h2>
       <ResizableContainer initialWidth="420px" minWidth="220px">
-        {emojiTool && <ToolCard tool={emojiTool} />}
+        {emojiTool && <ToolCard item={emojiTool} />}
       </ResizableContainer>
 
       <h2>ToolCard (image icon)</h2>
       <ResizableContainer initialWidth="420px" minWidth="220px">
-        {imageIconTool && <ToolCard tool={imageIconTool} />}
+        {imageIconTool && <ToolCard item={imageIconTool} />}
       </ResizableContainer>
 
       <h2>ToolCard (compact — all {toolboxPages.length} tools)</h2>
       <ResizableContainer initialWidth="600px" minWidth="180px">
         <div class="compact-stack">
-          {toolboxPages.map(tool => <ToolCard tool={tool} compact />)}
+          {toolboxPages.map(tool => <ToolCard item={tool} compact />)}
+        </div>
+      </ResizableContainer>
+
+      <h2>ContentCard (article with cover)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        {articleWithCover && <ContentCard content={articleWithCover} />}
+      </ResizableContainer>
+
+      <h2>ContentCard (article without cover)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        {articleNoCover && <ContentCard content={articleNoCover} />}
+      </ResizableContainer>
+
+      <h2>ContentCard (note)</h2>
+      <ResizableContainer initialWidth="420px" minWidth="220px">
+        <ContentCard content={sampleNote} />
+      </ResizableContainer>
+
+      <h2>ContentCard (compact)</h2>
+      <ResizableContainer initialWidth="600px" minWidth="180px">
+        <div class="compact-stack">
+          {articles.slice(0, 2).map(article => <ContentCard content={article} compact />)}
+          <ContentCard content={sampleNote} compact />
         </div>
       </ResizableContainer>
     </main>

@@ -1641,9 +1641,9 @@ Provide a title to skip the fetch or override it:
 
     <h3 id="project-card-full">Full card</h3>
     <p>Past a wide container the image moves out to the right of everything else.</p>
-    <Code lang="mdx" code={'<ProjectCard project={project} />'} />
+    <Code lang="mdx" code={'<ProjectCard item={project} />'} />
     <ResizableContainer>
-      {sampleProject && <ProjectCard project={sampleProject} />}
+      {sampleProject && <ProjectCard item={sampleProject} />}
     </ResizableContainer>
 
     <h3 id="project-card-compact">Compact</h3>
@@ -1651,10 +1651,10 @@ Provide a title to skip the fetch or override it:
       The <code>compact</code> prop renders a linked tile that opens the project's website (then GitHub,
       then its <code>/making</code> anchor). The byline drops on very narrow containers.
     </p>
-    <Code lang="mdx" code={'<ProjectCard project={project} compact />'} />
+    <Code lang="mdx" code={'<ProjectCard item={project} compact />'} />
     <ResizableContainer>
       <div style="display: grid; gap: var(--space-s);">
-        {sampleProjects.map(project => <ProjectCard project={project} compact />)}
+        {sampleProjects.map(project => <ProjectCard item={project} compact />)}
       </div>
     </ResizableContainer>
   </section>
@@ -1701,22 +1701,22 @@ Provide a title to skip the fetch or override it:
       Below 350px of container width the icon, badges and summary shrink and the Notion link is
       dropped.
     </p>
-    <Code lang="mdx" code={'<ToolCard tool={tool} />'} />
+    <Code lang="mdx" code={'<ToolCard item={tool} />'} />
     <SGSwitcher>
       <ResizableContainer>
         <div style="display: grid; gap: var(--space-s);">
-          {sampleTools.map(tool => <ToolCard tool={tool} />)}
+          {sampleTools.map(tool => <ToolCard item={tool} />)}
         </div>
       </ResizableContainer>
     </SGSwitcher>
 
     <h3 id="tool-card-compact">Compact</h3>
     <p>The byline drops on very narrow containers.</p>
-    <Code lang="mdx" code={'<ToolCard tool={tool} compact />'} />
+    <Code lang="mdx" code={'<ToolCard item={tool} compact />'} />
     <SGSwitcher>
       <ResizableContainer>
         <div style="display: grid; gap: var(--space-s);">
-          {sampleTools.map(tool => <ToolCard tool={tool} compact />)}
+          {sampleTools.map(tool => <ToolCard item={tool} compact />)}
         </div>
       </ResizableContainer>
     </SGSwitcher>

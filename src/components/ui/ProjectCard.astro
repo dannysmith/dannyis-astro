@@ -5,6 +5,7 @@ import { Image } from 'astro:assets'
 import { Icon } from 'astro-icon/components'
 import Pill from '@components/ui/Pill.astro'
 import ProjectIcon from '@components/ui/ProjectIcon.astro'
+import CompactCardTile from './CompactCardTile.astro'
 
 // Types derived from the schema, so adding an enum value in content.config.ts
 // forces these maps to be updated.
@@ -69,19 +70,19 @@ const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
 }
 
 interface Props {
-  project: CollectionEntry<'projects'>
+  item: CollectionEntry<'projects'>
   /** Compact tile: icon + title + byline, the whole card links out. */
   compact?: boolean
 }
 
-const { project, compact = false } = Astro.props
-const { title, byline, stage, audience, icon, image, website, github } = project.data
+const { item, compact = false } = Astro.props
+const { title, byline, stage, audience, icon, image, website, github } = item.data
 
 // Compact links out to the project (website → GitHub → its /making anchor); the
 // full card renders the markdown body inline (no per-project routes).
-const compactHref = website ?? github ?? `/making#${project.id}`
+const compactHref = website ?? github ?? `/making#${item.id}`
 const compactIsExternal = Boolean(website ?? github)
-const Content = compact ? null : (await render(project)).Content
+const Content = compact ? null : (await render(item)).Content
 
 // Status pill first, audience pill (when not plainly public) after.
 const audienceMeta = AUDIENCE_META[audience]
@@ -97,20 +98,11 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
 
 {
   compact ? (
-    <a
-      class="project-card-compact ui-style"
-      href={compactHref}
-      target={compactIsExternal ? '_blank' : undefined}
-      rel={compactIsExternal ? 'noopener' : undefined}
-    >
+    <CompactCardTile href={compactHref} title={title} byline={byline} external={compactIsExternal}>
       <ProjectIcon icon={icon} title={title} />
-      <span class="compact-text">
-        <span class="compact-title">{title}</span>
-        <span class="compact-byline">{byline}</span>
-      </span>
-    </a>
+    </CompactCardTile>
   ) : (
-    <article class="project-card ui-style" id={project.id}>
+    <article class="project-card ui-style" id={item.id}>
       <div class="identity">
         <div class="icon">
           <ProjectIcon icon={icon} title={title} />
@@ -321,69 +313,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     .byline {
       text-transform: none;
       font-size: var(--font-size-sm);
-    }
-  }
-
-  /* ---- Compact variant: a single clickable tile (icon + title + byline) ---- */
-  .project-card-compact {
-    --_icon-size: 3rem;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-    padding: var(--space-s);
-    overflow: hidden;
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background-color: var(--color-background-secondary);
-    text-decoration: none;
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-  }
-
-  /* Accent bar that grows on hover/focus — the site's ContentCard idiom. */
-  .project-card-compact::before {
-    content: '';
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 0;
-    inline-size: var(--border-width-thick);
-    background: var(--color-accent);
-    transition: inline-size var(--duration-fast) var(--ease-in-out);
-  }
-
-  .project-card-compact:is(:hover, :focus-visible) {
-    border-color: var(--color-accent);
-
-    &::before {
-      inline-size: var(--border-width-heavy);
-    }
-  }
-
-  .compact-text {
-    display: flex;
-    flex-direction: column;
-    min-inline-size: 0;
-  }
-
-  .compact-title {
-    font-family: var(--font-display);
-    font-weight: var(--font-weight-extrabold);
-    text-transform: uppercase;
-    font-feature-settings: 'case' on;
-    line-height: var(--leading-tight);
-    color: var(--color-text);
-  }
-
-  .compact-byline {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    text-wrap: pretty;
-  }
-
-  /* Respond to the container: drop the byline once the tile gets tight. */
-  @container (max-width: 20rem) {
-    .compact-byline {
-      display: none;
     }
   }
 </style>
