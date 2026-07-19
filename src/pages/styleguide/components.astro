@@ -26,7 +26,7 @@ import {
 } from '@components/mdx/index'
 import { BaselineStatus, BlueskyPost, Gist, MastodonPost, Tweet, Vimeo, YouTube } from 'astro-embed'
 import { Code } from 'astro-expressive-code/components'
-import { NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { ArticleCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
 import { Content as MermaidContent } from './_snippets/mermaid.mdx'
 import { Image, Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
@@ -49,6 +49,7 @@ const toc = [
   { id: 'mermaid', label: 'Mermaid diagrams' },
   { id: 'basic-image', label: 'BasicImage' },
   { id: 'astro-image', label: 'Astro Image & Picture' },
+  { id: 'article-card', label: 'ArticleCard' },
   { id: 'content-card', label: 'ContentCard' },
   { id: 'note-card', label: 'NoteCard' },
   { id: 'project-card', label: 'ProjectCard' },
@@ -1418,6 +1419,63 @@ Provide a title to skip the fetch or override it:
       alt="Using Astro's Picture component"
       width={600}
     />
+  </section>
+
+  <section id="article-card" class="flow">
+    <h2>ArticleCard</h2>
+    <p>
+      ArticleCard links to an article from the <code>articles</code> collection — the article itself lives
+      at <code>/writing/…</code>, the card shows the pertinent info and points there. Intended for
+      grids and other collection-index contexts. The full card shows an optional cover with an
+      "Article" badge (plus a platform badge for externally-published pieces; coverless cards get a
+      meta row instead), the title, a summary and a footer with dates, a series indicator and
+      reading time. The <code>compact</code> variant is a small linked tile. Both respond to their
+      <em>container</em> width — drag the handles below to see them adapt.
+    </p>
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>item</code></td>
+          <td><code>CollectionEntry&lt;'articles'&gt;</code></td>
+          <td><em>required</em></td>
+          <td>The article entry to render.</td>
+        </tr>
+        <tr>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>
+            Render a small linked tile (title + "Article · date · reading time" byline) instead of
+            the full card.
+          </td>
+        </tr>
+      </tbody>
+    </WrappedTable>
+
+    <h3 id="article-card-full">Full card</h3>
+    <Code lang="mdx" code={'<ArticleCard item={article} />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.map(article => <ArticleCard item={article} />)}
+      </div>
+    </ResizableContainer>
+
+    <h3 id="article-card-compact">Compact</h3>
+    <p>The byline drops on very narrow containers.</p>
+    <Code lang="mdx" code={'<ArticleCard item={article} compact />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.map(article => <ArticleCard item={article} compact />)}
+      </div>
+    </ResizableContainer>
   </section>
 
   <section id="content-card" class="flow">

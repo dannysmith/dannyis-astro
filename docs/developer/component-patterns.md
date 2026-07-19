@@ -183,25 +183,16 @@ Apply to any container that:
 
 See [architecture-guide.md § Component Organization](./architecture-guide.md#component-organization) for the directory structure. Each category uses barrel exports for clean imports.
 
-### Layout Components vs UI Components
+### The card family
 
-Understanding the distinction between `layout/` and `ui/` components:
+Every content collection has one card component in `ui/`, and they all share the same external interface: `item: CollectionEntry<'…'>` plus `compact?: boolean`.
 
-**NoteCard (in layout/):**
-- Used specifically for notes listings
-- Part of the page layout structure
-- Tightly coupled to notes display patterns
-- Contains rendering logic for MDX content
+- **Primary display cards** — `NoteCard`, `ProjectCard`. The full card *is* how the content type is rendered on the site: both call `render(item)` internally and render the whole body. They stay fully-featured down to narrow container widths (they adapt, but never auto-degrade to compact). `NoteCard` additionally takes `standalone` — set only on the note's own page — which gates Pagefind indexing, sharing and the back-to-top link.
+- **Links-to-longer-content cards** — `ArticleCard`, `ToolCard`. The content lives elsewhere (the article page, betterat.work); the card shows the pertinent info plus a summary and links out. Mostly used in grids and collection indexes.
+- **Compact variants** — every card's `compact` prop renders `CompactCardTile` (internal to `ui/`, not in the barrel): a single clickable icon/title/byline tile with a per-type accent colour (article/project = accent, note = blue, tool = green). Compact is an explicit caller choice, never a container-width fallback.
+- **`ContentCard` (in `mdx/`)** — a dispatcher for MDX content: `<ContentCard item="collection/id" compact />` looks the entry up and renders the right card. Auto-imported in MDX via the barrel.
 
-**ContentCard (in ui/):**
-- Generic reusable card component
-- Can be used for any content type (articles, notes, toolbox)
-- More flexible, accepts arbitrary content
-- Focused on presentation over content-specific logic
-
-Both serve similar visual purposes but have different architectural roles. When creating a new card-like component, ask:
-- Is it tied to a specific content type or page layout? → `layout/`
-- Is it a reusable UI pattern for multiple contexts? → `ui/`
+Full variants are deliberately bespoke — the shared tile is the only cross-card abstraction.
 
 ### Barrel Export Pattern
 
@@ -210,7 +201,6 @@ Both serve similar visual purposes but have different architectural roles. When 
 export { default as BaseHead } from './BaseHead.astro';
 export { default as Footer } from './Footer.astro';
 export { default as MainNavigation } from './MainNavigation.astro';
-export { default as NoteCard } from './NoteCard.astro';
 ```
 
 ### Adding New Components

@@ -28,7 +28,7 @@ What gets indexed is controlled by `data-pagefind-*` attributes on the content l
 - **`data-pagefind-ignore`** removes bits we don't want in results (TOC, footer actions, a note's date and source embed).
 - **`data-pagefind-meta`** carries `type` / `title` / `date` through to results, for grouping and a recency sort.
 
-See `Article.astro`, `NoteCard.astro`, `Page.astro` and `making.astro`. `NoteCard` only marks itself as the body on the standalone note page (via its `indexAsBody` prop), so listing pages don't turn every note into a separate result.
+See `Article.astro`, `NoteCard.astro` (in `components/ui/`), `Page.astro` and `making.astro`. `NoteCard` only marks itself as the body on the note's own page (via its `standalone` prop), so listing pages don't turn every note into a separate result.
 
 ## Why the build integration is ours
 
