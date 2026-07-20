@@ -111,20 +111,23 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
     line-height: var(--leading-none);
   }
 
-  /* One grid drives the content sections. Placement lives in
-     `grid-template-areas`, so rearranging the layout is a matter of editing the
-     template alone — every section reflows to wherever its area moves. Narrow
-     viewports collapse to a single stacked column. */
+  /* One grid drives the content sections; placement lives in
+     `grid-template-areas`, so each layout is just a different template. It
+     densifies mobile-first through the breakpoints below: a stacked column,
+     then the card sections pair up, then links and writing pair, and finally
+     the wide layout tucks the notes between them. */
   .home-grid {
     display: grid;
-    padding-inline: var(--space-m);
+    padding-inline: var(--space-s);
     margin-block-start: var(--space-2xl);
-    gap: var(--space-2xl) var(--space-l);
-    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+    grid-template-columns: 1fr;
     grid-template-areas:
-      'links   .       writing writing'
-      'notes   notes   notes   notes'
-      'toolbox toolbox projects projects';
+      'links'
+      'writing'
+      'notes'
+      'toolbox'
+      'projects';
   }
 
   .home-links {
@@ -173,22 +176,54 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
     display: none;
   }
 
-  @media (max-width: 48rem) {
+  /* First grid step: pair the toolbox and projects card sections; links,
+     writing and notes stay full-width. */
+  @media (min-width: 40rem) {
     .home-grid {
-      grid-template-columns: 1fr;
+      padding-inline: var(--space-m);
+      gap: var(--space-2xl) var(--space-l);
+      grid-template-columns: 1fr 1fr;
       grid-template-areas:
-        'links'
-        'writing'
-        'notes'
-        'toolbox'
-        'projects';
-      gap: var(--space-xl);
-      padding-inline: var(--space-s);
+        'links   links'
+        'writing writing'
+        'notes   notes'
+        'toolbox toolbox'
+        'projects projects';
     }
 
-    /* Keep the mobile stack calm — no tilt. */
-    .home-writing {
-      rotate: none;
+    /* Toolbox and projects each get a two-column card grid. Cards stretch to
+       the full height of their row on their own (grid stretch + each card's
+       flex-grow footer), so no subgrid is needed. */
+    .home-toolbox .card-grid,
+    .home-projects .card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Pair links with writing too; notes take their own full-width row. */
+  @media (min-width: 56rem) {
+    .home-grid {
+      grid-template-areas:
+        'links   writing'
+        'notes   notes'
+        'toolbox toolbox'
+        'projects projects';
+    }
+  }
+
+  /* Wide: links, a vertical stack of notes, and recent writing across the top;
+     toolbox and projects paired below. */
+  @media (min-width: 72rem) {
+    .home-grid {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-areas:
+        'links   notes   writing writing'
+        'toolbox toolbox projects projects';
+    }
+
+    /* Notes become a single-column vertical stack in their middle slot. */
+    .home-notes .card-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
