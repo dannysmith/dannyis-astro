@@ -7,15 +7,15 @@ import {
   LLMDiscoveryNote,
   MainNavigation,
 } from '@components/layout/index'
-import { FormattedDate, NoteCard } from '@components/ui/index'
+import { NoteCard } from '@components/ui/index'
 import { filterContentForListing } from '@utils/content'
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 )
 
-// Split notes into recent and archive
-const numberOfRecentNotes = 5
+// Latest few shown in full; the rest as compact cards below.
+const numberOfRecentNotes = 2
 const recentNotes = notes.slice(0, numberOfRecentNotes)
 const olderNotes = notes.slice(numberOfRecentNotes)
 ---
@@ -36,10 +36,10 @@ const olderNotes = notes.slice(numberOfRecentNotes)
       <LLMDiscoveryNote />
       <h1 class="title ui-style">Notes</h1>
 
-      <!-- Recent Notes as Cards (prose styling for content) -->
+      <!-- Latest notes, shown in full -->
       {
         recentNotes.length > 0 && (
-          <section class="recent-notes" aria-label="Recent Notes">
+          <section class="recent-notes" aria-label="Recent notes">
             {recentNotes.map(note => (
               <div class="note-container cq" style={`--vt-name: note-${note.id}`}>
                 <NoteCard item={note} />
@@ -49,24 +49,17 @@ const olderNotes = notes.slice(numberOfRecentNotes)
         )
       }
 
-      <!-- Archive List (UI styling) -->
+      <!-- Older notes as compact cards -->
       {
         olderNotes.length > 0 && (
-          <section class="archive-section ui-style" aria-label="Archive">
+          <section class="archive-section" aria-label="Older notes">
             <div class="archive-content">
-              <h2 class="archive-title">Older Notes</h2>
-              <ul class="archive-list list-reset">
+              <h2 class="archive-title ui-style">Older Notes</h2>
+              <div class="notes-grid">
                 {olderNotes.map(note => (
-                  <li>
-                    <a href={`/notes/${note.id}/`}>
-                      <p class="date all-caps">
-                        <FormattedDate date={note.data.pubDate} />
-                      </p>
-                      <h3 class="note-title">{note.data.title}</h3>
-                    </a>
-                  </li>
+                  <NoteCard item={note} compact />
                 ))}
-              </ul>
+              </div>
             </div>
           </section>
         )
@@ -99,8 +92,14 @@ const olderNotes = notes.slice(numberOfRecentNotes)
       }
 
       .archive-content {
-        max-width: var(--measure-standard);
+        max-width: 56rem;
         width: 100%;
+      }
+
+      .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+        gap: var(--space-m);
       }
 
       .recent-notes,
@@ -132,24 +131,6 @@ const olderNotes = notes.slice(numberOfRecentNotes)
         border-bottom: var(--border-width-base) solid var(--color-border);
       }
 
-      .date {
-        font-size: var(--font-size-xs);
-        color: var(--color-text-secondary);
-      }
-
-      .note-title {
-        font-size: var(--font-size-md);
-        font-weight: var(--font-weight-extrabold);
-        line-height: var(--leading-tight);
-        padding-bottom: var(--space-3xs);
-        border-bottom: var(--border-width-thick) solid var(--color-accent);
-        transition: color var(--duration-fast) var(--ease-in-out);
-
-        a:hover & {
-          color: var(--color-accent);
-        }
-      }
-
       @media (min-width: 800px) {
         .recent-notes,
         .archive-section {
@@ -158,30 +139,6 @@ const olderNotes = notes.slice(numberOfRecentNotes)
 
         .recent-notes {
           padding-top: var(--space-2xl);
-        }
-
-        .archive-list {
-          display: grid;
-          grid-template-columns: auto auto;
-          justify-content: start;
-          gap: var(--space-m) var(--space-s);
-
-          & li {
-            display: grid;
-            grid-template-columns: subgrid;
-            grid-column: 1 / -1;
-          }
-
-          & a {
-            display: grid;
-            grid-template-columns: subgrid;
-            grid-column: 1 / -1;
-            align-items: baseline;
-          }
-        }
-
-        .date {
-          text-align: right;
         }
       }
     </style>
