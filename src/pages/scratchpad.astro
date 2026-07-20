@@ -7,19 +7,24 @@
  */
 import { getCollection } from 'astro:content'
 import { BaseHead, MainNavigation } from '@components/layout/index'
-import { ProjectCard, ToolCard } from '@components/ui/index'
+import { NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { filterContentForListing } from '@utils/content'
 import {
   LLMDiscoveryNote,
   CommandPalette,
   Footer,
   HomepageLatestArticles,
-  HomepageLatestNotes,
 } from '@components/layout/index'
 
 // --- Featured projects ---
 const projects = await getCollection('projects')
 const featuredProjects = projects.filter(p => p.data.featured)
 const projectsToShow = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4)
+
+// --- Latest notes ---
+const notes = filterContentForListing(await getCollection('notes'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4)
 
 // --- Random toolbox pages ---
 const toolboxPages = await getCollection('toolboxPages')
@@ -46,8 +51,9 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
         </div>
       </section>
       <section id="latest-notes">
-        <div class="cq">
-          <HomepageLatestNotes />
+        <h2>Recent notes</h2>
+        <div class="stack">
+          {notes.map(note => <NoteCard item={note} compact />)}
         </div>
       </section>
       <section id="from-the-toolbox">
@@ -78,7 +84,8 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
   }
 
   #featured-projects,
-  #from-the-toolbox {
+  #from-the-toolbox,
+  #latest-notes {
     margin: 0 auto;
     padding: var(--space-xl);
 
