@@ -8,13 +8,12 @@ import ProjectIcon from '@components/ui/ProjectIcon.astro'
 import CompactCardTile from './CompactCardTile.astro'
 import { generateSummary } from '@utils/content-summary'
 
-// Types derived from the schema, so adding an enum value in content.config.ts
-// forces these maps to be updated.
+// Types derived from the schema
 type ProjectStage = CollectionEntry<'projects'>['data']['stage']
 type ProjectAudience = CollectionEntry<'projects'>['data']['audience']
 
 // Pill metadata mirrors Pill's props (text + hover title), so it can be spread
-// straight onto <Pill>. No colour => the pill's default outline style.
+// straight onto <Pill>.
 interface PillMeta {
   text: string
   title: string
@@ -22,7 +21,6 @@ interface PillMeta {
   icon?: string
 }
 
-// Stage pill — always shown.
 const STAGE_META: Record<ProjectStage, PillMeta> = {
   'active-development': {
     text: 'In active development',
@@ -97,14 +95,11 @@ const compactHref = website ?? github ?? `/making#${item.id}`
 const compactIsExternal = Boolean(website ?? github)
 const Content = full ? (await render(item)).Content : null
 
-// Medium card summary: first meaningful paragraph of the body, truncated.
 const summary = full || compact ? '' : generateSummary(item, 220)
 
-// Status pill first, audience pill (when not plainly public) after.
 const audienceMeta = AUDIENCE_META[audience]
 const pills: PillMeta[] = audienceMeta ? [STAGE_META[stage], audienceMeta] : [STAGE_META[stage]]
 
-// External links, rendered as buttons — GitHub before website.
 type ProjectLink = { href: string; variant: 'primary' | 'secondary'; label: string; icon?: string }
 const links: ProjectLink[] = []
 if (github)
@@ -208,9 +203,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
 }
 
 <style>
-  /* Narrow (default): a single column — identity, then image, then content.
-     Source order already matches, so no reordering needed here. The container
-     itself is set by the consumer (e.g. .cq on the making page), not here. */
   .project-card {
     display: grid;
     gap: var(--space-m);
@@ -224,7 +216,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     background-color: var(--color-background-secondary);
   }
 
-  /* Narrow: icon on the left; header and meta stacked in the column beside it. */
   .identity {
     grid-area: identity;
     display: grid;
@@ -306,7 +297,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
       scale: 0.98;
     }
 
-    /* Primary (website): solid accent, always dark text for contrast. */
+    /* Primary (website) */
     &[data-variant='primary'] {
       background-color: var(--color-accent);
       color: var(--color-ink);
@@ -316,7 +307,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
       }
     }
 
-    /* Secondary (GitHub): outline that picks up the accent on hover. */
+    /* Secondary (GitHub)  */
     &[data-variant='secondary'] {
       background-color: transparent;
       color: var(--color-text);
@@ -333,7 +324,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
       block-size: 1.15em;
     }
 
-    /* Trailing arrow — decorative, so a pseudo-element keeps it out of the DOM. */
     &::after {
       content: '→';
       transition: translate var(--duration-fast) var(--ease-in-out);
@@ -351,8 +341,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     border-radius: var(--radius-md);
   }
 
-  /* Wide: image out to the right; identity back to a single row with the status
-     on the right. Placed last so these overrides win over the narrow base rules. */
+  /* Wide: image out to the right etc */
   @container (min-width: 55rem) {
     .project-card {
       grid-template-columns: 1fr minmax(0, 20rem);
@@ -420,7 +409,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     }
   }
 
-  /* The link grows so the footer always sits at the bottom of the card. */
   .card-link {
     flex-grow: 1;
 
@@ -430,9 +418,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     }
   }
 
-  /* Cover strip; badges sit in its corners. The height cap stops the 3:1 ratio
-     producing an enormous cover in very wide containers. A base fill gives
-     image-less projects a visible header strip. */
   .card-cover {
     position: relative;
     inline-size: 100%;
@@ -441,7 +426,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     background-color: var(--color-white);
   }
 
-  /* Pin the responsive image to the (capped) cover box — see ArticleCard. */
   .card-cover :global(img) {
     position: absolute;
     inset: 0;
@@ -470,14 +454,12 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     inset-inline-start: var(--space-2xs);
   }
 
-  /* Same dark translucent treatment, tinted per status. */
   .status-badge {
     inset-block-end: var(--space-2xs);
     inset-inline-end: var(--space-2xs);
     background-color: oklch(from var(--_badge-color) 35% c h / 80%);
   }
 
-  /* Icon half-overlaps the bottom edge of the cover, Notion-style. */
   .card-icon {
     position: relative;
     display: block;
@@ -487,7 +469,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     line-height: 1;
   }
 
-  /* Title and summary spacing lean on the .ui-style defaults. */
   .card-content {
     padding-block: var(--space-2xs) var(--space-s);
     padding-inline: var(--space-s);
@@ -507,7 +488,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     font-size: var(--font-size-sm);
     line-height: var(--leading-normal);
 
-    /* Already ~first paragraph; clamp defensively. */
+    /* Defensive clamp */
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 6;

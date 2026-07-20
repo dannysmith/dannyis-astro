@@ -68,14 +68,14 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
           </div>
         </section>
 
-        <section class="home-toolbox" aria-label="From the toolbox">
+        <section class="home-toolbox" aria-label="A few random tools from the toolbox">
           <h2 class="section-heading">Random tools from <a href="/toolbox">the toolbox</a></h2>
           <div class="card-grid">
             {randomTools.map(tool => <ToolCard item={tool} />)}
           </div>
         </section>
 
-        <section class="home-projects" aria-label="Featured projects">
+        <section class="home-projects" aria-label="Current projects">
           <h2 class="section-heading">Current <a href="/projects">projects</a></h2>
           <div class="card-grid">
             {projectsToShow.map(project => <ProjectCard item={project} />)}
@@ -98,34 +98,22 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
 </html>
 
 <style>
-  /* Breathing room before the footer (padding so it can't margin-collapse). */
   .home {
     padding-block-end: var(--space-2xl);
   }
 
-  /* The title is always the same, so it sits outside the content grid and
-     bleeds to the page edge exactly as before. */
   .home-title {
     font-family: var(--font-display);
     font-size: clamp(3rem, 14.3vw, 22rem);
     font-weight: var(--font-weight-extrabold);
     text-transform: uppercase;
     font-feature-settings: 'case' on;
-    /* Nudge up visually with transform, not a negative margin: as a plain
-       block child (no longer a grid item) a negative margin-top would collapse
-       into <body> and, scaling with the vw font, drag the whole page — and the
-       absolutely-positioned nav hamburger — upward as the viewport widens. */
     margin-top: 0;
     transform: translateY(-0.1em);
     pointer-events: none;
     line-height: var(--leading-none);
   }
 
-  /* One grid drives the content sections; placement lives in
-     `grid-template-areas`, so each layout is just a different template. It
-     densifies mobile-first through the breakpoints below: a stacked column,
-     then the card sections pair up, then links and writing pair, and finally
-     the wide layout tucks the notes between them. */
   .home-grid {
     display: grid;
     padding-inline: var(--space-s);
@@ -148,8 +136,6 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
   .home-writing {
     grid-area: writing;
     container-type: inline-size;
-    /* Playground: a jaunty tilt — tune or drop. */
-    /* rotate: 20deg; */
     border-block-start: var(--border-width-accent) solid var(--color-accent);
   }
 
@@ -166,10 +152,6 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
     grid-area: projects;
   }
 
-  /* When toolbox and projects sit side by side (wide layout) they already
-     stretch to a shared row height. Make each a flex column and let its card
-     grid fill that height (with 1fr rows), so all the cards match — footers
-     aligned — without needing subgrid. */
   .home-toolbox,
   .home-projects {
     display: flex;
@@ -206,8 +188,6 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
     display: none;
   }
 
-  /* First grid step: pair the toolbox and projects card sections; links,
-     writing and notes stay full-width. */
   @media (min-width: 40rem) {
     .home-grid {
       padding-inline: var(--space-m);
@@ -221,16 +201,12 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
         'projects projects';
     }
 
-    /* Toolbox and projects each get a two-column card grid. Cards stretch to
-       the full height of their row on their own (grid stretch + each card's
-       flex-grow footer), so no subgrid is needed. */
     .home-toolbox .card-grid,
     .home-projects .card-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* Pair links with writing too; notes take their own full-width row. */
   @media (min-width: 56rem) {
     .home-grid {
       grid-template-areas:
@@ -241,8 +217,6 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
     }
   }
 
-  /* Wide: links, a vertical stack of notes, and recent writing across the top;
-     toolbox and projects paired below. */
   @media (min-width: 72rem) {
     .home-grid {
       grid-template-columns: repeat(4, 1fr);
@@ -251,7 +225,6 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
         'toolbox toolbox projects projects';
     }
 
-    /* Notes become a single-column vertical stack in their middle slot. */
     .home-notes .card-grid {
       grid-template-columns: 1fr;
     }

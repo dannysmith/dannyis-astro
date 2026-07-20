@@ -56,7 +56,6 @@ const icon = Astro.slots.has('default') ? (await Astro.slots.render('default')).
     text-decoration: none;
     transition: border-color var(--duration-fast) var(--ease-in-out);
 
-    /* Left accent bar that grows on hover/focus — the site's card idiom. */
     &::before {
       content: '';
       position: absolute;

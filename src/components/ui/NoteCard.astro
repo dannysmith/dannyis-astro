@@ -25,13 +25,9 @@ import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
 interface Props {
   /** A `notes` collection entry */
   item: CollectionEntry<'notes'>
-  /** Render the compact tile instead of the full card */
   compact?: boolean
-  /**
-   * This card is the note's own page (the Note layout): marks it as the
-   * Pagefind search-body (listings must stay unindexed so each note is one
-   * result), enables sharing and adds a back-to-top link.
-   */
+  /* Set true on the note's own page (the Note layout): marks it as the Pagefind
+     search-body (listings must stay unindexed so each note is one result), */
   standalone?: boolean
 }
 
@@ -39,7 +35,7 @@ const { item, compact = false, standalone = false } = Astro.props
 const { title, pubDate, sourceURL, tags = [] } = item.data
 
 const href = `/notes/${item.id}/`
-// Root-relative URL of the raw markdown twin (served by [...slug].md.ts).
+// Root-relative URL of the raw markdown twin.
 const markdownUrl = `/notes/${item.id}.md`
 const Content = compact ? null : (await render(item)).Content
 

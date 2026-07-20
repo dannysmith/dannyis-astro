@@ -92,16 +92,19 @@
     }
 
     & strong {
-      letter-spacing: var(--tracking-wider);
       font-weight: var(--font-weight-heavy);
     }
   }
 
-  @media (max-width: 500px) {
-    .link-list a {
+  @media (max-width: 30rem) {
+    .link-list {
+      inline-size: 100%;
+    }
+
+    a {
       display: flex;
       flex-wrap: wrap;
-      min-height: var(--space-l);
+      min-height: var(--space-md);
       align-items: end;
       gap: var(--space-3xs);
     }
