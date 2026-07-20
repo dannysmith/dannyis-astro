@@ -44,7 +44,6 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
                     {post.data.draft && <span class="draft-marker"> 🚧</span>}
                     {post.data.platform && (
                       <>
-                        {' '}
                         <Pill text={post.data.platform} color="var(--color-green)" />
                       </>
                     )}

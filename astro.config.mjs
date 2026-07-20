@@ -50,6 +50,11 @@ const mdxComponentNames = readFileSync(new URL(mdxBarrelPath, import.meta.url), 
 export default defineConfig({
   site: 'https://danny.is',
   prefetch: true,
+  // HTML-aware whitespace compression (the pre-v7 default). Keeps a single
+  // space between inline elements per HTML rules, matching what Prettier
+  // assumes when it wraps prose in .astro files. The v7 default 'jsx' strips
+  // tag-adjacent whitespace, which silently deletes those spaces.
+  compressHTML: true,
   vite: {
     optimizeDeps: {
       exclude: ['@resvg/resvg-js'],

@@ -95,7 +95,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
           Added <FormattedDate date={data.created} />
           {!updatedSameDay && (
             <>
-              {' '}
               · Updated <FormattedDate date={data.lastEdited} />
             </>
           )}
