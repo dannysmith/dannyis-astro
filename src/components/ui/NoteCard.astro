@@ -2,7 +2,7 @@
 import { type CollectionEntry, render } from 'astro:content'
 import { BackToTopLink, FormattedDate, MarkdownContentActions, Pill } from '@components/ui/index'
 import { Embed } from '@components/mdx/index'
-import CompactCardTile from './CompactCardTile.astro'
+import CompactNoteCard from './CompactNoteCard.astro'
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
 
 /**
@@ -47,18 +47,11 @@ const Content = compact ? null : (await render(item)).Content
 // when this card is the page's search body. Date-only avoids colons, which the
 // comma-separated `data-pagefind-meta` syntax would otherwise split on.
 const pubIso = pubDate.toISOString().slice(0, 10)
-
-// Compact byline, e.g. "Note · Jul 15, 2026"
-const byline = `Note · ${pubDate.toLocaleDateString('en-us', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-})}`
 ---
 
 {
   compact ? (
-    <CompactCardTile href={href} title={title} byline={byline} accentColor="var(--color-blue)" />
+    <CompactNoteCard item={item} />
   ) : (
     <article
       class="note h-entry cq surface-white"
