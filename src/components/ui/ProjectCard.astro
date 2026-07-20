@@ -192,15 +192,13 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
           {github && (
             <a class="footer-link" href={github} target="_blank" rel="noopener">
               <Icon name="social/github" />
-              Code
+              GitHub
             </a>
           )}
           {website && (
             <a class="footer-link" href={website} target="_blank" rel="noopener">
+              <Icon name="heroicons:globe-alt-20-solid" />
               Website
-              <span class="external-arrow" aria-hidden="true">
-                ↗
-              </span>
             </a>
           )}
         </footer>
