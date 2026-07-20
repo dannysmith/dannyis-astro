@@ -111,7 +111,12 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2
     font-weight: var(--font-weight-extrabold);
     text-transform: uppercase;
     font-feature-settings: 'case' on;
-    margin-top: -0.1em;
+    /* Nudge up visually with transform, not a negative margin: as a plain
+       block child (no longer a grid item) a negative margin-top would collapse
+       into <body> and, scaling with the vw font, drag the whole page — and the
+       absolutely-positioned nav hamburger — upward as the viewport widens. */
+    margin-top: 0;
+    transform: translateY(-0.1em);
     pointer-events: none;
     line-height: var(--leading-none);
   }
