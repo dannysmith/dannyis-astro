@@ -2,30 +2,87 @@
 /**
  * HomepageLatestNotes — the "Recent notes" section of the homepage.
  * Owns its own data fetching so it can be dropped in standalone.
+ *
+ * Renders each note as a bespoke mini-card (used only here) — a pared-down
+ * take on the main NoteCard idiom: white raised surface, coral dot grid and
+ * top accent bar, showing date, title and a short summary.
  */
 import { getCollection } from 'astro:content'
-import { NoteCard } from '@components/ui/index'
+import { FormattedDate } from '@components/ui/index'
 import { filterContentForListing } from '@utils/content'
+import { generateSummary } from '@utils/content-summary'
 
 const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 )
 const latestNotes = notes.slice(0, 4)
+
+// Description → cleaned first paragraph → title fallback (see generateSummary)
+const items = latestNotes.map(note => ({ note, summary: generateSummary(note, 140) }))
 ---
 
-<section id="latest-notes">
-  <h2>Recent notes</h2>
-  <div class="stack">
-    {latestNotes.map(note => <NoteCard item={note} compact />)}
-  </div>
-</section>
+<ul class="list-reset note-list ui-style">
+  {
+    items.map(({ note, summary }) => (
+      <li class="list-item">
+        <a href={`/notes/${note.id}/`} class="mini-note surface-white">
+          <p class="date">
+            <FormattedDate date={note.data.pubDate} />
+          </p>
+          <p class="title">{note.data.title}</p>
+          {summary && <p class="summary">{summary}</p>}
+        </a>
+      </li>
+    ))
+  }
+</ul>
 
 <style>
-  section {
-    margin-top: var(--space-xl);
+  .note-list {
+    display: flex;
+    margin-top: var(--space-m);
   }
 
-  .stack {
-    margin-top: var(--space-m);
+  /* Pared-down NoteCard surface: white raised tile, coral dot grid, accent bar */
+  .mini-note {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-2xs);
+    border-inline-start: var(--border-width-accent) solid
+      light-dark(var(--color-black), var(--color-accent));
+    background-image: radial-gradient(
+      light-dark(color-mix(in oklch, var(--color-black) 60%, transparent), transparent) 0.5px,
+      transparent 0
+    );
+    background-size: var(--space-xs) var(--space-xs);
+    color: var(--color-text);
+    filter: var(--shadow-medium);
+
+    &:hover, &:active {
+      border-inline-start-color: var(--color-accent);
+    }
+  }
+
+  .date, .title, .summary {
+    margin: 0;
+  }
+
+  .date {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+  }
+
+  .title {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-extrabold);
+  }
+
+  .summary {
+    font-size: var(--font-size-xs);
+    line-height: var(--leading-normal);
+    color: var(--color-text-secondary);
+    text-transform: capitalize;
   }
 </style>
