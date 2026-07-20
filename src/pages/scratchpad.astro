@@ -2,41 +2,35 @@
 /**
  * Scratchpad — a noindex page for eyeballing components in isolation.
  *
- * Currently: all card components (NoteCard, ProjectCard, ToolCard,
- * ContentCard) in their full and compact variants, for the card review.
+ * Currently: a rough homepage layout playground — featured projects,
+ * latest articles, latest notes, and a couple of random toolbox pages.
  */
 import { getCollection } from 'astro:content'
 import { BaseHead, MainNavigation } from '@components/layout/index'
 import { ArticleCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
-import ContentCard from '@components/mdx/ContentCard.astro'
-import ResizableContainer from '@components/mdx/ResizableContainer.astro'
+import { LLMDiscoveryNote, CommandPalette, Footer } from '@components/layout/index'
 import { filterContentForListing } from '@utils/content'
 
-// --- Sample content ---
-const toolboxPages = await getCollection('toolboxPages')
-const emojiTool = toolboxPages.find(t => t.id === 'writing-good-evergreen-documents')
-const imageIconTool = toolboxPages.find(
-  t => t.id === 'creating-managing-and-archiving-slack-channels',
-)
-
+// --- Featured projects ---
 const projects = await getCollection('projects')
-const sampleProject = projects.find(p => p.id === 'astro-editor')
+const featuredProjects = projects.filter(p => p.data.featured)
+const projectsToShow = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4)
 
-const articles = filterContentForListing(await getCollection('articles')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-)
-const articleWithCover = articles.find(a => a.data.cover)
-const articleNoCover = articles.find(a => !a.data.cover)
-const articlePlatform = articles.find(a => a.data.platform)
-const articleSeries = articles.find(a => a.data.series)
-const articleUpdated = articles.find(
-  a => a.data.updatedDate && a.data.updatedDate.toDateString() !== a.data.pubDate.toDateString(),
-)
+// --- Latest articles ---
+const articles = filterContentForListing(await getCollection('articles'))
+  .filter(a => !a.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const latestArticles = articles.slice(0, 3)
 
+// --- Latest notes ---
 const notes = filterContentForListing(await getCollection('notes')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 )
-const sampleNote = notes.find(n => n.id === '2026-07-15-moving-uses-pages-site') ?? notes[0]
+const latestNotes = notes.slice(0, 4)
+
+// --- Random toolbox pages ---
+const toolboxPages = await getCollection('toolboxPages')
+const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4)
 ---
 
 <!doctype html>
@@ -44,146 +38,70 @@ const sampleNote = notes.find(n => n.id === '2026-07-15-moving-uses-pages-site')
   <head>
     <BaseHead
       title="Scratchpad"
-      description="Component testing"
+      description="Homepage layout playground"
       robotsDirective="noindex, nofollow"
     />
   </head>
   <body>
     <MainNavigation />
     <main id="main" tabindex="-1">
-      <h1>Card components</h1>
-
-      <h2>ArticleCard (with cover)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {articleWithCover && <ArticleCard item={articleWithCover} />}
-      </ResizableContainer>
-
-      <h2>ArticleCard (without cover)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {articleNoCover && <ArticleCard item={articleNoCover} />}
-      </ResizableContainer>
-
-      <h2>ArticleCard (external platform)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {articlePlatform && <ArticleCard item={articlePlatform} />}
-      </ResizableContainer>
-
-      <h2>ArticleCard (part of a series)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {articleSeries && <ArticleCard item={articleSeries} />}
-      </ResizableContainer>
-
-      <h2>ArticleCard (with updated date)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {
-          articleUpdated ? (
-            <ArticleCard item={articleUpdated} />
-          ) : (
-            <p>No article with a distinct updatedDate found.</p>
-          )
-        }
-      </ResizableContainer>
-
-      <h2>ArticleCard (grid of 4)</h2>
-      <ResizableContainer initialWidth="900px" minWidth="260px">
-        <div class="card-grid">
-          {articles.slice(0, 4).map(article => <ArticleCard item={article} />)}
+      <LLMDiscoveryNote />
+      <CommandPalette />
+      <section id="latest-articles">
+        <h2>Writing</h2>
+        <div class="stack">
+          {latestArticles.map(article => <ArticleCard item={article} />)}
         </div>
-      </ResizableContainer>
+      </section>
 
-      <h2>ArticleCard (compact — recent 6)</h2>
-      <ResizableContainer initialWidth="600px" minWidth="180px">
-        <div class="compact-stack">
-          {articles.slice(0, 6).map(article => <ArticleCard item={article} compact />)}
+      <section id="latest-notes">
+        <h2>Recent notes</h2>
+        <div class="stack">
+          {latestNotes.map(note => <NoteCard item={note} compact />)}
         </div>
-      </ResizableContainer>
+      </section>
 
-      <h2>NoteCard (full — primary display)</h2>
-      <ResizableContainer initialWidth="700px" minWidth="220px">
-        <NoteCard item={sampleNote} />
-      </ResizableContainer>
-
-      <h2>NoteCard (compact — recent 5)</h2>
-      <ResizableContainer initialWidth="600px" minWidth="180px">
-        <div class="compact-stack">
-          {notes.slice(0, 5).map(note => <NoteCard item={note} compact />)}
+      <section id="from-the-toolbox">
+        <h2>From the toolbox</h2>
+        <div class="stack">
+          {randomTools.map(tool => <ToolCard item={tool} />)}
         </div>
-      </ResizableContainer>
+      </section>
 
-      <h2>ProjectCard (full — primary display)</h2>
-      <ResizableContainer initialWidth="900px" minWidth="220px">
-        {sampleProject && <ProjectCard item={sampleProject} />}
-      </ResizableContainer>
-
-      <h2>ProjectCard (compact — all {projects.length} projects)</h2>
-      <ResizableContainer initialWidth="600px" minWidth="180px">
-        <div class="compact-stack">
-          {projects.map(project => <ProjectCard item={project} compact />)}
+      <section id="featured-projects">
+        <h2>Current projects</h2>
+        <div class="stack">
+          {projectsToShow.map(project => <ProjectCard item={project} />)}
         </div>
-      </ResizableContainer>
+      </section>
 
-      <h2>ToolCard (emoji icon)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {emojiTool && <ToolCard item={emojiTool} />}
-      </ResizableContainer>
-
-      <h2>ToolCard (image icon)</h2>
-      <ResizableContainer initialWidth="420px" minWidth="220px">
-        {imageIconTool && <ToolCard item={imageIconTool} />}
-      </ResizableContainer>
-
-      <h2>ToolCard (compact — all {toolboxPages.length} tools)</h2>
-      <ResizableContainer initialWidth="600px" minWidth="180px">
-        <div class="compact-stack">
-          {toolboxPages.map(tool => <ToolCard item={tool} compact />)}
-        </div>
-      </ResizableContainer>
-
-      <h2>ContentCard dispatcher (one per collection)</h2>
-      <ResizableContainer initialWidth="700px" minWidth="220px">
-        <div class="compact-stack">
-          {articleWithCover && <ContentCard item={`articles/${articleWithCover.id}`} />}
-          <ContentCard item={`notes/${sampleNote.id}`} />
-          {emojiTool && <ContentCard item={`toolboxPages/${emojiTool.id}`} />}
-          {sampleProject && <ContentCard item={`projects/${sampleProject.id}`} />}
-        </div>
-      </ResizableContainer>
-
-      <h2>ContentCard dispatcher (compact, one per collection)</h2>
-      <ResizableContainer initialWidth="600px" minWidth="180px">
-        <div class="compact-stack">
-          {articleWithCover && <ContentCard item={`articles/${articleWithCover.id}`} compact />}
-          <ContentCard item={`notes/${sampleNote.id}`} compact />
-          {emojiTool && <ContentCard item={`toolboxPages/${emojiTool.id}`} compact />}
-          {sampleProject && <ContentCard item={`projects/${sampleProject.id}`} compact />}
-        </div>
-      </ResizableContainer>
     </main>
+    <Footer />
   </body>
 </html>
-
 <style>
   main {
-    padding-block: var(--space-xl);
-    margin-inline: auto;
-    padding-inline: var(--space-m);
+    margin: 0 auto;
+    padding: var(--space-xl);
+  }
 
-    & h2 {
-      margin-block: var(--space-m) var(--space-xs);
-      font-size: var(--font-size-sm);
-      color: var(--color-text-secondary);
+  section {
+    margin-top: var(--space-xl);
+
+    .stack {
+      margin-top: var(--space-m);
     }
   }
 
-  .compact-stack {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
+  #featured-projects .stack {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: var(--space-m);
   }
 
-  .card-grid {
+  #from-the-toolbox .stack {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
-    gap: var(--space-s);
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: var(--space-m);
   }
 </style>
