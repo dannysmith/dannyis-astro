@@ -3,6 +3,7 @@ import {
   BaseHead,
   CommandPalette,
   Footer,
+  HomeLinkList,
   LLMDiscoveryNote,
   MainNavigation,
 } from '@components/layout/index'
@@ -33,70 +34,9 @@ const config = getConfig()
         <span itemprop="givenName">Danny</span>
         <span itemprop="familyName">Smith</span>
       </h1>
-      <ul class="link-list list-reset all-caps">
-        <li>
-          <a href="/writing">My <strong>writing</strong></a>
-        </li>
-        <li>
-          <a href="/notes">Short <strong>notes</strong></a>
-        </li>
-        <li>
-          <a href="/now">What I'm doing <strong>now</strong></a>
-        </li>
-        <li>
-          <a href="/making">Things I'm <strong>making</strong></a>
-        </li>
-        <li>
-          <a href="https://betterat.work">My <strong>work</strong></a>
-        </li>
-        <li>
-          <a href="/toolbox">The <strong>toolbox</strong></a>
-        </li>
-        <li>
-          <a href="/using">stuff I'm <strong>using</strong></a>
-        </li>
-        <li>
-          <a href="/youtube"><strong>youtube</strong></a>
-        </li>
-        <li>
-          <a href="/music"><strong>music</strong></a>
-        </li>
-        <li>
-          <a href="https://www.linkedin.com/in/dannyasmith" rel="me" target="_blank"
-            ><strong>linkedin</strong><span>/dannyasmith</span></a
-          >
-        </li>
-        <li>
-          <a href="https://bsky.app/profile/danny.is" rel="me" target="_blank">
-            <strong>BlueSky</strong><span>@danny.is</span>
-          </a>
-        </li>
-        <li>
-          <a href="https://indieweb.social/@dannysmith" rel="me" target="_blank">
-            <strong>Mastodon</strong>
-          </a>
-        </li>
-        <li>
-          <a href="https://github.com/dannysmith" rel="me" target="_blank"
-            ><strong>github</strong><span>/dannysmith</span></a
-          >
-        </li>
-        <li>
-          <a href="https://instagram.com/dannysmith" rel="me" target="_blank"
-            ><strong>instagram</strong><span>/dannysmith</span></a
-          >
-        </li>
-        <li>
-          <a href="https://monzo.me/dannyasmith" rel="me" target="_blank"
-            ><strong>monzo</strong><span>.me</span></a
-          >
-        </li>
-        <li>
-          <a class="u-email p-email" href="mailto:hi+website@danny.is" rel="me" itemprop="email"
-            ><strong>email</strong></a
-          >
-        </li>
-      </ul>
+      <div class="links">
+        <HomeLinkList />
+      </div>
       <img
         src="/icon.jpg"
         alt="Danny Smith Profile Image"
@@ -126,27 +66,9 @@ const config = getConfig()
           line-height: var(--leading-none);
         }
 
-        .link-list {
+        .links {
           grid-column: 2 / 3;
           min-width: 0;
-
-          & li {
-            border-bottom: var(--border-width-thick) solid var(--color-accent);
-            line-height: var(--leading-none);
-            padding-block: var(--space-3xs);
-            text-box-trim: trim-both;
-            text-box-edge: cap alphabetic;
-          }
-
-          & a {
-            overflow-wrap: break-word;
-            word-break: break-word;
-          }
-
-          & strong {
-            letter-spacing: var(--tracking-wider);
-            font-weight: var(--font-weight-heavy);
-          }
         }
 
         .avatar {
@@ -159,15 +81,8 @@ const config = getConfig()
             padding-inline: var(--space-s);
           }
 
-          .link-list {
+          .links {
             grid-column: 1;
-
-            & a {
-              display: flex;
-              flex-wrap: wrap;
-              min-height: var(--space-l);
-              align-items: end;
-            }
           }
         }
       </style>
