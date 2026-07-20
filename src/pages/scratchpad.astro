@@ -7,26 +7,19 @@
  */
 import { getCollection } from 'astro:content'
 import { BaseHead, MainNavigation } from '@components/layout/index'
-import { ArticleCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
-import { LLMDiscoveryNote, CommandPalette, Footer } from '@components/layout/index'
-import { filterContentForListing } from '@utils/content'
+import { ProjectCard, ToolCard } from '@components/ui/index'
+import {
+  LLMDiscoveryNote,
+  CommandPalette,
+  Footer,
+  HomepageLatestArticles,
+  HomepageLatestNotes,
+} from '@components/layout/index'
 
 // --- Featured projects ---
 const projects = await getCollection('projects')
 const featuredProjects = projects.filter(p => p.data.featured)
 const projectsToShow = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4)
-
-// --- Latest articles ---
-const articles = filterContentForListing(await getCollection('articles'))
-  .filter(a => !a.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-const latestArticles = articles.slice(0, 3)
-
-// --- Latest notes ---
-const notes = filterContentForListing(await getCollection('notes')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-)
-const latestNotes = notes.slice(0, 4)
 
 // --- Random toolbox pages ---
 const toolboxPages = await getCollection('toolboxPages')
@@ -44,23 +37,17 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
   </head>
   <body>
     <MainNavigation />
+    <CommandPalette />
     <main id="main" tabindex="-1">
       <LLMDiscoveryNote />
-      <CommandPalette />
       <section id="latest-articles">
-        <h2>Writing</h2>
-        <div class="stack">
-          {latestArticles.map(article => <ArticleCard item={article} />)}
+        <div class="cq">
+          <HomepageLatestArticles />
         </div>
       </section>
-
-      <section id="latest-notes">
-        <h2>Recent notes</h2>
-        <div class="stack">
-          {latestNotes.map(note => <NoteCard item={note} compact />)}
-        </div>
+      <section id-"latest-notes">
+        <HomepageLatestNotes />
       </section>
-
       <section id="from-the-toolbox">
         <h2>From the toolbox</h2>
         <div class="stack">
@@ -74,9 +61,8 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
           {projectsToShow.map(project => <ProjectCard item={project} />)}
         </div>
       </section>
-
+      <Footer />
     </main>
-    <Footer />
   </body>
 </html>
 <style>
