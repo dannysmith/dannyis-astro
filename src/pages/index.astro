@@ -1,15 +1,31 @@
 ---
+import { getCollection } from 'astro:content'
 import {
   BaseHead,
   CommandPalette,
   Footer,
   HomeLinkList,
+  HomepageLatestArticles,
   LLMDiscoveryNote,
   MainNavigation,
 } from '@components/layout/index'
+import { NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { filterContentForListing } from '@utils/content'
 import { getConfig } from '@config/config'
 
 const config = getConfig()
+
+// --- Homepage content sections (stacked for now; layout comes later) ---
+const projects = await getCollection('projects')
+const featuredProjects = projects.filter(p => p.data.featured)
+const projectsToShow = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4)
+
+const notes = filterContentForListing(await getCollection('notes'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4)
+
+const toolboxPages = await getCollection('toolboxPages')
+const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4)
 ---
 
 <!doctype html>
@@ -47,6 +63,36 @@ const config = getConfig()
         itemprop="image"
       />
 
+      <!-- Content sections, stacked for now — layout work comes later -->
+      <div class="home-content">
+        <section id="latest-articles">
+          <div class="cq">
+            <HomepageLatestArticles />
+          </div>
+        </section>
+
+        <section id="latest-notes">
+          <h2>Recent notes</h2>
+          <div class="stack">
+            {notes.map(note => <NoteCard item={note} compact />)}
+          </div>
+        </section>
+
+        <section id="from-the-toolbox">
+          <h2>From the toolbox</h2>
+          <div class="stack">
+            {randomTools.map(tool => <ToolCard item={tool} />)}
+          </div>
+        </section>
+
+        <section id="featured-projects">
+          <h2>Featured projects</h2>
+          <div class="stack">
+            {projectsToShow.map(project => <ProjectCard item={project} />)}
+          </div>
+        </section>
+      </div>
+
       <style>
         main {
           display: grid;
@@ -73,6 +119,42 @@ const config = getConfig()
 
         .avatar {
           display: none;
+        }
+
+        /* Content sections span the full hero grid and stack for now. */
+        .home-content {
+          grid-column: 1 / -1;
+        }
+
+        #latest-articles {
+          border-block-end: var(--border-width-accent) solid var(--color-accent);
+          padding-block-end: var(--space-xs);
+
+          > div {
+            max-width: 70%;
+          }
+        }
+
+        #featured-projects,
+        #from-the-toolbox,
+        #latest-notes {
+          margin: 0 auto;
+          padding: var(--space-xl);
+
+          h2 {
+            font-family: var(--font-display);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-extrabold);
+            text-transform: uppercase;
+            font-feature-settings: 'case' on;
+            border-block-end: none;
+          }
+
+          .stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+            gap: var(--space-m);
+          }
         }
 
         @media (max-width: 500px) {
