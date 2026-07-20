@@ -65,7 +65,6 @@ const items = latestNotes.map(note => ({ note, summary: generateSummary(note, 14
     /* Torn-paper right edge */
     --tear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='170' preserveAspectRatio='none'%3E%3Cfilter id='r' x='-30%25' y='-30%25' width='160%25' height='160%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.13' numOctaves='2' seed='11' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='9' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect x='-40' y='-40' width='330' height='250' fill='%23fff' filter='url(%23r)'/%3E%3C/svg%3E")
       0 0 / 100% 100% no-repeat;
-    -webkit-mask: var(--tear);
     mask: var(--tear);
 
     &:hover,
