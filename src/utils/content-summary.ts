@@ -26,7 +26,7 @@ export function generateSummary(entry: ContentEntry, maxLength: number = 200): s
   // 2. Extract from content body
   try {
     if (entry.body) {
-      const cleanText = stripMDXElements(entry.body)
+      const cleanText = stripMDXElements(stripLeadingEsm(entry.body))
       const firstParagraph = extractFirstMeaningfulParagraph(cleanText)
 
       if (firstParagraph) {
@@ -39,6 +39,25 @@ export function generateSummary(entry: ContentEntry, maxLength: number = 200): s
 
   // 3. Fallback to title-based summary
   return `${entry.data.title}...`
+}
+
+/**
+ * Drop leading MDX ESM statement blocks (`import` / `export`) from a raw body.
+ *
+ * These always sit at the top of the file, ahead of any prose, but a single
+ * `export` can span many lines (an object literal, say) with no delimiter
+ * before the content that follows — so rather than trying to match arbitrary
+ * JS, we split on blank lines and drop each leading block that opens with
+ * `import`/`export`, stopping at the first prose block.
+ */
+export function stripLeadingEsm(content: string): string {
+  if (!content) return ''
+
+  const blocks = content.split(/\n\s*\n/)
+  let i = 0
+  while (i < blocks.length && /^\s*(?:import|export)\b/.test(blocks[i])) i++
+
+  return blocks.slice(i).join('\n\n')
 }
 
 /**

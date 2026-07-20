@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   generateSummary,
+  stripLeadingEsm,
   stripMDXElements,
   extractFirstMeaningfulParagraph,
   truncateAtSentence,
@@ -149,6 +150,39 @@ Final paragraph with \`inline code\`.`
   })
 })
 
+describe('stripLeadingEsm', () => {
+  it('drops a leading contiguous import/export block, including multiline exports', () => {
+    const content = `import { ToolCard } from '@components/ui/index';
+import toolboxPages from '../toolboxPages.json';
+export const exampleTool = {
+  data: { id: 'sharing-appreciation' },
+};
+
+Real prose starts here.`
+
+    expect(stripLeadingEsm(content)).toBe('Real prose starts here.')
+  })
+
+  it('drops multiple blank-line-separated ESM blocks', () => {
+    const content = `import a from 'a';
+
+export const b = 1;
+
+Prose.`
+
+    expect(stripLeadingEsm(content)).toBe('Prose.')
+  })
+
+  it('leaves prose untouched when there is no leading ESM', () => {
+    const content = 'Just prose.\n\nMore prose.'
+    expect(stripLeadingEsm(content)).toBe('Just prose.\n\nMore prose.')
+  })
+
+  it('handles empty input', () => {
+    expect(stripLeadingEsm('')).toBe('')
+  })
+})
+
 describe('extractFirstMeaningfulParagraph', () => {
   it('should extract the first substantial paragraph', () => {
     const text = `Short line.
@@ -263,6 +297,23 @@ Another paragraph here.`,
 
     const result = generateSummary(entry, 100)
     expect(result).toContain('This is a substantial paragraph')
+  })
+
+  it('ignores leading MDX import/export statements when extracting from body', () => {
+    const entry = createMockEntry(
+      { title: 'Toolbox' },
+      `import { ToolCard } from '@components/ui/index';
+export const exampleTool = {
+  data: { id: 'sharing-appreciation' },
+};
+
+This note explains how the toolbox is rendered on the site using rich links.`,
+    )
+
+    const result = generateSummary(entry, 100)
+    expect(result).toContain('This note explains how the toolbox')
+    expect(result).not.toContain('export')
+    expect(result).not.toContain('exampleTool')
   })
 
   it('should truncate description if too long', () => {
