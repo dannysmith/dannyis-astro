@@ -52,12 +52,12 @@ const items = latestNotes.map(note => ({ note, summary: generateSummary(note, 14
     border-inline-start: var(--border-width-accent) solid
       light-dark(var(--color-black), var(--color-accent));
     background-image: radial-gradient(
-      light-dark(color-mix(in oklch, var(--color-black) 60%, transparent), transparent) 0.5px,
+      light-dark(color-mix(in oklch, var(--color-black) 20%, transparent), transparent) 0.5px,
       transparent 0
     );
     background-size: var(--space-xs) var(--space-xs);
     color: var(--color-text);
-    filter: var(--shadow-medium);
+    filter: var(--shadow-small);
 
     &:hover, &:active {
       border-inline-start-color: var(--color-accent);
@@ -83,6 +83,9 @@ const items = latestNotes.map(note => ({ note, summary: generateSummary(note, 14
     font-size: var(--font-size-xs);
     line-height: var(--leading-normal);
     color: var(--color-text-secondary);
-    text-transform: capitalize;
+  }
+
+  .summary::first-letter {
+    text-transform: uppercase;
   }
 </style>
