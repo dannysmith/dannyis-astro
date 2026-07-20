@@ -29,7 +29,8 @@ const items = await Promise.all(
   }),
 )
 ---
-<p class="section-title all-caps">Writing</p>
+
+<p class="section-title">Writing</p>
 <ul class="list-reset ui-style">
   {
     items.map(({ article, minutesRead, series }) => (
@@ -37,7 +38,7 @@ const items = await Promise.all(
         <a href={`/writing/${article.id}/`} class="link">
           <p class="title">
             {article.data.title}
-            {/* article.data.redirectURL */} <span class="external-arrow">↗</span>
+            {article.data.redirectURL && <span class="external-arrow" aria-hidden="true"> ↗</span>}
           </p>
           <p class="meta">
             {series && (
@@ -67,14 +68,24 @@ const items = await Promise.all(
     margin-top: 0;
   }
 
-  .section-title {
+  /* Shared display-heading treatment for the section label and item titles */
+  .section-title,
+  .title {
     font-family: var(--font-display);
-    text-transform: uppercase;
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-extrabold);
     line-height: var(--leading-tight);
-    font-feature-settings: 'case' on;
     letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+  }
+
+  .section-title {
+    font-weight: var(--font-weight-extrabold);
+  }
+
+  .title {
+    font-weight: var(--font-weight-light);
+    padding-block: 0.2em;
   }
 
   .list-item {
@@ -86,18 +97,7 @@ const items = await Promise.all(
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
-    gap: 0 var(--space-sm);
-  }
-
-  .title {
-    font-family: var(--font-display);
-    text-transform: uppercase;
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-light);
-    line-height: var(--leading-tight);
-    font-feature-settings: 'case' on;
-    padding-block: .2em;
-    letter-spacing: var(--tracking-tight);
+    gap: 0 var(--space-s);
   }
 
   .meta {
