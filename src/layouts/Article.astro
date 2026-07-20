@@ -12,9 +12,9 @@ import {
   CommandPalette,
   MainNavigation,
   SeriesCallout,
-  TableOfContents,
+  TableOfContents
 } from '@components/layout/index'
-import { BackToTopLink, FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index'
+import { BackToTopLink, FormattedDate, MarkdownContentActions, Spinner, Pill } from '@components/ui/index'
 import { getDocumentUri } from '@utils/standard-site'
 
 type Props = CollectionEntry<'articles'>['data'] & {
@@ -129,7 +129,7 @@ const standardSiteDocumentUri =
                 )
               }
               {readingTime && <span class="reading-time">· {readingTime}</span>}
-              {draft && <span class="draft-notice">🚧 Draft</span>}
+              {draft && <Pill text="Draft" />}
             </div>
 
             <h1 class="title p-name" itemprop="headline" data-pagefind-meta="title">{title}</h1>
@@ -203,15 +203,6 @@ const standardSiteDocumentUri =
           height: 100%;
           object-fit: cover;
           filter: light-dark(none, grayscale(70%));
-        }
-
-        .draft-notice {
-          border: var(--border-width-base) solid var(--color-accent);
-          color: var(--color-accent);
-          font-family: var(--font-ui);
-          padding: var(--space-2xs) var(--space-s);
-          border-radius: var(--radius-sm);
-          float: right;
         }
 
         .footer-actions {
