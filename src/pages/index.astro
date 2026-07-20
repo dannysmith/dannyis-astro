@@ -15,7 +15,7 @@ import { getConfig } from '@config/config'
 
 const config = getConfig()
 
-// --- Homepage content sections (stacked for now; layout comes later) ---
+// --- Homepage content sections ---
 const projects = await getCollection('projects')
 const featuredProjects = projects.filter(p => p.data.featured)
 const projectsToShow = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4)
@@ -39,20 +39,50 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
     <main
       id="main"
       tabindex="-1"
-      class="vcard h-card ui-style"
+      class="home vcard h-card ui-style"
       itemtype="http://schema.org/Person"
       itemprop="mainEntity"
       itemscope
     >
       <LLMDiscoveryNote />
       <a rel="me" href={Astro.site?.href} class="u-url u-uid hidden-microformat">Danny Smith</a>
-      <h1 class="fn p-name" itemprop="name">
+
+      <h1 class="home-title fn p-name" itemprop="name">
         <span itemprop="givenName">Danny</span>
         <span itemprop="familyName">Smith</span>
       </h1>
-      <div class="links">
-        <HomeLinkList />
+
+      <div class="home-grid">
+        <div class="home-links">
+          <HomeLinkList />
+        </div>
+
+        <section class="home-writing" aria-label="Recent writing">
+          <HomepageLatestArticles />
+        </section>
+
+        <section class="home-notes" aria-label="Recent notes">
+          <h2 class="section-heading">Recent notes</h2>
+          <div class="card-grid">
+            {notes.map(note => <NoteCard item={note} compact />)}
+          </div>
+        </section>
+
+        <section class="home-toolbox" aria-label="From the toolbox">
+          <h2 class="section-heading">From the toolbox</h2>
+          <div class="card-grid">
+            {randomTools.map(tool => <ToolCard item={tool} />)}
+          </div>
+        </section>
+
+        <section class="home-projects" aria-label="Featured projects">
+          <h2 class="section-heading">Featured projects</h2>
+          <div class="card-grid">
+            {projectsToShow.map(project => <ProjectCard item={project} />)}
+          </div>
+        </section>
       </div>
+
       <img
         src="/icon.jpg"
         alt="Danny Smith Profile Image"
@@ -62,113 +92,103 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
         height={200}
         itemprop="image"
       />
-
-      <!-- Content sections, stacked for now — layout work comes later -->
-      <div class="home-content">
-        <section id="latest-articles">
-          <div class="cq">
-            <HomepageLatestArticles />
-          </div>
-        </section>
-
-        <section id="latest-notes">
-          <h2>Recent notes</h2>
-          <div class="stack">
-            {notes.map(note => <NoteCard item={note} compact />)}
-          </div>
-        </section>
-
-        <section id="from-the-toolbox">
-          <h2>From the toolbox</h2>
-          <div class="stack">
-            {randomTools.map(tool => <ToolCard item={tool} />)}
-          </div>
-        </section>
-
-        <section id="featured-projects">
-          <h2>Featured projects</h2>
-          <div class="stack">
-            {projectsToShow.map(project => <ProjectCard item={project} />)}
-          </div>
-        </section>
-      </div>
-
-      <style>
-        main {
-          display: grid;
-          grid-template-columns: 1rem auto 1fr;
-          min-block-size: 100svh;
-        }
-
-        h1 {
-          grid-column: 1 / -1;
-          font-family: var(--font-display);
-          font-size: clamp(3rem, 14.3vw, 22rem);
-          font-weight: var(--font-weight-extrabold);
-          text-transform: uppercase;
-          font-feature-settings: 'case' on;
-          margin-top: -0.1em;
-          pointer-events: none;
-          line-height: var(--leading-none);
-        }
-
-        .links {
-          grid-column: 2 / 3;
-          min-width: 0;
-        }
-
-        .avatar {
-          display: none;
-        }
-
-        /* Content sections span the full hero grid and stack for now. */
-        .home-content {
-          grid-column: 1 / -1;
-        }
-
-        #latest-articles {
-          border-block-end: var(--border-width-accent) solid var(--color-accent);
-          padding-block-end: var(--space-xs);
-
-          > div {
-            max-width: 70%;
-          }
-        }
-
-        #featured-projects,
-        #from-the-toolbox,
-        #latest-notes {
-          margin: 0 auto;
-          padding: var(--space-xl);
-
-          h2 {
-            font-family: var(--font-display);
-            font-size: var(--font-size-lg);
-            font-weight: var(--font-weight-extrabold);
-            text-transform: uppercase;
-            font-feature-settings: 'case' on;
-            border-block-end: none;
-          }
-
-          .stack {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-            gap: var(--space-m);
-          }
-        }
-
-        @media (max-width: 500px) {
-          main {
-            grid-template-columns: 1fr;
-            padding-inline: var(--space-s);
-          }
-
-          .links {
-            grid-column: 1;
-          }
-        }
-      </style>
     </main>
     <Footer />
   </body>
 </html>
+
+<style>
+  /* The title is always the same, so it sits outside the content grid and
+     bleeds to the page edge exactly as before. */
+  .home-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 14.3vw, 22rem);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    margin-top: -0.1em;
+    pointer-events: none;
+    line-height: var(--leading-none);
+  }
+
+  /* One grid drives the content sections. Placement lives in
+     `grid-template-areas`, so rearranging the layout is a matter of editing the
+     template alone — every section reflows to wherever its area moves. Narrow
+     viewports collapse to a single stacked column. */
+  .home-grid {
+    display: grid;
+    padding-inline: var(--space-m);
+    margin-block-start: var(--space-2xl);
+    gap: var(--space-2xl) var(--space-l);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      'links   .       writing writing'
+      'notes   notes   notes   notes'
+      'toolbox toolbox projects projects';
+  }
+
+  .home-links {
+    grid-area: links;
+    min-width: 0;
+  }
+
+  .home-writing {
+    grid-area: writing;
+    container-type: inline-size;
+    /* Playground: a jaunty tilt — tune or drop. */
+    /* rotate: 20deg; */
+    border-block-start: var(--border-width-accent) solid var(--color-accent);
+  }
+
+  .home-notes {
+    grid-area: notes;
+    border-block-start: var(--border-width-accent) solid var(--color-text);
+  }
+
+  .home-toolbox {
+    grid-area: toolbox;
+  }
+
+  .home-projects {
+    grid-area: projects;
+  }
+
+  .section-heading {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    border-block-end: none;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-s);
+    margin-block-start: var(--space-s);
+  }
+
+  .avatar {
+    display: none;
+  }
+
+  @media (max-width: 48rem) {
+    .home-grid {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'links'
+        'writing'
+        'notes'
+        'toolbox'
+        'projects';
+      gap: var(--space-xl);
+      padding-inline: var(--space-s);
+    }
+
+    /* Keep the mobile stack calm — no tilt. */
+    .home-writing {
+      rotate: none;
+    }
+  }
+</style>
