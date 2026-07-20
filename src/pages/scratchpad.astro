@@ -46,7 +46,9 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
         </div>
       </section>
       <section id-"latest-notes">
-        <HomepageLatestNotes />
+        <div class="cq">
+          <HomepageLatestNotes />
+        </div>
       </section>
       <section id="from-the-toolbox">
         <h2>From the toolbox</h2>
@@ -66,28 +68,33 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
   </body>
 </html>
 <style>
-  main {
-    margin: 0 auto;
-    padding: var(--space-xl);
-  }
+  #latest-articles {
+    border-block-end: var(--border-width-accent) solid var(--color-accent);
+    padding-block-end: var(--space-xs);
 
-  section {
-    margin-top: var(--space-xl);
-
-    .stack {
-      margin-top: var(--space-m);
+    > div {
+      max-width: 70%;
     }
   }
 
-  #featured-projects .stack {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-    gap: var(--space-m);
+  #featured-projects,
+  #from-the-toolbox {
+    margin: 0 auto;
+    padding: var(--space-xl);
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-extrabold);
+      text-transform: uppercase;
+      font-feature-settings: 'case' on;
+      border-block-end: none;
+    }
+    .stack {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      gap: var(--space-m);
+    }
   }
 
-  #from-the-toolbox .stack {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-    gap: var(--space-m);
-  }
 </style>

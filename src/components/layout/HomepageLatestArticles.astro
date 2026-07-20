@@ -16,7 +16,7 @@ import { filterContentForListing } from '@utils/content'
 const articles = filterContentForListing(await getCollection('articles'))
   .filter(a => !a.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-const latestArticles = articles.slice(0, 3)
+const latestArticles = articles.slice(0, 6)
 
 // Reading time lives in the render()-only frontmatter bag (injected by
 // satteri-reading-time), and series needs resolving — gather both per item.
@@ -30,7 +30,7 @@ const items = await Promise.all(
 )
 ---
 
-<p class="section-title">Writing</p>
+<h2 class="section-title">Recent Writing</h2>
 <ul class="list-reset ui-style">
   {
     items.map(({ article, minutesRead, series }) => (
@@ -81,6 +81,8 @@ const items = await Promise.all(
 
   .section-title {
     font-weight: var(--font-weight-extrabold);
+    border-block-end: none;
+    padding-block-end: 0;
   }
 
   .title {
@@ -101,7 +103,7 @@ const items = await Promise.all(
   }
 
   .meta {
-    display: inline-flex;
+    display: flex;
     flex-grow: 1;
     flex-wrap: wrap;
     justify-content: flex-end;
@@ -112,7 +114,7 @@ const items = await Promise.all(
   }
 
   .meta-item {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.25em;
 
