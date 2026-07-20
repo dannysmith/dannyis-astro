@@ -30,7 +30,7 @@ const items = await Promise.all(
 )
 ---
 
-<h2 class="section-title">Recent Writing</h2>
+<h2 class="section-title">Recent <a href="/writing">writing</a></h2>
 <ul class="list-reset ui-style">
   {
     items.map(({ article, minutesRead, series }) => (
@@ -38,7 +38,12 @@ const items = await Promise.all(
         <a href={`/writing/${article.id}/`} class="link">
           <p class="title">
             {article.data.title}
-            {article.data.redirectURL && <span class="external-arrow" aria-hidden="true"> ↗</span>}
+            {article.data.redirectURL && (
+              <span class="external-arrow" aria-hidden="true">
+                {' '}
+                ↗
+              </span>
+            )}
           </p>
           <p class="meta">
             {series && (
@@ -83,6 +88,10 @@ const items = await Promise.all(
     font-weight: var(--font-weight-extrabold);
     border-block-end: none;
     padding-block-end: 0;
+
+    a {
+      color: var(--color-accent);
+    }
   }
 
   .title {

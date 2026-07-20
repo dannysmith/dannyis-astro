@@ -25,7 +25,7 @@ const notes = filterContentForListing(await getCollection('notes'))
   .slice(0, 4)
 
 const toolboxPages = await getCollection('toolboxPages')
-const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4)
+const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2)
 ---
 
 <!doctype html>
@@ -62,21 +62,21 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
         </section>
 
         <section class="home-notes" aria-label="Recent notes">
-          <h2 class="section-heading">Recent notes</h2>
+          <h2 class="section-heading">Recent <a href="/notes">notes</a></h2>
           <div class="card-grid">
             {notes.map(note => <NoteCard item={note} compact />)}
           </div>
         </section>
 
         <section class="home-toolbox" aria-label="From the toolbox">
-          <h2 class="section-heading">From the toolbox</h2>
+          <h2 class="section-heading">Random tools from <a href="/toolbox">the toolbox</a></h2>
           <div class="card-grid">
             {randomTools.map(tool => <ToolCard item={tool} />)}
           </div>
         </section>
 
         <section class="home-projects" aria-label="Featured projects">
-          <h2 class="section-heading">Featured projects</h2>
+          <h2 class="section-heading">Current <a href="/projects">projects</a></h2>
           <div class="card-grid">
             {projectsToShow.map(project => <ProjectCard item={project} />)}
           </div>
@@ -98,6 +98,11 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
 </html>
 
 <style>
+  /* Breathing room before the footer (padding so it can't margin-collapse). */
+  .home {
+    padding-block-end: var(--space-2xl);
+  }
+
   /* The title is always the same, so it sits outside the content grid and
      bleeds to the page edge exactly as before. */
   .home-title {
@@ -156,6 +161,22 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
     grid-area: projects;
   }
 
+  /* When toolbox and projects sit side by side (wide layout) they already
+     stretch to a shared row height. Make each a flex column and let its card
+     grid fill that height (with 1fr rows), so all the cards match — footers
+     aligned — without needing subgrid. */
+  .home-toolbox,
+  .home-projects {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-toolbox .card-grid,
+  .home-projects .card-grid {
+    flex: 1;
+    grid-auto-rows: 1fr;
+  }
+
   .section-heading {
     font-family: var(--font-display);
     font-size: var(--font-size-base);
@@ -163,6 +184,10 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
     text-transform: uppercase;
     font-feature-settings: 'case' on;
     border-block-end: none;
+
+    a {
+      color: var(--color-accent);
+    }
   }
 
   .card-grid {
