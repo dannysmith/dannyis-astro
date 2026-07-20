@@ -7,7 +7,8 @@
 
 import type { CollectionEntry } from 'astro:content'
 
-type ContentEntry = CollectionEntry<'articles'> | CollectionEntry<'notes'>
+type ContentEntry =
+  CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'projects'>
 
 /**
  * Generate a summary for a content entry
@@ -18,9 +19,10 @@ type ContentEntry = CollectionEntry<'articles'> | CollectionEntry<'notes'>
  * 3. Truncate intelligently at sentence boundaries
  */
 export function generateSummary(entry: ContentEntry, maxLength: number = 200): string {
-  // 1. Check frontmatter description first
-  if (entry.data.description && entry.data.description.trim()) {
-    return truncateAtSentence(entry.data.description.trim(), maxLength)
+  // 1. Check frontmatter description first (projects have no description field)
+  const description = 'description' in entry.data ? entry.data.description : undefined
+  if (description && description.trim()) {
+    return truncateAtSentence(description.trim(), maxLength)
   }
 
   // 2. Extract from content body

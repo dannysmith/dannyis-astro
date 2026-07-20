@@ -6,6 +6,7 @@ import { Icon } from 'astro-icon/components'
 import Pill from '@components/ui/Pill.astro'
 import ProjectIcon from '@components/ui/ProjectIcon.astro'
 import CompactCardTile from './CompactCardTile.astro'
+import { generateSummary } from '@utils/content-summary'
 
 // Types derived from the schema, so adding an enum value in content.config.ts
 // forces these maps to be updated.
@@ -52,6 +53,16 @@ const STAGE_META: Record<ProjectStage, PillMeta> = {
   },
 }
 
+// Stage badge tint for the medium card (its cover badge needs a solid colour,
+// unlike the outline pill the full card uses for most stages).
+const STAGE_BADGE_COLOR: Record<ProjectStage, string> = {
+  'active-development': 'var(--color-blue)',
+  'actively-maintained': 'var(--color-green)',
+  finished: 'var(--color-green)',
+  paused: 'var(--color-yellow)',
+  archived: 'var(--color-purple)',
+}
+
 // Audience pill — only shown when it's not plainly public.
 const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
   'public-with-dragons': {
@@ -73,16 +84,21 @@ interface Props {
   item: CollectionEntry<'projects'>
   /** Compact tile: icon + title + byline, the whole card links out. */
   compact?: boolean
+  /** Full card: renders the project's markdown body inline (the /making view). */
+  full?: boolean
 }
 
-const { item, compact = false } = Astro.props
+const { item, compact = false, full = false } = Astro.props
 const { title, byline, stage, audience, icon, image, website, github } = item.data
 
-// Compact links out to the project (website → GitHub → its /making anchor); the
-// full card renders the markdown body inline (no per-project routes).
+// Both the compact tile and the medium card link out to the project (website →
+// GitHub → its /making anchor); only the full card renders the markdown body.
 const compactHref = website ?? github ?? `/making#${item.id}`
 const compactIsExternal = Boolean(website ?? github)
-const Content = compact ? null : (await render(item)).Content
+const Content = full ? (await render(item)).Content : null
+
+// Medium card summary: first meaningful paragraph of the body, truncated.
+const summary = full || compact ? '' : generateSummary(item, 220)
 
 // Status pill first, audience pill (when not plainly public) after.
 const audienceMeta = AUDIENCE_META[audience]
@@ -101,7 +117,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     <CompactCardTile href={compactHref} title={title} byline={byline} external={compactIsExternal}>
       <ProjectIcon icon={icon} title={title} />
     </CompactCardTile>
-  ) : (
+  ) : full ? (
     <article class="project-card ui-style" id={item.id}>
       <div class="identity">
         <div class="icon">
@@ -141,6 +157,54 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
           </div>
         )}
       </div>
+    </article>
+  ) : (
+    <article class="project-card-medium ui-style cq">
+      <a
+        class="card-link"
+        href={compactHref}
+        target={compactIsExternal ? '_blank' : undefined}
+        rel={compactIsExternal ? 'noopener' : undefined}
+      >
+        <div class="card-cover">
+          {image && <Image src={image} alt="" width={600} />}
+          <span class="cover-badge type-badge">Project</span>
+          <span
+            class="cover-badge status-badge"
+            style={`--_badge-color: ${STAGE_BADGE_COLOR[stage]}`}
+          >
+            {STAGE_META[stage].text}
+          </span>
+        </div>
+
+        <span class="card-icon">
+          <ProjectIcon icon={icon} title={title} />
+        </span>
+
+        <div class="card-content">
+          <h3 class="card-title">{title}</h3>
+          {summary && <p class="card-summary">{summary}</p>}
+        </div>
+      </a>
+
+      {(github || website) && (
+        <footer class="card-footer">
+          {github && (
+            <a class="footer-link" href={github} target="_blank" rel="noopener">
+              <Icon name="social/github" />
+              Code
+            </a>
+          )}
+          {website && (
+            <a class="footer-link" href={website} target="_blank" rel="noopener">
+              Website
+              <span class="external-arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          )}
+        </footer>
+      )}
     </article>
   )
 }
@@ -313,6 +377,181 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     .byline {
       text-transform: none;
       font-size: var(--font-size-sm);
+    }
+  }
+
+  /* =====================================================================
+     Medium variant (default) — a ToolCard-style tile: the site's bordered
+     card with a left accent bar that grows on hover/focus, a cover strip (the
+     project image) carrying a "Project" badge and a tinted status badge, a
+     Notion-style overlapping icon, the title, the first body paragraph, and a
+     footer of external links. The body links out (as the compact tile does);
+     the footer links sit outside that anchor so they stay clickable.
+     ===================================================================== */
+  .project-card-medium {
+    --_border-color: var(--color-accent);
+    --_icon-size: 2.75rem;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--duration-fast) var(--ease-in-out);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      inline-size: var(--border-width-thick);
+      background: var(--_border-color);
+      transition: inline-size var(--duration-fast) var(--ease-in-out);
+      z-index: 1;
+    }
+
+    &:hover,
+    &:has(:focus-visible) {
+      border-color: var(--_border-color);
+
+      &::before {
+        inline-size: var(--border-width-heavy);
+      }
+    }
+  }
+
+  /* The link grows so the footer always sits at the bottom of the card. */
+  .card-link {
+    flex-grow: 1;
+
+    &:focus-visible {
+      outline: var(--border-width-base) solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Cover strip; badges sit in its corners. The height cap stops the 3:1 ratio
+     producing an enormous cover in very wide containers. A base fill gives
+     image-less projects a visible header strip. */
+  .card-cover {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 3 / 1;
+    max-block-size: 10rem;
+    background-color: var(--color-white);
+  }
+
+  /* Pin the responsive image to the (capped) cover box — see ArticleCard. */
+  .card-cover :global(img) {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .cover-badge {
+    position: absolute;
+    padding: 0.4em 0.7em 0.3em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-white);
+    background-color: oklch(0% 0 0 / 55%);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-xs);
+  }
+
+  .type-badge {
+    inset-block-start: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+  }
+
+  /* Same dark translucent treatment, tinted per status. */
+  .status-badge {
+    inset-block-end: var(--space-2xs);
+    inset-inline-end: var(--space-2xs);
+    background-color: oklch(from var(--_badge-color) 35% c h / 80%);
+  }
+
+  /* Icon half-overlaps the bottom edge of the cover, Notion-style. */
+  .card-icon {
+    position: relative;
+    display: block;
+    inline-size: fit-content;
+    margin-block-start: calc(var(--_icon-size) / -2);
+    margin-inline-start: var(--space-s);
+    line-height: 1;
+  }
+
+  /* Title and summary spacing lean on the .ui-style defaults. */
+  .card-content {
+    padding-block: var(--space-2xs) var(--space-s);
+    padding-inline: var(--space-s);
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .card-summary {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+
+    /* Already ~first paragraph; clamp defensively. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2xs) var(--space-s);
+    padding: var(--space-2xs) var(--space-s);
+    border-block-start: var(--border-width-hairline) solid var(--color-border);
+    font-size: var(--font-size-xs);
+  }
+
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+
+    & svg {
+      inline-size: 1.1em;
+      block-size: 1.1em;
+    }
+  }
+
+  /* Narrow: shrink the icon, badges and summary. */
+  @container (width < 350px) {
+    .project-card-medium {
+      --_icon-size: 2rem;
+    }
+
+    .cover-badge {
+      font-size: calc(var(--font-size-xs) * 0.8);
+    }
+
+    .card-summary {
+      font-size: var(--font-size-xs);
+      -webkit-line-clamp: 5;
+      line-clamp: 5;
     }
   }
 </style>

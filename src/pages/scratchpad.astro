@@ -64,7 +64,7 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
       </section>
 
       <section id="featured-projects">
-        <h2>Current projects</h2>
+        <h2>Featured Projects</h2>
         <div class="stack">
           {projectsToShow.map(project => <ProjectCard item={project} />)}
         </div>
@@ -97,6 +97,7 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
       font-feature-settings: 'case' on;
       border-block-end: none;
     }
+
     .stack {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
