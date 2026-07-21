@@ -37,12 +37,12 @@ const tearMask = `url(data:image/svg+xml,${encodeURIComponent(tearSvg).replace(
 ---
 
 <div class="compact-note ui-style">
-  <a href={href} class="mini-note surface-white" style={`--tear: ${tearMask}`}>
-    <p class="date">
+  <a href={href} class="compact-note-surface surface-white" style={`--tear: ${tearMask}`}>
+    <p class="card-date">
       <FormattedDate date={pubDate} />
     </p>
-    <p class="title">{title}</p>
-    {summary && <p class="summary">{summary}</p>}
+    <p class="card-title">{title}</p>
+    {summary && <p class="card-summary">{summary}</p>}
   </a>
 </div>
 
@@ -51,7 +51,7 @@ const tearMask = `url(data:image/svg+xml,${encodeURIComponent(tearSvg).replace(
     filter: var(--shadow-small);
   }
 
-  .mini-note {
+  .compact-note-surface {
     display: flex;
     flex-direction: column;
     gap: var(--space-3xs);
@@ -77,24 +77,24 @@ const tearMask = `url(data:image/svg+xml,${encodeURIComponent(tearSvg).replace(
     }
   }
 
-  .date,
-  .title,
-  .summary {
+  .card-date,
+  .card-title,
+  .card-summary {
     margin: 0;
   }
 
-  .date {
+  .card-date {
     font-family: var(--font-code);
     font-size: var(--font-size-xs);
   }
 
-  .title {
+  .card-title {
     font-size: var(--font-size-sm);
     font-family: var(--font-display);
     font-weight: var(--font-weight-extrabold);
   }
 
-  .summary {
+  .card-summary {
     font-size: var(--font-size-xs);
     line-height: var(--leading-normal);
     color: var(--color-text-secondary);
@@ -106,7 +106,7 @@ const tearMask = `url(data:image/svg+xml,${encodeURIComponent(tearSvg).replace(
     overflow: hidden;
   }
 
-  .summary::first-letter {
+  .card-summary::first-letter {
     text-transform: uppercase;
   }
 </style>

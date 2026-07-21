@@ -66,7 +66,7 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
   compact ? (
     <CompactCardTile href={href} title={data.title} byline={byline} />
   ) : (
-    <article class="article-card ui-style cq">
+    <article class="article-card card-shell ui-style cq">
       <a href={href} class="card-link">
         {data.cover && (
           <div class="card-cover">
@@ -124,34 +124,8 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
   .article-card {
     --_border-color: var(--color-accent);
 
-    position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    background-color: var(--color-background-secondary);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: var(--border-width-thick);
-      background: var(--_border-color);
-      transition: inline-size var(--duration-fast) var(--ease-in-out);
-      z-index: 1;
-    }
-
-    &:hover,
-    &:has(:focus-visible) {
-      border-color: var(--_border-color);
-
-      &::before {
-        inline-size: var(--border-width-heavy);
-      }
-    }
   }
 
   /* The link grows so the footer always sits at the bottom of the card,

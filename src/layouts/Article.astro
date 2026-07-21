@@ -12,9 +12,15 @@ import {
   CommandPalette,
   MainNavigation,
   SeriesCallout,
-  TableOfContents
+  TableOfContents,
 } from '@components/layout/index'
-import { BackToTopLink, FormattedDate, MarkdownContentActions, Spinner, Pill } from '@components/ui/index'
+import {
+  BackToTopLink,
+  FormattedDate,
+  MarkdownContentActions,
+  Spinner,
+  Pill,
+} from '@components/ui/index'
 import { getDocumentUri } from '@utils/standard-site'
 
 type Props = CollectionEntry<'articles'>['data'] & {

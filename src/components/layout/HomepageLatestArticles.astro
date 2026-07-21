@@ -7,6 +7,9 @@
  * item shows the title, publish date, a series indicator and reading time
  * (both mirroring ArticleCard), plus an external-link arrow when the article
  * redirects off-site.
+ *
+ * Place inside a `cq` (container-type) ancestor: the meta-hiding container
+ * query resolves against it.
  */
 import { getCollection, getEntry, render } from 'astro:content'
 import { Icon } from 'astro-icon/components'
@@ -29,7 +32,7 @@ const items = await Promise.all(
 )
 ---
 
-<h2 class="section-title">Recent <a href="/writing">writing</a></h2>
+<h2 class="section-heading">Recent <a href="/writing">writing</a></h2>
 <ul class="list-reset ui-style">
   {
     items.map(({ article, minutesRead, series }) => (
@@ -72,7 +75,7 @@ const items = await Promise.all(
     margin-top: 0;
   }
 
-  .section-title,
+  .section-heading,
   .title {
     font-family: var(--font-display);
     font-size: var(--font-size-base);
@@ -82,7 +85,7 @@ const items = await Promise.all(
     font-feature-settings: 'case' on;
   }
 
-  .section-title {
+  .section-heading {
     font-weight: var(--font-weight-extrabold);
     border-block-end: none;
     padding-block-end: 0;

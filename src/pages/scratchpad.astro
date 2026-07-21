@@ -1,34 +1,15 @@
 ---
 /**
  * Scratchpad — a noindex page for eyeballing components in isolation.
- *
- * Currently: a rough homepage layout playground — featured projects,
- * latest articles, latest notes, and a couple of random toolbox pages.
+ * Empty by default: drop whatever you want to experiment with into <main>.
  */
-import { getCollection } from 'astro:content'
-import { BaseHead, MainNavigation } from '@components/layout/index'
-import { NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
-import { filterContentForListing } from '@utils/content'
 import {
-  LLMDiscoveryNote,
+  BaseHead,
   CommandPalette,
   Footer,
-  HomepageLatestArticles,
+  MainNavigation,
+  LLMDiscoveryNote,
 } from '@components/layout/index'
-
-// --- Featured projects ---
-const projects = await getCollection('projects')
-const featuredProjects = projects.filter(p => p.data.featured)
-const projectsToShow = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4)
-
-// --- Latest notes ---
-const notes = filterContentForListing(await getCollection('notes'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4)
-
-// --- Random toolbox pages ---
-const toolboxPages = await getCollection('toolboxPages')
-const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4)
 ---
 
 <!doctype html>
@@ -36,7 +17,7 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
   <head>
     <BaseHead
       title="Scratchpad"
-      description="Homepage layout playground"
+      description="Component playground"
       robotsDirective="noindex, nofollow"
     />
   </head>
@@ -45,63 +26,8 @@ const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 4
     <CommandPalette />
     <main id="main" tabindex="-1">
       <LLMDiscoveryNote />
-      <section id="latest-articles">
-        <div class="cq">
-          <HomepageLatestArticles />
-        </div>
-      </section>
-      <section id="latest-notes">
-        <h2>Recent notes</h2>
-        <div class="stack">
-          {notes.map(note => <NoteCard item={note} compact />)}
-        </div>
-      </section>
-      <section id="from-the-toolbox">
-        <h2>From the toolbox</h2>
-        <div class="stack">
-          {randomTools.map(tool => <ToolCard item={tool} />)}
-        </div>
-      </section>
-
-      <section id="featured-projects">
-        <h2>Featured Projects</h2>
-        <div class="stack">
-          {projectsToShow.map(project => <ProjectCard item={project} />)}
-        </div>
-      </section>
-      <Footer />
+      <h1>Scratchpad</h1>
     </main>
+    <Footer />
   </body>
 </html>
-<style>
-  #latest-articles {
-    border-block-end: var(--border-width-accent) solid var(--color-accent);
-    padding-block-end: var(--space-xs);
-
-    > div {
-      max-width: 70%;
-    }
-  }
-
-  #featured-projects,
-  #from-the-toolbox,
-  #latest-notes {
-    margin: 0 auto;
-    padding: var(--space-xl);
-
-    h2 {
-      font-family: var(--font-display);
-      font-size: var(--font-size-lg);
-      font-weight: var(--font-weight-extrabold);
-      text-transform: uppercase;
-      font-feature-settings: 'case' on;
-      border-block-end: none;
-    }
-
-    .stack {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-      gap: var(--space-m);
-    }
-  }
-</style>

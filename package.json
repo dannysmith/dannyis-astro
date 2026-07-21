@@ -30,7 +30,7 @@
     "test:unit": "vitest run tests/unit",
     "test:e2e": "playwright test",
     "test:all": "bun run test:unit && bun run test:e2e",
-    "shoot:home": "node scripts/shoot-home.mjs",
+    "shoot": "node scripts/shoot.mjs",
     "scrape-toolbox": "bun scripts/get-toolbox-json.ts",
     "generate-og-image": "bun scripts/generate-og-image.ts",
     "standard-site:publication": "bun scripts/standard-site/create-publication.ts",

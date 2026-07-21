@@ -78,6 +78,11 @@ const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
   },
 }
 
+/**
+ * Card for a `projects` entry. Default is the medium card (cover, status, icon,
+ * title, summary). Unlike the other cards, the default here is medium, not full
+ * — `full` (the whole markdown body inline) is only used on /making.
+ */
 interface Props {
   item: CollectionEntry<'projects'>
   /** Compact tile: icon + title + byline, the whole card links out. */
@@ -154,7 +159,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
       </div>
     </article>
   ) : (
-    <article class="project-card-medium ui-style cq">
+    <article class="project-card-medium card-shell ui-style cq">
       <a
         class="card-link"
         href={compactHref}
@@ -379,34 +384,8 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     --_border-color: var(--color-accent);
     --_icon-size: 2.75rem;
 
-    position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    background-color: var(--color-background-secondary);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: var(--border-width-thick);
-      background: var(--_border-color);
-      transition: inline-size var(--duration-fast) var(--ease-in-out);
-      z-index: 1;
-    }
-
-    &:hover,
-    &:has(:focus-visible) {
-      border-color: var(--_border-color);
-
-      &::before {
-        inline-size: var(--border-width-heavy);
-      }
-    }
   }
 
   .card-link {

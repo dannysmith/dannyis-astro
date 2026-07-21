@@ -27,11 +27,11 @@ const icon = Astro.slots.has('default') ? (await Astro.slots.render('default')).
 ---
 
 <a
-  class="compact-card-tile ui-style cq"
+  class="compact-card-tile card-shell ui-style cq"
   href={href}
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener' : undefined}
-  style={`--_accent-color: ${accentColor}`}
+  style={`--_border-color: ${accentColor}`}
 >
   {icon && <span class="tile-icon" set:html={icon} />}
   <span class="tile-text">
@@ -44,36 +44,11 @@ const icon = Astro.slots.has('default') ? (await Astro.slots.render('default')).
   .compact-card-tile {
     --_icon-size: 3rem;
 
-    position: relative;
     display: flex;
     align-items: center;
     gap: var(--space-s);
     padding: var(--space-s);
-    overflow: hidden;
-    background-color: var(--color-background-secondary);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
     text-decoration: none;
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: var(--border-width-thick);
-      background: var(--_accent-color);
-      transition: inline-size var(--duration-fast) var(--ease-in-out);
-    }
-
-    &:hover,
-    &:focus-visible {
-      border-color: var(--_accent-color);
-
-      &::before {
-        inline-size: var(--border-width-heavy);
-      }
-    }
   }
 
   .tile-icon {

@@ -53,7 +53,7 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     </CompactCardTile>
   ) : (
     <article
-      class="tool-card ui-style cq"
+      class="tool-card card-shell ui-style cq"
       data-notion-id={data.notionId}
       data-category={data.category}
       style={`view-transition-name: tool-${item.id}`}
@@ -110,33 +110,10 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
 <style>
   .tool-card {
     --_border-color: var(--color-green);
+    --_icon-size: 2.5rem;
 
-    position: relative;
-    overflow: hidden;
-    background-color: var(--color-background-secondary);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: var(--border-width-thick);
-      background: var(--_border-color);
-      transition: inline-size var(--duration-fast) var(--ease-in-out);
-      z-index: 1;
-    }
-
-    &:hover,
-    &:has(:focus-visible) {
-      border-color: var(--_border-color);
-
-      &::before {
-        inline-size: var(--border-width-heavy);
-      }
-    }
+    display: flex;
+    flex-direction: column;
   }
 
   /* Image icons fill the icon box; emoji size comes from font-size. The
@@ -151,13 +128,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     border-radius: var(--radius-xs);
   }
 
-  .tool-card {
-    --_icon-size: 2.5rem;
-
-    display: flex;
-    flex-direction: column;
-  }
-
   .card-link {
     flex-grow: 1;
 
@@ -167,10 +137,11 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     }
   }
 
-  /* Hheight cap stops the 3:1 ratio producing an enormous cover in very wide containers. */
+  /* Height cap stops the 3:1 ratio producing an enormous cover in very wide containers. */
   .card-cover {
     position: relative;
-    /* Explicit width so aspect-ratio derives the height*/
+    /* Explicit width so aspect-ratio derives the height (with auto width it would
+       derive width from the capped height and stop filling the card). */
     inline-size: 100%;
     aspect-ratio: 3 / 1;
     max-block-size: 10rem;
