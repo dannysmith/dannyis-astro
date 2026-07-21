@@ -12,7 +12,7 @@ import {
   Spinner,
 } from '@components/ui/index'
 import { ThemeToggle } from '@components/navigation/index'
-import { Footer } from '@components/layout/index'
+import { Footer, HomeLinkList, HomepageLatestArticles } from '@components/layout/index'
 
 const toc = [
   { id: 'command-palette-component', label: 'CommandPalette' },
@@ -23,6 +23,7 @@ const toc = [
   { id: 'theme-toggle', label: 'ThemeToggle' },
   { id: 'markdown-content-actions', label: 'MarkdownContentActions' },
   { id: 'formatted-date', label: 'FormattedDate' },
+  { id: 'homepage-components', label: 'Homepage' },
   { id: 'footer', label: 'Footer' },
 ]
 ---
@@ -325,6 +326,38 @@ const toc = [
     <SGSwitcher>
       <FormattedDate date={new Date('2025-06-12')} />
     </SGSwitcher>
+  </section>
+
+  <section id="homepage-components" class="flow">
+    <h2>Homepage</h2>
+    <p>
+      These two components are used <strong>only on the homepage</strong> (<a href="/">/</a>) and
+      aren't meant to be reused elsewhere.
+    </p>
+
+    <h3 id="home-link-list">HomeLinkList</h3>
+    <p>
+      The homepage's primary list of site and social links (carrying the h-card microformats). It
+      shrinks to the width of its longest item, so give it a <code>.ui-style</code> context for the link
+      reset. Takes no props.
+    </p>
+    <Code lang="astro" code={'<HomeLinkList />'} />
+    <ResizableContainer>
+      <div class="ui-style">
+        <HomeLinkList />
+      </div>
+    </ResizableContainer>
+
+    <h3 id="home-latest-articles">HomepageLatestArticles</h3>
+    <p>
+      The homepage "Recent writing" list — it fetches the latest articles itself and renders them as
+      a compact list with series and reading-time meta. Must sit inside a container-query context (a
+      <code>.cq</code> ancestor); the meta hides below 30rem. Takes no props.
+    </p>
+    <Code lang="astro" code={'<HomepageLatestArticles />'} />
+    <ResizableContainer>
+      <HomepageLatestArticles />
+    </ResizableContainer>
   </section>
 
   <section id="footer" class="flow">

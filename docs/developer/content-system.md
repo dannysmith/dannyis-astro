@@ -39,8 +39,8 @@ The `projects` collection powers the `/making` page — a showcase of things Dan
 
 - **Files:** named by slug (e.g. `astro-editor.md`, no date prefix); the filename is the project `id` and its `/making#<id>` anchor.
 - **Schema:** `title`, `byline`, three status axes (`stage`, `audience`, optional `kind`), `icon`/`image` (via `image()`), `website`/`github`, `featured`, `startDate`, `draft`. See the inline-commented source in `src/content.config.ts`.
-- **Ordering:** `getSortedProjects()` (`src/utils/content.ts`) drops drafts and sorts by `startDate` (newest first, undated on top). Consumed by `/making` and `src/pages/scratchpad.astro`.
-- **Components:** `ProjectCard` renders a project, with a `compact` prop for a small linked tile; `ProjectIcon` renders the square icon or a display-type monogram fallback.
+- **Ordering:** `getSortedProjects()` (`src/utils/content.ts`) drops drafts and sorts by `startDate` (newest first, undated on top). Consumed by `/making` and the `llms.txt` feed.
+- **Components:** `ProjectCard` renders a project — default is a medium card, `full` renders the inline markdown body (used on `/making`), `compact` is a small linked tile. `ProjectIcon` renders the square icon or a display-type monogram fallback.
 - **Discovery:** listed in `llms.txt` and the sitemap, and `/making` emits an `ItemList` of `CreativeWork` JSON-LD. Deliberately **excluded from RSS/JSON feeds** — projects aren't dated posts.
 
 ### Content Filtering
@@ -196,7 +196,7 @@ Markdown export endpoints (`.md.ts` files) convert rendered content back to mark
 
 ### Utility Functions
 
-`src/utils/content-summary.ts` exposes `generateSummary(entry, maxLength)` (used by `ArticleCard` and the Note layout) plus its helpers for stripping MDX, extracting the first meaningful paragraph, sentence-aware truncation, and validation. See the file for signatures.
+`src/utils/content-summary.ts` exposes `generateSummary(entry, maxLength)` (accepts articles, notes and projects; used by `ArticleCard`, `ProjectCard`, `CompactNoteCard` and the Note layout) plus its helpers for stripping leading MDX ESM and elements, extracting the first meaningful paragraph, sentence-aware truncation, and validation. See the file for signatures.
 
 ## Markdown Plugins Configuration
 
