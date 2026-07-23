@@ -57,9 +57,8 @@ const markdownUrl = `${Astro.url.pathname.replace(/\/$/, '')}.md`
 // avoids colons, which the comma-separated `data-pagefind-meta` syntax splits on.
 const pubIso = pubDate.toISOString().slice(0, 10)
 
-// Shared-element view-transition names — the receiving ends of the title/cover
-// morph from listing pages and cards. Suppressed for externally-published
-// pieces, which immediately redirect off-site (matching the sources).
+// Receiving ends of the title/cover morph from listings and cards. Suppressed
+// for externally-published pieces, which redirect off-site (matching sources).
 const vtTitle = redirectURL ? undefined : `article-title-${Astro.params.slug}`
 const vtCover = redirectURL ? undefined : `article-cover-${Astro.params.slug}`
 
@@ -223,15 +222,11 @@ const standardSiteDocumentUri =
           object-fit: cover;
           filter: light-dark(none, grayscale(70%));
 
-          /* Receiving end of the cover morph from ArticleCard */
           view-transition-name: var(--vt-cover, none);
-          view-transition-class: article-morph;
         }
 
-        /* Receiving end of the title morph from listings and cards */
         .title {
           view-transition-name: var(--vt-name, none);
-          view-transition-class: article-morph;
         }
 
         .footer-actions {

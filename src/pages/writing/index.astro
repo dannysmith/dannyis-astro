@@ -42,7 +42,9 @@ const posts = filterContentForListing(await getCollection('articles'), true).sor
                   </p>
                   <h2
                     class="post-title"
-                    style={post.data.redirectURL ? undefined : `--vt-name: article-title-${post.id}`}
+                    style={
+                      post.data.redirectURL ? undefined : `--vt-name: article-title-${post.id}`
+                    }
                   >
                     {post.data.title}
                     {post.data.draft && <Pill text="Draft" />}
@@ -97,9 +99,8 @@ const posts = filterContentForListing(await getCollection('articles'), true).sor
         border-bottom: var(--border-width-thick) solid var(--color-accent);
         transition: color var(--duration-fast) var(--ease-in-out);
 
-        /* Morphs into the article page's <h1> */
+        /* Title morph. See docs/developer/view-transitions.md */
         view-transition-name: var(--vt-name, none);
-        view-transition-class: article-morph;
 
         & :global(.pill) {
           transform: translateY(-0.2em);

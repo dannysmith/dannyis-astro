@@ -121,13 +121,9 @@ document.addEventListener('theme-changed', (e) => {
 
 ### View Transitions
 
-The site uses the View Transitions API for smooth navigation. Key elements get a `view-transition-name` (the footer is stable; note cards morph between list and detail via a per-id name passed through a CSS variable like `--vt-name: note-${id}`), with animation tuned in `global.css`.
+The site uses **cross-document (MPA) view transitions** — opted in with a single `@view-transition { navigation: auto }` (in `src/styles/_view-transitions.css`). There is no `ClientRouter` and no client-side routing: this is a statically generated site and every navigation is an ordinary full-page load. Shared-element morphs are therefore pure CSS — an element on the old page and the matching element on the new page share a `view-transition-name` (via `--vt-name`), and the browser morphs between them. Because each navigation is a full document load, page scripts simply re-run fresh; there is no swap to survive and no re-init lifecycle to wire.
 
-**The one gotcha:** client JS doesn't survive a swap, so every interactive component must re-initialise on `astro:after-swap`:
-
-```javascript
-document.addEventListener('astro:after-swap', initComponent);
-```
+See [view-transitions.md](./view-transitions.md) for the full pattern, naming convention, and how to add new transitions.
 
 ### 4. Centralized Organization with Clear Boundaries ⭐⭐
 

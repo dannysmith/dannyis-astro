@@ -51,6 +51,7 @@ const pubIso = pubDate.toISOString().slice(0, 10)
   ) : (
     <article
       class="note h-entry cq surface-white"
+      style={`--vt-name: note-${item.id}`}
       data-pagefind-body={standalone ? true : undefined}
       data-pagefind-meta={standalone ? 'type:note' : undefined}
     >
@@ -105,9 +106,9 @@ const pubIso = pubDate.toISOString().slice(0, 10)
     color: var(--color-text);
     filter: var(--shadow-medium);
 
-    /* View transition support - uses CSS variable set via inline style */
+    /* Shared with the standalone note and the compact card, so it morphs
+       between them. See docs/developer/view-transitions.md */
     view-transition-name: var(--vt-name, none);
-    view-transition-class: note-card;
   }
 
   .note-header {

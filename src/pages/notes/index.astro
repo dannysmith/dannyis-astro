@@ -41,7 +41,7 @@ const olderNotes = notes.slice(numberOfRecentNotes)
         recentNotes.length > 0 && (
           <section class="recent-notes" aria-label="Recent notes">
             {recentNotes.map(note => (
-              <div class="note-container cq" style={`--vt-name: note-${note.id}`}>
+              <div class="note-container cq">
                 <NoteCard item={note} />
               </div>
             ))}

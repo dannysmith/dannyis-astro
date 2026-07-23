@@ -1,0 +1,55 @@
+/*
+ * View transitions
+ * ================
+ * The site opts into cross-document (MPA) view transitions below — zero-JS: the
+ * browser cross-fades between pages and morphs any elements that share a
+ * `view-transition-name` across the old and new document. Browsers without
+ * support (Firefox today) navigate instantly.
+ *
+ * Pattern for a morphable element:
+ *   - its scoped CSS declares `view-transition-name: var(--vt-name, none)`
+ *   - a consumer sets `--vt-name` inline; omitting it leaves the element inert
+ *   - a second morphing part on the same element uses `--vt-cover` likewise
+ *
+ * Naming: `<type>-<id>` for a whole-element morph (`note-<id>`), or
+ * `<type>-<facet>-<id>` when one element morphs several parts
+ * (`article-title-<id>`, `article-cover-<id>`).
+ *
+ * Invariant: a name must be UNIQUE per rendered page. Two elements sharing one
+ * makes the browser skip that navigation's transition — benign, never a crash.
+ *
+ * Full pattern, naming and expansion notes: docs/developer/view-transitions.md
+ */
+
+:root {
+  /* One knob for how quick everything feels — morphs and the root cross-fade
+     both read these. Custom properties inherit from :root into the
+     ::view-transition pseudo tree, so this retunes the whole site. */
+  --vt-duration: 200ms;
+  --vt-easing: ease-in-out;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+/* Every group and cross-fade runs at the shared duration. To give one type its
+   own timing, add a `view-transition-class` to those elements and override
+   `::view-transition-group(.that-class)`. */
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--vt-duration);
+  animation-timing-function: var(--vt-easing);
+}
+
+/* The blanket `*` reduced-motion reset in _reset.css can't reach these
+   pseudo-elements, so opt out explicitly — navigation still happens, as an
+   instant cut. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -102,9 +102,8 @@ const items = await Promise.all(
     font-weight: var(--font-weight-light);
     padding-block: 0.2em;
 
-    /* Morphs into the article page's <h1> */
+    /* Title morph; also into the /writing list. See docs/developer/view-transitions.md */
     view-transition-name: var(--vt-name, none);
-    view-transition-class: article-morph;
   }
 
   .list-item {

@@ -61,10 +61,8 @@ const bylineDate = data.pubDate.toLocaleDateString('en-us', {
 })
 const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
 
-// Shared-element view-transition names: the title (and cover, when present)
-// morph into the article page's <h1> and hero image. Suppressed for
-// externally-published pieces — those redirect off-site, so a morph would only
-// flash before the page is yanked away.
+// Title and cover morph into the article page. Suppressed for externally-
+// published pieces, which redirect off-site — the morph would only flash.
 const vtTitle = data.redirectURL ? undefined : `article-title-${item.id}`
 const vtCover = data.redirectURL ? undefined : `article-cover-${item.id}`
 ---
@@ -167,9 +165,8 @@ const vtCover = data.redirectURL ? undefined : `article-cover-${item.id}`
     block-size: 100%;
     object-fit: cover;
 
-    /* Morphs into the article page's hero image (name set on .card-cover) */
+    /* Cover morph; name set on .card-cover. See docs/developer/view-transitions.md */
     view-transition-name: var(--vt-cover, none);
-    view-transition-class: article-morph;
   }
 
   .cover-badge {
@@ -226,9 +223,8 @@ const vtCover = data.redirectURL ? undefined : `article-cover-${item.id}`
     font-size: var(--font-size-base);
     letter-spacing: var(--tracking-tight);
 
-    /* Morphs into the article page's <h1> */
+    /* Title morph into the article page's <h1> */
     view-transition-name: var(--vt-name, none);
-    view-transition-class: article-morph;
   }
 
   .card-summary {
