@@ -51,14 +51,15 @@ const STAGE_META: Record<ProjectStage, PillMeta> = {
   },
 }
 
-// Stage badge tint for the medium card (its cover badge needs a solid colour,
-// unlike the outline pill the full card uses for most stages).
-const STAGE_BADGE_COLOR: Record<ProjectStage, string> = {
-  'active-development': 'var(--color-blue)',
-  'actively-maintained': 'var(--color-green)',
-  finished: 'var(--color-green)',
-  paused: 'var(--color-yellow)',
-  archived: 'var(--color-purple)',
+// The medium card's cover badge: a solid tint (unlike the outline pill the full
+// card uses) and a short single-line label — STAGE_META's descriptive text is
+// too long for a fixed corner overlay.
+const STAGE_BADGE_META: Record<ProjectStage, { color: string; label: string }> = {
+  'active-development': { color: 'var(--color-blue)', label: 'In development' },
+  'actively-maintained': { color: 'var(--color-green)', label: 'Maintained' },
+  finished: { color: 'var(--color-green)', label: 'Finished' },
+  paused: { color: 'var(--color-yellow)', label: 'Paused' },
+  archived: { color: 'var(--color-purple)', label: 'Archived' },
 }
 
 // Audience pill — only shown when it's not plainly public.
@@ -171,9 +172,9 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
           <span class="cover-badge type-badge">Project</span>
           <span
             class="cover-badge status-badge"
-            style={`--_badge-color: ${STAGE_BADGE_COLOR[stage]}`}
+            style={`--_badge-color: ${STAGE_BADGE_META[stage].color}`}
           >
-            {STAGE_META[stage].text}
+            {STAGE_BADGE_META[stage].label}
           </span>
         </div>
 

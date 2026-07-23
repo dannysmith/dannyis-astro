@@ -23,12 +23,29 @@ const flags = Object.fromEntries(
 )
 const path = args.find(a => !a.startsWith('--')) || '/'
 
-const base = flags.base || process.env.BASE_URL || 'http://localhost:4321'
+const fail = msg => {
+  console.error(`shoot: ${msg}`)
+  process.exit(1)
+}
+
+// Value-taking flags passed bare (e.g. `--theme` with no `=…`) parse as `true`.
+for (const key of ['base', 'out', 'theme', 'widths']) {
+  if (flags[key] === true) fail(`--${key} needs a value, e.g. --${key}=…`)
+}
+if (flags.theme && !['light', 'dark', 'both'].includes(flags.theme)) {
+  fail(`--theme must be light, dark or both (got "${flags.theme}")`)
+}
+
+// Trailing slash would double up against the slash-prefixed path.
+const base = (flags.base || process.env.BASE_URL || 'http://localhost:4321').replace(/\/+$/, '')
 const out = flags.out || 'docs/tasks-todo/temporary'
 // A generalised spread from a small phone to an ultra-wide monitor.
 const widths = String(flags.widths || '375,430,768,1024,1440,1920,2560')
   .split(',')
   .map(Number)
+if (widths.some(w => !Number.isFinite(w) || w <= 0)) {
+  fail(`--widths must be comma-separated positive numbers (got "${flags.widths}")`)
+}
 const themes = flags.theme && flags.theme !== 'both' ? [flags.theme] : ['light', 'dark']
 
 // Filename-safe slug of the path ("/" → "home", "/writing/x" → "writing-x"), and

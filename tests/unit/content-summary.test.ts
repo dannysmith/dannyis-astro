@@ -173,6 +173,25 @@ Prose.`
     expect(stripLeadingEsm(content)).toBe('Prose.')
   })
 
+  it('drops a multiline export block that contains internal blank lines', () => {
+    const content = `export const meta = {
+  a: 1,
+
+  b: 2,
+};
+
+Real prose starts here.`
+
+    expect(stripLeadingEsm(content)).toBe('Real prose starts here.')
+  })
+
+  it('keeps prose that follows an ESM block with no blank line between', () => {
+    const content = `import X from 'x';
+Prose glued to the import.`
+
+    expect(stripLeadingEsm(content)).toBe('Prose glued to the import.')
+  })
+
   it('leaves prose untouched when there is no leading ESM', () => {
     const content = 'Just prose.\n\nMore prose.'
     expect(stripLeadingEsm(content)).toBe('Just prose.\n\nMore prose.')

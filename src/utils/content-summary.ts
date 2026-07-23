@@ -46,20 +46,52 @@ export function generateSummary(entry: ContentEntry, maxLength: number = 200): s
 /**
  * Drop leading MDX ESM statement blocks (`import` / `export`) from a raw body.
  *
- * These always sit at the top of the file, ahead of any prose, but a single
- * `export` can span many lines (an object literal, say) with no delimiter
- * before the content that follows — so rather than trying to match arbitrary
- * JS, we split on blank lines and drop each leading block that opens with
- * `import`/`export`, stopping at the first prose block.
+ * These always sit at the top of the file, ahead of any prose. A single
+ * statement can span many lines (an `export` object literal, say) and may even
+ * contain blank lines, so we walk line by line — tracking bracket depth to stay
+ * inside a multi-line statement — and stop at the first line of prose, even
+ * when no blank line separates it from the ESM above.
  */
 export function stripLeadingEsm(content: string): string {
   if (!content) return ''
 
-  const blocks = content.split(/\n\s*\n/)
+  const lines = content.split('\n')
   let i = 0
-  while (i < blocks.length && /^\s*(?:import|export)\b/.test(blocks[i])) i++
+  let depth = 0
 
-  return blocks.slice(i).join('\n\n')
+  while (i < lines.length) {
+    const line = lines[i]
+
+    if (depth > 0) {
+      // Continuation of a multi-line import/export statement.
+      depth += bracketDelta(line)
+      i++
+    } else if (line.trim() === '') {
+      // Leading blank line, before or between ESM statements.
+      i++
+    } else if (/^(?:import|export)\b/.test(line)) {
+      depth += bracketDelta(line)
+      i++
+    } else {
+      break // first line of prose
+    }
+  }
+
+  return lines.slice(i).join('\n').trim()
+}
+
+/**
+ * Net unclosed brackets (`{[(` minus `}])`) on a line, used to stay inside a
+ * multi-line ESM statement. A heuristic, not a JS parser — brackets inside
+ * strings would miscount, but import/export headers don't carry those.
+ */
+function bracketDelta(line: string): number {
+  let delta = 0
+  for (const ch of line) {
+    if (ch === '{' || ch === '[' || ch === '(') delta++
+    else if (ch === '}' || ch === ']' || ch === ')') delta--
+  }
+  return delta
 }
 
 /**
