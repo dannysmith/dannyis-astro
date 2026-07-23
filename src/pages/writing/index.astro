@@ -10,8 +10,7 @@ import {
 import { FormattedDate, Pill } from '@components/ui/index'
 import { filterContentForListing } from '@utils/content'
 
-// TODO: Remove true when done testing view transitions
-const posts = filterContentForListing(await getCollection('articles'), true).sort(
+const posts = filterContentForListing(await getCollection('articles')).sort(
   (b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
 )
 ---
