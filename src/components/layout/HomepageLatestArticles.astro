@@ -38,7 +38,10 @@ const items = await Promise.all(
     items.map(({ article, minutesRead, series }) => (
       <li class="list-item">
         <a href={`/writing/${article.id}/`} class="link">
-          <p class="title">
+          <p
+            class="title"
+            style={article.data.redirectURL ? undefined : `--vt-name: article-title-${article.id}`}
+          >
             {article.data.title}
             {article.data.redirectURL && (
               <span class="external-arrow" aria-hidden="true">
@@ -98,6 +101,10 @@ const items = await Promise.all(
   .title {
     font-weight: var(--font-weight-light);
     padding-block: 0.2em;
+
+    /* Morphs into the article page's <h1> */
+    view-transition-name: var(--vt-name, none);
+    view-transition-class: article-morph;
   }
 
   .list-item {

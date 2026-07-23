@@ -60,6 +60,13 @@ const bylineDate = data.pubDate.toLocaleDateString('en-us', {
   day: 'numeric',
 })
 const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
+
+// Shared-element view-transition names: the title (and cover, when present)
+// morph into the article page's <h1> and hero image. Suppressed for
+// externally-published pieces — those redirect off-site, so a morph would only
+// flash before the page is yanked away.
+const vtTitle = data.redirectURL ? undefined : `article-title-${item.id}`
+const vtCover = data.redirectURL ? undefined : `article-cover-${item.id}`
 ---
 
 {
@@ -69,7 +76,7 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
     <article class="article-card card-shell ui-style cq">
       <a href={href} class="card-link">
         {data.cover && (
-          <div class="card-cover">
+          <div class="card-cover" style={vtCover ? `--vt-cover: ${vtCover}` : undefined}>
             <Image src={data.cover} alt={data.coverAlt ?? ''} width={600} />
             <span class="cover-badge type-badge">Article</span>
             {data.platform && <span class="cover-badge platform-badge">{data.platform}</span>}
@@ -83,7 +90,7 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
               {data.platform && <Pill text={data.platform} color="var(--color-green)" />}
             </div>
           )}
-          <h3 class="card-title">
+          <h3 class="card-title" style={vtTitle ? `--vt-name: ${vtTitle}` : undefined}>
             {data.title}
             {data.draft && <span aria-hidden="true"> 🚧</span>}
           </h3>
@@ -159,6 +166,10 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
+
+    /* Morphs into the article page's hero image (name set on .card-cover) */
+    view-transition-name: var(--vt-cover, none);
+    view-transition-class: article-morph;
   }
 
   .cover-badge {
@@ -214,6 +225,10 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
     font-family: var(--font-display);
     font-size: var(--font-size-base);
     letter-spacing: var(--tracking-tight);
+
+    /* Morphs into the article page's <h1> */
+    view-transition-name: var(--vt-name, none);
+    view-transition-class: article-morph;
   }
 
   .card-summary {

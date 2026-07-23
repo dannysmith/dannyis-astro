@@ -37,7 +37,11 @@ const tearMask = `url(data:image/svg+xml,${encodeURIComponent(tearSvg).replace(
 ---
 
 <div class="compact-note ui-style">
-  <a href={href} class="compact-note-surface surface-white" style={`--tear: ${tearMask}`}>
+  <a
+    href={href}
+    class="compact-note-surface surface-white"
+    style={`--tear: ${tearMask}; --vt-name: note-${item.id}`}
+  >
     <p class="card-date">
       <FormattedDate date={pubDate} />
     </p>
@@ -77,6 +81,11 @@ const tearMask = `url(data:image/svg+xml,${encodeURIComponent(tearSvg).replace(
     mask:
       var(--tear) right / var(--tear-width) 100% no-repeat,
       linear-gradient(#000 0 0) left / calc(100% - var(--tear-width) + 1px) 100% no-repeat;
+
+    /* Shares its note's transition-name with the full NoteCard and the
+       standalone note, so clicking it morphs the torn card into the full note. */
+    view-transition-name: var(--vt-name, none);
+    view-transition-class: note-card;
 
     &:hover,
     &:active {

@@ -10,7 +10,8 @@ import {
 import { FormattedDate, Pill } from '@components/ui/index'
 import { filterContentForListing } from '@utils/content'
 
-const posts = filterContentForListing(await getCollection('articles')).sort(
+// TODO: Remove true when done testing view transitions
+const posts = filterContentForListing(await getCollection('articles'), true).sort(
   (b, a) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
 )
 ---
@@ -39,7 +40,10 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
                   <p class="date all-caps">
                     <FormattedDate date={post.data.pubDate} />
                   </p>
-                  <h2 class="post-title">
+                  <h2
+                    class="post-title"
+                    style={post.data.redirectURL ? undefined : `--vt-name: article-title-${post.id}`}
+                  >
                     {post.data.title}
                     {post.data.draft && <Pill text="Draft" />}
                     {post.data.platform && (
@@ -92,6 +96,10 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
         padding-bottom: var(--space-3xs);
         border-bottom: var(--border-width-thick) solid var(--color-accent);
         transition: color var(--duration-fast) var(--ease-in-out);
+
+        /* Morphs into the article page's <h1> */
+        view-transition-name: var(--vt-name, none);
+        view-transition-class: article-morph;
 
         & :global(.pill) {
           transform: translateY(-0.2em);
