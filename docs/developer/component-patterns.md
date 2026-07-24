@@ -195,6 +195,15 @@ Every content collection has one card component in `ui/`. They share a common in
 
 Cross-card abstractions: the `.card-shell` utility (the bordered tile with a growing left accent bar; `_utilities.css`) and the two compact building blocks (`CompactCardTile`, `CompactNoteCard`). Full/medium variants are otherwise bespoke per card.
 
+### Opting out of the lightbox
+
+`Lightbox.astro` binds a delegated click handler to every `img[alt]` on the page and zooms it into a full-screen canvas. Two rules keep that from firing where it shouldn't:
+
+1. **Interactive ancestors win automatically.** An image inside an `a[href]`, `button`, `summary`, `label` or `[role="button"]` is never lightboxed — its click already navigates or triggers a control. This covers all card covers and icons (they sit inside `card-link`) with no per-component work, and covers future cards for free.
+2. **`data-no-lightbox` is the explicit opt-out.** Honoured on the `<img>` **or any ancestor**, so you never prop-drill it. Put it on the image for `<Image>`/`<Picture>` (extra attributes spread onto the `<img>`: `<Image src={…} alt="" data-no-lightbox />`), or on a wrapper (`<figure>`, a `<Grid>`, a section) for anything that hides its `<img>` behind markup — e.g. `BasicImage`. `ProjectIcon` sets it directly, since its icon renders outside a link on `/making`.
+
+Gotcha: `data-no-lightbox={false}` still renders the attribute (as `"false"`), so it still opts out. Use `data-no-lightbox={cond ? '' : undefined}` for conditional application. Markdown image syntax is out of scope — there's no way to attach it there, and prose images are meant to zoom.
+
 ### Barrel Export Pattern
 
 ```typescript

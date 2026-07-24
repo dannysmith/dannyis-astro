@@ -12,7 +12,14 @@ const { icon, title } = Astro.props
 
 {
   icon ? (
-    <Image class="project-icon" src={icon} alt={`${title} icon`} width={128} height={128} />
+    <Image
+      class="project-icon"
+      src={icon}
+      alt={`${title} icon`}
+      width={128}
+      height={128}
+      data-no-lightbox
+    />
   ) : (
     <span class="project-icon is-fallback" aria-hidden="true">
       {title.charAt(0)}

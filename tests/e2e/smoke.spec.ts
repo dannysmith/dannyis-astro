@@ -98,6 +98,31 @@ test.describe('Generated Files', () => {
   })
 })
 
+test.describe('Lightbox', () => {
+  test('prose images still open the lightbox', async ({ page }) => {
+    await page.goto('/writing/article-styleguide/')
+    const figureImg = page.locator('.figure img').first()
+    await expect(figureImg).toBeVisible()
+    await figureImg.click()
+    await expect(page.locator('.lightbox.is-open')).toBeVisible()
+  })
+
+  test('card cover images do not trigger the lightbox', async ({ page }) => {
+    await page.goto('/styleguide/components/')
+    // Stop the card link from navigating so we can observe the click in place —
+    // otherwise the click would just land us on a fresh page with a closed lightbox.
+    await page.evaluate(() =>
+      document
+        .querySelectorAll('a.card-link')
+        .forEach(a => a.addEventListener('click', e => e.preventDefault())),
+    )
+    const cover = page.locator('.article-card .card-cover img').first()
+    await expect(cover).toBeVisible()
+    await cover.click()
+    await expect(page.locator('.lightbox.is-open')).toHaveCount(0)
+  })
+})
+
 test.describe('Content Filtering Tests', () => {
   test('styleguide article renders individually', async ({ page }) => {
     const response = await page.goto('/writing/article-styleguide/')

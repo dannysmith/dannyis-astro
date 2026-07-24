@@ -50,22 +50,33 @@
     const ctx = lightboxCanvas.getContext('2d')
     const closeBtn = document.getElementById('close') as HTMLSpanElement
 
-    document.querySelectorAll('img[alt]').forEach(img => {
-      img.addEventListener('click', function (event) {
-        const clickedImg = event.target as HTMLImageElement
-        lightbox.classList.add('is-open')
+    // Any image whose click already means something else (following a link,
+    // triggering a control) must not also open the lightbox, or the two fire
+    // together. `[data-no-lightbox]` is an explicit opt-out, honoured on the
+    // <img> or any ancestor — see docs/developer/component-patterns.md.
+    const SKIP = 'a[href], button, summary, label, [role="button"], [data-no-lightbox]'
 
-        const image = new Image()
-        image.src = clickedImg.src
-        image.onload = function () {
-          lightboxCanvas.width = image.width
-          lightboxCanvas.height = image.height
-          if (ctx) {
-            ctx.clearRect(0, 0, lightboxCanvas.width, lightboxCanvas.height)
-            ctx.drawImage(image, 0, 0, lightboxCanvas.width, lightboxCanvas.height)
-          }
+    function openLightbox(clickedImg: HTMLImageElement) {
+      lightbox.classList.add('is-open')
+
+      const image = new Image()
+      image.src = clickedImg.src
+      image.onload = function () {
+        lightboxCanvas.width = image.width
+        lightboxCanvas.height = image.height
+        if (ctx) {
+          ctx.clearRect(0, 0, lightboxCanvas.width, lightboxCanvas.height)
+          ctx.drawImage(image, 0, 0, lightboxCanvas.width, lightboxCanvas.height)
         }
-      })
+      }
+    }
+
+    // Delegated so it also covers images added after load, and evaluates the
+    // skip rules at click time.
+    document.addEventListener('click', function (event) {
+      const img = (event.target as HTMLElement).closest?.('img[alt]') as HTMLImageElement | null
+      if (!img || img.closest(SKIP)) return
+      openLightbox(img)
     })
 
     closeBtn.addEventListener('click', function () {
@@ -77,5 +88,11 @@
         lightbox.classList.remove('is-open')
       }
     })
+  })
+
+  // Never restore an open lightbox from the bfcache: after a full-page
+  // navigation, Back would otherwise show the page with the lightbox still up.
+  window.addEventListener('pageshow', function () {
+    document.getElementById('lightbox')?.classList.remove('is-open')
   })
 </script>
