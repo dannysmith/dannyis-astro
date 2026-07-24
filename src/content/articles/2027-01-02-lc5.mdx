@@ -1,32 +1,6 @@
 ---
-title: 'LoomClone 5: Building resiliance into my video platform'
+title: 'LoomClone 5: A dive into the Video Editor and Thumbnail Editor'
 draft: true
 pubDate: 2027-01-01
 series: loomclone
 ---
-
-Intro
-
-## Local recording resilience
-
-### Writing to disk as recording happens
-
- (segments, JSON files etc)
-
-### Writing raw captures
-
-### Managing local files
-
-## Streaming & Healing resiliance
-
-### Streaming
-
-### Post-recording healing
-
-### Healing later on
-
-The *heal loop* runs after every recording, but it also runs against all videos recorded in the last three days whenever the macOS app reconnects to the server. It walks the local recordings folder for any video within the last 3 days where `recording.json` shows segments with `uploaded: false` and resends them. This catches any recordings where the app quit before healing finished, or where the network dropped and never came back.
-
-## Server backups
-
-## Wrapping up
