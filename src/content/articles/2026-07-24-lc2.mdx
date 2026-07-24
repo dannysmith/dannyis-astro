@@ -14,6 +14,11 @@ I think the best way to explain this is to walk through the lifecycle of a recor
 
 When I open the menubar popover we start some lightweight preview sessions for the selected camera and audio devices and start capturing screenshots of the active display to provide a preview for that. We also begin polling for new devices to keep the dropdowns up-to-date and check the server is reachable and the local data directory is writable. All this is intentionally separate from the actual capture sessions and is torn down once the menubar popover is closed. Its only purpose is to confirm to the user that the chosen sources are set up properly and let them choose a few settings.
 
+<Grid columns="2">
+![2026-07-06-lc-menubar-app-1.png](../../assets/articles/2026-07-24-2026-07-06-lc-menubar-app-1.png)
+![2026-07-06-lc-menubar-app-2.png](../../assets/articles/2026-07-24-2026-07-06-lc-menubar-app-2.png)
+</Grid>
+
 ## 2. Pressing record
 
 The recording toolbar shows a short countdown while in the background:
@@ -22,13 +27,13 @@ The recording toolbar shows a short countdown while in the background:
 2. We hit the server to generate a UUID and unique three-word slug for the video. This creates a new recording in the database and seeds a data directory on the server, returning the UUID and slug to the mac app.
 3. We use the UUID to create a local data directory and seed it with an `init.mp4` to act as an entrypoint for the local `m4s` segments.
 
-When the countdown finishes we initiate an internal *metronome* to help keep things in sync and begin the **writes** processes.
+When the countdown finishes we initiate an internal *metronome* to help keep things in sync and begin the **writer** processes.
 
 ## 3. During Recording
 
 We use two capture sessions: one for the screen and another for the camera+audio together (or just the audio if there’s no camera feed). These feed an orchestrator which maintains a metronome & recording clock, handles user pausing/unpausing by pausing the clock, and deals with things like frame caching.
 
-There's a ton of fiddly stuff in here to gracefully handle video sources which deliver frames unpredictably. Every video frame and audio sample is timestamped using the *hardware capture time* it arrived with rather than the wall clock, so variable latency between capture and reaching my code is irellevant for timing sync. When camera & mic are both selected they share a single capture session so are inherently aligned to sub-millisecond accuracy. While the metronome ticks along at the target frame rate, it's just a *budget*: on each tick we emit whatever the source has actually delivered. So a camera that can only manage 24fps produces honest 24fps output rather than the horrible corrupted mess I ended up with from my initial metronome implementation.
+There's a ton of fiddly stuff in here to gracefully handle video sources which deliver frames unpredictably. Every video frame and audio sample is timestamped using the *hardware capture time* it arrived with rather than the wall clock, so variable latency between capture and reaching my code is irrelevant for timing sync. When camera & mic are both selected they share a single capture session so are inherently aligned to sub-millisecond accuracy. While the metronome ticks along at the target frame rate, it's just a *budget*: on each tick we emit whatever the source has actually delivered. So a camera that can only manage 24fps produces 24fps output rather than the horrible corrupted mess I ended up with from my initial metronome implementation.
 
 <Callout title="Aside: Some cameras are lying bastards">
 My Sony ZV-1 advertises itself as a 30fps camera but actually only delivers **about** 24. When I told macOS to *hold* 30fps, its capture layer tried to fabricate the missing frames and in doing so corrupted the timestamps on every frame, shifting them several seconds into the past and completely desyncing the audio. The fix was to stop telling the camera how fast to run and just take whatever it gives us. Cameras that can actually sustain their advertised rate (like the built-in FaceTime one) were never affected, which made it a *delightfully* confusing bug to track down.
@@ -44,9 +49,9 @@ During recording we continuously write three media files to disk locally, direct
 
 These are never sent to the server, but having them locally means I can always pull them into Final Cut Pro if I decide to do some proper editing later, and have a reliable backup if composition fails for some reason. We also keep a timeline of events in memory and continuously write to a few log and diagnostic files.
 
-The video we send to the server is *composited* from the capture streams using the upload resolution and framerate selected by the user before recording. Camera adjustments for white balance & brightness are applied to the camera feed and the camera and screen feeds are downscaled and/or cropped to an appropriate size & aspect ratio for the recording, taking into account the selected stream quality.
+The video we send to the server is *composited* from the capture streams using the upload resolution and framerate selected by the user before recording. Camera adjustments for white balance & brightness are applied to the camera feed and both it and the screen feed are downscaled and/or cropped to an appropriate size & aspect ratio, taking into account the chosen stream quality.
 
-<Callout title="User Actions While Recording">
+<Callout title="User Actions While Recording" emoji="👉" largeHeading>
 The following user actions affect the composited recording.
 
 - Pressing **pause** in the toolbar temporarily pauses all writers until **unpause** is pressed, along with the metronome.
@@ -55,30 +60,32 @@ The following user actions affect the composited recording.
 - Moving the camera preview from one quadrant to another (eg. bottom-right to top-left) moves it to that corner in the composited output (when in screen & camera mode).
 </Callout>
 
-As the composited video is generated it's encoded at an appropriate bitrate and written to disk locally as a series of ~4 second `.m4s` segments before being "streamed" to the server via a queue of simple `PUT` requests. Failed `PUT`s are retried indefinitely with an exponential backoff (and we stop bothering entirely while the network is obviously down), but they're all sent via a queue so even a ~10 min connection loss just means the queued segments are sent up on reconnection. These `PUT`s are idempotent on the server.
+As the composited video is generated it's encoded at an appropriate bitrate and written to disk locally as a series of ~4 second `.m4s` segments before being "streamed" to the server via a queue of simple `PUT` requests. Failed puts are retried indefinitely with an exponential backoff (and we stop bothering entirely while the network is obviously down), but they're all sent via a queue so even a ~10 min connection loss just means the queued segments are sent up on reconnection. These `PUT`s are idempotent on the server.
 
-There are a couple of other resilience details worth a mention. If the Metal compositor hangs or returns a bad frame – which can happen under sustained GPU pressure – we detect it, rebuild the context and carry on. And when the screen content isn't changing for a while (eg. I'm holding on a slide while talking to camera) we emit synthetic *keep-alive* frames so the HLS segments never go empty and break the playlist. We also keep an eye on the capture sources themselves: if the screen, camera or mic stalls or drops out mid-recording a warning pill pops up in the toolbar so I know something's wrong. And if a camera sharing a session with the mic dies we fail over to a separate, always-running mic capture session so the audio keeps recording.
+There are a couple of other resilience details worth a mention. If the Metal compositor hangs or returns a bad frame – which can happen under sustained GPU pressure – we detect it, rebuild the context and carry on. And when the screen content isn't changing for a while (eg. I'm showing a static slide while talking to camera) we emit synthetic *keep-alive* frames so the HLS segments never go empty and break the playlist.
+
+We also keep an eye on the capture sources themselves: if the screen, camera or mic stalls or drops out mid-recording a warning pill pops up in the toolbar so I know something's wrong. And if the camera in a shared camera+mic capture session dies we fail over to a separate, always-running mic capture session so the audio at least keeps recording.
 
 The recording timeline is periodically written to a temporary file on disk to facilitate recovery if anything goes wrong.
 
 ## 4. Pressing Stop
 
-When we hit stop, the capture sessions and writer processes are stopped. If the `UploadActor` queue isn’t empty it’s given up to ten seconds to finish uploading before any remaining segments are marked as *failed* locally[^1].
+When we hit stop, the capture sessions and writer processes finish and if the `UploadActor` queue isn’t empty it’s given up to ten seconds to finish uploading before remaining segments are marked *failed* locally[^1].
 
 The recording timeline is used to write a local `recording.json` to disk which includes:
 
 - Basic info like UUID, start/end timestamps, duration etc.
-- Details of the input sources and raw writers used, including device names, hardware details and the like.
+- Details of the input sources and raw writers used, including hardware details and the like.
 - Details of the writer used for the composited video including the encoder and streaming settings.
 
-It includes a log of timeline events during recording, each of which has:
+It includes a timeline of events during recording, each of which has:
 
 - `kind` - type of event (eg `segment.uploaded` or `modeChange.CamOnly`).
 - `t` - time of event as seconds since metronome `T0`.
 - `wallClock` - datetime of event per OS clock as UTC.
 - `data` - Other useful stuff as an object. This depends on the kind of event.
 
-While the event log includes the segment upload events, `recording.json` also contains a separate list of the generated segments, including:
+While the event timeline includes segment-related events, `recording.json` also contains a separate list of the generated segments, including:
 
 - `bytes` - size of the segment
 - `durationSeconds` - segment duration
@@ -87,19 +94,291 @@ While the event log includes the segment upload events, `recording.json` also co
 - `index` - Order of segments chronologically as emitted by the compositor. We can use this to deal with any ordering issues later.
 - `uploaded` - True if any `PUT` for the segment returned OK, false if not.
 
-This data is written to a local `recording.json` and then `POST`ed to `/:uuid/complete` on the server to tell it we're done recording.
+This data is written to a local `recording.json` and then POSTed to `/:uuid/complete` on the server to tell it we're done recording.
+
+<Accordion header="Example recording.json">
+Here's an example (with a bunch of the repetitive data removed).
+
+
+```json title="recording.json"
+{
+  "app" : {
+    "build" : "1",
+    "osVersion" : "26.5.1",
+    "version" : "0.1.0"
+  },
+  "encoder" : {
+    "audioBitrate" : 128000,
+    "audioCodec" : "aac-lc",
+    "outputHeight" : 1080,
+    "outputWidth" : 1920,
+    "segmentIntervalSeconds" : 4,
+    "targetFPS" : 30,
+    "videoBitrate" : 8000000,
+    "videoCodec" : "h264",
+    "videoProfile" : "High"
+  },
+  "events" : [
+    {
+      "data" : {
+        "file" : "screen.mov"
+      },
+      "kind" : "raw.writer.started",
+      "t" : 0,
+      "wallClock" : "2026-06-06T16:47:20.381Z"
+    },
+    {
+      "data" : {
+        "file" : "audio.m4a"
+      },
+      "kind" : "raw.writer.started",
+      "t" : 0,
+      "wallClock" : "2026-06-06T16:47:20.381Z"
+    },
+    {
+      "kind" : "recording.committed",
+      "t" : 0,
+      "wallClock" : "2026-06-06T16:47:23.223Z"
+    },
+    {
+      "data" : {
+        "file" : "camera.mp4"
+      },
+      "kind" : "raw.writer.started",
+      "t" : 0.004191994667053223,
+      "wallClock" : "2026-06-06T16:47:23.227Z"
+    },
+    {
+      "data" : {
+        "bytes" : 4229782,
+        "durationSeconds" : 4,
+        "filename" : "seg_000.m4s"
+      },
+      "kind" : "segment.emitted",
+      "t" : 4.875511791,
+      "wallClock" : "2026-06-06T16:47:28.056Z"
+    },
+    {
+      "data" : {
+        "filename": "seg_000.m4s"
+      },
+      "kind" : "segment.uploaded",
+      "t" : 4.891072416,
+      "wallClock" : "2026-06-06T16:47:28.071Z"
+    },
+    {
+      "data" : {
+        "from" : "bottomRight",
+        "to" : "bottomLeft"
+      },
+      "kind" : "pip.position.changed",
+      "t" : 36.89907425,
+      "wallClock" : "2026-06-06T16:48:00.079Z"
+    },
+    {
+      "data" : {
+        "from" : "screenAndCamera",
+        "to" : "cameraOnly"
+      },
+      "kind" : "mode.switched",
+      "t" : 41.911716833,
+      "wallClock" : "2026-06-06T16:48:05.091Z"
+    },
+    // ...
+    {
+      "data" : {
+        "branch" : "pop",
+        "deltaMs" : 1989.68825
+      },
+      "kind" : "monotonicity.rejected",
+      "t" : 44.876459916,
+      "wallClock" : "2026-06-06T16:48:08.056Z"
+    },
+    {
+      "data" : {
+        "staleDurationSeconds" : 1.016079208
+      },
+      "kind" : "keepalive.emitted",
+      "t" : 56.630524583,
+      "wallClock" : "2026-06-06T16:48:19.810Z"
+    },
+    {
+      "data" : {
+        "from" : "cameraOnly",
+        "to" : "screenAndCamera"
+      },
+      "kind" : "mode.switched",
+      "t" : 56.944255875,
+      "wallClock" : "2026-06-06T16:48:20.124Z"
+    },
+    {
+      "kind" : "recording.stopped",
+      "t" : 159.799141458,
+      "wallClock" : "2026-06-06T16:50:02.977Z"
+    },
+    {
+      "data" : {
+        "code" : -11800,
+        "domain" : "AVFoundationErrorDomain",
+        "error" : "The operation could not be completed",
+        "file" : "camera.mp4",
+        "underlyingCode" : -16364,
+        "underlyingDomain" : "NSOSStatusErrorDomain",
+        "underlyingError" : "The operation couldn’t be completed. (OSStatus error -16364.)"
+      },
+      "kind" : "raw.writer.failed",
+      "t" : 159.799141458,
+      "wallClock" : "2026-06-06T16:50:03.238Z"
+    },
+    {
+      "data" : {
+        "message" : "diagnostics: iters=7450 emit=3891 skipStale=2703 keepAlive=11 mono=53 neg=7 noSrc=785 peek=0 pop=623 camFrames=3350 (~0.00fps) scrFrames=4721 evictions=2399 compFails=0 dropRate=0.8%"
+      },
+      "kind" : "error",
+      "t" : 160.061301666,
+      "wallClock" : "2026-06-06T16:50:03.239Z"
+    }
+  ],
+  "hardware" : {
+    "arch" : "arm64",
+    "model" : "Mac14,9"
+  },
+  "inputs" : {
+    "camera" : {
+      "advertisedFormats" : [
+        {
+          "height" : 720,
+          "maxFrameRate" : 30.00003000003,
+          "minFrameRate" : 30.00003000003,
+          "pixelFormat" : "420v",
+          "width" : 1280
+        }
+      ],
+      "name" : "ZV-1",
+      "selectedFormat" : {
+        "activeMaxFrameDurationSeconds" : 0.03333330000003333,
+        "activeMinFrameDurationSeconds" : 0.03333330000003333,
+        "didLockRate" : true,
+        "height" : 720,
+        "pixelFormat" : "420v",
+        "width" : 1280
+      },
+      "uniqueID" : "0x2111100054c0de4"
+    },
+    "display" : {
+      "height" : 1080,
+      "id" : 3,
+      "width" : 1920
+    },
+    "microphone" : {
+      "halInputLatencyMs" : 13.75,
+      "name" : "Yeti Stereo Microphone",
+      "uniqueID" : "AppleUSBAudioEngine:Blue Microphones:Yeti Stereo Microphone:ReV8:2"
+    }
+  },
+  "preset" : {
+    "bitrate" : 8000000,
+    "height" : 1080,
+    "id" : "1080p",
+    "label" : "1080p",
+    "width" : 1920
+  },
+  "rawStreams" : {
+    "audio" : {
+      "audioCodec" : "aac-lc",
+      "bitrate" : 192000,
+      "bytes" : 3134595,
+      "channels" : 2,
+      "filename" : "audio.m4a",
+      "sampleRate" : 48000
+    },
+    "camera" : {
+      "bitrate" : 12000000,
+      "bytes" : 11308795,
+      "failed" : true,
+      "filename" : "camera.mp4",
+      "height" : 720,
+      "videoCodec" : "h264",
+      "width" : 1280
+    },
+    "screen" : {
+      "bitrate" : 146343794,
+      "bytes" : 2923201587,
+      "filename" : "screen.mov",
+      "height" : 2160,
+      "videoCodec" : "prores422proxy",
+      "width" : 3840
+    }
+  },
+  "runtime" : {
+    "cameraIntervalP50Ms" : 35,
+    "cameraIntervalP95Ms" : 67,
+    "effectiveCameraFps" : 20.96381726106132,
+    "effectiveScreenFps" : 29.5433376983494,
+    "metronome" : {
+      "emitOK" : 3891,
+      "iterations" : 7450,
+      "keepAliveEmits" : 11,
+      "monoRejects" : 53,
+      "skipsStale" : 2703
+    },
+    "outputFps" : 24.41815371721232,
+    "screenIntervalP50Ms" : 35,
+    "screenIntervalP95Ms" : 67
+  },
+  "schemaVersion" : 3,
+  "segments" : [
+    {
+      "bytes" : 4229782,
+      "durationSeconds" : 4,
+      "emittedAt" : 4.875511791,
+      "filename" : "seg_000.m4s",
+      "index" : 1,
+      "uploaded" : true
+    },
+    {
+      "bytes" : 4136495,
+      "durationSeconds" : 4,
+      "emittedAt" : 9.318954291,
+      "filename" : "seg_001.m4s",
+      "index" : 2,
+      "uploaded" : true
+    },
+    // ...
+    {
+      "bytes" : 1427814,
+      "durationSeconds" : 3.0933333333333333,
+      "emittedAt" : 159.956935541,
+      "filename" : "seg_039.m4s",
+      "index" : 40,
+      "uploaded" : true
+    }
+  ],
+  "session" : {
+    "durationSeconds" : 159.799141458,
+    "endedAt" : "2026-06-06T16:50:02.977Z",
+    "id" : "4a1f8229-6a19-4e55-8fd4-af979b706ecd",
+    "initialMode" : "cameraOnly",
+    "initialPipPosition" : "bottomRight",
+    "slug" : "fluffy-moments-flash",
+    "startedAt" : "2026-06-06T16:47:23.223Z"
+  }
+}
+
+```
+</Accordion>
 
 We also write a local `diagnostics.json` full of per-tick timing data and — because a lot of camera and encoder gremlins originate deep inside weird bits of macOS — we grab a slice of the macOS system log for the recording and temporarily write it to disk to help with debugging.
 
 <Callout>
-Because the HLS segments are written to the server as they arrive, and we generated the slug at the beginning, it's possible to watch the video live at `https://v.danny.is/the-generated-slug` *while it's being recorded*. This isn't really an intentional feature (it's not a livestreaming platform), we do this so that when we hit stop we **already** have a live video on a URL.
+Because the HLS segments are written to the server as they arrive, and we generated the slug at the beginning, it's possible to watch the video live at `https://v.danny.is/the-generated-slug` *while it's being recorded*. This isn't really an intentional feature (it's not a livestreaming platform). We do this so that **when we hit stop we already have a live video on a URL** and can share it.
 
 At the end of recording the mac app copies the public URL to the clipboard so it can instantly be shared, and it's also possible to quickly edit a recently-finished video's title, slug and visibility in the macos menubar app.
 </Callout>
 
 ## 5. When recording's finished
 
-When the server receives the `POST` to `/:uuid/complete` it already has all the segments on disk and is serving them as an HLS playlist on the public URL. So the *complete* signal just causes the data in `recording.json` to be written server-side, with some of the key data from it added to the recording's database record. It then kicks off a series of step-by-step post-processing jobs.
+When the server receives the `POST` to `/:uuid/complete` it already has all the segments on disk and is serving them as an HLS playlist on the public URL. So the *complete* signal just causes `recording.json` to be stored server-side, with some of its key data added to the database record. It then kicks off a series of step-by-step post-processing jobs.
 
 ### Healing
 
@@ -107,7 +386,7 @@ Healing is the recovery mechanism for HLS segments that didn't make it during li
 
 ### Restitching
 
-The first and simplest post-processing task is stitching the `m4s` segments into a single `source.mp4` using `ffmpeg`. As soon as we have a valid `source.mp4` available, we serve that to viewers instead of the HLS playlist. We also use `ffprobe` to extract some metadata from the new MP4 and update the database record.
+The first and simplest post-processing task is stitching the M4S segments into a single `source.mp4` using ffmpeg. As soon as we have a valid `source.mp4` available, we serve that to viewers instead of the HLS playlist. We also use `ffprobe` to extract some metadata from the new MP4 and update the database record.
 
 ### Audio Enhancement
 
@@ -124,11 +403,13 @@ Next, we clean up the audio by running it through a chain of ffmpeg filters, wri
 Despite a lot of tuning this is probably a bit aggressive considering most of my recordings happen in a quiet room with a decent mic. I'm currently iterating on this in a separate little project with a load of representative audio samples.
 </Callout>
 
-We also generate a `peaks.json` describing the audio levels which is used in the video editor to render a nice waveform and suggest quiet areas to trim or cut.
+We also generate a `peaks.json` from the audio levels, used by the video editor to render a nice waveform and suggest quiet areas to trim or cut.
 
 ### Thumbnail candidates
 
-Multiple frames are extracted and scored by luminance variance, with the “best” written to disk as `thumbnail.jpg` and used as the video's poster image. The other candidates are also saved to disk on the server so I can choose a new one in the admin app.
+Multiple frames are extracted and scored by luminance variance, with the “best” one written to disk as `thumbnail.jpg` and used as the video's poster image. The other candidates are also saved to disk on the server so I can choose a new one in the admin app if I want.
+
+![The admin app's thumbnail picker: a grid of seven auto-extracted candidate frames from the recording, each labelled "auto", with the first outlined in red and marked "Active" as the chosen poster image.](../../assets/articles/2026-07-24-generated-thumbnails-in-admin-interface.png "How the generated thumbnail candidates appear in the admin app")
 
 ### Generating video variants
 
@@ -148,30 +429,30 @@ We look at the `peaks.json` and if there are any obviously quiet areas we write 
 
 ## Transcription & Subtitles
 
-While the post-processing above is done server-side, doing any **AI stuff** on the server would mean paying for tokens on an external service or beefing up the server enough to run models on it. Since I have a pretty powerful laptop it makes more sense to do this locally instead. So the macOS app includes WhisperKit for transcription and makes use of Apple's built-in foundation models for generating suggested titles and the like.
+While the post-processing above is done server-side, doing any **AI stuff** on the server would mean paying for tokens on an external service or beefing up the server enough to run models on it. Since I have a pretty powerful laptop it makes more sense to do this locally instead, so the macOS app includes WhisperKit for transcription and makes use of Apple's built-in foundation models for title suggestions.
 
 When a video completes, the macOS app kicks off a task to transcribe the local `audio.m4a` using WhisperKit. It uses this and the timing data from `recording.json` to produce two things:
 
 1. A `words.json` containing each word and its start & end timestamp.
 2. A `captions.srt` containing timestamped subtitles.
 
-Both are stored locally on disk and also sent to the server along with the plain transcription text. The plain transcription is written to the database and `captions.srt` is used to provide subtitles in the video players. We only use `words.json` in the video editor, but it's good to keep around as a definitive version of the transcript.
+Both are stored locally and also sent to the server along with the plain transcription text. The plain transcription is written to the database and `captions.srt` is used to provide subtitles in the video players. We only use `words.json` in the video editor, but it's good to keep around as a definitive version of the transcript.
 
 ### Suggested title and description
 
-If transcription completes successfully, the first ~500 words are fed to Apple's local Foundation Model along with a system prompt asking for a suggested title and some data from `recording.json`. The suggestion is checked against some simple *is-this-insane?* rules and then sent to the server where it's used to update the video’s title in the database (unless it's already been updated by me first).
+If transcription completes successfully, the first ~500 words are fed to Apple's local Foundation Model along with a system prompt asking for a suggested title. The prompt includes some data from `recording.json` and the response is checked against some simple *is-this-insane?* rules before being sent to the server where it's used to update the video’s title in the database (unless I've already touched it).
 
-A similar process is used to generate a suggested description and, if chapter markers exist, suggested titles for each of them.
+A similar process is used to suggest a description and, if chapter markers exist, suggest titles for each of them.
 
 This is far from perfect, but it's better than nothing at all.
 
 ## So where do we end up?
 
-On the server-side, the whole post-processing pipeline is managed by a kind of *step registry* which ensure each step happens in the right order and allows me to manually retrigger the process from various points if I need to. When everything's finished the admin panel will show a checklist like this.
+On the server-side, the whole post-processing pipeline is managed by a kind of *step registry* which ensures each step happens in order and allows me to manually retrigger the process from various points if I need to. When everything's finished the admin panel will show a checklist like this.
 
 ![The admin panel's post-processing checklist, listing each step — source video, metadata, audio processed, thumbnail, 720p variant, storyboard, audio peaks, suggested edits, transcript, word timings, suggested title and description — with green ticks for completed steps and dashes for skipped ones.](../../assets/articles/2026-07-24-post-processing-pipeline.png)
 
-And we’ll end up with the following in our database record...
+We’ll end up with the following in our database record...
 
 | Field            | Description                                                                       | Example Value                          |
 | ---------------- | --------------------------------------------------------------------------------- | -------------------------------------- |
@@ -181,7 +462,7 @@ And we’ll end up with the following in our database record...
 | visibility       | `public`, `unlisted` or `private`.                                                | `unlisted`                             |
 | title            | Display title. Null until set by the user or the AI suggestion step.              | `How to Use the New Dashboard`         |
 | description      | Public-facing description. Null until set.                                        | `null`                                 |
-| notes            | Private notes — admin-only, never exposed publicly.                               | `null`                                 |
+| notes            | Private notes.                                | `null`                                 |
 | duration_seconds | Cached at completion so list views don't need to sum segment durations.           | `187.4`                                |
 | width            | Pixel width of `source.mp4`, from ffprobe.                                        | `2560`                                 |
 | height           | Pixel height of `source.mp4`, from ffprobe.                                       | `1440`                                 |
@@ -201,43 +482,43 @@ The `video_transcripts` table will also have a row for the video with the plain 
 
 #### On Disk
 
-Our server's storage volume will have a directory which looks something like this on disk…
+Our server's storage volume will have a directory which looks something like this…
 
-```tree
+```tree title="Server data folder"
 data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
-├── init.mp4                          # HLS initialization segment (codec headers)
+├── init.mp4                          # HLS initialization segment
 ├── seg_000.m4s                       # ~4s media segments streamed during recording
 ├── seg_001.m4s
 ├── ...
 ├── seg_046.m4s
 ├── stream.m3u8                       # HLS playlist referencing init.mp4 + segments
-├── recording.json                    # Timeline, events and segment log from the client
-├── chapters.json                     # Chapter markers (extracted from recording.json, user-editable)
+├── recording.json                    # Timeline, events and segment log from client
+├── chapters.json                     # Chapter markers if set
 └── derivatives/
     ├── source.mp4                    # Stitched single-file MP4 with enhanced audio
     ├── 1080p.mp4                     # Downsampled variant (source is 1440p)
     ├── 720p.mp4                      # Downsampled variant
     ├── thumbnail.jpg                 # Auto-selected best frame
     ├── thumbnail-candidates/
-    │   ├── auto-01.jpg               # Other candidate frames (cleaned up after 10 days)
+    │   ├── auto-01.jpg               # Other candidate frames
     │   ├── auto-02.jpg
     │   └── auto-03.jpg
     ├── captions.srt                  # Subtitles uploaded by the macOS app
-    ├── words.json                    # Per-word transcript timings (used by the editor)
-    ├── peaks.json                    # Audio waveform peaks for the editor
-    ├── suggested-edits.json          # AI-suggested silence/filler cuts for the editor
-    ├── storyboard.jpg                # Sprite sheet of preview frames (videos ≥ 60s)
+    ├── words.json                    # Per-word transcript timings
+    ├── peaks.json                    # Audio waveform peaks
+    ├── suggested-edits.json          # Suggested cuts and trims
+    ├── storyboard.jpg                # Sprite sheet of preview frames
     ├── storyboard.vtt                # Maps time ranges to sprite regions
-    ├── editor-storyboard.jpg         # Higher-density sprite sheet for the editor
-    └── editor-storyboard.vtt         # Maps time ranges to editor sprite regions
+    ├── editor-storyboard.jpg         # Higher-density sprite sheet for editor
+    └── editor-storyboard.vtt
 ```
 
 Our mac will have a directory in `~/Application Support/LoomClone/recordings/[UUID]` which looks something like this…
 
-```tree
-~/Library/Application Support/LoomClone/recordings/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
+```tree title="Local data folder"
+recordings/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 ├── init.mp4                          # HLS initialization segment
-├── seg_000.m4s                       # Composited ~4s segments (uploaded to server)
+├── seg_000.m4s                       # Composited ~4s segments
 ├── seg_001.m4s
 ├── ...
 ├── seg_046.m4s
@@ -246,14 +527,15 @@ Our mac will have a directory in `~/Application Support/LoomClone/recordings/[UU
 ├── audio.m4a                         # Raw AAC mic audio
 ├── recording.json                    # Timeline, events and segment log
 ├── diagnostics.json                  # Recording-time diagnostic snapshot
-├── captions.srt                      # Local backup of generated subtitles
-├── words.json                        # Local backup of per-word transcript timings
-└── .transcribed                      # Marker: transcription complete
+├── captions.srt
+├── words.json
+├── os-log.ndjson                     # Copy of relevant OS log data
+└── .transcribed                      # Marker to say transcription complete
 ```
 
-And when someone visits the public URL for a video they'll see something like this, complete with subtitles, thumbnail, scrubber previews and the option to play lower-resolution derivatives.
+And when someone visits the public URL for the video they'll see something like this, complete with subtitles, thumbnail, scrubber previews and the option to play lower-resolution derivatives.
 
-![The public video page for a recording, showing the title, duration and date, a video player with a talking-head thumbnail and playback controls including subtitles, and a description with author details below.](../../assets/articles/2026-07-06-lc-demo-publicpage-screenshot.png)
+![The public video page for a recording, showing the title, duration and date, a video player with a talking-head thumbnail and playback controls including subtitles, and a description with author details below.](../../assets/articles/2026-07-06-lc-demo-publicpage-screenshot.png "Screenshot of public video page")
 
 There's **a lot** I haven't covered here – I'll hopefully get to that in some more focussed articles in the future. If you're interested in the details of all this [the internal docs on GitHub might be of interest](https://github.com/dannysmith/loom-clone/blob/main/docs/developer/recording-pipeline.md). Just bear in mind much of it was written by an LLM.
 
