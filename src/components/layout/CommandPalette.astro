@@ -334,8 +334,7 @@ const groups = ['Commands', 'Navigation'] as const
 <script>
   import { search, preloadPagefind, type SearchResult } from '@utils/pagefind'
 
-  // The document-level hotkey binds once (guarded); the per-dialog wiring re-runs
-  // on astro:page-load for View Transitions — the same split Tabs.astro uses.
+  // The document-level hotkey binds once (guarded); per-dialog wiring runs per init.
   let hotkeyWired = false
   function wireHotkey() {
     if (hotkeyWired) return
