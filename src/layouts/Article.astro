@@ -14,7 +14,13 @@ import {
   SeriesCallout,
   TableOfContents,
 } from '@components/layout/index'
-import { BackToTopLink, FormattedDate, MarkdownContentActions, Spinner } from '@components/ui/index'
+import {
+  BackToTopLink,
+  FormattedDate,
+  MarkdownContentActions,
+  Spinner,
+  Pill,
+} from '@components/ui/index'
 import { getDocumentUri } from '@utils/standard-site'
 
 type Props = CollectionEntry<'articles'>['data'] & {
@@ -50,6 +56,11 @@ const markdownUrl = `${Astro.url.pathname.replace(/\/$/, '')}.md`
 // ISO date (YYYY-MM-DD) for Pagefind's `date` meta + recency sort. Date-only
 // avoids colons, which the comma-separated `data-pagefind-meta` syntax splits on.
 const pubIso = pubDate.toISOString().slice(0, 10)
+
+// Receiving ends of the title/cover morph from listings and cards. Suppressed
+// for externally-published pieces, which redirect off-site (matching sources).
+const vtTitle = redirectURL ? undefined : `article-title-${Astro.params.slug}`
+const vtCover = redirectURL ? undefined : `article-cover-${Astro.params.slug}`
 
 // standard.site document AT-URI for the <head> verification link tag (null for
 // drafts, styleguides, or posts before the configured cutoff).
@@ -105,7 +116,7 @@ const standardSiteDocumentUri =
         <LongFormProseTypography>
           {
             cover && coverAlt && (
-              <div class="hero-image">
+              <div class="hero-image" style={vtCover ? `--vt-cover: ${vtCover}` : undefined}>
                 <Image
                   src={cover}
                   alt={coverAlt}
@@ -129,10 +140,17 @@ const standardSiteDocumentUri =
                 )
               }
               {readingTime && <span class="reading-time">· {readingTime}</span>}
-              {draft && <span class="draft-notice">🚧 Draft</span>}
+              {draft && <Pill text="Draft" />}
             </div>
 
-            <h1 class="title p-name" itemprop="headline" data-pagefind-meta="title">{title}</h1>
+            <h1
+              class="title p-name"
+              itemprop="headline"
+              data-pagefind-meta="title"
+              style={vtTitle ? `--vt-name: ${vtTitle}` : undefined}
+            >
+              {title}
+            </h1>
           </div>
           <SeriesCallout series={series} currentId={Astro.params.slug!} />
           <slot />
@@ -203,15 +221,12 @@ const standardSiteDocumentUri =
           height: 100%;
           object-fit: cover;
           filter: light-dark(none, grayscale(70%));
+
+          view-transition-name: var(--vt-cover, none);
         }
 
-        .draft-notice {
-          border: var(--border-width-base) solid var(--color-accent);
-          color: var(--color-accent);
-          font-family: var(--font-ui);
-          padding: var(--space-2xs) var(--space-s);
-          border-radius: var(--radius-sm);
-          float: right;
+        .title {
+          view-transition-name: var(--vt-name, none);
         }
 
         .footer-actions {

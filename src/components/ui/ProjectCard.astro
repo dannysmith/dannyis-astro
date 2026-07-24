@@ -6,14 +6,14 @@ import { Icon } from 'astro-icon/components'
 import Pill from '@components/ui/Pill.astro'
 import ProjectIcon from '@components/ui/ProjectIcon.astro'
 import CompactCardTile from './CompactCardTile.astro'
+import { generateSummary } from '@utils/content-summary'
 
-// Types derived from the schema, so adding an enum value in content.config.ts
-// forces these maps to be updated.
+// Types derived from the schema
 type ProjectStage = CollectionEntry<'projects'>['data']['stage']
 type ProjectAudience = CollectionEntry<'projects'>['data']['audience']
 
 // Pill metadata mirrors Pill's props (text + hover title), so it can be spread
-// straight onto <Pill>. No colour => the pill's default outline style.
+// straight onto <Pill>.
 interface PillMeta {
   text: string
   title: string
@@ -21,7 +21,6 @@ interface PillMeta {
   icon?: string
 }
 
-// Stage pill — always shown.
 const STAGE_META: Record<ProjectStage, PillMeta> = {
   'active-development': {
     text: 'In active development',
@@ -52,6 +51,17 @@ const STAGE_META: Record<ProjectStage, PillMeta> = {
   },
 }
 
+// The medium card's cover badge: a solid tint (unlike the outline pill the full
+// card uses) and a short single-line label — STAGE_META's descriptive text is
+// too long for a fixed corner overlay.
+const STAGE_BADGE_META: Record<ProjectStage, { color: string; label: string }> = {
+  'active-development': { color: 'var(--color-blue)', label: 'In development' },
+  'actively-maintained': { color: 'var(--color-green)', label: 'Maintained' },
+  finished: { color: 'var(--color-green)', label: 'Finished' },
+  paused: { color: 'var(--color-yellow)', label: 'Paused' },
+  archived: { color: 'var(--color-purple)', label: 'Archived' },
+}
+
 // Audience pill — only shown when it's not plainly public.
 const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
   'public-with-dragons': {
@@ -69,26 +79,33 @@ const AUDIENCE_META: Partial<Record<ProjectAudience, PillMeta>> = {
   },
 }
 
+/**
+ * Card for a `projects` entry. Default is the medium card (cover, status, icon,
+ * title, summary). Unlike the other cards, the default here is medium, not full
+ * — `full` (the whole markdown body inline) is only used on /making.
+ */
 interface Props {
   item: CollectionEntry<'projects'>
   /** Compact tile: icon + title + byline, the whole card links out. */
   compact?: boolean
+  /** Full card: renders the project's markdown body inline (the /making view). */
+  full?: boolean
 }
 
-const { item, compact = false } = Astro.props
+const { item, compact = false, full = false } = Astro.props
 const { title, byline, stage, audience, icon, image, website, github } = item.data
 
-// Compact links out to the project (website → GitHub → its /making anchor); the
-// full card renders the markdown body inline (no per-project routes).
+// Both the compact tile and the medium card link out to the project (website →
+// GitHub → its /making anchor); only the full card renders the markdown body.
 const compactHref = website ?? github ?? `/making#${item.id}`
 const compactIsExternal = Boolean(website ?? github)
-const Content = compact ? null : (await render(item)).Content
+const Content = full ? (await render(item)).Content : null
 
-// Status pill first, audience pill (when not plainly public) after.
+const summary = full || compact ? '' : generateSummary(item, 220)
+
 const audienceMeta = AUDIENCE_META[audience]
 const pills: PillMeta[] = audienceMeta ? [STAGE_META[stage], audienceMeta] : [STAGE_META[stage]]
 
-// External links, rendered as buttons — GitHub before website.
 type ProjectLink = { href: string; variant: 'primary' | 'secondary'; label: string; icon?: string }
 const links: ProjectLink[] = []
 if (github)
@@ -101,7 +118,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     <CompactCardTile href={compactHref} title={title} byline={byline} external={compactIsExternal}>
       <ProjectIcon icon={icon} title={title} />
     </CompactCardTile>
-  ) : (
+  ) : full ? (
     <article class="project-card ui-style" id={item.id}>
       <div class="identity">
         <div class="icon">
@@ -142,13 +159,56 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
         )}
       </div>
     </article>
+  ) : (
+    <article class="project-card-medium card-shell ui-style cq">
+      <a
+        class="card-link"
+        href={compactHref}
+        target={compactIsExternal ? '_blank' : undefined}
+        rel={compactIsExternal ? 'noopener' : undefined}
+      >
+        <div class="card-cover">
+          {image && <Image src={image} alt="" width={600} />}
+          <span class="cover-badge type-badge">Project</span>
+          <span
+            class="cover-badge status-badge"
+            style={`--_badge-color: ${STAGE_BADGE_META[stage].color}`}
+          >
+            {STAGE_BADGE_META[stage].label}
+          </span>
+        </div>
+
+        <span class="card-icon">
+          <ProjectIcon icon={icon} title={title} />
+        </span>
+
+        <div class="card-content">
+          <h3 class="card-title">{title}</h3>
+          {summary && <p class="card-summary">{summary}</p>}
+        </div>
+      </a>
+
+      {(github || website) && (
+        <footer class="card-footer">
+          {github && (
+            <a class="footer-link" href={github} target="_blank" rel="noopener">
+              <Icon name="social/github" />
+              GitHub
+            </a>
+          )}
+          {website && (
+            <a class="footer-link" href={website} target="_blank" rel="noopener">
+              <Icon name="heroicons:globe-alt-20-solid" />
+              Website
+            </a>
+          )}
+        </footer>
+      )}
+    </article>
   )
 }
 
 <style>
-  /* Narrow (default): a single column — identity, then image, then content.
-     Source order already matches, so no reordering needed here. The container
-     itself is set by the consumer (e.g. .cq on the making page), not here. */
   .project-card {
     display: grid;
     gap: var(--space-m);
@@ -162,7 +222,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     background-color: var(--color-background-secondary);
   }
 
-  /* Narrow: icon on the left; header and meta stacked in the column beside it. */
   .identity {
     grid-area: identity;
     display: grid;
@@ -244,7 +303,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
       scale: 0.98;
     }
 
-    /* Primary (website): solid accent, always dark text for contrast. */
+    /* Primary (website) */
     &[data-variant='primary'] {
       background-color: var(--color-accent);
       color: var(--color-ink);
@@ -254,7 +313,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
       }
     }
 
-    /* Secondary (GitHub): outline that picks up the accent on hover. */
+    /* Secondary (GitHub)  */
     &[data-variant='secondary'] {
       background-color: transparent;
       color: var(--color-text);
@@ -271,7 +330,6 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
       block-size: 1.15em;
     }
 
-    /* Trailing arrow — decorative, so a pseudo-element keeps it out of the DOM. */
     &::after {
       content: '→';
       transition: translate var(--duration-fast) var(--ease-in-out);
@@ -289,8 +347,7 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     border-radius: var(--radius-md);
   }
 
-  /* Wide: image out to the right; identity back to a single row with the status
-     on the right. Placed last so these overrides win over the narrow base rules. */
+  /* Wide: image out to the right etc */
   @container (min-width: 55rem) {
     .project-card {
       grid-template-columns: 1fr minmax(0, 20rem);
@@ -313,6 +370,147 @@ if (website) links.push({ href: website, variant: 'primary', label: `${title} We
     .byline {
       text-transform: none;
       font-size: var(--font-size-sm);
+    }
+  }
+
+  /* =====================================================================
+     Medium variant (default) — a ToolCard-style tile: the site's bordered
+     card with a left accent bar that grows on hover/focus, a cover strip (the
+     project image) carrying a "Project" badge and a tinted status badge, a
+     Notion-style overlapping icon, the title, the first body paragraph, and a
+     footer of external links. The body links out (as the compact tile does);
+     the footer links sit outside that anchor so they stay clickable.
+     ===================================================================== */
+  .project-card-medium {
+    --_border-color: var(--color-accent);
+    --_icon-size: 2.75rem;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-link {
+    flex-grow: 1;
+
+    &:focus-visible {
+      outline: var(--border-width-base) solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  .card-cover {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 3 / 1;
+    max-block-size: 10rem;
+    background-color: var(--color-white);
+  }
+
+  .card-cover :global(img) {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .cover-badge {
+    position: absolute;
+    padding: 0.4em 0.7em 0.3em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-white);
+    background-color: oklch(0% 0 0 / 55%);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius-xs);
+  }
+
+  .type-badge {
+    inset-block-start: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+  }
+
+  .status-badge {
+    inset-block-end: var(--space-2xs);
+    inset-inline-end: var(--space-2xs);
+    background-color: oklch(from var(--_badge-color) 35% c h / 80%);
+  }
+
+  .card-icon {
+    position: relative;
+    display: block;
+    inline-size: fit-content;
+    margin-block-start: calc(var(--_icon-size) / -2);
+    margin-inline-start: var(--space-s);
+    line-height: 1;
+  }
+
+  .card-content {
+    padding-block: var(--space-2xs) var(--space-s);
+    padding-inline: var(--space-s);
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .card-summary {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-normal);
+
+    /* Defensive clamp */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2xs) var(--space-s);
+    padding: var(--space-2xs) var(--space-s);
+    border-block-start: var(--border-width-hairline) solid var(--color-border);
+    font-size: var(--font-size-xs);
+  }
+
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+
+    & svg {
+      inline-size: 1.1em;
+      block-size: 1.1em;
+    }
+  }
+
+  /* Narrow: shrink the icon, badges and summary. */
+  @container (width < 350px) {
+    .project-card-medium {
+      --_icon-size: 2rem;
+    }
+
+    .cover-badge {
+      font-size: calc(var(--font-size-xs) * 0.8);
+    }
+
+    .card-summary {
+      font-size: var(--font-size-xs);
+      -webkit-line-clamp: 5;
+      line-clamp: 5;
     }
   }
 </style>

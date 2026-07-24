@@ -1,0 +1,149 @@
+---
+/**
+ * HomepageLatestArticles — the "Writing" section of the homepage.
+ * Owns its own data fetching so it can be dropped in standalone.
+ *
+ * Renders the latest articles as a compact list (rather than cards): each
+ * item shows the title, publish date, a series indicator and reading time
+ * (both mirroring ArticleCard), plus an external-link arrow when the article
+ * redirects off-site.
+ *
+ * Place inside a `cq` (container-type) ancestor: the meta-hiding container
+ * query resolves against it.
+ */
+import { getCollection, getEntry, render } from 'astro:content'
+import { Icon } from 'astro-icon/components'
+import { FormattedDate } from '@components/ui/index'
+import { filterContentForListing } from '@utils/content'
+
+const articles = filterContentForListing(await getCollection('articles'))
+  .filter(a => !a.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const latestArticles = articles.slice(0, 6)
+
+// Reading time lives in the render()-only frontmatter bag injected by satteri-reading-time
+const items = await Promise.all(
+  latestArticles.map(async article => {
+    const { remarkPluginFrontmatter } = await render(article)
+    const minutesRead = remarkPluginFrontmatter.minutesRead as string | undefined
+    const series = article.data.series ? await getEntry(article.data.series) : undefined
+    return { article, minutesRead, series }
+  }),
+)
+---
+
+<h2 class="section-heading">Recent <a href="/writing">writing</a></h2>
+<ul class="list-reset ui-style">
+  {
+    items.map(({ article, minutesRead, series }) => (
+      <li class="list-item">
+        <a href={`/writing/${article.id}/`} class="link">
+          <p
+            class="title"
+            style={article.data.redirectURL ? undefined : `--vt-name: article-title-${article.id}`}
+          >
+            {article.data.title}
+            {article.data.redirectURL && (
+              <span class="external-arrow" aria-hidden="true">
+                {' '}
+                ↗
+              </span>
+            )}
+          </p>
+          <p class="meta">
+            {series && (
+              <span class="meta-item meta-series" title={`Part of the ${series.data.name} series`}>
+                <Icon name="heroicons:numbered-list-20-solid" />
+                Series
+              </span>
+            )}
+            {minutesRead && (
+              <span class="meta-item meta-reading-time">
+                <Icon name="heroicons:clock-20-solid" />
+                {minutesRead}
+              </span>
+            )}
+            <span class="meta-item">
+              <FormattedDate date={article.data.pubDate} />
+            </span>
+          </p>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  p {
+    margin-top: 0;
+  }
+
+  .section-heading,
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+  }
+
+  .section-heading {
+    font-weight: var(--font-weight-extrabold);
+    border-block-end: none;
+    padding-block-end: 0;
+
+    a {
+      color: var(--color-accent);
+    }
+  }
+
+  .title {
+    font-weight: var(--font-weight-light);
+    padding-block: 0.2em;
+
+    /* Title morph; also into the /writing list. See docs/developer/view-transitions.md */
+    view-transition-name: var(--vt-name, none);
+  }
+
+  .list-item {
+    border-bottom: var(--border-width-hairline) solid var(--color-text);
+  }
+
+  .link {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0 var(--space-s);
+  }
+
+  .meta {
+    display: flex;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-3xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+
+    & svg {
+      inline-size: 1em;
+      block-size: 1em;
+    }
+  }
+
+  @container (width < 30rem) {
+    .meta-series,
+    .meta-reading-time {
+      display: none;
+    }
+  }
+</style>

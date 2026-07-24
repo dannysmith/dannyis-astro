@@ -55,6 +55,7 @@ bun run check:knip    # Check for unused code with Knip
 bun run check:dupes   # Check for duplicate code with jscpd
 bun run test:unit     # Unit tests only
 bun run test:e2e      # E2E tests only
+bun run shoot         # Screenshot a page for visual inspection (see below)
 bun run scrape-toolbox # Refresh src/content/toolboxPages.json from betterat.work
 
 # AT Protocol (standard.site) publishing — needs ATPROTO_APP_PASSWORD. See docs/developer/standard-site.md
@@ -114,6 +115,17 @@ bun run standard-site:sync         # Sync post records (e.g. -- --all, -- --dry-
     ├── types/         # TypeScript type declarations
     └── utils/         # Shared helper functions
 ```
+
+## Visual inspection with `bun run shoot`
+
+`bun run shoot [path] [flags]` takes full-length screenshots of a page for eyeballing layout work. **Requires a running server** — start `bun run dev` first (or point `--base` at another). Screenshots are written to `docs/tasks-todo/temporary/` (gitignored) as `<slug>-<theme>-<width>-<timestamp>.png`; read them back to inspect the result.
+
+- **Path** — positional, from the site root; defaults to `/`. E.g. `bun run shoot /writing`.
+- **Defaults** — widths `375,430,768,1024,1440,1920,2560` (small phone → ultra-wide monitor) in **both** light and dark.
+- `--widths=390,1440` — custom comma-separated widths.
+- `--theme=light|dark|both` — restrict the OS theme (default `both`).
+- `--out=<dir>` / `--base=<url>` — override output dir / server URL.
+
 
 ## Agent Skills
 

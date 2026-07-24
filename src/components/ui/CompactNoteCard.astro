@@ -1,0 +1,127 @@
+---
+import { type CollectionEntry } from 'astro:content'
+import FormattedDate from './FormattedDate.astro'
+import { generateSummary } from '@utils/content-summary'
+
+/**
+ * The compact variant of NoteCard — used in place of the generic
+ * CompactCardTile.
+ *
+ * Internal building block, like CompactCardTile — reach for it via NoteCard:
+ *   <NoteCard item={entry} compact />
+ */
+interface Props {
+  item: CollectionEntry<'notes'>
+}
+
+const { item } = Astro.props
+const { title, pubDate } = item.data
+const href = `/notes/${item.id}/`
+
+const summary = generateSummary(item, 140)
+
+// Torn-paper right edge. The mask is an SVG rectangle whose right edge is
+// roughened by fractal-noise displacement (feTurbulence + feDisplacementMap);
+// the rect bleeds off the other three sides so only the right edge shows. It's
+// applied to a fixed-width strip (see `--tear-width` in the CSS) rather than
+// stretched across the card, so the bite depth stays constant at any width.
+// A per-note seed (stable hash of the id) gives every card a different tear.
+const tearSeed =
+  Math.abs([...item.id].reduce((h, ch) => (Math.imul(h, 31) + ch.charCodeAt(0)) | 0, 0)) % 1000
+const tearSvg = `<svg xmlns='http://www.w3.org/2000/svg' width='24' height='170' preserveAspectRatio='none'><filter id='r' x='-50%' y='-30%' width='200%' height='160%'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.13' numOctaves='2' seed='${tearSeed}' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='9' xChannelSelector='R' yChannelSelector='G'/></filter><rect x='-40' y='-40' width='52' height='250' fill='#fff' filter='url(#r)'/></svg>`
+// Encode fully (incl. () and ') so the value is safe unquoted in an inline style.
+const tearMask = `url(data:image/svg+xml,${encodeURIComponent(tearSvg).replace(
+  /[()']/g,
+  ch => `%${ch.charCodeAt(0).toString(16).toUpperCase()}`,
+)})`
+---
+
+<div class="compact-note ui-style">
+  <a
+    href={href}
+    class="compact-note-surface surface-white"
+    style={`--tear: ${tearMask}; --vt-name: note-${item.id}`}
+  >
+    <p class="card-date">
+      <FormattedDate date={pubDate} />
+    </p>
+    <p class="card-title">{title}</p>
+    {summary && <p class="card-summary">{summary}</p>}
+  </a>
+</div>
+
+<style>
+  .compact-note {
+    filter: var(--shadow-small);
+  }
+
+  /* Focus ring on the unmasked wrapper (the surface's mask would clip an
+     outline placed on it, as it does the shadow). */
+  .compact-note:has(:focus-visible) {
+    outline: var(--border-width-base) solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .compact-note-surface {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-2xs);
+    padding-inline-end: var(--space-s);
+    border-inline-start: var(--border-width-accent) solid
+      light-dark(var(--color-black), var(--color-accent));
+    background-image: radial-gradient(
+      light-dark(color-mix(in oklch, var(--color-black) 20%, transparent), transparent) 0.5px,
+      transparent 0
+    );
+    background-size: var(--space-xs) var(--space-xs);
+    color: var(--color-text);
+
+    --tear-width: 24px;
+    mask:
+      var(--tear) right / var(--tear-width) 100% no-repeat,
+      linear-gradient(#000 0 0) left / calc(100% - var(--tear-width) + 1px) 100% no-repeat;
+
+    /* Shares its note's name, so it morphs into the full note. See
+       docs/developer/view-transitions.md */
+    view-transition-name: var(--vt-name, none);
+
+    &:hover,
+    &:active {
+      border-inline-start-color: var(--color-accent);
+    }
+  }
+
+  .card-date,
+  .card-title,
+  .card-summary {
+    margin: 0;
+  }
+
+  .card-date {
+    font-family: var(--font-code);
+    font-size: var(--font-size-xs);
+  }
+
+  .card-title {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-extrabold);
+  }
+
+  .card-summary {
+    font-size: var(--font-size-xs);
+    line-height: var(--leading-normal);
+    color: var(--color-text-secondary);
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .card-summary::first-letter {
+    text-transform: uppercase;
+  }
+</style>

@@ -70,6 +70,46 @@
     --color-background-secondary: oklch(from var(--_surface-bg) calc(l - 0.04) c h);
   }
 
+  /* ----------------------------------------
+     .card-shell - The site's card idiom: a bordered tile with a left accent
+     bar that grows on hover/focus. Cards add this to their own root and set
+     `--_border-color` (accent tint) + their own layout — as ArticleCard,
+     ToolCard, ProjectCard and CompactCardTile do.
+     ---------------------------------------- */
+  .card-shell {
+    --_border-color: var(--color-accent);
+
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--duration-fast) var(--ease-in-out);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      inline-size: var(--border-width-thick);
+      background: var(--_border-color);
+      transition: inline-size var(--duration-fast) var(--ease-in-out);
+      z-index: 1;
+    }
+
+    /* :focus-visible for tiles that are themselves the link (CompactCardTile);
+       :has(:focus-visible) for cards whose link is a descendant. */
+    &:hover,
+    &:focus-visible,
+    &:has(:focus-visible) {
+      border-color: var(--_border-color);
+
+      &::before {
+        inline-size: var(--border-width-heavy);
+      }
+    }
+  }
+
   /* Image cover - for responsive images that fill their container */
   .img-cover {
     width: 100%;

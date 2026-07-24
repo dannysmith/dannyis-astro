@@ -7,7 +7,8 @@
 
 import type { CollectionEntry } from 'astro:content'
 
-type ContentEntry = CollectionEntry<'articles'> | CollectionEntry<'notes'>
+type ContentEntry =
+  CollectionEntry<'articles'> | CollectionEntry<'notes'> | CollectionEntry<'projects'>
 
 /**
  * Generate a summary for a content entry
@@ -18,15 +19,16 @@ type ContentEntry = CollectionEntry<'articles'> | CollectionEntry<'notes'>
  * 3. Truncate intelligently at sentence boundaries
  */
 export function generateSummary(entry: ContentEntry, maxLength: number = 200): string {
-  // 1. Check frontmatter description first
-  if (entry.data.description && entry.data.description.trim()) {
-    return truncateAtSentence(entry.data.description.trim(), maxLength)
+  // 1. Check frontmatter description first (projects have no description field)
+  const description = 'description' in entry.data ? entry.data.description : undefined
+  if (description && description.trim()) {
+    return truncateAtSentence(description.trim(), maxLength)
   }
 
   // 2. Extract from content body
   try {
     if (entry.body) {
-      const cleanText = stripMDXElements(entry.body)
+      const cleanText = stripMDXElements(stripLeadingEsm(entry.body))
       const firstParagraph = extractFirstMeaningfulParagraph(cleanText)
 
       if (firstParagraph) {
@@ -39,6 +41,57 @@ export function generateSummary(entry: ContentEntry, maxLength: number = 200): s
 
   // 3. Fallback to title-based summary
   return `${entry.data.title}...`
+}
+
+/**
+ * Drop leading MDX ESM statement blocks (`import` / `export`) from a raw body.
+ *
+ * These always sit at the top of the file, ahead of any prose. A single
+ * statement can span many lines (an `export` object literal, say) and may even
+ * contain blank lines, so we walk line by line — tracking bracket depth to stay
+ * inside a multi-line statement — and stop at the first line of prose, even
+ * when no blank line separates it from the ESM above.
+ */
+export function stripLeadingEsm(content: string): string {
+  if (!content) return ''
+
+  const lines = content.split('\n')
+  let i = 0
+  let depth = 0
+
+  while (i < lines.length) {
+    const line = lines[i]
+
+    if (depth > 0) {
+      // Continuation of a multi-line import/export statement.
+      depth += bracketDelta(line)
+      i++
+    } else if (line.trim() === '') {
+      // Leading blank line, before or between ESM statements.
+      i++
+    } else if (/^(?:import|export)\b/.test(line)) {
+      depth += bracketDelta(line)
+      i++
+    } else {
+      break // first line of prose
+    }
+  }
+
+  return lines.slice(i).join('\n').trim()
+}
+
+/**
+ * Net unclosed brackets (`{[(` minus `}])`) on a line, used to stay inside a
+ * multi-line ESM statement. A heuristic, not a JS parser — brackets inside
+ * strings would miscount, but import/export headers don't carry those.
+ */
+function bracketDelta(line: string): number {
+  let delta = 0
+  for (const ch of line) {
+    if (ch === '{' || ch === '[' || ch === '(') delta++
+    else if (ch === '}' || ch === ']' || ch === ')') delta--
+  }
+  return delta
 }
 
 /**

@@ -50,10 +50,10 @@ const toc = [
   { id: 'basic-image', label: 'BasicImage' },
   { id: 'astro-image', label: 'Astro Image & Picture' },
   { id: 'article-card', label: 'ArticleCard' },
-  { id: 'content-card', label: 'ContentCard' },
   { id: 'note-card', label: 'NoteCard' },
   { id: 'project-card', label: 'ProjectCard' },
   { id: 'tool-card', label: 'ToolCard' },
+  { id: 'content-card', label: 'ContentCard' },
   { id: 'embeds', label: 'Embeds' },
 ]
 
@@ -1478,76 +1478,6 @@ Provide a title to skip the fetch or override it:
     </ResizableContainer>
   </section>
 
-  <section id="content-card" class="flow">
-    <h2>ContentCard</h2>
-    <p>
-      ContentCard renders any content-collection item as its card, from just a
-      <code>"collection/id"</code> string — sugar for use in MDX content, where you don't have the entry
-      to hand. It looks the entry up and dispatches to the right card component (ArticleCard, NoteCard,
-      ToolCard or ProjectCard), passing <code>compact</code> through. An unknown collection or id fails
-      the build with a clear error.
-    </p>
-    <WrappedTable>
-      <thead>
-        <tr>
-          <th>Prop</th>
-          <th>Type</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>item</code></td>
-          <td><code>string</code></td>
-          <td><em>required</em></td>
-          <td>
-            <code>"collection/id"</code>, where collection is one of <code>articles</code>,
-            <code>notes</code>, <code>toolboxPages</code> or <code>projects</code>.
-          </td>
-        </tr>
-        <tr>
-          <td><code>compact</code></td>
-          <td><code>boolean</code></td>
-          <td><code>false</code></td>
-          <td>Render the card's compact tile variant instead of the full card.</td>
-        </tr>
-      </tbody>
-    </WrappedTable>
-
-    <h3 id="content-card-full">Full cards</h3>
-    <Code lang="mdx" code={'<ContentCard item="articles/my-article-slug" />'} />
-    <ResizableContainer>
-      <div style="display: grid; gap: var(--space-s);">
-        {sampleArticles.slice(0, 1).map(article => <ContentCard item={`articles/${article.id}`} />)}
-        {sampleTools.slice(0, 1).map(tool => <ContentCard item={`toolboxPages/${tool.id}`} />)}
-      </div>
-    </ResizableContainer>
-
-    <h3 id="content-card-compact">Compact</h3>
-    <Code lang="mdx" code={'<ContentCard item="notes/some-note" compact />'} />
-    <ResizableContainer>
-      <div style="display: grid; gap: var(--space-s);">
-        {
-          sampleArticles
-            .slice(0, 1)
-            .map(article => <ContentCard item={`articles/${article.id}`} compact />)
-        }
-        {sampleNotes.slice(0, 1).map(note => <ContentCard item={`notes/${note.id}`} compact />)}
-        {
-          sampleTools
-            .slice(0, 1)
-            .map(tool => <ContentCard item={`toolboxPages/${tool.id}`} compact />)
-        }
-        {
-          sampleProjects
-            .slice(0, 1)
-            .map(project => <ContentCard item={`projects/${project.id}`} compact />)
-        }
-      </div>
-    </ResizableContainer>
-  </section>
-
   <section id="note-card" class="flow">
     <h2>NoteCard</h2>
     <p>
@@ -1577,7 +1507,8 @@ Provide a title to skip the fetch or override it:
           <td><code>boolean</code></td>
           <td><code>false</code></td>
           <td
-            >Render a small linked tile (title + "Note · date" byline) instead of the full card.</td
+            >Render the compact card — date, title and a short summary from the body, with a
+            torn-paper edge — instead of the full card.</td
           >
         </tr>
         <tr>
@@ -1603,16 +1534,30 @@ Provide a title to skip the fetch or override it:
     <ResizableContainer>
       <NoteCard item={noteMinimal} />
     </ResizableContainer>
+
+    <h3 id="note-card-compact">Compact</h3>
+    <p>
+      The <code>compact</code> prop renders a smaller card — date, title and a short summary drawn from
+      the body — with a torn-paper right edge (a per-note seed varies the tear). Used for note listings
+      such as the homepage.
+    </p>
+    <Code lang="mdx" code={'<NoteCard item={note} compact />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleNotes.map(note => <NoteCard item={note} compact />)}
+      </div>
+    </ResizableContainer>
   </section>
 
   <section id="project-card" class="flow">
     <h2>ProjectCard</h2>
     <p>
-      ProjectCard renders a project from the <code>projects</code> collection, as used on the
-      <a href="/making">/making</a> page. The full card shows the icon, status pills, byline, markdown
-      body, an optional image and website/GitHub buttons. The <code>compact</code> variant is a small
-      linked tile. Both respond to their <em>container</em> width — the demos below sit in resizable containers,
-      so drag the handle to see them reflow.
+      ProjectCard renders a project from the <code>projects</code> collection, and has three variants.
+      The default is a card modelled on ToolCard: cover image, status badge, icon, title and the first
+      paragraph of the body, with Code/Website links. The <code>full</code> prop renders the whole markdown
+      body inline, as used on the <a href="/making">/making</a> page. The <code>compact</code> prop is
+      a small linked tile. All respond to their <em>container</em> width — the demos below sit in resizable
+      containers, so drag the handle to see them reflow.
     </p>
     <WrappedTable>
       <thead>
@@ -1625,25 +1570,51 @@ Provide a title to skip the fetch or override it:
       </thead>
       <tbody>
         <tr>
-          <td><code>project</code></td>
+          <td><code>item</code></td>
           <td><code>CollectionEntry&lt;'projects'&gt;</code></td>
-          <td>—</td>
+          <td><em>required</em></td>
           <td>The project entry to render.</td>
+        </tr>
+        <tr>
+          <td><code>full</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>
+            Render the full card — the project's markdown body inline, with status pills, an
+            optional image and website/GitHub buttons (the <code>/making</code> view).
+          </td>
         </tr>
         <tr>
           <td><code>compact</code></td>
           <td><code>boolean</code></td>
           <td><code>false</code></td>
-          <td>Render a small linked tile (icon + title + byline) instead of the full card.</td>
+          <td>Render a small linked tile (icon + title + byline) instead.</td>
         </tr>
       </tbody>
     </WrappedTable>
 
-    <h3 id="project-card-full">Full card</h3>
-    <p>Past a wide container the image moves out to the right of everything else.</p>
+    <h3 id="project-card-medium">Card (default)</h3>
+    <p>
+      The default variant, modelled on ToolCard: the project image as a cover with a status badge,
+      an overlapping icon, the title and the first paragraph of the body. The whole card links out
+      (website → GitHub → its <code>/making</code> anchor); the footer links are separate.
+    </p>
     <Code lang="mdx" code={'<ProjectCard item={project} />'} />
     <ResizableContainer>
-      {sampleProject && <ProjectCard item={sampleProject} />}
+      <div style="display: grid; gap: var(--space-m);">
+        {sampleProjects.map(project => <ProjectCard item={project} />)}
+      </div>
+    </ResizableContainer>
+
+    <h3 id="project-card-full">Full card</h3>
+    <p>
+      The <code>full</code> prop renders the project's whole markdown body inline, as used on
+      <a href="/making">/making</a>. Past a wide container the image moves out to the right of
+      everything else.
+    </p>
+    <Code lang="mdx" code={'<ProjectCard item={project} full />'} />
+    <ResizableContainer>
+      {sampleProject && <ProjectCard item={sampleProject} full />}
     </ResizableContainer>
 
     <h3 id="project-card-compact">Compact</h3>
@@ -1720,6 +1691,76 @@ Provide a title to skip the fetch or override it:
         </div>
       </ResizableContainer>
     </SGSwitcher>
+  </section>
+
+  <section id="content-card" class="flow">
+    <h2>ContentCard</h2>
+    <p>
+      ContentCard renders any content-collection item as its card, from just a
+      <code>"collection/id"</code> string — sugar for use in MDX content, where you don't have the entry
+      to hand. It looks the entry up and dispatches to the right card component (ArticleCard, NoteCard,
+      ToolCard or ProjectCard), passing <code>compact</code> through. An unknown collection or id fails
+      the build with a clear error.
+    </p>
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>item</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>
+            <code>"collection/id"</code>, where collection is one of <code>articles</code>,
+            <code>notes</code>, <code>toolboxPages</code> or <code>projects</code>.
+          </td>
+        </tr>
+        <tr>
+          <td><code>compact</code></td>
+          <td><code>boolean</code></td>
+          <td><code>false</code></td>
+          <td>Render the card's compact variant instead of the full card.</td>
+        </tr>
+      </tbody>
+    </WrappedTable>
+
+    <h3 id="content-card-full">Full cards</h3>
+    <Code lang="mdx" code={'<ContentCard item="articles/my-article-slug" />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {sampleArticles.slice(0, 1).map(article => <ContentCard item={`articles/${article.id}`} />)}
+        {sampleTools.slice(0, 1).map(tool => <ContentCard item={`toolboxPages/${tool.id}`} />)}
+      </div>
+    </ResizableContainer>
+
+    <h3 id="content-card-compact">Compact</h3>
+    <Code lang="mdx" code={'<ContentCard item="notes/some-note" compact />'} />
+    <ResizableContainer>
+      <div style="display: grid; gap: var(--space-s);">
+        {
+          sampleArticles
+            .slice(0, 1)
+            .map(article => <ContentCard item={`articles/${article.id}`} compact />)
+        }
+        {sampleNotes.slice(0, 1).map(note => <ContentCard item={`notes/${note.id}`} compact />)}
+        {
+          sampleTools
+            .slice(0, 1)
+            .map(tool => <ContentCard item={`toolboxPages/${tool.id}`} compact />)
+        }
+        {
+          sampleProjects
+            .slice(0, 1)
+            .map(project => <ContentCard item={`projects/${project.id}`} compact />)
+        }
+      </div>
+    </ResizableContainer>
   </section>
 
   <section id="embeds" class="flow">

@@ -39,9 +39,14 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
                   <p class="date all-caps">
                     <FormattedDate date={post.data.pubDate} />
                   </p>
-                  <h2 class="post-title">
+                  <h2
+                    class="post-title"
+                    style={
+                      post.data.redirectURL ? undefined : `--vt-name: article-title-${post.id}`
+                    }
+                  >
                     {post.data.title}
-                    {post.data.draft && <span class="draft-marker"> 🚧</span>}
+                    {post.data.draft && <Pill text="Draft" />}
                     {post.data.platform && (
                       <>
                         <Pill text={post.data.platform} color="var(--color-green)" />
@@ -92,6 +97,9 @@ const posts = filterContentForListing(await getCollection('articles')).sort(
         padding-bottom: var(--space-3xs);
         border-bottom: var(--border-width-thick) solid var(--color-accent);
         transition: color var(--duration-fast) var(--ease-in-out);
+
+        /* Title morph. See docs/developer/view-transitions.md */
+        view-transition-name: var(--vt-name, none);
 
         & :global(.pill) {
           transform: translateY(-0.2em);

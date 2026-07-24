@@ -2,7 +2,7 @@
 import { type CollectionEntry, render } from 'astro:content'
 import { BackToTopLink, FormattedDate, MarkdownContentActions, Pill } from '@components/ui/index'
 import { Embed } from '@components/mdx/index'
-import CompactCardTile from './CompactCardTile.astro'
+import CompactNoteCard from './CompactNoteCard.astro'
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
 
 /**
@@ -14,8 +14,8 @@ import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
  * - **Full** (default) — the note idiom: white raised surface, dot grid, top
  *   accent bar; header (date, title, tag pills), optional sourceURL embed,
  *   then the rendered content and actions.
- * - **Compact** — the shared CompactCardTile: title with a "Note · date"
- *   byline and blue accent.
+ * - **Compact** — the CompactNoteCard: date, title and a short summary on a
+ *   torn-paper note surface.
  *
  * Usage:
  *   <NoteCard item={entry} />            — listings (share disabled)
@@ -25,13 +25,9 @@ import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
 interface Props {
   /** A `notes` collection entry */
   item: CollectionEntry<'notes'>
-  /** Render the compact tile instead of the full card */
   compact?: boolean
-  /**
-   * This card is the note's own page (the Note layout): marks it as the
-   * Pagefind search-body (listings must stay unindexed so each note is one
-   * result), enables sharing and adds a back-to-top link.
-   */
+  /* Set true on the note's own page (the Note layout): marks it as the Pagefind
+     search-body (listings must stay unindexed so each note is one result), */
   standalone?: boolean
 }
 
@@ -39,7 +35,7 @@ const { item, compact = false, standalone = false } = Astro.props
 const { title, pubDate, sourceURL, tags = [] } = item.data
 
 const href = `/notes/${item.id}/`
-// Root-relative URL of the raw markdown twin (served by [...slug].md.ts).
+// Root-relative URL of the raw markdown twin.
 const markdownUrl = `/notes/${item.id}.md`
 const Content = compact ? null : (await render(item)).Content
 
@@ -47,21 +43,15 @@ const Content = compact ? null : (await render(item)).Content
 // when this card is the page's search body. Date-only avoids colons, which the
 // comma-separated `data-pagefind-meta` syntax would otherwise split on.
 const pubIso = pubDate.toISOString().slice(0, 10)
-
-// Compact byline, e.g. "Note · Jul 15, 2026"
-const byline = `Note · ${pubDate.toLocaleDateString('en-us', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-})}`
 ---
 
 {
   compact ? (
-    <CompactCardTile href={href} title={title} byline={byline} accentColor="var(--color-blue)" />
+    <CompactNoteCard item={item} />
   ) : (
     <article
       class="note h-entry cq surface-white"
+      style={`--vt-name: note-${item.id}`}
       data-pagefind-body={standalone ? true : undefined}
       data-pagefind-meta={standalone ? 'type:note' : undefined}
     >
@@ -116,9 +106,9 @@ const byline = `Note · ${pubDate.toLocaleDateString('en-us', {
     color: var(--color-text);
     filter: var(--shadow-medium);
 
-    /* View transition support - uses CSS variable set via inline style */
+    /* Shared with the standalone note and the compact card, so it morphs
+       between them. See docs/developer/view-transitions.md */
     view-transition-name: var(--vt-name, none);
-    view-transition-class: note-card;
   }
 
   .note-header {

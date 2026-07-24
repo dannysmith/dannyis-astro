@@ -185,14 +185,15 @@ See [architecture-guide.md § Component Organization](./architecture-guide.md#co
 
 ### The card family
 
-Every content collection has one card component in `ui/`, and they all share the same external interface: `item: CollectionEntry<'…'>` plus `compact?: boolean`.
+Every content collection has one card component in `ui/`. They share a common interface — `item: CollectionEntry<'…'>` plus `compact?: boolean` — and `ProjectCard` adds `full?: boolean` (see below).
 
-- **Primary display cards** — `NoteCard`, `ProjectCard`. The full card *is* how the content type is rendered on the site: both call `render(item)` internally and render the whole body. They stay fully-featured down to narrow container widths (they adapt, but never auto-degrade to compact). `NoteCard` additionally takes `standalone` — set only on the note's own page — which gates Pagefind indexing, sharing and the back-to-top link.
+- **Primary display card** — `NoteCard`. The full (default) card *is* how a note is rendered on the site: it calls `render(item)` and renders the whole body. It also takes `standalone` — set only on the note's own page — which gates Pagefind indexing, sharing and the back-to-top link.
 - **Links-to-longer-content cards** — `ArticleCard`, `ToolCard`. The content lives elsewhere (the article page, betterat.work); the card shows the pertinent info plus a summary and links out. Mostly used in grids and collection indexes.
-- **Compact variants** — every card's `compact` prop renders `CompactCardTile` (internal to `ui/`, not in the barrel): a single clickable icon/title/byline tile with a per-type accent colour (article/project = accent, note = blue, tool = green). Compact is an explicit caller choice, never a container-width fallback.
+- **`ProjectCard` is the outlier.** Its **default** is a medium card (cover, status, icon, title, summary, links) — _not_ a body render. `full` renders the whole markdown body inline (only used on `/making`); `compact` is the tile.
+- **Compact variants** — `compact` renders a small clickable icon/title/byline tile via `CompactCardTile` (internal to `ui/`, not in the barrel; per-type accent: article/project = accent, tool = green) — **except `NoteCard`**, whose `compact` renders the bespoke `CompactNoteCard` (a torn-paper mini-card with date, title and summary). Compact is an explicit caller choice, never a container-width fallback.
 - **`ContentCard` (in `mdx/`)** — a dispatcher for MDX content: `<ContentCard item="collection/id" compact />` looks the entry up and renders the right card. Auto-imported in MDX via the barrel.
 
-Full variants are deliberately bespoke — the shared tile is the only cross-card abstraction.
+Cross-card abstractions: the `.card-shell` utility (the bordered tile with a growing left accent bar; `_utilities.css`) and the two compact building blocks (`CompactCardTile`, `CompactNoteCard`). Full/medium variants are otherwise bespoke per card.
 
 ### Barrel Export Pattern
 

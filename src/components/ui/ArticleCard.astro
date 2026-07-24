@@ -60,16 +60,21 @@ const bylineDate = data.pubDate.toLocaleDateString('en-us', {
   day: 'numeric',
 })
 const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
+
+// Title and cover morph into the article page. Suppressed for externally-
+// published pieces, which redirect off-site — the morph would only flash.
+const vtTitle = data.redirectURL ? undefined : `article-title-${item.id}`
+const vtCover = data.redirectURL ? undefined : `article-cover-${item.id}`
 ---
 
 {
   compact ? (
     <CompactCardTile href={href} title={data.title} byline={byline} />
   ) : (
-    <article class="article-card ui-style cq">
+    <article class="article-card card-shell ui-style cq">
       <a href={href} class="card-link">
         {data.cover && (
-          <div class="card-cover">
+          <div class="card-cover" style={vtCover ? `--vt-cover: ${vtCover}` : undefined}>
             <Image src={data.cover} alt={data.coverAlt ?? ''} width={600} />
             <span class="cover-badge type-badge">Article</span>
             {data.platform && <span class="cover-badge platform-badge">{data.platform}</span>}
@@ -83,7 +88,7 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
               {data.platform && <Pill text={data.platform} color="var(--color-green)" />}
             </div>
           )}
-          <h3 class="card-title">
+          <h3 class="card-title" style={vtTitle ? `--vt-name: ${vtTitle}` : undefined}>
             {data.title}
             {data.draft && <span aria-hidden="true"> 🚧</span>}
           </h3>
@@ -121,39 +126,11 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
 }
 
 <style>
-  /* Shell — bordered tile with a left accent bar that grows on hover/focus
-     (the site's card idiom, as ToolCard and CompactCardTile). */
   .article-card {
     --_border-color: var(--color-accent);
 
-    position: relative;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    background-color: var(--color-background-secondary);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: var(--border-width-thick);
-      background: var(--_border-color);
-      transition: inline-size var(--duration-fast) var(--ease-in-out);
-      z-index: 1;
-    }
-
-    &:hover,
-    &:has(:focus-visible) {
-      border-color: var(--_border-color);
-
-      &::before {
-        inline-size: var(--border-width-heavy);
-      }
-    }
   }
 
   /* The link grows so the footer always sits at the bottom of the card,
@@ -187,6 +164,9 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
+
+    /* Cover morph; name set on .card-cover. See docs/developer/view-transitions.md */
+    view-transition-name: var(--vt-cover, none);
   }
 
   .cover-badge {
@@ -209,8 +189,6 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
     inset-inline-start: var(--space-2xs);
   }
 
-  /* Same dark translucent treatment, tinted to match the platform pill used
-     on the writing index. */
   .platform-badge {
     inset-block-end: var(--space-2xs);
     inset-inline-end: var(--space-2xs);
@@ -244,6 +222,9 @@ const byline = ['Article', bylineDate, minutesRead].filter(Boolean).join(' · ')
     font-family: var(--font-display);
     font-size: var(--font-size-base);
     letter-spacing: var(--tracking-tight);
+
+    /* Title morph into the article page's <h1> */
+    view-transition-name: var(--vt-name, none);
   }
 
   .card-summary {

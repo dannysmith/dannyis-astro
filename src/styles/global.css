@@ -9,17 +9,4 @@
 @import './_utilities.css';
 @import './_mermaid.css';
 @import './_embed-overrides.css';
-
-/* VIEW TRANSITION ANIMATIONS */
-
-/* Note card morph animation */
-::view-transition-group(.note-card) {
-  animation-duration: 350ms;
-  animation-timing-function: ease-in-out;
-}
-
-/* Footer stays stable during navigation */
-::view-transition-group(site-footer) {
-  animation-duration: 250ms;
-  animation-timing-function: ease-in-out;
-}
+@import './_view-transitions.css';

@@ -1,14 +1,31 @@
 ---
+import { getCollection } from 'astro:content'
 import {
   BaseHead,
   CommandPalette,
   Footer,
+  HomeLinkList,
+  HomepageLatestArticles,
   LLMDiscoveryNote,
   MainNavigation,
 } from '@components/layout/index'
+import { NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
+import { filterContentForListing } from '@utils/content'
 import { getConfig } from '@config/config'
 
 const config = getConfig()
+
+// --- Homepage content sections ---
+const projects = await getCollection('projects')
+const featuredProjects = projects.filter(p => p.data.featured)
+const projectsToShow = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4)
+
+const notes = filterContentForListing(await getCollection('notes'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4)
+
+const toolboxPages = await getCollection('toolboxPages')
+const randomTools = [...toolboxPages].sort(() => Math.random() - 0.5).slice(0, 2)
 ---
 
 <!doctype html>
@@ -22,81 +39,50 @@ const config = getConfig()
     <main
       id="main"
       tabindex="-1"
-      class="vcard h-card ui-style"
+      class="home vcard h-card ui-style"
       itemtype="http://schema.org/Person"
       itemprop="mainEntity"
       itemscope
     >
       <LLMDiscoveryNote />
       <a rel="me" href={Astro.site?.href} class="u-url u-uid hidden-microformat">Danny Smith</a>
-      <h1 class="fn p-name" itemprop="name">
+
+      <h1 class="home-title fn p-name" itemprop="name">
         <span itemprop="givenName">Danny</span>
         <span itemprop="familyName">Smith</span>
       </h1>
-      <ul class="link-list list-reset all-caps">
-        <li>
-          <a href="/writing">My <strong>writing</strong></a>
-        </li>
-        <li>
-          <a href="/notes">Short <strong>notes</strong></a>
-        </li>
-        <li>
-          <a href="/now">What I'm doing <strong>now</strong></a>
-        </li>
-        <li>
-          <a href="/making">Things I'm <strong>making</strong></a>
-        </li>
-        <li>
-          <a href="https://betterat.work">My <strong>work</strong></a>
-        </li>
-        <li>
-          <a href="/toolbox">The <strong>toolbox</strong></a>
-        </li>
-        <li>
-          <a href="/using">stuff I'm <strong>using</strong></a>
-        </li>
-        <li>
-          <a href="/youtube"><strong>youtube</strong></a>
-        </li>
-        <li>
-          <a href="/music"><strong>music</strong></a>
-        </li>
-        <li>
-          <a href="https://www.linkedin.com/in/dannyasmith" rel="me" target="_blank"
-            ><strong>linkedin</strong><span>/dannyasmith</span></a
-          >
-        </li>
-        <li>
-          <a href="https://bsky.app/profile/danny.is" rel="me" target="_blank">
-            <strong>BlueSky</strong><span>@danny.is</span>
-          </a>
-        </li>
-        <li>
-          <a href="https://indieweb.social/@dannysmith" rel="me" target="_blank">
-            <strong>Mastodon</strong>
-          </a>
-        </li>
-        <li>
-          <a href="https://github.com/dannysmith" rel="me" target="_blank"
-            ><strong>github</strong><span>/dannysmith</span></a
-          >
-        </li>
-        <li>
-          <a href="https://instagram.com/dannysmith" rel="me" target="_blank"
-            ><strong>instagram</strong><span>/dannysmith</span></a
-          >
-        </li>
-        <li>
-          <a href="https://monzo.me/dannyasmith" rel="me" target="_blank"
-            ><strong>monzo</strong><span>.me</span></a
-          >
-        </li>
-        <li>
-          <a class="u-email p-email" href="mailto:hi+website@danny.is" rel="me" itemprop="email"
-            ><strong>email</strong></a
-          >
-        </li>
-      </ul>
+
+      <div class="home-grid">
+        <div class="home-links">
+          <HomeLinkList />
+        </div>
+
+        <section class="home-writing" aria-label="Recent writing">
+          <HomepageLatestArticles />
+        </section>
+
+        <section class="home-notes" aria-label="Recent notes">
+          <h2 class="section-heading">Recent <a href="/notes">notes</a></h2>
+          <div class="card-grid">
+            {notes.map(note => <NoteCard item={note} compact />)}
+          </div>
+        </section>
+
+        <section class="home-toolbox" aria-label="A few random tools from the toolbox">
+          <h2 class="section-heading">Random tools from <a href="/toolbox">the toolbox</a></h2>
+          <div class="card-grid">
+            {randomTools.map(tool => <ToolCard item={tool} />)}
+          </div>
+        </section>
+
+        <section class="home-projects" aria-label="Current projects">
+          <h2 class="section-heading">Current <a href="/making">projects</a></h2>
+          <div class="card-grid">
+            {projectsToShow.map(project => <ProjectCard item={project} />)}
+          </div>
+        </section>
+      </div>
+
       <img
         src="/icon.jpg"
         alt="Danny Smith Profile Image"
@@ -106,72 +92,144 @@ const config = getConfig()
         height={200}
         itemprop="image"
       />
-
-      <style>
-        main {
-          display: grid;
-          grid-template-columns: 1rem auto 1fr;
-          min-block-size: 100svh;
-        }
-
-        h1 {
-          grid-column: 1 / -1;
-          font-family: var(--font-display);
-          font-size: clamp(3rem, 14.3vw, 22rem);
-          font-weight: var(--font-weight-extrabold);
-          text-transform: uppercase;
-          font-feature-settings: 'case' on;
-          margin-top: -0.1em;
-          pointer-events: none;
-          line-height: var(--leading-none);
-        }
-
-        .link-list {
-          grid-column: 2 / 3;
-          min-width: 0;
-
-          & li {
-            border-bottom: var(--border-width-thick) solid var(--color-accent);
-            line-height: var(--leading-none);
-            padding-block: var(--space-3xs);
-            text-box-trim: trim-both;
-            text-box-edge: cap alphabetic;
-          }
-
-          & a {
-            overflow-wrap: break-word;
-            word-break: break-word;
-          }
-
-          & strong {
-            letter-spacing: var(--tracking-wider);
-            font-weight: var(--font-weight-heavy);
-          }
-        }
-
-        .avatar {
-          display: none;
-        }
-
-        @media (max-width: 500px) {
-          main {
-            grid-template-columns: 1fr;
-            padding-inline: var(--space-s);
-          }
-
-          .link-list {
-            grid-column: 1;
-
-            & a {
-              display: flex;
-              flex-wrap: wrap;
-              min-height: var(--space-l);
-              align-items: end;
-            }
-          }
-        }
-      </style>
     </main>
     <Footer />
   </body>
 </html>
+
+<style>
+  .home {
+    padding-block-end: var(--space-2xl);
+  }
+
+  .home-title {
+    font-family: var(--font-display);
+    text-align: right;
+    font-size: clamp(3rem, 13.8vw, 22rem);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    /* transform, not a negative margin — the latter collapses into <body> and
+       drags the absolutely-positioned nav up as the vw font scales. */
+    margin-top: 0;
+    transform: translateY(-0.1em);
+    pointer-events: none;
+    line-height: var(--leading-none);
+  }
+
+  .home-grid {
+    display: grid;
+    padding-inline: var(--space-s);
+    margin-block-start: var(--space-2xl);
+    gap: var(--space-xl);
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'links'
+      'writing'
+      'notes'
+      'toolbox'
+      'projects';
+  }
+
+  .home-links {
+    grid-area: links;
+    min-width: 0;
+  }
+
+  .home-writing {
+    grid-area: writing;
+    container-type: inline-size;
+    border-block-start: var(--border-width-accent) solid var(--color-accent);
+  }
+
+  .home-notes {
+    grid-area: notes;
+    border-block-start: var(--border-width-accent) solid var(--color-text);
+  }
+
+  .home-toolbox {
+    grid-area: toolbox;
+  }
+
+  .home-projects {
+    grid-area: projects;
+  }
+
+  .home-toolbox,
+  .home-projects {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-toolbox .card-grid,
+  .home-projects .card-grid {
+    flex: 1;
+    grid-auto-rows: 1fr;
+  }
+
+  .section-heading {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    border-block-end: none;
+
+    a {
+      color: var(--color-accent);
+    }
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--space-s);
+    margin-block-start: var(--space-s);
+  }
+
+  .avatar {
+    display: none;
+  }
+
+  @media (min-width: 40rem) {
+    .home-grid {
+      padding-inline: var(--space-m);
+      gap: var(--space-2xl) var(--space-l);
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        'links   links'
+        'writing writing'
+        'notes   notes'
+        'toolbox toolbox'
+        'projects projects';
+    }
+
+    .home-toolbox .card-grid,
+    .home-projects .card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .home-grid {
+      grid-template-areas:
+        'links   writing'
+        'notes   notes'
+        'toolbox toolbox'
+        'projects projects';
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .home-grid {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-areas:
+        'links   notes   writing writing'
+        'toolbox toolbox projects projects';
+    }
+
+    .home-notes .card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

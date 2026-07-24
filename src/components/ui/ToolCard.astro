@@ -53,7 +53,7 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     </CompactCardTile>
   ) : (
     <article
-      class="tool-card ui-style cq"
+      class="tool-card card-shell ui-style cq"
       data-notion-id={data.notionId}
       data-category={data.category}
       style={`view-transition-name: tool-${item.id}`}
@@ -108,39 +108,12 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
 }
 
 <style>
-  /* =====================================================================
-     Full variant shell — a bordered tile with a left accent bar that grows
-     on hover/focus (the site's card idiom, as CompactCardTile).
-     ===================================================================== */
   .tool-card {
     --_border-color: var(--color-green);
+    --_icon-size: 2.5rem;
 
-    position: relative;
-    overflow: hidden;
-    background-color: var(--color-background-secondary);
-    border: var(--border-width-hairline) solid var(--color-border);
-    border-radius: var(--radius-sm);
-    transition: border-color var(--duration-fast) var(--ease-in-out);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block: 0;
-      inset-inline-start: 0;
-      inline-size: var(--border-width-thick);
-      background: var(--_border-color);
-      transition: inline-size var(--duration-fast) var(--ease-in-out);
-      z-index: 1;
-    }
-
-    &:hover,
-    &:has(:focus-visible) {
-      border-color: var(--_border-color);
-
-      &::before {
-        inline-size: var(--border-width-heavy);
-      }
-    }
+    display: flex;
+    flex-direction: column;
   }
 
   /* Image icons fill the icon box; emoji size comes from font-size. The
@@ -155,15 +128,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     border-radius: var(--radius-xs);
   }
 
-  .tool-card {
-    --_icon-size: 2.5rem;
-
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* The link grows so the footer always sits at the bottom of the card,
-     however tall the grid row is. */
   .card-link {
     flex-grow: 1;
 
@@ -173,13 +137,11 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     }
   }
 
-  /* Thin cover strip; overlays sit in its corners. The height cap stops the
-     3:1 ratio producing an enormous cover in very wide containers. */
+  /* Height cap stops the 3:1 ratio producing an enormous cover in very wide containers. */
   .card-cover {
     position: relative;
-    /* Explicit width so aspect-ratio derives the height (which the cap then
-       clamps) — with auto width the box would derive width from the capped
-       height instead and stop filling the card. */
+    /* Explicit width so aspect-ratio derives the height (with auto width it would
+       derive width from the capped height and stop filling the card). */
     inline-size: 100%;
     aspect-ratio: 3 / 1;
     max-block-size: 10rem;
@@ -208,7 +170,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
   .category-badge {
     inset-block-end: var(--space-2xs);
     inset-inline-end: var(--space-2xs);
-    /* Same dark translucent treatment as the base badge, tinted per category */
     background-color: oklch(from var(--_badge-color) 35% c h / 80%);
   }
 
@@ -223,7 +184,6 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     line-height: 1;
   }
 
-  /* Title and summary spacing lean on the .ui-style defaults */
   .card-content {
     padding-block: var(--space-2xs) var(--space-s);
     padding-inline: var(--space-s);
@@ -240,7 +200,7 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     font-size: var(--font-size-sm);
     line-height: var(--leading-normal);
 
-    /* Truncate exceptionally long summaries (longest today is ~12 lines) */
+    /* Defensive summary clamp */
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 12;
@@ -260,13 +220,11 @@ const updatedSameDay = data.created.toDateString() === data.lastEdited.toDateStr
     color: var(--color-text-secondary);
   }
 
-  /* .ui-style strips link underlines; restore one for the secondary link */
   .notion-link {
     text-decoration-line: underline;
     text-underline-offset: 0.2em;
   }
 
-  /* Narrow full card: shrink the icon, badges and summary; drop the link */
   @container (width < 350px) {
     .card-icon {
       --_icon-size: 1.8rem;
