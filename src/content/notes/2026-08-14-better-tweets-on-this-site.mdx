@@ -1,0 +1,12 @@
+---
+title: Better Tweets on this site
+pubDate: 2026-08-14
+---
+
+Before today I was using [astro-embed](https://astro-embed.netlify.app/) to handle tweets. I've just added a new `<Tweet>` component which looks like this.
+
+<Tweet id="https://x.com/astrodotbuild/status/2085409918434062432" />
+
+It renders the tweet at build-time and links out to [xcancel.com](https://xcancel.com) instead of X (except for the little 𝕏 icon which does point to the original) and properly supports embedded images.
+
+You can see some [examples in the styleguide](https://danny.is/styleguide/components#embed-tweet).
