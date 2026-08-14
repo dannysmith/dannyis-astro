@@ -1,5 +1,5 @@
 ---
-title: 'LoomClone 4: A complete tour of the admin interface'
+title: 'My Loom replacement: The admin side of things'
 draft: true
 pubDate: 2027-01-01
 series: loomclone
@@ -7,21 +7,24 @@ series: loomclone
 
 Intro
 
-## The Overvirw Page
+## The Admin Dashboard
 
 The admin interface lives at http://v.danny.is/admin and is a web interface for managing my videos. The dashboard has grid and table views with controls for sorting and filtering videos. Searching will show all videos whose title, description, slug or transcript match.
 
 [VIDEO Dashboard demo]
 
-*Trashing* a video moves it to the **trash bin**, disables its public endpoints and removes it from any public feeds. Trashed videos can be restored or permanently deleted from the trash bin.
 
-[IMAGE Trash bin]
-
-## Uploading videos
+### Uploading videos
 
 I can also upload an `mp4` video directly via the web interface, and the server will run as much of the post-processing pipeline as it can.
 
 [IMAGE Upload screen]
+
+### The Trash Bin
+
+*Trashing* a video moves it to the **trash bin**, disables its public endpoints and removes it from any public feeds. Trashed videos can be restored or permanently deleted from the trash bin.
+
+[IMAGE Trash bin]
 
 ## The Video Page
 
@@ -69,9 +72,20 @@ The **Files** tab shows the entire contents of the video's data directory on the
 
 ![Viewing a JSON file's contents directly inside the admin interface](../../assets/articles/2026-05-23-view-recording.json.png)
 
+## The Thumbnail Editor
 
-## The video Editor
+For less ephemeral videos I often want to add a cover image based on a template I designed in Figma ages ago. 
 
+- Avatar, me, copyright notice
+- Title (resizing)
+- URL
+- Image (unframed, framed, video overlay)
+- QR Code
+- Exporting
+
+[VIDEO Cover Editor Demo]
+
+## The Video Editor
 
 I didn't originally plan to include any sort of video editor because most of my "editing" is done while I'm recording by pausing and unpausing. But after recording a few real videos I realised that I do sometimes need two features here: cutting out mistakes and trimming a few seconds from the start and end of some videos.
 
@@ -87,18 +101,6 @@ Finally, we can add named chapter markers and – if any were added during recor
 
 [VIDEO Video Editor Demo]
 
-## The thumbnail editor
+## Admin in the macOs app
 
-
-For less ephemeral videos I often want to add a cover image based on a template I designed in Figma ages ago. 
-
-- Avatar, me, copyright notice
-- Title (resizing)
-- URL
-- Image (unframed, framed, video overlay)
-- QR Code
-- Exporting
-
-[VIDEO Cover Editor Demo]
-
-## Managing tags
+- Managing and cleaning out Recordings etc

@@ -1,6 +1,71 @@
 ---
-title: 'LoomClone 5: A dive into the Video Editor and Thumbnail Editor'
+title: 'My Loom replacement: how it''s deployed'
 draft: true
 pubDate: 2027-01-01
 series: loomclone
 ---
+
+When I first started thinking about building my own [loom replacement](/writing/loomclone-part-1) I was pretty clear I wanted it deployed on European infrastructure, and that it shouldn't be tightly coupled to any specidfic SaaS/IaaS platforms. This felt important enough that the first work I did after the initial proof-of-concept mac app was a bunch of detailed research into this.
+
+Conceptually, the project has four components:
+
+1. The **macOS recording app**.
+2. The **backend API** which the mac app talks to.
+3. The **admin web app** I use to manage everything.
+4. The **public surface** which viewers interact with.
+
+The mac app is obviously it's own thing, and my first thought about the others was that *obviously they should too* because the boundries between their responsibilities are incredibly clear and each has a very distinct and independant job do do.
+
+1. I *know* the mac app will only consume a **tiny** external API so the **backend's** main job is gonna be data processing, storage and "business logic": a very thin wrapper over the data store.
+2. The admin app is just a nice **internal** UI for administering the data. And *internal* means we can probably get away with a hacky independant system with shared acess to the data store because that's better than complicating the backend's external API with a load of *internal admin-only* stuff.
+3. The **public surface** is a bit different: it's basically a CDN serving video files and a bit of HTML at scale. So let's have the backend stick the videos on a CDN and serve the HTML from cloudflare or something.
+
+And then I engaged my brain for a few seconds and remembered I'm the only user of (1) and (2). At most there'll be one mac client interacting with the backend API, and since I'm not gonna be recording multiple videos concurrently or administering them while recording... *why am I even thinking about separating the API and admin app?* Especially as it's mean deployiing and managing two seperate services. The only part of this where traffic is relevant is the public bit, and most of the time even that won't get much on average.
+
+## "Architecture"
+
+The LoomClone repo contains the macOS app and a single [Hono](https://hono.dev/) app which serves the backend API, admin app and public endpoints together, with the public stuff behind [BunnyCDN](https://bunny.net/). It's intentionally simple, has very few dependencies and stores its data in SQLite or on disk.
+
+The only notable thing here is that the route handlers & middleware strongly seperated by concern...
+
+```tree
+src/routes/
+├── admin/                  # All admin app stuff
+├── api/                    # All 'backend API' stuff
+├── videos/                 # All public-facing endpoints which render video stuff
+└──  site/                  # Other public-facing stuff like RSS feeds and the homepage
+```
+
+This strict separation applies equally to views, layouts and CSS. **Within the Hono app**, the three concerns are entirely seperate apart from the libraries they share for interacting with data.
+
+With all the server-side stuff as a single Hono app backed by SQLite and files-on-disk, deployment is simple portable, and **easy**.
+
+## The VPS
+
+I obviously went with [Hetzner](https://www.hetzner.com/). They're reliable, European, and I already use them for my [minecraft box](/notes/minecraft-bluemap-plugins/#mc-infra).
+
+Assuming the public-facing stuff is behind a CDN it makes little sense to give *LoomClone* its own dedicated VPS. Even when I'm fevourishly recording & sharing videos the most useful "buff" is  gonna be *more CPU*, *more GPU* or *more RAM*. In other words, there's a chance this server wil see occasional spikes in usage and it needs to handle them well, 
+
+Rather than giving LoomClone it's own dedicated VPS, I set up a "generic" VPS with some minimal tooling to enable LoomClone to run alongside other services. My thinking here was basically this: if the public surface is behind a CDN, LoomClone is likely to use compute very sporadically (lots when I'm recording videos, almost none when I'm not), and I'm planning to self-host a few other personal services soon (some simplified version of [cal.com](https://cal.com/) and a small [n8n](https://n8n.io/) instance), both of which I expect to *also* use compute very sporadically. Given my expected useage, a single server is gonna be more cost-efective, less of a headache to manage and more fun to noodle about with. So LoomClone is currently running inside a container on a cheap Hetzner VPS, bootstrapped with some [simple tooling](https://github.com/dannysmith/danny-vps-infra/) to set up docker, [Caddy](https://caddyserver.com/) and some niceties if have to SSH in.
+
+
+
+
+Server stuff in general and overview of https://github.com/dannysmith/danny-vps-infra/blob/main/README.md
+
+## The deployment pipeline
+
+- How LC is set up for deployment
+- The GH Actions
+
+## The CDN
+
+CDN
+Cacheing
+
+## Cron Jobs & Backup
+
+- Repeating cron jobs
+- Backups etc
+
+## Wrapping up
