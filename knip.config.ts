@@ -8,5 +8,8 @@ export default {
     'tests/**/*.{test,spec}.ts',
   ],
   project: ['src/**/*.{ts,tsx,astro}', 'scripts/**/*.{ts,js}', 'tests/**/*.ts'],
-  ignoreDependencies: ['@iconify-json/heroicons'],
+  // astro-icon resolves icon sets by string name at build time (`<Icon
+  // name="simple-icons:x" />`), so nothing ever imports these packages and
+  // knip's import graph can't see them.
+  ignoreDependencies: ['@iconify-json/heroicons', '@iconify-json/simple-icons'],
 } satisfies KnipConfig
