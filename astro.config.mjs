@@ -65,6 +65,11 @@ export default defineConfig({
     // Used for all `<Image />` and `<Picture />` components unless overridden with a prop
     layout: 'constrained',
     responsiveStyles: true,
+    // Tweet avatars and media (see src/components/mdx/Tweet.astro). Authorising
+    // the host lets Astro download and optimise them at build time, so nothing
+    // in the output hotlinks X's CDN — and its content-addressed asset cache in
+    // node_modules/.astro handles the caching for us.
+    remotePatterns: [{ protocol: 'https', hostname: 'pbs.twimg.com' }],
   },
   experimental: {
     svgOptimizer: svgoOptimizer(),

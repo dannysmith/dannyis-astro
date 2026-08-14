@@ -24,7 +24,8 @@ import {
   Tabs,
   WrappedTable,
 } from '@components/mdx/index'
-import { BaselineStatus, BlueskyPost, Gist, MastodonPost, Tweet, Vimeo, YouTube } from 'astro-embed'
+import { BaselineStatus, BlueskyPost, Gist, MastodonPost, Vimeo, YouTube } from 'astro-embed'
+import Tweet from '@components/mdx/Tweet.astro'
 import { Code } from 'astro-expressive-code/components'
 import { ArticleCard, NoteCard, ProjectCard, ToolCard } from '@components/ui/index'
 import { Content as MermaidContent } from './_snippets/mermaid.mdx'
@@ -1865,6 +1866,60 @@ Provide a title to skip the fetch or override it:
       <Loom id="0132dbe661b24dd28f42e2ce040f78cc" />
     </ResizableContainer>
 
+    <h3 id="embed-tweet">Tweet</h3>
+    <p>
+      Renders a tweet as static HTML from JSON fetched at build time and cached to disk, so each
+      tweet is only ever fetched once. X's own oEmbed endpoint returns a bare text blockquote and
+      nothing else; going elsewhere for the data gets us the author's avatar, images with their alt
+      text, and real destinations in place of <code>t.co</code> stubs. Avatars and media go through Astro's
+      image pipeline, so nothing here hotlinks X's CDN.
+    </p>
+    <p>
+      Permalinks point at <a href="https://xcancel.com/">xcancel</a>, which is readable without an X
+      account, with the original on X behind the icon. A tweet that can't be fetched — deleted,
+      private, or simply mistyped — degrades to a link rather than failing the build.
+    </p>
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td><code>string</code></td>
+          <td><em>required</em></td>
+          <td>A twitter.com/x.com status URL, or a bare tweet id.</td>
+        </tr>
+      </tbody>
+    </WrappedTable>
+    <Code
+      lang="mdx"
+      code={'<Tweet id="https://x.com/astrodotbuild/status/1512144306898976768" />'}
+    />
+
+    <h4>Text, emoji and an image</h4>
+    <Tweet id="https://x.com/astrodotbuild/status/1512144306898976768" />
+
+    <h4>Links and mentions</h4>
+    <Tweet id="https://x.com/astrodotbuild/status/1841964398815895583" />
+
+    <h4>Several images</h4>
+    <Tweet id="https://x.com/SpaceX/status/1848831595014459513" />
+
+    <h4>Video</h4>
+    <Tweet id="https://x.com/DivineDropbear/status/1841206275088290279" />
+
+    <h4>A long post, no media</h4>
+    <Tweet id="https://x.com/stevekrouse/status/1988641250329989533" />
+
+    <h4>Unavailable — deleted tweet, or a bad id</h4>
+    <Tweet id="https://x.com/nobody/status/1111111111111111111" />
+
     <h3 id="embed-astro-embed">astro-embed components</h3>
     <p>
       These come from the <a href="https://astro-embed.netlify.app/">astro-embed</a> package. Each takes
@@ -1881,15 +1936,6 @@ Provide a title to skip the fetch or override it:
     <Code lang="mdx" code={'<Vimeo id="32001208" />'} />
     <ResizableContainer>
       <Vimeo id="32001208" />
-    </ResizableContainer>
-
-    <h4>Tweet</h4>
-    <Code
-      lang="mdx"
-      code={'<Tweet id="https://twitter.com/astrodotbuild/status/1512144306898976768" />'}
-    />
-    <ResizableContainer>
-      <Tweet id="https://twitter.com/astrodotbuild/status/1512144306898976768" />
     </ResizableContainer>
 
     <h4>Gist</h4>

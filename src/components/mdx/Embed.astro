@@ -1,8 +1,10 @@
 ---
-import { YouTube, Tweet, Vimeo, BlueskyPost, MastodonPost } from 'astro-embed';
+import { YouTube, Vimeo, BlueskyPost, MastodonPost } from 'astro-embed';
 import BookmarkCard from '@components/mdx/BookmarkCard.astro';
 import LCVid from '@components/mdx/LCVid.astro';
 import Loom from '@components/mdx/Loom.astro';
+import Tweet from '@components/mdx/Tweet.astro';
+import { getTweetId } from '@utils/fetchTweet';
 
 export interface Props {
   url: string;
@@ -13,11 +15,6 @@ const { url, className = '' } = Astro.props;
 
 function getYouTubeId(url: string) {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
-  return match ? match[1] : null;
-}
-
-function getTweetId(url: string) {
-  const match = url.match(/twitter\.com\/[\w]+\/status\/([0-9]+)/);
   return match ? match[1] : null;
 }
 

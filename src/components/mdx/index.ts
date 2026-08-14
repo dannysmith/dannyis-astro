@@ -9,6 +9,7 @@ import ContentCard from './ContentCard.astro'
 import Embed from './Embed.astro'
 import LCVid from './LCVid.astro'
 import Loom from './Loom.astro'
+import Tweet from './Tweet.astro'
 import BasicImage from './BasicImage.astro'
 import BlockQuoteCitation from './BlockQuoteCitation.astro'
 import ButtonLink from './ButtonLink.astro'
@@ -38,6 +39,7 @@ export {
   Callout,
   LCVid,
   Loom,
+  Tweet,
   BasicImage,
   BlockQuoteCitation,
   ButtonLink,
