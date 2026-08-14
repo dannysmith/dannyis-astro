@@ -12,11 +12,12 @@ import { templates, type OGTemplateData } from '@utils/og-templates.js'
 // inside Astro's own cache dir so a single CI cache step covers both.
 //
 // Bump CACHE_VERSION whenever the templates (og-templates.ts), branding
-// (og-branding.ts), the baked background (src/assets/og/background.svg), or
-// the embedded fonts change — those aren't part of the per-image key, so a
-// bump is how we invalidate every cached image at once.
+// (og-branding.ts), the baked background (src/assets/og/background.svg), the
+// embedded fonts, or the renderer itself (the satori/resvg versions) change —
+// those aren't part of the per-image key, so a bump is how we invalidate every
+// cached image at once.
 const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'og-cache')
-const CACHE_VERSION = 'v5'
+const CACHE_VERSION = 'v6'
 
 // The decorative blobs background never changes per page, so we rasterise the
 // source SVG to a PNG once per build (per output size) and reuse the data URI.
