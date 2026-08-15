@@ -109,11 +109,12 @@ The truncation bug is the worst because it's invisible: the value regex is `["']
 ## Phase 5 — Docs, styleguide, cleanup
 
 1. Styleguide: update the BookmarkCard section for the new props and states, including a dead/blocked/thin example each.
-2. New `docs/developer/link-metadata.md` covering the fetcher, the cache and its version keys, the status taxonomy, and the image pipeline. Link it from `component-patterns.md`.
-3. `src/utils/CLAUDE.md`: add the cache-version bumping rule (same class of gotcha as the OG cache). `docs/developer/deployment.md`: add the link cache to the caching section.
-4. `bun run check:knip` and `check:dupes` — the two fetchers merging should reduce duplication, not move it.
-5. Comment pass: evergreen, no transient references, explaining *why* (the UA choice, the raw-head capture, the fail-soft image path).
-6. Final `bun run check:all` plus a cold-cache full build.
+2. Review all code changes on this branch for opportunities to refactor, simplify, remove features which we think aren't worth the extra code, clean up and simplify all the code etc.
+3. New `docs/developer/link-metadata.md` covering the fetcher, the cache and its version keys, the status taxonomy, and the image pipeline. Link it from `component-patterns.md`.
+4. `src/utils/CLAUDE.md`: add the cache-version bumping rule (same class of gotcha as the OG cache). `docs/developer/deployment.md`: add the link cache to the caching section.
+5. `bun run check:knip` and `check:dupes` — the two fetchers merging should reduce duplication, not move it.
+6. Comment pass: evergreen, no transient references, explaining *why*.
+7. Final `bun run check:all` plus a cold-cache full build.
 
 ## Out of scope / follow-up
 
