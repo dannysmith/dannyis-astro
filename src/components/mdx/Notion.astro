@@ -1,5 +1,5 @@
 ---
-import { fetchLinkPreview } from '@utils/fetchLinkPreview'
+import { fetchLinkMetadata } from '@utils/fetchLinkMetadata'
 import { Icon } from 'astro-icon/components'
 
 export interface Props {
@@ -15,42 +15,44 @@ let hasFavicon = false
 let faviconImageURL = ''
 let emoji = ''
 
-try {
-  // Only fetch if no manual title provided
-  if (!manualTitle) {
-    const meta = await fetchLinkPreview(href)
-    title = meta.title || 'Notion Page'
+// Only fetch if no manual title provided. fetchLinkMetadata never throws \u2014 an
+// unreachable or blocked page just leaves the defaults in place.
+if (!manualTitle) {
+  const meta = await fetchLinkMetadata(href)
+  title = meta.title || 'Notion Page'
 
-    // Clean title
-    if (title?.endsWith('| Notion')) {
-      title = title.slice(0, title.lastIndexOf('| Notion')).trim()
+  // Clean title
+  if (title?.endsWith('| Notion')) {
+    title = title.slice(0, title.lastIndexOf('| Notion')).trim()
+  }
+
+  // Get faviconImageURL or emoji
+  const faviconURL = meta.favicon
+
+  if (faviconURL && faviconURL.includes('amazonaws.com')) {
+    hasFavicon = true
+    faviconImageURL = faviconURL
+  } else {
+    // Notion encodes emoji icons into the favicon URL, so a malformed percent
+    // sequence would otherwise throw where a missing emoji is the right answer.
+    let decodedURL: string
+    try {
+      decodedURL = decodeURIComponent(faviconURL || '')
+    } catch {
+      decodedURL = faviconURL || ''
     }
 
-    // Get faviconImageURL or emoji
-    const faviconURL = meta.favicon
+    // Regex pattern to match most common emojis
+    const emojiRegex =
+      /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\u200D|\uFE0E|\uFE0F|\p{Extended_Pictographic})/gu
 
-    if (faviconURL && faviconURL.includes('amazonaws.com')) {
+    const matches = decodedURL.match(emojiRegex) as Array<string>
+
+    if (matches?.length > 0) {
       hasFavicon = true
-      faviconImageURL = faviconURL
-    } else {
-      const decodedURL = decodeURIComponent(faviconURL || '')
-
-      // Regex pattern to match most common emojis
-      const emojiRegex =
-        /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\u200D|\uFE0E|\uFE0F|\p{Extended_Pictographic})/gu
-
-      const matches = decodedURL.match(emojiRegex) as Array<string>
-
-      if (matches?.length > 0) {
-        hasFavicon = true
-        emoji = matches[0]
-      }
+      emoji = matches[0]
     }
   }
-} catch (error) {
-  console.warn(`Failed to fetch Notion page data for ${href}:`, error)
-  // Fallback to manual title or default
-  title = manualTitle || 'Notion Page'
 }
 ---
 

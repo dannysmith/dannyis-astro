@@ -8,33 +8,18 @@ export interface Props {
 
 const { url, className = '' } = Astro.props
 
-// Fetch metadata at build time
-const metadata = await fetchLinkMetadata(url)
+// Fetched at build time, from cache where possible. Never throws — `status`
+// says how much of the card we can fill in.
+const data = await fetchLinkMetadata(url)
 
-// If metadata fetch fails, provide a minimal fallback
-let domain: string | null = null
-try {
-  domain = new URL(url).hostname.replace('www.', '')
-} catch {
-  // Malformed URL - leave domain as null
-}
-
-const fallbackMetadata = {
-  url,
-  domain,
-  title: url,
-  description: null,
-  image: null,
-}
-
-const data = metadata || fallbackMetadata
-const isFallback = !metadata
+const title = data.title ?? data.domain ?? url
+const isFallback = !data.title
 ---
 
 <div class={`bookmark-card cq ${className}`}>
   <a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
     <div class="bookmark-content">
-      <span class="bookmark-title">{data.title}</span>
+      <span class="bookmark-title">{title}</span>
       {data.description && <p class="bookmark-description">{data.description}</p>}
       {data.domain && <span class="bookmark-domain">{data.domain}</span>}
       {isFallback && <p class="bookmark-fallback">Preview unavailable - click to visit</p>}

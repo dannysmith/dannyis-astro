@@ -9,6 +9,10 @@
 # Gitignored scratch area for in-progress task work
 docs/tasks-todo/temporary/
 
+# Real <head>s captured from live sites, used as link-metadata test fixtures.
+# Reformatting them would stop them being what those sites actually served.
+tests/fixtures/link-heads/
+
 # Its gist embed needs an explicitly-closed <script></script> (a self-closing
 # <script/> crashes astro-eslint-parser v3). prettier keeps re-collapsing it to a
 # self-close and prettier-ignore comments don't work in .astro
