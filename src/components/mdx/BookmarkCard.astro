@@ -12,17 +12,37 @@ const { url, className = '' } = Astro.props
 // says how much of the card we can fill in.
 const data = await fetchLinkMetadata(url)
 
-const title = data.title ?? data.domain ?? url
-const isFallback = !data.title
+// With no title of its own, the card leans on the URL, so it shows more of it.
+const location = data.title ? data.domain : (data.displayUrl ?? data.domain)
+
+// Common types worth naming; anything else just isn't a web page we can preview.
+const FILE_TYPES: Record<string, string> = {
+  'application/pdf': 'PDF',
+  'application/epub+zip': 'EPUB',
+  'application/zip': 'ZIP',
+  'text/plain': 'Text file',
+}
+const fileType = data.contentType
+  ? (FILE_TYPES[data.contentType.split(';')[0].trim().toLowerCase()] ?? 'File')
+  : null
+
+const flags = [
+  // Only 404/410 gets this: sites block and time out for temporary reasons.
+  data.status === 'dead' ? 'Link may be dead' : null,
+  data.archived ? 'Archived copy' : null,
+  fileType,
+].filter((flag): flag is string => Boolean(flag))
 ---
 
 <div class={`bookmark-card cq ${className}`}>
   <a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
     <div class="bookmark-content">
-      <span class="bookmark-title">{title}</span>
+      <span class="bookmark-title">{data.displayTitle}</span>
       {data.description && <p class="bookmark-description">{data.description}</p>}
-      {data.domain && <span class="bookmark-domain">{data.domain}</span>}
-      {isFallback && <p class="bookmark-fallback">Preview unavailable - click to visit</p>}
+      <span class="bookmark-meta">
+        {location && <span class="bookmark-domain">{location}</span>}
+        {flags.map(flag => <span class="bookmark-flag">{flag}</span>)}
+      </span>
     </div>
     {data.image && <img src={data.image} alt="" loading="lazy" />}
   </a>
@@ -54,11 +74,27 @@ const isFallback = !data.title
     padding: var(--space-s);
   }
 
+  /* Domain and any flags share one wrapping row. */
+  .bookmark-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs) var(--space-xs);
+    margin-block-start: var(--space-2xs);
+  }
+
   .bookmark-domain {
-    display: block;
     font-family: var(--font-code);
     font-size: var(--font-size-xs);
-    margin-block-start: var(--space-2xs);
+    word-break: break-all;
+  }
+
+  .bookmark-flag {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-xs);
+    padding-inline: var(--space-2xs);
   }
 
   .bookmark-title {
@@ -82,12 +118,6 @@ const isFallback = !data.title
     font-size: var(--font-size-sm);
     line-height: var(--leading-normal);
     margin: 0;
-  }
-
-  .bookmark-fallback {
-    font-size: var(--font-size-xs);
-    font-style: italic;
-    margin-block: var(--space-2xs) 0;
   }
 
   /* Horizontal layout when container is wide enough */

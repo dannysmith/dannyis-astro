@@ -29,6 +29,15 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
+// Types and every extraction rule live in deriveLinkMetadata; this module only
+// gets the bytes and remembers them.
+import {
+  derive,
+  normaliseUrl,
+  unwrapArchiveUrl,
+  type LinkCapture,
+  type LinkMetadata,
+} from '@utils/deriveLinkMetadata'
 
 const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'link-cache')
 const CAPTURE_VERSION = 'v1'
@@ -54,45 +63,6 @@ const SOCIAL_UA = 'facebookexternalhit/1.1'
 const BROWSER_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
-/**
- * What happened when we asked for this URL.
- *
- * `blocked` and `dead` are deliberately distinct: sites 403, rate-limit and
- * challenge us for temporary reasons all the time, so only 404/410 is treated
- * as a link that has actually rotted.
- */
-export type LinkStatus = 'ok' | 'thin' | 'blocked' | 'dead' | 'unreachable' | 'non-html'
-
-export interface LinkMetadata {
-  /** The URL as authored. Always what we link to. */
-  url: string
-  /** Where it landed after redirects; the base for resolving relative URLs. */
-  finalUrl: string
-  /** Hostname without `www.`, for display. */
-  domain: string | null
-  status: LinkStatus
-  title: string | null
-  description: string | null
-  image: string | null
-  favicon: string | null
-  /** Set for `non-html` captures, e.g. `application/pdf`. */
-  contentType: string | null
-}
-
-/** A stored fetch. `outcome` is what the network said; `status` is derived from it. */
-export interface LinkCapture {
-  url: string
-  finalUrl: string
-  httpStatus: number | null
-  contentType: string | null
-  /** Captured `<head>`, or '' when we never got usable HTML. */
-  head: string
-  fetchedAt: number
-  outcome: 'fetched' | 'blocked' | 'dead' | 'unreachable' | 'non-html'
-  captureVersion: string
-  deriveVersion: string
-}
-
 // ---------------------------------------------------------------- public API
 
 /**
@@ -103,74 +73,32 @@ export async function fetchLinkMetadata(url: string): Promise<LinkMetadata> {
   return derive(await loadCapture(url))
 }
 
-/**
- * Capture → renderable fields. Pure, so the extraction rules are testable
- * against captured HTML with no network involved.
- */
-export function derive(capture: LinkCapture): LinkMetadata {
-  const base = capture.finalUrl || capture.url
-  const head = capture.head
-
-  // A 4xx page usually still has a full <head> — GitHub's 404 advertises
-  // "Build software better, together" — so metadata from a failed fetch is
-  // someone else's error page, not this link.
-  const usable = capture.outcome === 'fetched'
-
-  const title = usable ? (metaContent(head, ['og:title', 'twitter:title']) ?? titleTag(head)) : null
-  const description = usable
-    ? metaContent(head, ['og:description', 'twitter:description', 'description'])
-    : null
-  const image = usable ? metaContent(head, ['og:image', 'twitter:image']) : null
-  const favicon = usable ? iconHref(head, base) : null
-
-  return {
-    url: capture.url,
-    finalUrl: base,
-    domain: hostname(base),
-    status: statusFor(capture, title),
-    title,
-    description,
-    image,
-    favicon,
-    contentType: capture.outcome === 'non-html' ? capture.contentType : null,
-  }
-}
-
-function statusFor(capture: LinkCapture, title: string | null): LinkStatus {
-  if (capture.outcome !== 'fetched') return capture.outcome
-  return title ? 'ok' : 'thin'
-}
-
-function hostname(url: string): string | null {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '')
-  } catch {
-    return null
-  }
-}
-
 // ------------------------------------------------------------------ capturing
 
-/** One capture per URL per build, however many cards render it. */
+/**
+ * One capture per page per build, however many cards render it — keyed on the
+ * normalised URL, so two links differing only by a utm_ tag share a capture.
+ */
 const inFlight = new Map<string, Promise<LinkCapture>>()
 
 function loadCapture(url: string): Promise<LinkCapture> {
-  let pending = inFlight.get(url)
+  const key = normaliseUrl(url)
+  let pending = inFlight.get(key)
   if (!pending) {
-    pending = withSlot(() => load(url))
-    inFlight.set(url, pending)
+    pending = withSlot(() => load(url, key))
+    inFlight.set(key, pending)
   }
   return pending
 }
 
-async function load(url: string): Promise<LinkCapture> {
-  const cached = await readCache(url)
-  if (cached && Date.now() - cached.fetchedAt < TTL_MS) return cached
+async function load(url: string, key: string): Promise<LinkCapture> {
+  const cached = await readCache(key)
+  if (cached && Date.now() - cached.fetchedAt < TTL_MS) return { ...cached, url }
 
   const fresh = await capture(url)
 
   if (fresh.outcome === 'fetched' || fresh.outcome === 'non-html') {
-    await writeCache(url, fresh)
+    await writeCache(key, fresh)
     return fresh
   }
 
@@ -180,13 +108,19 @@ async function load(url: string): Promise<LinkCapture> {
   // that has started 404ing gets marked dead while still showing what it said
   // when it worked. Failures are never cached, so a transient outage doesn't
   // get baked in and replayed on every later build.
-  return cached ? { ...cached, outcome: fresh.outcome, httpStatus: fresh.httpStatus } : fresh
+  return cached ? { ...cached, url, outcome: fresh.outcome, httpStatus: fresh.httpStatus } : fresh
 }
 
 async function capture(url: string): Promise<LinkCapture> {
+  // An archive link's metadata lives at the URL it archived. We still link to
+  // the archive — it's what was asked for, and often the only readable copy —
+  // but describe the page it holds.
+  const archivedUrl = unwrapArchiveUrl(url)
+  const target = archivedUrl ?? url
+
   let parsed: URL
   try {
-    parsed = new URL(url)
+    parsed = new URL(target)
   } catch {
     return emptyCapture(url, 'unreachable')
   }
@@ -194,6 +128,11 @@ async function capture(url: string): Promise<LinkCapture> {
     return emptyCapture(url, 'unreachable')
   }
 
+  const result = await attemptWithFallback(target)
+  return { ...result, url, archived: archivedUrl !== null }
+}
+
+async function attemptWithFallback(url: string): Promise<LinkCapture> {
   const first = await attempt(url, SOCIAL_UA)
   if (first.outcome === 'blocked' && first.httpStatus === 403) {
     const second = await attempt(url, BROWSER_UA)
@@ -315,9 +254,10 @@ function isHtml(contentType: string | null): boolean {
 const CHALLENGE_TITLES =
   /just a moment|attention required|checking your browser|making sure you|are you a robot|verify you are human|access denied/i
 
+/** Challenge titles are plain ASCII, so this reads the raw tag rather than parsing the head. */
 function isChallengePage(head: string): boolean {
-  const title = titleTag(head)
-  return title !== null && CHALLENGE_TITLES.test(title)
+  const title = head.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]
+  return title !== undefined && CHALLENGE_TITLES.test(title)
 }
 
 function retryAfterMs(response: Response): number {
@@ -410,15 +350,43 @@ function decodeHead(bytes: Uint8Array, headerCharset: string | null): string {
   return end === -1 ? text : text.slice(0, end)
 }
 
+/**
+ * windows-1252's 0x80–0x9F range, which is where it differs from latin1 — and
+ * where the smart quotes and dashes that fill page titles live.
+ *
+ * We map it ourselves rather than trusting `new TextDecoder('windows-1252')`:
+ * runtimes disagree (some decode 0x92 to U+0092, a control character, instead
+ * of the right single quote), and a build's output shouldn't depend on which
+ * one ran it. The five slots windows-1252 leaves undefined (0x81, 0x8D,
+ * 0x8F, 0x90, 0x9D) keep their raw code point, as browsers do.
+ */
+// prettier-ignore
+const CP1252_HIGH =
+  '\u20AC\u0081\u201A\u0192\u201E\u2026\u2020\u2021\u02C6\u2030\u0160\u2039\u0152\u008D\u017D\u008F' +
+  '\u0090\u2018\u2019\u201C\u201D\u2022\u2013\u2014\u02DC\u2122\u0161\u203A\u0153\u009D\u017E\u0178'
+
+/** Labels the HTML spec says to decode as windows-1252, latin1 included. */
+const CP1252_LABELS = /^(windows-1252|cp1252|x-cp1252|iso-8859-1|latin1|us-ascii|ascii)$/
+
 function decodeWith(bytes: Uint8Array, charset: string | null): string {
-  if (charset && charset !== 'utf-8') {
-    try {
-      return new TextDecoder(charset).decode(bytes)
-    } catch {
-      // Unknown label — fall through to UTF-8.
-    }
+  if (!charset || charset === 'utf-8' || charset === 'utf8') {
+    return new TextDecoder('utf-8').decode(bytes)
   }
-  return new TextDecoder('utf-8').decode(bytes)
+
+  if (CP1252_LABELS.test(charset)) {
+    let text = ''
+    for (const byte of bytes) {
+      text += byte >= 0x80 && byte <= 0x9f ? CP1252_HIGH[byte - 0x80] : String.fromCharCode(byte)
+    }
+    return text
+  }
+
+  try {
+    return new TextDecoder(charset).decode(bytes)
+  } catch {
+    // Unknown label (or an encoding this runtime lacks) — UTF-8 is the best guess.
+    return new TextDecoder('utf-8').decode(bytes)
+  }
 }
 
 function charsetFromContentType(contentType: string | null): string | null {
@@ -433,95 +401,6 @@ function sniffCharset(bytes: Uint8Array): string | null {
     prefix.match(/<meta[^>]*charset=["']?([\w-]+)/i) ??
     prefix.match(/<meta[^>]*content=["'][^"']*charset=([\w-]+)/i)
   return match ? match[1].toLowerCase() : null
-}
-
-// ---------------------------------------------------------------- extraction
-
-/**
- * Read a meta tag's content, trying each name in order.
- *
- * The tag is matched first and its `content` extracted second, with the closing
- * quote required to match the opening one. Matching content directly with a
- * `["']([^"']+)["']` pattern — as this util used to — silently truncates any
- * value containing the other quote character, so `content="Wasn't it"` became
- * "Wasn". Both `property=` (Open Graph) and `name=` (Twitter, plain meta) are
- * accepted for every name, since sites use them interchangeably.
- */
-export function metaContent(head: string, names: string[]): string | null {
-  for (const name of names) {
-    const pattern = new RegExp(
-      `<meta\\b[^>]*\\b(?:property|name)=(["'])${escapeRegex(name)}\\1[^>]*>`,
-      'gi',
-    )
-    for (const tag of head.matchAll(pattern)) {
-      const content = tag[0].match(/\bcontent=(["'])([\s\S]*?)\1/i)
-      const value = content ? decodeEntities(content[2]).trim() : ''
-      if (value) return value
-    }
-
-    // Attribute order is not guaranteed: `content="…" property="og:title"`.
-    const reversed = new RegExp(
-      `<meta\\b[^>]*\\bcontent=(["'])([\\s\\S]*?)\\1[^>]*\\b(?:property|name)=(["'])${escapeRegex(name)}\\3[^>]*>`,
-      'i',
-    )
-    const match = head.match(reversed)
-    if (match) {
-      const value = decodeEntities(match[2]).trim()
-      if (value) return value
-    }
-  }
-  return null
-}
-
-export function titleTag(head: string): string | null {
-  const match = head.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
-  if (!match) return null
-  return decodeEntities(match[1]).trim() || null
-}
-
-export function iconHref(head: string, baseUrl: string): string | null {
-  for (const tag of head.matchAll(/<link\b[^>]*\brel=(["'])(?:shortcut )?icon\1[^>]*>/gi)) {
-    const href = tag[0].match(/\bhref=(["'])([\s\S]*?)\1/i)
-    if (!href) continue
-    try {
-      return new URL(decodeEntities(href[2]).trim(), baseUrl).href
-    } catch {
-      // Malformed href; try the next one.
-    }
-  }
-  return null
-}
-
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
-
-/**
- * Decode the entities that appear in metadata. Numeric forms matter as much as
- * named ones — `&#x27;` and `&#039;` for apostrophes are everywhere, and each
- * used to reach the page verbatim.
- *
- * `&amp;` is decoded last so `&amp;amp;` becomes `&amp;` rather than `&`.
- */
-export function decodeEntities(text: string): string {
-  return text
-    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => codePoint(Number.parseInt(hex, 16)))
-    .replace(/&#(\d+);/g, (_, dec) => codePoint(Number.parseInt(dec, 10)))
-    .replace(/&quot;/gi, '"')
-    .replace(/&apos;/gi, "'")
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&amp;/gi, '&')
-}
-
-function codePoint(value: number): string {
-  if (!Number.isFinite(value) || value < 0 || value > 0x10ffff) return ''
-  try {
-    return String.fromCodePoint(value)
-  } catch {
-    return ''
-  }
 }
 
 // -------------------------------------------------------------------- caching
