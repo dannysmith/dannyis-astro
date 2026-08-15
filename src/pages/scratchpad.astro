@@ -88,9 +88,10 @@ const images: Case[] = [
     expect: 'og:image is /OGImage.jpg. Both of these are broken images on the live site today.',
   },
   {
-    label: 'og:image URL that returns 400',
+    label: 'og:image URL with entity-escaped query params',
     url: 'https://www.cubic.dev/blog/the-real-problem-with-ai-coding',
-    expect: 'Card renders without an image, plus a build warning. No broken-image icon.',
+    expect:
+      'og:image is `…png?width=2720&amp;height=1568`. Requested with the literal &amp; it 400s, so the attribute has to be decoded before use.',
   },
   {
     label: 'Tiny square image (150×150)',

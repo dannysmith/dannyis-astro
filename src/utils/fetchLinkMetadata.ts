@@ -38,6 +38,7 @@ import {
   type LinkCapture,
   type LinkMetadata,
 } from '@utils/deriveLinkMetadata'
+import { recordProblem } from '@utils/linkHealth'
 
 const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.astro', 'link-cache')
 const CAPTURE_VERSION = 'v1'
@@ -449,19 +450,7 @@ async function withSlot<T>(task: () => Promise<T>): Promise<T> {
 
 // ------------------------------------------------------------ health reporting
 
-const problems = new Map<string, LinkCapture['outcome']>()
-
 function warn(url: string, capture: LinkCapture): void {
-  problems.set(url, capture.outcome)
-  const detail = capture.httpStatus ? ` (${capture.httpStatus})` : ''
-  // Leading newline: these land mid-render, in the middle of Astro's progress lines.
-  console.warn(`\nLink ${capture.outcome}${detail}: ${url}`)
+  if (capture.outcome === 'fetched') return
+  recordProblem(url, capture.outcome, capture.httpStatus ? String(capture.httpStatus) : undefined)
 }
-
-// One summary at the end of the build beats scrolling back through per-page
-// warnings. Registered on import; harmless when nothing failed.
-process.on('exit', () => {
-  if (problems.size === 0) return
-  console.warn(`\nLink health: ${problems.size} link(s) did not resolve cleanly.`)
-  for (const [url, outcome] of problems) console.warn(`  ${outcome}: ${url}`)
-})
