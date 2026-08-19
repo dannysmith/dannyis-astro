@@ -51,28 +51,30 @@ const textCleanup: Case[] = [
   {
     label: 'Entity-escaped apostrophe (&#x27;)',
     url: 'https://bricolage.io/essential-until-it-wasnt/',
-    expect: '"Essential Until It Wasn\'t" — currently renders the raw entity.',
+    expect: '"Essential Until It Wasn\'t", with a real apostrophe.',
   },
   {
     label: 'Entity-escaped apostrophe + site-name suffix',
     url: 'https://seths.blog/2025/08/aha/',
-    expect: '<title> is "Aha! | Seth&#039;s Blog" — decode it, and consider dropping the suffix.',
+    expect:
+      '<title> is "Aha! | Seth&#039;s Blog"; og:title gives "Aha!", and the suffix would go anyway.',
   },
   {
     label: 'Entity-escaped quotes AND a raw apostrophe — silent truncation',
     url: 'https://perevillega.com/posts/2026-02-24-llms-are-monkey-paws/',
     expect:
-      "og:title is `LLMs &#34;Junior Developers.&#34; They're Monkey Paws`. The old regex stopped dead at the apostrophe.",
+      'Whole title, decoded quotes and all. The old regex stopped dead at the raw apostrophe.',
   },
   {
     label: 'og:title much terser than <title>',
     url: 'https://lucumr.pocoo.org/2024/9/3/progress/',
-    expect: 'og:title is just "Progress"; <title> adds the author. Which reads better on a card?',
+    expect:
+      'og:title is just "Progress"; <title> adds the author. og:title wins unless it is only the site name.',
   },
   {
     label: 'Site name duplicated as a title prefix',
     url: 'https://github.com/dannysmith/tauri-template',
-    expect: '"GitHub - " prefix is redundant next to the domain line.',
+    expect: 'Leading site names are kept: too often the prefix is the useful half.',
   },
 ]
 
@@ -85,7 +87,8 @@ const images: Case[] = [
   {
     label: 'Relative og:image path (second case)',
     url: 'https://replaceyourboss.ai',
-    expect: 'og:image is /OGImage.jpg. Both of these are broken images on the live site today.',
+    expect:
+      'og:image is /OGImage.jpg. Both were broken images before the URL was resolved against the page.',
   },
   {
     label: 'og:image URL with entity-escaped query params',

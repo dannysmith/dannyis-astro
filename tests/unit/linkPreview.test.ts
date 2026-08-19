@@ -12,7 +12,7 @@ process.env.LINK_CACHE_DIR = cacheDir
 afterAll(() => fs.rmSync(cacheDir, { recursive: true, force: true }))
 
 const { readMetadata, titleFromUrl } = await import('@utils/linkPreview/parse')
-const { normaliseUrl, unwrapArchiveUrl } = await import('@utils/linkPreview/fetch')
+const { normaliseUrl, unwrapArchiveUrl, isPublicHttpUrl } = await import('@utils/linkPreview/fetch')
 const { classifyShape } = await import('@utils/linkPreview/image')
 
 /**
@@ -226,6 +226,26 @@ describe('normaliseUrl — the cache key', () => {
   it('returns malformed input unchanged', () => {
     expect(normaliseUrl('not-a-url')).toBe('not-a-url')
   })
+})
+
+describe('isPublicHttpUrl', () => {
+  it.each([
+    'https://example.com/a',
+    'http://example.com/a',
+    'https://192.0.2.10/a', // a public IP literal
+  ])('allows %s', url => expect(isPublicHttpUrl(url)).toBe(true))
+
+  it.each([
+    'http://localhost:4321/admin',
+    'http://127.0.0.1/',
+    'http://10.0.0.5/',
+    'http://192.168.1.1/',
+    'http://172.16.0.1/',
+    'http://169.254.169.254/latest/meta-data/', // cloud metadata
+    'http://printer.local/',
+    'file:///etc/passwd',
+    'not-a-url',
+  ])('refuses %s', url => expect(isPublicHttpUrl(url)).toBe(false))
 })
 
 describe('unwrapArchiveUrl', () => {

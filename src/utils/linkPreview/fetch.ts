@@ -128,13 +128,7 @@ async function load(url: string, key: string, authoredUrl: string): Promise<Stor
 }
 
 async function capture(url: string): Promise<StoredCapture> {
-  let parsed: URL
-  try {
-    parsed = new URL(url)
-  } catch {
-    return empty(url, 'unreachable')
-  }
-  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return empty(url, 'unreachable')
+  if (!isPublicHttpUrl(url)) return empty(url, 'unreachable')
 
   const first = await attempt(url, SOCIAL_UA)
   if (first.status === 'blocked') {
@@ -172,6 +166,12 @@ async function attempt(url: string, userAgent: string): Promise<StoredCapture> {
           continue
         }
         return empty(response.url || url, 'unreachable')
+      }
+
+      // A redirect can land somewhere we would never have asked for directly.
+      if (!isPublicHttpUrl(response.url || url)) {
+        await discard(response)
+        return empty(url, 'unreachable')
       }
 
       const contentType = response.headers.get('content-type')
@@ -280,6 +280,50 @@ export function normaliseUrl(url: string): string {
 }
 
 /**
+ * Whether a URL is somewhere on the public internet worth fetching.
+ *
+ * A page we link to controls its own `og:image` and can redirect us wherever it
+ * likes, so without this a build could be talked into requesting a machine on
+ * the network it happens to run on — a laptop's dev server, or a cloud
+ * metadata endpoint — and publishing whatever came back.
+ *
+ * Hostname-level only. A name that *resolves* to a private address still gets
+ * through; catching that needs our own DNS resolution and connection pinning,
+ * which is far more machinery than a personal site's build warrants. Redirects
+ * are re-checked after the fact, so the response is discarded even though the
+ * request was made.
+ */
+export function isPublicHttpUrl(url: string): boolean {
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return false
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false
+
+  const host = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, '')
+  if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')) return false
+  // IPv6 loopback, link-local and unique-local.
+  if (host === '::1' || /^(fe80|fc|fd)/.test(host)) return false
+
+  const parts = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.\d{1,3}$/)
+  if (parts) {
+    const [a, b] = parts.slice(1, 3).map(Number)
+    const isPrivate =
+      a === 0 ||
+      a === 10 ||
+      a === 127 ||
+      (a === 169 && b === 254) || // link-local, including cloud metadata
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 && b === 168)
+    if (isPrivate) return false
+  }
+
+  return true
+}
+
+/**
  * Archive links carry the original URL in their path, so the interesting
  * metadata is a hop away: archive.ph/20260811223012/https://economist.com/…
  * (which itself rate-limits us) describes an Economist article.
@@ -341,7 +385,9 @@ let activeFetches = 0
 const waiting: Array<() => void> = []
 
 async function withSlot<T>(task: () => Promise<T>): Promise<T> {
-  if (activeFetches >= MAX_CONCURRENT_FETCHES) {
+  // A loop, not an `if`: a waiter that wakes up can find the slot already taken
+  // by a caller that arrived in the meantime, which would put us over the limit.
+  while (activeFetches >= MAX_CONCURRENT_FETCHES) {
     await new Promise<void>(resolve => waiting.push(resolve))
   }
   activeFetches++

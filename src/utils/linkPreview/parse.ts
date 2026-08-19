@@ -32,7 +32,7 @@ const MAX_DESCRIPTION = 300
 
 export function readMetadata(head: string, baseUrl: string): PageMetadata {
   const tags = parseHead(head)
-  const siteName = tags.metas.get('og:site_name') ?? null
+  const siteName = clean(tags.metas.get('og:site_name') ?? '')
   const domain = hostname(baseUrl)
 
   const title = selectTitle(tags, siteName, domain)
@@ -131,10 +131,18 @@ function attr(tag: string, name: string): string | null {
  * `&lt;b&gt;` as literal markup on the card.
  */
 function clean(value: string): string | null {
-  const text = decodeHTML(value)
-    .replace(/<[^>]*>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
+  let text = decodeHTML(value)
+
+  // Strip tags repeatedly rather than once: a single pass over `<scr<script>ipt>`
+  // removes the inner match and leaves a working tag behind. Astro escapes
+  // whatever we return, so this is about not printing junk as much as safety.
+  let previous
+  do {
+    previous = text
+    text = text.replace(/<[^>]*>/g, '')
+  } while (text !== previous)
+
+  text = text.replace(/\s+/g, ' ').trim()
   return text || null
 }
 

@@ -27,6 +27,7 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import sharp from 'sharp'
 import { recordProblem } from '@utils/linkPreview/health'
+import { isPublicHttpUrl } from '@utils/linkPreview/fetch'
 
 /** Sits inside the link cache so one CI cache step covers captures and images. */
 export const IMAGE_CACHE_DIR = path.join(
@@ -102,6 +103,11 @@ async function download(
   pageUrl: string,
   maxPx: number,
 ): Promise<PreviewImage | null> {
+  if (!isPublicHttpUrl(imageUrl)) {
+    recordProblem(pageUrl, 'image', `is not a public URL: ${imageUrl}`)
+    return null
+  }
+
   try {
     const response = await fetch(imageUrl, {
       // A browser UA, not the social-crawler one the page fetch uses: that
@@ -112,7 +118,7 @@ async function download(
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     })
 
-    if (!response.ok) {
+    if (!response.ok || !isPublicHttpUrl(response.url || imageUrl)) {
       recordProblem(pageUrl, 'image', `${response.status} on ${imageUrl}`)
       await response.body?.cancel()
       return null

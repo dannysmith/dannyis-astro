@@ -30,9 +30,11 @@ if (!manualTitle) {
   // URL itself, so the declared URL matters here, not our copy of the image.
   const faviconURL = meta.faviconUrl
 
-  if (faviconURL && faviconURL.includes('amazonaws.com')) {
+  // Only our own copy is ever rendered; with no copy the Notion glyph is a
+  // better answer than hotlinking someone's S3 bucket from every page view.
+  if (meta.favicon && faviconURL?.includes('amazonaws.com')) {
     hasFavicon = true
-    faviconImageURL = meta.favicon?.src ?? faviconURL
+    faviconImageURL = meta.favicon.src
   } else {
     // Notion encodes emoji icons into the favicon URL, so a malformed percent
     // sequence would otherwise throw where a missing emoji is the right answer.
