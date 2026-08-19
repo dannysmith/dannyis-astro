@@ -1,5 +1,5 @@
 ---
-import { fetchLinkMetadata } from '@utils/fetchLinkMetadata'
+import { fetchLinkPreview } from '@utils/linkPreview/index'
 import { Icon } from 'astro-icon/components'
 
 export interface Props {
@@ -15,10 +15,10 @@ let hasFavicon = false
 let faviconImageURL = ''
 let emoji = ''
 
-// Only fetch if no manual title provided. fetchLinkMetadata never throws \u2014 an
+// Only fetch if no manual title provided. fetchLinkPreview never throws \u2014 an
 // unreachable or blocked page just leaves the defaults in place.
 if (!manualTitle) {
-  const meta = await fetchLinkMetadata(href)
+  const meta = await fetchLinkPreview(href)
   title = meta.title || 'Notion Page'
 
   // Clean title

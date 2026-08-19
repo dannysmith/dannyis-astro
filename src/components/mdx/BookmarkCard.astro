@@ -1,6 +1,5 @@
 ---
-import { fetchLinkMetadata } from '@utils/fetchLinkMetadata'
-import { fetchBookmarkImage } from '@utils/bookmarkImage'
+import { fetchLinkPreview } from '@utils/linkPreview/index'
 
 export interface Props {
   url: string
@@ -11,52 +10,34 @@ const { url, className = '' } = Astro.props
 
 // Fetched at build time, from cache where possible. Never throws — `status`
 // says how much of the card we can fill in.
-const data = await fetchLinkMetadata(url)
-
-// Downloaded and re-encoded at build time, so the card never hotlinks. Null
-// when the image 404s, rate-limits, or isn't decodable — the card just has none.
-const image = await fetchBookmarkImage(data.image, url)
-
-// With no title of its own, the card leans on the URL, so it shows more of it.
-const location = data.title ? data.domain : (data.displayUrl ?? data.domain)
-
-// Common types worth naming; anything else just isn't a web page we can preview.
-const FILE_TYPES: Record<string, string> = {
-  'application/pdf': 'PDF',
-  'application/epub+zip': 'EPUB',
-  'application/zip': 'ZIP',
-  'text/plain': 'Text file',
-}
-const fileType = data.contentType
-  ? (FILE_TYPES[data.contentType.split(';')[0].trim().toLowerCase()] ?? 'File')
-  : null
+const link = await fetchLinkPreview(url)
 
 const flags = [
   // Only 404/410 gets this: sites block and time out for temporary reasons.
-  data.status === 'dead' ? 'Link may be dead' : null,
-  data.archived ? 'Archived copy' : null,
-  fileType,
+  link.status === 'dead' ? 'Link may be dead' : null,
+  link.archived ? 'Archived copy' : null,
+  link.fileType,
 ].filter((flag): flag is string => Boolean(flag))
 ---
 
 <div class={`bookmark-card cq ${className}`}>
   <a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
     <div class="bookmark-content">
-      <span class="bookmark-title">{data.displayTitle}</span>
-      {data.description && <p class="bookmark-description">{data.description}</p>}
+      <span class="bookmark-title">{link.displayTitle}</span>
+      {link.description && <p class="bookmark-description">{link.description}</p>}
       <span class="bookmark-meta">
-        {location && <span class="bookmark-domain">{location}</span>}
+        {link.domain && <span class="bookmark-domain">{link.domain}</span>}
         {flags.map(flag => <span class="bookmark-flag">{flag}</span>)}
       </span>
     </div>
     {
-      image && (
+      link.image && (
         <img
-          src={image.src}
+          src={link.image.src}
           alt=""
-          width={image.width}
-          height={image.height}
-          data-shape={image.shape}
+          width={link.image.width}
+          height={link.image.height}
+          data-shape={link.image.shape}
           loading="lazy"
           decoding="async"
         />

@@ -1,5 +1,5 @@
 /**
- * Build-time download and re-encode of the preview images BookmarkCards show.
+ * Build-time download and re-encode of the preview image a card shows.
  *
  * We serve these ourselves rather than pointing an <img> at someone else's CDN.
  * Hotlinking failed in five ways at once: relative paths that were never valid
@@ -17,7 +17,7 @@
  * our build. Everything here fails soft to "no image".
  *
  * Derivatives are cached beside the link captures and copied into `dist/` by
- * src/lib/bookmark-images-integration.mjs.
+ * src/lib/link-preview-images-integration.mjs.
  */
 
 /* global fetch */
@@ -26,7 +26,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 import sharp from 'sharp'
-import { recordProblem } from '@utils/linkHealth'
+import { recordProblem } from '@utils/linkPreview/health'
 
 /** Sits inside the link cache so one CI cache step covers captures and images. */
 export const IMAGE_CACHE_DIR = path.join(
@@ -38,7 +38,7 @@ export const IMAGE_CACHE_DIR = path.join(
 )
 
 /** Where the emitted files are served from, in dev and in the built site. */
-export const IMAGE_URL_BASE = '/bookmark-images'
+export const IMAGE_URL_BASE = '/link-previews'
 
 // Bump when the encoding below changes, so existing derivatives are replaced.
 const IMAGE_VERSION = 'v1'
@@ -48,8 +48,8 @@ const TARGET_MAX_PX = 800
 const WEBP_QUALITY = 78
 
 const FETCH_TIMEOUT_MS = 15_000
-/** OG images are page furniture; anything this big is a mistake on their end. */
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024
+const BROWSER_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
 /**
  * Below this ratio an image is a logo or avatar rather than a banner, and
@@ -62,7 +62,7 @@ const MAX_IMAGE_BYTES = 8 * 1024 * 1024
  */
 const LOGO_MAX_RATIO = 1.2
 
-export interface BookmarkImage {
+export interface PreviewImage {
   /** Path on this site, not the origin's. */
   src: string
   width: number
@@ -70,45 +70,41 @@ export interface BookmarkImage {
   shape: 'banner' | 'logo'
 }
 
-interface CachedImage extends BookmarkImage {
-  imageVersion: string
-}
-
 /**
  * Fetch, re-encode and cache a preview image. Returns null — with a build
  * warning — for anything that doesn't resolve to a usable image, which leaves
  * the card to render without one.
  */
-export async function fetchBookmarkImage(
+export async function fetchPreviewImage(
   imageUrl: string | null,
   /** The page the image belongs to; only used to make warnings locatable. */
   pageUrl: string,
-): Promise<BookmarkImage | null> {
+): Promise<PreviewImage | null> {
   if (!imageUrl) return null
 
   const key = cacheKey(imageUrl)
-  const cached = await readCache(key)
-  if (cached) return cached
-
   let pending = inFlight.get(key)
   if (!pending) {
-    pending = download(imageUrl, key, pageUrl)
+    pending = readCache(key).then(cached => cached ?? download(imageUrl, key, pageUrl))
     inFlight.set(key, pending)
   }
   return pending
 }
 
 /** One download per image per build, however many cards use it. */
-const inFlight = new Map<string, Promise<BookmarkImage | null>>()
+const inFlight = new Map<string, Promise<PreviewImage | null>>()
 
 async function download(
   imageUrl: string,
   key: string,
   pageUrl: string,
-): Promise<BookmarkImage | null> {
+): Promise<PreviewImage | null> {
   try {
     const response = await fetch(imageUrl, {
-      headers: { 'User-Agent': 'facebookexternalhit/1.1', Accept: 'image/*,*/*;q=0.8' },
+      // A browser UA, not the social-crawler one the page fetch uses: that
+      // sentinel earns better metadata from pages, but WordPress hosts 403 it
+      // for image files — which silently cost two cards their preview.
+      headers: { 'User-Agent': BROWSER_UA, Accept: 'image/*,*/*;q=0.8' },
       redirect: 'follow',
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     })
@@ -119,25 +115,8 @@ async function download(
       return null
     }
 
-    const type = response.headers.get('content-type')?.split(';')[0].trim().toLowerCase()
-    if (type && !type.startsWith('image/')) {
-      recordProblem(pageUrl, 'image', `${type} is not an image: ${imageUrl}`)
-      await response.body?.cancel()
-      return null
-    }
-
-    const bytes = new Uint8Array(await response.arrayBuffer())
-    if (bytes.length > MAX_IMAGE_BYTES) {
-      recordProblem(
-        pageUrl,
-        'image',
-        `${Math.round(bytes.length / 1024)}KB is too big: ${imageUrl}`,
-      )
-      return null
-    }
-
-    const image = await encode(bytes, key)
-    if (!image) recordProblem(pageUrl, 'image', `could not be decoded: ${imageUrl}`)
+    const image = await encode(new Uint8Array(await response.arrayBuffer()), key)
+    if (!image) recordProblem(pageUrl, 'image', `is not a decodable image: ${imageUrl}`)
     return image
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'failed'
@@ -147,7 +126,7 @@ async function download(
 }
 
 /** Re-encode to a single webp derivative, sized for the biggest the card draws it. */
-async function encode(bytes: Uint8Array, key: string): Promise<BookmarkImage | null> {
+async function encode(bytes: Uint8Array, key: string): Promise<PreviewImage | null> {
   try {
     const { data, info } = await sharp(bytes)
       .resize({
@@ -159,7 +138,7 @@ async function encode(bytes: Uint8Array, key: string): Promise<BookmarkImage | n
       .webp({ quality: WEBP_QUALITY })
       .toBuffer({ resolveWithObject: true })
 
-    const image: BookmarkImage = {
+    const image: PreviewImage = {
       src: `${IMAGE_URL_BASE}/${key}.webp`,
       width: info.width,
       height: info.height,
@@ -184,30 +163,26 @@ function cacheKey(imageUrl: string): string {
   return `${IMAGE_VERSION}-${hash}`
 }
 
-async function readCache(key: string): Promise<BookmarkImage | null> {
+async function readCache(key: string): Promise<PreviewImage | null> {
   try {
     const meta = JSON.parse(
       await fs.readFile(path.join(IMAGE_CACHE_DIR, `${key}.json`), 'utf-8'),
-    ) as CachedImage
-    if (meta.imageVersion !== IMAGE_VERSION) return null
-    // The sidecar is only true if the file it describes is still there.
+    ) as PreviewImage
+    // The sidecar is only true if the file it describes is still there; cache
+    // directories do get partially clobbered.
     await fs.access(path.join(IMAGE_CACHE_DIR, `${key}.webp`))
-    return { src: meta.src, width: meta.width, height: meta.height, shape: meta.shape }
+    return meta
   } catch {
     return null
   }
 }
 
-async function writeCache(key: string, data: Buffer, image: BookmarkImage): Promise<void> {
+async function writeCache(key: string, data: Buffer, image: PreviewImage): Promise<void> {
   // Best-effort: a cache we can't write is a slow build, not a broken one.
   try {
     await fs.mkdir(IMAGE_CACHE_DIR, { recursive: true })
     await fs.writeFile(path.join(IMAGE_CACHE_DIR, `${key}.webp`), data)
-    await fs.writeFile(
-      path.join(IMAGE_CACHE_DIR, `${key}.json`),
-      JSON.stringify({ ...image, imageVersion: IMAGE_VERSION }),
-      'utf-8',
-    )
+    await fs.writeFile(path.join(IMAGE_CACHE_DIR, `${key}.json`), JSON.stringify(image), 'utf-8')
   } catch (error) {
     console.warn(`Bookmark image cache write failed for ${key}:`, error)
   }

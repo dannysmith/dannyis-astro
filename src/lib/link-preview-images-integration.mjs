@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import sirv from 'sirv'
 
 /**
- * Serves the BookmarkCard preview images that `src/utils/bookmarkImage.ts`
+ * Serves the link-preview images that `src/utils/linkPreview/image.ts`
  * downloads and re-encodes at build time. Same two-hook shape as the pagefind
  * integration:
  *
@@ -17,16 +17,16 @@ import sirv from 'sirv'
  *
  * The whole cache is copied, not just what this build referenced. Tracking
  * references would mean threading state from a util into an integration, and
- * the images a removed bookmark leaves behind are a few KB of unreferenced
+ * the images a removed link leaves behind are a few KB of unreferenced
  * files that the next CI cache rotation clears anyway.
  *
  * @param {string} cacheDir Absolute path to the cached derivatives.
  * @param {string} urlBase Path they're served under.
  * @returns {import('astro').AstroIntegration}
  */
-export function bookmarkImages(cacheDir, urlBase) {
+export function linkPreviewImages(cacheDir, urlBase) {
   return {
-    name: 'bookmark-images',
+    name: 'link-preview-images',
     hooks: {
       'astro:server:setup': ({ server }) => {
         const serve = sirv(cacheDir, { dev: true, etag: true })
@@ -52,7 +52,7 @@ export function bookmarkImages(cacheDir, urlBase) {
           await fs.copyFile(path.join(cacheDir, file), path.join(outDir, file))
         }
 
-        logger.info(`Copied ${files.length} bookmark image(s) → dist${urlBase}/`)
+        logger.info(`Copied ${files.length} link preview image(s) → dist${urlBase}/`)
       },
     },
   }

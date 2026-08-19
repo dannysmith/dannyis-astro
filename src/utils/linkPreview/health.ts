@@ -2,10 +2,10 @@
  * One end-of-build report for everything that went wrong fetching external
  * links and their images.
  *
- * Warnings are printed as they happen (so you can see which page triggered
- * them) and collected into a summary, because scrolling back through a 227-page
- * build to count them is how link rot goes unnoticed. Nothing here ever fails
- * the build: other people's sites breaking is not our build error.
+ * Warnings print as they happen (so you can see which page triggered them) and
+ * collect into a summary, because scrolling back through a 227-page build to
+ * count them is how link rot goes unnoticed. Nothing here ever fails the build:
+ * other people's sites breaking is not our build error.
  */
 
 /* global process */
