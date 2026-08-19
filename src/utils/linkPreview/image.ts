@@ -79,13 +79,15 @@ export async function fetchPreviewImage(
   imageUrl: string | null,
   /** The page the image belongs to; only used to make warnings locatable. */
   pageUrl: string,
+  /** Longest edge to keep. Favicons want far less than a preview banner. */
+  maxPx: number = TARGET_MAX_PX,
 ): Promise<PreviewImage | null> {
   if (!imageUrl) return null
 
-  const key = cacheKey(imageUrl)
+  const key = cacheKey(imageUrl, maxPx)
   let pending = inFlight.get(key)
   if (!pending) {
-    pending = readCache(key).then(cached => cached ?? download(imageUrl, key, pageUrl))
+    pending = readCache(key).then(cached => cached ?? download(imageUrl, key, pageUrl, maxPx))
     inFlight.set(key, pending)
   }
   return pending
@@ -98,6 +100,7 @@ async function download(
   imageUrl: string,
   key: string,
   pageUrl: string,
+  maxPx: number,
 ): Promise<PreviewImage | null> {
   try {
     const response = await fetch(imageUrl, {
@@ -115,7 +118,7 @@ async function download(
       return null
     }
 
-    const image = await encode(new Uint8Array(await response.arrayBuffer()), key)
+    const image = await encode(new Uint8Array(await response.arrayBuffer()), key, maxPx)
     if (!image) recordProblem(pageUrl, 'image', `is not a decodable image: ${imageUrl}`)
     return image
   } catch (error) {
@@ -126,12 +129,12 @@ async function download(
 }
 
 /** Re-encode to a single webp derivative, sized for the biggest the card draws it. */
-async function encode(bytes: Uint8Array, key: string): Promise<PreviewImage | null> {
+async function encode(bytes: Uint8Array, key: string, maxPx: number): Promise<PreviewImage | null> {
   try {
     const { data, info } = await sharp(bytes)
       .resize({
-        width: TARGET_MAX_PX,
-        height: TARGET_MAX_PX,
+        width: maxPx,
+        height: maxPx,
         fit: 'inside',
         withoutEnlargement: true,
       })
@@ -158,8 +161,8 @@ export function classifyShape(width: number, height: number): 'banner' | 'logo' 
   return width / height < LOGO_MAX_RATIO ? 'logo' : 'banner'
 }
 
-function cacheKey(imageUrl: string): string {
-  const hash = createHash('sha256').update(imageUrl).digest('hex').slice(0, 16)
+function cacheKey(imageUrl: string, maxPx: number): string {
+  const hash = createHash('sha256').update(`${imageUrl}@${maxPx}`).digest('hex').slice(0, 16)
   return `${IMAGE_VERSION}-${hash}`
 }
 

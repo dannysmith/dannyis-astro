@@ -126,12 +126,51 @@ describe('readMetadata — selection rules', () => {
   })
 
   it('resolves favicons, including a later fallback', () => {
-    expect(read(`<link rel="icon" href="/favicon.ico">`).favicon).toBe(
-      'https://example.com/favicon.ico',
+    expect(read(`<link rel="icon" href="/favicon.png">`).favicon).toBe(
+      'https://example.com/favicon.png',
     )
     expect(
-      read(`<link rel="icon"><link rel="shortcut icon" href="https://example.com/b.ico">`).favicon,
-    ).toBe('https://example.com/b.ico')
+      read(`<link rel="icon"><link rel="shortcut icon" href="https://example.com/b.png">`).favicon,
+    ).toBe('https://example.com/b.png')
+  })
+})
+
+describe('readMetadata — what else the page tells us', () => {
+  it('reads the site name, author, date and image alt text', () => {
+    const meta = read(`
+      <meta property="og:site_name" content="Example Blog">
+      <meta name="author" content="A Writer">
+      <meta property="article:published_time" content="2026-03-12T09:00:00Z">
+      <meta property="og:image" content="/og.png">
+      <meta property="og:image:alt" content="A chart of something">`)
+    expect(meta.siteName).toBe('Example Blog')
+    expect(meta.author).toBe('A Writer')
+    expect(meta.published?.toISOString()).toBe('2026-03-12T09:00:00.000Z')
+    expect(meta.imageAlt).toBe('A chart of something')
+  })
+
+  it('ignores an author that is a profile link rather than a name', () => {
+    // article:author is as often a URL as a name.
+    const meta = read(`<meta property="article:author" content="https://example.com/team/jo">`)
+    expect(meta.author).toBeNull()
+  })
+
+  it('ignores an unparseable or future publish date', () => {
+    expect(
+      read(`<meta property="article:published_time" content="not a date">`).published,
+    ).toBeNull()
+    expect(
+      read(`<meta property="article:published_time" content="3026-01-01">`).published,
+    ).toBeNull()
+  })
+
+  it('skips .ico favicons, which cannot be re-encoded', () => {
+    // sharp reads PNG and SVG but not ICO, and a third of sites still link one.
+    expect(read(`<link rel="icon" href="/favicon.ico">`).favicon).toBeNull()
+    expect(
+      read(`<link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/touch.png">`)
+        .favicon,
+    ).toBe('https://example.com/touch.png')
   })
 })
 

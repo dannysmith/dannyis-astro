@@ -158,6 +158,23 @@ const failures: Case[] = [
   },
 ]
 
+/**
+ * A grab-bag of real links, here purely to look at. No expectations attached —
+ * this is the "does it cope with whatever I throw at it" section.
+ */
+const assorted = [
+  'https://amyhupe.co.uk/articles/design-system-strategies/',
+  'https://lethain.com/decisions-not-dates/',
+  'https://www.localfirst.fm/',
+  'https://lucumr.pocoo.org/2026/7/13/the-tower-keeps-rising/',
+  'https://tropopause.pckt.blog/on-atproto-and-atmospheric-groups-jqdept6',
+  'https://bsky.network/docs/jetstream/',
+  'https://bsky.app/profile/fasterthanli.me/post/3mth45dvjz22d',
+  'https://code.claude.com/docs/en/permission-modes#eliminate-prompts-with-auto-mode',
+  'https://danny.is/writing/loomclone-part-2/',
+  'https://www.youtube.com/watch?v=Tqz7da31ryI',
+]
+
 const groups: Array<{ heading: string; note: string; cases: Case[] }> = [
   {
     heading: 'Healthy',
@@ -216,6 +233,24 @@ const groups: Array<{ heading: string; note: string; cases: Case[] }> = [
           </section>
         ))
       }
+
+      <section class="bench-group">
+        <h3>Assorted real links</h3>
+        <p>
+          Whatever happened to be open in a browser. Note that two of these route to a different
+          embed in real content — <code>Embed</code> sends bsky.app posts to a Bluesky embed and YouTube
+          URLs to a player; they only render as cards because this page calls
+          <code>BookmarkCard</code> directly.
+        </p>
+        {
+          assorted.map(url => (
+            <div class="bench-case">
+              <p class="bench-label">{url}</p>
+              <BookmarkCard url={url} />
+            </div>
+          ))
+        }
+      </section>
 
       <section class="bench-group">
         <h3>Narrow containers</h3>

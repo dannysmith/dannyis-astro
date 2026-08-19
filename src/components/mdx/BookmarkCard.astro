@@ -1,5 +1,6 @@
 ---
 import { fetchLinkPreview } from '@utils/linkPreview/index'
+import { Icon } from 'astro-icon/components'
 
 export interface Props {
   url: string
@@ -11,6 +12,23 @@ const { url, className = '' } = Astro.props
 // Fetched at build time, from cache where possible. Never throws — `status`
 // says how much of the card we can fill in.
 const link = await fetchLinkPreview(url)
+
+// Everything the page told us about itself, in a fixed order so cards stay
+// consistent when some links are rich articles and others are bare pages. The
+// site's own favicon stands in as the icon for its domain.
+const facts = [
+  { icon: null, text: link.siteName },
+  { icon: 'heroicons:user-20-solid', text: link.author },
+  {
+    icon: 'heroicons:calendar-20-solid',
+    text:
+      link.published?.toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      }) ?? null,
+  },
+].filter((fact): fact is { icon: string | null; text: string } => Boolean(fact.text))
 
 const flags = [
   // Only 404/410 gets this: sites block and time out for temporary reasons.
@@ -26,21 +44,48 @@ const flags = [
       <span class="bookmark-title">{link.displayTitle}</span>
       {link.description && <p class="bookmark-description">{link.description}</p>}
       <span class="bookmark-meta">
-        {link.domain && <span class="bookmark-domain">{link.domain}</span>}
+        <span class="bookmark-facts">
+          {
+            link.domain && (
+              <span class="bookmark-fact bookmark-domain">
+                {link.favicon && (
+                  <img
+                    class="bookmark-favicon"
+                    src={link.favicon.src}
+                    alt=""
+                    width={link.favicon.width}
+                    height={link.favicon.height}
+                    loading="lazy"
+                  />
+                )}
+                {link.domain}
+              </span>
+            )
+          }
+          {
+            facts.map(fact => (
+              <span class="bookmark-fact">
+                {fact.icon && <Icon name={fact.icon} />}
+                {fact.text}
+              </span>
+            ))
+          }
+        </span>
         {flags.map(flag => <span class="bookmark-flag">{flag}</span>)}
       </span>
     </div>
     {
       link.image && (
-        <img
-          src={link.image.src}
-          alt=""
-          width={link.image.width}
-          height={link.image.height}
-          data-shape={link.image.shape}
-          loading="lazy"
-          decoding="async"
-        />
+        <div class="bookmark-preview" data-shape={link.image.shape}>
+          <img
+            src={link.image.src}
+            alt={link.imageAlt ?? ''}
+            width={link.image.width}
+            height={link.image.height}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       )
     }
   </a>
@@ -48,6 +93,9 @@ const flags = [
 
 <style>
   .bookmark-link {
+    /* How big a square preview is, and therefore how short such a card can be. */
+    --preview-square: max(22cqi, calc(var(--space-2xl) * 2));
+
     display: block;
     overflow: hidden;
     text-decoration: none;
@@ -62,20 +110,30 @@ const flags = [
       border-color: var(--color-accent);
     }
 
-    img {
-      width: 100%;
-      /* Every preview occupies the same box whatever shape it arrived in, so a
-         run of cards doesn't jump around. Dimensions are on the tag too, so
-         nothing shifts before the CSS lands. */
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
+    /* The preview is a full-bleed panel, and its shape decides one thing only:
+       the ratio of that panel. Banners and square images are otherwise
+       identical — cropped to fill, flush to the card's edge. Roughly one link
+       in ten publishes a square logo or avatar rather than a banner.
 
-      /* Roughly one link in ten publishes a logo or avatar rather than a
-         banner; cropping those to 16:9 slices the middle out of them. */
+       The panel is a wrapper rather than the <img> itself so its geometry never
+       depends on the image having loaded: a lazy <img> has no intrinsic size
+       until it arrives, so a width derived from its height collapses to zero
+       and then jumps. A plain box always has a size. */
+    > .bookmark-preview {
+      --preview-ratio: 16 / 9;
+
+      inline-size: 100%;
+      aspect-ratio: var(--preview-ratio);
+
       &[data-shape='logo'] {
-        object-fit: contain;
-        padding: var(--space-xs);
-        background-color: var(--color-background);
+        --preview-ratio: 1;
+      }
+
+      > img {
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+        display: block;
       }
     }
   }
@@ -84,13 +142,55 @@ const flags = [
     padding: var(--space-s);
   }
 
-  /* Domain and any flags share one wrapping row. */
+  /* Facts and any flags share one wrapping row. */
   .bookmark-meta {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--space-2xs) var(--space-xs);
     margin-block-start: var(--space-2xs);
+  }
+
+  .bookmark-facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+
+    /* A separator between facts, but not before the first one. Drawn rather
+       than typed: a `·` glyph sits wherever the font puts it and is barely
+       visible at this size. As a flex item of .bookmark-fact it centres itself. */
+    > span + span::before {
+      content: '';
+      inline-size: 0.3em;
+      block-size: 0.3em;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: 0.5;
+      margin-inline: 0.2em;
+    }
+  }
+
+  /* Same icon-and-label idiom as the article lists. */
+  .bookmark-fact {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+
+    & svg {
+      inline-size: 1em;
+      block-size: 1em;
+    }
+  }
+
+  .bookmark-favicon {
+    inline-size: 1.1em;
+    block-size: 1.1em;
+    object-fit: contain;
+    border-radius: var(--radius-xs);
   }
 
   .bookmark-domain {
@@ -137,10 +237,29 @@ const flags = [
       align-items: stretch;
       min-height: var(--space-2xl);
 
-      img {
-        width: max(30cqi, calc(var(--space-2xl) * 2));
-        flex-shrink: 0;
+      /* Side by side, the panel is a full-height column on the trailing edge,
+         its width fixed and its height taken from the card. */
+      > .bookmark-preview {
         order: 2;
+        flex: none;
+        align-self: stretch;
+        aspect-ratio: auto;
+        inline-size: max(30cqi, calc(var(--space-2xl) * 2));
+      }
+    }
+
+    /* Square images get a narrower panel, sized so the card is square at its
+       shortest. The width is deliberately fixed rather than derived from the
+       card's height: that height depends on how the title and description
+       wrap, which depends on this width, and CSS resolves the loop by
+       collapsing the panel to nothing. Text long enough to push the card past
+       this height leaves the panel portrait rather than square, which crops
+       far more kindly than a 16:9 slice through the middle of a logo. */
+    .bookmark-link:has(> .bookmark-preview[data-shape='logo']) {
+      min-block-size: var(--preview-square);
+
+      > .bookmark-preview {
+        inline-size: var(--preview-square);
       }
     }
 

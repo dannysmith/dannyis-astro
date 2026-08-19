@@ -34,10 +34,31 @@ export interface LinkPreview {
   archived: boolean
   /** Downloaded and re-encoded at build time; always a path on this site. */
   image: PreviewImage | null
-  favicon: string | null
+  /** The author's own alt text for the image, when they wrote one. */
+  imageAlt: string | null
+  /** Also self-hosted, so cards don't call out to 60 different domains. */
+  favicon: PreviewImage | null
+  /** The icon URL the page declared. Notion encodes a page's emoji into it. */
+  faviconUrl: string | null
+  /** What the site calls itself. */
+  siteName: string | null
+  author: string | null
+  published: Date | null
 }
 
-const NO_METADATA: PageMetadata = { title: null, description: null, imageUrl: null, favicon: null }
+const NO_METADATA: PageMetadata = {
+  title: null,
+  description: null,
+  imageUrl: null,
+  imageAlt: null,
+  favicon: null,
+  siteName: null,
+  author: null,
+  published: null,
+}
+
+/** Big enough for a retina render of a ~20px icon, small enough to be nothing. */
+const FAVICON_PX = 64
 
 export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
   const page = await capturePage(url)
@@ -58,9 +79,20 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
     domain: hostname(page.finalUrl),
     fileType: fileTypeOf(page),
     archived: page.archived,
-    image: await fetchPreviewImage(metadata.imageUrl, url),
-    favicon: metadata.favicon,
+    ...(await images(metadata, url)),
+    siteName: metadata.siteName,
+    author: metadata.author,
+    published: metadata.published,
   }
+}
+
+/** Both images come from the same pipeline; fetch them together. */
+async function images(metadata: PageMetadata, pageUrl: string) {
+  const [image, favicon] = await Promise.all([
+    fetchPreviewImage(metadata.imageUrl, pageUrl),
+    fetchPreviewImage(metadata.favicon, pageUrl, FAVICON_PX),
+  ])
+  return { image, imageAlt: metadata.imageAlt, favicon, faviconUrl: metadata.favicon }
 }
 
 /**

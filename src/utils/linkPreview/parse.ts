@@ -14,11 +14,19 @@ export interface PageMetadata {
   description: string | null
   /** Absolute; relative paths are resolved against the page's own URL. */
   imageUrl: string | null
+  /** The author's own alt text for that image, when they wrote one. */
+  imageAlt: string | null
   favicon: string | null
+  /** What the site calls itself, which is often friendlier than its domain. */
+  siteName: string | null
+  author: string | null
+  published: Date | null
 }
 
 /** Long enough for a real headline, short enough not to swamp the card. */
 const MAX_TITLE = 120
+/** A byline, not a list of contributors. */
+const MAX_AUTHOR = 60
 /** Clamped to two lines in CSS, but the full text still ships in the HTML. */
 const MAX_DESCRIPTION = 300
 
@@ -33,8 +41,32 @@ export function readMetadata(head: string, baseUrl: string): PageMetadata {
     title,
     description: selectDescription(tags, title),
     imageUrl: selectImage(tags, baseUrl),
+    imageAlt: clean(tags.metas.get('og:image:alt') ?? ''),
     favicon: selectFavicon(tags, baseUrl),
+    siteName,
+    author: selectAuthor(tags),
+    published: selectPublished(tags),
   }
+}
+
+/**
+ * `article:author` is as often a link to a profile as a name, so a URL there is
+ * no use on a card — `meta[name=author]` is the reliable one.
+ */
+function selectAuthor(tags: HeadTags): string | null {
+  for (const name of ['author', 'article:author']) {
+    const value = clean(tags.metas.get(name) ?? '')
+    if (value && !/^https?:\/\//i.test(value)) return truncate(value, MAX_AUTHOR)
+  }
+  return null
+}
+
+function selectPublished(tags: HeadTags): Date | null {
+  const raw = tags.metas.get('article:published_time') ?? tags.metas.get('article:published')
+  if (!raw) return null
+  const date = new Date(raw)
+  // Dates in the future are a mis-set clock or a parse artefact, not news.
+  return Number.isNaN(date.valueOf()) || date > new Date() ? null : date
 }
 
 export function hostname(url: string): string | null {
@@ -265,12 +297,19 @@ function selectImage(tags: HeadTags, base: string): string | null {
   return absoluteUrl(tags.links.find(link => link.rel === 'image_src')?.href, base)
 }
 
+/**
+ * Prefer an icon we can re-encode: sharp reads PNG and SVG but not ICO, and a
+ * third of the sites here still link a bare `/favicon.ico`. Apple's touch icon
+ * is always a PNG, which makes it a good second choice.
+ */
 function selectFavicon(tags: HeadTags, base: string): string | null {
-  for (const icon of tags.links.filter(link => /(^|\s)(shortcut\s+)?icon(\s|$)/.test(link.rel))) {
-    const resolved = absoluteUrl(icon.href, base)
-    if (resolved) return resolved
-  }
-  return null
+  const icons = tags.links
+    .filter(link => /(^|\s)(shortcut\s+)?(icon|apple-touch-icon)(\s|$)/.test(link.rel))
+    .map(link => absoluteUrl(link.href, base))
+    .filter((href): href is string => Boolean(href))
+    .filter(href => !/\.ico(\?|$)/i.test(href))
+
+  return icons[0] ?? null
 }
 
 /** Resolve against the page URL, rejecting anything that isn't fetchable http(s). */

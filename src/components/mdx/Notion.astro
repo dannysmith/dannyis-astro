@@ -26,12 +26,13 @@ if (!manualTitle) {
     title = title.slice(0, title.lastIndexOf('| Notion')).trim()
   }
 
-  // Get faviconImageURL or emoji
-  const faviconURL = meta.favicon
+  // Get faviconImageURL or emoji. Notion encodes a page's emoji into the icon
+  // URL itself, so the declared URL matters here, not our copy of the image.
+  const faviconURL = meta.faviconUrl
 
   if (faviconURL && faviconURL.includes('amazonaws.com')) {
     hasFavicon = true
-    faviconImageURL = faviconURL
+    faviconImageURL = meta.favicon?.src ?? faviconURL
   } else {
     // Notion encodes emoji icons into the favicon URL, so a malformed percent
     // sequence would otherwise throw where a missing emoji is the right answer.
