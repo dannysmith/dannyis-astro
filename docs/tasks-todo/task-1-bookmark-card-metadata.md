@@ -49,7 +49,7 @@ The truncation bug is the worst because it's invisible: the value regex is `["']
 ## Working method
 
 - After **each phase**: eyeball `/scratchpad` (the test bench built in Phase 1 — keep it current as behaviour changes), check both themes, run `bun run check:all`. `bun run shoot` for width sweeps.
-- Phases 1–3 and 3.5 need a **full `bun run build`** to verify cache, warnings and emitted images, not just `dev`.
+- Phases 1–3, 3.5 and 4 need a **full `bun run build`** to verify cache, warnings and emitted images, not just `dev`.
 - Danny commits manually after each phase.
 
 ---
@@ -104,7 +104,13 @@ The truncation bug is the worst because it's invisible: the value regex is `["']
 5. Safety net for any external image the site renders: a small capture-phase `error` listener that hides broken images. CSS alone can't suppress the browser's broken-image icon. With self-hosting this is belt-and-braces, so keep it minimal and site-wide rather than card-specific.
 6. Verify with a full build: emitted files, no hotlinked third-party image URLs left in the HTML, dev serving works, cold-cache rebuild works.
 
-## Phase 3.5 — Simplify and consolidate
+## Phase 3.5 — Simplify and consolidate ✅
+
+**Done.** One module at `src/utils/linkPreview/` (`index` / `fetch` / `parse` / `image` / `health`), **1,235 → 932 source lines**, **74 → 38 tests**, fixtures **140KB → 12KB across 5 files**. One public call, `fetchLinkPreview(url)`, returning the image already downloaded.
+
+Two things worth remembering from it. **The "stale capture, current status" behaviour had never worked** — deriving gated on the status, so a link that started 404ing showed nothing rather than its last-known content; the fix (gate on whether a head exists) is simpler than the bug. And the tests were **writing to the real cache**, because a static import bound the cache directory before the test set its override; imports are dynamic now. Both were found by writing the four missing tests, not by reading the code.
+
+Also landed here: the image fetcher now uses a browser UA (WordPress 403s the social crawler for image files, which had silently cost two cards their preview), and the pre-retry delay lost during the rewrite was restored.
 
 Three phases in, the feature is ~1,235 source lines and ~560 test lines to render a link preview. A review (three agents, plus measurement against the 83 real pages captured in the cache) found roughly a third of it is machinery for conditions that don't occur, and four real bugs hiding in the parts that do. This lands **before** Phase 4, because Phase 4 adds fields to whatever shape we settle on here.
 
@@ -174,23 +180,65 @@ Written down so a future pass doesn't re-delete them: the disk cache and in-flig
 
 Behaviour should be unchanged apart from the four fixes and the dropped prefix stripping. `/scratchpad` is the check: same cards, same flags, same images. Then `bun run check:all`, a cold-cache build and a warm one.
 
-## Phase 4 — Richer metadata and card design
+## Phase 4 — Richer metadata and card design ✅
 
-1. Extract everything cheap from the captured head: `og:site_name`, `og:type`, `og:image:alt`, `og:image:width`/`height`, `article:published_time`, author (`article:author`, `meta[name=author]`, JSON-LD `author.name`), JSON-LD generally (headline, description, image, author, date, type), and the `twitter:label1`/`data1` pairs — the de-facto home of author-declared reading time.
-2. Favicon: extract, fetch, self-host through the Phase 3 pipeline (the biggest visual improvement for cards with no OG image).
-3. Consider oEmbed discovery (`link[rel=alternate][type="application/json+oembed"]`) for provider/author/thumbnail — costs an extra request, so only if the fixtures show it earning its place.
-4. Put **all** of it on the card, then iterate with Danny's feedback and cut. Open questions for that pass: how many facts a card can carry before it reads as clutter; whether a fixed-priority meta line (favicon · site name · author · date) keeps cards visually consistent when some URLs are rich articles and others are bare pages; what the dead-link marker looks like; whether `og:type` video/audio deserves a distinct treatment.
-5. Screenshot sweeps in both themes at the standard widths; check narrow containers (NoteCard on the home page) as well as full width.
+**Done.** Measured all 80 captured heads first, which decided the scope: **`og:site_name` (57%), author via `meta[name=author]`/`article:author` (31%/11%), `article:published_time` (21%), `og:image:alt` (31%), and the favicon (81% declare one)** are extracted and shown. The card renders them as `[favicon] domain · site name · [person] author · [calendar] date`, using the same icon-and-label idiom as `HomepageLatestArticles`.
+
+**Dropped on evidence rather than taste:** `og:type` (80% available but nothing useful to show — article/website/object), `og:image:width`/`height` (sharp already gives real dimensions), oEmbed (5%), and **reading time** — only 2 of 80 pages publish `twitter:label1`/`data1` and both say "Written by", so the de-facto convention this corner of the web supposedly uses isn't actually used.
+
+Favicons are self-hosted through the Phase 3 pipeline at 64px. `.ico` is skipped because sharp can't decode it, so coverage is 75% rather than 81%; `apple-touch-icon` is the fallback. `Notion.astro` needs the *declared* icon URL as well as our copy, because Notion encodes a page's emoji into that URL.
+
+**The image panel was rebuilt, not patched.** Square images now get a square panel at full card height, flush right, cropped — identical to a banner but for the ratio. The image lives inside a `.bookmark-preview` wrapper that owns all the geometry.
+
+The panel's width is a fixed token (`--preview-square`) with a matching `min-block-size` on the card, and that is deliberate: **a square panel cannot take its width from the card's height in CSS**, because that height depends on how the text wraps, which depends on the panel's width. Chromium breaks the loop by collapsing the panel to zero. Three attempts looked correct only because the images had already loaded and were contributing their natural width; measuring with image loading blocked showed panels at `0x101`, `0x125`, `20x92` — a card that would render text-only and then jump. The trade-off accepted: text long enough to push a card past that height leaves the panel portrait rather than square.
+
+**Still open, deliberately** — small changes, waiting on a visual verdict:
+
+- **Site name duplicating the domain**: `bricolage.io · Bricolage`, `seths.blog · Seth's Blog`, and `danny.is · danny.is`. Suppressing it when it's essentially the domain reuses the comparison that already strips site names from titles.
+- **A generic glyph for the 25% of cards with no favicon**, so the row's left edge stays consistent — or leave them starting with the domain text.
+- **Tuning `--preview-square`** (`max(22cqi, calc(var(--space-2xl) * 2))` — 268px on a wide card).
+
+### Post-phase: CI scan follow-ups ✅
+
+Landed after review scans: iterative tag stripping in `clean()` (single-pass `replace` leaves a working tag behind on nested markup — a correctness bug as much as the flagged one, since Astro escapes this output anyway); `withSlot` re-checking its limit after waking, so six concurrent fetches means six; `Notion.astro` no longer hotlinking a favicon when our copy is missing; `siteName` passing through `clean()`; and an `isPublicHttpUrl` guard on both fetchers, since `og:image` and redirect targets are controlled by the site being linked and could point a build at a dev server or a cloud metadata endpoint. **DNS-rebinding protection was deliberately not implemented** — it needs our own resolution and connection pinning, which is far more than a personal site's build warrants.
 
 ## Phase 5 — Docs, styleguide, cleanup
 
-1. Styleguide: update the BookmarkCard section for the new props and states, including a dead and a blocked example.
-2. Review all code changes on this branch for opportunities to refactor, simplify, remove features which we think aren't worth the extra code, clean up and simplify all the code etc. (Phase 3.5 does the bulk of this; this is the final sweep over whatever is left.)
-3. New `docs/developer/link-metadata.md` covering the fetcher, the cache and its version keys, the status taxonomy, and the image pipeline. Link it from `component-patterns.md`.
-4. `src/utils/CLAUDE.md`: add the cache-version bumping rule (same class of gotcha as the OG cache). `docs/developer/deployment.md`: add the link cache to the caching section.
-5. `bun run check:knip` and `check:dupes` — the two fetchers merging should reduce duplication, not move it.
-6. Comment pass: evergreen, no transient references, explaining *why*.
-7. Final `bun run check:all` plus a cold-cache full build.
+To be done in a fresh session. The three parts are separable and in order.
+
+### Context for a cold start
+
+Everything lives in `src/utils/linkPreview/` (`index.ts` public API and assembly, `fetch.ts` network + disk cache, `parse.ts` head → fields, `image.ts` remote image → local webp, `health.ts` build warnings), plus `src/lib/link-preview-images-integration.mjs` (emits images into `dist/`), `src/components/mdx/BookmarkCard.astro`, and `src/components/mdx/Notion.astro` (the second consumer — title and favicon only). Tests are `tests/unit/linkPreview.test.ts` with real captured `<head>` fixtures in `tests/fixtures/link-heads/`. `/scratchpad` is the visual bench.
+
+Two things that will waste time otherwise:
+
+- **The dev server serves stale scoped CSS** when files are edited by a script rather than an editor — new markup, old styles. `touch` the `.astro` file and re-check what the server actually serves before trusting any visual check. This cost several rounds in Phase 4.
+- **Measure, don't eyeball, for layout.** A short Playwright script against the dev server (viewport sweep, `getBoundingClientRect`, image loading blocked to catch the pre-load state) is how the square-panel bug was found and fixed.
+
+### Phase 5.1 — Fresh-eyes review of the whole branch
+
+A full review of everything on this branch, as though seeing it for the first time. Not a rerun of Phase 3.5's deletion audit — that one was measurement-driven and its conclusions hold; this is about what has accumulated *since*, and about quality rather than quantity.
+
+1. **Complexity**: anything that can go now the shape has settled. Phase 4 added fields and a wrapper element; Phase 3.5's "Keep, deliberately" list above says what has already been judged worth its lines, so re-deleting those needs a new argument, not a repeat of the old one.
+2. **CSS**: `BookmarkCard.astro`'s styles grew through several rounds of visual iteration. Look for rules that survive only by inertia, duplicated spacing, anything that could be expressed with fewer selectors, and whether the `--preview-square` / `--preview-ratio` custom properties are pulling their weight.
+3. **TS/JS**: naming, dead parameters, functions that only have one caller, anything where the code reads less clearly than the thing it does.
+4. **Comments**: this branch comments heavily and explains *why*, which is the intent — but check every one is still true, still evergreen (no "currently", no references to phases or to what the code used to do), and still earning its space. Several were written mid-investigation and may now over-explain.
+5. **Tests**: 54 now. Which are load-bearing and which are ceremony? The bar from Phase 3.5 holds — a test that would have to change during a behaviour-preserving refactor is testing the wrong thing.
+6. **General code review** for correctness, including a look at anything the CI scans have flagged since.
+
+### Phase 5.2 — Styleguide and developer docs
+
+1. `src/pages/styleguide/components.astro`: update the BookmarkCard section for the current props and states, with a dead and a blocked example, plus the square-image treatment.
+2. New `docs/developer/link-metadata.md`: the module's shape and why the boundary sits where it does, the disk cache and its version keys, the status taxonomy, the image pipeline, and the constraints worth knowing (no committed cache, `.ico` can't be decoded, the square-panel circularity). Link it from `component-patterns.md`.
+3. `src/utils/CLAUDE.md`: the cache-version bumping rule, same class of gotcha as the OG cache.
+4. `docs/developer/deployment.md`: add the link cache and the emitted `dist/link-previews/` to the caching and build sections.
+
+### Phase 5.3 — Empty the bench and close the task
+
+1. Empty `/scratchpad` back to its bare state. This also settles the open question of whether to exclude it from production builds: with the bench gone, production stops fetching ~37 external URLs per build, five of which fail deliberately and inflate the link-health report.
+2. Decide the two open visual questions from Phase 4 (site-name duplication, generic favicon glyph) or record them as deliberate non-changes.
+3. Final `bun run check:all`, `check:knip`, `check:dupes`, plus a cold-cache and a warm build.
+4. Move this doc to `docs/tasks-done/` with the completion date, and **slim it down** so it records what was built and why, rather than the route taken to get there.
 
 ## Out of scope / follow-up
 
