@@ -46,17 +46,6 @@ export interface LinkPreview {
   published: Date | null
 }
 
-const NO_METADATA: PageMetadata = {
-  title: null,
-  description: null,
-  imageUrl: null,
-  imageAlt: null,
-  favicon: null,
-  siteName: null,
-  author: null,
-  published: null,
-}
-
 /** Big enough for a retina render of a ~20px icon, small enough to be nothing. */
 const FAVICON_PX = 64
 
@@ -68,8 +57,8 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
   // link that has started 404ing keep showing what it said when it worked. A
   // failed fetch's own HTML is never kept: a 404 page usually has a full head
   // (GitHub's advertises "Build software better, together") and reading it
-  // would produce a confident, wrong card.
-  const metadata = page.head ? readMetadata(page.head, page.finalUrl) : NO_METADATA
+  // would produce a confident, wrong card. An empty head reads as all-nulls.
+  const metadata = readMetadata(page.head, page.finalUrl)
 
   return {
     status: page.status,

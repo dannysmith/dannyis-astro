@@ -32,7 +32,9 @@ const facts = [
 
 const flags = [
   // Only 404/410 gets this: sites block and time out for temporary reasons.
-  link.status === 'dead' ? 'Link may be dead' : null,
+  // An archive link is alive even when the page it preserves is not, so there
+  // it's the original that gets the marker.
+  link.status === 'dead' ? (link.archived ? 'Original may be dead' : 'Link may be dead') : null,
   link.archived ? 'Archived copy' : null,
   link.fileType,
 ].filter((flag): flag is string => Boolean(flag))
@@ -93,9 +95,6 @@ const flags = [
 
 <style>
   .bookmark-link {
-    /* How big a square preview is, and therefore how short such a card can be. */
-    --preview-square: max(22cqi, calc(var(--space-2xl) * 2));
-
     display: block;
     overflow: hidden;
     text-decoration: none;
@@ -120,20 +119,17 @@ const flags = [
        until it arrives, so a width derived from its height collapses to zero
        and then jumps. A plain box always has a size. */
     > .bookmark-preview {
-      --preview-ratio: 16 / 9;
-
       inline-size: 100%;
-      aspect-ratio: var(--preview-ratio);
+      aspect-ratio: 16 / 9;
 
       &[data-shape='logo'] {
-        --preview-ratio: 1;
+        aspect-ratio: 1;
       }
 
       > img {
         inline-size: 100%;
         block-size: 100%;
         object-fit: cover;
-        display: block;
       }
     }
   }
@@ -142,13 +138,15 @@ const flags = [
     padding: var(--space-s);
   }
 
-  /* Facts and any flags share one wrapping row. */
+  /* Facts and any flags share one wrapping row, small and muted throughout. */
   .bookmark-meta {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--space-2xs) var(--space-xs);
     margin-block-start: var(--space-2xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
   }
 
   .bookmark-facts {
@@ -156,8 +154,6 @@ const flags = [
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2xs);
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
 
     /* A separator between facts, but not before the first one. Drawn rather
        than typed: a `·` glyph sits wherever the font puts it and is barely
@@ -195,13 +191,11 @@ const flags = [
 
   .bookmark-domain {
     font-family: var(--font-code);
-    font-size: var(--font-size-xs);
-    word-break: break-all;
+    /* `anywhere`, not `break-all`: only break a long host when nothing else fits. */
+    overflow-wrap: anywhere;
   }
 
   .bookmark-flag {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-xs);
     padding-inline: var(--space-2xs);
@@ -209,21 +203,24 @@ const flags = [
 
   .bookmark-title {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
     line-height: var(--leading-snug);
     color: var(--color-accent);
     margin-block-end: var(--space-2xs);
-    word-break: break-word;
+    /* The title falls back to a raw URL when a page tells us nothing. */
+    overflow-wrap: anywhere;
   }
 
   .bookmark-description {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
     font-size: var(--font-size-sm);
     line-height: var(--leading-normal);
@@ -234,32 +231,34 @@ const flags = [
   @container (min-width: 400px) {
     .bookmark-link {
       display: flex;
-      align-items: stretch;
-      min-height: var(--space-2xl);
+      min-block-size: var(--space-2xl);
 
       /* Side by side, the panel is a full-height column on the trailing edge,
-         its width fixed and its height taken from the card. */
+         its width fixed and its height taken from the card. `flex: none` keeps
+         the text from squeezing it; `aspect-ratio: auto` cancels the ratio the
+         stacked layout gives it. */
       > .bookmark-preview {
-        order: 2;
         flex: none;
-        align-self: stretch;
         aspect-ratio: auto;
         inline-size: max(30cqi, calc(var(--space-2xl) * 2));
       }
     }
 
     /* Square images get a narrower panel, sized so the card is square at its
-       shortest. The width is deliberately fixed rather than derived from the
-       card's height: that height depends on how the title and description
-       wrap, which depends on this width, and CSS resolves the loop by
-       collapsing the panel to nothing. Text long enough to push the card past
-       this height leaves the panel portrait rather than square, which crops
-       far more kindly than a 16:9 slice through the middle of a logo. */
+       shortest — which is also what decides how short such a card can be. The
+       width is deliberately fixed rather than derived from the card's height:
+       that height depends on how the title and description wrap, which depends
+       on this width, and CSS resolves the loop by collapsing the panel to
+       nothing. Text long enough to push the card past this height leaves the
+       panel portrait rather than square, which crops far more kindly than a
+       16:9 slice through the middle of a logo. */
     .bookmark-link:has(> .bookmark-preview[data-shape='logo']) {
-      min-block-size: var(--preview-square);
+      --_preview-square: max(22cqi, calc(var(--space-2xl) * 2));
+
+      min-block-size: var(--_preview-square);
 
       > .bookmark-preview {
-        inline-size: var(--preview-square);
+        inline-size: var(--_preview-square);
       }
     }
 

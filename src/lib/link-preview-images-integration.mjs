@@ -8,7 +8,7 @@ import sirv from 'sirv'
  * downloads and re-encodes at build time. Same two-hook shape as the pagefind
  * integration:
  *
- *   • astro:build:done  — copy the cached derivatives into `dist/bookmark-images/`
+ *   • astro:build:done  — copy the cached derivatives into `dist/link-previews/`
  *     so they ship as ordinary static files, on Vercel or anywhere else.
  *
  *   • astro:server:setup — in `bun run dev` nothing is copied, so serve them
@@ -32,8 +32,15 @@ export function linkPreviewImages(cacheDir, urlBase) {
         const serve = sirv(cacheDir, { dev: true, etag: true })
         server.middlewares.use((req, res, next) => {
           if (!req.url?.startsWith(`${urlBase}/`)) return next()
-          req.url = req.url.slice(urlBase.length)
-          serve(req, res, next)
+          // The cache directory is flat, so the prefix comes off — and goes
+          // back on if sirv has no such file, or Astro's router would report
+          // the miss against a path nobody requested.
+          const requested = req.url
+          req.url = requested.slice(urlBase.length)
+          serve(req, res, () => {
+            req.url = requested
+            next()
+          })
         })
       },
       'astro:build:done': async ({ dir, logger }) => {

@@ -2,9 +2,9 @@
  * What an external page says about itself.
  *
  * Everything here is pure: give it a captured `<head>` and the URL it came
- * from, get back the four things a preview card can show. The rules are
- * heuristics about how people actually mark up pages, so each one notes the
- * kind of page that motivated it.
+ * from, get back the fields a preview card can show. The rules are heuristics
+ * about how people actually mark up pages, so each one notes the kind of page
+ * that motivated it.
  */
 
 import { decodeHTML } from 'entities'
@@ -86,18 +86,24 @@ interface HeadTags {
   title: string | null
 }
 
+/** A tag, allowing `>` to appear inside a quoted attribute value. */
+const tagPattern = (name: string) => new RegExp(`<${name}\\b(?:[^>"']|"[^"]*"|'[^']*')*>`, 'gi')
+
 /**
  * Tokenise the head once, rather than running a regex per field per candidate.
  *
- * Attribute values are read with the closing quote required to match the
- * opening one. Matching `content` directly with a `["']([^"']+)["']` pattern —
- * as this code used to — silently truncates any value containing the other
- * quote character, so perevillega.com's `content="… They're Monkey Paws."`
- * became "… They".
+ * The quoting is the fiddly part, and getting it wrong is silent. A value is
+ * read with the closing quote required to match the opening one, so a title
+ * like `They're Monkey Paws.` survives inside double quotes; and a tag runs to
+ * the first `>` *outside* quotes, so `content="A > B"` isn't cut in half.
  */
 function parseHead(head: string): HeadTags {
+  // Inline scripts and styles can hold anything that looks like markup — a
+  // `<title>` inside a JSON string would otherwise become the page's title.
+  const markup = head.replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, '')
+
   const metas = new Map<string, string>()
-  for (const tag of head.matchAll(/<meta\b[^>]*>/gi)) {
+  for (const tag of markup.matchAll(tagPattern('meta'))) {
     const key = attr(tag[0], 'property') ?? attr(tag[0], 'name')
     const content = attr(tag[0], 'content')
     if (!key || !content?.trim()) continue
@@ -106,32 +112,37 @@ function parseHead(head: string): HeadTags {
   }
 
   const links: Array<{ rel: string; href: string }> = []
-  for (const tag of head.matchAll(/<link\b[^>]*>/gi)) {
+  for (const tag of markup.matchAll(tagPattern('link'))) {
     const rel = attr(tag[0], 'rel')
     const href = attr(tag[0], 'href')
     if (rel && href) links.push({ rel: rel.trim().toLowerCase(), href: href.trim() })
   }
 
-  const title = head.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
+  // Element text, not an attribute, so it arrives encoded and undecoded.
+  const title = markup.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
 
-  return { metas, links, title: title ? clean(title[1]) : null }
+  return { metas, links, title: title ? clean(decodeHTML(title[1])) : null }
 }
 
 /** Read one attribute, tolerating single, double, and unquoted values. */
 function attr(tag: string, name: string): string | null {
-  const quoted = tag.match(new RegExp(`\\b${name}=(["'])([\\s\\S]*?)\\1`, 'i'))
+  // The name has to follow whitespace rather than any word boundary: `\b`
+  // would let a `data-content=` decoy answer a search for `content=`.
+  const quoted = tag.match(new RegExp(`[\\s/]${name}\\s*=\\s*(["'])([\\s\\S]*?)\\1`, 'i'))
   if (quoted) return decodeHTML(quoted[2])
-  const bare = tag.match(new RegExp(`\\b${name}=([^\\s"'>]+)`, 'i'))
+  const bare = tag.match(new RegExp(`[\\s/]${name}\\s*=\\s*([^\\s"'>]+)`, 'i'))
   return bare ? decodeHTML(bare[1]) : null
 }
 
 /**
- * Metadata routinely arrives entity-encoded, tag-laden, or wrapped across lines
- * in the source. Decode first, then strip tags — the other order would leave
- * `&lt;b&gt;` as literal markup on the card.
+ * Metadata routinely arrives tag-laden or wrapped across lines in the source.
+ *
+ * Values reach here already entity-decoded, and decoding again would be worse
+ * than pointless: a page that escapes its markup twice — `&amp;lt;b&amp;gt;` —
+ * would have it decoded into real tags and then stripped, losing the text.
  */
 function clean(value: string): string | null {
-  let text = decodeHTML(value)
+  let text = value
 
   // Strip tags repeatedly rather than once: a single pass over `<scr<script>ipt>`
   // removes the inner match and leaves a working tag behind. Astro escapes
@@ -278,7 +289,10 @@ function selectDescription(tags: HeadTags, title: string | null): string | null 
 
   // A description that restates the title is noise. Compare loosely: a title
   // trimmed of its site name often reappears verbatim as the description.
-  if (title && simplify(best).startsWith(simplify(title))) return null
+  // A title that simplifies to almost nothing — a CJK headline, or `C++` — is
+  // a prefix of everything, so it can't be used to judge this.
+  const stem = title ? simplify(title) : ''
+  if (stem.length > 2 && simplify(best).startsWith(stem)) return null
   return truncate(best, MAX_DESCRIPTION)
 }
 
@@ -286,9 +300,8 @@ function selectDescription(tags: HeadTags, title: string | null): string | null 
 
 /**
  * `og:image` is usually a full URL, but plenty of sites publish a root-relative
- * path (oilwell.app serves `/preview/Oilwell-OG-5.jpg`), which is only valid
- * against the page's own URL — hotlinking those as-is is what put broken images
- * on this site.
+ * path (oilwell.app serves `/preview/Oilwell-OG-5.jpg`), which means nothing
+ * except against the page's own URL.
  */
 function selectImage(tags: HeadTags, base: string): string | null {
   const candidates = [
@@ -312,7 +325,9 @@ function selectImage(tags: HeadTags, base: string): string | null {
  */
 function selectFavicon(tags: HeadTags, base: string): string | null {
   const icons = tags.links
-    .filter(link => /(^|\s)(shortcut\s+)?(icon|apple-touch-icon)(\s|$)/.test(link.rel))
+    .filter(link =>
+      /(^|\s)(shortcut\s+)?(icon|apple-touch-icon(-precomposed)?)(\s|$)/.test(link.rel),
+    )
     .map(link => absoluteUrl(link.href, base))
     .filter((href): href is string => Boolean(href))
     .filter(href => !/\.ico(\?|$)/i.test(href))

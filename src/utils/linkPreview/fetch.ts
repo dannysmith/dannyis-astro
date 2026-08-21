@@ -52,7 +52,6 @@ interface StoredCapture {
   contentType: string | null
   head: string
   fetchedAt: number
-  captureVersion: string
 }
 
 // Overridable so tests can point at a temp directory.
@@ -64,7 +63,10 @@ const CACHE_VERSION = 'v2'
 const TTL_MS = 30 * 24 * 60 * 60 * 1000
 
 const FETCH_TIMEOUT_MS = 10_000
-/** Politeness, and a build that hammers 60 hosts at once times out against slow ones. */
+/**
+ * Politeness, and a build that hammers 60 hosts at once times out against slow
+ * ones. Shared with the image downloads, which go to the same hosts.
+ */
 const MAX_CONCURRENT_FETCHES = 6
 /** Long enough for a blip to pass, short enough not to stall the build. */
 const RETRY_DELAY_MS = 500
@@ -93,7 +95,7 @@ export async function capturePage(url: string): Promise<CapturedPage> {
 
   let pending = inFlight.get(key)
   if (!pending) {
-    pending = withSlot(() => load(target, key, url))
+    pending = withNetworkSlot(() => load(target, key, url))
     inFlight.set(key, pending)
   }
 
@@ -114,17 +116,21 @@ async function load(url: string, key: string, authoredUrl: string): Promise<Stor
 
   const fresh = await capture(url)
 
-  if (fresh.status === 'ok' || fresh.status === 'non-html') {
+  // Only a capture we actually read is stored. A non-HTML target isn't a
+  // failure — a PDF link is a good link — but it has no head, so storing it
+  // would let one mislabelled `text/plain` response bury a good capture for a
+  // month. Re-checking its content type costs one cheap round-trip a build.
+  if (fresh.status === 'ok') {
     await writeCache(key, fresh)
     return fresh
   }
 
-  recordProblem(authoredUrl, fresh.status)
+  if (fresh.status !== 'non-html') recordProblem(authoredUrl, fresh.status)
 
-  // A stale capture beats an empty card, but the *status* is current: a link
-  // that has started 404ing shows what it said when it worked, marked dead.
-  // Failures are never cached, so a transient outage isn't baked in.
-  return cached ? { ...cached, status: fresh.status } : fresh
+  // A stale capture beats an empty card, but what happened *this* time is
+  // current: a link that has started 404ing shows what it said when it worked,
+  // marked dead. Failures are never cached, so an outage isn't baked in.
+  return cached ? { ...cached, status: fresh.status, contentType: fresh.contentType } : fresh
 }
 
 async function capture(url: string): Promise<StoredCapture> {
@@ -192,7 +198,6 @@ async function attempt(url: string, userAgent: string): Promise<StoredCapture> {
         contentType,
         head,
         fetchedAt: Date.now(),
-        captureVersion: CACHE_VERSION,
       }
     } catch {
       // Timeout, DNS failure, TLS error, connection reset. One retry, because
@@ -216,20 +221,22 @@ function sleep(ms: number): Promise<void> {
 }
 
 function empty(finalUrl: string, status: LinkStatus): StoredCapture {
-  return {
-    finalUrl,
-    status,
-    contentType: null,
-    head: '',
-    fetchedAt: Date.now(),
-    captureVersion: CACHE_VERSION,
-  }
+  return { finalUrl, status, contentType: null, head: '', fetchedAt: Date.now() }
 }
 
-/** Everything after `</head>` is never metadata, and some pages are enormous. */
+/** A head big enough to hold any real metadata, and small enough to store. */
+const MAX_HEAD_CHARS = 512_000
+
+/**
+ * Metadata all lives in the head, so everything past `</head>` goes — and the
+ * head itself is capped, because a handful of sites inline hundreds of KB of
+ * JSON into it (YouTube's runs to a megabyte) and every byte would otherwise
+ * be stored and re-scanned on each render. `</head>` is optional in HTML, so
+ * the cap is also what bounds a page that never closes it.
+ */
 function readHead(html: string): string {
   const end = html.search(/<\/head\s*>/i)
-  return end === -1 ? html : html.slice(0, end)
+  return html.slice(0, Math.min(end === -1 ? html.length : end, MAX_HEAD_CHARS))
 }
 
 /** Release the socket for responses we won't read. */
@@ -304,8 +311,9 @@ export function isPublicHttpUrl(url: string): boolean {
 
   const host = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, '')
   if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')) return false
-  // IPv6 loopback, link-local and unique-local.
-  if (host === '::1' || /^(fe80|fc|fd)/.test(host)) return false
+  // IPv6 loopback, link-local and unique-local — tested only against an actual
+  // IPv6 literal, since plenty of public names start `fc` or `fd` (fcc.gov).
+  if (host.includes(':') && (host === '::1' || /^(fe80|fc|fd)/.test(host))) return false
 
   const parts = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.\d{1,3}$/)
   if (parts) {
@@ -355,6 +363,7 @@ export function unwrapArchiveUrl(url: string): string | null {
 
 // --------------------------------------------------------------------- caching
 
+/** The version is in the filename, so bumping it orphans old entries rather than reading them. */
 function cachePath(key: string): string {
   const hash = createHash('sha256').update(key).digest('hex').slice(0, 16)
   return path.join(CACHE_DIR, `${CACHE_VERSION}-${hash}.json`)
@@ -362,8 +371,7 @@ function cachePath(key: string): string {
 
 async function readCache(key: string): Promise<StoredCapture | null> {
   try {
-    const stored = JSON.parse(await fs.readFile(cachePath(key), 'utf-8')) as StoredCapture
-    return stored.captureVersion === CACHE_VERSION ? stored : null
+    return JSON.parse(await fs.readFile(cachePath(key), 'utf-8')) as StoredCapture
   } catch {
     return null
   }
@@ -384,7 +392,12 @@ async function writeCache(key: string, capture: StoredCapture): Promise<void> {
 let activeFetches = 0
 const waiting: Array<() => void> = []
 
-async function withSlot<T>(task: () => Promise<T>): Promise<T> {
+/**
+ * Hold one of a fixed number of outbound slots for the duration of `task`.
+ * Shared by page captures and image downloads: they hit the same hosts, and a
+ * limit only one of them respects isn't a limit.
+ */
+export async function withNetworkSlot<T>(task: () => Promise<T>): Promise<T> {
   // A loop, not an `if`: a waiter that wakes up can find the slot already taken
   // by a caller that arrived in the meantime, which would put us over the limit.
   while (activeFetches >= MAX_CONCURRENT_FETCHES) {

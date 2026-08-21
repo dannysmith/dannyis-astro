@@ -20,21 +20,21 @@
  * src/lib/link-preview-images-integration.mjs.
  */
 
-/* global fetch */
+/* global fetch, process */
 
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 import sharp from 'sharp'
 import { recordProblem } from '@utils/linkPreview/health'
-import { isPublicHttpUrl } from '@utils/linkPreview/fetch'
+import { isPublicHttpUrl, withNetworkSlot } from '@utils/linkPreview/fetch'
 
-/** Sits inside the link cache so one CI cache step covers captures and images. */
+/**
+ * Sits inside the link cache so one CI cache step covers captures and images,
+ * and follows the same override, so a test that redirects one redirects both.
+ */
 export const IMAGE_CACHE_DIR = path.join(
-  process.cwd(),
-  'node_modules',
-  '.astro',
-  'link-cache',
+  process.env.LINK_CACHE_DIR ?? path.join(process.cwd(), 'node_modules', '.astro', 'link-cache'),
   'images',
 )
 
@@ -49,6 +49,8 @@ const TARGET_MAX_PX = 800
 const WEBP_QUALITY = 78
 
 const FETCH_TIMEOUT_MS = 15_000
+/** Generous for an OG banner; anything larger is a mistake we shouldn't buffer. */
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024
 const BROWSER_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 
@@ -88,7 +90,10 @@ export async function fetchPreviewImage(
   const key = cacheKey(imageUrl, maxPx)
   let pending = inFlight.get(key)
   if (!pending) {
-    pending = readCache(key).then(cached => cached ?? download(imageUrl, key, pageUrl, maxPx))
+    // The slot is taken only around the download, so a cache hit never queues.
+    pending = readCache(key).then(
+      cached => cached ?? withNetworkSlot(() => download(imageUrl, key, pageUrl, maxPx)),
+    )
     inFlight.set(key, pending)
   }
   return pending
@@ -112,14 +117,26 @@ async function download(
     const response = await fetch(imageUrl, {
       // A browser UA, not the social-crawler one the page fetch uses: that
       // sentinel earns better metadata from pages, but WordPress hosts 403 it
-      // for image files — which silently cost two cards their preview.
+      // for image files.
       headers: { 'User-Agent': BROWSER_UA, Accept: 'image/*,*/*;q=0.8' },
       redirect: 'follow',
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     })
 
-    if (!response.ok || !isPublicHttpUrl(response.url || imageUrl)) {
+    if (!response.ok) {
       recordProblem(pageUrl, 'image', `${response.status} on ${imageUrl}`)
+      await response.body?.cancel()
+      return null
+    }
+    // A redirect can land somewhere we would never have asked for directly.
+    if (!isPublicHttpUrl(response.url || imageUrl)) {
+      recordProblem(pageUrl, 'image', `redirected somewhere private: ${imageUrl}`)
+      await response.body?.cancel()
+      return null
+    }
+    const declared = Number(response.headers.get('content-length'))
+    if (declared > MAX_IMAGE_BYTES) {
+      recordProblem(pageUrl, 'image', `is ${Math.round(declared / 1e6)}MB: ${imageUrl}`)
       await response.body?.cancel()
       return null
     }
@@ -162,7 +179,7 @@ async function encode(bytes: Uint8Array, key: string, maxPx: number): Promise<Pr
   }
 }
 
-/** A banner gets cropped to fill; a logo gets contained so it stays whole. */
+/** Decides the shape of the panel the card draws; both are cropped to fill it. */
 export function classifyShape(width: number, height: number): 'banner' | 'logo' {
   return width / height < LOGO_MAX_RATIO ? 'logo' : 'banner'
 }
@@ -193,6 +210,6 @@ async function writeCache(key: string, data: Buffer, image: PreviewImage): Promi
     await fs.writeFile(path.join(IMAGE_CACHE_DIR, `${key}.webp`), data)
     await fs.writeFile(path.join(IMAGE_CACHE_DIR, `${key}.json`), JSON.stringify(image), 'utf-8')
   } catch (error) {
-    console.warn(`Bookmark image cache write failed for ${key}:`, error)
+    console.warn(`Link preview image cache write failed for ${key}:`, error)
   }
 }

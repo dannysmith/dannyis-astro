@@ -10,18 +10,21 @@
 
 /* global process */
 
-export type LinkProblem = 'blocked' | 'dead' | 'unreachable' | 'non-html' | 'image'
+/** A link that isn't HTML is not a problem — a PDF link is a good link. */
+export type LinkProblem = 'blocked' | 'dead' | 'unreachable' | 'image'
 
-const problems = new Map<string, LinkProblem>()
+// The summary lines themselves, so the same page rendering four times reports
+// once — but a page that is both dead and missing its image reports both.
+const problems = new Set<string>()
 
 export function recordProblem(url: string, problem: LinkProblem, detail?: string): void {
-  problems.set(url, problem)
+  problems.add(`${problem}: ${url}`)
   // Leading newline: these land mid-render, in the middle of Astro's progress lines.
   console.warn(`\nLink ${problem}${detail ? ` (${detail})` : ''}: ${url}`)
 }
 
 process.on('exit', () => {
   if (problems.size === 0) return
-  console.warn(`\nLink health: ${problems.size} link(s) did not resolve cleanly.`)
-  for (const [url, problem] of problems) console.warn(`  ${problem}: ${url}`)
+  console.warn(`\nLink health: ${problems.size} problem(s) with external links.`)
+  for (const line of problems) console.warn(`  ${line}`)
 })

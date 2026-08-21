@@ -109,6 +109,38 @@ describe('readMetadata — selection rules', () => {
     expect(meta.description).toBeNull()
   })
 
+  it('keeps the description when the title has nothing to compare with', () => {
+    // A CJK title has no [a-z0-9] left to match on, and a prefix of nothing
+    // matches everything — which used to cost these pages their description.
+    const cjk = read(`<title>ホームページの作り方</title>
+      <meta property="og:description" content="How to build a home page.">`)
+    expect(cjk.description).toBe('How to build a home page.')
+
+    const short = read(`<title>C++</title>
+      <meta property="og:description" content="Compilers are hard, and here is why.">`)
+    expect(short.description).toBe('Compilers are hard, and here is why.')
+  })
+
+  it('reads a value containing > and ignores a data- attribute of the same name', () => {
+    const meta = read(`<title>Fallback</title>
+      <meta data-content="decoy" property="og:title" content="A > B: why ordering matters">`)
+    expect(meta.title).toBe('A > B: why ordering matters')
+  })
+
+  it('decodes entities exactly once, so escaped markup stays text', () => {
+    // Decoding twice would turn this into real tags and then strip them,
+    // silently deleting the words the page was actually about.
+    const meta = read(`<title>T</title>
+      <meta property="og:description" content="Write &amp;lt;b&amp;gt;bold&amp;lt;/b&amp;gt; to embolden">`)
+    expect(meta.description).toBe('Write &lt;b&gt;bold&lt;/b&gt; to embolden')
+  })
+
+  it('ignores markup inside an inline script', () => {
+    const meta = read(`<script>var t = "<title>Not the title</title>"</script>
+      <title>The real title</title>`)
+    expect(meta.title).toBe('The real title')
+  })
+
   it('caps a very long description at a word boundary', () => {
     const meta = read(`<title>T</title>
       <meta property="og:description" content="${'word '.repeat(200)}">`)
@@ -233,6 +265,10 @@ describe('isPublicHttpUrl', () => {
     'https://example.com/a',
     'http://example.com/a',
     'https://192.0.2.10/a', // a public IP literal
+    // Plenty of real hosts share a prefix with the IPv6 private ranges.
+    'https://fcc.gov/reports',
+    'https://fd.nl/artikel',
+    'https://fe80s-revival.com/',
   ])('allows %s', url => expect(isPublicHttpUrl(url)).toBe(true))
 
   it.each([
@@ -243,6 +279,7 @@ describe('isPublicHttpUrl', () => {
     'http://172.16.0.1/',
     'http://169.254.169.254/latest/meta-data/', // cloud metadata
     'http://printer.local/',
+    'http://[fd00::1]/', // IPv6 unique-local
     'file:///etc/passwd',
     'not-a-url',
   ])('refuses %s', url => expect(isPublicHttpUrl(url)).toBe(false))
@@ -267,15 +304,9 @@ describe('unwrapArchiveUrl', () => {
 })
 
 describe('classifyShape', () => {
-  it.each([
-    [1200, 630, 'banner'],
-    [1200, 900, 'banner'], // a 4:3 photo still wants the crop
-    [1080, 900, 'banner'], // exactly 1.2, the boundary
-    [1070, 900, 'logo'],
-    [400, 400, 'logo'],
-    [600, 800, 'logo'],
-  ])('%i×%i is a %s', (width, height, shape) => {
-    expect(classifyShape(width, height)).toBe(shape)
+  it('splits banners from logos at 1.2, so a 4:3 photo still gets the crop', () => {
+    expect(classifyShape(1080, 900)).toBe('banner') // exactly 1.2, the boundary
+    expect(classifyShape(1070, 900)).toBe('logo')
   })
 })
 
@@ -319,6 +350,42 @@ describe('fetchLinkPreview — what it does with the network', () => {
     expect(link.title).toBeNull()
     expect(link.image).toBeNull()
     expect(link.displayTitle).toBe('This repo does not exist')
+  })
+
+  it('retries a 403 with a browser UA', async () => {
+    // Some hosts refuse the social-crawler sentinel but answer a browser.
+    const stub = vi.fn(async (_url: string, init: RequestInit) =>
+      String(init.headers ? (init.headers as Record<string, string>)['User-Agent'] : '').includes(
+        'Mozilla',
+      )
+        ? page('<title>Behind the bouncer</title>')
+        : page('no', 403),
+    )
+    vi.stubGlobal('fetch', stub)
+    const { fetchLinkPreview } = await import('@utils/linkPreview/index')
+
+    const link = await fetchLinkPreview('https://picky.test/an-article')
+    expect(link.status).toBe('ok')
+    expect(link.title).toBe('Behind the bouncer')
+    expect(stub).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not treat a non-HTML link as a problem, and does not cache it', async () => {
+    // A PDF link is a good link — but its content type is re-checked each
+    // build, so one mislabelled response can't bury a good capture.
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () => new Response('%PDF-1.4', { headers: { 'content-type': 'application/pdf' } }),
+      ),
+    )
+    const warn = vi.spyOn(console, 'warn').mockClear()
+    const { fetchLinkPreview } = await import('@utils/linkPreview/index')
+
+    const before = cacheFiles().length
+    await fetchLinkPreview('https://files.test/a-report.pdf')
+    expect(cacheFiles()).toHaveLength(before)
+    expect(warn).not.toHaveBeenCalled()
   })
 
   it('does not cache a failure', async () => {

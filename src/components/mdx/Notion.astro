@@ -15,7 +15,7 @@ let hasFavicon = false
 let faviconImageURL = ''
 let emoji = ''
 
-// Only fetch if no manual title provided. fetchLinkPreview never throws \u2014 an
+// Only fetch if no manual title provided. fetchLinkPreview never throws — an
 // unreachable or blocked page just leaves the defaults in place.
 if (!manualTitle) {
   const meta = await fetchLinkPreview(href)
@@ -49,9 +49,9 @@ if (!manualTitle) {
     const emojiRegex =
       /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\u200D|\uFE0E|\uFE0F|\p{Extended_Pictographic})/gu
 
-    const matches = decodedURL.match(emojiRegex) as Array<string>
+    const matches = decodedURL.match(emojiRegex)
 
-    if (matches?.length > 0) {
+    if (matches) {
       hasFavicon = true
       emoji = matches[0]
     }
