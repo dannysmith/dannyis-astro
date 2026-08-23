@@ -16,6 +16,8 @@ import { satteriListDensity } from './src/lib/satteri-list-density.mjs'
 import { satteriMermaid } from './src/lib/satteri-mermaid.mjs'
 import { mermaidConfig, mermaidColorReplacements, mermaidFontCss } from './src/config/mermaid.js'
 import { pagefind } from './src/lib/pagefind-integration.mjs'
+import { linkPreviewImages } from './src/lib/link-preview-images-integration.mjs'
+import { IMAGE_CACHE_DIR, IMAGE_URL_BASE } from './src/utils/linkPreview/index.ts'
 import icon from 'astro-icon'
 import { redirects } from './src/config/redirects.ts'
 
@@ -93,6 +95,7 @@ export default defineConfig({
     icon(),
     react(),
     pagefind(),
+    linkPreviewImages(IMAGE_CACHE_DIR, IMAGE_URL_BASE),
   ],
   markdown: {
     // syntaxHighlight stays at the markdown level; the processor reads it from

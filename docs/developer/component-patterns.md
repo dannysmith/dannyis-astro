@@ -195,6 +195,10 @@ Every content collection has one card component in `ui/`. They share a common in
 
 Cross-card abstractions: the `.card-shell` utility (the bordered tile with a growing left accent bar; `_utilities.css`) and the two compact building blocks (`CompactCardTile`, `CompactNoteCard`). Full/medium variants are otherwise bespoke per card.
 
+### Cards for other people's pages
+
+`BookmarkCard` (in `mdx/`) is the odd one out: its content is fetched at build time from a page we don't control, and it skips `.card-shell` because the accent bar reads as a collection tile and this sits in prose. `fetchLinkPreview(url)` never throws and never returns null, so there's no try/catch or fallback object at the call site. See [link-metadata.md](./link-metadata.md).
+
 ### Opting out of the lightbox
 
 `Lightbox.astro` binds a delegated click handler to every `img[alt]` on the page and zooms it into a full-screen canvas. Two rules keep that from firing where it shouldn't:

@@ -48,6 +48,17 @@ Two consequences for the pipeline:
 
 See [command-palette-and-search.md](./command-palette-and-search.md) for the why behind the whole setup.
 
+## Link preview images
+
+`BookmarkCard` fetches the pages it links to at build time and copies their preview images onto our own domain. A second inline integration (`src/lib/link-preview-images-integration.mjs`) mirrors Pagefind's two-hook shape: `astro:build:done` copies the cached derivatives into `dist/link-previews/`, `astro:server:setup` serves them from the cache in dev.
+
+Two consequences for the pipeline:
+
+- **A cold cache makes the build reach every linked host.** Nothing external can fail it — a link that 404s, blocks us or times out is reported, not thrown — but the build is slower and its output depends on who was up. The cache (below) is what keeps that rare.
+- **Every build prints a link-health summary**, which is how link rot in published content gets noticed. Two entries are permanent and deliberate: `/styleguide` renders a dead and a blocked example.
+
+See [link-metadata.md](./link-metadata.md).
+
 ## Serving `.well-known`
 
 Web- and agent-standard files (`security.txt`, the standard.site publication record, and more over time) belong at `/.well-known/…`. Two quirks shape how we get them there: **Vercel won't serve a dotfile directory** (anything under `dist/.well-known/` 404s), and **Astro won't reliably build routes placed in a dotfile directory** under `src/pages/`.
@@ -70,9 +81,12 @@ OG image generation (Satori + Resvg) and image optimization (Sharp) dominate bui
 
 - **`node_modules/.astro/`** — Astro's own cache. It content-addresses optimized images, so unchanged source images aren't re-processed by Sharp.
 - **`node_modules/.astro/og-cache/`** — our own OG image cache. Astro doesn't cache endpoint output, so `og-image-generator.ts` caches the rendered PNGs itself. It rides along inside Astro's cache directory, so one `actions/cache` step persists both between runs.
+- **`node_modules/.astro/link-cache/`** — captured `<head>`s from the pages `BookmarkCard` links to, plus their preview images (in `images/`). Rides along in the same cache step. This one is about more than speed: it's what stops a build depending on other people's servers being up, and what lets a link that has since died keep the metadata it had when it worked.
 - The **Vercel CLI** is also cached in the Deploy jobs so `npx` doesn't re-download it on every deploy.
 
 **Correctness note:** the OG cache is keyed on each image's content. If you change the OG **template, branding, or fonts**, bump `CACHE_VERSION` in `src/utils/og-image-generator.ts` (also flagged in `src/utils/CLAUDE.md`).
+
+**The link cache is the other way round.** It stores the raw captured `<head>`, not the fields parsed out of it, so changing `linkPreview/parse.ts` needs **no** version bump. Its two keys are for stored shape only (also flagged in `src/utils/CLAUDE.md`).
 
 ## What not to do
 

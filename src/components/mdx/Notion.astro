@@ -1,5 +1,5 @@
 ---
-import { fetchLinkPreview } from '@utils/fetchLinkPreview'
+import { fetchLinkPreview } from '@utils/linkPreview/index'
 import { Icon } from 'astro-icon/components'
 
 export interface Props {
@@ -15,42 +15,47 @@ let hasFavicon = false
 let faviconImageURL = ''
 let emoji = ''
 
-try {
-  // Only fetch if no manual title provided
-  if (!manualTitle) {
-    const meta = await fetchLinkPreview(href)
-    title = meta.title || 'Notion Page'
+// Only fetch if no manual title provided. fetchLinkPreview never throws — an
+// unreachable or blocked page just leaves the defaults in place.
+if (!manualTitle) {
+  const meta = await fetchLinkPreview(href)
+  title = meta.title || 'Notion Page'
 
-    // Clean title
-    if (title?.endsWith('| Notion')) {
-      title = title.slice(0, title.lastIndexOf('| Notion')).trim()
+  // Clean title
+  if (title?.endsWith('| Notion')) {
+    title = title.slice(0, title.lastIndexOf('| Notion')).trim()
+  }
+
+  // Get faviconImageURL or emoji. Notion encodes a page's emoji into the icon
+  // URL itself, so the declared URL matters here, not our copy of the image.
+  const faviconURL = meta.faviconUrl
+
+  // Only our own copy is ever rendered; with no copy the Notion glyph is a
+  // better answer than hotlinking someone's S3 bucket from every page view.
+  if (meta.favicon && faviconURL?.includes('amazonaws.com')) {
+    hasFavicon = true
+    faviconImageURL = meta.favicon.src
+  } else {
+    // Notion encodes emoji icons into the favicon URL, so a malformed percent
+    // sequence would otherwise throw where a missing emoji is the right answer.
+    let decodedURL: string
+    try {
+      decodedURL = decodeURIComponent(faviconURL || '')
+    } catch {
+      decodedURL = faviconURL || ''
     }
 
-    // Get faviconImageURL or emoji
-    const faviconURL = meta.favicon
+    // Regex pattern to match most common emojis
+    const emojiRegex =
+      /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\u200D|\uFE0E|\uFE0F|\p{Extended_Pictographic})/gu
 
-    if (faviconURL && faviconURL.includes('amazonaws.com')) {
+    const matches = decodedURL.match(emojiRegex)
+
+    if (matches) {
       hasFavicon = true
-      faviconImageURL = faviconURL
-    } else {
-      const decodedURL = decodeURIComponent(faviconURL || '')
-
-      // Regex pattern to match most common emojis
-      const emojiRegex =
-        /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\u200D|\uFE0E|\uFE0F|\p{Extended_Pictographic})/gu
-
-      const matches = decodedURL.match(emojiRegex) as Array<string>
-
-      if (matches?.length > 0) {
-        hasFavicon = true
-        emoji = matches[0]
-      }
+      emoji = matches[0]
     }
   }
-} catch (error) {
-  console.warn(`Failed to fetch Notion page data for ${href}:`, error)
-  // Fallback to manual title or default
-  title = manualTitle || 'Notion Page'
 }
 ---
 
