@@ -46,9 +46,6 @@ export interface LinkPreview {
   published: Date | null
 }
 
-/** Big enough for a retina render of a ~20px icon, small enough to be nothing. */
-const FAVICON_PX = 64
-
 export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
   const page = await capturePage(url)
 
@@ -79,7 +76,7 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
 async function images(metadata: PageMetadata, pageUrl: string) {
   const [image, favicon] = await Promise.all([
     fetchPreviewImage(metadata.imageUrl, pageUrl),
-    fetchPreviewImage(metadata.favicon, pageUrl, FAVICON_PX),
+    fetchPreviewImage(metadata.favicon, pageUrl, 'favicon'),
   ])
   return { image, imageAlt: metadata.imageAlt, favicon, faviconUrl: metadata.favicon }
 }

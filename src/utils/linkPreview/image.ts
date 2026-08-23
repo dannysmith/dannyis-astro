@@ -46,6 +46,8 @@ const IMAGE_VERSION = 'v1'
 
 /** Twice the widest the card ever draws it (a full-width card in a narrow container). */
 const TARGET_MAX_PX = 800
+/** Big enough for a retina render of a ~20px icon, small enough to be nothing. */
+const FAVICON_PX = 64
 const WEBP_QUALITY = 78
 
 const FETCH_TIMEOUT_MS = 15_000
@@ -74,25 +76,31 @@ export interface PreviewImage {
 }
 
 /**
- * Fetch, re-encode and cache a preview image. Returns null — with a build
- * warning — for anything that doesn't resolve to a usable image, which leaves
- * the card to render without one.
+ * Fetch, re-encode and cache an image, returning null for anything that doesn't
+ * resolve to a usable one — which leaves the card to render without it.
+ *
+ * A missing *preview* image is worth a build warning; a missing favicon isn't.
+ * We already skip undecodable `.ico` icons without a word, and a quarter of
+ * cards have no favicon at all, so reporting the ones that fail mid-download
+ * would only teach you to ignore the report. Notion's emoji icons land here
+ * every build: the icon URL encodes an emoji rather than an image, and
+ * `Notion.astro` renders the emoji instead.
  */
 export async function fetchPreviewImage(
   imageUrl: string | null,
   /** The page the image belongs to; only used to make warnings locatable. */
   pageUrl: string,
-  /** Longest edge to keep. Favicons want far less than a preview banner. */
-  maxPx: number = TARGET_MAX_PX,
+  kind: 'preview' | 'favicon' = 'preview',
 ): Promise<PreviewImage | null> {
   if (!imageUrl) return null
 
+  const maxPx = kind === 'favicon' ? FAVICON_PX : TARGET_MAX_PX
   const key = cacheKey(imageUrl, maxPx)
   let pending = inFlight.get(key)
   if (!pending) {
     // The slot is taken only around the download, so a cache hit never queues.
     pending = readCache(key).then(
-      cached => cached ?? withNetworkSlot(() => download(imageUrl, key, pageUrl, maxPx)),
+      cached => cached ?? withNetworkSlot(() => download(imageUrl, key, pageUrl, maxPx, kind)),
     )
     inFlight.set(key, pending)
   }
@@ -107,9 +115,14 @@ async function download(
   key: string,
   pageUrl: string,
   maxPx: number,
+  kind: 'preview' | 'favicon',
 ): Promise<PreviewImage | null> {
+  const report = (detail: string) => {
+    if (kind === 'preview') recordProblem(pageUrl, 'image', detail)
+  }
+
   if (!isPublicHttpUrl(imageUrl)) {
-    recordProblem(pageUrl, 'image', `is not a public URL: ${imageUrl}`)
+    report(`is not a public URL: ${imageUrl}`)
     return null
   }
 
@@ -124,29 +137,29 @@ async function download(
     })
 
     if (!response.ok) {
-      recordProblem(pageUrl, 'image', `${response.status} on ${imageUrl}`)
+      report(`${response.status} on ${imageUrl}`)
       await response.body?.cancel()
       return null
     }
     // A redirect can land somewhere we would never have asked for directly.
     if (!isPublicHttpUrl(response.url || imageUrl)) {
-      recordProblem(pageUrl, 'image', `redirected somewhere private: ${imageUrl}`)
+      report(`redirected somewhere private: ${imageUrl}`)
       await response.body?.cancel()
       return null
     }
     const declared = Number(response.headers.get('content-length'))
     if (declared > MAX_IMAGE_BYTES) {
-      recordProblem(pageUrl, 'image', `is ${Math.round(declared / 1e6)}MB: ${imageUrl}`)
+      report(`is ${Math.round(declared / 1e6)}MB: ${imageUrl}`)
       await response.body?.cancel()
       return null
     }
 
     const image = await encode(new Uint8Array(await response.arrayBuffer()), key, maxPx)
-    if (!image) recordProblem(pageUrl, 'image', `is not a decodable image: ${imageUrl}`)
+    if (!image) report(`is not a decodable image: ${imageUrl}`)
     return image
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'failed'
-    recordProblem(pageUrl, 'image', `${reason}: ${imageUrl}`)
+    report(`${reason}: ${imageUrl}`)
     return null
   }
 }
