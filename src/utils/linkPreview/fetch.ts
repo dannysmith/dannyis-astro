@@ -147,23 +147,25 @@ async function capture(url: string): Promise<StoredCapture> {
 async function attempt(url: string, userAgent: string): Promise<StoredCapture> {
   for (let tries = 0; tries < 2; tries++) {
     try {
-      const response = await fetch(url, {
+      const hit = await fetchPublic(url, {
         headers: {
           'User-Agent': userAgent,
           Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           'Accept-Language': 'en-US,en;q=0.9',
         },
-        redirect: 'follow',
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       })
+      // A redirect chain that leaves the public internet, or never ends.
+      if (!hit) return empty(url, 'unreachable')
+      const { response, finalUrl } = hit
 
       if (response.status === 404 || response.status === 410) {
         await discard(response)
-        return empty(response.url || url, 'dead')
+        return empty(finalUrl, 'dead')
       }
       if (response.status === 403 || response.status === 429) {
         await discard(response)
-        return empty(response.url || url, 'blocked')
+        return empty(finalUrl, 'blocked')
       }
       if (!response.ok) {
         await discard(response)
@@ -171,34 +173,22 @@ async function attempt(url: string, userAgent: string): Promise<StoredCapture> {
           await sleep(RETRY_DELAY_MS)
           continue
         }
-        return empty(response.url || url, 'unreachable')
-      }
-
-      // A redirect can land somewhere we would never have asked for directly.
-      if (!isPublicHttpUrl(response.url || url)) {
-        await discard(response)
-        return empty(url, 'unreachable')
+        return empty(finalUrl, 'unreachable')
       }
 
       const contentType = response.headers.get('content-type')
       if (!isHtml(contentType)) {
         await discard(response)
-        return { ...empty(response.url || url, 'non-html'), contentType }
+        return { ...empty(finalUrl, 'non-html'), contentType }
       }
 
       const head = readHead(await response.text())
 
       // A challenge page answers 200 with a real <head>, so status alone can't
       // catch it — and its title would otherwise become the card's title.
-      if (isChallengePage(head)) return empty(response.url || url, 'blocked')
+      if (isChallengePage(head)) return empty(finalUrl, 'blocked')
 
-      return {
-        finalUrl: response.url || url,
-        status: 'ok',
-        contentType,
-        head,
-        fetchedAt: Date.now(),
-      }
+      return { finalUrl, status: 'ok', contentType, head, fetchedAt: Date.now() }
     } catch {
       // Timeout, DNS failure, TLS error, connection reset. One retry, because
       // failures aren't cached and a blip would otherwise cost this card its
@@ -212,6 +202,50 @@ async function attempt(url: string, userAgent: string): Promise<StoredCapture> {
   }
 
   return empty(url, 'unreachable')
+}
+
+/** Enough for a shortener chain plus a canonicalising hop or two. */
+const MAX_REDIRECTS = 5
+
+export interface PublicResponse {
+  response: Response
+  /** Where the chain actually ended, which is what relative URLs resolve against. */
+  finalUrl: string
+}
+
+/**
+ * Fetch, following redirects ourselves so every hop is checked *before* it is
+ * requested.
+ *
+ * `redirect: 'follow'` would make the request and only let us notice
+ * afterwards, which is enough to keep internal data off the site but not enough
+ * to keep the build from touching a machine on the network it happens to run
+ * on. The page we're reading chooses both its `og:image` and its redirects, so
+ * that distinction is the whole point of the check.
+ *
+ * Returns null when a hop isn't public, or the chain never ends.
+ */
+export async function fetchPublic(url: string, init: RequestInit): Promise<PublicResponse | null> {
+  let target = url
+
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+    if (!isPublicHttpUrl(target)) return null
+
+    const response = await fetch(target, { ...init, redirect: 'manual' })
+
+    const location = response.headers.get('location')
+    const redirected = response.status >= 300 && response.status < 400 && location
+    if (!redirected) return { response, finalUrl: target }
+
+    await discard(response)
+    try {
+      target = new URL(location, target).href
+    } catch {
+      return null
+    }
+  }
+
+  return null
 }
 
 function sleep(ms: number): Promise<void> {
@@ -296,9 +330,8 @@ export function normaliseUrl(url: string): string {
  *
  * Hostname-level only. A name that *resolves* to a private address still gets
  * through; catching that needs our own DNS resolution and connection pinning,
- * which is far more machinery than a personal site's build warrants. Redirects
- * are re-checked after the fact, so the response is discarded even though the
- * request was made.
+ * which is far more machinery than a personal site's build warrants. Every
+ * redirect hop is checked before it is requested — see `fetchPublic`.
  */
 export function isPublicHttpUrl(url: string): boolean {
   let parsed: URL
@@ -311,24 +344,50 @@ export function isPublicHttpUrl(url: string): boolean {
 
   const host = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, '')
   if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')) return false
-  // IPv6 loopback, link-local and unique-local — tested only against an actual
-  // IPv6 literal, since plenty of public names start `fc` or `fd` (fcc.gov).
-  if (host.includes(':') && (host === '::1' || /^(fe80|fc|fd)/.test(host))) return false
 
-  const parts = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.\d{1,3}$/)
-  if (parts) {
-    const [a, b] = parts.slice(1, 3).map(Number)
-    const isPrivate =
-      a === 0 ||
-      a === 10 ||
-      a === 127 ||
-      (a === 169 && b === 254) || // link-local, including cloud metadata
-      (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && b === 168)
-    if (isPrivate) return false
+  // An IPv6 literal may carry an IPv4 address inside it, and `new URL` rewrites
+  // `::ffff:169.254.169.254` to `::ffff:a9fe:a9fe` — so the mapped form has to
+  // be unpacked and judged as the IPv4 address it really is.
+  if (host.includes(':')) {
+    const mapped = mappedIpv4(host)
+    return mapped ? isPublicIpv4(mapped) : !isPrivateIpv6(host)
   }
 
-  return true
+  return /^\d{1,3}(\.\d{1,3}){3}$/.test(host) ? isPublicIpv4(host) : true
+}
+
+/** The IPv4 address inside an IPv4-mapped IPv6 literal, else null. */
+function mappedIpv4(host: string): string | null {
+  const dotted = host.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/)
+  if (dotted) return dotted[1]
+
+  const hex = host.match(/^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/)
+  if (!hex) return null
+  const [high, low] = hex.slice(1, 3).map(part => parseInt(part, 16))
+  return `${high >> 8}.${high & 0xff}.${low >> 8}.${low & 0xff}`
+}
+
+function isPublicIpv4(address: string): boolean {
+  const [a, b] = address.split('.').map(Number)
+  const isPrivate =
+    a === 0 || // "this network"
+    a === 10 ||
+    a === 127 || // loopback
+    a >= 224 || // multicast and reserved
+    (a === 100 && b >= 64 && b <= 127) || // carrier-grade NAT
+    (a === 169 && b === 254) || // link-local, including cloud metadata
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168)
+  return !isPrivate
+}
+
+/**
+ * Unique-local `fc00::/7` and link-local `fe80::/10` — which runs to `febf`,
+ * not just `fe80`. Only ever applied to a real IPv6 literal, since plenty of
+ * public names start `fc` or `fd` (fcc.gov, fd.nl).
+ */
+function isPrivateIpv6(host: string): boolean {
+  return host === '::1' || host === '::' || /^f[cd]/.test(host) || /^fe[89ab]/.test(host)
 }
 
 /**

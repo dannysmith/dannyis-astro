@@ -20,14 +20,14 @@
  * src/lib/link-preview-images-integration.mjs.
  */
 
-/* global fetch, process */
+/* global process */
 
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 import sharp from 'sharp'
 import { recordProblem } from '@utils/linkPreview/health'
-import { isPublicHttpUrl, withNetworkSlot } from '@utils/linkPreview/fetch'
+import { fetchPublic, isPublicHttpUrl, withNetworkSlot } from '@utils/linkPreview/fetch'
 
 /**
  * Sits inside the link cache so one CI cache step covers captures and images,
@@ -127,34 +127,31 @@ async function download(
   }
 
   try {
-    const response = await fetch(imageUrl, {
+    const hit = await fetchPublic(imageUrl, {
       // A browser UA, not the social-crawler one the page fetch uses: that
       // sentinel earns better metadata from pages, but WordPress hosts 403 it
       // for image files.
       headers: { 'User-Agent': BROWSER_UA, Accept: 'image/*,*/*;q=0.8' },
-      redirect: 'follow',
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     })
-
-    if (!response.ok) {
-      report(`${response.status} on ${imageUrl}`)
-      await response.body?.cancel()
-      return null
-    }
-    // A redirect can land somewhere we would never have asked for directly.
-    if (!isPublicHttpUrl(response.url || imageUrl)) {
-      report(`redirected somewhere private: ${imageUrl}`)
-      await response.body?.cancel()
-      return null
-    }
-    const declared = Number(response.headers.get('content-length'))
-    if (declared > MAX_IMAGE_BYTES) {
-      report(`is ${Math.round(declared / 1e6)}MB: ${imageUrl}`)
-      await response.body?.cancel()
+    if (!hit) {
+      report(`redirected off the public internet, or never stopped: ${imageUrl}`)
       return null
     }
 
-    const image = await encode(new Uint8Array(await response.arrayBuffer()), key, maxPx)
+    if (!hit.response.ok) {
+      report(`${hit.response.status} on ${imageUrl}`)
+      await hit.response.body?.cancel()
+      return null
+    }
+
+    const bytes = await readCapped(hit.response, MAX_IMAGE_BYTES)
+    if (!bytes) {
+      report(`is larger than ${MAX_IMAGE_BYTES / 1e6}MB: ${imageUrl}`)
+      return null
+    }
+
+    const image = await encode(bytes, key, maxPx)
     if (!image) report(`is not a decodable image: ${imageUrl}`)
     return image
   } catch (error) {
@@ -162,6 +159,40 @@ async function download(
     report(`${reason}: ${imageUrl}`)
     return null
   }
+}
+
+/**
+ * Read a body with a running byte count, returning null once it goes over.
+ *
+ * `content-length` is a claim, not a fact: it is absent on a chunked response
+ * and can simply be wrong, so the limit has to be enforced against what
+ * actually arrives rather than what was promised.
+ */
+async function readCapped(response: Response, max: number): Promise<Uint8Array | null> {
+  const reader = response.body?.getReader()
+  if (!reader) return null
+
+  const chunks: Uint8Array[] = []
+  let size = 0
+
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    size += value.length
+    if (size > max) {
+      await reader.cancel()
+      return null
+    }
+    chunks.push(value)
+  }
+
+  const bytes = new Uint8Array(size)
+  let at = 0
+  for (const chunk of chunks) {
+    bytes.set(chunk, at)
+    at += chunk.length
+  }
+  return bytes
 }
 
 /** Re-encode to a single webp derivative, sized for the biggest the card draws it. */

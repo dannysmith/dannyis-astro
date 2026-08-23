@@ -279,10 +279,23 @@ describe('isPublicHttpUrl', () => {
     'http://172.16.0.1/',
     'http://169.254.169.254/latest/meta-data/', // cloud metadata
     'http://printer.local/',
+    'http://100.64.1.1/', // carrier-grade NAT
     'http://[fd00::1]/', // IPv6 unique-local
+    'http://[fe81::1]/', // link-local runs to febf, not just fe80
+    'http://[febf::1]/',
+    'http://[::]/',
+    // IPv4-mapped IPv6. `new URL` rewrites these to hex (::ffff:a9fe:a9fe),
+    // so the embedded address has to be unpacked to be judged.
+    'http://[::ffff:127.0.0.1]/',
+    'http://[::ffff:10.0.0.1]/',
+    'http://[::ffff:169.254.169.254]/latest/meta-data/',
     'file:///etc/passwd',
     'not-a-url',
   ])('refuses %s', url => expect(isPublicHttpUrl(url)).toBe(false))
+
+  it('still allows a public IPv6 literal', () => {
+    expect(isPublicHttpUrl('http://[2606:4700::1111]/')).toBe(true)
+  })
 })
 
 describe('unwrapArchiveUrl', () => {
@@ -386,6 +399,44 @@ describe('fetchLinkPreview — what it does with the network', () => {
     await fetchLinkPreview('https://files.test/a-report.pdf')
     expect(cacheFiles()).toHaveLength(before)
     expect(warn).not.toHaveBeenCalled()
+  })
+
+  it('fetches a failing URL once per build, however many cards render it', async () => {
+    // The in-flight map is a memo for the whole build, not just for concurrent
+    // callers. Failures are deliberately never written to the disk cache, so
+    // clearing the entry once a promise settles would send every later render
+    // of a dead link back to the network — the exact repeated-fetch problem
+    // this module exists to remove.
+    const stub = vi.fn(async () => page('gone', 404))
+    vi.stubGlobal('fetch', stub)
+    const { fetchLinkPreview } = await import('@utils/linkPreview/index')
+
+    const url = 'https://rendered-four-times.test/a-post'
+    await fetchLinkPreview(url)
+    await fetchLinkPreview(url)
+    await fetchLinkPreview(url)
+    expect(stub).toHaveBeenCalledTimes(1)
+  })
+
+  it('follows a redirect, and refuses one that leaves the public internet', async () => {
+    const redirect = (to: string) => new Response(null, { status: 302, headers: { location: to } })
+    const stub = vi.fn(async (url: string) => {
+      if (url.endsWith('/start')) return redirect('https://elsewhere.test/end')
+      if (url.endsWith('/end')) return page('<title>Landed</title>')
+      if (url.endsWith('/evil')) return redirect('http://169.254.169.254/latest/meta-data/')
+      return page('nope', 500)
+    })
+    vi.stubGlobal('fetch', stub)
+    const { fetchLinkPreview } = await import('@utils/linkPreview/index')
+
+    const good = await fetchLinkPreview('https://hops.test/start')
+    expect(good.title).toBe('Landed')
+    expect(good.domain).toBe('elsewhere.test')
+
+    const bad = await fetchLinkPreview('https://hops.test/evil')
+    expect(bad.status).toBe('unreachable')
+    // The point is that the metadata host was never requested at all.
+    expect(stub.mock.calls.every(([url]) => !String(url).includes('169.254'))).toBe(true)
   })
 
   it('does not cache a failure', async () => {

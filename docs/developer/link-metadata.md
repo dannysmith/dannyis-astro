@@ -50,7 +50,7 @@ Written down so it doesn't get re-added on the assumption it was an oversight:
 - **Charset sniffing.** `response.text()` is UTF-8, which covers almost everything, and the failure mode is loud rather than silent.
 - **Stripping a site name from the front of a title.** `GitHub - foo` → `foo` versus `Cap — Beautiful screen recordings` → `Beautiful screen recordings` is a coin-flip we can't call. Trailing site names _are_ stripped, but only when the removed part demonstrably names the site.
 - **Scraping frameworks.** `metascraper` and friends are plugin systems for a job that is a few hundred lines. The one dependency is `entities`, for the entity table, because that part is a lookup rather than logic.
-- **DNS-rebinding protection.** `isPublicHttpUrl` guards both fetchers at the _hostname_ level; a name that resolves to a private address still gets through. Catching that needs our own resolution and connection pinning.
+- **DNS-rebinding protection.** `isPublicHttpUrl` guards both fetchers at the _hostname_ level; a name that resolves to a private address still gets through. Catching that needs our own resolution and connection pinning. Redirects _are_ covered — both fetchers follow them by hand so every hop is checked before it is requested, rather than after the response comes back.
 
 ## Sharp edges
 
