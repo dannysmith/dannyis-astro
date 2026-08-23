@@ -100,7 +100,12 @@ const tagPattern = (name: string) => new RegExp(`<${name}\\b(?:[^>"']|"[^"]*"|'[
 function parseHead(head: string): HeadTags {
   // Inline scripts and styles can hold anything that looks like markup — a
   // `<title>` inside a JSON string would otherwise become the page's title.
-  const markup = head.replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, '')
+  let markup = head
+  let previous: string
+  do {
+    previous = markup
+    markup = markup.replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, '')
+  } while (markup !== previous)
 
   const metas = new Map<string, string>()
   for (const tag of markup.matchAll(tagPattern('meta'))) {
