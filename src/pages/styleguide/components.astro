@@ -722,6 +722,112 @@ Provide a title to skip the fetch or override it:
         <BookmarkCard url="https://github.com/withastro/astro" />
       </SGSwitcher>
     </ResizableContainer>
+
+    <h3 id="bookmark-card-anatomy">What a card shows</h3>
+    <p>
+      Under the title and description, a card lists whatever the page published about itself, in a
+      fixed order so cards stay consistent when some links are rich articles and others are bare
+      pages: favicon and domain, then site name, author and publication date. Anything the page
+      didn't say is simply absent.
+    </p>
+    <p>
+      Both images are downloaded and re-encoded at build time, so a card never hotlinks a third
+      party and always has real dimensions to reserve space with. Images wider than 1.2∶1 are
+      treated as banners; squarer ones are logos or avatars and get a square panel instead of a
+      slice through the middle. See
+      <a href="/styleguide/components#bookmark-card-states">the states below</a>
+      for both, and the
+      <code>docs/developer/link-metadata.md</code> developer doc for the pipeline.
+    </p>
+
+    <h3 id="bookmark-card-states">States</h3>
+    <p>
+      What the card can show depends on what the page gave us, which is not up to us. Rather than
+      one apologetic fallback, a status decides the treatment — and only a 404 or 410 marks a link
+      dead, because other people's sites block and time out for temporary reasons constantly.
+    </p>
+
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Cause</th>
+          <th>Card shows</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>ok</code></td>
+          <td>2xx with readable HTML</td>
+          <td>Everything the page published.</td>
+        </tr>
+        <tr>
+          <td><code>blocked</code></td>
+          <td>403, 429, or a bot-challenge page</td>
+          <td>Last-known content, else a title derived from the URL. Never flagged dead.</td>
+        </tr>
+        <tr>
+          <td><code>dead</code></td>
+          <td>404 or 410</td>
+          <td>Last-known content plus a visible flag.</td>
+        </tr>
+        <tr>
+          <td><code>unreachable</code></td>
+          <td>DNS, TLS, timeout, reset</td>
+          <td>Last-known content, else a title derived from the URL.</td>
+        </tr>
+        <tr>
+          <td><code>non-html</code></td>
+          <td>PDF, zip, image content-type</td>
+          <td>A title derived from the URL plus a type label.</td>
+        </tr>
+      </tbody>
+    </WrappedTable>
+
+    <p>
+      Every card below is a real live URL that exhibits the labelled behaviour — including the two
+      that deliberately fail.
+    </p>
+
+    <ResizableContainer>
+      <div class="flow">
+        <p>
+          <strong>Square image</strong> — a logo or avatar, given a square panel, not cropped to 16∶9.
+        </p>
+        <BookmarkCard url="https://interconnected.org/home/2026/03/28/architecture" />
+
+        <p>
+          <strong>No image</strong>.
+        </p>
+        <BookmarkCard
+          url="https://ntietz.com/blog/that-boolean-should-probably-be-something-else/"
+        />
+
+        <p>
+          <strong>Dead</strong> — a 404. With nothing cached from when it worked, the title comes from
+          the URL.
+        </p>
+        <BookmarkCard url="https://github.com/dannysmith/this-repo-does-not-exist" />
+
+        <p>
+          <strong>Blocked</strong> — a 403.
+        </p>
+        <BookmarkCard
+          url="https://medium.com/@dannysmith/breaking-down-problems-its-hard-when-you-re-learning-to-code-f10269f4ccd5"
+        />
+
+        <p>
+          <strong>Archived</strong> — the link goes to the archive, but the metadata describes the page
+          it preserves.
+        </p>
+        <BookmarkCard
+          url="https://archive.ph/20260811223012/https://www.economist.com/culture/2026/07/30/how-to-spot-ai-writing#selection-1279.0-1353.201"
+        />
+
+        <p><strong>Not a web page</strong></p>
+        <BookmarkCard url="https://danny.is/cv.pdf" />
+      </div>
+    </ResizableContainer>
   </section>
 
   <section id="color-swatch" class="flow">
