@@ -2,7 +2,7 @@
 import { type CollectionEntry, getCollection, render } from 'astro:content'
 import Article from '@layouts/Article.astro'
 import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
-import { filterContentForPage } from '@utils/content'
+import { contentCacheKey, filterContentForPage } from '@utils/content'
 import { generateSummary } from '@utils/content-summary'
 
 export async function getStaticPaths() {
@@ -10,6 +10,14 @@ export async function getStaticPaths() {
   return posts.map(post => ({
     params: { slug: post.id },
     props: post,
+    // Articles in a series deliberately opt out of the incremental cache.
+    // Article.astro renders SeriesCallout, which reads every sibling article
+    // and the series entry itself. Astro's cache can't see those reads — it
+    // tracks the entry a page *renders*, not entries it looks up — so this
+    // post's own digest doesn't change when a sibling is retitled or added,
+    // or when series.json is edited. Omitting the key re-renders these on
+    // every build, which is the correct answer for ~20 of 76 articles.
+    cacheKey: post.data.series ? undefined : contentCacheKey(post),
   }))
 }
 type Props = CollectionEntry<'articles'>

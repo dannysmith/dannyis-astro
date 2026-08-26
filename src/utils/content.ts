@@ -91,3 +91,19 @@ export function getSortedProjects<
     return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title)
   })
 }
+
+/**
+ * Build the `cacheKey` a route returns from `getStaticPaths()` under
+ * `experimental.incrementalBuild` (see docs/developer/deployment.md).
+ *
+ * The glob loader derives `digest` from file contents, so it changes whenever
+ * the entry does. Returns `undefined` when an entry has no digest — the `file()`
+ * loader doesn't set one — because a path without a cacheKey is always
+ * re-rendered, which is the safe default.
+ *
+ * Never fall back to a constant string here. `String(undefined)` is a stable
+ * key that never invalidates, so the page would be served from cache forever.
+ */
+export function contentCacheKey(entry: { digest?: string | number }): string | undefined {
+  return entry.digest === undefined ? undefined : String(entry.digest)
+}

@@ -48,6 +48,26 @@ const mdxComponentNames = readFileSync(new URL(mdxBarrelPath, import.meta.url), 
   .map(name => name.trim())
   .filter(name => /^[A-Z][A-Za-z0-9]*$/.test(name))
 
+// astro-icon builds a `local` icon set from src/icons/, and @iconify/tools
+// defaults a set's `lastModified` to the current time when it has none — so
+// `virtual:astro-icon` contains a fresh timestamp on every build. The bundled
+// heroicons/simple-icons sets ship a real value and are unaffected.
+//
+// Every page reaches that virtual module through the Icon component, so the
+// timestamp changes each route's dependency hash and defeats
+// `experimental.incrementalBuild` — nothing is ever reused. The value is
+// metadata we never read, so pinning it is free.
+function stableIconSetTimestamp() {
+  return {
+    name: 'stable-icon-set-timestamp',
+    enforce: 'post',
+    transform(code, id) {
+      if (!id.includes('virtual:astro-icon')) return null
+      return code.replace(/("prefix":"local","lastModified":)\d+/, (_match, prefix) => `${prefix}0`)
+    },
+  }
+}
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://danny.is',
@@ -61,6 +81,7 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ['@resvg/resvg-js'],
     },
+    plugins: [stableIconSetTimestamp()],
   },
   image: {
     // Used for all Markdown images; not configurable per-image
@@ -75,6 +96,7 @@ export default defineConfig({
   },
   experimental: {
     svgOptimizer: svgoOptimizer(),
+    incrementalBuild: true,
   },
   integrations: [
     expressiveCode({

@@ -131,6 +131,87 @@ Both 7.2.1 and 7.2.2 shipped incremental-build fixes, and two are exactly this s
 
 The feature is still settling. Stay on 7.2.2+, and treat this as an experiment with a real verification step rather than set-and-forget.
 
+## Findings (2026-08-24, branch `experimental-incremental-builds`, Astro 7.2.2)
+
+**Outcome: enabled and working.** Warm local builds went from ~31s to ~8.4s, with 393 of ~430 prerendered paths reused. Getting there required fixing one non-obvious bug in our own setup — see "The blocker" below.
+
+### The open question: endpoints DO participate
+
+Confirmed by source and empirically. `generatePathWithPrerenderer` (`core/build/generate.js`) applies the skip/restore path to every prerendered route with no `route.type` filter, and `collectPagesData` puts endpoint routes into `allPages` so they get a `dependencyHash` like any page. The `.md.ts` twins cache exactly like the `.astro` pages.
+
+### The blocker: `astro-icon` stamps a build timestamp into every page's dependency graph
+
+Initially **nothing cached at all** — every `.astro` page re-rendered on every build despite a stable `cacheKey`, because Astro's `dependencyHash` for both `index.astro` routes differed between two byte-identical builds.
+
+Found by patching `plugin-incremental.js` to dump a per-module hash of `resolveAssetPlaceholders(code)` for all 935 modules, running two builds and diffing. **Exactly 4 modules were unstable:**
+
+- `virtual:astro-icon`
+- three `.mdx` files containing Mermaid diagrams
+
+Dumping the 5.3MB `virtual:astro-icon` module from both builds and diffing byte-by-byte found a single difference:
+
+```
+"local":{"prefix":"local","lastModified":1787579078, …}   ← build A
+"local":{"prefix":"local","lastModified":1787579110, …}   ← build B
+```
+
+`astro-icon` builds a `local` icon set from `src/icons/`, and `@iconify/tools` (`lib/icon-set/index.mjs:162`) does `this.lastModified = value || Math.floor(Date.now() / 1e3)`. The bundled `heroicons` and `simple-icons` sets ship a real `lastModified` and are stable; our own set has none, so it gets the current build time. Every page reaches that module through the `Icon` component, so that one number invalidated every route, every build.
+
+**Fix:** a small Vite plugin in `astro.config.mjs` (`stableIconSetTimestamp`) pins the local set's `lastModified` to `0`. The value is metadata nothing reads. This is the whole difference between the feature doing nothing and working.
+
+### `series.json` is a real staleness vector the original analysis missed
+
+`SeriesCallout` renders `seriesEntry.data.intro` from the `series` collection, which uses the `file()` loader (no digest). Content data modules are stripped from the dependency walk by `isContentDataIncrementalModule`, so **editing `series.json` invalidates nothing**. Any Option B would have to fold in the series entry, not just sibling digests.
+
+Also confirmed by source: `recordContentEntryRender` fires only inside `renderEntry()`, so `getCollection()` and `getEntry()` are invisible to the cache. The `SeriesCallout` risk is proven, not merely suspected.
+
+### What was implemented (Option A)
+
+- `experimental.incrementalBuild: true` plus the `stableIconSetTimestamp` Vite plugin in `astro.config.mjs`.
+- `contentCacheKey()` in `src/utils/content.ts` — returns `undefined` rather than `String(undefined)` when an entry has no digest, so a missing digest degrades to "always re-render" instead of "cache forever".
+- `cacheKey` on `notes/[...slug]/index.astro`, `writing/[...slug]/index.astro` (omitted when `data.series` is set), and both `.md.ts` endpoints (no series caveat — they emit only the entry's own title and body).
+- **Not** added to the `og-image.png.ts` endpoints: our own OG cache already covers them, and adding it would duplicate ~222 PNGs into the incremental cache.
+
+### What still re-renders, and why each is correct
+
+| Pages                              | Reason                                          |
+| ---------------------------------- | ----------------------------------------------- |
+| `/writing`, `/notes`, `/`, RSS, …  | No `getStaticPaths()` — aggregate other entries |
+| 17 series articles                 | Option A opt-out                                |
+| 2 Mermaid notes                    | Mermaid output genuinely differs per build      |
+| All `og-image.png` endpoints       | No `cacheKey`; covered by our own OG cache      |
+
+### Verification
+
+Harness in `docs/tasks-todo/temporary/incremental/` (`snapshot.sh`, `compare.sh`, `noise.txt`). Snapshots `dist/` as sorted `sha256\tpath`, normalising Mermaid element ids before hashing.
+
+**Noise floor:** two identical builds differ in 10 paths — `Math.random()` on the homepage, and Mermaid output being non-deterministic in both element ids and SVG path geometry (which also churns the RSS feeds that embed content). After normalising ids and excluding the 9 Mermaid-bearing pages, 3158 of 3411 files are byte-identical. No series article contains a Mermaid diagram, so the noise does not overlap the scenarios that matter.
+
+**The core check:** a warm build serving 393 pages from cache is **byte-identical to a full `astro build --force` rebuild** across 3157 compared files.
+
+| Scenario                       | Restored | Assertion                                  |
+| ------------------------------ | -------- | ------------------------------------------ |
+| Retitle an article in a series | 393      | 15/15 siblings show new title, 0 stale     |
+| Add an article to a series     | 393      | 16/16 siblings list the new entry, 0 stale |
+| Edit `series.json` intro       | 394      | 15/15 pages show new intro, 0 stale        |
+| Edit `Footer.astro`            | 206      | 0 HTML pages reused; all 227 pick it up    |
+
+The last one confirms dependency-hash invalidation works: every HTML page re-rendered while the `.md` endpoints correctly stayed cached, since they don't use the Footer.
+
+`check:types`, `check:lint`, `check:format` green; 474 unit tests pass.
+
+### Two incidental findings
+
+- **`astro build --force` also clears the content data store** ("data store cleared (force)"), not just the incremental cache. On this site that forces every Mermaid diagram to re-render through Playwright, making `--force` far more expensive than a cold incremental build.
+- **Mermaid diagram output is non-deterministic between builds** (element ids and path geometry). Independent of this feature, it means those pages' HTML churns on every build and they can never be cached. Worth fixing separately — it would bring the last 2 notes into the cache.
+
+### Still to do
+
+- Deploy and verify in CI. `node_modules/.astro` is already cached by the Build job, so no workflow change is needed, but cache size is worth watching.
+- Decide on the `Footer` `new Date()` year — a page cached in December shows the wrong year in January. Now that pages really are cached, this is live rather than theoretical.
+- Add the `ContentCard` comment noting that `getEntry()` reads are invisible to the cache.
+- Report the `astro-icon` / `@iconify/tools` timestamp upstream — it silently defeats incremental builds for any site using local icons.
+
 ## Phases
 
 ### Phase 1 — Spike and answer the open question
