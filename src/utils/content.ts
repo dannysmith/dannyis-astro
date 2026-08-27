@@ -91,3 +91,36 @@ export function getSortedProjects<
     return byDate !== 0 ? byDate : a.data.title.localeCompare(b.data.title)
   })
 }
+
+/**
+ * The `cacheKey` a route returns from `getStaticPaths()` under
+ * `experimental.incrementalBuild`. See docs/developer/deployment.md.
+ *
+ * The glob loader derives `digest` from file contents, so it changes whenever
+ * the entry does. Returns `undefined` when there is no digest — the `file()`
+ * loader sets none — which makes the page re-render every build.
+ *
+ * Never fall back to a constant string. `String(undefined)` is a key that can
+ * never change, so the page would be served from cache forever.
+ */
+export function contentCacheKey(entry: { digest?: string | number }): string | undefined {
+  return entry.digest === undefined ? undefined : String(entry.digest)
+}
+
+/** MDX components that resolve another content entry while rendering. */
+const CROSS_ENTRY_COMPONENTS = ['<ContentCard']
+
+/**
+ * Whether rendering this entry's body pulls in *other* content entries.
+ *
+ * Astro's incremental cache tracks the entry a page renders, not entries it
+ * looks up with `getEntry()`/`getCollection()`, so such a page can go stale
+ * when the entry it points at changes. Callers that render the body drop the
+ * `cacheKey` when this is true; routes emitting the raw body don't need to.
+ *
+ * Add any new component of that shape to `CROSS_ENTRY_COMPONENTS`.
+ */
+export function rendersOtherEntries(entry: { body?: string }): boolean {
+  const body = entry.body
+  return body !== undefined && CROSS_ENTRY_COMPONENTS.some(name => body.includes(name))
+}

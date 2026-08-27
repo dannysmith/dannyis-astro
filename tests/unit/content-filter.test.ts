@@ -3,6 +3,8 @@ import {
   filterContentForPage,
   filterContentForListing,
   getPublishedSeriesArticles,
+  contentCacheKey,
+  rendersOtherEntries,
 } from '@utils/content'
 
 // Mock content entries
@@ -257,5 +259,36 @@ describe('getPublishedSeriesArticles', () => {
     ]
     const ids = getPublishedSeriesArticles('redesign', withStyleguide, true).map(e => e.id)
     expect(ids).not.toContain('sg')
+  })
+})
+
+// The incremental build cache fails silently when a key is wrong: the page
+// keeps serving stale HTML rather than erroring.
+describe('contentCacheKey', () => {
+  it('uses the digest as the key', () => {
+    expect(contentCacheKey({ digest: 'abc123' })).toBe('abc123')
+  })
+
+  it('coerces a numeric digest to a string', () => {
+    expect(contentCacheKey({ digest: 42 })).toBe('42')
+  })
+
+  it('declines a key when the entry has no digest', () => {
+    // Must not be the string "undefined" — a constant key never invalidates.
+    expect(contentCacheKey({})).toBeUndefined()
+  })
+})
+
+describe('rendersOtherEntries', () => {
+  it('detects a body that embeds another entry', () => {
+    expect(rendersOtherEntries({ body: 'text <ContentCard item="articles/x" /> more' })).toBe(true)
+  })
+
+  it('ignores ordinary components', () => {
+    expect(rendersOtherEntries({ body: 'text <Callout>hi</Callout>' })).toBe(false)
+  })
+
+  it('handles an entry with no body', () => {
+    expect(rendersOtherEntries({})).toBe(false)
   })
 })

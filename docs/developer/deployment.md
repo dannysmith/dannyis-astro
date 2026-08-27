@@ -88,6 +88,18 @@ OG image generation (Satori + Resvg) and image optimization (Sharp) dominate bui
 
 **The link cache is the other way round.** It stores the raw captured `<head>`, not the fields parsed out of it, so changing `linkPreview/parse.ts` needs **no** version bump. Its two keys are for stored shape only (also flagged in `src/utils/CLAUDE.md`).
 
+## Incremental builds
+
+`experimental.incrementalBuild` lets Astro reuse a page's output when both its data and the code it depends on are unchanged since the last build. A page qualifies only if its route returns a `cacheKey` from `getStaticPaths()` — anything without one re-renders every time, which is the safe default. Locally this takes a warm build from ~31s to ~8s.
+
+- **The key is the entry's `digest`**, which the glob loader derives from file contents. `contentCacheKey()` in `src/utils/content.ts` builds it, and returns `undefined` when there's no digest rather than falling back to a constant — a key that never changes would serve the page from cache forever.
+- **Articles in a series opt out.** `SeriesCallout` reads its sibling articles and the series entry, and Astro tracks the entry a page *renders*, not entries it looks up with `getEntry()`/`getCollection()`. Without the opt-out, retitling one article or editing `series.json` would leave the others stale.
+- **So do pages whose body uses `ContentCard`**, for the same reason. Add any new component that resolves another entry to `CROSS_ENTRY_COMPONENTS`.
+- **Keep `astro-icon` at 1.2.0 or newer.** Earlier versions stamped the current time into `virtual:astro-icon` for the icon set built from `src/icons/`, and every page reaches that module through `Icon`. On an older version every route's dependency hash changes on every build and nothing is ever reused — silently, with no error.
+- **CI needs no extra setup.** The cache lives in `node_modules/.astro`, which the Build job already caches and restores.
+
+`astro build --force` ignores the cache and re-renders everything, while still writing a fresh cache. It also clears the content data store, so every Mermaid diagram is re-rendered through Playwright — expect it to be much slower than a cold incremental build.
+
 ## What not to do
 
 To preserve "deployable anywhere":

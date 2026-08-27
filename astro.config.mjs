@@ -75,6 +75,7 @@ export default defineConfig({
   },
   experimental: {
     svgOptimizer: svgoOptimizer(),
+    incrementalBuild: true,
   },
   integrations: [
     expressiveCode({
