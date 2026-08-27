@@ -157,7 +157,7 @@ Dumping the 5.3MB `virtual:astro-icon` module from both builds and diffing byte-
 
 `astro-icon` builds a `local` icon set from `src/icons/`, and `@iconify/tools` (`lib/icon-set/index.mjs:162`) does `this.lastModified = value || Math.floor(Date.now() / 1e3)`. The bundled `heroicons` and `simple-icons` sets ship a real `lastModified` and are stable; our own set has none, so it gets the current build time. Every page reaches that module through the `Icon` component, so that one number invalidated every route, every build.
 
-**Fix:** a small Vite plugin in `astro.config.mjs` (`stableIconSetTimestamp`) pins the local set's `lastModified` to `0`. The value is metadata nothing reads. This is the whole difference between the feature doing nothing and working.
+**Fix:** upgrade to `astro-icon` 1.2.0, which added `delete collection.lastModified` in `loaders/loadLocalCollection.js` — the same bug, fixed upstream. We first worked around it with a Vite plugin pinning the value; the upgrade made that redundant and it was removed. Either way this is the whole difference between the feature doing nothing and working, so a downgrade below 1.2.0 would silently disable incremental builds.
 
 ### `series.json` is a real staleness vector the original analysis missed
 
@@ -167,7 +167,7 @@ Also confirmed by source: `recordContentEntryRender` fires only inside `renderEn
 
 ### What was implemented (Option A)
 
-- `experimental.incrementalBuild: true` plus the `stableIconSetTimestamp` Vite plugin in `astro.config.mjs`.
+- `experimental.incrementalBuild: true` in `astro.config.mjs`, and `astro-icon` upgraded to 1.2.0 (see the blocker above).
 - `contentCacheKey()` in `src/utils/content.ts` — returns `undefined` rather than `String(undefined)` when an entry has no digest, so a missing digest degrades to "always re-render" instead of "cache forever".
 - `cacheKey` on `notes/[...slug]/index.astro`, `writing/[...slug]/index.astro` (omitted when `data.series` is set), and both `.md.ts` endpoints (no series caveat — they emit only the entry's own title and body).
 - **Not** added to the `og-image.png.ts` endpoints: our own OG cache already covers them, and adding it would duplicate ~222 PNGs into the incremental cache.
@@ -215,7 +215,7 @@ The last one confirms dependency-hash invalidation works: every HTML page re-ren
 
 - Deploy and verify in CI. `node_modules/.astro` is already cached by the Build job, so no workflow change is needed, but cache size is worth watching.
 - Document the setup in `docs/developer/deployment.md` (Phase 4).
-- Report the `astro-icon` / `@iconify/tools` timestamp upstream — it silently defeats incremental builds for any site using local icons.
+- ~~Report the `astro-icon` timestamp upstream~~ — already fixed in astro-icon 1.2.0.
 - Optional: make Mermaid output deterministic. It's the only thing keeping the last 2 notes out of the cache, and it churns those pages' HTML on every build regardless of this feature.
 
 ## Phases
