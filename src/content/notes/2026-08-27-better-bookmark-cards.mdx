@@ -1,0 +1,30 @@
+---
+title: Better Bookmark Cards
+slug: better-bookmark-cards
+pubDate: 2026-08-27
+---
+
+After [improving the Twitter cards on this site](/notes/2026-08-14-better-tweets-on-this-site) the other week, I wanted to do something similar with my more generic **BookmarkCard** components. These take a URL:
+
+```mdx
+<BookmarkCard url="https://danny.is/now" />
+```
+
+And render a nice-looking card like this:
+
+<BookmarkCard url="https://danny.is/now" />
+
+This component and the fetch functions it uses were pretty unsophisticated, and I started noticing some issues with special characters in titles not rendering properly. Since this runs at build-time, I was fetching each page's HTML on every build — several times over, since a bookmarked URL can appear on the note page, the home page, /notes and in the RSS feed — which occasionally got rate limited for domains like github.com. While addressing this I also added a few other bits:
+
+1. The code which extracts & cleans the title and description is much more robust.
+2. We now extract and show the **favicon** if it's available.
+3. We extract and show the **site name**, **author** and **published date** if they're available.
+4. Links to non-HTML files like PDFs show a label with the file type.
+5. Links to **archive** versions of pages on [archive.ph](https://archive.ph/) or the [Wayback Machine](https://web.archive.org/) are labelled as such and attempt to grab their metadata from the original URL.
+6. Links which **404** at build-time are marked with a *may be dead* label.
+
+The biggest change is that **images are now downloaded and re-hosted here.** Previously the cards hotlinked whatever `og:image` the page declared. Now they're fetched, re-encoded to webp, and served from danny.is with appropriate `width` & `height` attributes. These aren't committed in the repo, but they are [cached across builds in a similar way to other images](/writing/speeding-up-astro-builds/).
+
+We also **cache the raw `<head>` HTML** for every bookmark card URL in `node_modules/.astro/link-cache/` which avoids the need to refetch all of them on every single build.
+
+Every state is rendered at [/styleguide/components#bookmark-card](/styleguide/components#bookmark-card).
