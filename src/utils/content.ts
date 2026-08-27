@@ -93,17 +93,37 @@ export function getSortedProjects<
 }
 
 /**
+ * MDX components that look up *other* content entries while rendering.
+ *
+ * Astro's incremental cache tracks the entry a page renders, not entries it
+ * looks up with `getEntry()`/`getCollection()`, so a body using one of these
+ * can go stale when the entry it points at changes. Add any new component of
+ * that shape here. (`SeriesCallout` is the other case, but it's driven by
+ * frontmatter rather than the body, so the articles route handles it.)
+ */
+const CROSS_ENTRY_COMPONENTS = ['<ContentCard']
+
+/**
  * Build the `cacheKey` a route returns from `getStaticPaths()` under
  * `experimental.incrementalBuild` (see docs/developer/deployment.md).
  *
  * The glob loader derives `digest` from file contents, so it changes whenever
- * the entry does. Returns `undefined` when an entry has no digest — the `file()`
- * loader doesn't set one — because a path without a cacheKey is always
- * re-rendered, which is the safe default.
+ * the entry does. Returns `undefined` in two cases, both of which mean "always
+ * re-render this page", which is the safe default:
+ *
+ * 1. The entry has no digest — the `file()` loader doesn't set one.
+ * 2. The body renders a component that reads another entry, so the digest
+ *    alone doesn't describe everything the page displays.
  *
  * Never fall back to a constant string here. `String(undefined)` is a stable
  * key that never invalidates, so the page would be served from cache forever.
  */
-export function contentCacheKey(entry: { digest?: string | number }): string | undefined {
-  return entry.digest === undefined ? undefined : String(entry.digest)
+export function contentCacheKey(entry: {
+  digest?: string | number
+  body?: string
+}): string | undefined {
+  if (entry.digest === undefined) return undefined
+  const body = entry.body
+  if (body && CROSS_ENTRY_COMPONENTS.some(component => body.includes(component))) return undefined
+  return String(entry.digest)
 }

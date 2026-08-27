@@ -3,6 +3,7 @@ import {
   filterContentForPage,
   filterContentForListing,
   getPublishedSeriesArticles,
+  contentCacheKey,
 } from '@utils/content'
 
 // Mock content entries
@@ -257,5 +258,33 @@ describe('getPublishedSeriesArticles', () => {
     ]
     const ids = getPublishedSeriesArticles('redesign', withStyleguide, true).map(e => e.id)
     expect(ids).not.toContain('sg')
+  })
+})
+
+// The incremental build cache fails silently when a key is wrong: the page
+// keeps serving stale HTML rather than erroring. These pin the two ways
+// contentCacheKey is allowed to decline to produce one.
+describe('contentCacheKey', () => {
+  it('uses the digest as the key', () => {
+    expect(contentCacheKey({ digest: 'abc123' })).toBe('abc123')
+  })
+
+  it('coerces a numeric digest to a string', () => {
+    expect(contentCacheKey({ digest: 42 })).toBe('42')
+  })
+
+  it('declines a key when the entry has no digest', () => {
+    // Must not be the string "undefined" — a constant key never invalidates.
+    expect(contentCacheKey({})).toBeUndefined()
+  })
+
+  it('declines a key when the body renders a cross-entry component', () => {
+    expect(
+      contentCacheKey({ digest: 'abc', body: 'text <ContentCard id="x" /> more' }),
+    ).toBeUndefined()
+  })
+
+  it('keeps the key for a body with ordinary components', () => {
+    expect(contentCacheKey({ digest: 'abc', body: 'text <Callout>hi</Callout>' })).toBe('abc')
   })
 })

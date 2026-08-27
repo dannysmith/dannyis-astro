@@ -205,12 +205,18 @@ The last one confirms dependency-hash invalidation works: every HTML page re-ren
 - **`astro build --force` also clears the content data store** ("data store cleared (force)"), not just the incremental cache. On this site that forces every Mermaid diagram to re-render through Playwright, making `--force` far more expensive than a cold incremental build.
 - **Mermaid diagram output is non-deterministic between builds** (element ids and path geometry). Independent of this feature, it means those pages' HTML churns on every build and they can never be cached. Worth fixing separately — it would bring the last 2 notes into the cache.
 
+### Decisions on the two remaining correctness notes
+
+**`Footer` year — left as it is, deliberately.** A page cached in December would show the wrong year in January. We're accepting that rather than building machinery for it, because the incremental manifest stores a `lockfileHash` and a config hash, and a mismatch on either discards the **entire** cache. Any dependency bump, config change, or edit to a component in the route's graph forces a full rebuild, so a page surviving untouched across New Year is unlikely on this site. Options considered and rejected: dropping the year from the footer, folding the year into the `cacheKey`, and a scheduled January `--force` build (the most fragile of the three — out-of-band, forgettable, and expensive here because `--force` also re-renders every Mermaid diagram through Playwright).
+
+**`ContentCard` — opts itself out.** Rather than the comment the original plan suggested, `contentCacheKey` returns `undefined` when an entry's body references a component listed in `CROSS_ENTRY_COMPONENTS`. `ContentCard` is the only one today, it's used 0 times, and it's auto-imported into every MDX file by the barrel — so the moment anyone uses it, that page opts out on its own instead of relying on someone having read a warning. Verified end to end: adding a `<ContentCard>` to a note dropped exactly that note's page and its `.md` twin out of the cache while the card rendered correctly. The `.md` twin opting out is unnecessary (it emits raw text and can't go stale) but costs nothing on a currently-empty set, and keeping the check in one place is simpler than duplicating it.
+
 ### Still to do
 
 - Deploy and verify in CI. `node_modules/.astro` is already cached by the Build job, so no workflow change is needed, but cache size is worth watching.
-- Decide on the `Footer` `new Date()` year — a page cached in December shows the wrong year in January. Now that pages really are cached, this is live rather than theoretical.
-- Add the `ContentCard` comment noting that `getEntry()` reads are invisible to the cache.
+- Document the setup in `docs/developer/deployment.md` (Phase 4).
 - Report the `astro-icon` / `@iconify/tools` timestamp upstream — it silently defeats incremental builds for any site using local icons.
+- Optional: make Mermaid output deterministic. It's the only thing keeping the last 2 notes out of the cache, and it churns those pages' HTML on every build regardless of this feature.
 
 ## Phases
 
