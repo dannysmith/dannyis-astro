@@ -8,8 +8,8 @@ export async function getStaticPaths() {
   return posts.map(post => ({
     params: { slug: post.id },
     props: { post },
-    // Unlike the HTML twin, this emits only the article's own title and body —
-    // no layout, no SeriesCallout — so series articles are cacheable here too.
+    // Emits the article's own title and body as text — no layout and no
+    // components — so the digest alone is enough, series articles included.
     cacheKey: contentCacheKey(post),
   }))
 }

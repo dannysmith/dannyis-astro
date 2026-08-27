@@ -93,37 +93,34 @@ export function getSortedProjects<
 }
 
 /**
- * MDX components that look up *other* content entries while rendering.
+ * The `cacheKey` a route returns from `getStaticPaths()` under
+ * `experimental.incrementalBuild`. See docs/developer/deployment.md.
  *
- * Astro's incremental cache tracks the entry a page renders, not entries it
- * looks up with `getEntry()`/`getCollection()`, so a body using one of these
- * can go stale when the entry it points at changes. Add any new component of
- * that shape here. (`SeriesCallout` is the other case, but it's driven by
- * frontmatter rather than the body, so the articles route handles it.)
+ * The glob loader derives `digest` from file contents, so it changes whenever
+ * the entry does. Returns `undefined` when there is no digest — the `file()`
+ * loader sets none — which makes the page re-render every build.
+ *
+ * Never fall back to a constant string. `String(undefined)` is a key that can
+ * never change, so the page would be served from cache forever.
  */
+export function contentCacheKey(entry: { digest?: string | number }): string | undefined {
+  return entry.digest === undefined ? undefined : String(entry.digest)
+}
+
+/** MDX components that resolve another content entry while rendering. */
 const CROSS_ENTRY_COMPONENTS = ['<ContentCard']
 
 /**
- * Build the `cacheKey` a route returns from `getStaticPaths()` under
- * `experimental.incrementalBuild` (see docs/developer/deployment.md).
+ * Whether rendering this entry's body pulls in *other* content entries.
  *
- * The glob loader derives `digest` from file contents, so it changes whenever
- * the entry does. Returns `undefined` in two cases, both of which mean "always
- * re-render this page", which is the safe default:
+ * Astro's incremental cache tracks the entry a page renders, not entries it
+ * looks up with `getEntry()`/`getCollection()`, so such a page can go stale
+ * when the entry it points at changes. Callers that render the body drop the
+ * `cacheKey` when this is true; routes emitting the raw body don't need to.
  *
- * 1. The entry has no digest — the `file()` loader doesn't set one.
- * 2. The body renders a component that reads another entry, so the digest
- *    alone doesn't describe everything the page displays.
- *
- * Never fall back to a constant string here. `String(undefined)` is a stable
- * key that never invalidates, so the page would be served from cache forever.
+ * Add any new component of that shape to `CROSS_ENTRY_COMPONENTS`.
  */
-export function contentCacheKey(entry: {
-  digest?: string | number
-  body?: string
-}): string | undefined {
-  if (entry.digest === undefined) return undefined
+export function rendersOtherEntries(entry: { body?: string }): boolean {
   const body = entry.body
-  if (body && CROSS_ENTRY_COMPONENTS.some(component => body.includes(component))) return undefined
-  return String(entry.digest)
+  return body !== undefined && CROSS_ENTRY_COMPONENTS.some(name => body.includes(name))
 }

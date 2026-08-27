@@ -1,16 +1,15 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content'
 import Note from '@layouts/Note.astro'
-import { contentCacheKey, filterContentForPage } from '@utils/content'
+import { contentCacheKey, filterContentForPage, rendersOtherEntries } from '@utils/content'
 
 export async function getStaticPaths() {
   const notes = filterContentForPage(await getCollection('notes'))
   return notes.map(note => ({
     params: { slug: note.id },
     props: note,
-    // A note page renders only its own entry — nothing here reads another
-    // entry — so the note's digest fully describes its data.
-    cacheKey: contentCacheKey(note),
+    // Nothing in the Note layout reads another entry, so only the body can.
+    cacheKey: rendersOtherEntries(note) ? undefined : contentCacheKey(note),
   }))
 }
 type Props = CollectionEntry<'notes'>

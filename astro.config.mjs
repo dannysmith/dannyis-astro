@@ -48,15 +48,11 @@ const mdxComponentNames = readFileSync(new URL(mdxBarrelPath, import.meta.url), 
   .map(name => name.trim())
   .filter(name => /^[A-Z][A-Za-z0-9]*$/.test(name))
 
-// astro-icon builds a `local` icon set from src/icons/, and @iconify/tools
-// defaults a set's `lastModified` to the current time when it has none — so
-// `virtual:astro-icon` contains a fresh timestamp on every build. The bundled
-// heroicons/simple-icons sets ship a real value and are unaffected.
-//
-// Every page reaches that virtual module through the Icon component, so the
-// timestamp changes each route's dependency hash and defeats
-// `experimental.incrementalBuild` — nothing is ever reused. The value is
-// metadata we never read, so pinning it is free.
+// astro-icon builds an icon set from src/icons/, and @iconify/tools stamps it
+// with the current time because it carries no `lastModified` of its own. Every
+// page reaches that virtual module through Icon, so the fresh timestamp changes
+// each route's dependency hash and silently defeats incrementalBuild — nothing
+// is ever reused. Pinning it is free: nothing reads the value.
 function stableIconSetTimestamp() {
   return {
     name: 'stable-icon-set-timestamp',
