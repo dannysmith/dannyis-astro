@@ -22,7 +22,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "check:format": "prettier --check .",
-    "check:types": "tsc --noEmit && astro check",
+    "check:types": "astro sync && tsc --noEmit && astro check",
     "check:knip": "knip",
     "check:dupes": "jscpd src",
     "check:all": "bun run check:types && bun run check:format && bun run check:lint && bun run test:all",
