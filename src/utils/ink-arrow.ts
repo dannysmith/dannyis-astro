@@ -12,6 +12,8 @@
  *
  * Coordinates are in whatever user units the host SVG uses — for an SVG with no
  * viewBox, CSS pixels. `weight` scales the shaft thickness only.
+ *
+ * Used by MarginAnnotations to join a reader's note to the phrase it marks.
  */
 
 export interface Point {

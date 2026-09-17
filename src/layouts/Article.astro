@@ -9,6 +9,7 @@ import {
   Lightbox,
   LLMDiscoveryNote,
   LongFormProseTypography,
+  MarginAnnotations,
   CommandPalette,
   MainNavigation,
   SeriesCallout,
@@ -113,7 +114,7 @@ const standardSiteDocumentUri =
         }
         <span data-pagefind-meta={`date:${pubIso}`} data-pagefind-sort={`date:${pubIso}`}></span>
         {toc && <TableOfContents headings={headings} />}
-        <LongFormProseTypography>
+        <LongFormProseTypography data-annotations-content>
           {
             cover && coverAlt && (
               <div class="hero-image" style={vtCover ? `--vt-cover: ${vtCover}` : undefined}>
@@ -158,6 +159,11 @@ const standardSiteDocumentUri =
             <MarkdownContentActions markdownUrl={markdownUrl} />
             <BackToTopLink />
           </div>
+          {
+            /* Reader annotations. Pointless on externally-published pieces, which
+              redirect off-site the moment they load. */
+          }
+          {!redirectURL && <MarginAnnotations />}
         </LongFormProseTypography>
       </article>
 

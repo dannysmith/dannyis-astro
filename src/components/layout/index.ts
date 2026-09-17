@@ -13,4 +13,5 @@ export { default as SkipLink } from './SkipLink.astro'
 export { default as TableOfContents } from './TableOfContents.astro'
 
 // Typography wrapper components
+export { default as MarginAnnotations } from './MarginAnnotations.astro'
 export { default as LongFormProseTypography } from './LongFormProseTypography.astro'

@@ -452,20 +452,39 @@ Three decisions worth knowing before Phase 3 uses this:
 
 **Interface for Phase 3:** collect `{ tag, text }` for the annotatable blocks in document order, call `reanchor(record, blocks)` per stored record, then use `rangeFromOffsets` on the block at `anchor.blockIndex` to build the mark. Reference numerals aren't stored at all — they're computed at layout from document order (Phase 1's finding), which also makes them stable across reloads.
 
-### Phase 3 — The component
+### Phase 3 — The component ✅
 
-- [ ] `src/components/layout/MarginAnnotations.astro`, barrel-exported, mounted in `Article.astro` for every article bar `redirectURL` ones, with `data-annotations-content` passed through `LongFormProseTypography`.
-- [ ] Vendor Caveat in `public/fonts/` with the version-dated filename convention, `@font-face` in `_foundation.css`, a `--font-handwriting` token beside the other four, and **no preload entry**. Docs and styleguide are Phase 6.
-- [ ] Server-render all chrome hidden. Styles in the component's `<style is:global>` — marks and notes are injected into slotted MDX content, so scoping can't reach them.
-- [ ] Selection handling, the fixed selection button, save/edit/delete, `Escape` to cancel. No standing invitation prompt for now.
-- [ ] Margin layout: the sorted collision cursor, generated connectors, and the full set of reflow triggers.
+**Done.** `src/components/layout/MarginAnnotations.astro`, mounted in `Article.astro` on every article bar `redirectURL` ones, with `data-annotations-content` passed straight through `LongFormProseTypography` (it spreads `{...props}`, so no component change was needed).
 
-### Phase 4 — Narrow viewports and print
+- [x] The component, barrel-exported, with all chrome server-rendered and hidden.
+- [x] Caveat vendored: `public/fonts/Caveat-v2.000-2026-09-18.woff2` + `-LatinExt-`, `@font-face` in `_foundation.css`, a `--font-handwriting` token beside the other four, and **no preload entry**.
+- [x] `--color-annotation` token, light and dark.
+- [x] Selection handling, the fixed invite button, save / edit / delete, `Escape` to cancel, no standing invitation.
+- [x] Margin layout: collision cursor, generated connectors, and the reflow triggers.
+- [x] Storage and anchoring wired to `@utils/annotations`, including detached notes.
 
-- [ ] Inline mode below the breakpoint, inserted after the block (parent list for an `li`), several notes per block stacking in order.
-- [ ] Reference numerals in the handwriting face, on both mark and inline note. Check against a real footnote reference in the same paragraph — the face is doing the work of telling them apart, so if it can't, revisit the marker.
-- [ ] Print mode: the `beforeprint`/`afterprint` pair *and* the `@media print` fallback.
-- [ ] Verify against an article carrying real footnotes, a `Callout`, a code block and a `BookmarkCard`.
+Three deviations from the plan, all deliberate:
+
+- **Inline mode landed here too**, not in Phase 4. Margin-only would have meant a commit where the feature silently does nothing below 1400px, and the two modes share one layout function anyway — it was about twenty lines. **Phase 4 is now print plus the verification matrix.**
+- **Caveat is split by `unicode-range`** (latin 73 KB, latin-ext 29 KB) rather than the site's usual one-file-per-face. The reader supplies the text here, so we can't predict glyph coverage: most readers only ever need latin, and the extended file arrives only if someone types an accent. Worth a note in `fonts.md` in Phase 6, since it breaks the existing pattern.
+- **`ink-arrow.ts` was promoted to `src/utils/`** and the Phase 1 prototype deleted, along with its scratchpad page and experiment font. It had to go: the real component now runs on every article, including the one the lab rendered, so the two would have fought over the same prose. `scratchpad.astro` is back to its empty state; the reference material and harnesses stay in `docs/tasks-todo/temporary/`.
+
+Verified against the real article at 1440px (margin) and 500px (inline), in both themes, driving the component through a browser:
+
+- Create, persist, reload, edit, delete — with the mark unwrapped cleanly on delete and the prose text left intact.
+- **A stale record re-anchors instead of vanishing.** Seeded with an offset of 999 and context from an imaginary older draft, it found its quote at offset 295, refreshed the stored coordinates and kept the note. This is the exact case his version drops silently.
+- **An impossible quote shows as detached**, with no numeral, and its record is left untouched in storage.
+- The handwritten numeral sits next to a real coral footnote reference in the same paragraph and reads as a different thing entirely.
+- `position: relative` on `.longform-prose` shifts nothing: the `LCVid` play button is still centred on its frame, which was the thing most likely to move.
+
+One thing to keep an eye on: detached notes currently just stack at the end (of the margin, or of the article inline). That's honest but plain — a labelled group, or something collapsible, might be better once there's a real one to look at.
+
+### Phase 4 — Print, and verification against real content
+
+- [ ] Print mode: the `beforeprint`/`afterprint` pair *and* the `@media print` fallback, with notes back out in the margin and short connectors.
+- [ ] Verify against an article carrying real footnotes, a `Callout`, a code block and a `BookmarkCard` — annotating around them, not inside them.
+- [ ] Check several notes on one block, and a note on a list item, in both modes.
+- [ ] Decide how detached notes should present themselves once there's a real one on screen.
 
 ### Phase 5 — Accessibility, export, tests
 
