@@ -29,6 +29,13 @@ export default defineConfig([
 
   // Global ignores (node_modules and .git are ignored by default)
   {
-    ignores: ['dist/**', '.astro/**', '.unlighthouse/**', 'public/**'],
+    ignores: [
+      'dist/**',
+      '.astro/**',
+      '.unlighthouse/**',
+      'public/**',
+      // Gitignored scratch space: throwaway scripts and reference material.
+      'docs/tasks-todo/temporary/**',
+    ],
   },
 ])

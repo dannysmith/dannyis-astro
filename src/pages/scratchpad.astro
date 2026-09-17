@@ -1,33 +1,427 @@
 ---
 /**
- * Scratchpad — a noindex page for eyeballing components in isolation.
- * Empty by default: drop whatever you want to experiment with into <main>.
+ * Scratchpad — reader margin annotations, Phase 1 experiment.
+ *
+ * Renders a real article through the real Article layout, then layers the
+ * throwaway prototype in `_scratchpad/margin/` on top. A "Margin lab" panel
+ * (bottom left) switches face, ink, underline technique, numerals, layout and
+ * arrow weight; every setting is also a URL param (e.g. `?face=kalam&mode=margin`).
+ * `?seed=0` starts with no annotations, which exercises the lazy-load stub.
+ *
+ * See docs/tasks-todo/task-x-reader-margin-annotations.md.
  */
-import {
-  BaseHead,
-  CommandPalette,
-  Footer,
-  MainNavigation,
-  LLMDiscoveryNote,
-} from '@components/layout/index'
+import { getEntry, render } from 'astro:content'
+import Article from '@layouts/Article.astro'
+import { MDX_COMPONENT_REMAPPING } from '@config/mdx-components'
+
+const post = await getEntry('articles', '2026-05-28-work-on-this-site')
+if (!post) throw new Error('Scratchpad article not found')
+const { Content, headings, remarkPluginFrontmatter } = await render(post)
+
+// The underline shape, as reverse-engineered from the prior art.
+const UNDERLINE_PATH =
+  'M0 4.1 L2 3.8 L6 2.9 L15 2.88 L28 2.87 L42 2.64 L57 2.5 L72 2.22 L85 2.13 L92 2.27 L97 2.56 L100 2.9 L97 2.96 L92 3.17 L85 3.43 L72 3.68 L57 3.9 L42 4.16 L28 4.23 L15 4.32 L6 4.4 L2 4.1 Z'
+
+// Hex equivalents of the --_ink-* oklch values below (a data URI can't read tokens).
+const INK = {
+  grey: { light: '#566061', dark: '#a9b3b5' },
+  coral: { light: '#af3c3a', dark: '#f4928a' },
+}
+
+const svgUrl = (inner: string) =>
+  `url("data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 6' preserveAspectRatio='none'>${inner}</svg>`,
+  )}")`
+const filled = (color: string) => svgUrl(`<path d='${UNDERLINE_PATH}' fill='${color}'/>`)
+const themed = ({ light, dark }: { light: string; dark: string }) =>
+  svgUrl(
+    `<style>path{fill:${light}}@media (prefers-color-scheme:dark){path{fill:${dark}}}</style><path d='${UNDERLINE_PATH}'/>`,
+  )
+
+const underlineVars = `:root {
+  --_ul-grey-light: ${filled(INK.grey.light)};
+  --_ul-grey-dark: ${filled(INK.grey.dark)};
+  --_ul-coral-light: ${filled(INK.coral.light)};
+  --_ul-coral-dark: ${filled(INK.coral.dark)};
+  --_ul-grey-media: ${themed(INK.grey)};
+  --_ul-coral-media: ${themed(INK.coral)};
+  --_ul-mask: ${filled('#000')};
+}`
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="Scratchpad"
-      description="Component playground"
-      robotsDirective="noindex, nofollow"
-    />
-  </head>
-  <body>
-    <MainNavigation />
-    <CommandPalette />
-    <main id="main" tabindex="-1">
-      <LLMDiscoveryNote />
-      <h1>Scratchpad</h1>
-    </main>
-    <Footer />
-  </body>
-</html>
+<Article
+  {...post.data}
+  description={post.data.description ?? 'Scratchpad'}
+  readingTime={remarkPluginFrontmatter.minutesRead}
+  headings={headings}
+  hasFootnotes={remarkPluginFrontmatter.hasFootnotes ?? false}
+>
+  <Content components={MDX_COMPONENT_REMAPPING} />
+
+  <section class="annot-faces" aria-label="Caveat at display sizes">
+    <div class="annot-faces-title">Caveat at display size · variable 400–700 · 73 KB latin</div>
+    <div class="annot-face">
+      <div class="annot-face-3xl">Written in the margin</div>
+      <div class="annot-face-xl">The quick brown fox jumps over the lazy dog — 0123456789</div>
+      <div class="annot-face-weights">
+        <span style="font-weight: 400">Regular 400</span>
+        <span style="font-weight: 700">Bold 700 (the numeral weight)</span>
+      </div>
+    </div>
+  </section>
+
+  <aside class="annot-margin" aria-label="Reader margin">
+    <svg class="annot-ink" aria-hidden="true"></svg>
+  </aside>
+
+  <details class="annot-lab">
+    <summary>Margin lab</summary>
+    <label>
+      Ink
+      <select data-setting="ink">
+        <option value="grey">Grey</option>
+        <option value="coral">Coral</option>
+      </select>
+    </label>
+    <label>
+      Underline
+      <select data-setting="underline">
+        <option value="uri">Two URIs, theme-keyed</option>
+        <option value="svgmedia">One SVG, internal media query</option>
+        <option value="mask">Mask, below descenders</option>
+      </select>
+    </label>
+    <label>
+      Numerals
+      <select data-setting="numerals">
+        <option value="off">Inline mode only</option>
+        <option value="400">Always, 400</option>
+        <option value="700">Always, 700</option>
+      </select>
+    </label>
+    <label>
+      Layout
+      <select data-setting="mode">
+        <option value="auto">Auto (≥1400px margin)</option>
+        <option value="margin">Force margin</option>
+        <option value="inline">Force inline</option>
+      </select>
+    </label>
+    <label>
+      Arrow weight
+      <select data-setting="weight">
+        <option value="1">1×</option>
+        <option value="1.4">1.4×</option>
+        <option value="1.8">1.8×</option>
+      </select>
+    </label>
+  </details>
+
+  <style is:inline set:html={underlineVars}></style>
+
+  <script>
+    const root = document.documentElement
+    const SETTINGS = ['ink', 'underline', 'numerals', 'mode', 'weight', 'seed', 'trigger']
+    const datasetKey = (setting: string) => `annot${setting[0].toUpperCase()}${setting.slice(1)}`
+
+    // Lab settings live in the URL and are mirrored onto <html> as data-annot-* attributes.
+    const params = new URLSearchParams(location.search)
+    for (const setting of SETTINGS) {
+      const value = params.get(setting)
+      if (value) root.dataset[datasetKey(setting)] = value
+    }
+
+    const lab = document.querySelector<HTMLDetailsElement>('.annot-lab')
+    if (lab) {
+      // Out of .longform-prose, so position: fixed is relative to the viewport.
+      document.body.append(lab)
+      for (const select of lab.querySelectorAll<HTMLSelectElement>('select[data-setting]')) {
+        const setting = select.dataset.setting!
+        const current = root.dataset[datasetKey(setting)]
+        if (current) select.value = current
+        select.addEventListener('change', () => {
+          root.dataset[datasetKey(setting)] = select.value
+          const url = new URL(location.href)
+          url.searchParams.set(setting, select.value)
+          history.replaceState(null, '', url)
+          document.dispatchEvent(new Event('annot:relayout'))
+        })
+      }
+    }
+
+    // The stub: all a reader with no annotations would pay for. The prototype loads
+    // straight away when there are notes to show, otherwise on the first sign that
+    // the reader is about to select something.
+    let loaded = false
+    const load = () => {
+      if (loaded) return
+      loaded = true
+      import('./_scratchpad/margin/prototype').then(module => module.init())
+    }
+
+    if (root.dataset.annotSeed === '0') {
+      const onFirstSelection = () => {
+        if (getSelection()?.isCollapsed !== false) return
+        performance.mark('annot:first-selection')
+        load()
+      }
+      document.addEventListener('selectionchange', onFirstSelection)
+      // A pointer going down in the prose is the earliest hint of a selection, and
+      // buys the fetch the length of the drag (or of a double-click) as a head start.
+      // `?trigger=selection` drops it, for comparison.
+      if (root.dataset.annotTrigger !== 'selection') {
+        document
+          .querySelector('.longform-prose')
+          ?.addEventListener('pointerdown', load, { once: true })
+      }
+    } else {
+      load()
+    }
+  </script>
+</Article>
+
+<style is:global>
+  @font-face {
+    font-family: 'Caveat';
+    src: url('/scratchpad/fonts/caveat-vf.woff2') format('woff2');
+    font-weight: 400 700;
+    font-display: swap;
+  }
+
+  /* ---- Lab settings ---- */
+
+  :root {
+    --_ink-grey: light-dark(oklch(48% 0.012 var(--hue-grey)), oklch(76% 0.012 var(--hue-grey)));
+    --_ink-coral: light-dark(oklch(52% 0.15 var(--hue-coral)), oklch(76% 0.12 var(--hue-coral)));
+    --_ink: var(--_ink-grey);
+    --_hand: 'Caveat', cursive;
+    --_hand-size: 1.15em;
+    --_hand-leading: 1.15;
+    --_tilt: -0.8deg;
+    --_numeral-weight: 400;
+    --_arrow-room: 3rem;
+  }
+  :root[data-annot-ink='coral'] {
+    --_ink: var(--_ink-coral);
+  }
+  :root[data-annot-numerals='700'] {
+    --_numeral-weight: 700;
+  }
+
+  /* ---- The margin: an abspos grid item, so its box is exactly the right gutter column ---- */
+
+  .longform-prose:has(> .annot-margin) {
+    position: relative;
+  }
+
+  .longform-prose > .annot-margin {
+    position: absolute;
+    grid-column: 3;
+    inset: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  :root[data-annot-layout='inline'] .annot-margin {
+    display: none;
+  }
+
+  .annot-ink {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .annot-shaft {
+    fill: var(--_ink);
+  }
+
+  .annot-head {
+    fill: none;
+    stroke: var(--_ink);
+    stroke-width: 1.3px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* ---- Notes ---- */
+
+  .annot-note {
+    display: block;
+    font-family: var(--_hand);
+    font-size: var(--_hand-size);
+    font-weight: 400;
+    line-height: var(--_hand-leading);
+    color: var(--_ink);
+    text-wrap: pretty;
+  }
+
+  :root[data-annot-layout='margin'] .annot-note {
+    position: absolute;
+    inset-inline: var(--_arrow-room) var(--space-m);
+    max-inline-size: 16rem;
+    pointer-events: auto;
+    transform: rotate(var(--_tilt));
+    transform-origin: 0 50%;
+  }
+
+  .longform-prose > .annot-note {
+    position: relative;
+    margin-block: 0.4em 1em;
+    margin-inline-start: 1.75em;
+    max-inline-size: 30rem;
+  }
+
+  .longform-prose > .annot-note::before {
+    content: attr(data-ref);
+    position: absolute;
+    inset-inline-start: -1.4em;
+    font-weight: var(--_numeral-weight);
+  }
+
+  .annot-note-text {
+    outline: none;
+  }
+
+  .annot-note-text:focus-visible {
+    outline: 1px dashed var(--_ink);
+    outline-offset: 0.2em;
+  }
+
+  .annot-note-text:empty::before {
+    content: 'Write something…';
+    opacity: 0.55;
+  }
+
+  /* ---- Marks: the underline, three ways ---- */
+
+  .annot-mark {
+    --_ul: var(--_ul-grey-light);
+    background: var(--_ul) 0 calc(100% - 1px) / 100% 0.32em no-repeat;
+    padding-bottom: 0.08em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    print-color-adjust: exact;
+  }
+  :root[data-theme='dark'] .annot-mark {
+    --_ul: var(--_ul-grey-dark);
+  }
+  :root[data-annot-ink='coral'] .annot-mark {
+    --_ul: var(--_ul-coral-light);
+  }
+  :root[data-annot-ink='coral'][data-theme='dark'] .annot-mark {
+    --_ul: var(--_ul-coral-dark);
+  }
+
+  :root[data-annot-underline='svgmedia'] .annot-mark {
+    --_ul: var(--_ul-grey-media);
+  }
+  :root[data-annot-underline='svgmedia'][data-annot-ink='coral'] .annot-mark {
+    --_ul: var(--_ul-coral-media);
+  }
+
+  /* The mask hides everything it doesn't cover, text included — so the text area
+     gets a solid layer and the underline has to live in padding below the descenders. */
+  :root[data-annot-underline='mask'] .annot-mark {
+    background: linear-gradient(var(--_ink), var(--_ink)) 0 100% / 100% 0.32em no-repeat;
+    padding-bottom: 0.32em;
+    mask:
+      linear-gradient(#000 0 0) 0 0 / 100% calc(100% - 0.32em) no-repeat,
+      var(--_ul-mask) 0 100% / 100% 0.32em no-repeat;
+  }
+
+  :root:is([data-annot-layout='inline'], [data-annot-numerals='400'], [data-annot-numerals='700'])
+    .annot-mark::after {
+    content: attr(data-ref);
+    margin-inline-start: 0.08em;
+    font-family: var(--_hand);
+    font-size: calc(var(--_hand-size) * 0.75);
+    font-weight: var(--_numeral-weight);
+    line-height: 0;
+    color: var(--_ink);
+    vertical-align: super;
+  }
+
+  /* ---- Selection button ---- */
+
+  .annot-write {
+    position: fixed;
+    z-index: 20;
+    padding: 0.4em 0.65em;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    line-height: 1;
+    color: var(--color-text);
+    background: var(--color-background);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 8px oklch(0% 0 0 / 0.12);
+    cursor: pointer;
+  }
+
+  /* ---- Face specimens ---- */
+
+  .annot-faces {
+    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-m);
+    border-block-start: var(--border-width-hairline) solid var(--color-border);
+  }
+
+  .annot-faces-title {
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .annot-face {
+    margin-block: var(--space-l);
+    font-family: var(--_hand);
+    color: var(--_ink);
+    font-synthesis: none;
+  }
+
+  .annot-face-3xl {
+    font-size: var(--font-size-3xl);
+    line-height: 1.1;
+  }
+
+  .annot-face-xl {
+    font-size: var(--font-size-xl);
+    line-height: 1.25;
+  }
+
+  .annot-face-weights {
+    display: flex;
+    gap: var(--space-m);
+    font-size: var(--font-size-lg);
+  }
+
+  /* ---- Lab panel ---- */
+
+  .annot-lab {
+    position: fixed;
+    inset-block-end: var(--space-s);
+    inset-inline-start: var(--space-s);
+    z-index: 30;
+    padding: 0.5em 0.75em;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    color: var(--color-text);
+    background: var(--color-background);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 12px oklch(0% 0 0 / 0.12);
+  }
+
+  .annot-lab summary {
+    cursor: pointer;
+  }
+
+  .annot-lab label {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    margin-block-start: 0.5em;
+  }
+</style>

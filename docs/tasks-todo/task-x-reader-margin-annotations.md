@@ -229,10 +229,14 @@ Same architecture, three deliberate improvements (orphaning instead of silent lo
 **Annotatable blocks are narrower than his**, because our articles are MDX full of components (`Callout`, `Embed`, `BookmarkCard`, `Tabs`, Mermaid, lightboxed images). Wrapping a range with `extractContents()` inside any of those risks breaking their behaviour. So: direct prose children only.
 
 ```
-:scope > p, :scope > blockquote, :scope > :is(h2, h3, h4), :scope > :is(ul, ol) > li
+:scope > p, :scope > blockquote, :scope > :is(ul, ol) > li
 ```
 
-No `pre`, no `.full-bleed`, no figures, nothing inside a component. Two specific hazards:
+No `pre`, no `.full-bleed`, no figures, nothing inside a component.
+
+**Drop the headings too** (`h2, h3, h4`), which his selector allows. Our `h2` carries its own `border-bottom`, and an annotation underline lands right on top of it: the wobble and the rule fight each other and the mark stops reading as a mark. Headings are also the least useful thing to annotate — there's no argument in them to disagree with. Easy to add back later if it's missed.
+
+Two further hazards:
 
 - **`.intro-paragraph`** (from the `IntroParagraph` MDX component) rewrites its own text nodes on load to trim leading whitespace. Annotating it means racing that script, and offsets captured before normalisation won't match after. Exclude it to start.
 - **Real footnotes already exist and already render inline.** `InlineFootnotes.astro` expands `a[data-footnote-ref]` beneath the paragraph, mounted behind `Article.astro`'s `hasFootnotes` flag. Two independent superscript sequences in one paragraph would be badly confusing, so we lean on the **handwriting face** to separate them: a reader's numeral is visibly handwritten, the author's is Literata. Needs checking with both in one paragraph.
@@ -251,11 +255,21 @@ grid-template-columns: minmax(var(--gutter), 1fr)
 
 `TableOfContents` doesn't take a grid cell — it's `position: absolute` in the **left** gutter, `width: calc(calc(100vw - var(--measure-standard)) / 2)`, shown only at `min-width: 1400px`. Mirroring that on the right means **no grid restructure at all**, the prose column never shifts, and articles without annotations stay pixel-identical. Reusing `1400px` also makes the margin and the TOC appear together, reading as one deliberate wide-screen layout rather than two unrelated breakpoints.
 
-We expect to tune that breakpoint down after looking at it — `--measure-standard` is `70ch`, so there may be usable gutter well below 1400px.
+**Use the grid area, not a width calculation** (verified in Phase 1). An absolutely positioned child of a grid container takes its containing block from `grid-column`/`grid-row`, so the margin needs no width maths at all:
+
+```css
+.longform-prose { position: relative } /* the abspos containing block */
+.longform-prose > .annot-margin { position: absolute; grid-column: 3; inset: 0 }
+```
+
+Measured, that lands the margin's left edge on 1128px at a 1440px viewport — exactly the prose column's right edge. The TOC's `calc(100vw - var(--measure-standard))` approach can't be that precise here, because `--measure-standard` is `70ch` and `ch` resolves against the *element's* font: 70ch means one thing in Literata inside `.longform-prose` and another in Figtree on `article`. The grid area sidesteps the whole problem.
+
+One inherited limit: absolutely positioned notes don't contribute to document height. His stretched grid cell behaves the same way, so it's a known constraint rather than a regression.
 
 One inherited limit: absolutely positioned notes don't contribute to document height. His stretched grid cell behaves the same way, so it's a known constraint rather than a regression.
 
 ### Anchoring, storage and orphaning
+
 
 His anchoring is tangled into the DOM code. Ours goes in `src/utils/annotations.ts` as pure functions, because it's both the most testable part and the part where his version is weakest.
 
@@ -270,19 +284,45 @@ Storage key gets a schema version so a future record change can migrate rather t
 
 The same three, with the same algorithms — the collision cursor, the inline insertion with its per-block `Map`, the `beforeprint`/`afterprint` pair plus the `@media print` fallback. The reflow triggers carry over too, including `document.fonts.ready`, which matters more for us than for him because the handwriting face loads late by design.
 
+Two deliberate departures, both from watching the prototype:
+
+**Number the notes by document order, not creation order.** His `reference` is `max(existing) + 1`, so annotate the third paragraph and then the first, and the numerals read 2 then 1 down the page. Invisible in margin mode, glaring in inline mode where they sit in the text as footnote-style markers. Renumber on layout from document position; the stored `reference` then only has to be stable enough to keep a note matched to its mark within a session.
+
+**Never reparent a note during layout.** Moving a DOM node blurs a focused `contenteditable` inside it and drops the caret, so re-appending every note on every layout pass — the obvious way to keep them in document order — makes a note impossible to type into: the first keystroke lands, then focus falls to `<body>` and the rest of the word goes nowhere. The Phase 1 prototype had exactly this bug. Set `style.top`, and move a note only when its parent is genuinely wrong, i.e. on a mode switch. Margin notes are absolutely positioned, so their DOM order doesn't matter anyway.
+
+**Align the note's first line with the mark's first line**, rather than centring the whole note box on the mark's bounding box as he does. For a one-line note the two are identical; for a two- or three-line note his version points the arrow at the middle of the block, while first-line alignment keeps the arrow horizontal and makes it read as leading into the start of the handwriting. Use the mark's *first* client rect too, so a mark that wraps across lines is pointed at where the phrase begins.
+
 ### Theming
 
-The one place his CSS is no use to us. Every colour becomes a token, and specifically:
+The one place his CSS is no use to us. Connectors and note text are easy — they're inline SVG and real text, so `var(--…)` and `light-dark()` just work. The underline is the hard part, because **an SVG in a data URI can't read a custom property**: it's an isolated document, and `currentColor` there resolves to black.
 
-**The underline SVG can't read a custom property** from inside a data URI. Two options: ship two URIs and swap them with `light-dark()`, or use the SVG as a `mask-image` and let `background-color: var(--…)` do the colouring. Prefer the mask — one asset, themes for free.
+Phase 1 tested three ways round it, in Chromium and WebKit. **Two theme-keyed URIs wins:**
 
-Thin handwriting strokes also fade on charcoal at the same alpha that reads well on beige, so the note colour likely wants a different value per theme rather than one shared token.
+```css
+.annot-mark { --_ul: var(--_ul-light); background: var(--_ul) 0 calc(100% - 1px) / 100% 0.32em no-repeat }
+:root[data-theme='dark'] .annot-mark { --_ul: var(--_ul-dark) }
+```
+
+`data-theme` is always on `<html>` (BaseHead's theme script sets it to the *resolved* theme, even on auto), and its own comment calls it a styling hook, so this is a sanctioned use rather than a workaround.
+
+The two rejected options, with the evidence, because both look more elegant on paper:
+
+- **One SVG carrying its own `@media (prefers-color-scheme: dark)`.** Works perfectly in Chromium, which passes the embedding page's used `color-scheme` into the image — it even follows the site's own toggle. **WebKit follows the OS instead**, so a reader whose site theme disagrees with their OS gets light ink on charcoal (2.5:1) or dark-mode ink on beige (2:1, near-invisible). That's precisely the reader who went out of their way to choose, so it's not a corner worth cutting.
+- **`mask-image` with a themeable `background-color`.** A mask hides everything it doesn't cover, *including the text*, so the text area needs its own opaque mask layer and the underline has to move down into padding below the descenders — which loses the pen-crossing-the-letters look. Worse, **in WebKit the marked text disappears entirely once the mark wraps across a line break.** Dead on arrival.
+
+Both rejected techniques are still in the scratchpad lab behind `?underline=svgmedia` and `?underline=mask` if that needs re-confirming.
+
+Thin handwriting strokes also fade on charcoal at the same value that reads well on beige, so the ink wants a different lightness per theme. Verified pair, both clearing WCAG AA for normal text:
+
+`oklch(48% 0.012 210)` on beige is 5.79:1, and `oklch(76% 0.012 210)` on charcoal is 7.62:1 — both clear WCAG AA for normal text. For reference `--color-text-secondary` is only 4.30:1 on beige, so the notes should not simply reuse it.
+
+**Don't use coral.** It was worth trying, given "the red pen" framing and our accent, and it reads well (5.29:1 / 7.22:1). But footnote references and links are *already* coral: a coral reader numeral next to a coral footnote ref makes the reader's marks look like the author's. Grey ink keeps the two voices apart, which is the whole point.
 
 ### The handwriting face
 
 A handwriting face will get used elsewhere on the site later, so this isn't a private choice belonging to one component. It becomes a real token, `--font-handwriting`, with a styleguide specimen and a font-reference entry — same standing as Literata, Geist, Figtree and Fira Code. That means it has to be good in the abstract, not merely good at small size in a gutter, and it should look like **script** rather than tidy print.
 
-**Shortlist: Caveat, Kalam, Indie Flower.** Measured `woff2` bytes from the Fontsource CDN. We vendor one file per face with no `unicode-range` splitting (unlike his site, which loads three Kalam subsets separately), so the number that matters is latin + latin-ext — and it shouldn't be subset harder than that, because the *reader* types the content and may well type accents.
+**Decided: Caveat**, on the strength of the Phase 1 comparison — the most convincingly script-like of the three, the strongest at display size (which matters for a site-level token), and the only one whose numeral works. The shortlist it came from, with measured `woff2` bytes from the Fontsource CDN. We vendor one file per face with no `unicode-range` splitting (unlike his site, which loads three Kalam subsets separately), so the number that matters is latin + latin-ext — and it shouldn't be subset harder than that, because the *reader* types the content and may well type accents.
 
 | Face         | Axis             | latin   | + latin-ext | Note                              |
 | ------------ | ---------------- | ------- | ----------- | --------------------------------- |
@@ -294,7 +334,19 @@ For scale: Figtree is 27 KB, Geist 68 KB, Literata **394 KB**. Even Caveat is a 
 
 Caveat leads on the wider-use argument: it's the only shortlisted face with a weight axis, and for a site-level token that flexibility is worth the extra weight over Kalam. Kalam is the one to beat *on the page* — known-good, a third of the size, but much less script-like and therefore the weaker general-purpose face. Everything else tested was rejected for being upright print rather than script (Architects Daughter, Patrick Hand, Edu NSW ACT Foundation), too light (Shadows Into Light Two), or not actually handwriting despite the Fontsource category (Cause, Delius). Literata italic reads as *emphasis*, not annotation, which is what settles the question of buying a new face at all.
 
-Note that `1.03rem` is a Kalam-specific number: at identical `font-size` these faces render at very different apparent sizes, so whichever wins needs its own size and line-height.
+`1.03rem` is a Kalam-specific number: at identical `font-size` these faces render at very different apparent sizes. Calibrated in the real gutter against Literata, relative to the prose font size, these match each other optically:
+
+| Face         | Note size | Line height | Notes                                            |
+| ------------ | --------- | ----------- | ------------------------------------------------ |
+| Caveat       | `1.15em`  | 1.15        | Small x-height, so the largest number            |
+| Kalam        | `0.9em`   | 1.4         | Largest apparent size per point                  |
+| Indie Flower | `0.95em`  | 1.35        | Widest — wraps ~1 line more than the others      |
+
+Indie Flower's width is a real cost, not just a look: at 1440px its long seed note takes three lines where Caveat and Kalam take two, which pushes the next note down and bends that note's arrow. The narrower the gutter, the more it compounds.
+
+**The numeral settles the variable-axis question, and it points at Caveat.** Set as a superscript marker beside real footnote references: Caveat at 400 is too faint to read as a marker and needs 700, which its axis provides. Kalam is heavy enough at 400. Indie Flower renders 400 and 700 *identically* — it has no bold, so with `font-synthesis: none` (and synthesis would look awful) it simply can't do a heavier numeral. So: pick Caveat and the weight axis earns its keep; pick Kalam and it never gets used; pick Indie Flower and the option doesn't exist.
+
+Separately, the marker worry from Phase 4 is already answered: a reader's numeral is grey and handwritten, the author's footnote ref is coral and Literata. They don't read as the same sequence, provided the ink stays grey.
 
 **Lazy loading is free.** A browser only downloads a webfont when rendered text actually matches the `@font-face`. Notes don't exist until a reader writes one, so readers who never annotate never fetch the face — no JS, no `document.fonts.load()`. The only thing that would break this is preloading, so `--font-handwriting` must **not** go in the `BaseHead.astro` preload list.
 
@@ -302,32 +354,81 @@ Note that `1.03rem` is a Kalam-specific number: at identical `font-size` these f
 
 This is the one rule the task genuinely spends: no-runtime-JS-by-default. It's honest progressive enhancement — the article renders and reads perfectly without the script — but it's still weight on every article page.
 
-The idea to test: before a reader interacts, the only work needed is restoring existing notes and listening for `selectionchange`. So a tiny inline stub can read `localStorage` and either `import()` the module immediately (notes exist) or wait for the first non-collapsed selection (they don't). For most readers on most articles that's ~15 lines instead of ~11 KB, and it's the same logic we already applied to Pagefind. Phase 1 measures whether the deferred import adds visible lag between selecting and the button appearing; if it does, ship the module directly and accept the weight.
+The idea tested: before a reader interacts, the only work needed is restoring existing notes and listening for `selectionchange`. So a tiny stub reads `localStorage` and either `import()`s the module immediately (notes exist) or waits for the first non-collapsed selection (they don't).
+
+**Measured, and the case for the stub is weaker than it looked.** Sizes first:
+
+| Module                                       | Minified  | Gzipped |
+| -------------------------------------------- | --------- | ------- |
+| His shipped `Marginalia` script              | 10.9 KB   | 4.0 KB  |
+| Our Phase 1 prototype (no storage, no export) | 5.6 KB    | 2.8 KB  |
+
+So the real component lands somewhere near his — call it 4–5 KB gzipped, against Literata's 394 KB on every article page. That is the entire saving the stub is protecting.
+
+And it isn't free. Perceived lag, measured from the reader finishing their selection to the button appearing, on the dev server (which adds ~170 ms of transform overhead and one extra request that production wouldn't have):
+
+| Selection           | +150 ms RTT | +300 ms RTT | +600 ms RTT |
+| ------------------- | ----------- | ----------- | ----------- |
+| Drag-select, ~400ms | 30 ms       | ~320 ms     | ~900 ms     |
+| Double-click        | ~500 ms     | ~800 ms     | ~1400 ms    |
+
+Production would be roughly one RTT rather than two plus the dev overhead, so: a drag-select hides the fetch behind the drag, while a **double-click selection — which is instant, with no drag to hide behind — waits about one RTT**, up to ~600 ms on a bad connection.
+
+Triggering the import on `pointerdown` in the prose rather than on `selectionchange` was worth testing and turned out not to help measurably (~15 ms), because the first `selectionchange` already fires almost immediately on pointer-down.
+
+**Recommendation: ship the module on article pages and drop the stub.** 4–5 KB gzipped is noise next to the fonts, nothing is perceptibly delayed, and it removes a moving part from a feature that already has plenty. "Only where it's needed" is still satisfied at page granularity — articles only, never notes or index pages — and with no annotations stored the module's whole job is one cheap `selectionchange` listener. The stub stays a reasonable option if minimum bytes matters more than the double-click case; the scratchpad keeps it behind `?seed=0` either way.
 
 ### Decisions taken
 
-| Decision    | Call                                                                      |
-| ----------- | ------------------------------------------------------------------------- |
-| Note face   | A script hand as `--font-handwriting`. Try Caveat, Kalam, Indie Flower    |
-| Breakpoint  | Start at the TOC's `1400px`, expect to tune down after eyeballing it      |
-| Note marker | A numeral in the handwriting face — try it and see                        |
-| Invitation  | Selection popover only to start; a standing prompt is a likely follow-up  |
-| Enabling    | All articles except those with a `redirectURL`                            |
-| Payload     | Open — Phase 1 measures the lazy stub against shipping the module         |
+| Decision    | Call                                                                     |
+| ----------- | ------------------------------------------------------------------------ |
+| Note face   | **Caveat**, variable 400–700, as `--font-handwriting`. Numerals at 700    |
+| Breakpoint  | `1400px`, matching the TOC. Works to ~1366; don't go below ~1280         |
+| Note marker | Grey handwritten numeral, renumbered in document order. Settled          |
+| Ink         | Grey, not coral — coral is already the footnote and link colour          |
+| Underline   | Two theme-keyed data URIs, switched on `[data-theme='dark']`             |
+| Invitation  | Selection popover only to start; a standing prompt is a likely follow-up |
+| Enabling    | All articles except those with a `redirectURL`                           |
+| Payload     | Ship the module on article pages; drop the stub                          |
+| Blocks      | Paragraphs, blockquotes and list items only — no headings                |
 
 ## The plan
 
-### Phase 1 — Scratchpad experiment
+### Phase 1 — Scratchpad experiment ✅
 
-De-risk in `src/pages/scratchpad.astro` before writing anything real, the same way the command palette was built.
+**Done.** The live experiment is **`src/pages/scratchpad.astro`** plus `src/pages/_scratchpad/margin/` — a real article rendered through the real `Article` layout, with a throwaway prototype layered on top. A "Margin lab" panel (bottom left) switches ink, underline technique, numerals, layout mode and arrow weight; each is also a URL param, e.g. `?mode=margin&numerals=700`. Now the face is decided the lab carries Caveat only — the Kalam and Indie Flower files and switches are gone. `?seed=0` starts empty and exercises the lazy-load stub. Selecting text adds a real note you can type into, so it's worth playing with before Phase 3 starts.
 
-- [ ] Reproduce the tapered-bezier connector in isolation and confirm it reads as ink at our type sizes, not just his.
-- [ ] Test the `mask-image` underline against the two-data-URI approach in both themes. Pick one.
-- [ ] Confirm right-gutter absolute positioning holds at 1400px with `--measure-standard: 70ch` in Literata — measure the real gutter width, check a two-line note fits comfortably, then push the breakpoint down to find where it stops working.
-- [ ] Try all three shortlisted faces in the real gutter. Calibrate each one's own size and line-height. Judge twice: as a margin note, **and** at display size as a general site face.
-- [ ] Set the note colour per theme and check thin strokes hold up on charcoal, not just beige.
-- [ ] Set a reference numeral in the chosen face and see whether it reads as a marker at 400 or needs a heavier weight. **This decides whether we need a variable face at all**, so answer it before vendoring anything.
-- [ ] Measure the lazy-import stub. Confirm no visible lag between selection and button.
+Everything it established has been folded into the sections above. The checklist and what came back:
+
+- [x] **Tapered-bezier connector reads as ink** at our type sizes, reimplemented in `_scratchpad/margin/ink-arrow.ts` (pure, no DOM — promote it to `src/utils/` in Phase 3). His constants transfer unchanged; the `weight` multiplier the lab exposes wasn't needed, 1× is right.
+- [x] **Underline technique: two theme-keyed data URIs.** Both alternatives fail in WebKit — see [Theming](#theming). The mask idea the plan preferred is dead: masks hide the text too, and WebKit loses the marked text completely once a mark wraps.
+- [x] **Right gutter holds up, via the grid area** rather than a width calculation — see [Layout](#layout-the-right-gutter-not-a-new-grid). Measured, with margin mode forced on:
+
+  | Viewport | Prose | Gutter | Note width | Worst note | Worst collision push |
+  | -------- | ----- | ------ | ---------- | ---------- | -------------------- |
+  | 1440px   | 816px | 312px  | 234px      | 2 lines    | 11px                 |
+  | 1400px   | 816px | 292px  | 215px      | 3 lines    | 30px                 |
+  | 1366px   | 816px | 275px  | 198px      | 3 lines    | 30px                 |
+  | 1280px   | 816px | 232px  | 155px      | 4 lines    | 58px                 |
+  | 1200px   | 801px | 199px  | 123px      | 4 lines    | 58px                 |
+  | 1024px   | 769px | 127px  | 53px       | 10 lines   | 207px                |
+
+  `1400px` is comfortable and matches the TOC. It still works at `1366px`; by `1280px` notes are 4 lines and drifting ~60px from their marks; below `1200px` it falls apart. So there's room to tune down to ~1366px, but not to ~1200px. Note the arrow gap and right padding eat 78px of every gutter — worth reclaiming if we ever want a lower breakpoint.
+
+- [x] **All three faces tried in the real gutter and at display size**, each calibrated to its own size and line height — see [The handwriting face](#the-handwriting-face). Screenshots in `docs/tasks-todo/temporary/margin-lab/`.
+- [x] **Ink set per theme** and checked on charcoal. Also killed the coral idea, for a reason worth keeping: coral is the author's footnote and link colour.
+- [x] **Numerals answered, and they decide the face question** — Caveat needs its 700, Kalam doesn't need one, Indie Flower can't have one.
+- [x] **Lazy stub measured** — and the recommendation is now to drop it. See [Payload](#payload).
+
+Three things the prototype turned up that weren't on the list:
+
+- **Numbering must follow document order**, not creation order. His doesn't, and inline mode makes it obvious.
+- **Headings are a bad annotation target** on this site — our `h2` has a `border-bottom` that the underline collides with. Dropped from the block selector.
+- **Aligning the note's first line** with the mark beats centring the note box, once notes run to more than one line.
+- **Layout must not reparent notes** — see [Render modes](#render-modes). Found by trying to type into a prototype note and getting one character in before focus vanished.
+- **Deleting an empty note on blur is the wrong interaction.** The prototype does it (there being no editor) and it reads as the feature throwing your annotation away. Evidence for keeping his explicit Cancel/Save rather than improving on it.
+
+Left for Phase 3 to confirm rather than chased here: that `position: relative` on `.longform-prose` moves nothing on a real article (the prototype's own page renders `LCVid`, callouts, tables and code blocks correctly with it applied, which is good evidence but not a before/after diff).
 
 ### Phase 2 — Anchoring and storage as pure functions
 
@@ -340,7 +441,7 @@ De-risk in `src/pages/scratchpad.astro` before writing anything real, the same w
 ### Phase 3 — The component
 
 - [ ] `src/components/layout/MarginAnnotations.astro`, barrel-exported, mounted in `Article.astro` for every article bar `redirectURL` ones, with `data-annotations-content` passed through `LongFormProseTypography`.
-- [ ] Vendor the chosen face in `public/fonts/` with the version-dated filename convention, `@font-face` in `_foundation.css`, a `--font-handwriting` token beside the other four, and **no preload entry**. Docs and styleguide are Phase 6.
+- [ ] Vendor Caveat in `public/fonts/` with the version-dated filename convention, `@font-face` in `_foundation.css`, a `--font-handwriting` token beside the other four, and **no preload entry**. Docs and styleguide are Phase 6.
 - [ ] Server-render all chrome hidden. Styles in the component's `<style is:global>` — marks and notes are injected into slotted MDX content, so scoping can't reach them.
 - [ ] Selection handling, the fixed selection button, save/edit/delete, `Escape` to cancel. No standing invitation prompt for now.
 - [ ] Margin layout: the sorted collision cursor, generated connectors, and the full set of reflow triggers.
@@ -363,7 +464,7 @@ De-risk in `src/pages/scratchpad.astro` before writing anything real, the same w
 
 The face is a site-level token, so it has to land everywhere the other four are documented — otherwise the next person or agent reaches for an inline `font-family`.
 
-- [ ] **`docs/developer/fonts.md`** — a full per-font section following the existing pattern: source information (version, repository, build date), variable axes with CSS examples, OpenType features. Plus the overview-table row and the custom-properties list.
+- [ ] **`docs/developer/fonts.md`** — a full `## Caveat` section following the existing per-font pattern: source information (version, repository, build date), variable axes with CSS examples, OpenType features. Plus the overview-table row and the custom-properties list.
 - [ ] **`docs/developer/fonts.md` preload note** — the existing copy explains which faces preload and why. Say explicitly that this one doesn't, and why, so nobody "fixes" it later.
 - [ ] **`docs/developer/design-tokens.md`** — add `--font-handwriting` to the font-token table (currently four rows) with a one-line purpose.
 - [ ] **`src/pages/styleguide/foundations.astro`** — a fifth `<SGTypeSpecimen>` in the `.type-specimens` block. Its intro prose says "five distinct usage contexts, covered by four font stacks", so that sentence needs rewriting rather than appending to.
@@ -383,6 +484,10 @@ The face is a site-level token, so it has to land everywhere the other four are 
 
 ## Reference material
 
-`docs/tasks-todo/temporary/marginalia-reference/` holds the decompiled original — the Prettier-formatted script, the extracted CSS, and the server-rendered markup — pulled from the live site on 2026-09-11. `docs/tasks-todo/temporary/font-specimen/` holds the face comparison (`specimen-light.png`, `specimen-dark.png`, regenerate with `node shoot.mjs`).
+All gitignored, under `docs/tasks-todo/temporary/`:
+
+- **`marginalia-reference/`** — the decompiled original (Prettier-formatted script, extracted CSS, server-rendered markup), pulled from the live site on 2026-09-11.
+- **`font-specimen/`** — the first flat face comparison that produced the shortlist (`node shoot.mjs`).
+- **`margin-lab/`** — the Phase 1 evidence and the harnesses that made it, all pointed at `bun run dev`: `inspect.mjs` (layout geometry and console), `shoot-lab.mjs` / `shoot-mark.mjs` / `shoot-wrap.mjs` (screenshots, `BROWSER=webkit` for Safari), `sample-underline.mjs` (reads ink colour out of a PNG), `gutter.mjs` (the gutter table), `lag-perceived.mjs` (the payload numbers) and `grid.mjs` (composites PNGs into a comparison sheet). The `cmp-*.png` files are the comparisons themselves.
 
 Both are gitignored and will eventually be cleaned up, which is why everything load-bearing is written into this document. The originals are useful for checking a detail, not as a dependency.
