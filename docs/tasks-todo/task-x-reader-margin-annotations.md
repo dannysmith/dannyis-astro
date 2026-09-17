@@ -430,13 +430,27 @@ Three things the prototype turned up that weren't on the list:
 
 Left for Phase 3 to confirm rather than chased here: that `position: relative` on `.longform-prose` moves nothing on a real article (the prototype's own page renders `LCVid`, callouts, tables and code blocks correctly with it applied, which is good evidence but not a before/after diff).
 
-### Phase 2 — Anchoring and storage as pure functions
+### Phase 2 — Anchoring and storage as pure functions ✅
 
-- [ ] `src/utils/annotations.ts`: record type, `fnv1a`, `blockId`, offset↔range conversion, serialise/deserialise, validation predicate.
-- [ ] Fuzzy re-anchoring: `prefix + quote + suffix` in the block, then neighbours, then `quote` alone.
-- [ ] Orphan state for notes that can't be re-anchored — kept in storage, surfaced as detached.
-- [ ] Versioned storage key.
-- [ ] Unit tests in `tests/unit/annotations.test.ts` — round-trip; exact restore; restore after an edit earlier in the same paragraph; restore after the quote itself is edited (must orphan, not mis-anchor); duplicate reference renumbering; corrupt and absent `localStorage`.
+**Done.** `src/utils/annotations.ts` (~270 lines) with 44 tests in `tests/unit/annotations.test.ts`.
+
+- [x] Record type, `fnv1a`, `blockId`, `createAnnotation`, `serialiseAnnotations` / `parseAnnotations`, `isStoredAnnotation`, `storageKey`, `normaliseArticleId`.
+- [x] Fuzzy re-anchoring in `findAnchor`, scored by surviving context.
+- [x] Orphan state: `{ status: 'orphaned' }`, with the record handed back untouched so nothing is rewritten on the strength of a failed search. Showing it as detached is Phase 3's job.
+- [x] Versioned storage key: `annotations:v1:<pathname>`.
+- [x] Unit tests, including the cases the plan named and a few it didn't.
+
+**The module is DOM-free, and the range conversion moved to Phase 3.** Vitest here runs in plain Node with no jsdom or happy-dom, and adding one for a single function isn't worth a dependency — the real DOM path gets covered by the Phase 5 e2e tests instead. That constraint turned out to be the right seam anyway: anchoring is entirely string work over block text, so the part that fails silently is the part under test, and `rangeFromOffsets` (already written in the prototype) stays with the component.
+
+Three decisions worth knowing before Phase 3 uses this:
+
+- **`blockId` is not a gate.** It's stored, and it's a cheap "did this block change?" signal, but a hash mismatch is never a reason to drop a note — that mismatch *is* his silent-data-loss bug. Only the quote's actual presence decides.
+- **Where we left it wins ties.** `findAnchor` scores every occurrence of the quote by how much stored context still surrounds it, but an annotation whose recorded offsets still hold the quote stays put unless another candidate scores *strictly* better. Without that rule, an edit elsewhere in a paragraph can shunt a note onto a different copy of the same phrase.
+- **Ambiguity orphans.** If the recorded position no longer holds the quote, no context survives, and the quote appears in more than one place, it orphans rather than guessing. Attaching a reader's note to the wrong sentence is worse than telling them it came loose. A quote that's unambiguous re-anchors even with no context at all.
+
+`reanchor` wraps `findAnchor` and returns the record that should be stored — coordinates and context refreshed from wherever the quote now is, including when it hasn't moved but the surrounding text has, so records don't rot over successive edits. It returns the original object by identity when nothing needs saving, so the caller can just compare with `!==` to decide whether to write.
+
+**Interface for Phase 3:** collect `{ tag, text }` for the annotatable blocks in document order, call `reanchor(record, blocks)` per stored record, then use `rangeFromOffsets` on the block at `anchor.blockIndex` to build the mark. Reference numerals aren't stored at all — they're computed at layout from document order (Phase 1's finding), which also makes them stable across reloads.
 
 ### Phase 3 — The component
 
