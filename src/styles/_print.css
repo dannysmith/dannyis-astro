@@ -1,0 +1,110 @@
+/* ============================================
+   PRINT
+   ============================================ */
+
+/* Unlayered on purpose: Astro's component <style> blocks are unlayered too, and
+   unlayered beats every layer — a `@layer print` would lose to them. */
+
+@media print {
+  @page {
+    margin: 16mm 14mm;
+  }
+
+  /* The theme script sets `color-scheme` inline on <html>, so in dark mode every
+     light-dark() would resolve dark and print pale text on white paper. Only
+     `!important` outranks an inline style. */
+  :root {
+    color-scheme: light !important;
+  }
+
+  /* `!important` because component roots set their own `display`. */
+  .no-print {
+    display: none !important;
+  }
+
+  .external-arrow,
+  .external::after,
+  :is(h1, h2, h3, h4, h5, h6) > a[href^='#'] {
+    display: none;
+  }
+
+  .external {
+    padding-inline-end: 0;
+  }
+
+  /* ----------- Page breaks ----------- */
+
+  /* `break-after` alone still lets a break slice through the heading itself. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  /* Only self-contained blocks. Not `.note`, which wraps a whole note body —
+     telling a multi-page element not to break buys a blank opening sheet. */
+  figure,
+  blockquote,
+  pre,
+  tr,
+  details,
+  .callout,
+  .bookmark-card,
+  .expressive-code {
+    break-inside: avoid;
+  }
+
+  figcaption {
+    break-before: avoid;
+  }
+
+  /* ----------- Media ----------- */
+
+  /* Height only — capping the inline size lets intrinsic widths reflow Grid. */
+  figure img {
+    max-block-size: 85vh;
+    object-fit: contain;
+  }
+
+  /* Backgrounds don't print by default, and both of these need theirs: code
+     colours are inline per token, and lite-youtube's poster is a background. */
+  lite-youtube,
+  lite-loom,
+  .expressive-code,
+  .expressive-code * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .lyt-playbtn,
+  .lite-loom-playbtn,
+  .lcvid-play,
+  .lcvid-duration-badge,
+  .lcvid-open {
+    display: none;
+  }
+
+  /* Expressive Code scrolls long lines horizontally, which on paper just clips
+     them. Wrap instead — the reset already does this for a bare <pre>. */
+  .expressive-code pre,
+  .expressive-code .ec-line,
+  .expressive-code .code {
+    overflow: visible;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Reveal collapsed content — there's nothing to click on paper. */
+  details::details-content {
+    content-visibility: visible;
+    block-size: auto;
+  }
+
+  details > summary {
+    list-style: none;
+  }
+}

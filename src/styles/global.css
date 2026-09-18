@@ -10,3 +10,5 @@
 @import './_mermaid.css';
 @import './_embed-overrides.css';
 @import './_view-transitions.css';
+/* Last, and deliberately unlayered — see the note at the top of the file. */
+@import './_print.css';

@@ -137,6 +137,10 @@ Everything inherits these styles but UI areas can opt out of most of it using `.
 
 Only for styles specific to long-form reading that shouldn't apply elsewhere. Styles should ONLY be added to this layer via the `LongFormProseTypography.astro` component, or occasionally by other components that need to override their standard styles when used inside a longform container.
 
+### Print Styles
+
+`_print.css` is the whole print stylesheet, imported last from `global.css` and **unlayered on purpose** — Astro's component `<style>` blocks are unlayered too, so a `@layer print` would lose to them. To hide something in print, add `no-print` to the element rather than writing `@media print` in the component; everything else in the file works on bare elements, so new content gets it for free. `bun run shoot` can't check this (it screenshots, it doesn't paginate) — render a real PDF via Playwright's `emulateMedia({ media: 'print' })` + `page.pdf()`, leaving `printBackground` off to match the browser default, and check dark mode too. Covered by `tests/e2e/print.spec.ts`.
+
 ### Where Component Styles Go
 
 **Most component styles go in the `.astro` file's `<style>` block**, not in a CSS file.
