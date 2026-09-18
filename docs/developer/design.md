@@ -139,22 +139,7 @@ Only for styles specific to long-form reading that shouldn't apply elsewhere. St
 
 ### Print Styles
 
-`_print.css` holds the whole print stylesheet and is imported last from `global.css`. It is **unlayered on purpose** — the one file here that isn't in a layer.
-
-Astro's component `<style>` blocks are themselves unlayered (and scoped, so they carry extra specificity). Unlayered declarations beat _every_ declared layer, so a `@layer print` — even declared last — would lose to any component setting its own `display`. Staying unlayered is what actually wins.
-
-Two things still need `!important` on top of that:
-
-- **`color-scheme: light`** — the theme script in `BaseHead.astro` sets `color-scheme` _inline_ on `<html>`, and that inline style survives into print. Without the override, a reader in dark mode gets every `light-dark()` resolved to its dark value: pale beige text on white paper. Only `!important` outranks an inline style. This is the single most important rule in the file.
-- **`.no-print`** — component roots set their own `display` in unlayered scoped styles.
-
-**Hiding something in print:** add `no-print` to the element in markup. Don't add `@media print` blocks to components — the mechanism lives in one place. Current users: `SkipLink`, `MainNavigation` (button and nav), `Footer`, `BackToTopLink`, `MarkdownContentActions`, `TableOfContents`, `Lightbox`, `CommandPalette`, and the `.footer-actions` wrappers in `Article.astro` and `NoteCard.astro`.
-
-Everything else in the file works on bare elements — page breaks, the `@page` margin, image sizing — so new content gets it for free.
-
-**Two deliberate `print-color-adjust: exact` exceptions.** Browsers don't print backgrounds by default, which breaks two things: Expressive Code ships a single dark theme and writes syntax colours inline per token (those pastels land on white paper at very low contrast), and `lite-youtube` paints its poster as a CSS `background-image` (so it prints as an empty box). Both keep their own ink.
-
-**Checking print output:** `bun run shoot` only screenshots — it can't paginate. Render a real PDF instead with Playwright: `page.emulateMedia({ media: 'print' })`, then `page.pdf({ format: 'A4', printBackground: false, preferCSSPageSize: true })`. Leave `printBackground` off, since that's the browser default and the case most likely to look wrong. Test in **both** colour schemes — `browser.newContext({ colorScheme: 'dark' })` is the case that used to be broken. Regressions are covered by `tests/e2e/print.spec.ts`.
+`_print.css` is the whole print stylesheet, imported last from `global.css` and **unlayered on purpose** — Astro's component `<style>` blocks are unlayered too, so a `@layer print` would lose to them. To hide something in print, add `no-print` to the element rather than writing `@media print` in the component; everything else in the file works on bare elements, so new content gets it for free. `bun run shoot` can't check this (it screenshots, it doesn't paginate) — render a real PDF via Playwright's `emulateMedia({ media: 'print' })` + `page.pdf()`, leaving `printBackground` off to match the browser default, and check dark mode too. Covered by `tests/e2e/print.spec.ts`.
 
 ### Where Component Styles Go
 
