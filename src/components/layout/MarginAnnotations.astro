@@ -12,9 +12,9 @@
 import { Icon } from 'astro-icon/components'
 ---
 
-<aside class="reader-margin" aria-label="Reader margin" data-reader-margin>
+<aside class="reader-margin" aria-label="Reader margin" data-reader-margin data-prose-chrome>
   <svg class="annotation-connectors" aria-hidden="true"></svg>
-  <form class="annotation-editor" data-annotation-editor hidden>
+  <form class="annotation-editor" data-annotation-editor data-prose-chrome hidden>
     <label class="sr-only" for="annotation-note">Your note</label>
     {/* No `rows`, so the reset's `field-sizing: content` grows it as you type. */}
     <textarea id="annotation-note" maxlength="500"></textarea>
@@ -25,8 +25,12 @@ import { Icon } from 'astro-icon/components'
   </form>
 </aside>
 
-<button class="annotation-invite" type="button" popover="manual" data-annotation-invite
-  >Write in margin</button
+<button
+  class="annotation-invite"
+  type="button"
+  popover="manual"
+  data-annotation-invite
+  data-prose-chrome>Write in margin</button
 >
 
 {/* Cloned per note by the script — the icons have to be rendered at build time. */}
@@ -517,6 +521,9 @@ import { Icon } from 'astro-icon/components'
       note.id = `annotation-${record.id}`
       note.setAttribute('role', 'note')
       note.tabIndex = 0
+      // A reader's note sits in the prose in inline mode, but isn't body prose:
+      // without this the article's end mark disappears once anyone annotates it.
+      note.dataset.proseChrome = ''
 
       const textNode = document.createElement('span')
       textNode.className = 'annotation-note-text'

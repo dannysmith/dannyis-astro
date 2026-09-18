@@ -137,6 +137,12 @@ Everything inherits these styles but UI areas can opt out of most of it using `.
 
 Only for styles specific to long-form reading that shouldn't apply elsewhere. Styles should ONLY be added to this layer via the `LongFormProseTypography.astro` component, or occasionally by other components that need to override their standard styles when used inside a longform container.
 
+#### `data-prose-chrome`
+
+Anything rendered as a direct child of `.longform-prose` that **isn't body prose** — footer actions, the reader margin, footnote containers, reader-written notes — must carry `data-prose-chrome`.
+
+The end mark (the accent glyph closing the last paragraph) renders on the last `<p>` that nothing but chrome follows, so an untagged trailing sibling silently removes it from every article. That happened once already: the end mark was added in May 2026, and a wrapper `div` introduced in July left it dead until September, because the rule whitelisted the inner element by class rather than the wrapper. Tag the chrome at the point you add it. `script` and `template` never render and are exempt, as is remark-gfm's generated footnotes section.
+
 ### Print Styles
 
 `_print.css` is the whole print stylesheet, imported last from `global.css` and **unlayered on purpose** — Astro's component `<style>` blocks are unlayered too, so a `@layer print` would lose to them. To hide something in print, add `no-print` to the element rather than writing `@media print` in the component; everything else in the file works on bare elements, so new content gets it for free. `bun run shoot` can't check this (it screenshots, it doesn't paginate) — render a real PDF via Playwright's `emulateMedia({ media: 'print' })` + `page.pdf()`, leaving `printBackground` off to match the browser default, and check dark mode too. Covered by `tests/e2e/print.spec.ts`.
