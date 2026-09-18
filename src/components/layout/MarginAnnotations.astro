@@ -15,9 +15,11 @@
   <svg class="annotation-connectors" aria-hidden="true"></svg>
   <form class="annotation-editor" data-annotation-editor data-prose-chrome hidden>
     <label class="sr-only" for="annotation-note">Your note</label>
-    {/* No `rows`: its absence is what turns on the reset's `field-sizing: content`,
+    {
+      /* No `rows`: its absence is what turns on the reset's `field-sizing: content`,
         so the field grows as you type. Don't add `rows="1"` to make it start
-        short — that switches the growing off. The starting height is CSS. */}
+        short — that switches the growing off. The starting height is CSS. */
+    }
     <textarea id="annotation-note" maxlength="500"></textarea>
     <div class="annotation-editor-actions">
       <button type="button" data-annotation-cancel>Cancel</button>
