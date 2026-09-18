@@ -90,16 +90,6 @@ jobs:
           restore-keys: |
             astro-cache-${{ runner.os }}-
 
-      # One-off: the link preview images moved into the shared mirror cache.
-      # Carry the restored ones across, so links that have since died keep the
-      # image they had. Delete this step once it has run on main.
-      - name: Migrate link preview image cache
-        run: |
-          if [ -d node_modules/.astro/link-cache/images ] && [ ! -d node_modules/.astro/mirrored-images/links ]; then
-            mkdir -p node_modules/.astro/mirrored-images
-            mv node_modules/.astro/link-cache/images node_modules/.astro/mirrored-images/links
-          fi
-
       - name: Build site
         run: bun run build
 

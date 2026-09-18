@@ -164,9 +164,9 @@ It's computed from the content store, which is by definition what the build load
 
 ### After merging
 
-- [ ] Confirm the deploy from `main` succeeds, its run is named after the commit as before, and `https://danny.is/atproto-state.json` is live.
-- [ ] Confirm bookmark cards still have their images (the one-off cache migration ran), then delete the `Migrate link preview image cache` step from `deploy.yml`.
-- [ ] Run `Detect AT Protocol changes` by hand and confirm it reports no change.
+- [x] Confirm the deploy from `main` succeeds, its run is named after the commit as before, and `https://danny.is/atproto-state.json` is live. (Merged as #162. 248 records loaded in CI, and the live manifest's fingerprint matches a local build.)
+- [x] Confirm bookmark cards still have their images (the one-off cache migration ran), then delete the `Migrate link preview image cache` step from `deploy.yml`. (All eight live posts with bookmark cards serve their images from `/mirrored/links/`, none reference the old path.)
+- [x] Run `Detect AT Protocol changes` by hand and confirm it reports no change. (13 seconds end to end; the script itself about one.)
 - [ ] Change a book in BookHive; confirm exactly one `atproto <state>` deploy fires and `/scratchpad/books` updates.
 - [ ] Watch for a day: quiet when nothing changes, no repeat dispatches.
 
