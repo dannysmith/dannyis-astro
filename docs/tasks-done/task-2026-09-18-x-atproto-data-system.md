@@ -168,7 +168,7 @@ It's computed from the content store, which is by definition what the build load
 - [x] Confirm bookmark cards still have their images (the one-off cache migration ran), then delete the `Migrate link preview image cache` step from `deploy.yml`. (All eight live posts with bookmark cards serve their images from `/mirrored/links/`, none reference the old path.)
 - [x] Run `Detect AT Protocol changes` by hand and confirm it reports no change. (13 seconds end to end; the script itself about one.)
 - [x] Change a book in BookHive; confirm exactly one `atproto <state>` deploy fires and `/scratchpad/books` updates. (Three books left "reading": detection dispatched `atproto 6b4f3150fe9b`, a second check mid-deploy stood down with "a deploy is already underway", the page went from 11 books to 8, and the next check reported no change.)
-- [ ] Watch for a day: quiet when nothing changes, no repeat dispatches.
+- Not yet observed when this task was closed: the workflow running on its own schedule. Every check above was triggered by hand. Danny is keeping an eye on it over the following days — it should stay quiet when nothing changes and never dispatch the same state twice.
 
 ## Decisions taken
 
@@ -187,7 +187,7 @@ It's computed from the content store, which is by definition what the build load
 ## Out of scope
 
 - **A real reading page.** Shelf, finished books, ratings, design. Later, once I know what I want.
-- **Scrobbles.** Own task: [task-x-atproto-scrobbles.md](./task-x-atproto-scrobbles.md). It adds the `latest` watch strategy and a loader `limit`, which append-only collections need.
+- **Scrobbles.** Own task: [task-x-atproto-scrobbles.md](../tasks-todo/task-x-atproto-scrobbles.md). It adds the `latest` watch strategy and a loader `limit`, which append-only collections need.
 - **Now playing**, **comments and backlinks**, **health data**, **notes or articles as atproto records**, **private data / Spaces**, **authenticated reads**, **publishing a lexicon of my own**.
 
 ## Notes for later
