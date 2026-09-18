@@ -441,12 +441,12 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
     <h3 id="font-families">Font Families</h3>
     <p>
-      Typography on this site serves five distinct usage contexts, covered by four font stacks.
       Short-form prose and UI elements use Figtree (<code>--font-ui</code>) which works well for
       both use cases and is the default face. Long-form prose uses Literata (<code
         >--font-prose</code
       >), while "display" type uses Geist (<code>--font-display</code>). Code examples and other
-      monospace fonts use a version of Fira Code.
+      monospace fonts use a version of Fira Code. Caveat (<code>--font-handwriting</code>) is used
+      only for annotations readers write in the margins of articles, and loads only once one exists.
     </p>
     <div class="type-specimens">
       <SGTypeSpecimen
@@ -477,6 +477,13 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
         usageTitle="Code"
         cssVar="--font-code"
         description="Code and occasional stylistic monospace."
+      />
+      <SGTypeSpecimen
+        family="Caveat"
+        url="https://fonts.google.com/specimen/Caveat"
+        usageTitle="Margin annotations"
+        cssVar="--font-handwriting"
+        description="A reader's own handwriting in the margins of an article. Nothing else uses it, so it isn't preloaded."
       />
     </div>
 

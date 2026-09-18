@@ -65,6 +65,7 @@ Role-based tokens — **use these in components**, not the raw palette:
 | `--color-border` | Default border colour (10% opacity) |
 | `--color-background-code` | Background for inline code / code blocks |
 | `--color-focus-ring` | Focus outline colour (blue); applied globally by the reset layer |
+| `--color-annotation` | Reader-written margin annotations: note text, underline and arrows. Darker than `--color-text-secondary`, which is too light (4.3:1 on beige) to carry a handwriting face |
 
 There is no `--surface-raised` token. For raised cards/panels, use the `.surface-white` utility (`_utilities.css`), which sets a white-in-light / dark-grey-in-dark background and re-points `--color-background-secondary` for descendants.
 
@@ -100,6 +101,7 @@ Utopia-generated fluid spacing (`--space-3xs` … `--space-3xl`) that scales smo
 | `--font-ui` | Interface elements **and** short-form prose — the document body default (Figtree) |
 | `--font-prose` | Long-form reading: articles, anywhere `.longform-prose` applies (Literata) |
 | `--font-code` | Code blocks, inline code (Fira Code) |
+| `--font-handwriting` | Reader-written margin annotations (Caveat) |
 
 The body defaults to `--font-ui`, so UI and short-form prose share a typeface; long-form articles opt into `--font-prose` via `.longform-prose`. See `fonts.md` for the full font reference.
 
