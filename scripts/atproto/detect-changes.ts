@@ -9,9 +9,13 @@
  * sparse checkout with no `bun install` — so nothing here, or in anything it
  * imports, may import from npm.
  *
- * Always exits 0. Being unable to tell is not a failure worth an email; it just
- * means no rebuild this time. Under GitHub Actions the result is also written
- * to $GITHUB_OUTPUT as `changed`, `state` and `built_at`.
+ * Exits 0 whenever it simply can't tell — no manifest yet, the PDS down. That's
+ * not a failure worth an email; it just means no rebuild this time. Anything
+ * else (a manifest our own build mangled, say) is a bug, and is left to throw:
+ * the run fails, nothing is dispatched, and someone finds out.
+ *
+ * Under GitHub Actions the result is also written to $GITHUB_OUTPUT as
+ * `changed`, `state` and `built_at`.
  */
 
 import { appendFileSync } from 'node:fs'

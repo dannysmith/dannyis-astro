@@ -103,4 +103,27 @@ describe('mirrorImage', () => {
     expect(image).toBeNull()
     expect(onProblem).toHaveBeenCalledWith(expect.stringContaining('not a decodable image'))
   })
+
+  it('is null, not a src for a file that is not there, when the image cannot be written', async () => {
+    await serve(await png(100, 150))
+    // A file where the group's directory should be, so it can never be created.
+    fs.writeFileSync(path.join(cacheDir, 'unwritable'), '')
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const onProblem = vi.fn()
+
+    const image = await mirrorImage('https://images.test/cover.png', {
+      group: 'unwritable',
+      maxPx: 800,
+      onProblem,
+    })
+
+    expect(image).toBeNull()
+    // It's our disk at fault, not the image, so it isn't reported as the image's problem.
+    expect(onProblem).not.toHaveBeenCalled()
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('could not be written'),
+      expect.anything(),
+    )
+    warn.mockRestore()
+  })
 })

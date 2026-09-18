@@ -127,9 +127,15 @@ async function download(
       return null
     }
 
-    const image = await encode(bytes, file, maxPx)
-    if (!image) report(`is not a decodable image: ${imageUrl}`)
-    return image
+    const encoded = await encode(bytes, maxPx)
+    if (!encoded) {
+      report(`is not a decodable image: ${imageUrl}`)
+      return null
+    }
+
+    // Not reported as a problem with the image: writeCache has already said why.
+    if (!(await writeCache(file, encoded))) return null
+    return { src: srcOf(file), width: encoded.width, height: encoded.height }
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'failed'
     report(`${reason}: ${imageUrl}`)
@@ -171,12 +177,14 @@ async function readCapped(response: Response, max: number): Promise<Uint8Array |
   return bytes
 }
 
+interface Encoded {
+  data: Buffer
+  width: number
+  height: number
+}
+
 /** Re-encode to a single webp derivative, no larger than `maxPx` on either edge. */
-async function encode(
-  bytes: Uint8Array,
-  file: string,
-  maxPx: number,
-): Promise<MirroredImage | null> {
+async function encode(bytes: Uint8Array, maxPx: number): Promise<Encoded | null> {
   try {
     const { data, info } = await sharp(bytes)
       .resize({
@@ -188,8 +196,7 @@ async function encode(
       .webp({ quality: WEBP_QUALITY })
       .toBuffer({ resolveWithObject: true })
 
-    await writeCache(file, data, { width: info.width, height: info.height })
-    return { src: srcOf(file), width: info.width, height: info.height }
+    return { data, width: info.width, height: info.height }
   } catch {
     // Not an image, or an encoding sharp can't read. Either way: no image.
     return null
@@ -223,18 +230,28 @@ async function readCache(file: string): Promise<MirroredImage | null> {
   }
 }
 
-async function writeCache(
-  file: string,
-  data: Buffer,
-  size: { width: number; height: number },
-): Promise<void> {
-  // Best-effort: a cache we can't write is a slow build, not a broken one.
+/**
+ * False when the image itself couldn't be written. The built site ships images
+ * from this directory, so a `src` for a file that isn't there would be a broken
+ * image on the page — the caller renders without one instead.
+ *
+ * The sidecar is only a cache: without it the next build downloads again.
+ */
+async function writeCache(file: string, { data, width, height }: Encoded): Promise<boolean> {
+  const base = path.join(MIRROR_CACHE_DIR, file)
+
   try {
-    const base = path.join(MIRROR_CACHE_DIR, file)
     await fs.mkdir(path.dirname(base), { recursive: true })
     await fs.writeFile(`${base}.webp`, data)
-    await fs.writeFile(`${base}.json`, JSON.stringify(size), 'utf-8')
   } catch (error) {
-    console.warn(`Mirrored image cache write failed for ${file}:`, error)
+    console.warn(`Mirrored image could not be written for ${file}:`, error)
+    return false
   }
+
+  try {
+    await fs.writeFile(`${base}.json`, JSON.stringify({ width, height }), 'utf-8')
+  } catch (error) {
+    console.warn(`Mirrored image sidecar could not be written for ${file}:`, error)
+  }
+  return true
 }
