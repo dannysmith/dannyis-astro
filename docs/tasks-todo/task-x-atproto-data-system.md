@@ -2,273 +2,195 @@
 
 ## Overview
 
-This site already **writes** to the ATmosphere — `site.standard.document` records for every article and note, via `scripts/standard-site/` and a post-deploy workflow. See [standard-site.md](../developer/standard-site.md).
+This site already **writes** to the ATmosphere — `site.standard.document` records for every article and note. See [standard-site.md](../developer/standard-site.md). This task builds the other direction: **reading** public records from my PDS and rendering them at build time.
 
-This task builds the other direction: **reading** public records from the PDS and rendering them at build time.
+The point is not any one feature. It's the wiring, so that adding a new atproto-backed source later — books, scrobbles, saved articles, step counts written to a lexicon of my own — is three steps:
 
-The point is not any one feature. It's that adding a new atproto-backed data source should be close to free. If I start using an app that writes restaurants or recipes to my PDS, or I define a lexicon of my own for Apple Watch data and write it from somewhere, putting that on this site should be: add a row to a registry, write a schema, render it. Everything else — fetching, paginating, mirroring blobs, noticing changes, rebuilding — should already be handled.
+1. Add a row to the registry.
+2. Define a collection with a schema.
+3. Render it.
 
-So this is three pieces of plumbing and two features that exercise them:
+Fetching, pagination, surviving a PDS outage, mirroring images onto our own domain, noticing changes and rebuilding should all be handled already.
 
-1. **A read layer** — paginated record fetching, PDS host resolution, blob mirroring.
-2. **A registry** — one list of watched collections that both the build and CI read.
-3. **Change detection** — a cheap poll that fires a rebuild when watched data actually moves.
-
-Books first, because there's real data there already (248 records). Scrobbles second, because they're shaped differently enough to prove the system generalises.
+Books are the worked example because the data exists (248 `buzz.bookhive.book` records). The page itself is deliberately tiny and hidden: **currently-reading only, at `/scratchpad/books`**. A real reading page is a separate piece of work once I know what I want from it.
 
 ### Why build-time, and what that costs
 
-The site stays statically generated and host-agnostic — see [deployment.md](../developer/deployment.md). No adapter, no serverless functions, no server islands. The data lands in `dist/` as HTML like everything else.
+The site stays statically generated and host-agnostic — see [deployment.md](../developer/deployment.md). No adapter, no serverless functions. The cost is staleness, bounded by how quickly we notice a change and rebuild (see Change detection below). The one thing this can't serve is "currently listening", whose records expire in ~10 minutes. That's client-side or nothing, and out of scope.
 
-The cost is staleness, bounded by how often we rebuild. For books, scrobble history and daily metrics that's invisible — nobody notices a reading list that's twenty minutes behind. The one thing it genuinely can't serve is **"currently listening"**, because the now-playing records carry a ~10 minute expiry and are stale before a deploy finishes. That's client-side or nothing, and it's out of scope here.
-
-There's a conceptual line worth holding onto, which also predicts where client-side work will eventually land: **`dist/` should contain HTML derived from my data.** Books, scrobbles, health, whatever I write to my own repo. It should probably *not* contain other people's — Bluesky posts mentioning a page, annotations on an article. Those are comments on my site rather than content of it, and fetching them in the browser is both more honest and always current. Out of scope here, but it's why the read layer is built for build-time use and not generalised to the browser yet.
+A line worth holding: **`dist/` contains HTML derived from _my_ data.** Other people's records (Bluesky replies, annotations on an article) are comments on the site rather than content of it, and belong client-side. Out of scope here.
 
 ### Prior art
 
-[Barry Frost](https://barryfrost.com) has the closest working equivalent — Astro 7, static, nine PDS-backed collections, [writeup](https://barryfrost.com/articles/atmospheric), source at [barryf/barryfrost-v7](https://github.com/barryf/barryfrost-v7). Worth reading before starting. Two things to take from it:
-
-- **`src/lib/pds.ts` is ~80 lines and has no atproto dependencies.** Just `fetch`, an async generator that pages `listRecords`, and backoff on 429/5xx. His `package.json` contains no `@atproto/*` or `@atcute/*` at all. Every Astro atproto loader package I looked at is pre-1.0, single-maintainer and under 100 weekly downloads; none of them is a better dependency than 80 lines we can read.
-- **`cloudflare/pds-poller/`** is a 426-line Worker doing the change detection described below. We're doing the same thing in GitHub Actions instead, but his edge cases are real and hard-won — particularly the comment explaining why `rev` can't be advanced when a collection fetch fails.
-
-We keep `@atproto/api` for the existing write path. It isn't deprecated and there's no reason to churn it. The read path takes no new dependency.
+[Barry Frost](https://barryfrost.com) has the closest equivalent — Astro 7, static, nine PDS-backed collections ([writeup](https://barryfrost.com/articles/atmospheric), [source](https://github.com/barryf/barryfrost-v7)). His `src/lib/pds.ts` is ~80 lines of plain `fetch` with no atproto dependency, and we follow it: **the read path takes no new dependency**. `@atproto/api` stays for the existing write path.
 
 ## What the network actually looks like
 
-Verified against `did:plc:aes3lokiqtv63fk62nwnjeuf` on 2026-09-11. These are the details that shape the design.
+Verified against `did:plc:aes3lokiqtv63fk62nwnjeuf` on 2026-09-11 and re-checked 2026-09-18.
 
-**The PDS host is not `bsky.social`.** It's `bankera.us-west.host.bsky.network`, resolved from the DID document at `https://plc.directory/<did>` via the `#atproto_pds` service endpoint. This matters more than it looks: `listRecords` works fine against the `bsky.social` entryway, but **`com.atproto.sync.*` returns `401 AuthMissing` there** and only works against the real shard. Bluesky reassigns accounts between shards, so resolve it rather than hardcoding — and cache the result.
-
-**Everything we need is unauthenticated.** `listRecords`, `getLatestCommit`, `getRepoStatus`, `describeRepo` and `getBlob` all work with no credentials. The PDS also sends `access-control-allow-origin: *`, so the same calls work from a browser — which is what makes the future client-side work cheap.
-
-**`getLatestCommit` is the cheapest change signal there is:**
-
-```
-GET https://<pds>/xrpc/com.atproto.sync.getLatestCommit?did=<did>
-→ 200, 91 bytes, {"cid":"bafyrei…","rev":"3mv72toilkn2a"}
-→ with If-None-Match: <etag>  →  304, 0 bytes
-```
-
-Rate limit is `3000;w=300` — 3000 per 5 minutes. Polling every 10 minutes uses a rounding error of that. Note the ETag comes from the PDS; relays serve the same endpoint but **don't** send one, so prefer the PDS.
-
-**`rev` is noisy.** It's a logical clock that bumps on *any* write to the repo. There are 1,987 likes and 655 follows in there as of 2026-09-11, so it moves constantly for reasons we don't care about. It's a good negative gate — an unchanged `rev` definitively means nothing changed — but a changed `rev` means almost nothing on its own. Hence the second tier.
-
-**`listRecords` semantics:** `limit` max is 100 (101 is rejected), the default order is reverse-chronological by rkey, and `cursor` is the rkey of the last record returned. It also honours `If-None-Match`.
-
-**Current state of the collections we care about:**
-
-| Collection             | Records | Shape                                       |
-| ---------------------- | ------- | ------------------------------------------- |
-| `buzz.bookhive.book`   | 248     | 61 finished, 35 want-to-read, 4 reading     |
-| `app.bsky.feed.post`   | many    | grows monotonically                         |
-| `site.standard.document` | —     | **written by our own CI — never watch it**  |
+- **Everything we need is unauthenticated**, and the PDS sends `access-control-allow-origin: *`.
+- **The `bsky.social` entryway is enough.** `listRecords` works against it directly, and `com.atproto.sync.getBlob` 302s to the real shard (`bankera.us-west.host.bsky.network` today). So we hardcode `bsky.social` in site config and let the entryway follow shard moves for us. If I ever move PDS, it's a one-line config change. Other `com.atproto.sync.*` calls (e.g. `getLatestCommit`) return `401 AuthMissing` at the entryway and need the real host from the DID doc — we don't use them.
+- **`bsky.network` intermittently 500s on valid requests.** Retry with backoff is not optional.
+- **`listRecords`:** `limit` max 100, reverse-chronological by rkey, `cursor` is the last rkey returned. A cursor can come back even on the final page, so terminate on a short page.
+- **Repo `rev` is noisy** — it bumps on every like and follow (~2,600 of those in the repo). That's why change detection compares per-collection fingerprints and ignores `rev` entirely.
+- **Rate limit** is 3000 requests per 5 minutes. Nothing here gets near it.
+- **Book covers are blobs**, not URLs: `{$type: 'blob', ref: {$link: 'bafkrei…'}, mimeType, size}`, capped at 1MB. Other apps put images on a plain URL instead (Rocksky's `albumCoverUrl`), so the image helper takes either.
 
 ## Design
 
-### 1. The read layer — `src/utils/atproto/`
+### 1. A generic image mirror (generalising the link-preview one)
 
-A small module, shaped like `src/utils/linkPreview/` (which is the existing precedent for "fetches the network at build time, caches on disk, degrades honestly").
+`src/utils/linkPreview/image.ts` already does everything a blob needs: download, re-encode to webp with `sharp`, content-addressed disk cache, real dimensions, and it never fails the build. A blob is just a URL (`…/xrpc/com.atproto.sync.getBlob?did=…&cid=…`). So rather than copy ~300 lines, lift the core out and make link previews one consumer of it.
 
-| File        | Does                                                                     |
-| ----------- | ------------------------------------------------------------------------ |
-| `pds.ts`    | Host resolution, `fetchWithRetry`, `listRecords` async generator          |
-| `blob.ts`   | Blob ref → mirrored local webp, content-addressed disk cache              |
-| `loader.ts` | `atprotoLoader()` — a Content Layer loader built on the above             |
-| `index.ts`  | Barrel                                                                    |
+- **`src/utils/mirrorImage.ts`** — `mirrorImage(url, { group, maxPx, onProblem? })` → `{ src, width, height } | null`. Owns the download, size cap, encode, cache read/write and in-flight dedup.
+- **`linkPreview/image.ts`** shrinks to a thin `fetchPreviewImage` wrapper: group `links`, the preview/favicon sizes, banner-vs-logo `shape` (derived from width/height), and link-health reporting via `onProblem`.
+- **`src/lib/link-preview-images-integration.mjs` → `mirrored-images-integration.mjs`**, copying the tree recursively at `astro:build:done` and serving it in dev.
+- **Sidecars stop storing `src`** — derive it from the key on read. That makes the cache relocatable, which the migration below relies on.
 
-`pds.ts` carries the whole client surface:
+Everything is organised by group, on disk and in the URL. Groups are named for the feature: `links`, `books`, later `scrobbles`. The cache stays inside `node_modules/.astro`, so the existing `actions/cache` step covers it.
 
-- `resolvePdsHost(did)` — DID doc lookup, memoised per build.
-- `fetchWithRetry(url)` — exponential backoff on 429/500/502/503/504 and network errors, immediate return on genuine 4xx. Not optional: `bsky.network` shards intermittently 500 on valid requests, and without this a single blip fails the whole build.
-- `listRecords(collection, { did })` — async generator, pages at `limit=100` until the cursor runs out. Terminate on a short page rather than trusting the cursor to be absent.
+| Where  | Path                                                     |
+| ------ | -------------------------------------------------------- |
+| Cache  | `node_modules/.astro/mirrored-images/<group>/<key>.webp` |
+| Served | `/mirrored/<group>/<key>.webp`                           |
 
-`loader.ts` wraps that into an Astro [Content Layer loader](https://docs.astro.build/en/reference/content-loader-reference/):
+**Migration.** The cached images for links that have since died are irreplaceable, so don't orphan them: a one-off step in `deploy.yml` before the build moves `link-cache/images/` to `mirrored-images/links/` if the old directory exists. Remove the step once it has run. `IMAGE_VERSION` does not change, so keys still match.
 
-```ts
-store.set({
-  id: rkey,
-  data: transform(record.value),
-  digest: generateDigest(record.cid),
-})
-```
+### 2. The read layer — `src/utils/atproto/`
 
-Using the record CID as the digest is what plugs this into `experimental.incrementalBuild` (already on — see [deployment.md](../developer/deployment.md#incremental-builds)). Routes return `cacheKey` from `contentCacheKey()` in `src/utils/content.ts`, exactly as the markdown collections do, so a rebuild triggered by one changed book re-renders only the pages that book touches.
+| File             | Does                                                                  |
+| ---------------- | --------------------------------------------------------------------- |
+| `pds.ts`         | `fetchWithRetry`, `listRecords` async generator. Plain `fetch`        |
+| `fingerprint.ts` | `fingerprint(records)` — hash of sorted `rkey:cid` pairs              |
+| `loader.ts`      | `atprotoLoader({ nsid })` — a Content Layer loader                    |
+| `image.ts`       | `atprotoImage()` — blob ref or URL → mirrored image; `blobRef` schema |
 
-### 2. Blob mirroring
+`pds.ts` and `fingerprint.ts` must stay free of `astro:*` and npm imports — the change-detection script runs them under bun with **no install step**.
 
-Book covers are blobs, not URLs — `{$type: 'blob', ref: {$link: 'bafkrei…'}, mimeType, size}`, capped at 1MB by BookHive's lexicon. They're fetched from `com.atproto.sync.getBlob?did=<did>&cid=<link>`, which is public (verified: 200, `image/jpeg`, 23,464 bytes).
+**The loader must never fail the build.** Astro's example loader clears the store then fetches, so a PDS blip would stop me shipping an article. The store persists in `node_modules/.astro` between builds, so instead:
 
-Not everything is a blob, though — Rocksky puts a plain `albumCoverUrl` on its CDN instead. So `blob.ts` takes either a blob ref or a URL and returns a local path.
+- Fetch every record first. Only then reconcile the store: `set` what came back, `delete` ids that didn't.
+- If the fetch fails after retries: warn, leave the store as the last build left it.
+- If one record fails the schema (a third-party app changed its lexicon): warn and skip that record.
+- `digest` is the record CID, so `store.set` skips unchanged entries and per-record routes can use `contentCacheKey()` later.
 
-The mechanism copies `linkPreview/image.ts` and its integration almost exactly, because that pattern is already proven twice in this repo:
-
-- Download, re-encode to webp with `sharp`, write content-addressed into `node_modules/.astro/atproto-blobs/`.
-- An inline integration mirroring `src/lib/link-preview-images-integration.mjs`: `astro:build:done` copies the cache into `dist/atproto-blobs/`, `astro:server:setup` serves it from the cache in dev.
-- Rides the existing `actions/cache` step for `node_modules/.astro`, so CI needs no new setup.
-
-This means no page ever hotlinks `bsky.network`, and covers survive a book being deleted upstream.
+**Images are mirrored at render time**, the way `BookmarkCard` does it — `await atprotoImage(entry.data.cover, 'books')` in the template. Only covers a page actually shows get downloaded (4 today, not 248), and the loader needs no transform hook.
 
 ### 3. The registry — `src/config/atproto.ts`
 
-The single source of truth, read by three consumers: the content config, the freshness checker, and the state manifest.
-
 ```ts
-export const ATPROTO_SOURCES = [
-  { collection: 'books', nsid: 'buzz.bookhive.book', watch: 'digest' },
-] as const
+export const ATPROTO_SOURCES = {
+  books: { nsid: 'buzz.bookhive.book', watch: 'digest' },
+} as const
 ```
 
-**The one real constraint: this module must not import anything from `astro:`.** The freshness checker runs under bun in CI with no Astro context. `src/utils/standard-site.ts` already has this property and is imported by both the build and `scripts/standard-site/`, so the shape is established.
+Two consumers: `src/content.config.ts` (`loader: atprotoLoader(ATPROTO_SOURCES.books)`, schema alongside the other collections) and the state manifest. `watch: false` loads a collection without triggering rebuilds for it.
 
-Zod schemas stay in `src/content.config.ts` with the other collections; the registry carries only what both consumers need.
+DID, handle and PDS host move to a new `atproto` block in `src/config/site.ts`; `standardSite` keeps `publicationUri` and `since`.
 
 ### 4. Change detection
 
-Two tiers, because the cheap one is nearly free and the expensive one shouldn't run most of the time.
+**Polling from GitHub Actions is the right fit.** atproto has no webhooks — everything push-shaped (firehose, Jetstream) is a WebSocket needing an always-on consumer, and I found no hosted service that turns it into an HTTP call. The repo is public, so Actions minutes are free; the only real costs are GitHub's cron jitter and noise in the Actions tab.
 
-**Tier 1 — has anything at all changed?** `getLatestCommit` with `If-None-Match`. A 304 ends the check in zero bytes. This is the common case overnight.
-
-**Tier 2 — did anything we care about change?** Only runs when `rev` moved. Per-collection, with the strategy declared in the registry, because the right answer differs by collection shape:
-
-| `watch`    | Method                            | Requests     | Catches                | Use for        |
-| ---------- | --------------------------------- | ------------ | ---------------------- | -------------- |
-| `digest`   | Full `rkey → cid` map, diffed     | `ceil(n/100)`| create, update, delete | Books, curated |
-| `latest`   | Newest rkey only (`limit=1`)      | 1            | create only            | Scrobbles, logs|
-
-`digest` is Barry's approach and is the correct one where records get edited in place — a book's status changes from `reading` to `finished` without its rkey moving, and a "newest record" check would miss that entirely. `latest` exists because append-only collections make the full scan pathological: 248 books is 3 requests, but a few years of scrobbles would be dozens, every poll, to detect something a single request proves.
-
-**Two rules that are easy to get wrong:**
-
-- **Never watch `site.standard.document`.** Our own post-deploy workflow writes those records, so watching them means every deploy triggers another deploy. Barry hit this and left a comment about it.
-- **Don't advance the stored `rev` if any collection fetch failed.** Advancing it means tier 1 short-circuits every later run until something unrelated changes, silently deferring detection of whatever is already sitting in the failed collection. Withhold it and the next run rescans.
-
-**If this ever gets slow**, the escape hatch is `com.atproto.sync.getRepo?did=<did>&since=<rev>`, which returns a CAR of everything changed since a revision in **one** request regardless of collection count — verified at 59 bytes for no change and 105KB for a week's worth, against a full repo of only 1.7MB. It needs a CAR parser (`@atcute/car`), and the PDS rejects revisions it no longer retains, so it needs a full-scan fallback. Not worth the dependency yet. Worth knowing it's there.
-
-### 5. State — `dist/atproto-state.json`
-
-The checker needs to know what the last successful build actually saw. Three options were considered:
-
-- **A committed file** — works, but adds bot commits and a push-loop guard.
-- **The Actions cache** — entries are immutable (you can't overwrite a stable key, you have to encode the value *in* the key and use `restore-keys`), and anything untouched for 7 days is evicted.
-- **A build-emitted manifest** — the build writes what it loaded; the checker fetches it from the live site.
-
-The third is the best fit and follows `dist/redirects.json`, which already exists for exactly this reason — deploy-target-neutral state emitted by the build. It needs no CI state at all, and it's **self-healing**: if a build fails, the deployed manifest doesn't advance, so the next check still sees a difference and retries.
-
-The manifest must record **what the build actually loaded**, not a fresh fetch at the end — otherwise a record written during the build gets marked as shipped when it isn't in the output. So the loaders accumulate fingerprints and an integration writes them out at `astro:build:done`, the same hook Pagefind and link previews already use.
+**State: a build-emitted manifest.** `src/pages/atproto-state.json.ts`, an endpoint like `redirects.json.ts`, reads each registry source with `getCollection()` and emits:
 
 ```json
 {
-  "rev": "3mv72toilkn2a",
-  "collections": {
-    "buzz.bookhive.book": { "watch": "digest", "fingerprint": "a1b2c3…", "count": 248 }
-  }
+  "did": "did:plc:…",
+  "host": "bsky.social",
+  "builtAt": "2026-09-18T10:00:00Z",
+  "sources": [{ "nsid": "buzz.bookhive.book", "fingerprint": "a1b2…", "count": 248 }]
 }
 ```
 
-### 6. The CI workflow
+It's computed from the content store, which is by definition what the build loaded — no state threaded between loaders and integrations. It's self-healing (a failed build doesn't advance it), and it makes the detection script config-free: everything it needs to know is in the manifest, so a newly added source is watched from its first deploy with no workflow change.
 
-`.github/workflows/atproto-freshness.yml`, modelled on the existing `update-toolbox.yml`, which already does scheduled-check → detect-change → trigger-deploy.
+**The script — `scripts/atproto/detect-changes.ts`.** Fetch `https://danny.is/atproto-state.json`; for each source, page `listRecords`, compute the same `fingerprint()`, compare. For books that's 1 + 3 requests. Any error — manifest 404 (before the first deploy carrying one), PDS unreachable, a collection failing — means **no dispatch**, a logged warning, exit 0.
 
-Runs on a schedule every ~10 minutes at an offset minute (the top of the hour is when GitHub's scheduler is most congested), plus `workflow_dispatch`. On a detected change it calls `gh workflow run deploy.yml`, which `deploy.yml` already accepts via its bare `workflow_dispatch:` trigger — so no new plumbing there, and `GITHUB_TOKEN` with `actions: write` is enough. No PAT.
+**The workflow — `.github/workflows/atproto-detect-changes.yml`.** Sparse checkout of `scripts/atproto` and `src/utils/atproto`, `setup-bun`, run the script. No `bun install`, no node_modules. Scheduled every 10 minutes on an offset minute, plus `workflow_dispatch`. On a change it runs `gh workflow run deploy.yml` with `GITHUB_TOKEN` and `actions: write`, as `update-toolbox.yml` already does.
 
-GitHub's `on: schedule` is documented as delayable under load and runs are occasionally dropped outright; reports of 50-60 minute delays are common. That's fine here and explicitly accepted — none of this data is urgent. If something ever needs to-the-minute freshness, the upgrade is a small always-on Jetstream consumer firing `repository_dispatch`, not a tighter cron.
+**The guard — one deploy attempt per detected state.** Needed for two reasons: a deploy takes longer than it sounds, and `deploy.yml` has `cancel-in-progress: true`, so a second dispatch while the first is still running would cancel it, potentially forever; and a broken build or a schema-skipped record would otherwise mean a deploy every 10 minutes indefinitely. So the dispatch carries the detected state as an input (`reason: atproto <hash>`), `deploy.yml` surfaces it via `run-name`, and before dispatching the workflow checks for a run with that name created after the manifest's `builtAt`. If one exists, it's in flight or already failed — skip.
 
-Two things to get right: `concurrency` with `cancel-in-progress: true`, since a superseded check is worthless; and note that **scheduled workflows on public repos are auto-disabled after 60 days of repository inactivity**, which is worth knowing even though this repo is active.
+**Instant rebuilds for writers I control.** Anything of mine that writes to the PDS (a steps pusher, say) can call the `workflow_dispatch` API on `deploy.yml` straight after writing, with a fine-grained PAT. No polling delay, nothing to build here — just a recipe for the docs. Polling stays as the path for third-party apps like BookHive.
+
+**Two rules:**
+
+- **Never put `site.standard.document` in the registry with a `watch`.** Our own post-deploy sync writes those, so every deploy would trigger another.
+- **`standard-site-sync.yml` should skip dispatched deploys.** It diffs the tip commit, so a deploy dispatched by change detection would re-sync whatever posts were in my last push. Idempotent, but pointless work — add `github.event.workflow_run.event != 'workflow_dispatch'` to its `if`.
+
+**If this ever gets slow or GitHub's cron jitter annoys:** a Cloudflare Worker cron running the same comparison (Barry's approach), or `com.atproto.sync.getRepo?since=<rev>` for a one-request diff of the whole repo (needs a CAR parser and the real PDS host). Neither is worth it yet.
 
 ## Proposed approach
 
-### Phase 1 — The read layer
+### Phase 1 — Generalise the image mirror
 
-- [ ] `src/utils/atproto/pds.ts`: `resolvePdsHost`, `fetchWithRetry`, `listRecords` generator. Read Barry's `src/lib/pds.ts` first.
-- [ ] `src/utils/atproto/loader.ts`: `atprotoLoader()` returning an Astro `Loader`, setting `digest` from the record CID.
-- [ ] `src/config/atproto.ts` with the registry, `buzz.bookhive.book` as its only entry. Keep it free of `astro:` imports.
-- [ ] Wire a `books` collection into `src/content.config.ts` with a Zod schema. Status is a four-value enum — `buzz.bookhive.defs#` + `wantToRead` / `reading` / `finished` / `abandoned`. Rating is `stars`, 1–10.
-- [ ] Unit tests in `tests/unit/atproto.test.ts`: pagination across a cursor boundary, short-page termination, retry on 500 then success, immediate return on 404, DID doc parsing.
-- [ ] Confirm `bun run build` loads 248 books and that a second build reuses them.
+- [ ] Lift the core of `linkPreview/image.ts` into `src/utils/mirrorImage.ts`; leave `fetchPreviewImage` as a thin wrapper. Derive `src` on read instead of storing it.
+- [ ] Rename the integration, make the copy recursive, update `astro.config.mjs`.
+- [ ] One-off cache migration step in `deploy.yml`; run the same `mv` locally.
+- [ ] Update `tests/unit/linkPreview.test.ts`, [link-metadata.md](../developer/link-metadata.md), [deployment.md](../developer/deployment.md) and `src/utils/CLAUDE.md` for the new names.
+- [ ] Build and confirm every bookmark card still has its image, served from `/mirrored/links/`.
 
-### Phase 2 — Blob mirroring
+### Phase 2 — Read layer and the books collection
 
-- [ ] `src/utils/atproto/blob.ts`: blob ref *or* URL → mirrored webp, content-addressed in `node_modules/.astro/atproto-blobs/`. Mirror `linkPreview/image.ts`, including its `IMAGE_VERSION`-style cache key.
-- [ ] `src/lib/atproto-blobs-integration.mjs`: `astro:build:done` copies to `dist/`, `astro:server:setup` serves from cache in dev. Register in `astro.config.mjs`.
-- [ ] Add a note to `src/utils/CLAUDE.md` covering the new cache and when its version needs bumping — it sits alongside two existing caches with opposite bump rules, so the distinction needs writing down.
-- [ ] Verify no page hotlinks `bsky.network`, and that a cold cache doesn't fail the build when a blob 404s.
+- [ ] `atproto` block in `src/config/site.ts`; update the `standardSite.did` / `.handle` usages.
+- [ ] `pds.ts`, `fingerprint.ts`, `loader.ts`, `image.ts` as above. Read Barry's `pds.ts` first.
+- [ ] `src/config/atproto.ts` with books as its only row.
+- [ ] `books` collection in `src/content.config.ts`. Status is `buzz.bookhive.defs#` + `wantToRead` / `reading` / `finished` / `abandoned` — strip the prefix in the schema. `stars` is 1–10, optional. `cover` is an optional `blobRef`.
+- [ ] Unit tests: pagination across a cursor, short-page termination, retry on 500 then success, immediate return on 404; loader sets digest from CID, deletes vanished records, keeps the store when the fetch fails, skips a schema-invalid record; fingerprint is order-independent and moves on create, update and delete.
+- [ ] Confirm `bun run build` loads 248 books, and that a build with the network off still succeeds with the previous data.
 
-### Phase 3 — The reading page
+### Phase 3 — The hidden books page
 
-- [ ] A route rendering current reads, recently finished, and the shelf. Decide the URL (see Decisions).
-- [ ] Return `cacheKey` from `getStaticPaths()` via `contentCacheKey()` so incremental builds can skip it.
-- [ ] Reuse existing card patterns rather than inventing a component — check `src/components/ui/` and the `/making` page first.
-- [ ] Styleguide entry for any new visual component, per the house rule.
-- [ ] `bun run shoot /reading` in both themes at 375, 768 and 1440.
+- [ ] `src/pages/scratchpad/books.astro`: books with status `reading` only — cover, title, author. Same shell as `scratchpad.astro`, `noindex, nofollow`. The sitemap filter already excludes `/scratchpad*`.
+- [ ] No new components, no styleguide entry. Check it in both themes.
 
-### Phase 4 — Freshness
+### Phase 4 — Change detection
 
-- [ ] Extend the loaders to accumulate per-collection fingerprints during load.
-- [ ] An integration writing `dist/atproto-state.json` at `astro:build:done` from those fingerprints.
-- [ ] Exclude it from the sitemap in `astro.config.mjs`, alongside the existing `redirects.json` filter.
-- [ ] `scripts/atproto/check-freshness.ts`: fetch the deployed manifest, tier-1 ETag check, tier-2 per-collection check, exit code or `GITHUB_OUTPUT` signalling whether to build.
-- [ ] `.github/workflows/atproto-freshness.yml` on a ~10 minute offset schedule plus `workflow_dispatch`, dispatching `deploy.yml` on change.
-- [ ] Test the failure paths deliberately: PDS unreachable, manifest 404 (first run, before the first deploy carrying one), a collection 404ing. None should trigger a build loop, and none should advance `rev`.
-- [ ] Watch it for a day and confirm it fires on a real book status change and stays quiet otherwise.
+- [ ] `src/pages/atproto-state.json.ts`; exclude it from the sitemap alongside `redirects.json`.
+- [ ] `scripts/atproto/detect-changes.ts`, with unit tests for the comparison and each no-dispatch failure path.
+- [ ] `reason` input and `run-name` on `deploy.yml`; skip-on-dispatch condition on `standard-site-sync.yml`.
+- [ ] `atproto-detect-changes.yml` with the guard. `concurrency` with `cancel-in-progress: true` — a superseded check is worthless.
+- [ ] Prove it for real: change a book's status in BookHive and confirm one deploy fires; confirm it stays quiet otherwise, and that a deliberately broken build doesn't loop.
 
-### Phase 5 — Generalise, with scrobbles as the test
+### Phase 5 — Documentation
 
-Sign up for teal.fm and Rocksky first and let some history accumulate — this phase needs real records to be a real test.
-
-- [ ] Add a scrobbles source to the registry with `watch: 'latest'`. **If adding it needs more than a registry row, a schema and a render, the system isn't finished** — that's the acceptance test for this whole task.
-- [ ] Pick a service. `fm.teal.feed.play` is the more widely-read schema (Rocksky writes it too, as does multi-scrobbler); `app.rocksky.scrobble` has a working public API and puts album art on a plain URL rather than needing MusicBrainz lookups. Running multi-scrobbler feeds both.
-- [ ] Mind the unit mismatch: **teal's `duration` is seconds, Rocksky's is milliseconds.**
-- [ ] Something small on the site — recently played, or top artists this month. The feature matters less than proving the pattern.
-- [ ] Confirm the `latest` watch strategy behaves: one request per poll, and a new scrobble triggers a build.
-
-### Phase 6 — Documentation
-
-- [ ] `docs/developer/atproto-data.md`: the read layer, the registry and how to add a source, the two watch strategies, the state manifest contract, and the gotchas from *What the network actually looks like* above.
-- [ ] Cross-link from [standard-site.md](../developer/standard-site.md) — one doc covers writing, the other reading, and neither should be found without the other.
-- [ ] A line in [deployment.md](../developer/deployment.md) covering the new cache directory and the freshness workflow.
-- [ ] `AGENTS.md` under key features, matching how the command palette is listed.
-- [ ] `bun run check:all`, plus `check:knip` and `check:dupes` since this adds a util module, an integration and a script.
+- [ ] `docs/developer/atproto-data.md`: the add-a-source recipe first, then the read layer, the image mirror, how change detection works (manifest contract, the guard, the instant-dispatch recipe, upgrade paths), and the network gotchas above. Move *Notes for later* from this doc into it so they outlive the task.
+- [ ] Cross-link with [standard-site.md](../developer/standard-site.md); a line in [deployment.md](../developer/deployment.md) for the change-detection workflow.
+- [ ] `bun run check:all`, plus `check:knip` and `check:dupes`.
 
 ## Decisions taken
 
-| Decision          | Call                                                                  |
-| ----------------- | --------------------------------------------------------------------- |
-| Client library    | None. ~80 lines of `fetch`, following Barry Frost                     |
-| Write path        | Unchanged — `@atproto/api` stays for standard.site                    |
-| Rendering         | Build-time only. No adapter, no server islands, no runtime JS          |
-| Change detection  | ETag gate, then per-collection strategy from the registry              |
-| State             | Build-emitted `dist/atproto-state.json`, fetched from the live site    |
-| Trigger           | GitHub Actions schedule → `workflow_dispatch` on `deploy.yml`          |
-| Cadence           | ~10 minutes, offset from the hour. Delays accepted                     |
-| Blobs             | Mirrored to webp at build time. Nothing hotlinks `bsky.network`        |
-| First source      | `buzz.bookhive.book` — 248 real records already there                  |
-| Second source     | Scrobbles, as the test that the system generalises                     |
-
-**On the reading page URL** — `/reading` and `/books` both work; `/making` sets the precedent of a bare gerund. Decide in Phase 3, but decide before building the route, because it's in the sitemap and RSS considerations follow from it.
+| Decision         | Call                                                               |
+| ---------------- | ------------------------------------------------------------------ |
+| Client library   | None. Plain `fetch`, following Barry Frost                         |
+| PDS host         | Hardcoded `bsky.social` entryway in site config. No DID resolution |
+| Images           | One generic mirror, grouped by feature. Link previews use it too   |
+| Mirroring point  | Render time, so only displayed images are fetched                  |
+| Loader failures  | Never fail the build: keep last data, skip invalid records         |
+| Change detection | Per-collection fingerprint vs. build manifest. No `rev`, no ETag   |
+| Trigger          | Actions cron, ~10 min, no install → dispatches `deploy.yml`        |
+| Loop protection  | One deploy attempt per detected state, via named dispatch runs     |
+| Books page       | Currently-reading only, hidden at `/scratchpad/books`              |
 
 ## Out of scope
 
-- **Now playing.** The records expire in ~10 minutes, so a build-time render is always wrong. Client-side, later, or not at all.
-- **Comments and backlinks.** Bluesky posts and annotations mentioning a page. When it happens it's client-side, for the reason in the Overview. Notes below.
-- **Health and quantified-self data.** The system should make it trivial later; this task doesn't build it.
-- **Notes or articles as atproto records.** Markdown in git stays canonical. Both Barry Frost and Paul Frazee evaluated the alternative and reached the same conclusion.
-- **Private data / atproto Spaces.** Everything this site reads is a public record. Spaces are alpha-only and can't be read by a static page by definition.
-- **Authenticated reads.** Nothing we need requires them.
-- **Publishing a lexicon of my own.** Not needed until there's data to write.
+- **A real reading page.** Shelf, finished books, ratings, design. Later, once I know what I want.
+- **Scrobbles.** Own task: [task-x-atproto-scrobbles.md](./task-x-atproto-scrobbles.md). It adds the `latest` watch strategy and a loader `limit`, which append-only collections need.
+- **Now playing**, **comments and backlinks**, **health data**, **notes or articles as atproto records**, **private data / Spaces**, **authenticated reads**, **publishing a lexicon of my own**.
 
 ## Notes for later
 
-Kept here because they were expensive to establish and will be wanted when the out-of-scope items come round.
+Kept because they were expensive to establish. Move into `atproto-data.md` in Phase 5.
 
-**Comments, when we get there.** Don't use `app.bsky.feed.searchPosts` — it has `url` and `domain` filters that look perfect for this and it returns **403 unauthenticated**, verified while `getPostThread` and `getProfile` return 200 on the same host in the same second. `public.api.bsky.app` supports no authentication at all, so a token can't fix it.
+**Comments, when we get there.** Don't use `app.bsky.feed.searchPosts` — its `url` and `domain` filters look perfect and it returns **403 unauthenticated**, while `getPostThread` and `getProfile` return 200 on the same host. `public.api.bsky.app` supports no authentication at all, so a token can't fix it.
 
-Use [Constellation](https://constellation.microcosm.blue) instead — a network-wide backlink index (18bn links, 590 days) with `blue.microcosm.links.getBacklinks`, unauthenticated. It indexes links in *every* collection, not just Bluesky posts, so the real question it answers is "what in the atmosphere points at this page" — annotations, bookmarks, reading-list saves. Hydrate the `{did, collection, rkey}` stubs it returns with `app.bsky.feed.getPostThread`, which does work unauthenticated. Two traps, both verified:
+Use [Constellation](https://constellation.microcosm.blue) instead — a network-wide backlink index with `blue.microcosm.links.getBacklinks`, unauthenticated. It indexes links in *every* collection, so it answers "what in the atmosphere points at this page". Hydrate the `{did, collection, rkey}` stubs with `app.bsky.feed.getPostThread`. Two traps, both verified:
 
-- The discovery endpoint reports JSON paths **with** a leading dot; the `source` parameter needs them **without**. Wrong form returns an empty response, not an error.
+- The discovery endpoint reports JSON paths **with** a leading dot; the `source` parameter needs them **without**. The wrong form returns an empty response, not an error.
 - Targets match exactly. `https://danny.is` returns 1, `https://danny.is/` returns 0. Query both.
 
-**Minting a lexicon, when there's something to write.** Writing arbitrary records to my own PDS needs exactly two things: a syntactically valid NSID, and a matching `$type`. `createRecord`'s `validate` parameter defaults to validating only against lexicons the PDS already knows, so unknown ones are accepted unvalidated.
+**Minting a lexicon, when there's something to write.** Writing arbitrary records to my own PDS needs a syntactically valid NSID and a matching `$type`. `createRecord`'s `validate` defaults to validating only against lexicons the PDS knows, so unknown ones are accepted unvalidated.
 
-Publishing the schema is optional and buys interop rather than permission — a `com.atproto.lexicon.schema` record with rkey set to the NSID, plus a DNS TXT record at `_lexicon.<authority-domain>` holding `did=<did>`. Note the authority is the NSID minus its final segment, reversed: `is.danny.health.steps` resolves via `_lexicon.health.danny.is`, not `_lexicon.danny.is`.
+Publishing the schema is optional and buys interop, not permission — a `com.atproto.lexicon.schema` record with rkey set to the NSID, plus a DNS TXT record at `_lexicon.<authority-domain>` holding `did=<did>`. The authority is the NSID minus its final segment, reversed: `is.danny.health.steps` resolves via `_lexicon.health.danny.is`.
 
-There is no shared health namespace to adopt. The complete set of health-related NSIDs on the network is seven, the largest has two users, and there is **nothing at all** for sleep, HRV or weight. `dev.baileytownsend.health.rings` is the only Apple-Watch-shaped precedent and is worth copying in one respect: it keys records by **date** (`2026-01-05`) rather than a TID, which makes a daily metric an idempotent upsert that sorts correctly and never needs deduplicating.
+There is no shared health namespace to adopt — seven health-related NSIDs network-wide, the largest with two users, nothing for sleep, HRV or weight. `dev.baileytownsend.health.rings` is worth copying in one respect: it keys records by **date** (`2026-01-05`) rather than a TID, which makes a daily metric an idempotent upsert that sorts correctly and never needs deduplicating.
