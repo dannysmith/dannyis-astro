@@ -11,10 +11,10 @@ Split by topic — how we get the page, what it says about itself, what we do wi
 - `index.ts` — the one public call, `fetchLinkPreview(url)`, and the `LinkPreview` type.
 - `fetch.ts` — getting the page: network, retries, disk cache, dedup, concurrency, URL rules.
 - `parse.ts` — what the page says about itself.
-- `image.ts` — copying its images onto our domain.
+- `image.ts` — copying its images onto our domain: the card's sizes, banner-or-logo shape, and which failures get reported.
 - `health.ts` — the end-of-build warning summary.
 
-`src/lib/link-preview-images-integration.mjs` emits the derivatives into `dist/link-previews/` and serves them from the cache in dev — the same two-hook shape as the Pagefind integration.
+The copying itself is `src/utils/mirrorImage.ts`, which is shared — anything that shows someone else's image at build time goes through it, filed under a group named for the feature. Link cards are the `links` group. `src/lib/mirrored-images-integration.mjs` emits the derivatives into `dist/mirrored/` and serves them from the cache in dev — the same two-hook shape as the Pagefind integration.
 
 ## Why one call that can't fail
 
@@ -26,7 +26,7 @@ It returns images **already downloaded**, as paths on this site. Handing back a 
 
 Captures live in `node_modules/.astro/link-cache/`, so the existing `actions/cache` step covers them. What's stored is the head as served, not the fields parsed out of it. Every later improvement to extraction then applies to every cached link at once, offline, with no refetch of sites that may since have died or started blocking us — and the cache doubles as a corpus of real captured heads to test a parser change against.
 
-`LINK_CACHE_DIR` redirects both the captures and the image derivatives; the tests use it.
+The image derivatives live beside them in `node_modules/.astro/mirrored-images/links/`. `LINK_CACHE_DIR` redirects the captures and `MIRROR_CACHE_DIR` the images; the tests use both.
 
 ## Status, not a boolean
 
@@ -63,7 +63,8 @@ Written down so it doesn't get re-added on the assumption it was an oversight:
 ## Where things live
 
 - `src/utils/linkPreview/` — the module.
-- `src/lib/link-preview-images-integration.mjs` — emits and serves the images.
+- `src/utils/mirrorImage.ts` — the shared download, re-encode and cache; `tests/unit/mirrorImage.test.ts`.
+- `src/lib/mirrored-images-integration.mjs` — emits and serves the images.
 - `src/components/mdx/BookmarkCard.astro`, `Notion.astro` — the consumers.
 - `tests/unit/linkPreview.test.ts`, with real captured heads in `tests/fixtures/link-heads/` — kept byte-for-byte as served, and excluded from Prettier for that reason.
 - `/styleguide/components#bookmark-card` — every state, rendered.

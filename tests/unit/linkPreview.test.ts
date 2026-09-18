@@ -4,11 +4,13 @@ import os from 'node:os'
 import path from 'node:path'
 import type { PageMetadata } from '@utils/linkPreview/parse'
 
-// The cache directory is read once, when the module first loads — so it has to
-// be redirected at a temp dir before anything imports it. Static imports would
-// hoist above this and quietly point the whole suite at the real cache.
+// The cache directories are read once, when the modules first load — so they
+// have to be redirected at a temp dir before anything imports them. Static
+// imports would hoist above this and quietly point the whole suite at the real
+// caches.
 const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'link-cache-'))
 process.env.LINK_CACHE_DIR = cacheDir
+process.env.MIRROR_CACHE_DIR = path.join(cacheDir, 'mirrored-images')
 afterAll(() => fs.rmSync(cacheDir, { recursive: true, force: true }))
 
 const { readMetadata, titleFromUrl } = await import('@utils/linkPreview/parse')

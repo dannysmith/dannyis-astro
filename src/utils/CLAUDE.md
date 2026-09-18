@@ -15,7 +15,7 @@ The rule here is the opposite of the OG one. `linkPreview/` caches the raw `<hea
 Bump only when what's *stored* changes:
 
 - **`CACHE_VERSION` in `linkPreview/fetch.ts`** — the shape of a stored capture. It's part of the filename, so bumping orphans old entries rather than reading them.
-- **`IMAGE_VERSION` in `linkPreview/image.ts`** — the encoding of a downloaded image: format, quality, or target size.
+- **`IMAGE_VERSION` in `mirrorImage.ts`** — the encoding of a downloaded image: format or quality. (Target size is already part of each key.) It covers every group the mirror holds, not just link previews, and bumping it re-downloads all of them — so images belonging to links that have since died are lost. Don't bump it casually.
 
 Worth knowing while working on the parser: the cache is a corpus of real captured heads, so running the old and new `readMetadata` over all of them and diffing every field is a regression test that touches no network.
 

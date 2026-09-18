@@ -17,7 +17,6 @@ import { hostname, readMetadata, titleFromUrl, type PageMetadata } from '@utils/
 
 export type { LinkStatus } from '@utils/linkPreview/fetch'
 export type { PreviewImage } from '@utils/linkPreview/image'
-export { IMAGE_CACHE_DIR, IMAGE_URL_BASE } from '@utils/linkPreview/image'
 
 export interface LinkPreview {
   status: LinkStatus

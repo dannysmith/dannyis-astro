@@ -124,11 +124,12 @@ It's computed from the content store, which is by definition what the build load
 
 ### Phase 1 — Generalise the image mirror
 
-- [ ] Lift the core of `linkPreview/image.ts` into `src/utils/mirrorImage.ts`; leave `fetchPreviewImage` as a thin wrapper. Derive `src` on read instead of storing it.
-- [ ] Rename the integration, make the copy recursive, update `astro.config.mjs`.
-- [ ] One-off cache migration step in `deploy.yml`; run the same `mv` locally.
-- [ ] Update `tests/unit/linkPreview.test.ts`, [link-metadata.md](../developer/link-metadata.md), [deployment.md](../developer/deployment.md) and `src/utils/CLAUDE.md` for the new names.
-- [ ] Build and confirm every bookmark card still has its image, served from `/mirrored/links/`.
+- [x] Lift the core of `linkPreview/image.ts` into `src/utils/mirrorImage.ts`; leave `fetchPreviewImage` as a thin wrapper. Derive `src` on read instead of storing it.
+- [x] Rename the integration, make the copy recursive, update `astro.config.mjs`.
+- [x] One-off cache migration step in `deploy.yml`; run the same `mv` locally.
+- [x] Update `tests/unit/linkPreview.test.ts`, [link-metadata.md](../developer/link-metadata.md), [deployment.md](../developer/deployment.md) and `src/utils/CLAUDE.md` for the new names. Added `tests/unit/mirrorImage.test.ts`.
+- [x] Build and confirm every bookmark card still has its image, served from `/mirrored/links/`.
+- [ ] Once this has deployed from `main`, delete the migration step from `deploy.yml`.
 
 ### Phase 2 — Read layer and the books collection
 
