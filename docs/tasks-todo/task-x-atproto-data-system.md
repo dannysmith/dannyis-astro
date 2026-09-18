@@ -142,8 +142,8 @@ It's computed from the content store, which is by definition what the build load
 
 ### Phase 3 — The hidden books page
 
-- [ ] `src/pages/scratchpad/books.astro`: books with status `reading` only — cover, title, author. Same shell as `scratchpad.astro`, `noindex, nofollow`. The sitemap filter already excludes `/scratchpad*`.
-- [ ] No new components, no styleguide entry. Check it in both themes.
+- [x] `src/pages/scratchpad/books.astro`: books with status `reading` only — cover, title, author. Same shell as `scratchpad.astro`, `noindex, nofollow`. The sitemap filter already excludes `/scratchpad*`.
+- [x] No new components, no styleguide entry. Check it in both themes. (A CSS grid of covers with `Lightbox`; covers are mirrored at their full ~500px so the lightbox has something to show.)
 
 ### Phase 4 — Change detection
 
