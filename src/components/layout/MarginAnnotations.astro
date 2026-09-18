@@ -93,25 +93,35 @@ import { Icon } from 'astro-icon/components'
      Notes
      ---------------------------------------- */
 
-  .annotation-note {
-    display: block;
-    max-inline-size: 16rem;
+  /* The editor is a note being written, so the two share a hand and a box: what
+     you type is what you get. Everything below that names both is the same idea. */
+  .annotation-note,
+  .annotation-editor textarea {
     font-family: var(--font-handwriting);
     font-size: 1.15em;
     font-weight: 400;
+    /* Lining numerals: in print a note sits inside a <p>, which sets oldstyle. */
     font-variant-numeric: normal;
     line-height: 1.15;
     color: var(--color-annotation);
+  }
+
+  .annotation-note {
+    display: block;
+    max-inline-size: 16rem;
     text-wrap: pretty;
     /* Box hugs the text, so the gaps between notes are optically even. */
     text-box-trim: trim-both;
     text-box-edge: cap alphabetic;
   }
 
-  :root[data-annotations='margin'] .annotation-note {
+  :root[data-annotations='margin'] :is(.annotation-note, .annotation-editor) {
     position: absolute;
     inset-inline: var(--annotation-arrow-room) var(--space-m);
     pointer-events: auto;
+  }
+
+  :root[data-annotations='margin'] .annotation-note {
     transform: rotate(-0.8deg);
     transform-origin: 0 50%;
   }
@@ -125,11 +135,14 @@ import { Icon } from 'astro-icon/components'
   }
 
   /* Inline: beneath the annotated block, numbered like a footnote. */
-  .longform-prose > .annotation-note {
-    position: relative;
+  .longform-prose > :is(.annotation-note, .annotation-editor) {
     max-inline-size: 30rem;
     margin-block: 0.4em 1em;
     margin-inline-start: 1.75em;
+  }
+
+  .longform-prose > .annotation-note {
+    position: relative;
     font-size: 1.05em;
   }
 
@@ -280,20 +293,9 @@ import { Icon } from 'astro-icon/components'
     border-color: var(--color-text-secondary);
   }
 
+  /* Where it sits, in both modes, is shared with the notes above. */
   .annotation-editor {
     margin: 0;
-  }
-
-  :root[data-annotations='margin'] .annotation-editor {
-    position: absolute;
-    inset-inline: var(--annotation-arrow-room) var(--space-m);
-    pointer-events: auto;
-  }
-
-  .longform-prose > .annotation-editor {
-    max-inline-size: 30rem;
-    margin-block: 0.4em 1em;
-    margin-inline-start: 1.75em;
   }
 
   .annotation-editor textarea {
@@ -301,11 +303,6 @@ import { Icon } from 'astro-icon/components'
     display: block;
     width: 100%;
     padding: 0;
-    font-family: var(--font-handwriting);
-    font-size: 1.15em;
-    font-weight: 400;
-    line-height: 1.15;
-    color: var(--color-annotation);
     background: none;
     border: 0;
     border-bottom: var(--border-width-hairline) solid var(--color-border);
@@ -638,9 +635,9 @@ import { Icon } from 'astro-icon/components'
         const lastPlaced = new Map<Element, Element>()
         for (const annotation of anchored) {
           annotation.note.style.removeProperty('top')
-          const block = annotation.mark!.closest('p, blockquote, li')
-          const anchorEl = block?.matches('li') ? (block.parentElement ?? block) : block
-          if (!anchorEl) continue
+          const block = annotation.mark!.closest(BLOCK_TAGS)
+          if (!block) continue
+          const anchorEl = flowAnchor(block)
           const after = lastPlaced.get(anchorEl) ?? anchorEl
           // Only move a note that is in the wrong place: moving a node blurs any
           // focused field inside it.
@@ -652,12 +649,26 @@ import { Icon } from 'astro-icon/components'
           orphan.note.style.removeProperty('top')
           if (margin.previousElementSibling !== orphan.note) margin.before(orphan.note)
         }
+        // The editor goes last, after whatever its block already carries.
+        if (!editor.hidden) {
+          const block = editing?.mark?.closest(BLOCK_TAGS) ?? draft?.block
+          const anchorEl = block && flowAnchor(block)
+          const after = anchorEl && (lastPlaced.get(anchorEl) ?? anchorEl)
+          if (after) {
+            if (after.nextElementSibling !== editor) after.after(editor)
+          } else if (margin.previousElementSibling !== editor) {
+            // A detached note has no block of its own; nor, then, does its editor.
+            margin.before(editor)
+          }
+          editor.style.removeProperty('top')
+        }
         return
       }
 
       for (const annotation of [...anchored, ...orphans]) {
         if (annotation.note.parentElement !== margin) margin.append(annotation.note)
       }
+      if (!editor.hidden && editor.parentElement !== margin) margin.append(editor)
 
       const frame = margin.getBoundingClientRect()
 
@@ -869,38 +880,15 @@ import { Icon } from 'astro-icon/components'
 
     // ---- The editor ---------------------------------------------------------
 
+    /** Placement is `layout`'s job: it decides the mode, and the editor takes a
+     *  slot in the column alongside the notes. */
     function openEditor() {
       editor.hidden = false
       hideInvite()
       textarea.value = editing?.record.note ?? ''
       editing?.note.setAttribute('hidden', '')
-      placeEditor()
       layout()
       textarea.focus()
-    }
-
-    function placeEditor() {
-      if (!marginFits()) {
-        const block = editing?.mark?.closest(BLOCK_TAGS) ?? draft?.block
-        const anchorEl = block && flowAnchor(block)
-        if (anchorEl) {
-          if (anchorEl.nextElementSibling !== editor) {
-            anchorEl.insertAdjacentElement('afterend', editor)
-          }
-        } else if (margin.previousElementSibling !== editor) {
-          // A detached note has no block of its own; nor, then, does its editor.
-          margin.before(editor)
-        }
-        editor.style.removeProperty('top')
-        return
-      }
-
-      if (editor.parentElement !== margin) margin.append(editor)
-      const rect = (editing?.mark ?? draft?.range)?.getClientRects()[0]
-      // Without a mark to sit beside, layout stacks it with the detached notes.
-      if (rect) {
-        editor.style.top = `${Math.max(0, rect.top - margin.getBoundingClientRect().top)}px`
-      }
     }
 
     function closeEditor() {
@@ -910,8 +898,6 @@ import { Icon } from 'astro-icon/components'
       draft = undefined
       editor.hidden = true
       textarea.value = ''
-      if (editor.parentElement !== margin) margin.append(editor)
-      editor.style.removeProperty('top')
       scheduleLayout()
     }
 
