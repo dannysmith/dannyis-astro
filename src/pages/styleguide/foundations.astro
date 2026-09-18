@@ -255,6 +255,23 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
           <td>Muted or secondary text</td>
         </tr>
         <tr>
+          <td>Annotation</td>
+          <td class="center" data-theme="light">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-annotation)" />
+            </span>
+          </td>
+          <td class="center" data-theme="dark">
+            <span class="mini-swatch">
+              <ColorSwatch color="var(--color-annotation)" />
+            </span>
+          </td>
+          <td>
+            <code>--color-annotation</code>
+          </td>
+          <td>Reader-written margin notes, their underline and arrows</td>
+        </tr>
+        <tr>
           <td>Border</td>
           <td class="center" data-theme="light">
             <span class="mini-swatch">
@@ -628,7 +645,7 @@ const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
     <h3 id="font-weights">Font Weights</h3>
     <p>
-      All four families are variable fonts and therefore not limited to the weights defined below <em
+      All five families are variable fonts and therefore not limited to the weights defined below <em
         >(Geist: 100-900, Figtree: 300-900, Literata: 200-900, Fira Code: 300-700)</em
       >. These design tokens provide common stops to help keep the weight scale consistent across
       the site, but it's fine to use intermediate weights when needed.

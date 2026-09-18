@@ -700,10 +700,12 @@ import { Icon } from 'astro-icon/components'
         )
       }
 
-      // Detached notes have nothing to point at, so they stack up at the end.
+      // Detached notes have nothing to point at, so they stack up at the end. The
+      // editor stands in for whichever one is open.
       for (const orphan of orphans) {
-        orphan.note.style.top = `${cursor}px`
-        cursor += orphan.note.offsetHeight + controlsRoom(orphan.note) + NOTE_GAP
+        const element = orphan === editing && !editor.hidden ? editor : orphan.note
+        element.style.top = `${cursor}px`
+        cursor += element.offsetHeight + controlsRoom(element) + NOTE_GAP
       }
 
       // Let things move under transition only once they've been placed, so the
@@ -873,28 +875,32 @@ import { Icon } from 'astro-icon/components'
       textarea.value = editing?.record.note ?? ''
       editing?.note.setAttribute('hidden', '')
       placeEditor()
+      layout()
       textarea.focus()
     }
 
     function placeEditor() {
-      const target = editing?.mark ?? draft?.range
-      if (!target) return
-
       if (!marginFits()) {
         const block = editing?.mark?.closest(BLOCK_TAGS) ?? draft?.block
         const anchorEl = block && flowAnchor(block)
-        if (anchorEl && anchorEl.nextElementSibling !== editor) {
-          anchorEl.insertAdjacentElement('afterend', editor)
+        if (anchorEl) {
+          if (anchorEl.nextElementSibling !== editor) {
+            anchorEl.insertAdjacentElement('afterend', editor)
+          }
+        } else if (margin.previousElementSibling !== editor) {
+          // A detached note has no block of its own; nor, then, does its editor.
+          margin.before(editor)
         }
         editor.style.removeProperty('top')
         return
       }
 
       if (editor.parentElement !== margin) margin.append(editor)
-      const rects = Array.from(target.getClientRects())
-      const rect = rects[0]
-      if (!rect) return
-      editor.style.top = `${Math.max(0, rect.top - margin.getBoundingClientRect().top)}px`
+      const rect = (editing?.mark ?? draft?.range)?.getClientRects()[0]
+      // Without a mark to sit beside, layout stacks it with the detached notes.
+      if (rect) {
+        editor.style.top = `${Math.max(0, rect.top - margin.getBoundingClientRect().top)}px`
+      }
     }
 
     function closeEditor() {
