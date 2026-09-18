@@ -147,14 +147,6 @@ import { Icon } from 'astro-icon/components'
     font-weight: 700;
   }
 
-  .annotation-note[data-orphaned] {
-    position: relative;
-    inset-inline: auto;
-    max-inline-size: 30rem;
-    margin-block-start: var(--space-s);
-    transform: none;
-  }
-
   .annotation-detached-label {
     display: block;
     font-family: var(--font-ui);
@@ -188,20 +180,19 @@ import { Icon } from 'astro-icon/components'
     inset-block-start: calc(100% + 0.1rem);
     inset-inline-start: 0;
     opacity: 0;
-    transition: opacity var(--duration-fast) var(--ease-in-out);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :root[data-annotations='margin'] .annotation-note-controls {
+      transition: opacity var(--duration-fast) var(--ease-in-out);
+    }
   }
 
   /* Keyboard users get them on focus; pointer users on hover. */
   :root[data-annotations='margin']
-    :is(.annotation-note:hover, .annotation-note:focus-within)
+    .annotation-note:is(:hover, :focus-within)
     .annotation-note-controls {
     opacity: 1;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    :root[data-annotations='margin'] .annotation-note-controls {
-      transition: none;
-    }
   }
 
   .annotation-note-controls button {
@@ -255,11 +246,11 @@ import { Icon } from 'astro-icon/components'
     --annotation-underline: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%206'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0%204.1%20L2%203.8%20L6%202.9%20L15%202.88%20L28%202.87%20L42%202.64%20L57%202.5%20L72%202.22%20L85%202.13%20L92%202.27%20L97%202.56%20L100%202.9%20L97%202.96%20L92%203.17%20L85%203.43%20L72%203.68%20L57%203.9%20L42%204.16%20L28%204.23%20L15%204.32%20L6%204.4%20L2%204.1%20Z'%20fill='%23a9b3b5'/%3E%3C/svg%3E");
   }
 
-  /* Reference numerals only where a note isn't sitting beside the text. A
-     reader's numeral is handwritten and grey; an author's footnote reference is
-     Literata and coral, so the two sequences don't read as one. */
-  :root:not([data-annotations='margin']) .annotation-mark::after {
-    content: attr(data-reference);
+  /* A reader's numeral is handwritten and grey; an author's footnote reference is
+     Literata and coral, so the two sequences don't read as one. Only `content`
+     changes per context — the appearance is set once, here. */
+  .annotation-mark::after {
+    content: none;
     margin-inline-start: 0.08em;
     font-family: var(--font-handwriting);
     font-size: 0.8em;
@@ -267,6 +258,11 @@ import { Icon } from 'astro-icon/components'
     line-height: 0;
     color: var(--color-annotation);
     vertical-align: super;
+  }
+
+  /* Shown wherever a note isn't sitting beside the text to do the pointing. */
+  :root:not([data-annotations='margin']) .annotation-mark::after {
+    content: attr(data-reference);
   }
 
   /* ----------------------------------------
@@ -377,26 +373,21 @@ import { Icon } from 'astro-icon/components'
       grid-template-columns: 0 minmax(0, 1fr) 13rem;
     }
 
-    /* All screen furniture: the notes have already been moved out of the aside. */
-    :root[data-annotations='print'] :is(.reader-margin, .annotation-invite),
-    .annotation-note-controls {
+    /* Never useful on paper. */
+    .annotation-note-controls,
+    .annotation-invite {
+      display: none;
+    }
+
+    /* The notes have already been moved out of the aside by then. */
+    :root[data-annotations='print'] .reader-margin {
       display: none;
     }
 
     /* The connector points at the phrase, so a numeral would be noise — except
        where notes had to go beneath their block and need matching up. */
-    :root[data-annotations='print'] .annotation-mark::after {
-      content: none;
-    }
-
     :root[data-annotations='print'] .annotation-mark[data-print-numbered]::after {
       content: attr(data-reference);
-      margin-inline-start: 0.08em;
-      font-family: var(--font-handwriting);
-      font-size: 0.8em;
-      font-weight: 700;
-      line-height: 0;
-      vertical-align: super;
     }
 
     .annotation-print-host {
@@ -429,41 +420,6 @@ import { Icon } from 'astro-icon/components'
       width: auto;
       transform: none;
     }
-
-    /*
-     * Safety net. Without `beforeprint` the notes are still inside the aside,
-     * which is absolutely positioned across the whole article and would print on
-     * the first page only — or not at all. Drop the lot into flow at the end of
-     * the article instead, and bring the numerals back so each note can still be
-     * matched to its phrase.
-     */
-    :root[data-annotations='margin'] .reader-margin {
-      position: static;
-      display: block;
-      grid-column: 1 / -1;
-    }
-
-    :root[data-annotations='margin'] .annotation-note {
-      position: static;
-      width: auto;
-      max-inline-size: none;
-      margin-block-start: 0.5em;
-      transform: none;
-    }
-
-    :root[data-annotations='margin'] .annotation-connectors {
-      display: none;
-    }
-
-    :root[data-annotations='margin'] .annotation-mark::after {
-      content: attr(data-reference);
-      margin-inline-start: 0.08em;
-      font-family: var(--font-handwriting);
-      font-size: 0.8em;
-      font-weight: 700;
-      line-height: 0;
-      vertical-align: super;
-    }
   }
 </style>
 
@@ -475,7 +431,6 @@ import { Icon } from 'astro-icon/components'
     reanchor,
     serialiseAnnotations,
     storageKey,
-    type BlockText,
     type StoredAnnotation,
   } from '@utils/annotations'
   import { inkArrow } from '@utils/ink-arrow'
@@ -487,6 +442,8 @@ import { Icon } from 'astro-icon/components'
    * anything full-bleed.
    */
   const BLOCKS = ':scope > p, :scope > blockquote, :scope > :is(ul, ol) > li'
+  /** The same set, for walking up from a node rather than down from the prose. */
+  const BLOCK_TAGS = 'p, blockquote, li'
   const EXCLUDED = '.intro-paragraph'
   const NOTE_GAP = 20
   const ARROW_INSET = 8
@@ -503,11 +460,10 @@ import { Icon } from 'astro-icon/components'
     mark: HTMLElement | null
     note: HTMLElement
     textNode: HTMLElement
-    blockIndex: number
   }
 
-  function init() {
-    const root = document.documentElement
+  /** Everything needed from the DOM, or nothing if this page isn't set up for annotations. */
+  function parts() {
     const prose = document.querySelector<HTMLElement>('[data-annotations-content]')
     const margin = prose?.querySelector<HTMLElement>(':scope > [data-reader-margin]')
     const connectors = margin?.querySelector<SVGSVGElement>('.annotation-connectors')
@@ -518,6 +474,15 @@ import { Icon } from 'astro-icon/components'
       'template[data-annotation-controls]',
     )
     if (!prose || !margin || !connectors || !editor || !textarea || !invite || !controls) return
+    return { prose, margin, connectors, editor, textarea, invite, controls }
+  }
+
+  function init() {
+    const found = parts()
+    if (!found) return
+    // Destructured, so the functions below don't each need a non-null assertion.
+    const { prose, margin, connectors, editor, textarea, invite, controls } = found
+    const root = document.documentElement
 
     /**
      * `.longform-prose` is a query container, and `container-type` makes it a
@@ -540,8 +505,6 @@ import { Icon } from 'astro-icon/components'
       Array.from(prose.querySelectorAll<HTMLElement>(BLOCKS)).filter(
         block => !block.closest(EXCLUDED),
       )
-    const blockTexts = (): BlockText[] =>
-      blocks().map(block => ({ tag: block.tagName, text: block.textContent ?? '' }))
 
     // ---- Storage ------------------------------------------------------------
 
@@ -584,15 +547,15 @@ import { Icon } from 'astro-icon/components'
       textNode.textContent = record.note
 
       note.append(textNode)
-      note.append(controls!.content.cloneNode(true))
+      note.append(controls.content.cloneNode(true))
       labelControls(note, record.note)
 
       return { note, textNode }
     }
 
-    function add(record: StoredAnnotation, mark: HTMLElement | null, blockIndex: number) {
+    function add(record: StoredAnnotation, mark: HTMLElement | null) {
       const { note, textNode } = buildNote(record)
-      const annotation: Annotation = { record, mark, note, textNode, blockIndex }
+      const annotation: Annotation = { record, mark, note, textNode }
       annotations.push(annotation)
       return annotation
     }
@@ -604,7 +567,6 @@ import { Icon } from 'astro-icon/components'
       label.className = 'annotation-detached-label'
       label.textContent = 'Detached — the text this marked has changed'
       annotation.textNode.after(label)
-      return annotation
     }
 
     function remove(annotation: Annotation) {
@@ -618,28 +580,28 @@ import { Icon } from 'astro-icon/components'
     // ---- Restoring ----------------------------------------------------------
 
     function restore() {
-      const texts = blockTexts()
+      // One query: `anchor.blockIndex` indexes both lists, so they have to match.
       const elements = blocks()
+      const texts = elements.map(block => ({ tag: block.tagName, text: block.textContent ?? '' }))
       let changed = false
 
       for (const stored of read()) {
         const { anchor, record } = reanchor(stored, texts)
         if (record !== stored) changed = true
 
-        if (anchor.status === 'orphaned') {
-          markDetached(add(record, null, Number.MAX_SAFE_INTEGER))
-          continue
-        }
+        // The anchor came from this block's own text, so the range should always
+        // be there; if it somehow isn't, keep the note rather than lose it.
+        const block = anchor.status === 'orphaned' ? undefined : elements[anchor.blockIndex]
+        const range =
+          anchor.status === 'orphaned'
+            ? undefined
+            : block && rangeFromOffsets(block, anchor.startOffset, anchor.endOffset)
 
-        const block = elements[anchor.blockIndex]
-        const range = block && rangeFromOffsets(block, anchor.startOffset, anchor.endOffset)
-        // Belt and braces: the anchor came from this block's text, so a range
-        // should always be there. If it isn't, keep the note rather than lose it.
         if (!range || range.toString() !== record.quote) {
-          markDetached(add(record, null, Number.MAX_SAFE_INTEGER))
+          markDetached(add(record, null))
           continue
         }
-        add(record, wrapRange(range, record.id), anchor.blockIndex)
+        add(record, wrapRange(range, record.id))
       }
 
       if (changed) save()
@@ -654,9 +616,10 @@ import { Icon } from 'astro-icon/components'
      * `--measure-standard`, which is in `ch` and so differs per font.
      */
     function marginFits() {
-      const columns = getComputedStyle(prose!).gridTemplateColumns.split(' ')
+      const columns = getComputedStyle(prose).gridTemplateColumns.split(' ')
       const gutter = parseFloat(columns.at(-1) ?? '0')
-      return gutter >= MIN_GUTTER * remSize()
+      const rem = parseFloat(getComputedStyle(root).fontSize)
+      return gutter >= MIN_GUTTER * rem
     }
 
     /** One thing to be placed in the margin: a note, or the editor. */
@@ -665,14 +628,18 @@ import { Icon } from 'astro-icon/components'
       /** Where it would sit if nothing were in the way, relative to the margin. */
       wanted: number
       /** The line it belongs to, for drawing the arrow. */
-      target?: DOMRect
+      target: DOMRect
     }
 
     function layout() {
+      if (pendingFrame !== undefined) {
+        cancelAnimationFrame(pendingFrame)
+        pendingFrame = undefined
+      }
       if (printing) return
       const mode = marginFits() ? 'margin' : 'inline'
       root.dataset.annotations = mode
-      connectors!.replaceChildren()
+      connectors.replaceChildren()
 
       // Numbering follows the document, not the order they were written in, so
       // the numerals read 1, 2, 3 down the page however they were added.
@@ -707,16 +674,16 @@ import { Icon } from 'astro-icon/components'
         // of the article, just above this component's own markup.
         for (const orphan of orphans) {
           orphan.note.style.removeProperty('top')
-          if (margin!.previousElementSibling !== orphan.note) margin!.before(orphan.note)
+          if (margin.previousElementSibling !== orphan.note) margin.before(orphan.note)
         }
         return
       }
 
       for (const annotation of [...anchored, ...orphans]) {
-        if (annotation.note.parentElement !== margin) margin!.append(annotation.note)
+        if (annotation.note.parentElement !== margin) margin.append(annotation.note)
       }
 
-      const frame = margin!.getBoundingClientRect()
+      const frame = margin.getBoundingClientRect()
 
       // The editor is placed with the notes, not on top of them: it takes the
       // slot its note will occupy and pushes the rest of the column down.
@@ -732,10 +699,10 @@ import { Icon } from 'astro-icon/components'
           target,
         })
       }
-      if (!editor!.hidden) {
+      if (!editor.hidden) {
         const target = (editing?.mark ?? draft?.range)?.getClientRects()[0]
         if (target) {
-          boxes.push({ element: editor!, wanted: wantedTop(editor!, target, frame), target })
+          boxes.push({ element: editor, wanted: wantedTop(editor, target, frame), target })
         }
       }
 
@@ -747,13 +714,12 @@ import { Icon } from 'astro-icon/components'
         box.element.style.top = `${top}px`
         cursor = top + box.element.offsetHeight + controlsRoom(box.element) + NOTE_GAP
 
-        if (!box.target) continue
         const left = box.element.getBoundingClientRect().left - frame.left
         const arrow = inkArrow(
           { x: left - ARROW_INSET, y: top + firstLineCentre(box.element) },
           { x: ARROW_INSET, y: box.target.top - frame.top + box.target.height / 2 },
         )
-        connectors!.append(
+        connectors.append(
           path('annotation-shaft', arrow.shaft),
           path('annotation-head', arrow.head),
         )
@@ -767,8 +733,8 @@ import { Icon } from 'astro-icon/components'
 
       // Let things move under transition only once they've been placed, so the
       // first paint doesn't slide every note in from the top.
-      if (!margin!.dataset.settled) {
-        requestAnimationFrame(() => (margin!.dataset.settled = ''))
+      if (!margin.dataset.settled) {
+        requestAnimationFrame(() => (margin.dataset.settled = ''))
       }
     }
 
@@ -816,10 +782,10 @@ import { Icon } from 'astro-icon/components'
       for (const annotation of annotations) {
         annotation.note.style.removeProperty('top')
 
-        const block = annotation.mark?.closest<HTMLElement>('p, blockquote, li')
+        const block = annotation.mark?.closest<HTMLElement>(BLOCK_TAGS)
         if (!block) {
           // Nothing to sit beside: detached notes go to the end of the article.
-          if (margin!.previousElementSibling !== annotation.note) margin!.before(annotation.note)
+          if (margin.previousElementSibling !== annotation.note) margin.before(annotation.note)
           continue
         }
         byBlock.set(block, [...(byBlock.get(block) ?? []), annotation])
@@ -834,8 +800,7 @@ import { Icon } from 'astro-icon/components'
         }
 
         // More than one: number them and set them beneath the block instead.
-        const anchorEl = block.matches('li') ? (block.parentElement ?? block) : block
-        let after: Element = anchorEl
+        let after: Element = flowAnchor(block)
         for (const annotation of group) {
           annotation.mark!.dataset.printNumbered = ''
           after.after(annotation.note)
@@ -845,13 +810,13 @@ import { Icon } from 'astro-icon/components'
     }
 
     function printTeardown() {
-      for (const host of prose!.querySelectorAll('.annotation-print-host')) {
+      for (const host of prose.querySelectorAll('.annotation-print-host')) {
         host.classList.remove('annotation-print-host')
       }
-      for (const mark of prose!.querySelectorAll<HTMLElement>('[data-print-numbered]')) {
+      for (const mark of prose.querySelectorAll<HTMLElement>('[data-print-numbered]')) {
         delete mark.dataset.printNumbered
       }
-      for (const connector of prose!.querySelectorAll('.annotation-print-connector')) {
+      for (const connector of prose.querySelectorAll('.annotation-print-connector')) {
         connector.remove()
       }
     }
@@ -859,15 +824,11 @@ import { Icon } from 'astro-icon/components'
     let printing = false
 
     addEventListener('beforeprint', () => {
-      if (pendingFrame !== undefined) {
-        cancelAnimationFrame(pendingFrame)
-        pendingFrame = undefined
-      }
       printing = true
       root.dataset.annotations = 'print'
       printLayout()
       // Force the print arrangement to take effect before the snapshot is taken.
-      void prose!.offsetHeight
+      void prose.offsetHeight
     })
 
     addEventListener('afterprint', () => {
@@ -886,44 +847,45 @@ import { Icon } from 'astro-icon/components'
 
     // ---- Selecting ----------------------------------------------------------
 
-    function blockFor(node: Node) {
-      const element = node instanceof Element ? node : node.parentElement
-      const block = element?.closest<HTMLElement>('p, blockquote, li')
-      if (!block) return
-      const index = blocks().indexOf(block)
-      return index === -1 ? undefined : { block, index }
-    }
-
     function selectable() {
       const current = getSelection()
       if (!current || current.rangeCount !== 1 || current.isCollapsed) return
       const range = current.getRangeAt(0)
-      const start = blockFor(range.startContainer)
-      const end = blockFor(range.endContainer)
-      if (!start || !end || start.block !== end.block || !range.toString().trim()) return
+
+      // `selectionchange` fires throughout a drag, so the block list is gathered
+      // once here rather than per end of the range.
+      const candidates = blocks()
+      const blockFor = (node: Node) => {
+        const element = node instanceof Element ? node : node.parentElement
+        const block = element?.closest<HTMLElement>(BLOCK_TAGS)
+        return block && candidates.includes(block) ? block : undefined
+      }
+
+      const block = blockFor(range.startContainer)
+      if (!block || block !== blockFor(range.endContainer) || !range.toString().trim()) return
       // Never nest marks: overlapping annotations can't be unwrapped cleanly.
       if (annotations.some(a => a.mark && range.intersectsNode(a.mark))) return
-      return { range: range.cloneRange(), block: start.block, blockIndex: start.index }
+      return { range: range.cloneRange(), block, blockIndex: candidates.indexOf(block) }
     }
 
     function showInvite(range: Range) {
       const rects = range.getClientRects()
       const rect = rects[rects.length - 1]
       if (!rect) return
-      if (!invite!.matches(':popover-open')) invite!.showPopover()
-      const { offsetWidth: width, offsetHeight: height } = invite!
+      if (!invite.matches(':popover-open')) invite.showPopover()
+      const { offsetWidth: width, offsetHeight: height } = invite
       const below = rect.bottom + 8
       const top = below + height <= innerHeight - 8 ? below : rect.top - height - 8
-      invite!.style.top = `${Math.max(8, Math.min(top, innerHeight - height - 8))}px`
-      invite!.style.left = `${Math.max(8, Math.min(rect.right, innerWidth - width - 8))}px`
+      invite.style.top = `${Math.max(8, Math.min(top, innerHeight - height - 8))}px`
+      invite.style.left = `${Math.max(8, Math.min(rect.right, innerWidth - width - 8))}px`
     }
 
     function hideInvite() {
-      if (invite!.matches(':popover-open')) invite!.hidePopover()
+      if (invite.matches(':popover-open')) invite.hidePopover()
     }
 
     function onSelectionChange() {
-      if (!editor!.hidden) return
+      if (!editor.hidden) return
       selection = selectable()
       if (!selection) {
         hideInvite()
@@ -935,12 +897,12 @@ import { Icon } from 'astro-icon/components'
     // ---- The editor ---------------------------------------------------------
 
     function openEditor() {
-      editor!.hidden = false
+      editor.hidden = false
       hideInvite()
-      textarea!.value = editing?.record.note ?? ''
+      textarea.value = editing?.record.note ?? ''
       editing?.note.setAttribute('hidden', '')
       placeEditor()
-      textarea!.focus()
+      textarea.focus()
     }
 
     function placeEditor() {
@@ -948,20 +910,20 @@ import { Icon } from 'astro-icon/components'
       if (!target) return
 
       if (!marginFits()) {
-        const block = editing?.mark?.closest('p, blockquote, li') ?? draft?.block
-        const anchorEl = block?.matches('li') ? (block.parentElement ?? block) : block
+        const block = editing?.mark?.closest(BLOCK_TAGS) ?? draft?.block
+        const anchorEl = block && flowAnchor(block)
         if (anchorEl && anchorEl.nextElementSibling !== editor) {
-          anchorEl.insertAdjacentElement('afterend', editor!)
+          anchorEl.insertAdjacentElement('afterend', editor)
         }
-        editor!.style.removeProperty('top')
+        editor.style.removeProperty('top')
         return
       }
 
-      if (editor!.parentElement !== margin) margin!.append(editor!)
+      if (editor.parentElement !== margin) margin.append(editor)
       const rects = Array.from(target.getClientRects())
       const rect = rects[0]
       if (!rect) return
-      editor!.style.top = `${Math.max(0, rect.top - margin!.getBoundingClientRect().top)}px`
+      editor.style.top = `${Math.max(0, rect.top - margin.getBoundingClientRect().top)}px`
     }
 
     function closeEditor() {
@@ -969,10 +931,10 @@ import { Icon } from 'astro-icon/components'
       editing?.note.removeAttribute('hidden')
       editing = undefined
       draft = undefined
-      editor!.hidden = true
-      textarea!.value = ''
-      if (editor!.parentElement !== margin) margin!.append(editor!)
-      editor!.style.removeProperty('top')
+      editor.hidden = true
+      textarea.value = ''
+      if (editor.parentElement !== margin) margin.append(editor)
+      editor.style.removeProperty('top')
       scheduleLayout()
     }
 
@@ -985,38 +947,32 @@ import { Icon } from 'astro-icon/components'
     let discarding = false
 
     function commit() {
-      const value = textarea!.value.trim()
+      const value = textarea.value.trim()
       if (!value) {
         // Nothing written: drop a new note, and leave an edited one as it was.
         closeEditor()
         return
       }
 
+      let saved = editing
       if (editing) {
         editing.record = { ...editing.record, note: value }
         editing.textNode.textContent = value
         labelControls(editing.note, value)
       } else if (draft) {
-        const texts = blockTexts()
-        const block = blocks()[draft.blockIndex]
-        const offsets = offsetsOf(block, draft.range)
-        if (!offsets) {
-          closeEditor()
-          return
-        }
+        const offsets = offsetsOf(draft.block, draft.range)
         const record = createAnnotation({
           id: crypto.randomUUID(),
           articleId,
           blockIndex: draft.blockIndex,
-          block: texts[draft.blockIndex],
+          block: { tag: draft.block.tagName, text: draft.block.textContent ?? '' },
           startOffset: offsets.start,
           endOffset: offsets.end,
           note: value,
         })
-        add(record, wrapRange(draft.range, record.id), draft.blockIndex)
+        saved = add(record, wrapRange(draft.range, record.id))
       }
 
-      const saved = editing ?? annotations.at(-1)
       save()
       closeEditor()
       // Lay out before focusing: a brand new note isn't in the document until
@@ -1086,15 +1042,17 @@ import { Icon } from 'astro-icon/components'
         neighbour?.note.focus()
         return
       }
-      editing?.note.removeAttribute('hidden')
       editing = annotation
       openEditor()
     })
 
     document.addEventListener('selectionchange', onSelectionChange)
-    addEventListener('resize', scheduleLayout)
     addEventListener('scroll', hideInvite, { passive: true })
-    addEventListener('resize', hideInvite)
+    addEventListener('resize', () => {
+      // A resize can change the gutter, and so which mode applies.
+      hideInvite()
+      scheduleLayout()
+    })
 
     // ---- Reflow -------------------------------------------------------------
 
@@ -1113,10 +1071,6 @@ import { Icon } from 'astro-icon/components'
     document.fonts.addEventListener('loadingdone', scheduleLayout)
   }
 
-  /**
-   * Icon-only buttons say nothing on their own, so each one carries the note's
-   * text in its accessible name.
-   */
   /** A short arrow for print, over a fixed box beside the mark. */
   function printConnector() {
     const svg = document.createElementNS(SVG_NS, 'svg')
@@ -1128,8 +1082,10 @@ import { Icon } from 'astro-icon/components'
     return svg
   }
 
-  const remSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize)
-
+  /**
+   * Icon-only buttons say nothing on their own, so each one carries the note's
+   * text in its accessible name.
+   */
   function labelControls(note: HTMLElement, text: string) {
     for (const button of note.querySelectorAll<HTMLElement>('[data-annotation-action]')) {
       const action = button.dataset.annotationAction === 'delete' ? 'Delete' : 'Edit'
@@ -1164,6 +1120,14 @@ import { Icon } from 'astro-icon/components'
       }
       position += length
     }
+  }
+
+  /**
+   * Where a note sits in flow for a given block: after the block itself, or after
+   * the whole list when the block is a list item.
+   */
+  function flowAnchor(block: Element) {
+    return block.matches('li') ? (block.parentElement ?? block) : block
   }
 
   function path(className: string, d: string) {

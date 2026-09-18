@@ -11,7 +11,7 @@
  *   joined polyline), like two flicks of a pen.
  *
  * Coordinates are in whatever user units the host SVG uses — for an SVG with no
- * viewBox, CSS pixels. `weight` scales the shaft thickness only.
+ * viewBox, CSS pixels.
  *
  * Used by MarginAnnotations to join a reader's note to the phrase it marks.
  */
@@ -30,7 +30,7 @@ const SAMPLES = 9
 const HEAD_LENGTH = 7.5
 const HEAD_SPREAD = 3.25
 
-export function inkArrow(from: Point, to: Point, weight = 1): InkArrow {
+export function inkArrow(from: Point, to: Point): InkArrow {
   const dx = to.x - from.x
   const dy = to.y - from.y
   const length = Math.hypot(dx, dy) || 1
@@ -62,7 +62,7 @@ export function inkArrow(from: Point, to: Point, weight = 1): InkArrow {
     const tangent = Math.hypot(tx, ty) || 1
 
     // Zero-ish at both ends, fullest in the middle.
-    const halfWidth = (Math.sin(Math.PI * t) ** 0.65 * 0.75 + 0.04) * weight
+    const halfWidth = Math.sin(Math.PI * t) ** 0.65 * 0.75 + 0.04
     const ox = (-ty / tangent) * halfWidth
     const oy = (tx / tangent) * halfWidth
 
