@@ -9,14 +9,15 @@
  *
  * See docs/developer/margin-annotations.md.
  */
-import { Icon } from 'astro-icon/components'
 ---
 
 <aside class="reader-margin" aria-label="Reader margin" data-reader-margin data-prose-chrome>
   <svg class="annotation-connectors" aria-hidden="true"></svg>
   <form class="annotation-editor" data-annotation-editor data-prose-chrome hidden>
     <label class="sr-only" for="annotation-note">Your note</label>
-    {/* No `rows`, so the reset's `field-sizing: content` grows it as you type. */}
+    {/* No `rows`: its absence is what turns on the reset's `field-sizing: content`,
+        so the field grows as you type. Don't add `rows="1"` to make it start
+        short — that switches the growing off. The starting height is CSS. */}
     <textarea id="annotation-note" maxlength="500"></textarea>
     <div class="annotation-editor-actions">
       <button type="button" data-annotation-cancel>Cancel</button>
@@ -33,15 +34,11 @@ import { Icon } from 'astro-icon/components'
   data-prose-chrome>Write in margin</button
 >
 
-{/* Cloned per note by the script — the icons have to be rendered at build time. */}
+{/* Cloned per note by the script, so the labels stay in markup where they read. */}
 <template data-annotation-controls>
   <span class="annotation-note-controls">
-    <button type="button" data-annotation-action="edit">
-      <Icon name="heroicons:pencil-square-16-solid" aria-hidden="true" />
-    </button>
-    <button type="button" data-annotation-action="delete">
-      <Icon name="heroicons:trash-16-solid" aria-hidden="true" />
-    </button>
+    <button type="button" data-annotation-action="edit">Edit</button>
+    <button type="button" data-annotation-action="delete">Delete</button>
   </span>
 </template>
 
@@ -104,7 +101,6 @@ import { Icon } from 'astro-icon/components'
     font-family: var(--font-handwriting);
     font-size: 1.15em;
     font-weight: 400;
-    /* Lining numerals: in print a note sits inside a <p>, which sets oldstyle. */
     font-variant-numeric: normal;
     line-height: 1.15;
     color: var(--color-annotation);
@@ -114,7 +110,6 @@ import { Icon } from 'astro-icon/components'
     display: block;
     max-inline-size: 16rem;
     text-wrap: pretty;
-    /* Box hugs the text, so the gaps between notes are optically even. */
     text-box-trim: trim-both;
     text-box-edge: cap alphabetic;
   }
@@ -169,17 +164,14 @@ import { Icon } from 'astro-icon/components'
     white-space: pre-wrap;
   }
 
-  /* The global 2px ring is heavy around handwriting, and a note is focused
-     programmatically after saving. Same affordance, quieter. */
   .annotation-note:focus-visible {
-    outline: var(--border-width-hairline) dashed var(--color-annotation);
-    outline-offset: 0.3em;
-    border-radius: 0;
+    outline-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
   }
 
   .annotation-note-controls {
     display: flex;
-    gap: 0.65rem;
+    justify-content: flex-end;
+    gap: 0.5em;
     font-family: var(--font-ui);
     font-size: var(--font-size-xs);
   }
@@ -187,7 +179,7 @@ import { Icon } from 'astro-icon/components'
   :root[data-annotations='margin'] .annotation-note-controls {
     position: absolute;
     inset-block-start: calc(100% + 0.1rem);
-    inset-inline-start: 0;
+    inset-inline-start: 0.1rem;
     opacity: 0;
   }
 
@@ -197,17 +189,19 @@ import { Icon } from 'astro-icon/components'
     }
   }
 
+  /* `:focus-visible` rather than `:focus-within`: a note is focused by script
+     after saving, and a mouse reader shouldn't be handed controls they didn't ask
+     for. `:has()` keeps them up once focus moves onto a control itself, which
+     takes `:focus-visible` off the note. */
   :root[data-annotations='margin']
-    .annotation-note:is(:hover, :focus-within)
+    .annotation-note:is(:hover, :focus-visible, :has(:focus-visible))
     .annotation-note-controls {
     opacity: 1;
   }
 
   .annotation-note-controls button {
-    display: grid;
-    place-items: center;
-    /* Comfortably tappable, without the icons themselves getting heavy. */
-    min-width: 1.5rem;
+    /* Words this small still need a tappable box: inline mode shows the controls
+       on touch, where there's no hover to reveal them. */
     min-height: 1.5rem;
     padding: 0;
     color: var(--color-annotation);
@@ -220,19 +214,6 @@ import { Icon } from 'astro-icon/components'
   .annotation-note-controls button:focus-visible {
     color: var(--color-text);
   }
-
-  .annotation-note-controls svg {
-    width: 0.9rem;
-    height: 0.9rem;
-  }
-
-  /* ----------------------------------------
-     Marks
-
-     The underline is a background image, not a mask: a mask hides the element's
-     text too, and WebKit loses it entirely once a mark wraps a line. A data URI
-     can't read a custom property, hence one copy of the shape per theme.
-     ---------------------------------------- */
 
   .annotation-mark {
     /* The same wobble in each theme's ink colour. Keep in sync with
@@ -251,8 +232,6 @@ import { Icon } from 'astro-icon/components'
     --annotation-underline: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%206'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0%204.1%20L2%203.8%20L6%202.9%20L15%202.88%20L28%202.87%20L42%202.64%20L57%202.5%20L72%202.22%20L85%202.13%20L92%202.27%20L97%202.56%20L100%202.9%20L97%202.96%20L92%203.17%20L85%203.43%20L72%203.68%20L57%203.9%20L42%204.16%20L28%204.23%20L15%204.32%20L6%204.4%20L2%204.1%20Z'%20fill='%23a9b3b5'/%3E%3C/svg%3E");
   }
 
-  /* Handwritten and grey, where an author's footnote reference is Literata and
-     coral, so the two sequences don't read as one. Only `content` varies below. */
   .annotation-mark::after {
     content: none;
     margin-inline-start: 0.08em;
@@ -297,7 +276,6 @@ import { Icon } from 'astro-icon/components'
     border-color: var(--color-text-secondary);
   }
 
-  /* Where it sits, in both modes, is shared with the notes above. */
   .annotation-editor {
     margin: 0;
   }
@@ -306,6 +284,7 @@ import { Icon } from 'astro-icon/components'
     box-sizing: border-box;
     display: block;
     width: 100%;
+    min-block-size: 1lh;
     padding: 0;
     background: none;
     border: 0;
@@ -915,7 +894,7 @@ import { Icon } from 'astro-icon/components'
      */
     let discarding = false
 
-    function commit() {
+    function commit(fromBlur = false) {
       const value = textarea.value.trim()
       if (!value) {
         // Nothing written: drop a new note, and leave an edited one as it was.
@@ -944,10 +923,13 @@ import { Icon } from 'astro-icon/components'
 
       save()
       closeEditor()
-      // Lay out before focusing: a brand new note isn't in the document until
-      // layout puts it there, and focus() on a detached node does nothing.
       layout()
-      saved?.note.focus()
+      // Focus follows the reader out of the editor, but only when they left it by
+      // saving. A blur save means they've already clicked somewhere of their own
+      // choosing, and pulling focus back to the note would take it off them.
+      // Laid out first: a new note isn't in the document until layout puts it
+      // there, and focus() on a detached node does nothing.
+      if (!fromBlur) saved?.note.focus()
     }
 
     editor.addEventListener('submit', event => {
@@ -974,7 +956,7 @@ import { Icon } from 'astro-icon/components'
     // Clicking away is a save, not a loss.
     textarea.addEventListener('blur', () => {
       if (discarding || editor.hidden) return
-      commit()
+      commit(true)
     })
 
     for (const button of editor.querySelectorAll('button')) {
@@ -1049,7 +1031,11 @@ import { Icon } from 'astro-icon/components'
     return svg
   }
 
-  /** Icon-only buttons need the note's text in their accessible name. */
+  /**
+   * An article full of notes is an article full of buttons reading "Edit", so
+   * each carries its own note's text to tell them apart. The visible word leads,
+   * which is what keeps the accessible name a match for the label.
+   */
   function labelControls(note: HTMLElement, text: string) {
     for (const button of note.querySelectorAll<HTMLElement>('[data-annotation-action]')) {
       const action = button.dataset.annotationAction === 'delete' ? 'Delete' : 'Edit'
