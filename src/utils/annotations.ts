@@ -2,12 +2,11 @@
  * Reader margin annotations: the stored record, and the anchoring that has to
  * survive the article being edited afterwards.
  *
- * Deliberately DOM-free. Every decision here is string work over a block's text
- * content, which keeps the part most likely to fail silently — deciding *where*
- * a saved note belongs after the prose has changed — unit testable. Turning
- * offsets back into a DOM `Range` is the component's job.
+ * Deliberately DOM-free — it's all string work over a block's text content — so
+ * the part most likely to fail silently is unit testable. Turning offsets back
+ * into a `Range` is the component's job.
  *
- * See docs/tasks-todo/task-x-reader-margin-annotations.md.
+ * See docs/developer/margin-annotations.md.
  */
 
 /** Characters of surrounding text stored either side of the quote. */
@@ -55,7 +54,7 @@ export type Anchor =
   | { status: 'orphaned' }
 
 /** FNV-1a, base 36. Short, stable, and not a security hash. */
-export function fnv1a(text: string): string {
+function fnv1a(text: string): string {
   let hash = 2166136261
   for (let i = 0; i < text.length; i++) {
     hash = Math.imul(hash ^ text.charCodeAt(i), 16777619)
@@ -64,17 +63,17 @@ export function fnv1a(text: string): string {
 }
 
 /** Identifies a block by what it is, where it is, and what it said at the time. */
-export function blockId(tag: string, index: number, text: string): string {
+function blockId(tag: string, index: number, text: string): string {
   return `${tag.toLowerCase()}:${index}:${fnv1a(text)}`
 }
 
-/** `/writing/thing/` and `/writing/thing` are the same article. */
+/** `/writing/thing/` and `/writing/thing` are the same article. Callers normalise once, here. */
 export function normaliseArticleId(pathname: string): string {
   return pathname.replace(/\/+$/, '') || '/'
 }
 
 export function storageKey(articleId: string): string {
-  return `annotations:v${STORAGE_VERSION}:${normaliseArticleId(articleId)}`
+  return `annotations:v${STORAGE_VERSION}:${articleId}`
 }
 
 /** Builds a record from a selection's offsets within a block. */
@@ -92,7 +91,7 @@ export function createAnnotation(input: {
   const text = block.text
   return {
     id,
-    articleId: normaliseArticleId(input.articleId),
+    articleId: input.articleId,
     blockIndex,
     blockTag: block.tag.toLowerCase(),
     blockId: blockId(block.tag, blockIndex, text),
@@ -106,7 +105,7 @@ export function createAnnotation(input: {
   }
 }
 
-export function isStoredAnnotation(value: unknown): value is StoredAnnotation {
+function isStoredAnnotation(value: unknown): value is StoredAnnotation {
   if (typeof value !== 'object' || value === null) return false
   const record = value as Record<string, unknown>
   const strings = [
@@ -142,10 +141,9 @@ export function parseAnnotations(json: string | null, articleId: string): Stored
     return []
   }
   if (!Array.isArray(parsed)) return []
-  const wanted = normaliseArticleId(articleId)
   return parsed.filter(
     (record): record is StoredAnnotation =>
-      isStoredAnnotation(record) && normaliseArticleId(record.articleId) === wanted,
+      isStoredAnnotation(record) && record.articleId === articleId,
   )
 }
 
@@ -154,18 +152,15 @@ export function serialiseAnnotations(records: StoredAnnotation[]): string {
 }
 
 /**
- * Finds where an annotation belongs now.
+ * Finds where an annotation belongs now: the recorded offsets first, then the
+ * quote itself, scored by how much stored context still surrounds it. Only a
+ * quote that has genuinely gone orphans. Reached through `reanchor`.
  *
- * The recorded offsets are tried first, then the quote is searched for — in its
- * own block, then outwards through the others — scored by how much of the stored
- * context still surrounds it. Only when the quote has genuinely gone does the
- * annotation orphan.
- *
- * Note what is deliberately *not* a test: `blockId`. A hash mismatch only means
- * the block's text changed somewhere, which is no reason to throw away a note
- * whose own text is still sitting there untouched.
+ * Note what is deliberately *not* tested here: `blockId`. A hash mismatch only
+ * means the block changed somewhere, which is no reason to throw away a note
+ * whose own text is sitting there untouched.
  */
-export function findAnchor(record: StoredAnnotation, blocks: BlockText[]): Anchor {
+function findAnchor(record: StoredAnnotation, blocks: BlockText[]): Anchor {
   const { quote, blockIndex, startOffset } = record
 
   // Every place the quote still appears, scored by surviving context.
@@ -215,13 +210,12 @@ export function findAnchor(record: StoredAnnotation, blocks: BlockText[]): Ancho
 }
 
 /**
- * Re-anchors a record and returns the version that should be stored: position
- * and context refreshed from wherever the quote actually is now, including when
- * it hasn't moved but the text around it has. An orphan is returned untouched,
- * so a note is never rewritten on the strength of a failed search.
+ * Re-anchors a record and returns the version to store: position and context
+ * refreshed from wherever the quote now is, including when it hasn't moved but
+ * the text around it has. An orphan comes back untouched.
  *
- * `record` comes back by identity when nothing needs saving, so callers can use
- * `next !== previous` to decide whether to write to storage.
+ * Unchanged records come back by identity, so callers can use `next !== previous`
+ * to decide whether to write.
  */
 export function reanchor(
   record: StoredAnnotation,

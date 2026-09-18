@@ -1,11 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   CONTEXT_LENGTH,
-  blockId,
   createAnnotation,
-  findAnchor,
-  fnv1a,
-  isStoredAnnotation,
   normaliseArticleId,
   parseAnnotations,
   reanchor,
@@ -14,6 +10,9 @@ import {
   type BlockText,
   type StoredAnnotation,
 } from '../../src/utils/annotations'
+
+/** The anchoring is reached the way the component reaches it. */
+const anchorOf = (record: StoredAnnotation, blocks: BlockText[]) => reanchor(record, blocks).anchor
 
 const ARTICLE = '/writing/some-article'
 
@@ -40,28 +39,6 @@ const annotate = (
   })
 }
 
-describe('fnv1a', () => {
-  it('is stable for the same text and differs for different text', () => {
-    expect(fnv1a('hello')).toBe(fnv1a('hello'))
-    expect(fnv1a('hello')).not.toBe(fnv1a('hello.'))
-  })
-
-  it('returns a short base-36 string, including for the empty string', () => {
-    expect(fnv1a('')).toMatch(/^[0-9a-z]+$/)
-    expect(fnv1a('a longer piece of prose to hash').length).toBeLessThanOrEqual(7)
-  })
-})
-
-describe('blockId', () => {
-  it('combines tag, index and a hash of the text, lowercasing the tag', () => {
-    expect(blockId('P', 3, 'hello')).toBe(`p:3:${fnv1a('hello')}`)
-  })
-
-  it('changes when the block text changes', () => {
-    expect(blockId('p', 0, 'before')).not.toBe(blockId('p', 0, 'after'))
-  })
-})
-
 describe('normaliseArticleId and storageKey', () => {
   it('treats trailing slashes as insignificant', () => {
     expect(normaliseArticleId('/writing/thing/')).toBe('/writing/thing')
@@ -73,7 +50,7 @@ describe('normaliseArticleId and storageKey', () => {
   })
 
   it('versions the storage key', () => {
-    expect(storageKey('/writing/thing/')).toBe('annotations:v1:/writing/thing')
+    expect(storageKey(normaliseArticleId('/writing/thing/'))).toBe('annotations:v1:/writing/thing')
   })
 })
 
@@ -99,40 +76,18 @@ describe('createAnnotation', () => {
     expect(atEnd.suffix).toBe('')
   })
 
-  it('records the block identity and normalises the article id', () => {
-    const withSlash = createAnnotation({
+  it('records the block identity, lowercasing the tag', () => {
+    const inQuote = createAnnotation({
       id: 'x',
-      articleId: `${ARTICLE}/`,
+      articleId: ARTICLE,
       blockIndex: 2,
       block: { tag: 'BLOCKQUOTE', text },
       startOffset: 0,
       endOffset: 3,
       note: '',
     })
-    expect(withSlash.articleId).toBe(ARTICLE)
-    expect(withSlash.blockTag).toBe('blockquote')
-    expect(withSlash.blockId).toBe(blockId('blockquote', 2, text))
-  })
-})
-
-describe('isStoredAnnotation', () => {
-  const valid = annotate([paragraph('Some prose worth annotating here.')], 0, 'prose')
-
-  it('accepts a well-formed record', () => {
-    expect(isStoredAnnotation(valid)).toBe(true)
-  })
-
-  it.each([
-    ['null', null],
-    ['a string', 'nope'],
-    ['an empty object', {}],
-    ['a missing quote', { ...valid, quote: '' }],
-    ['a non-integer offset', { ...valid, startOffset: 1.5 }],
-    ['an inverted range', { ...valid, startOffset: 10, endOffset: 4 }],
-    ['a negative block index', { ...valid, blockIndex: -1 }],
-    ['a numeric note', { ...valid, note: 42 }],
-  ])('rejects %s', (_label, value) => {
-    expect(isStoredAnnotation(value)).toBe(false)
+    expect(inQuote.blockTag).toBe('blockquote')
+    expect(inQuote.blockId).toMatch(/^blockquote:2:/)
   })
 })
 
@@ -142,10 +97,6 @@ describe('parseAnnotations', () => {
 
   it('round-trips through serialisation', () => {
     expect(parseAnnotations(serialiseAnnotations([record]), ARTICLE)).toEqual([record])
-  })
-
-  it('tolerates a trailing slash on either side', () => {
-    expect(parseAnnotations(serialiseAnnotations([record]), `${ARTICLE}/`)).toHaveLength(1)
   })
 
   it.each([
@@ -162,13 +113,31 @@ describe('parseAnnotations', () => {
     expect(parseAnnotations(json, ARTICLE)).toEqual([record])
   })
 
+  it.each([
+    ['null', null],
+    ['a string', 'nope'],
+    ['an empty object', {}],
+  ])('rejects %s in place of a record', (_label, value) => {
+    expect(parseAnnotations(JSON.stringify([value]), ARTICLE)).toEqual([])
+  })
+
+  it.each([
+    ['a missing quote', { quote: '' }],
+    ['a non-integer offset', { startOffset: 1.5 }],
+    ['an inverted range', { startOffset: 10, endOffset: 4 }],
+    ['a negative block index', { blockIndex: -1 }],
+    ['a numeric note', { note: 42 }],
+  ])('rejects a record with %s', (_label, broken) => {
+    expect(parseAnnotations(JSON.stringify([{ ...record, ...broken }]), ARTICLE)).toEqual([])
+  })
+
   it('drops records belonging to another article', () => {
     const json = JSON.stringify([record, { ...record, articleId: '/writing/elsewhere' }])
     expect(parseAnnotations(json, ARTICLE)).toEqual([record])
   })
 })
 
-describe('findAnchor', () => {
+describe('anchoring', () => {
   const original = [
     paragraph('Your product did not get worse. It still does the job well enough.'),
     paragraph('Then those customers start using agents elsewhere, and the standard changes.'),
@@ -177,7 +146,7 @@ describe('findAnchor', () => {
 
   it('finds an untouched annotation exactly where it was left', () => {
     const record = annotate(original, 1, 'agents elsewhere')
-    expect(findAnchor(record, original)).toEqual({
+    expect(anchorOf(record, original)).toEqual({
       status: 'exact',
       blockIndex: 1,
       startOffset: original[1].text.indexOf('agents elsewhere'),
@@ -194,7 +163,7 @@ describe('findAnchor', () => {
       ),
       original[2],
     ]
-    const anchor = findAnchor(record, edited)
+    const anchor = anchorOf(record, edited)
     expect(anchor.status).toBe('moved')
     if (anchor.status === 'orphaned') throw new Error('unreachable')
     expect(edited[1].text.slice(anchor.startOffset, anchor.endOffset)).toBe('agents elsewhere')
@@ -203,7 +172,7 @@ describe('findAnchor', () => {
   it('follows the quote when a paragraph is inserted above it', () => {
     const record = annotate(original, 1, 'agents elsewhere')
     const withNewIntro = [paragraph('A new opening paragraph.'), ...original]
-    const anchor = findAnchor(record, withNewIntro)
+    const anchor = anchorOf(record, withNewIntro)
     expect(anchor).toMatchObject({ status: 'moved', blockIndex: 2 })
   })
 
@@ -211,7 +180,7 @@ describe('findAnchor', () => {
     const blocks = [paragraph('Alpha then the phrase and then beta.')]
     const record = annotate(blocks, 0, 'the phrase')
     const edited = [paragraph('Alpha then the phrase and then gamma entirely rewritten.')]
-    expect(findAnchor(record, edited)).toMatchObject({ status: 'exact' })
+    expect(anchorOf(record, edited)).toMatchObject({ status: 'exact' })
   })
 
   it('orphans rather than mis-anchoring when the quote itself is edited away', () => {
@@ -221,17 +190,17 @@ describe('findAnchor', () => {
       paragraph('Then those customers start using something altogether different.'),
       original[2],
     ]
-    expect(findAnchor(record, rewritten)).toEqual({ status: 'orphaned' })
+    expect(anchorOf(record, rewritten)).toEqual({ status: 'orphaned' })
   })
 
   it('orphans when the whole article is replaced', () => {
     const record = annotate(original, 1, 'agents elsewhere')
-    expect(findAnchor(record, [paragraph('Nothing in common.')])).toEqual({ status: 'orphaned' })
+    expect(anchorOf(record, [paragraph('Nothing in common.')])).toEqual({ status: 'orphaned' })
   })
 
   it('orphans when the block it lived in is deleted and nothing else matches', () => {
     const record = annotate(original, 1, 'agents elsewhere')
-    expect(findAnchor(record, [original[0], original[2]])).toEqual({ status: 'orphaned' })
+    expect(anchorOf(record, [original[0], original[2]])).toEqual({ status: 'orphaned' })
   })
 
   it('picks the occurrence whose context matches when a phrase repeats in one block', () => {
@@ -247,7 +216,7 @@ describe('findAnchor', () => {
       note: '',
     })
     const edited = [paragraph('Changed opening where the cat sat down. Later the cat sat again.')]
-    const anchor = findAnchor(record, edited)
+    const anchor = anchorOf(record, edited)
     expect(anchor.status).toBe('moved')
     // The later occurrence, which is the one that was annotated — not the earlier one,
     // even though the earlier one is nearer the recorded offset.
@@ -260,7 +229,7 @@ describe('findAnchor', () => {
     const blocks = [paragraph('the thing'), paragraph('another line')]
     const record = annotate(blocks, 0, 'the thing')
     // A second copy appears elsewhere, but the recorded position still holds the quote.
-    expect(findAnchor(record, [blocks[0], paragraph('the thing')])).toMatchObject({
+    expect(anchorOf(record, [blocks[0], paragraph('the thing')])).toMatchObject({
       status: 'exact',
       blockIndex: 0,
     })
@@ -271,7 +240,7 @@ describe('findAnchor', () => {
     const record = annotate(blocks, 0, 'the thing')
     const edited = [paragraph('rewritten opening'), paragraph('the thing'), paragraph('the thing')]
     // Two equally plausible copies, and no context survives to separate them.
-    expect(findAnchor({ ...record, prefix: 'gone', suffix: 'gone' }, edited)).toEqual({
+    expect(anchorOf({ ...record, prefix: 'gone', suffix: 'gone' }, edited)).toEqual({
       status: 'orphaned',
     })
   })
@@ -279,7 +248,7 @@ describe('findAnchor', () => {
   it('accepts an unambiguous quote even with no surviving context', () => {
     const blocks = [paragraph('the thing')]
     const record = annotate(blocks, 0, 'the thing')
-    const anchor = findAnchor({ ...record, prefix: 'gone', suffix: 'gone' }, [
+    const anchor = anchorOf({ ...record, prefix: 'gone', suffix: 'gone' }, [
       paragraph('preamble'),
       paragraph('the thing'),
     ])
@@ -288,7 +257,7 @@ describe('findAnchor', () => {
 
   it('prefers a block of the same kind when the quote moves into a quotation', () => {
     const record = annotate(original, 1, 'agents elsewhere')
-    const anchor = findAnchor(record, [
+    const anchor = anchorOf(record, [
       { tag: 'blockquote', text: 'Something about agents elsewhere.' },
       paragraph('Something about agents elsewhere.'),
     ])
@@ -316,7 +285,7 @@ describe('reanchor', () => {
     expect(result.record.startOffset).toBe(edited[0].text.indexOf('product changes'))
     const movedTo = edited[0].text.indexOf('product changes')
     expect(result.record.prefix).toBe(edited[0].text.slice(movedTo - CONTEXT_LENGTH, movedTo))
-    expect(result.record.blockId).toBe(blockId('p', 0, edited[0].text))
+    expect(result.record.blockId).not.toBe(record.blockId)
     // The reader's own writing is never touched.
     expect(result.record.note).toBe(record.note)
     expect(result.record.id).toBe(record.id)

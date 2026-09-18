@@ -159,10 +159,7 @@ const standardSiteDocumentUri =
             <MarkdownContentActions markdownUrl={markdownUrl} />
             <BackToTopLink />
           </div>
-          {
-            /* Reader annotations. Pointless on externally-published pieces, which
-              redirect off-site the moment they load. */
-          }
+          {/* Pointless on externally-published pieces: they redirect off-site. */}
           {!redirectURL && <MarginAnnotations />}
         </LongFormProseTypography>
       </article>

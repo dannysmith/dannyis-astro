@@ -1,19 +1,13 @@
 /**
- * Hand-inked arrow geometry for margin annotations.
+ * Hand-inked arrow geometry: SVG path data for an arrow from `from` to `to`,
+ * drawn to read as a pen stroke rather than a vector line.
  *
- * Returns SVG path data for an arrow running from `from` to `to`, drawn to look
- * like a pen stroke rather than a vector line:
+ * - `shaft` is a *filled* outline around a gently bowed cubic bezier, tapering to
+ *   a point at both ends and swelling in the middle. That taper is the ink.
+ * - `head` is two separate strokes rather than one joined polyline, like two
+ *   flicks of a pen.
  *
- * - `shaft` is a *filled* outline around a gently bowed cubic bezier. Its width
- *   tapers to a point at both ends and swells in the middle, which is what makes
- *   it read as ink.
- * - `head` is an open arrowhead at `to`, made of two separate strokes (not one
- *   joined polyline), like two flicks of a pen.
- *
- * Coordinates are in whatever user units the host SVG uses — for an SVG with no
- * viewBox, CSS pixels.
- *
- * Used by MarginAnnotations to join a reader's note to the phrase it marks.
+ * Coordinates are in the host SVG's user units — CSS pixels, with no viewBox.
  */
 
 export interface Point {

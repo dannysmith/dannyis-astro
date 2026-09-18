@@ -1,18 +1,13 @@
 ---
 /**
  * MarginAnnotations - lets a reader annotate an article in the right-hand margin.
+ * Notes live in the reader's own browser and are never sent anywhere.
  *
- * Select a phrase and a "Write in margin" button appears; saving underlines the
- * phrase and writes the note out in the gutter, with an inked arrow pointing back
- * at it. Notes live in the reader's own browser and are never sent anywhere.
+ * Everything ships hidden and inert, so the article reads without the script.
+ * Mount inside `<LongFormProseTypography>` on article pages only, and give the
+ * prose container `data-annotations-content`.
  *
- * Progressive enhancement: everything here ships hidden and inert, and the article
- * reads perfectly without the script. Mount it inside `<LongFormProseTypography>`
- * on article pages only, and give the prose container `data-annotations-content`.
- *
- * Wide viewports get the margin; narrower ones get notes inline beneath their
- * block. Anchoring lives in `@utils/annotations`; see
- * docs/tasks-todo/task-x-reader-margin-annotations.md.
+ * See docs/developer/margin-annotations.md.
  */
 import { Icon } from 'astro-icon/components'
 ---
@@ -51,10 +46,9 @@ import { Icon } from 'astro-icon/components'
      The margin itself.
 
      An absolutely positioned grid item takes its containing block from
-     `grid-column`, so this lands exactly on the article grid's right-hand gutter
-     with no width arithmetic — and `--measure-standard` being `70ch` means
-     arithmetic would be wrong anyway, since `ch` differs between the prose font
-     and the page font.
+     `grid-column`, so this lands on the article grid's right-hand gutter with no
+     width arithmetic — which `--measure-standard` being in `ch` would get wrong
+     anyway, since `ch` differs between the prose font and the page font.
      ---------------------------------------- */
 
   .longform-prose:has(> .reader-margin) {
@@ -62,7 +56,6 @@ import { Icon } from 'astro-icon/components'
   }
 
   .longform-prose > .reader-margin {
-    /* Space between the prose edge and the notes, for the arrows to live in. */
     --annotation-arrow-room: 3rem;
 
     position: absolute;
@@ -159,9 +152,8 @@ import { Icon } from 'astro-icon/components'
     white-space: pre-wrap;
   }
 
-  /* The global ring (2px solid, 5px offset) is a lot around a handwritten note,
-     and a note is focused programmatically after saving. Keep the affordance,
-     quietly, in the same ink as the writing. */
+  /* The global 2px ring is heavy around handwriting, and a note is focused
+     programmatically after saving. Same affordance, quieter. */
   .annotation-note:focus-visible {
     outline: var(--border-width-hairline) dashed var(--color-annotation);
     outline-offset: 0.3em;
@@ -188,7 +180,6 @@ import { Icon } from 'astro-icon/components'
     }
   }
 
-  /* Keyboard users get them on focus; pointer users on hover. */
   :root[data-annotations='margin']
     .annotation-note:is(:hover, :focus-within)
     .annotation-note-controls {
@@ -221,11 +212,9 @@ import { Icon } from 'astro-icon/components'
   /* ----------------------------------------
      Marks
 
-     The wobbly underline is an SVG background rather than a mask: a mask hides
-     the element's text too, and in WebKit it loses the text altogether once a
-     mark wraps across a line. A data URI can't read a custom property, so the
-     two themes need two copies of the shape, keyed off `data-theme` (always
-     present, and set to the *resolved* theme even on auto).
+     The underline is a background image, not a mask: a mask hides the element's
+     text too, and WebKit loses it entirely once a mark wraps a line. A data URI
+     can't read a custom property, hence one copy of the shape per theme.
      ---------------------------------------- */
 
   .annotation-mark {
@@ -238,7 +227,6 @@ import { Icon } from 'astro-icon/components'
     /* Repeat the underline on every line the mark spans. */
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
-    /* Keep it when printed. */
     print-color-adjust: exact;
   }
 
@@ -246,9 +234,8 @@ import { Icon } from 'astro-icon/components'
     --annotation-underline: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%206'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0%204.1%20L2%203.8%20L6%202.9%20L15%202.88%20L28%202.87%20L42%202.64%20L57%202.5%20L72%202.22%20L85%202.13%20L92%202.27%20L97%202.56%20L100%202.9%20L97%202.96%20L92%203.17%20L85%203.43%20L72%203.68%20L57%203.9%20L42%204.16%20L28%204.23%20L15%204.32%20L6%204.4%20L2%204.1%20Z'%20fill='%23a9b3b5'/%3E%3C/svg%3E");
   }
 
-  /* A reader's numeral is handwritten and grey; an author's footnote reference is
-     Literata and coral, so the two sequences don't read as one. Only `content`
-     changes per context — the appearance is set once, here. */
+  /* Handwritten and grey, where an author's footnote reference is Literata and
+     coral, so the two sequences don't read as one. Only `content` varies below. */
   .annotation-mark::after {
     content: none;
     margin-inline-start: 0.08em;
@@ -361,10 +348,9 @@ import { Icon } from 'astro-icon/components'
   /* ----------------------------------------
      Print
 
-     Script moves each note in beside its mark before the snapshot is taken (see
-     printLayout) and sets `data-annotations="print"`. The rules below dress that
-     arrangement; the block at the end is the safety net for a browser that never
-     fires `beforeprint`.
+     Script moves each note in beside its mark before the snapshot is taken and
+     sets `data-annotations="print"`; these rules dress that arrangement. See
+     printLayout.
      ---------------------------------------- */
 
   @media print {
@@ -373,7 +359,6 @@ import { Icon } from 'astro-icon/components'
       grid-template-columns: 0 minmax(0, 1fr) 13rem;
     }
 
-    /* Never useful on paper. */
     .annotation-note-controls,
     .annotation-invite {
       display: none;
@@ -436,10 +421,8 @@ import { Icon } from 'astro-icon/components'
   import { inkArrow } from '@utils/ink-arrow'
 
   /**
-   * Annotatable blocks: direct prose children only, so a selection can never be
-   * wrapped inside an MDX component and break its behaviour. Headings are out —
-   * their bottom border fights the underline — as are code blocks, figures and
-   * anything full-bleed.
+   * Direct prose children only, so a selection can never be wrapped inside an MDX
+   * component and break it. Headings are out too: their border fights the underline.
    */
   const BLOCKS = ':scope > p, :scope > blockquote, :scope > :is(ul, ol) > li'
   /** The same set, for walking up from a node rather than down from the prose. */
@@ -447,10 +430,7 @@ import { Icon } from 'astro-icon/components'
   const EXCLUDED = '.intro-paragraph'
   const NOTE_GAP = 20
   const ARROW_INSET = 8
-  /**
-   * Narrowest gutter worth writing in, in rem: room for the arrow, a note wide
-   * enough to read, and the outer padding. Below this, notes go inline.
-   */
+  /** Narrowest gutter worth writing in, in rem: arrow, a readable note, padding. */
   const MIN_GUTTER = 16
   const SVG_NS = 'http://www.w3.org/2000/svg'
 
@@ -485,10 +465,9 @@ import { Icon } from 'astro-icon/components'
     const root = document.documentElement
 
     /**
-     * `.longform-prose` is a query container, and `container-type` makes it a
-     * containing block for fixed descendants too (checked in Chromium and
-     * WebKit). A popover in the top layer escapes that, but only while it's
-     * open — so keep the button in the body and leave nothing to chance.
+     * `container-type` on `.longform-prose` makes it a containing block for fixed
+     * descendants (Chromium and WebKit both), and the top layer only escapes that
+     * while the popover is open. So the button lives in the body.
      */
     document.body.append(invite)
 
@@ -611,9 +590,8 @@ import { Icon } from 'astro-icon/components'
 
     /**
      * Is there enough gutter to write in? Read from the grid's own used column
-     * widths rather than a viewport breakpoint, so the margin appears exactly
-     * when there's room for it — and nothing has to be kept in sync with
-     * `--measure-standard`, which is in `ch` and so differs per font.
+     * widths, so the margin appears whenever there's room and nothing has to stay
+     * in sync with `--measure-standard` being in `ch`.
      */
     function marginFits() {
       const columns = getComputedStyle(prose).gridTemplateColumns.split(' ')
@@ -657,7 +635,6 @@ import { Icon } from 'astro-icon/components'
       const orphans = annotations.filter(a => !a.mark)
 
       if (mode === 'inline') {
-        // Under the annotated block, or under its whole list for a list item.
         const lastPlaced = new Map<Element, Element>()
         for (const annotation of anchored) {
           annotation.note.style.removeProperty('top')
@@ -670,8 +647,7 @@ import { Icon } from 'astro-icon/components'
           if (after.nextElementSibling !== annotation.note) after.after(annotation.note)
           lastPlaced.set(anchorEl, annotation.note)
         }
-        // Detached notes have no block to sit under, so they collect at the end
-        // of the article, just above this component's own markup.
+        // Nothing to sit under, so they collect at the end of the article.
         for (const orphan of orphans) {
           orphan.note.style.removeProperty('top')
           if (margin.previousElementSibling !== orphan.note) margin.before(orphan.note)
@@ -689,8 +665,7 @@ import { Icon } from 'astro-icon/components'
       // slot its note will occupy and pushes the rest of the column down.
       const boxes: Box[] = []
       for (const annotation of anchored) {
-        // The mark's first line, so a phrase spanning a line break is pointed at
-        // where it starts.
+        // The first line, so a phrase spanning a break is pointed at where it starts.
         const target = annotation.mark!.getClientRects()[0]
         if (!target || annotation === editing) continue
         boxes.push({
@@ -765,18 +740,14 @@ import { Icon } from 'astro-icon/components'
     // ---- Print --------------------------------------------------------------
 
     /**
-     * Paper needs a different arrangement. An absolutely positioned note inside
-     * a container that spans several pages doesn't paginate — it lands on the
-     * first page or nowhere — so each note moves in beside its own mark, where
-     * the block it belongs to is in flow and carries the note across page breaks
-     * with it. `top: auto` then puts the note on the mark's own line, since an
-     * absolutely positioned box with no offsets keeps its static position.
+     * An absolutely positioned note inside a container spanning several pages
+     * doesn't paginate, so each note moves in beside its own mark, where the block
+     * is in flow and carries it across page breaks. `top: auto` then leaves the
+     * note at its static position, which is the mark's own line.
      */
     function printLayout() {
-      // Group by block: a block with one note can have it out in the margin, but
-      // two notes on one line would sit on top of each other, since print
-      // positions come from static positions and there's no collision pass to
-      // run (measurements taken now describe the screen, not the page).
+      // Two notes on one line would sit on top of each other: print positions come
+      // from static positions, and anything measured now describes the screen.
       const byBlock = new Map<HTMLElement, Annotation[]>()
 
       for (const annotation of annotations) {
@@ -939,10 +910,9 @@ import { Icon } from 'astro-icon/components'
     }
 
     /**
-     * Saving happens on blur, on Enter and on Save, so the editor never sits
-     * there holding a note the reader thinks they've written. `discarding` is the
-     * one way out without saving — Cancel and Escape — and it has to be set
-     * before focus moves, since losing focus is itself a save.
+     * Saving happens on blur, on Enter and on Save, so the editor never holds a
+     * note the reader thinks they've written. Cancel and Escape are the only way
+     * out, so `discarding` has to be set before focus moves — losing focus saves.
      */
     let discarding = false
 
@@ -986,7 +956,6 @@ import { Icon } from 'astro-icon/components'
       commit()
     })
 
-    // Enter saves; Shift+Enter is a new line, as in any other prose field.
     textarea.addEventListener('keydown', event => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
         event.preventDefault()
@@ -1037,7 +1006,6 @@ import { Icon } from 'astro-icon/components'
       if (button.dataset.annotationAction === 'delete') {
         const index = annotations.indexOf(annotation)
         remove(annotation)
-        // Move focus to a neighbouring note rather than losing it to the body.
         const neighbour = annotations[index] ?? annotations[index - 1]
         neighbour?.note.focus()
         return
@@ -1082,10 +1050,7 @@ import { Icon } from 'astro-icon/components'
     return svg
   }
 
-  /**
-   * Icon-only buttons say nothing on their own, so each one carries the note's
-   * text in its accessible name.
-   */
+  /** Icon-only buttons need the note's text in their accessible name. */
   function labelControls(note: HTMLElement, text: string) {
     for (const button of note.querySelectorAll<HTMLElement>('[data-annotation-action]')) {
       const action = button.dataset.annotationAction === 'delete' ? 'Delete' : 'Edit'

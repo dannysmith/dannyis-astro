@@ -53,10 +53,8 @@
   font-display: swap;
 }
 
-/* Reader-written margin notes only, so deliberately not preloaded: the browser
-   fetches it the first time a note is actually rendered. Split by unicode-range
-   because readers supply the text — most will only ever need latin, and the
-   extended file arrives only if someone types an accent. */
+/* Margin notes only. Not preloaded, and split by unicode-range because readers
+   supply the text: see fonts.md. */
 @font-face {
   font-family: 'Caveat';
   src: url('/fonts/Caveat-v2.000-2026-09-18.woff2') format('woff2');
