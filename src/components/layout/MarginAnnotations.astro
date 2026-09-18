@@ -1,0 +1,1093 @@
+---
+/**
+ * MarginAnnotations - lets a reader annotate an article in the right-hand margin.
+ * Notes live in the reader's own browser and are never sent anywhere.
+ *
+ * Everything ships hidden and inert, so the article reads without the script.
+ * Mount inside `<LongFormProseTypography>` on article pages only, and give the
+ * prose container `data-annotations-content`.
+ *
+ * See docs/developer/margin-annotations.md.
+ */
+---
+
+<aside class="reader-margin" aria-label="Reader margin" data-reader-margin data-prose-chrome>
+  <svg class="annotation-connectors" aria-hidden="true"></svg>
+  <form class="annotation-editor" data-annotation-editor data-prose-chrome hidden>
+    <label class="sr-only" for="annotation-note">Your note</label>
+    {
+      /* No `rows`: its absence is what turns on the reset's `field-sizing: content`,
+        so the field grows as you type. Don't add `rows="1"` to make it start
+        short — that switches the growing off. The starting height is CSS. */
+    }
+    <textarea id="annotation-note" maxlength="500"></textarea>
+    <div class="annotation-editor-actions">
+      <button type="button" data-annotation-cancel>Cancel</button>
+      <button type="submit" data-annotation-save>Save</button>
+    </div>
+  </form>
+</aside>
+
+<button
+  class="annotation-invite"
+  type="button"
+  popover="manual"
+  data-annotation-invite
+  data-prose-chrome>Write in margin</button
+>
+
+{/* Cloned per note by the script, so the labels stay in markup where they read. */}
+<template data-annotation-controls>
+  <span class="annotation-note-controls">
+    <button type="button" data-annotation-action="edit">Edit</button>
+    <button type="button" data-annotation-action="delete">Delete</button>
+  </span>
+</template>
+
+<style is:global>
+  /* ----------------------------------------
+     The margin itself.
+
+     An absolutely positioned grid item takes its containing block from
+     `grid-column`, so this lands on the article grid's right-hand gutter with no
+     width arithmetic — which `--measure-standard` being in `ch` would get wrong
+     anyway, since `ch` differs between the prose font and the page font.
+     ---------------------------------------- */
+
+  .longform-prose:has(> .reader-margin) {
+    position: relative;
+  }
+
+  .longform-prose > .reader-margin {
+    --annotation-arrow-room: 3rem;
+
+    position: absolute;
+    grid-column: 3;
+    inset: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  /* Until there is room for a margin, notes sit inline under their block. */
+  :root:not([data-annotations='margin']) .reader-margin {
+    display: none;
+  }
+
+  .annotation-connectors {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .annotation-shaft {
+    fill: var(--color-annotation);
+  }
+
+  .annotation-head {
+    fill: none;
+    stroke: var(--color-annotation);
+    stroke-width: 1.3px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* ----------------------------------------
+     Notes
+     ---------------------------------------- */
+
+  /* The editor is a note being written, so the two share a hand and a box: what
+     you type is what you get. Everything below that names both is the same idea. */
+  .annotation-note,
+  .annotation-editor textarea {
+    font-family: var(--font-handwriting);
+    font-size: 1.15em;
+    font-weight: 400;
+    font-variant-numeric: normal;
+    line-height: 1.15;
+    color: var(--color-annotation);
+  }
+
+  .annotation-note {
+    display: block;
+    max-inline-size: 16rem;
+    text-wrap: pretty;
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+  }
+
+  :root[data-annotations='margin'] :is(.annotation-note, .annotation-editor) {
+    position: absolute;
+    inset-inline: var(--annotation-arrow-room) var(--space-m);
+    pointer-events: auto;
+  }
+
+  :root[data-annotations='margin'] .annotation-note {
+    transform: rotate(-0.8deg);
+    transform-origin: 0 50%;
+  }
+
+  /* Notes shuffle out of the way when the editor opens or a note is resized.
+     Only after the first layout, so they don't all slide in from the top on load. */
+  @media (prefers-reduced-motion: no-preference) {
+    :root[data-annotations='margin'] .reader-margin[data-settled] .annotation-note {
+      transition: top var(--duration-fast) var(--ease-in-out);
+    }
+  }
+
+  /* Inline: beneath the annotated block, numbered like a footnote. */
+  .longform-prose > :is(.annotation-note, .annotation-editor) {
+    max-inline-size: 30rem;
+    margin-block: 0.4em 1em;
+    margin-inline-start: 1.75em;
+  }
+
+  .longform-prose > .annotation-note {
+    position: relative;
+    font-size: 1.05em;
+  }
+
+  .longform-prose > .annotation-note::before {
+    content: attr(data-reference);
+    position: absolute;
+    inset-inline-start: -1.5em;
+    font-weight: 700;
+  }
+
+  .annotation-detached-label {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    font-style: italic;
+    color: var(--color-annotation);
+  }
+
+  .annotation-note-text {
+    white-space: pre-wrap;
+  }
+
+  .annotation-note:focus-visible {
+    outline-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .annotation-note-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+  }
+
+  :root[data-annotations='margin'] .annotation-note-controls {
+    position: absolute;
+    inset-block-start: calc(100% + 0.1rem);
+    inset-inline-start: 0.1rem;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :root[data-annotations='margin'] .annotation-note-controls {
+      transition: opacity var(--duration-fast) var(--ease-in-out);
+    }
+  }
+
+  /* `:focus-visible` rather than `:focus-within`: a note is focused by script
+     after saving, and a mouse reader shouldn't be handed controls they didn't ask
+     for. `:has()` keeps them up once focus moves onto a control itself, which
+     takes `:focus-visible` off the note. */
+  :root[data-annotations='margin']
+    .annotation-note:is(:hover, :focus-visible, :has(:focus-visible))
+    .annotation-note-controls {
+    opacity: 1;
+  }
+
+  .annotation-note-controls button {
+    /* Words this small still need a tappable box: inline mode shows the controls
+       on touch, where there's no hover to reveal them. */
+    min-height: 1.5rem;
+    padding: 0;
+    color: var(--color-annotation);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .annotation-note-controls button:hover,
+  .annotation-note-controls button:focus-visible {
+    color: var(--color-text);
+  }
+
+  .annotation-mark {
+    /* The same wobble in each theme's ink colour. Keep in sync with
+       --color-annotation, which a data URI can't read. */
+    --annotation-underline: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%206'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0%204.1%20L2%203.8%20L6%202.9%20L15%202.88%20L28%202.87%20L42%202.64%20L57%202.5%20L72%202.22%20L85%202.13%20L92%202.27%20L97%202.56%20L100%202.9%20L97%202.96%20L92%203.17%20L85%203.43%20L72%203.68%20L57%203.9%20L42%204.16%20L28%204.23%20L15%204.32%20L6%204.4%20L2%204.1%20Z'%20fill='%23566061'/%3E%3C/svg%3E");
+
+    padding-bottom: 0.08em;
+    background: var(--annotation-underline) 0 calc(100% - 1px) / 100% 0.32em no-repeat;
+    /* Repeat the underline on every line the mark spans. */
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    print-color-adjust: exact;
+  }
+
+  :root[data-theme='dark'] .annotation-mark {
+    --annotation-underline: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%206'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0%204.1%20L2%203.8%20L6%202.9%20L15%202.88%20L28%202.87%20L42%202.64%20L57%202.5%20L72%202.22%20L85%202.13%20L92%202.27%20L97%202.56%20L100%202.9%20L97%202.96%20L92%203.17%20L85%203.43%20L72%203.68%20L57%203.9%20L42%204.16%20L28%204.23%20L15%204.32%20L6%204.4%20L2%204.1%20Z'%20fill='%23a9b3b5'/%3E%3C/svg%3E");
+  }
+
+  .annotation-mark::after {
+    content: none;
+    margin-inline-start: 0.08em;
+    font-family: var(--font-handwriting);
+    font-size: 0.8em;
+    font-weight: 700;
+    line-height: 0;
+    color: var(--color-annotation);
+    vertical-align: super;
+  }
+
+  /* Shown wherever a note isn't sitting beside the text to do the pointing. */
+  :root:not([data-annotations='margin']) .annotation-mark::after {
+    content: attr(data-reference);
+  }
+
+  /* ----------------------------------------
+     Writing a note
+     ---------------------------------------- */
+
+  .annotation-invite {
+    /* A popover, so it renders in the top layer — no z-index, and nothing can
+       clip it. Positioned from the selection's rect in script. */
+    position: fixed;
+    inset: auto;
+    width: max-content;
+    margin: 0;
+    padding: 0.4em 0.65em;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    line-height: 1;
+    color: var(--color-text);
+    background: var(--color-background);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 8px oklch(0% 0 0 / 0.12);
+    cursor: pointer;
+  }
+
+  .annotation-invite:hover,
+  .annotation-invite:focus-visible {
+    border-color: var(--color-text-secondary);
+  }
+
+  .annotation-editor {
+    margin: 0;
+  }
+
+  .annotation-editor textarea {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-block-size: 1lh;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-bottom: var(--border-width-hairline) solid var(--color-border);
+    border-radius: 0;
+    resize: none;
+  }
+
+  .annotation-editor textarea:focus {
+    outline: none;
+    border-bottom-color: var(--color-annotation);
+  }
+
+  .annotation-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    margin-block-start: 0.45rem;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+  }
+
+  .annotation-editor-actions button {
+    padding: 0;
+    color: var(--color-text-secondary);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .annotation-editor-actions button[type='submit'] {
+    color: var(--color-text);
+  }
+
+  .annotation-editor-actions button:hover,
+  .annotation-editor-actions button:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  /* ----------------------------------------
+     Print
+
+     Script moves each note in beside its mark before the snapshot is taken and
+     sets `data-annotations="print"`; these rules dress that arrangement. See
+     printLayout.
+     ---------------------------------------- */
+
+  @media print {
+    :root[data-annotations='print'] .longform-prose:has(> .reader-margin) {
+      /* Take the outer gutter back and spend it on the margin. */
+      grid-template-columns: 0 minmax(0, 1fr) 13rem;
+    }
+
+    .annotation-note-controls,
+    .annotation-invite {
+      display: none;
+    }
+
+    /* The notes have already been moved out of the aside by then. */
+    :root[data-annotations='print'] .reader-margin {
+      display: none;
+    }
+
+    /* The connector points at the phrase, so a numeral would be noise — except
+       where notes had to go beneath their block and need matching up. */
+    :root[data-annotations='print'] .annotation-mark[data-print-numbered]::after {
+      content: attr(data-reference);
+    }
+
+    .annotation-print-host {
+      position: relative;
+    }
+
+    .annotation-print-host > .annotation-note {
+      position: absolute;
+      top: auto;
+      left: calc(100% + 1.75rem);
+      width: 11rem;
+      max-inline-size: none;
+      /* Up onto the line the mark sits on, rather than below it. */
+      transform: translateY(-1.1em) rotate(-0.8deg);
+    }
+
+    .annotation-print-host > .annotation-print-connector {
+      position: absolute;
+      top: auto;
+      left: 100%;
+      width: 1.75rem;
+      height: 1em;
+      overflow: visible;
+      transform: translateY(-1em);
+    }
+
+    /* Detached notes have no mark to sit beside, so they read as a list at the end. */
+    :root[data-annotations='print'] .annotation-note[data-orphaned] {
+      position: static;
+      width: auto;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import {
+    createAnnotation,
+    normaliseArticleId,
+    parseAnnotations,
+    reanchor,
+    serialiseAnnotations,
+    storageKey,
+    type StoredAnnotation,
+  } from '@utils/annotations'
+  import { inkArrow } from '@utils/ink-arrow'
+
+  /**
+   * Direct prose children only, so a selection can never be wrapped inside an MDX
+   * component and break it. Headings are out too: their border fights the underline.
+   */
+  const BLOCKS = ':scope > p, :scope > blockquote, :scope > :is(ul, ol) > li'
+  /** The same set, for walking up from a node rather than down from the prose. */
+  const BLOCK_TAGS = 'p, blockquote, li'
+  const EXCLUDED = '.intro-paragraph'
+  const NOTE_GAP = 20
+  const ARROW_INSET = 8
+  /** Narrowest gutter worth writing in, in rem: arrow, a readable note, padding. */
+  const MIN_GUTTER = 16
+  const SVG_NS = 'http://www.w3.org/2000/svg'
+
+  interface Annotation {
+    record: StoredAnnotation
+    /** The wrapped phrase, or null when the annotation has come loose from the text. */
+    mark: HTMLElement | null
+    note: HTMLElement
+    textNode: HTMLElement
+  }
+
+  /** Everything needed from the DOM, or nothing if this page isn't set up for annotations. */
+  function parts() {
+    const prose = document.querySelector<HTMLElement>('[data-annotations-content]')
+    const margin = prose?.querySelector<HTMLElement>(':scope > [data-reader-margin]')
+    const connectors = margin?.querySelector<SVGSVGElement>('.annotation-connectors')
+    const editor = document.querySelector<HTMLFormElement>('[data-annotation-editor]')
+    const textarea = editor?.querySelector('textarea')
+    const invite = document.querySelector<HTMLButtonElement>('[data-annotation-invite]')
+    const controls = document.querySelector<HTMLTemplateElement>(
+      'template[data-annotation-controls]',
+    )
+    if (!prose || !margin || !connectors || !editor || !textarea || !invite || !controls) return
+    return { prose, margin, connectors, editor, textarea, invite, controls }
+  }
+
+  function init() {
+    const found = parts()
+    if (!found) return
+    // Destructured, so the functions below don't each need a non-null assertion.
+    const { prose, margin, connectors, editor, textarea, invite, controls } = found
+    const root = document.documentElement
+
+    /**
+     * `container-type` on `.longform-prose` makes it a containing block for fixed
+     * descendants (Chromium and WebKit both), and the top layer only escapes that
+     * while the popover is open. So the button lives in the body.
+     */
+    document.body.append(invite)
+
+    const articleId = normaliseArticleId(location.pathname)
+    const key = storageKey(articleId)
+    const annotations: Annotation[] = []
+
+    /** Pending state while the editor is open: a new selection, or an existing note. */
+    let draft: { range: Range; block: Element; blockIndex: number } | undefined
+    let editing: Annotation | undefined
+    let selection: { range: Range; block: Element; blockIndex: number } | undefined
+
+    const blocks = () =>
+      Array.from(prose.querySelectorAll<HTMLElement>(BLOCKS)).filter(
+        block => !block.closest(EXCLUDED),
+      )
+
+    // ---- Storage ------------------------------------------------------------
+
+    function save() {
+      try {
+        localStorage.setItem(key, serialiseAnnotations(annotations.map(a => a.record)))
+      } catch {
+        // A reader with storage disabled still gets annotations for this visit.
+      }
+    }
+
+    function read(): StoredAnnotation[] {
+      try {
+        return parseAnnotations(localStorage.getItem(key), articleId)
+      } catch {
+        return []
+      }
+    }
+
+    // ---- Building marks and notes -------------------------------------------
+
+    function wrapRange(range: Range, id: string): HTMLElement {
+      const mark = document.createElement('span')
+      mark.className = 'annotation-mark'
+      mark.setAttribute('aria-describedby', `annotation-${id}`)
+      mark.append(range.extractContents())
+      range.insertNode(mark)
+      return mark
+    }
+
+    function buildNote(record: StoredAnnotation): { note: HTMLElement; textNode: HTMLElement } {
+      const note = document.createElement('span')
+      note.className = 'annotation-note'
+      note.id = `annotation-${record.id}`
+      note.setAttribute('role', 'note')
+      note.tabIndex = 0
+      // A reader's note sits in the prose in inline mode, but isn't body prose:
+      // without this the article's end mark disappears once anyone annotates it.
+      note.dataset.proseChrome = ''
+
+      const textNode = document.createElement('span')
+      textNode.className = 'annotation-note-text'
+      textNode.textContent = record.note
+
+      note.append(textNode)
+      note.append(controls.content.cloneNode(true))
+      labelControls(note, record.note)
+
+      return { note, textNode }
+    }
+
+    function add(record: StoredAnnotation, mark: HTMLElement | null) {
+      const { note, textNode } = buildNote(record)
+      const annotation: Annotation = { record, mark, note, textNode }
+      annotations.push(annotation)
+      return annotation
+    }
+
+    /** A note whose text can no longer be found says so in its own words. */
+    function markDetached(annotation: Annotation) {
+      annotation.note.dataset.orphaned = ''
+      const label = document.createElement('span')
+      label.className = 'annotation-detached-label'
+      label.textContent = 'Detached — the text this marked has changed'
+      annotation.textNode.after(label)
+    }
+
+    function remove(annotation: Annotation) {
+      annotation.mark?.replaceWith(...annotation.mark.childNodes)
+      annotation.note.remove()
+      annotations.splice(annotations.indexOf(annotation), 1)
+      save()
+      scheduleLayout()
+    }
+
+    // ---- Restoring ----------------------------------------------------------
+
+    function restore() {
+      // One query: `anchor.blockIndex` indexes both lists, so they have to match.
+      const elements = blocks()
+      const texts = elements.map(block => ({ tag: block.tagName, text: block.textContent ?? '' }))
+      let changed = false
+
+      for (const stored of read()) {
+        const { anchor, record } = reanchor(stored, texts)
+        if (record !== stored) changed = true
+
+        // The anchor came from this block's own text, so the range should always
+        // be there; if it somehow isn't, keep the note rather than lose it.
+        const block = anchor.status === 'orphaned' ? undefined : elements[anchor.blockIndex]
+        const range =
+          anchor.status === 'orphaned'
+            ? undefined
+            : block && rangeFromOffsets(block, anchor.startOffset, anchor.endOffset)
+
+        if (!range || range.toString() !== record.quote) {
+          markDetached(add(record, null))
+          continue
+        }
+        add(record, wrapRange(range, record.id))
+      }
+
+      if (changed) save()
+    }
+
+    // ---- Layout -------------------------------------------------------------
+
+    /**
+     * Is there enough gutter to write in? Read from the grid's own used column
+     * widths, so the margin appears whenever there's room and nothing has to stay
+     * in sync with `--measure-standard` being in `ch`.
+     */
+    function marginFits() {
+      const columns = getComputedStyle(prose).gridTemplateColumns.split(' ')
+      const gutter = parseFloat(columns.at(-1) ?? '0')
+      const rem = parseFloat(getComputedStyle(root).fontSize)
+      return gutter >= MIN_GUTTER * rem
+    }
+
+    /** One thing to be placed in the margin: a note, or the editor. */
+    interface Box {
+      element: HTMLElement
+      /** Where it would sit if nothing were in the way, relative to the margin. */
+      wanted: number
+      /** The line it belongs to, for drawing the arrow. */
+      target: DOMRect
+    }
+
+    function layout() {
+      if (pendingFrame !== undefined) {
+        cancelAnimationFrame(pendingFrame)
+        pendingFrame = undefined
+      }
+      if (printing) return
+      const mode = marginFits() ? 'margin' : 'inline'
+      root.dataset.annotations = mode
+      connectors.replaceChildren()
+
+      // Numbering follows the document, not the order they were written in, so
+      // the numerals read 1, 2, 3 down the page however they were added.
+      const anchored = annotations
+        .filter(a => a.mark)
+        .toSorted((a, b) =>
+          a.mark!.compareDocumentPosition(b.mark!) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1,
+        )
+      anchored.forEach((annotation, index) => {
+        const reference = String(index + 1)
+        annotation.note.dataset.reference = reference
+        annotation.mark!.dataset.reference = reference
+      })
+
+      const orphans = annotations.filter(a => !a.mark)
+
+      if (mode === 'inline') {
+        const lastPlaced = new Map<Element, Element>()
+        for (const annotation of anchored) {
+          annotation.note.style.removeProperty('top')
+          const block = annotation.mark!.closest(BLOCK_TAGS)
+          if (!block) continue
+          const anchorEl = flowAnchor(block)
+          const after = lastPlaced.get(anchorEl) ?? anchorEl
+          // Only move a note that is in the wrong place: moving a node blurs any
+          // focused field inside it.
+          if (after.nextElementSibling !== annotation.note) after.after(annotation.note)
+          lastPlaced.set(anchorEl, annotation.note)
+        }
+        // Nothing to sit under, so they collect at the end of the article.
+        for (const orphan of orphans) {
+          orphan.note.style.removeProperty('top')
+          if (margin.previousElementSibling !== orphan.note) margin.before(orphan.note)
+        }
+        // The editor goes last, after whatever its block already carries.
+        if (!editor.hidden) {
+          const block = editing?.mark?.closest(BLOCK_TAGS) ?? draft?.block
+          const anchorEl = block && flowAnchor(block)
+          const after = anchorEl && (lastPlaced.get(anchorEl) ?? anchorEl)
+          if (after) {
+            if (after.nextElementSibling !== editor) after.after(editor)
+          } else if (margin.previousElementSibling !== editor) {
+            // A detached note has no block of its own; nor, then, does its editor.
+            margin.before(editor)
+          }
+          editor.style.removeProperty('top')
+        }
+        return
+      }
+
+      for (const annotation of [...anchored, ...orphans]) {
+        if (annotation.note.parentElement !== margin) margin.append(annotation.note)
+      }
+      if (!editor.hidden && editor.parentElement !== margin) margin.append(editor)
+
+      const frame = margin.getBoundingClientRect()
+
+      // The editor is placed with the notes, not on top of them: it takes the
+      // slot its note will occupy and pushes the rest of the column down.
+      const boxes: Box[] = []
+      for (const annotation of anchored) {
+        // The first line, so a phrase spanning a break is pointed at where it starts.
+        const target = annotation.mark!.getClientRects()[0]
+        if (!target || annotation === editing) continue
+        boxes.push({
+          element: annotation.note,
+          wanted: wantedTop(annotation.note, target, frame),
+          target,
+        })
+      }
+      if (!editor.hidden) {
+        const target = (editing?.mark ?? draft?.range)?.getClientRects()[0]
+        if (target) {
+          boxes.push({ element: editor, wanted: wantedTop(editor, target, frame), target })
+        }
+      }
+
+      boxes.sort((a, b) => a.wanted - b.wanted)
+
+      let cursor = 0
+      for (const box of boxes) {
+        const top = Math.max(0, box.wanted, cursor)
+        box.element.style.top = `${top}px`
+        cursor = top + box.element.offsetHeight + controlsRoom(box.element) + NOTE_GAP
+
+        const left = box.element.getBoundingClientRect().left - frame.left
+        const arrow = inkArrow(
+          { x: left - ARROW_INSET, y: top + firstLineCentre(box.element) },
+          { x: ARROW_INSET, y: box.target.top - frame.top + box.target.height / 2 },
+        )
+        connectors.append(
+          path('annotation-shaft', arrow.shaft),
+          path('annotation-head', arrow.head),
+        )
+      }
+
+      // Detached notes have nothing to point at, so they stack up at the end. The
+      // editor stands in for whichever one is open.
+      for (const orphan of orphans) {
+        const element = orphan === editing && !editor.hidden ? editor : orphan.note
+        element.style.top = `${cursor}px`
+        cursor += element.offsetHeight + controlsRoom(element) + NOTE_GAP
+      }
+
+      // Let things move under transition only once they've been placed, so the
+      // first paint doesn't slide every note in from the top.
+      if (!margin.dataset.settled) {
+        requestAnimationFrame(() => (margin.dataset.settled = ''))
+      }
+    }
+
+    /** Aligns an element's first line with the middle of the line it annotates. */
+    function wantedTop(element: HTMLElement, target: DOMRect, frame: DOMRect) {
+      return target.top - frame.top + target.height / 2 - firstLineCentre(element)
+    }
+
+    /**
+     * Distance from an element's top to the middle of its first line of text,
+     * measured rather than derived: `text-box-trim` and a handwriting face make
+     * the relationship between line height and visible text unpredictable.
+     */
+    function firstLineCentre(element: HTMLElement) {
+      const text = element.querySelector('.annotation-note-text') ?? element
+      const range = document.createRange()
+      range.selectNodeContents(text)
+      const line = range.getClientRects()[0]
+      if (!line) return element.offsetHeight / 2
+      return line.top + line.height / 2 - element.getBoundingClientRect().top
+    }
+
+    /** Hover controls are absolutely positioned, so layout has to reserve their room. */
+    function controlsRoom(element: HTMLElement) {
+      return element.querySelector<HTMLElement>('.annotation-note-controls')?.offsetHeight ?? 0
+    }
+
+    // ---- Print --------------------------------------------------------------
+
+    /**
+     * An absolutely positioned note inside a container spanning several pages
+     * doesn't paginate, so each note moves in beside its own mark, where the block
+     * is in flow and carries it across page breaks. `top: auto` then leaves the
+     * note at its static position, which is the mark's own line.
+     */
+    function printLayout() {
+      // Two notes on one line would sit on top of each other: print positions come
+      // from static positions, and anything measured now describes the screen.
+      const byBlock = new Map<HTMLElement, Annotation[]>()
+
+      for (const annotation of annotations) {
+        annotation.note.style.removeProperty('top')
+
+        const block = annotation.mark?.closest<HTMLElement>(BLOCK_TAGS)
+        if (!block) {
+          // Nothing to sit beside: detached notes go to the end of the article.
+          if (margin.previousElementSibling !== annotation.note) margin.before(annotation.note)
+          continue
+        }
+        byBlock.set(block, [...(byBlock.get(block) ?? []), annotation])
+      }
+
+      for (const [block, group] of byBlock) {
+        if (group.length === 1) {
+          const [annotation] = group
+          block.classList.add('annotation-print-host')
+          annotation.mark!.after(annotation.note, printConnector())
+          continue
+        }
+
+        // More than one: number them and set them beneath the block instead.
+        let after: Element = flowAnchor(block)
+        for (const annotation of group) {
+          annotation.mark!.dataset.printNumbered = ''
+          after.after(annotation.note)
+          after = annotation.note
+        }
+      }
+    }
+
+    function printTeardown() {
+      for (const host of prose.querySelectorAll('.annotation-print-host')) {
+        host.classList.remove('annotation-print-host')
+      }
+      for (const mark of prose.querySelectorAll<HTMLElement>('[data-print-numbered]')) {
+        delete mark.dataset.printNumbered
+      }
+      for (const connector of prose.querySelectorAll('.annotation-print-connector')) {
+        connector.remove()
+      }
+    }
+
+    let printing = false
+
+    addEventListener('beforeprint', () => {
+      printing = true
+      root.dataset.annotations = 'print'
+      printLayout()
+      // Force the print arrangement to take effect before the snapshot is taken.
+      void prose.offsetHeight
+    })
+
+    addEventListener('afterprint', () => {
+      printing = false
+      printTeardown()
+      layout()
+    })
+
+    let pendingFrame: number | undefined
+    function scheduleLayout() {
+      pendingFrame ??= requestAnimationFrame(() => {
+        pendingFrame = undefined
+        layout()
+      })
+    }
+
+    // ---- Selecting ----------------------------------------------------------
+
+    function selectable() {
+      const current = getSelection()
+      if (!current || current.rangeCount !== 1 || current.isCollapsed) return
+      const range = current.getRangeAt(0)
+
+      // `selectionchange` fires throughout a drag, so the block list is gathered
+      // once here rather than per end of the range.
+      const candidates = blocks()
+      const blockFor = (node: Node) => {
+        const element = node instanceof Element ? node : node.parentElement
+        const block = element?.closest<HTMLElement>(BLOCK_TAGS)
+        return block && candidates.includes(block) ? block : undefined
+      }
+
+      const block = blockFor(range.startContainer)
+      if (!block || block !== blockFor(range.endContainer) || !range.toString().trim()) return
+      // Never nest marks: overlapping annotations can't be unwrapped cleanly.
+      if (annotations.some(a => a.mark && range.intersectsNode(a.mark))) return
+      return { range: range.cloneRange(), block, blockIndex: candidates.indexOf(block) }
+    }
+
+    function showInvite(range: Range) {
+      const rects = range.getClientRects()
+      const rect = rects[rects.length - 1]
+      if (!rect) return
+      if (!invite.matches(':popover-open')) invite.showPopover()
+      const { offsetWidth: width, offsetHeight: height } = invite
+      const below = rect.bottom + 8
+      const top = below + height <= innerHeight - 8 ? below : rect.top - height - 8
+      invite.style.top = `${Math.max(8, Math.min(top, innerHeight - height - 8))}px`
+      invite.style.left = `${Math.max(8, Math.min(rect.right, innerWidth - width - 8))}px`
+    }
+
+    function hideInvite() {
+      if (invite.matches(':popover-open')) invite.hidePopover()
+    }
+
+    function onSelectionChange() {
+      if (!editor.hidden) return
+      selection = selectable()
+      if (!selection) {
+        hideInvite()
+        return
+      }
+      showInvite(selection.range)
+    }
+
+    // ---- The editor ---------------------------------------------------------
+
+    /** Placement is `layout`'s job: it decides the mode, and the editor takes a
+     *  slot in the column alongside the notes. */
+    function openEditor() {
+      editor.hidden = false
+      hideInvite()
+      textarea.value = editing?.record.note ?? ''
+      editing?.note.setAttribute('hidden', '')
+      layout()
+      textarea.focus()
+    }
+
+    function closeEditor() {
+      discarding = false
+      editing?.note.removeAttribute('hidden')
+      editing = undefined
+      draft = undefined
+      editor.hidden = true
+      textarea.value = ''
+      scheduleLayout()
+    }
+
+    /**
+     * Saving happens on blur, on Enter and on Save, so the editor never holds a
+     * note the reader thinks they've written. Cancel and Escape are the only way
+     * out, so `discarding` has to be set before focus moves — losing focus saves.
+     */
+    let discarding = false
+
+    function commit(fromBlur = false) {
+      const value = textarea.value.trim()
+      if (!value) {
+        // Nothing written: drop a new note, and leave an edited one as it was.
+        closeEditor()
+        return
+      }
+
+      let saved = editing
+      if (editing) {
+        editing.record = { ...editing.record, note: value }
+        editing.textNode.textContent = value
+        labelControls(editing.note, value)
+      } else if (draft) {
+        const offsets = offsetsOf(draft.block, draft.range)
+        const record = createAnnotation({
+          id: crypto.randomUUID(),
+          articleId,
+          blockIndex: draft.blockIndex,
+          block: { tag: draft.block.tagName, text: draft.block.textContent ?? '' },
+          startOffset: offsets.start,
+          endOffset: offsets.end,
+          note: value,
+        })
+        saved = add(record, wrapRange(draft.range, record.id))
+      }
+
+      save()
+      closeEditor()
+      layout()
+      // Focus follows the reader out of the editor, but only when they left it by
+      // saving. A blur save means they've already clicked somewhere of their own
+      // choosing, and pulling focus back to the note would take it off them.
+      // Laid out first: a new note isn't in the document until layout puts it
+      // there, and focus() on a detached node does nothing.
+      if (!fromBlur) saved?.note.focus()
+    }
+
+    editor.addEventListener('submit', event => {
+      event.preventDefault()
+      commit()
+    })
+
+    textarea.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault()
+        editor.requestSubmit()
+        return
+      }
+      if (event.key === 'Escape') {
+        discarding = true
+        closeEditor()
+      }
+    })
+
+    // The editor grows as it's typed into (field-sizing), so the column below it
+    // has to move with it.
+    textarea.addEventListener('input', scheduleLayout)
+
+    // Clicking away is a save, not a loss.
+    textarea.addEventListener('blur', () => {
+      if (discarding || editor.hidden) return
+      commit(true)
+    })
+
+    for (const button of editor.querySelectorAll('button')) {
+      // Keep focus in the textarea so clicking a button doesn't fire the blur
+      // save before the button's own click lands.
+      button.addEventListener('pointerdown', event => event.preventDefault())
+    }
+
+    editor.querySelector('[data-annotation-cancel]')!.addEventListener('click', () => {
+      discarding = true
+      closeEditor()
+    })
+
+    // Keep the selection alive through the click that acts on it.
+    invite.addEventListener('pointerdown', event => event.preventDefault())
+    invite.addEventListener('click', () => {
+      if (!selection) return
+      draft = selection
+      selection = undefined
+      getSelection()?.removeAllRanges()
+      openEditor()
+    })
+
+    document.addEventListener('click', event => {
+      const button = (event.target as HTMLElement).closest<HTMLElement>('[data-annotation-action]')
+      const annotation = annotations.find(a => a.note.contains(button ?? null))
+      if (!button || !annotation) return
+      if (button.dataset.annotationAction === 'delete') {
+        const index = annotations.indexOf(annotation)
+        remove(annotation)
+        const neighbour = annotations[index] ?? annotations[index - 1]
+        neighbour?.note.focus()
+        return
+      }
+      editing = annotation
+      openEditor()
+    })
+
+    document.addEventListener('selectionchange', onSelectionChange)
+    addEventListener('scroll', hideInvite, { passive: true })
+    addEventListener('resize', () => {
+      // A resize can change the gutter, and so which mode applies.
+      hideInvite()
+      scheduleLayout()
+    })
+
+    // ---- Reflow -------------------------------------------------------------
+
+    restore()
+    layout()
+
+    let lastSize = ''
+    new ResizeObserver(([entry]) => {
+      const size = `${Math.round(entry.contentRect.width)}x${Math.round(entry.contentRect.height)}`
+      if (size === lastSize) return
+      lastSize = size
+      scheduleLayout()
+    }).observe(prose)
+    // The handwriting face is fetched the first time a note renders, which
+    // changes every note's height when it arrives.
+    document.fonts.addEventListener('loadingdone', scheduleLayout)
+  }
+
+  /** A short arrow for print, over a fixed box beside the mark. */
+  function printConnector() {
+    const svg = document.createElementNS(SVG_NS, 'svg')
+    svg.classList.add('annotation-print-connector')
+    svg.setAttribute('viewBox', '0 0 32 24')
+    svg.setAttribute('aria-hidden', 'true')
+    const arrow = inkArrow({ x: 28, y: 12 }, { x: 4, y: 12 })
+    svg.append(path('annotation-shaft', arrow.shaft), path('annotation-head', arrow.head))
+    return svg
+  }
+
+  /**
+   * An article full of notes is an article full of buttons reading "Edit", so
+   * each carries its own note's text to tell them apart. The visible word leads,
+   * which is what keeps the accessible name a match for the label.
+   */
+  function labelControls(note: HTMLElement, text: string) {
+    for (const button of note.querySelectorAll<HTMLElement>('[data-annotation-action]')) {
+      const action = button.dataset.annotationAction === 'delete' ? 'Delete' : 'Edit'
+      button.setAttribute('aria-label', `${action} note: ${text}`)
+    }
+  }
+
+  /** Character offsets of a range within a block's text content. */
+  function offsetsOf(block: Element, range: Range) {
+    const before = document.createRange()
+    before.setStart(block, 0)
+    before.setEnd(range.startContainer, range.startOffset)
+    const start = before.toString().length
+    return { start, end: start + range.toString().length }
+  }
+
+  /** The inverse: a range spanning character offsets into a block's text content. */
+  function rangeFromOffsets(block: Element, start: number, end: number) {
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT)
+    const range = document.createRange()
+    let position = 0
+    let started = false
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const length = node.textContent?.length ?? 0
+      if (!started && start < position + length) {
+        range.setStart(node, start - position)
+        started = true
+      }
+      if (started && end <= position + length) {
+        range.setEnd(node, end - position)
+        return range
+      }
+      position += length
+    }
+  }
+
+  /**
+   * Where a note sits in flow for a given block: after the block itself, or after
+   * the whole list when the block is a list item.
+   */
+  function flowAnchor(block: Element) {
+    return block.matches('li') ? (block.parentElement ?? block) : block
+  }
+
+  function path(className: string, d: string) {
+    const element = document.createElementNS(SVG_NS, 'path')
+    element.classList.add(className)
+    element.setAttribute('d', d)
+    return element
+  }
+
+  init()
+</script>

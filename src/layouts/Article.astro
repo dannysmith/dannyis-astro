@@ -9,6 +9,7 @@ import {
   Lightbox,
   LLMDiscoveryNote,
   LongFormProseTypography,
+  MarginAnnotations,
   CommandPalette,
   MainNavigation,
   SeriesCallout,
@@ -113,7 +114,7 @@ const standardSiteDocumentUri =
         }
         <span data-pagefind-meta={`date:${pubIso}`} data-pagefind-sort={`date:${pubIso}`}></span>
         {toc && <TableOfContents headings={headings} />}
-        <LongFormProseTypography>
+        <LongFormProseTypography data-annotations-content>
           {
             cover && coverAlt && (
               <div class="hero-image" style={vtCover ? `--vt-cover: ${vtCover}` : undefined}>
@@ -154,10 +155,12 @@ const standardSiteDocumentUri =
           </div>
           <SeriesCallout series={series} currentId={Astro.params.slug!} />
           <slot />
-          <div class="footer-actions no-print" data-pagefind-ignore>
+          <div class="footer-actions no-print" data-pagefind-ignore data-prose-chrome>
             <MarkdownContentActions markdownUrl={markdownUrl} />
             <BackToTopLink />
           </div>
+          {/* Pointless on externally-published pieces: they redirect off-site. */}
+          {!redirectURL && <MarginAnnotations />}
         </LongFormProseTypography>
       </article>
 

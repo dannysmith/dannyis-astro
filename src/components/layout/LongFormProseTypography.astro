@@ -58,16 +58,17 @@ const { class: className, ...props } = Astro.props
       }
     }
 
-    /* End Mark — applied to the last paragraph of body prose. Treats a
-       small whitelist of trailing meta-chrome as ignorable: the footnotes
-       section from remark-gfm, the markdown-actions div, the inline-footnote
-       containers injected by InlineFootnotes, and any trailing scripts.
-       Anything else following the paragraph (heading, list, callout, etc.)
-       counts as body content and suppresses the mark. */
+    /* End Mark — applied to the last paragraph of body prose. Anything trailing
+       the prose that isn't body content (actions, the reader margin, footnote
+       containers) carries `data-prose-chrome` and is ignored here; `script` and
+       `template` never render, and remark-gfm's footnotes section isn't ours to
+       tag. Anything else following the paragraph (heading, list, callout, etc.)
+       counts as body content and suppresses the mark.
+
+       Tag trailing chrome at the point you add it — an untagged sibling silently
+       removes the mark from every article. */
     .longform-prose
-      > p:not(
-        :has(~ :not(.inline-footnote-container, [data-footnotes], .markdown-actions, script))
-      ):after {
+      > p:not(:has(~ :not([data-prose-chrome], [data-footnotes], script, template))):after {
       color: var(--color-accent);
       display: inline-block;
       content: ' ';

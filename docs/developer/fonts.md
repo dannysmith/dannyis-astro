@@ -10,6 +10,7 @@ Detailed reference for the custom fonts used on this site, including variable fo
 | [Geist](#geist) | Display typography | Variable (weight) + variable italic | Self-hosted from [vercel/geist-font](https://github.com/vercel/geist-font) |
 | [Figtree](#figtree) | UI + short-form prose | Variable (weight) + variable italic | Self-hosted from [google/fonts](https://github.com/google/fonts/tree/main/ofl/figtree) |
 | [Fira Code](#fira-code) | Code / monospace | Variable (weight) | Fontsource (temporary) |
+| [Caveat](#caveat) | Reader-written margin annotations | Variable (weight) | Fontsource (built from [google/fonts](https://github.com/google/fonts/tree/main/ofl/caveat)) |
 
 CSS custom properties for font stacks are defined in `src/styles/_foundation.css`:
 
@@ -18,6 +19,7 @@ CSS custom properties for font stacks are defined in `src/styles/_foundation.css
 --font-ui: 'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
 --font-code: 'Fira Code Variable', 'Fira Code', 'Inconsolata', monospace;
+--font-handwriting: 'Caveat', cursive;
 ```
 
 | Variable | Purpose |
@@ -26,6 +28,7 @@ CSS custom properties for font stacks are defined in `src/styles/_foundation.css
 | `--font-ui` | Interface elements AND short-form prose (notes, callouts, captions, `/now`) — this is the document body default |
 | `--font-prose` | Long-form reading: articles, anywhere `.longform-prose` applies |
 | `--font-code` | Code blocks, inline code |
+| `--font-handwriting` | Reader-written margin annotations (see `margin-annotations.md`) |
 
 **Notes:**
 - The document body defaults to `--font-ui` (set in `_typography.css`), so short-form prose and UI share Figtree. `.longform-prose` scopes Literata to long-form articles only.
@@ -496,6 +499,43 @@ See the [Fira Code wiki](https://github.com/tonsky/FiraCode/wiki/How-to-enable-s
 
 ---
 
+## Caveat
+
+A brush-style handwriting face. Used only for reader-written margin annotations — the notes themselves, their reference numerals, and the editor you type into.
+
+### Source Information
+
+| Property | Value |
+|----------|-------|
+| Version | 2.000 (Google Fonts revision v23) |
+| Repository | [google/fonts](https://github.com/google/fonts/tree/main/ofl/caveat) |
+| Current source | [Fontsource](https://fontsource.org/fonts/caveat) (`@fontsource-variable/caveat` 5.3.0) |
+| Download date | September 2026 |
+| Files | `Caveat-v2.000-2026-09-18.woff2` (latin), `Caveat-LatinExt-v2.000-2026-09-18.woff2` (latin-ext) |
+
+### Variable Axes
+
+#### Weight (`wght`)
+
+Range: 400–700. Notes are set at 400; reference numerals use 700, which they need — at 400 a numeral is too faint to read as a marker.
+
+| Value | Name |
+|-------|------|
+| 400 | Regular |
+| 700 | Bold |
+
+### Loading
+
+Two things here differ from the other faces on purpose.
+
+**Split by `unicode-range`**, rather than one file per face. The text is written by the *reader*, so glyph coverage can't be predicted: latin (73KB) covers almost everyone, and latin-ext (29KB) is fetched only if someone actually types an accent.
+
+**Not preloaded.** A browser only downloads a webfont when rendered text matches the `@font-face`, and nothing on the page uses Caveat until a reader writes a note — so readers who never annotate never pay for it. Adding a preload would defeat that.
+
+There are also no static TTFs for this face, unlike Geist and Figtree: the OG image pipeline never sets handwriting type.
+
+---
+
 ## CSS Best Practices
 
 ### Prefer `font-variant-*` over `font-feature-settings`
@@ -526,7 +566,7 @@ Variable fonts load a single file for all weights/styles, but consider:
 
 - **Subsetting**: Remove unused glyphs/features for smaller files
 - **`font-display: swap`**: Show fallback text immediately while font loads
-- **Preload critical fonts**: handled in `src/components/layout/BaseHead.astro`. Figtree Regular (body default) and Geist Regular (display + nav) preload on every page; Literata Regular preloads only on `pageType === 'article'` because its 394KB would be wasted on notes and index pages. Italic variants and Fira Code load on demand. When bumping a font's version, update both the `@font-face` declaration in `_foundation.css` AND the preload URL in `BaseHead.astro`.
+- **Preload critical fonts**: handled in `src/components/layout/BaseHead.astro`. Figtree Regular (body default) and Geist Regular (display + nav) preload on every page; Literata Regular preloads only on `pageType === 'article'` because its 394KB would be wasted on notes and index pages. Italic variants and Fira Code load on demand. **Caveat is deliberately not preloaded** — nothing renders in it until a reader writes a margin note, so the browser only fetches it when it's actually needed. Don't add it. When bumping a font's version, update both the `@font-face` declaration in `_foundation.css` AND the preload URL in `BaseHead.astro`.
 
 ### Feature Detection
 
