@@ -6,6 +6,7 @@ import { fetchWithRetry, listRecords, rkeyOf, blobUrl, type PdsRecord } from '@u
 import { fingerprint } from '@utils/atproto/fingerprint'
 import { atprotoLoader } from '@utils/atproto/loader'
 import { atprotoImage } from '@utils/atproto/image'
+import { detectChanges, type StateManifest } from '@utils/atproto/changes'
 import { mirrorImage } from '@utils/mirrorImage'
 
 vi.mock('@utils/mirrorImage', () => ({ mirrorImage: vi.fn(async () => null) }))
@@ -223,5 +224,84 @@ describe('atprotoImage', () => {
 
     expect(await atprotoImage(undefined, options)).toBeNull()
     expect(mirrorImage).not.toHaveBeenCalled()
+  })
+})
+
+describe('detectChanges', () => {
+  const MANIFEST_URL = 'https://site.test/atproto-state.json'
+  const built = [record('a'), record('b')]
+
+  /** The manifest a build would have published, having loaded `records`. */
+  const manifest = (records: PdsRecord[]) =>
+    Response.json({
+      version: 1,
+      ...REPO,
+      builtAt: '2026-09-18T10:00:00.000Z',
+      sources: [
+        {
+          nsid: NSID,
+          watch: 'digest',
+          fingerprint: fingerprint(records.map(r => ({ rkey: rkeyOf(r.uri), cid: r.cid }))),
+          count: records.length,
+        },
+      ],
+    } satisfies StateManifest)
+
+  it('reads the manifest, then the repo and host it names', async () => {
+    const { urls } = serve(manifest(built), page(built))
+
+    await detectChanges(MANIFEST_URL)
+
+    const [first, second] = urls()
+    expect(first.href).toBe(MANIFEST_URL)
+    expect(second.host).toBe(REPO.host)
+    expect(second.searchParams.get('repo')).toBe(REPO.did)
+    expect(second.searchParams.get('collection')).toBe(NSID)
+  })
+
+  it('reports no change when the PDS still holds what the build loaded', async () => {
+    serve(manifest(built), page([...built].reverse()))
+
+    expect(await detectChanges(MANIFEST_URL)).toEqual({
+      changed: false,
+      reason: 'nothing has changed',
+    })
+  })
+
+  it('reports a change when a record has been edited in place', async () => {
+    serve(manifest(built), page([record('a'), record('b', {}, 'cid-b-edited')]))
+
+    expect(await detectChanges(MANIFEST_URL)).toEqual({
+      changed: true,
+      changedSources: [NSID],
+      state: expect.stringMatching(/^[0-9a-f]{12}$/),
+      builtAt: '2026-09-18T10:00:00.000Z',
+    })
+  })
+
+  it('names the same PDS state the same way every time, and a different one differently', async () => {
+    const stateOf = async (now: PdsRecord[]) => {
+      serve(manifest(built), page(now))
+      const result = await detectChanges(MANIFEST_URL)
+      return result.changed ? result.state : null
+    }
+
+    const created = [...built, record('c')]
+    expect(await stateOf(created)).toBe(await stateOf(created))
+    expect(await stateOf(created)).not.toBe(await stateOf([record('a')]))
+  })
+
+  it.each([
+    ['there is no manifest yet', [new Response('not found', { status: 404 })], /returned 404/],
+    ['the manifest is not JSON', [new Response('<html>')], /could not be read/],
+    ['the manifest is some other shape', [Response.json({ version: 2 })], /shape/],
+    ['a collection cannot be read', [manifest(built), new Response('no', { status: 400 })], NSID],
+  ])('does not ask for a rebuild when %s', async (_case, responses, why) => {
+    serve(...responses)
+
+    const result = await detectChanges(MANIFEST_URL)
+
+    expect(result.changed).toBe(false)
+    expect(result).toHaveProperty('reason', expect.stringMatching(why))
   })
 })

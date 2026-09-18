@@ -1,0 +1,81 @@
+name: Detect AT Protocol changes
+
+# The site renders records from my PDS at build time, so it goes stale when they
+# change. This compares the PDS with what the live site was built from, and
+# dispatches a deploy when they differ. See docs/developer/atproto-data.md.
+#
+# It runs often, so it is kept to almost nothing: a sparse checkout, no
+# `bun install`, and a handful of small unauthenticated requests.
+
+on:
+  schedule:
+    # Every 10 minutes, off the round numbers where GitHub's scheduler is
+    # busiest. Scheduled runs can still start late, or occasionally not at all;
+    # nothing here is urgent enough for that to matter.
+    - cron: '7-59/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write # To list and dispatch runs of the CI workflow
+
+# A check that has been overtaken by a newer one is worthless.
+concurrency:
+  group: atproto-detect-changes
+  cancel-in-progress: true
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Only the script and the two files it imports. Not the repo root: its
+      # tsconfig.json extends a file in node_modules, which won't be here.
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/atproto
+            src/utils/atproto
+          sparse-checkout-cone-mode: false
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Compare the PDS with the deployed site
+        id: detect
+        run: bun scripts/atproto/detect-changes.ts https://danny.is/atproto-state.json
+
+      # Two reasons not to dispatch, even though something changed:
+      #
+      #  • A deploy is already underway. The CI workflow cancels an in-progress
+      #    run when a new one starts, so dispatching would restart it from
+      #    scratch — and if it has yet to load the records, it will pick the
+      #    change up anyway. If it doesn't, the next check still sees a difference.
+      #
+      #  • This exact state has been tried since the live site was built. Then
+      #    that deploy failed, or the build can't reproduce what's on the PDS
+      #    (a record it skips, say). Trying again every 10 minutes won't help.
+      #    The next real change has a different state, and gets its own attempt.
+      - name: Dispatch a deploy, unless one is running or this state was already tried
+        if: steps.detect.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REASON: atproto ${{ steps.detect.outputs.state }}
+          BUILT_AT: ${{ steps.detect.outputs.built_at }}
+        run: |
+          running=$(gh run list --workflow deploy.yml --branch main --limit 20 \
+            --json status --jq '[.[] | select(.status != "completed")] | length')
+          if [ "$running" -gt 0 ]; then
+            echo "A deploy is already underway; leaving it to finish."
+            exit 0
+          fi
+
+          tried=$(gh run list --workflow deploy.yml --event workflow_dispatch --limit 50 \
+            --json displayTitle,createdAt \
+            --jq "[.[] | select(.displayTitle == \"$REASON\" and .createdAt > \"$BUILT_AT\")] | length")
+          if [ "$tried" -gt 0 ]; then
+            echo "Already dispatched \"$REASON\" since the site was built; not trying again."
+            exit 0
+          fi
+
+          gh workflow run deploy.yml --ref main -f reason="$REASON"
+          echo "Dispatched a deploy: $REASON"

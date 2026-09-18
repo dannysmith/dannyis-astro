@@ -105,18 +105,20 @@ DID, handle and PDS host move to a new `atproto` block in `src/config/site.ts`; 
 
 It's computed from the content store, which is by definition what the build loaded — no state threaded between loaders and integrations. It's self-healing (a failed build doesn't advance it), and it makes the detection script config-free: everything it needs to know is in the manifest, so a newly added source is watched from its first deploy with no workflow change.
 
-**The script — `scripts/atproto/detect-changes.ts`.** Fetch `https://danny.is/atproto-state.json`; for each source, page `listRecords`, compute the same `fingerprint()`, compare. For books that's 1 + 3 requests. Any error — manifest 404 (before the first deploy carrying one), PDS unreachable, a collection failing — means **no dispatch**, a logged warning, exit 0.
+**The script — `scripts/atproto/detect-changes.ts`**, a thin command line around `detectChanges()` in `src/utils/atproto/changes.ts` (where it can be unit tested). Fetch `https://danny.is/atproto-state.json`; for each source, page `listRecords`, compute the same `fingerprint()`, compare. For books that's 1 + 3 requests, about a second. Any error — manifest 404 (before the first deploy carrying one), PDS unreachable, a collection failing — means **no dispatch**, a logged reason, exit 0.
 
 **The workflow — `.github/workflows/atproto-detect-changes.yml`.** Sparse checkout of `scripts/atproto` and `src/utils/atproto`, `setup-bun`, run the script. No `bun install`, no node_modules. Scheduled every 10 minutes on an offset minute, plus `workflow_dispatch`. On a change it runs `gh workflow run deploy.yml` with `GITHUB_TOKEN` and `actions: write`, as `update-toolbox.yml` already does.
 
-**The guard — one deploy attempt per detected state.** Needed for two reasons: a deploy takes longer than it sounds, and `deploy.yml` has `cancel-in-progress: true`, so a second dispatch while the first is still running would cancel it, potentially forever; and a broken build or a schema-skipped record would otherwise mean a deploy every 10 minutes indefinitely. So the dispatch carries the detected state as an input (`reason: atproto <hash>`), `deploy.yml` surfaces it via `run-name`, and before dispatching the workflow checks for a run with that name created after the manifest's `builtAt`. If one exists, it's in flight or already failed — skip.
+**Two guards before dispatching**, both needed because `deploy.yml` has `cancel-in-progress: true`:
+
+- **Never while a deploy is already running.** A dispatch would cancel it and start again from scratch — including a deploy of my own push. The running one will usually pick the change up anyway; if it doesn't, the next check still sees a difference.
+- **One attempt per detected state.** A broken build, or a record the loader skips, means the manifest can never catch up with the PDS, which would otherwise mean a deploy every 10 minutes indefinitely. So the dispatch carries the detected state as an input (`reason: atproto <hash>`), `deploy.yml` surfaces it via `run-name`, and the workflow skips if a run with that name has been created since the manifest's `builtAt`. The next real change has a different hash and gets its own attempt.
 
 **Instant rebuilds for writers I control.** Anything of mine that writes to the PDS (a steps pusher, say) can call the `workflow_dispatch` API on `deploy.yml` straight after writing, with a fine-grained PAT. No polling delay, nothing to build here — just a recipe for the docs. Polling stays as the path for third-party apps like BookHive.
 
-**Two rules:**
+**One rule: never put `site.standard.document` in the registry with a `watch`.** Our own post-deploy sync writes those, so every deploy would trigger another.
 
-- **Never put `site.standard.document` in the registry with a `watch`.** Our own post-deploy sync writes those, so every deploy would trigger another.
-- **`standard-site-sync.yml` should skip dispatched deploys.** It diffs the tip commit, so a deploy dispatched by change detection would re-sync whatever posts were in my last push. Idempotent, but pointless work — add `github.event.workflow_run.event != 'workflow_dispatch'` to its `if`.
+**`standard-site-sync.yml` is deliberately left alone.** It diffs the tip commit, so a dispatched deploy re-syncs whatever posts were in my last push — idempotent, a little wasted work. Making it skip dispatched deploys looked like a tidy-up and is actually a bug: a dispatched run can cancel and replace the deploy of a push that added a post, and skipping it would mean that post never syncs.
 
 **If this ever gets slow or GitHub's cron jitter annoys:** a Cloudflare Worker cron running the same comparison (Barry's approach), or `com.atproto.sync.getRepo?since=<rev>` for a one-request diff of the whole repo (needs a CAR parser and the real PDS host). Neither is worth it yet.
 
@@ -147,11 +149,11 @@ It's computed from the content store, which is by definition what the build load
 
 ### Phase 4 — Change detection
 
-- [ ] `src/pages/atproto-state.json.ts`; exclude it from the sitemap alongside `redirects.json`.
-- [ ] `scripts/atproto/detect-changes.ts`, with unit tests for the comparison and each no-dispatch failure path.
-- [ ] `reason` input and `run-name` on `deploy.yml`; skip-on-dispatch condition on `standard-site-sync.yml`.
-- [ ] `atproto-detect-changes.yml` with the guard. `concurrency` with `cancel-in-progress: true` — a superseded check is worthless.
-- [ ] Prove it for real: change a book's status in BookHive and confirm one deploy fires; confirm it stays quiet otherwise, and that a deliberately broken build doesn't loop.
+- [x] `src/pages/atproto-state.json.ts`; exclude it from the sitemap alongside `redirects.json`.
+- [x] `scripts/atproto/detect-changes.ts`, with unit tests for the comparison and each no-dispatch failure path. Verified against the real PDS: a fresh build's manifest agrees with it, a tampered one is detected, and it runs from just the two sparse-checkout directories with no `node_modules`.
+- [x] `reason` input and `run-name` on `deploy.yml`. (No change to `standard-site-sync.yml` — see above.)
+- [x] `atproto-detect-changes.yml` with both guards. `concurrency` with `cancel-in-progress: true` — a superseded check is worthless. The `gh run list` queries are tested against the real repo; the workflow itself can't run until it's on `main`.
+- [ ] Prove it for real, once deployed: change a book's status in BookHive and confirm one deploy fires; confirm it stays quiet otherwise, and that a deliberately broken build doesn't loop.
 
 ### Phase 5 — Documentation
 

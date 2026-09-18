@@ -1,5 +1,9 @@
 name: CI
 
+# Blank for a push or a pull request, which leaves GitHub's default name (the
+# commit message or PR title). A dispatched run is named for why it was asked for.
+run-name: ${{ inputs.reason }}
+
 permissions:
   contents: read
 
@@ -8,8 +12,14 @@ on:
     branches: [main]
   pull_request:
     types: [opened, synchronize, reopened, labeled]
-  # Dispatched by update-toolbox.yml after it pushes a bot commit
+  # Dispatched by update-toolbox.yml after it pushes a bot commit, and by
+  # atproto-detect-changes.yml when records on the PDS have changed.
   workflow_dispatch:
+    inputs:
+      reason:
+        description: Why this run was dispatched. Becomes the run's name.
+        type: string
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
