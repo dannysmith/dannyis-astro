@@ -8,12 +8,13 @@ The site uses Astro's content collections with **glob loaders** and **inline-com
 
 ### Collection Configuration
 
-Five collections are defined in `src/content.config.ts` (the single source of truth for schemas, which carry inline comments):
+Six collections are defined in `src/content.config.ts` (the single source of truth for schemas, which carry inline comments):
 
 - **`articles`** and **`notes`** — markdown/MDX via a `glob` loader.
 - **`projects`** — the "things I've made" surfaced on `/making`, markdown/MDX via a `glob` loader (see below).
 - **`toolboxPages`** — external data via a `file` loader (see below).
 - **`series`** — article-series metadata via a `file` loader from `src/content/series.json` (schema `{ id, name, intro? }`). Drives the "part of a series" callout (`SeriesCallout`); articles opt in via the optional `series` frontmatter field, a reference to this collection.
+- **`books`** — records read from my AT Protocol PDS at build time via `atprotoLoader`. See [atproto-data.md](./atproto-data.md).
 
 ### Glob Loader Behavior
 

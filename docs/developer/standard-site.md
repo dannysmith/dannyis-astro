@@ -2,6 +2,8 @@
 
 This site syncs its articles and notes onto the [ATmosphere](https://atproto.com/) using the [standard.site](https://standard.site/) lexicons so any AT-aware reader can index it and Bluesky can show a richer card when someone shares a danny.is URL. Danny usesd Bluesky as his PDS so records live in his normal Bluesky account (`@danny.is`), written with a Bluesky **app password**.
 
+This doc covers writing to the PDS. Reading records back into the site is [atproto-data.md](./atproto-data.md).
+
 ## What it does
 
 Two kinds of record get written to the PDS:
@@ -33,7 +35,7 @@ We follow the site's normal "is this published?" rules with two extra exclusions
 - **Skipped:** drafts, styleguide pages, and externally-hosted posts — anything with a `redirectURL` (e.g. an article that lives on Medium and whose danny.is page only redirects away). External posts stay skipped even under `--force`.
 - **Cutoff:** only posts on or after `CONFIG.standardSite.since`, which is set before the first post so the whole archive qualifies.
 
-If `CONFIG.standardSite.did` is empty, `getDocumentUri` returns nothing and no tags render — the integration sits dormant until configured. It is currently configured and live (`did` and `publicationUri` are set in `src/config/site.ts`).
+If `CONFIG.atproto.did` is empty, `getDocumentUri` returns nothing and no tags render — the integration sits dormant until configured. It is currently configured and live (`did` and `publicationUri` are set in `src/config/site.ts`).
 
 **Fields on a document record.** Always `site`, `title`, `publishedAt`, `path`, and `textContent` (a plain-text rendering of the body, with markdown and MDX imports/JSX stripped). When present: `description`, `tags`, `updatedAt` (from `updatedDate`, articles only), and `coverImage`.
 
@@ -75,10 +77,14 @@ In CI the same script runs from `.github/workflows/standard-site-sync.yml`, read
 
 ## Configuration
 
-`CONFIG.standardSite` in `src/config/site.ts`:
+`CONFIG.atproto` in `src/config/site.ts` holds the identity, shared with the read layer:
 
 - `did` — the AT Protocol DID for `danny.is`. Public.
 - `handle` — the login handle (`danny.is`).
+- `pdsHost` — the host reads go to. Not used by the write path, which logs in via `ATPROTO_SERVICE`.
+
+`CONFIG.standardSite` holds what's specific to publishing:
+
 - `publicationUri` — the `at://…` URI of the publication record, printed by `standard-site:publication`. Public.
 - `since` — only posts on or after this date are published.
 

@@ -58,14 +58,14 @@ Everything is organised by group, on disk and in the URL. Groups are named for t
 
 ### 2. The read layer — `src/utils/atproto/`
 
-| File             | Does                                                                  |
-| ---------------- | --------------------------------------------------------------------- |
-| `pds.ts`         | `fetchWithRetry`, `listRecords` async generator. Plain `fetch`        |
-| `fingerprint.ts` | `fingerprint(records)` — hash of sorted `rkey:cid` pairs              |
-| `loader.ts`      | `atprotoLoader({ nsid })` — a Content Layer loader                    |
-| `image.ts`       | `atprotoImage()` — blob ref or URL → mirrored image; `blobRef` schema |
+| File         | Does                                                                  |
+| ------------ | --------------------------------------------------------------------- |
+| `pds.ts`     | `fetchWithRetry`, `listRecords` async generator. Plain `fetch`        |
+| `changes.ts` | `fingerprint(records)` and `detectChanges()` — see Change detection   |
+| `loader.ts`  | `atprotoLoader({ nsid })` — a Content Layer loader                    |
+| `image.ts`   | `atprotoImage()` — blob ref or URL → mirrored image; `blobRef` schema |
 
-`pds.ts` and `fingerprint.ts` must stay free of `astro:*` and npm imports — the change-detection script runs them under bun with **no install step**.
+`pds.ts` and `changes.ts` must stay free of `astro:*` and npm imports, and use relative imports — the change-detection script runs them under bun with **no install step**, so there is no `node_modules` for `tsconfig.json`'s path aliases to resolve through.
 
 **The loader must never fail the build.** Astro's example loader clears the store then fetches, so a PDS blip would stop me shipping an article. The store persists in `node_modules/.astro` between builds, so instead:
 
@@ -105,18 +105,20 @@ DID, handle and PDS host move to a new `atproto` block in `src/config/site.ts`; 
 
 It's computed from the content store, which is by definition what the build loaded — no state threaded between loaders and integrations. It's self-healing (a failed build doesn't advance it), and it makes the detection script config-free: everything it needs to know is in the manifest, so a newly added source is watched from its first deploy with no workflow change.
 
-**The script — `scripts/atproto/detect-changes.ts`.** Fetch `https://danny.is/atproto-state.json`; for each source, page `listRecords`, compute the same `fingerprint()`, compare. For books that's 1 + 3 requests. Any error — manifest 404 (before the first deploy carrying one), PDS unreachable, a collection failing — means **no dispatch**, a logged warning, exit 0.
+**The script — `scripts/atproto/detect-changes.ts`**, a thin command line around `detectChanges()` in `src/utils/atproto/changes.ts` (where it can be unit tested). Fetch `https://danny.is/atproto-state.json`; for each source, page `listRecords`, compute the same `fingerprint()`, compare. For books that's 1 + 3 requests, about a second. Any error — manifest 404 (before the first deploy carrying one), PDS unreachable, a collection failing — means **no dispatch**, a logged reason, exit 0.
 
 **The workflow — `.github/workflows/atproto-detect-changes.yml`.** Sparse checkout of `scripts/atproto` and `src/utils/atproto`, `setup-bun`, run the script. No `bun install`, no node_modules. Scheduled every 10 minutes on an offset minute, plus `workflow_dispatch`. On a change it runs `gh workflow run deploy.yml` with `GITHUB_TOKEN` and `actions: write`, as `update-toolbox.yml` already does.
 
-**The guard — one deploy attempt per detected state.** Needed for two reasons: a deploy takes longer than it sounds, and `deploy.yml` has `cancel-in-progress: true`, so a second dispatch while the first is still running would cancel it, potentially forever; and a broken build or a schema-skipped record would otherwise mean a deploy every 10 minutes indefinitely. So the dispatch carries the detected state as an input (`reason: atproto <hash>`), `deploy.yml` surfaces it via `run-name`, and before dispatching the workflow checks for a run with that name created after the manifest's `builtAt`. If one exists, it's in flight or already failed — skip.
+**Two guards before dispatching**, both needed because `deploy.yml` has `cancel-in-progress: true`:
+
+- **Never while a deploy is already running.** A dispatch would cancel it and start again from scratch — including a deploy of my own push. The running one will usually pick the change up anyway; if it doesn't, the next check still sees a difference.
+- **One attempt per detected state.** A broken build, or a record the loader skips, means the manifest can never catch up with the PDS, which would otherwise mean a deploy every 10 minutes indefinitely. So the dispatch carries the detected state as an input (`reason: atproto <hash>`), `deploy.yml` surfaces it via `run-name`, and the workflow skips if a run with that name has been created since the manifest's `builtAt`. The next real change has a different hash and gets its own attempt.
 
 **Instant rebuilds for writers I control.** Anything of mine that writes to the PDS (a steps pusher, say) can call the `workflow_dispatch` API on `deploy.yml` straight after writing, with a fine-grained PAT. No polling delay, nothing to build here — just a recipe for the docs. Polling stays as the path for third-party apps like BookHive.
 
-**Two rules:**
+**One rule: never put `site.standard.document` in the registry with a `watch`.** Our own post-deploy sync writes those, so every deploy would trigger another.
 
-- **Never put `site.standard.document` in the registry with a `watch`.** Our own post-deploy sync writes those, so every deploy would trigger another.
-- **`standard-site-sync.yml` should skip dispatched deploys.** It diffs the tip commit, so a deploy dispatched by change detection would re-sync whatever posts were in my last push. Idempotent, but pointless work — add `github.event.workflow_run.event != 'workflow_dispatch'` to its `if`.
+**`standard-site-sync.yml` is deliberately left alone.** It diffs the tip commit, so a dispatched deploy re-syncs whatever posts were in my last push — idempotent, a little wasted work. Making it skip dispatched deploys looked like a tidy-up and is actually a bug: a dispatched run can cancel and replace the deploy of a push that added a post, and skipping it would mean that post never syncs.
 
 **If this ever gets slow or GitHub's cron jitter annoys:** a Cloudflare Worker cron running the same comparison (Barry's approach), or `com.atproto.sync.getRepo?since=<rev>` for a one-request diff of the whole repo (needs a CAR parser and the real PDS host). Neither is worth it yet.
 
@@ -124,39 +126,49 @@ It's computed from the content store, which is by definition what the build load
 
 ### Phase 1 — Generalise the image mirror
 
-- [ ] Lift the core of `linkPreview/image.ts` into `src/utils/mirrorImage.ts`; leave `fetchPreviewImage` as a thin wrapper. Derive `src` on read instead of storing it.
-- [ ] Rename the integration, make the copy recursive, update `astro.config.mjs`.
-- [ ] One-off cache migration step in `deploy.yml`; run the same `mv` locally.
-- [ ] Update `tests/unit/linkPreview.test.ts`, [link-metadata.md](../developer/link-metadata.md), [deployment.md](../developer/deployment.md) and `src/utils/CLAUDE.md` for the new names.
-- [ ] Build and confirm every bookmark card still has its image, served from `/mirrored/links/`.
+- [x] Lift the core of `linkPreview/image.ts` into `src/utils/mirrorImage.ts`; leave `fetchPreviewImage` as a thin wrapper. Derive `src` on read instead of storing it.
+- [x] Rename the integration, make the copy recursive, update `astro.config.mjs`.
+- [x] One-off cache migration step in `deploy.yml`; run the same `mv` locally.
+- [x] Update `tests/unit/linkPreview.test.ts`, [link-metadata.md](../developer/link-metadata.md), [deployment.md](../developer/deployment.md) and `src/utils/CLAUDE.md` for the new names. Added `tests/unit/mirrorImage.test.ts`.
+- [x] Build and confirm every bookmark card still has its image, served from `/mirrored/links/`.
+- Deleting the migration step waits until it has run on `main` — see *After merging*.
 
 ### Phase 2 — Read layer and the books collection
 
-- [ ] `atproto` block in `src/config/site.ts`; update the `standardSite.did` / `.handle` usages.
-- [ ] `pds.ts`, `fingerprint.ts`, `loader.ts`, `image.ts` as above. Read Barry's `pds.ts` first.
-- [ ] `src/config/atproto.ts` with books as its only row.
-- [ ] `books` collection in `src/content.config.ts`. Status is `buzz.bookhive.defs#` + `wantToRead` / `reading` / `finished` / `abandoned` — strip the prefix in the schema. `stars` is 1–10, optional. `cover` is an optional `blobRef`.
-- [ ] Unit tests: pagination across a cursor, short-page termination, retry on 500 then success, immediate return on 404; loader sets digest from CID, deletes vanished records, keeps the store when the fetch fails, skips a schema-invalid record; fingerprint is order-independent and moves on create, update and delete.
-- [ ] Confirm `bun run build` loads 248 books, and that a build with the network off still succeeds with the previous data.
+- [x] `atproto` block in `src/config/site.ts`; update the `standardSite.did` / `.handle` usages.
+- [x] `pds.ts`, `loader.ts`, `image.ts` as above, plus `fingerprint()`. Read Barry's `pds.ts` first. (`fingerprint()` started as its own file and was folded into `changes.ts` in the pre-PR review, since change detection is all it's for.)
+- [x] `src/config/atproto.ts` with books as its only row.
+- [x] `books` collection in `src/content.config.ts`. Status is `buzz.bookhive.defs#` + `wantToRead` / `reading` / `finished` / `abandoned` — strip the prefix in the schema. `stars` is 1–10, optional. `cover` is an optional `blobRef`.
+- [x] Unit tests: pagination across a cursor, short-page termination, retry on 500 then success, immediate return on 404; loader sets digest from CID, deletes vanished records, keeps the store when the fetch fails, skips a schema-invalid record; fingerprint is order-independent and moves on create, update and delete.
+- [x] Confirm `bun run build` loads 248 books, and that a build with the PDS unreachable still succeeds with the previous data. (With the *whole* network down the build fails, but that's `<LCVid>` refusing to render without `v.danny.is` — existing behaviour, nothing to do with this.)
 
 ### Phase 3 — The hidden books page
 
-- [ ] `src/pages/scratchpad/books.astro`: books with status `reading` only — cover, title, author. Same shell as `scratchpad.astro`, `noindex, nofollow`. The sitemap filter already excludes `/scratchpad*`.
-- [ ] No new components, no styleguide entry. Check it in both themes.
+- [x] `src/pages/scratchpad/books.astro`: books with status `reading` only — cover, title, author. Same shell as `scratchpad.astro`, `noindex, nofollow`. The sitemap filter already excludes `/scratchpad*`.
+- [x] No new components, no styleguide entry. Check it in both themes. (A CSS grid of covers with `Lightbox`; covers are mirrored at their full ~500px so the lightbox has something to show.)
 
 ### Phase 4 — Change detection
 
-- [ ] `src/pages/atproto-state.json.ts`; exclude it from the sitemap alongside `redirects.json`.
-- [ ] `scripts/atproto/detect-changes.ts`, with unit tests for the comparison and each no-dispatch failure path.
-- [ ] `reason` input and `run-name` on `deploy.yml`; skip-on-dispatch condition on `standard-site-sync.yml`.
-- [ ] `atproto-detect-changes.yml` with the guard. `concurrency` with `cancel-in-progress: true` — a superseded check is worthless.
-- [ ] Prove it for real: change a book's status in BookHive and confirm one deploy fires; confirm it stays quiet otherwise, and that a deliberately broken build doesn't loop.
+- [x] `src/pages/atproto-state.json.ts`; exclude it from the sitemap alongside `redirects.json`.
+- [x] `scripts/atproto/detect-changes.ts`, with unit tests for the comparison and each no-dispatch failure path. Verified against the real PDS: a fresh build's manifest agrees with it, a tampered one is detected, and it runs from just the two sparse-checkout directories with no `node_modules`.
+- [x] `reason` input and `run-name` on `deploy.yml`. (No change to `standard-site-sync.yml` — see above.)
+- [x] `atproto-detect-changes.yml` with both guards. `concurrency` with `cancel-in-progress: true` — a superseded check is worthless. The `gh run list` queries are tested against the real repo; the workflow itself can't run until it's on `main`.
+- Proving it for real has to wait until it's deployed — see *After merging*.
 
 ### Phase 5 — Documentation
 
-- [ ] `docs/developer/atproto-data.md`: the add-a-source recipe first, then the read layer, the image mirror, how change detection works (manifest contract, the guard, the instant-dispatch recipe, upgrade paths), and the network gotchas above. Move *Notes for later* from this doc into it so they outlive the task.
-- [ ] Cross-link with [standard-site.md](../developer/standard-site.md); a line in [deployment.md](../developer/deployment.md) for the change-detection workflow.
-- [ ] `bun run check:all`, plus `check:knip` and `check:dupes`.
+- [x] `docs/developer/atproto-data.md`: the add-a-source recipe first, then how the loader, images and change detection work, the instant-dispatch recipe, and the network gotchas. Kept short on purpose. *Notes for later* stay in this doc rather than moving: they're about things that aren't built, and this file is kept in `tasks-done/`.
+- [x] Cross-link with [standard-site.md](../developer/standard-site.md); the change-detection workflow in [deployment.md](../developer/deployment.md); `books` added to the collection list in `content-system.md`; a Key Features line in `AGENTS.md`.
+- [x] `bun run check:all`, plus `check:knip` and `check:dupes` (both at the same counts as `main`).
+- [x] Pre-PR review of the new code: `fingerprint.ts` folded into `changes.ts`, `blobRef` moved beside `atprotoImage()`, one shared `errorMessage()`, a trivial test dropped, over-long header comments trimmed.
+
+### After merging
+
+- [ ] Confirm the deploy from `main` succeeds, its run is named after the commit as before, and `https://danny.is/atproto-state.json` is live.
+- [ ] Confirm bookmark cards still have their images (the one-off cache migration ran), then delete the `Migrate link preview image cache` step from `deploy.yml`.
+- [ ] Run `Detect AT Protocol changes` by hand and confirm it reports no change.
+- [ ] Change a book in BookHive; confirm exactly one `atproto <state>` deploy fires and `/scratchpad/books` updates.
+- [ ] Watch for a day: quiet when nothing changes, no repeat dispatches.
 
 ## Decisions taken
 
@@ -180,7 +192,7 @@ It's computed from the content store, which is by definition what the build load
 
 ## Notes for later
 
-Kept because they were expensive to establish. Move into `atproto-data.md` in Phase 5.
+Kept because they were expensive to establish, and will be wanted when the out-of-scope items come round.
 
 **Comments, when we get there.** Don't use `app.bsky.feed.searchPosts` — its `url` and `domain` filters look perfect and it returns **403 unauthenticated**, while `getPostThread` and `getProfile` return 200 on the same host. `public.api.bsky.app` supports no authentication at all, so a token can't fix it.
 

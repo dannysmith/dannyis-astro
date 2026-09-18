@@ -16,8 +16,8 @@ import { satteriListDensity } from './src/lib/satteri-list-density.mjs'
 import { satteriMermaid } from './src/lib/satteri-mermaid.mjs'
 import { mermaidConfig, mermaidColorReplacements, mermaidFontCss } from './src/config/mermaid.js'
 import { pagefind } from './src/lib/pagefind-integration.mjs'
-import { linkPreviewImages } from './src/lib/link-preview-images-integration.mjs'
-import { IMAGE_CACHE_DIR, IMAGE_URL_BASE } from './src/utils/linkPreview/index.ts'
+import { mirroredImages } from './src/lib/mirrored-images-integration.mjs'
+import { MIRROR_CACHE_DIR, MIRROR_URL_BASE } from './src/utils/mirrorImage.ts'
 import icon from 'astro-icon'
 import { redirects } from './src/config/redirects.ts'
 
@@ -91,12 +91,13 @@ export default defineConfig({
     sitemap({
       filter: page =>
         !page.startsWith('https://danny.is/scratchpad') &&
-        !page.startsWith('https://danny.is/redirects.json'),
+        !page.startsWith('https://danny.is/redirects.json') &&
+        !page.startsWith('https://danny.is/atproto-state.json'),
     }),
     icon(),
     react(),
     pagefind(),
-    linkPreviewImages(IMAGE_CACHE_DIR, IMAGE_URL_BASE),
+    mirroredImages(MIRROR_CACHE_DIR, MIRROR_URL_BASE),
   ],
   markdown: {
     // syntaxHighlight stays at the markdown level; the processor reads it from
