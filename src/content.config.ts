@@ -1,6 +1,8 @@
 import { defineCollection, reference } from 'astro:content'
 import { z } from 'astro/zod'
 import { file, glob } from 'astro/loaders'
+import { ATPROTO_SOURCES } from '@config/atproto'
+import { atprotoLoader, blobRef } from '@utils/atproto/index'
 
 // Long-form Articles
 const articles = defineCollection({
@@ -100,4 +102,24 @@ const projects = defineCollection({
     }),
 })
 
-export const collections = { articles, notes, toolboxPages, series, projects }
+// Books I'm tracking in BookHive, read from my PDS at build time. Only the
+// fields the site uses are listed; the rest of each record is dropped.
+// See docs/developer/atproto-data.md.
+const books = defineCollection({
+  loader: atprotoLoader(ATPROTO_SOURCES.books),
+  schema: z.object({
+    title: z.string(),
+    authors: z.string(),
+    status: z
+      .string()
+      .transform(status => status.replace('buzz.bookhive.defs#', ''))
+      .pipe(z.enum(['wantToRead', 'reading', 'finished', 'abandoned'])),
+    stars: z.number().int().min(1).max(10).optional().describe('Rating out of 10'),
+    cover: blobRef.optional(),
+    createdAt: z.coerce.date(),
+    startedAt: z.coerce.date().optional(),
+    finishedAt: z.coerce.date().optional(),
+  }),
+})
+
+export const collections = { articles, notes, toolboxPages, series, projects, books }

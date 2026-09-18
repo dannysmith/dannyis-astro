@@ -133,12 +133,12 @@ It's computed from the content store, which is by definition what the build load
 
 ### Phase 2 — Read layer and the books collection
 
-- [ ] `atproto` block in `src/config/site.ts`; update the `standardSite.did` / `.handle` usages.
-- [ ] `pds.ts`, `fingerprint.ts`, `loader.ts`, `image.ts` as above. Read Barry's `pds.ts` first.
-- [ ] `src/config/atproto.ts` with books as its only row.
-- [ ] `books` collection in `src/content.config.ts`. Status is `buzz.bookhive.defs#` + `wantToRead` / `reading` / `finished` / `abandoned` — strip the prefix in the schema. `stars` is 1–10, optional. `cover` is an optional `blobRef`.
-- [ ] Unit tests: pagination across a cursor, short-page termination, retry on 500 then success, immediate return on 404; loader sets digest from CID, deletes vanished records, keeps the store when the fetch fails, skips a schema-invalid record; fingerprint is order-independent and moves on create, update and delete.
-- [ ] Confirm `bun run build` loads 248 books, and that a build with the network off still succeeds with the previous data.
+- [x] `atproto` block in `src/config/site.ts`; update the `standardSite.did` / `.handle` usages.
+- [x] `pds.ts`, `fingerprint.ts`, `loader.ts`, `image.ts` as above. Read Barry's `pds.ts` first. (`blobRef` ended up in `loader.ts`, so the content config doesn't have to reach `image.ts` and sharp for a schema.)
+- [x] `src/config/atproto.ts` with books as its only row.
+- [x] `books` collection in `src/content.config.ts`. Status is `buzz.bookhive.defs#` + `wantToRead` / `reading` / `finished` / `abandoned` — strip the prefix in the schema. `stars` is 1–10, optional. `cover` is an optional `blobRef`.
+- [x] Unit tests: pagination across a cursor, short-page termination, retry on 500 then success, immediate return on 404; loader sets digest from CID, deletes vanished records, keeps the store when the fetch fails, skips a schema-invalid record; fingerprint is order-independent and moves on create, update and delete.
+- [x] Confirm `bun run build` loads 248 books, and that a build with the PDS unreachable still succeeds with the previous data. (With the *whole* network down the build fails, but that's `<LCVid>` refusing to render without `v.danny.is` — existing behaviour, nothing to do with this.)
 
 ### Phase 3 — The hidden books page
 

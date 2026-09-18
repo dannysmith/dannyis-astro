@@ -108,7 +108,7 @@ describe('standard-site', () => {
 
     it('returns null when no DID is configured', () => {
       // The committed config ships with an empty DID until setup.
-      const { did } = getConfig().standardSite
+      const { did } = getConfig().atproto
       if (!did) {
         expect(getDocumentUri('articles', '2020-01-01-foo', { pubDate })).toBeNull()
       } else {

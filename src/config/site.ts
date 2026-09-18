@@ -131,17 +131,25 @@ export const CONFIG = {
     baseUrl: 'https://v.danny.is',
   },
 
-  // standard.site (AT Protocol) publishing. Posts are mirrored to the Bluesky
-  // PDS as site.standard.document records. See
-  // docs/tasks-todo/task-x-standard-site-atproto.md for setup. The empty fields
-  // are typed `as string` so reads stay `string` (CONFIG is `as const`, which
-  // would otherwise narrow '' to the literal type "" and break null checks).
-  standardSite: {
-    // AT Protocol DID for danny.is. Filled in during setup (resolve from the
-    // Bluesky handle, e.g. via com.atproto.identity.resolveHandle).
+  // My AT Protocol identity, shared by everything that talks to the PDS: the
+  // standard.site write path below and the read layer in src/utils/atproto/.
+  // Typed `as string` so reads stay `string` (CONFIG is `as const`, which would
+  // otherwise narrow to the literal type and break null checks).
+  atproto: {
+    // Resolve from the handle, e.g. via com.atproto.identity.resolveHandle.
     did: 'did:plc:aes3lokiqtv63fk62nwnjeuf' as string,
-    // Bluesky handle that owns the records / used to log in.
+    // Bluesky handle that owns the records.
     handle: 'danny.is',
+    // The bsky.social entryway rather than the shard the account really lives
+    // on: it serves listRecords itself and redirects getBlob, so it follows
+    // shard moves for us. Change this if the account ever moves PDS.
+    pdsHost: 'bsky.social',
+  },
+
+  // standard.site (AT Protocol) publishing. Posts are mirrored to the PDS as
+  // site.standard.document records. See docs/developer/standard-site.md. The
+  // empty-able fields are typed `as string` for the reason above.
+  standardSite: {
     // AT-URI of the site.standard.publication record. Empty until created via
     // scripts/standard-site/create-publication.ts. When empty: the /.well-known
     // endpoint 404s and the homepage publication link tag is omitted.

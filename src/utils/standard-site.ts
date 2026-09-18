@@ -142,7 +142,7 @@ export function getDocumentUri(
   postId: string,
   post: StandardSitePost,
 ): string | null {
-  const { did } = getConfig().standardSite
+  const { did } = getConfig().atproto
   if (!did || !qualifiesForStandardSite(post)) return null
   return `at://${did}/site.standard.document/${getDocumentRkey(collection, postId, post.pubDate)}`
 }
