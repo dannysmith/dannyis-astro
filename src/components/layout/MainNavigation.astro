@@ -8,7 +8,7 @@ const isDev = import.meta.env.MODE === 'development'
 
 <SkipLink />
 <button
-  class="nav-open"
+  class="nav-open no-print"
   type="button"
   aria-label="Open navigation"
   aria-expanded="false"
@@ -16,7 +16,7 @@ const isDev = import.meta.env.MODE === 'development'
 >
   <Icon name="heroicons:bars-3-20-solid" />
 </button>
-<nav id="main-navigation" class="main-navigation ui-style dark-surface" inert>
+<nav id="main-navigation" class="main-navigation ui-style dark-surface no-print" inert>
   <button class="nav-close" type="button" aria-label="Close navigation">
     <Icon name="heroicons:x-mark-20-solid" />
   </button>

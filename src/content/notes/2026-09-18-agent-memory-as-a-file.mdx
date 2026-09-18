@@ -1,0 +1,21 @@
+---
+title: Agent memory as a file format
+sourceURL: https://calpaterson.com/memoryfields.html?ref=sidebar
+draft: false
+pubDate: 2026-09-18
+---
+
+This is an interesting take on Agent memory as a portable file format from Cal Paterson. Essentially he's proposing a file format which looks like this:
+
+```tree
+my-memories.memoryfield.zip
+├── carbon-fibre-woks.md
+├── finnish-bureaucracy-tips.md
+├── ...
+├── wec-2026-season-notes.md
+└── nomic-embed-text-v1.5.sqlite3
+```
+
+Agents write memories to markdown files with optional YAML frontmatter, and an optional generated SQLite vector index lets them search across those memories semantically.
+
+The [specification is on GitHub](https://github.com/calpaterson/memoryfield-spec/blob/main/SPEC.md) and is pretty well thought-out, and there's also an [Agent Skill](https://github.com/calpaterson/memoryfield-skill) and a [Python CLI](https://github.com/calpaterson/memoryfield-tool) tool for interacting with memories.
