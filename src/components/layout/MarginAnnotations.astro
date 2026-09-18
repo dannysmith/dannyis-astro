@@ -361,6 +361,110 @@ import { Icon } from 'astro-icon/components'
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }
+
+  /* ----------------------------------------
+     Print
+
+     Script moves each note in beside its mark before the snapshot is taken (see
+     printLayout) and sets `data-annotations="print"`. The rules below dress that
+     arrangement; the block at the end is the safety net for a browser that never
+     fires `beforeprint`.
+     ---------------------------------------- */
+
+  @media print {
+    :root[data-annotations='print'] .longform-prose:has(> .reader-margin) {
+      /* Take the outer gutter back and spend it on the margin. */
+      grid-template-columns: 0 minmax(0, 1fr) 13rem;
+    }
+
+    /* All screen furniture: the notes have already been moved out of the aside. */
+    :root[data-annotations='print'] :is(.reader-margin, .annotation-invite),
+    .annotation-note-controls {
+      display: none;
+    }
+
+    /* The connector points at the phrase, so a numeral would be noise — except
+       where notes had to go beneath their block and need matching up. */
+    :root[data-annotations='print'] .annotation-mark::after {
+      content: none;
+    }
+
+    :root[data-annotations='print'] .annotation-mark[data-print-numbered]::after {
+      content: attr(data-reference);
+      margin-inline-start: 0.08em;
+      font-family: var(--font-handwriting);
+      font-size: 0.8em;
+      font-weight: 700;
+      line-height: 0;
+      vertical-align: super;
+    }
+
+    .annotation-print-host {
+      position: relative;
+    }
+
+    .annotation-print-host > .annotation-note {
+      position: absolute;
+      top: auto;
+      left: calc(100% + 1.75rem);
+      width: 11rem;
+      max-inline-size: none;
+      /* Up onto the line the mark sits on, rather than below it. */
+      transform: translateY(-1.1em) rotate(-0.8deg);
+    }
+
+    .annotation-print-host > .annotation-print-connector {
+      position: absolute;
+      top: auto;
+      left: 100%;
+      width: 1.75rem;
+      height: 1em;
+      overflow: visible;
+      transform: translateY(-1em);
+    }
+
+    /* Detached notes have no mark to sit beside, so they read as a list at the end. */
+    :root[data-annotations='print'] .annotation-note[data-orphaned] {
+      position: static;
+      width: auto;
+      transform: none;
+    }
+
+    /*
+     * Safety net. Without `beforeprint` the notes are still inside the aside,
+     * which is absolutely positioned across the whole article and would print on
+     * the first page only — or not at all. Drop the lot into flow at the end of
+     * the article instead, and bring the numerals back so each note can still be
+     * matched to its phrase.
+     */
+    :root[data-annotations='margin'] .reader-margin {
+      position: static;
+      display: block;
+      grid-column: 1 / -1;
+    }
+
+    :root[data-annotations='margin'] .annotation-note {
+      position: static;
+      width: auto;
+      max-inline-size: none;
+      margin-block-start: 0.5em;
+      transform: none;
+    }
+
+    :root[data-annotations='margin'] .annotation-connectors {
+      display: none;
+    }
+
+    :root[data-annotations='margin'] .annotation-mark::after {
+      content: attr(data-reference);
+      margin-inline-start: 0.08em;
+      font-family: var(--font-handwriting);
+      font-size: 0.8em;
+      font-weight: 700;
+      line-height: 0;
+      vertical-align: super;
+    }
+  }
 </style>
 
 <script>
@@ -565,6 +669,7 @@ import { Icon } from 'astro-icon/components'
     }
 
     function layout() {
+      if (printing) return
       const mode = marginFits() ? 'margin' : 'inline'
       root.dataset.annotations = mode
       connectors!.replaceChildren()
@@ -690,6 +795,86 @@ import { Icon } from 'astro-icon/components'
     function controlsRoom(element: HTMLElement) {
       return element.querySelector<HTMLElement>('.annotation-note-controls')?.offsetHeight ?? 0
     }
+
+    // ---- Print --------------------------------------------------------------
+
+    /**
+     * Paper needs a different arrangement. An absolutely positioned note inside
+     * a container that spans several pages doesn't paginate — it lands on the
+     * first page or nowhere — so each note moves in beside its own mark, where
+     * the block it belongs to is in flow and carries the note across page breaks
+     * with it. `top: auto` then puts the note on the mark's own line, since an
+     * absolutely positioned box with no offsets keeps its static position.
+     */
+    function printLayout() {
+      // Group by block: a block with one note can have it out in the margin, but
+      // two notes on one line would sit on top of each other, since print
+      // positions come from static positions and there's no collision pass to
+      // run (measurements taken now describe the screen, not the page).
+      const byBlock = new Map<HTMLElement, Annotation[]>()
+
+      for (const annotation of annotations) {
+        annotation.note.style.removeProperty('top')
+
+        const block = annotation.mark?.closest<HTMLElement>('p, blockquote, li')
+        if (!block) {
+          // Nothing to sit beside: detached notes go to the end of the article.
+          if (margin!.previousElementSibling !== annotation.note) margin!.before(annotation.note)
+          continue
+        }
+        byBlock.set(block, [...(byBlock.get(block) ?? []), annotation])
+      }
+
+      for (const [block, group] of byBlock) {
+        if (group.length === 1) {
+          const [annotation] = group
+          block.classList.add('annotation-print-host')
+          annotation.mark!.after(annotation.note, printConnector())
+          continue
+        }
+
+        // More than one: number them and set them beneath the block instead.
+        const anchorEl = block.matches('li') ? (block.parentElement ?? block) : block
+        let after: Element = anchorEl
+        for (const annotation of group) {
+          annotation.mark!.dataset.printNumbered = ''
+          after.after(annotation.note)
+          after = annotation.note
+        }
+      }
+    }
+
+    function printTeardown() {
+      for (const host of prose!.querySelectorAll('.annotation-print-host')) {
+        host.classList.remove('annotation-print-host')
+      }
+      for (const mark of prose!.querySelectorAll<HTMLElement>('[data-print-numbered]')) {
+        delete mark.dataset.printNumbered
+      }
+      for (const connector of prose!.querySelectorAll('.annotation-print-connector')) {
+        connector.remove()
+      }
+    }
+
+    let printing = false
+
+    addEventListener('beforeprint', () => {
+      if (pendingFrame !== undefined) {
+        cancelAnimationFrame(pendingFrame)
+        pendingFrame = undefined
+      }
+      printing = true
+      root.dataset.annotations = 'print'
+      printLayout()
+      // Force the print arrangement to take effect before the snapshot is taken.
+      void prose!.offsetHeight
+    })
+
+    addEventListener('afterprint', () => {
+      printing = false
+      printTeardown()
+      layout()
+    })
 
     let pendingFrame: number | undefined
     function scheduleLayout() {
@@ -932,6 +1117,17 @@ import { Icon } from 'astro-icon/components'
    * Icon-only buttons say nothing on their own, so each one carries the note's
    * text in its accessible name.
    */
+  /** A short arrow for print, over a fixed box beside the mark. */
+  function printConnector() {
+    const svg = document.createElementNS(SVG_NS, 'svg')
+    svg.classList.add('annotation-print-connector')
+    svg.setAttribute('viewBox', '0 0 32 24')
+    svg.setAttribute('aria-hidden', 'true')
+    const arrow = inkArrow({ x: 28, y: 12 }, { x: 4, y: 12 })
+    svg.append(path('annotation-shaft', arrow.shaft), path('annotation-head', arrow.head))
+    return svg
+  }
+
   const remSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize)
 
   function labelControls(note: HTMLElement, text: string) {

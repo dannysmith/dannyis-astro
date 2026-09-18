@@ -481,10 +481,24 @@ One thing to keep an eye on: detached notes currently just stack at the end (of 
 
 ### Phase 4 — Print, and verification against real content
 
-- [ ] Print mode: the `beforeprint`/`afterprint` pair *and* the `@media print` fallback, with notes back out in the margin and short connectors.
+- [x] **Print mode.** Notes go back out in the margin on paper, each with a short connector.
 - [ ] Verify against an article carrying real footnotes, a `Callout`, a code block and a `BookmarkCard` — annotating around them, not inside them.
 - [ ] Check several notes on one block, and a note on a list item, in both modes.
 - [ ] Decide how detached notes should present themselves once there's a real one on screen.
+
+How print works, since it isn't obvious:
+
+**Each note moves in beside its own mark**, not into the margin aside. An absolutely positioned element inside a container spanning several pages doesn't paginate — it lands on the first page or nowhere — so the notes have to hang off something that's in flow. The annotated block becomes `position: relative`, the note is inserted straight after the mark, and `top: auto` leaves it at its static position, which is the mark's own line. The block then carries its note across page breaks. `beforeprint` does the moving and sets `data-annotations="print"`; `afterprint` puts everything back.
+
+**Two notes on one block print beneath it instead, numbered.** In the margin they'd overlap: print positions come from static positions, and there's no collision pass available because anything measured during `beforeprint` describes the screen, not the paginated page. So a block with one note gets the margin treatment, and a block with several gets them stacked underneath with handwritten numerals — deterministic, and it degrades rather than colliding. (The prior art overlaps here.)
+
+The print grid also takes the outer gutter back and spends it on the margin (`0 minmax(0, 1fr) 13rem`), since A4 has no room for a full measure plus a margin.
+
+**Safety net:** if a browser never fires `beforeprint`, the notes are still inside the aside — which is absolutely positioned across the whole article and would print on page one or not at all. A `@media print` block drops them into flow at the end of the article and brings the numerals back, so they're ugly rather than lost. Worth knowing for testing: Chromium's own print path (and Playwright's `page.pdf()`) does fire the events, so this is belt-and-braces.
+
+Verified by driving a real print: the events fire, the conversion happens, three notes land beside their marks with connectors, the margin and hover controls are hidden, numerals are suppressed where a connector does the pointing, and `afterprint` restores every note to the margin with nothing left behind. Also eyeballed at A4 width, both the margin case and the stacked case.
+
+One thing printing turned up that isn't ours: the skip link, the nav toggle and `Open ↗` links all print. That's the site's existing print styling, not the annotations — worth a separate look sometime.
 
 ### Phase 5 — Accessibility, export, tests
 
