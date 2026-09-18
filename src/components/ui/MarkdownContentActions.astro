@@ -7,7 +7,7 @@ interface Props {
 const { markdownUrl, disableShare = false } = Astro.props
 ---
 
-<div class="markdown-actions" data-disable-share={disableShare ? 'true' : undefined}>
+<div class="markdown-actions no-print" data-disable-share={disableShare ? 'true' : undefined}>
   {
     !disableShare && (
       <a href="#" id="share-post" style="display: none;">

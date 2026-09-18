@@ -91,6 +91,7 @@ export const MDX_COMPONENT_REMAPPING = {
 - `_foundation.css` — Design tokens, font faces, `@property` declarations
 - `_reset.css` through `_utilities.css` — One file per layer
 - `_verticalflow.css` — Vertical rhythm (part of typography layer, separate for maintainability)
+- `_print.css` — Print stylesheet. Imported last and deliberately **unlayered** (see [design.md](./design.md#print-styles))
 
 **Colour system:** OKLCH tokens that auto-switch via `light-dark()`; style from semantic tokens and derive variants with relative colour syntax. Full reference in [design-tokens.md](./design-tokens.md).
 

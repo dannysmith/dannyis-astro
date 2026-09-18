@@ -154,7 +154,7 @@ const standardSiteDocumentUri =
           </div>
           <SeriesCallout series={series} currentId={Astro.params.slug!} />
           <slot />
-          <div class="footer-actions" data-pagefind-ignore>
+          <div class="footer-actions no-print" data-pagefind-ignore>
             <MarkdownContentActions markdownUrl={markdownUrl} />
             <BackToTopLink />
           </div>

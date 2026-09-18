@@ -82,7 +82,7 @@ const pubIso = pubDate.toISOString().slice(0, 10)
       )}
       <div class="note-content p-content flow">
         {Content && <Content components={MDX_COMPONENT_REMAPPING} />}
-        <div class="footer-actions" data-pagefind-ignore>
+        <div class="footer-actions no-print" data-pagefind-ignore>
           <MarkdownContentActions markdownUrl={markdownUrl} disableShare={!standalone} />
           {standalone && <BackToTopLink />}
         </div>

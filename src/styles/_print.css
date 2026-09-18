@@ -1,0 +1,145 @@
+/* ============================================
+   PRINT
+   ============================================ */
+
+/* Deliberately unlayered, unlike every other file here.
+
+   Astro's component `<style>` blocks are themselves unlayered (and scoped, so
+   they carry extra specificity). Unlayered declarations beat *every* declared
+   layer, so a `@layer print` — even declared last — would lose to any component
+   that sets its own `display`. Staying unlayered is what actually wins, and the
+   few `!important`s below are for the cases that outrank even that. */
+
+@media print {
+  /* Roomier than Chrome's stingy ~10mm default without being precious about it:
+     across the styleguide article this costs one extra sheet. Grid galleries
+     collapse a column at this width, which is what that component is built to
+     do — its columns are `auto-fit` and meant to reflow. */
+  @page {
+    margin: 16mm 14mm;
+  }
+
+  /* The theme script in BaseHead.astro sets `color-scheme` *inline* on <html>
+     so the right theme paints before first load. That inline style also
+     survives into print: a reader in dark mode would resolve every
+     `light-dark()` to its dark value and get pale beige text on white paper.
+     Only `!important` outranks an inline style. */
+  :root {
+    color-scheme: light !important;
+  }
+
+  /* ----------- Screen-only chrome -----------
+     Applied to component roots in markup (see `.no-print` users). `!important`
+     because those roots set their own `display` in unlayered scoped styles. */
+  .no-print {
+    display: none !important;
+  }
+
+  /* The "↗" after external links means nothing on paper. SmartLink reserves
+     room for its glyph with padding, so reclaim that too. */
+  .external-arrow,
+  .external::after {
+    display: none;
+  }
+
+  .external {
+    padding-inline-end: 0;
+  }
+
+  /* Heading anchor links are already invisible on screen (`opacity: 0`) but
+     still occupy space. */
+  :is(h1, h2, h3, h4, h5, h6) > a[href^='#'] {
+    display: none;
+  }
+
+  /* ----------- Page breaks ----------- */
+
+  /* Never strand a heading at the foot of a page — and never let a break slice
+     through one, which `break-after` alone doesn't prevent. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  /* Keep self-contained blocks whole. Anything taller than the page box is
+     exempt automatically: browsers ignore `avoid` when it can't be honoured. */
+  figure,
+  blockquote,
+  pre,
+  tr,
+  details,
+  .callout,
+  .bookmark-card,
+  /* Expressive Code's outer wrapper is the box that actually splits — the
+     <figure> it nests inside is too deep to stop a break on its own. */
+  .expressive-code {
+    break-inside: avoid;
+  }
+
+  /* Deliberately NOT in the list above: `.note` wraps a note's entire body, not
+     a self-contained block. Asking a multi-page element not to break makes
+     Chrome push it past the first page boundary and print a blank sheet. */
+
+  /* A caption belongs with the figure above it. */
+  figcaption {
+    break-before: avoid;
+  }
+
+  /* ----------- Media ----------- */
+
+  /* Cap tall images at roughly one page, so `break-inside: avoid` on a portrait
+     figure doesn't push a mostly-empty sheet ahead of it. Height only: touching
+     the inline size would let intrinsic widths reflow the Grid galleries.
+     `object-fit: contain` scales rather than squashes within the capped box. */
+  figure img {
+    max-block-size: 85vh;
+    object-fit: contain;
+  }
+
+  /* Video facades: keep the poster so the reader sees what was embedded, but
+     drop the play button and duration badge, which do nothing on paper.
+     `lite-youtube` paints its poster as a CSS background-image, so without
+     `print-color-adjust` it prints as an empty box. */
+  lite-youtube,
+  lite-loom {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .lyt-playbtn,
+  .lite-loom-playbtn,
+  .lcvid-play,
+  .lcvid-duration-badge,
+  .lcvid-open {
+    display: none;
+  }
+
+  /* ----------- Code ----------- */
+
+  /* Expressive Code ships a single dark theme and writes its syntax colours
+     inline per token. Printed without backgrounds those pastels land on white
+     paper at very low contrast, so keep the frame's own ink. */
+  .expressive-code,
+  .expressive-code * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* ----------- Collapsed content ----------- */
+
+  /* A closed <details> hides its content from the page entirely. Reveal it on
+     paper, where there's nothing to click. */
+  details::details-content {
+    content-visibility: visible;
+    block-size: auto;
+  }
+
+  details > summary {
+    list-style: none;
+  }
+}
