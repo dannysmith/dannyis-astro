@@ -48,13 +48,11 @@ jobs:
       #
       #  • A deploy is already underway. The CI workflow cancels an in-progress
       #    run when a new one starts, so dispatching would restart it from
-      #    scratch — and if it has yet to load the records, it will pick the
-      #    change up anyway. If it doesn't, the next check still sees a difference.
+      #    scratch. If it misses the change, the next check still sees it.
       #
-      #  • This exact state has been tried since the live site was built. Then
-      #    that deploy failed, or the build can't reproduce what's on the PDS
-      #    (a record it skips, say). Trying again every 10 minutes won't help.
-      #    The next real change has a different state, and gets its own attempt.
+      #  • This exact state has been tried since the live site was built, so
+      #    that deploy failed or can't reproduce what's on the PDS. Retrying
+      #    every 10 minutes won't help; the next real change is a new state.
       - name: Dispatch a deploy, unless one is running or this state was already tried
         if: steps.detect.outputs.changed == 'true'
         env:

@@ -86,6 +86,11 @@ export async function* listRecords(
   } while (cursor)
 }
 
+/** Something to put in a log line, whatever was thrown. */
+export function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
+}
+
 /** The record key: the last segment of `at://<did>/<collection>/<rkey>`. */
 export function rkeyOf(uri: string): string {
   return uri.slice(uri.lastIndexOf('/') + 1)

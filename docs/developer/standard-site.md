@@ -2,6 +2,8 @@
 
 This site syncs its articles and notes onto the [ATmosphere](https://atproto.com/) using the [standard.site](https://standard.site/) lexicons so any AT-aware reader can index it and Bluesky can show a richer card when someone shares a danny.is URL. Danny usesd Bluesky as his PDS so records live in his normal Bluesky account (`@danny.is`), written with a Bluesky **app password**.
 
+This doc covers writing to the PDS. Reading records back into the site is [atproto-data.md](./atproto-data.md).
+
 ## What it does
 
 Two kinds of record get written to the PDS:

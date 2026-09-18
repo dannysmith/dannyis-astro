@@ -18,6 +18,7 @@ Content-first creative playground for writing and design experimentation. Built 
 - RSS feeds for articles, notes and both
 - Site-wide `⌘/Ctrl+K` command palette: full-text search (Pagefind) across articles/notes/pages, plus quick navigation and commands (see `docs/developer/command-palette-and-search.md`)
 - Reader margin annotations: readers can annotate any article in the right-hand margin, stored in their own browser (see `docs/developer/margin-annotations.md`)
+- Build-time data from my AT Protocol PDS (books today), with the site rebuilt automatically when those records change (see `docs/developer/atproto-data.md`)
 - Redirects and hosting for core static assets on my domain (danny.is/avatar.jpg, danny.is/cv.pdf, danny.is/meeting -> redirects to my booking link etc)
 
 ## Core Rules

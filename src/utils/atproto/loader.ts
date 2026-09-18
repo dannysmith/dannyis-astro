@@ -16,22 +16,8 @@
  */
 
 import type { Loader } from 'astro/loaders'
-import { z } from 'astro/zod'
 import { getConfig } from '@config/config'
-import { listRecords, rkeyOf, type PdsRecord } from '@utils/atproto/pds'
-
-/**
- * A blob as it appears inside a record — a reference to bytes, not a URL. Use
- * it in a collection schema, and hand the parsed value to `atprotoImage()`.
- */
-export const blobRef = z.object({
-  $type: z.literal('blob'),
-  ref: z.object({ $link: z.string() }),
-  mimeType: z.string(),
-  size: z.number(),
-})
-
-export type BlobRef = z.infer<typeof blobRef>
+import { errorMessage, listRecords, rkeyOf, type PdsRecord } from '@utils/atproto/pds'
 
 export function atprotoLoader({ nsid }: { nsid: string }): Loader {
   return {
@@ -46,7 +32,7 @@ export function atprotoLoader({ nsid }: { nsid: string }): Loader {
         for await (const record of listRecords(nsid, { did, host })) records.push(record)
       } catch (error) {
         logger.warn(
-          `Could not read ${nsid} (${reason(error)}). Keeping the ${store.keys().length} entries from the last build.`,
+          `Could not read ${nsid} (${errorMessage(error)}). Keeping the ${store.keys().length} entries from the last build.`,
         )
         return
       }
@@ -57,12 +43,14 @@ export function atprotoLoader({ nsid }: { nsid: string }): Loader {
         try {
           const data = await parseData({ id, data: record.value })
           // The CID is a hash of the record, so it is already the digest: set()
-          // skips entries whose CID hasn't moved, and routes can build a
-          // cacheKey from it with contentCacheKey().
+          // skips entries whose CID hasn't moved, and the state manifest
+          // fingerprints the collection from it.
           store.set({ id, data, digest: record.cid })
           loaded.add(id)
         } catch (error) {
-          logger.warn(`Skipping ${nsid}/${id}, which doesn't fit the schema: ${reason(error)}`)
+          logger.warn(
+            `Skipping ${nsid}/${id}, which doesn't fit the schema: ${errorMessage(error)}`,
+          )
         }
       }
 
@@ -74,8 +62,4 @@ export function atprotoLoader({ nsid }: { nsid: string }): Loader {
       logger.info(`Loaded ${loaded.size} ${nsid} records`)
     },
   }
-}
-
-function reason(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
 }

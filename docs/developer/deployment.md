@@ -24,6 +24,8 @@ Check and Build run **in parallel** — neither depends on the other. Deploy wai
 
 **Checks gate the deploy even on `main`.** Most commits land directly on `main` rather than via PR, so the Check stage is the only safety net. It must pass before anything ships — that's why Deploy depends on it and not just on Build.
 
+**A scheduled workflow can also trigger a deploy.** `.github/workflows/atproto-detect-changes.yml` dispatches this workflow when records the site renders from my PDS have changed. Those runs are named `atproto <state>` rather than after a commit. See [atproto-data.md](./atproto-data.md).
+
 **A separate workflow runs after a successful production deploy.** `.github/workflows/standard-site-sync.yml` mirrors new/changed posts to the AT Protocol network; it triggers on this workflow completing and does not affect the deploy itself. See [standard-site.md](./standard-site.md).
 
 **Build → artifact → deploy.** The Build job never deploys directly. It produces `dist/`, rearranges it into the layout Vercel expects under `.vercel/output/`, and uploads that as an artifact. The Deploy jobs download the artifact and run `vercel deploy --prebuilt`, which tells Vercel "this is already built — just host it." Vercel does no building of its own. This split is what keeps deploys fast and host-agnostic: the artifact is the same portable static output, and the deploy step is a thin shipping wrapper around it.

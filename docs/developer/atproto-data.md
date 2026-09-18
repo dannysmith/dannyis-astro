@@ -1,0 +1,63 @@
+# Reading AT Protocol data
+
+The site can render public records from my PDS at build time — books from BookHive today, and anything else an app writes there later. [standard-site.md](./standard-site.md) covers the other direction, writing.
+
+It stays static: records are fetched during `astro build`, and a scheduled workflow rebuilds the site when they change. There is no atproto dependency on the read side, just `fetch`.
+
+## Adding a source
+
+1. **Add a row** to `ATPROTO_SOURCES` in `src/config/atproto.ts`. The key is the collection name; `watch: 'digest'` means changes trigger a rebuild, `false` means they don't.
+2. **Define the collection** in `src/content.config.ts`, with a schema listing only the fields you'll use:
+
+   ```ts
+   const books = defineCollection({
+     loader: atprotoLoader(ATPROTO_SOURCES.books),
+     schema: z.object({ title: z.string(), cover: blobRef.optional() }),
+   })
+   ```
+
+3. **Render it** with `getCollection('books')`. For an image, call `atprotoImage()` where it's drawn:
+
+   ```ts
+   const cover = await atprotoImage(book.data.cover, { group: 'books', maxPx: 800 })
+   // → { src: '/mirrored/books/…webp', width, height } | null
+   ```
+
+Entries are keyed by rkey. `src/pages/scratchpad/books.astro` is a complete, small example.
+
+## How it works
+
+**The loader never fails the build.** The PDS is someone else's server and the records are usually written by someone else's app. If a collection can't be read, the entries from the last build are kept (the content store persists in `node_modules/.astro`). If one record doesn't fit the schema, that record is skipped. Both log a warning.
+
+**Images are mirrored, never hotlinked.** `atprotoImage()` takes a blob ref or a plain URL — apps differ — and passes it to the shared `src/utils/mirrorImage.ts`, which downloads, re-encodes to webp and caches it, grouped by feature. Mirroring happens at render time, so only images a page actually shows are downloaded. See [link-metadata.md](./link-metadata.md) for the mirror itself.
+
+**Change detection** has three parts:
+
+- The build emits `/atproto-state.json`: a fingerprint (a hash of every rkey and CID) for each watched collection, plus when it was built.
+- `.github/workflows/atproto-detect-changes.yml` runs every 10 minutes. It fetches that manifest from the live site, recomputes the fingerprints from the PDS, and dispatches `deploy.yml` if they differ. It needs no config — the manifest says what to check — and no `bun install`, so a run takes seconds.
+- It won't dispatch while a deploy is already running (a dispatch would cancel it), or if that exact PDS state has already been tried since the site was built (so a broken build can't loop). Dispatched deploys are named `atproto <state>`, which is how it tells.
+
+If it can't be sure — no manifest, PDS down — it does nothing and tries again next time. GitHub's cron can run late; nothing here is urgent.
+
+**For an instant rebuild**, anything of mine that writes to the PDS can dispatch the deploy itself straight after writing, with a fine-grained token that has Actions write access to this repo:
+
+```bash
+gh workflow run deploy.yml --ref main -f reason="steps updated"
+```
+
+## Things worth knowing
+
+- **Reads go to the `bsky.social` entryway** (`atproto.pdsHost` in `src/config/site.ts`), not the shard the account lives on. It serves `listRecords` itself and redirects `getBlob`, so it follows shard moves for us. Other `com.atproto.sync.*` calls return 401 there and need the real host from the DID document; we don't use them.
+- **`bsky.network` intermittently 500s on valid requests**, which is why every request retries with backoff.
+- **`listRecords` can return a cursor on the last page**, so paging stops on a short page instead.
+- **The repo's `rev` is useless as a change signal.** It bumps on every like and follow.
+- **Never watch `site.standard.document`.** Our own post-deploy sync writes those records, so every deploy would trigger another.
+- **`pds.ts` and `changes.ts` must not import from npm**, and use relative imports. The workflow runs them with no `node_modules`, and `tsconfig.json` (where the path aliases live) extends a file inside it.
+
+## Where things live
+
+- `src/config/atproto.ts` — the registry. `src/config/site.ts` — DID, handle, PDS host.
+- `src/utils/atproto/` — `pds.ts` (network), `loader.ts` (content loader), `image.ts` (`atprotoImage`, `blobRef`), `changes.ts` (fingerprints and change detection).
+- `src/pages/atproto-state.json.ts` — the manifest.
+- `scripts/atproto/detect-changes.ts` and `.github/workflows/atproto-detect-changes.yml`.
+- `tests/unit/atproto.test.ts`.

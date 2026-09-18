@@ -3,10 +3,9 @@ import { z } from 'astro/zod'
 import type { LoaderContext } from 'astro/loaders'
 import { getConfig } from '@config/config'
 import { fetchWithRetry, listRecords, rkeyOf, blobUrl, type PdsRecord } from '@utils/atproto/pds'
-import { fingerprint } from '@utils/atproto/fingerprint'
 import { atprotoLoader } from '@utils/atproto/loader'
 import { atprotoImage } from '@utils/atproto/image'
-import { detectChanges, type StateManifest } from '@utils/atproto/changes'
+import { detectChanges, fingerprint, type StateManifest } from '@utils/atproto/changes'
 import { mirrorImage } from '@utils/mirrorImage'
 
 vi.mock('@utils/mirrorImage', () => ({ mirrorImage: vi.fn(async () => null) }))
@@ -96,11 +95,7 @@ describe('listRecords', () => {
   })
 })
 
-describe('record helpers', () => {
-  it('reads the rkey off an AT-URI', () => {
-    expect(rkeyOf('at://did:plc:example/buzz.bookhive.book/3mumx5stca2xv')).toBe('3mumx5stca2xv')
-  })
-
+describe('blobUrl', () => {
   it('builds the getBlob URL for a blob CID', () => {
     const url = new URL(blobUrl('bafkreiexample', REPO))
     expect(url.origin + url.pathname).toBe('https://pds.test/xrpc/com.atproto.sync.getBlob')

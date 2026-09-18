@@ -9,13 +9,24 @@
  * actually shows are ever downloaded.
  */
 
+import { z } from 'astro/zod'
 import { getConfig } from '@config/config'
 import { blobUrl } from '@utils/atproto/pds'
-import type { BlobRef } from '@utils/atproto/loader'
 import { mirrorImage, type MirroredImage, type MirrorOptions } from '@utils/mirrorImage'
 
+/**
+ * A blob as it appears inside a record — a reference to bytes, not a URL. Use
+ * it in a collection schema, and hand the parsed value to `atprotoImage()`.
+ */
+export const blobRef = z.object({
+  $type: z.literal('blob'),
+  ref: z.object({ $link: z.string() }),
+  mimeType: z.string(),
+  size: z.number(),
+})
+
 export async function atprotoImage(
-  source: BlobRef | string | undefined,
+  source: z.infer<typeof blobRef> | string | undefined,
   { group, maxPx }: Pick<MirrorOptions, 'group' | 'maxPx'>,
 ): Promise<MirroredImage | null> {
   if (!source) return null

@@ -1,15 +1,12 @@
 /**
  * What this build loaded from my PDS: a fingerprint of every watched
- * collection in src/config/atproto.ts.
+ * collection in src/config/atproto.ts. Change detection compares it with the
+ * PDS and rebuilds the site when they differ — see src/utils/atproto/changes.ts
+ * and docs/developer/atproto-data.md.
  *
- * Change detection (.github/workflows/atproto-detect-changes.yml) fetches this
- * from the live site, recomputes the fingerprints from the PDS, and rebuilds
- * the site when they differ. See src/utils/atproto/changes.ts for the other
- * half, and docs/developer/atproto-data.md.
- *
- * It is computed from the content store, which is by definition what the build
- * rendered — not from a fresh fetch, which could include a record written
- * half-way through the build and mark it as shipped when it isn't.
+ * Computed from the content store, which is by definition what the build
+ * rendered. A fresh fetch here could include a record written half-way through
+ * the build, and mark it as shipped when it isn't.
  *
  * Deploy-target-neutral, like redirects.json. Excluded from the sitemap
  * (astro.config).
@@ -18,8 +15,7 @@ import type { APIRoute } from 'astro'
 import { getCollection } from 'astro:content'
 import { getConfig } from '@config/config'
 import { ATPROTO_SOURCES } from '@config/atproto'
-import { fingerprint } from '@utils/atproto/fingerprint'
-import type { SourceState, StateManifest } from '@utils/atproto/changes'
+import { fingerprint, type SourceState, type StateManifest } from '@utils/atproto/changes'
 
 export const prerender = true
 
