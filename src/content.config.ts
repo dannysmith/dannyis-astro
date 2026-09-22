@@ -116,6 +116,7 @@ const books = defineCollection({
       .pipe(z.enum(['wantToRead', 'reading', 'finished', 'abandoned'])),
     stars: z.number().int().min(1).max(10).optional().describe('Rating out of 10'),
     cover: blobRef.optional(),
+    hiveId: z.string().describe("The book's key in BookHive's catalog"),
     createdAt: z.coerce.date(),
     startedAt: z.coerce.date().optional(),
     finishedAt: z.coerce.date().optional(),

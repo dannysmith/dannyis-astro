@@ -29,15 +29,15 @@ Entries are keyed by rkey. `src/pages/scratchpad/books.astro` is a complete, sma
 
 **The loader never fails the build.** The PDS is someone else's server and the records are usually written by someone else's app. If a collection can't be read, the entries from the last build are kept (the content store persists in `node_modules/.astro`). If one record doesn't fit the schema, that record is skipped. Both log a warning.
 
-**Images are mirrored, never hotlinked.** `atprotoImage()` takes a blob ref or a plain URL — apps differ — and passes it to the shared `src/utils/mirrorImage.ts`, which downloads, re-encodes to webp and caches it, grouped by feature. Mirroring happens at render time, so only images a page actually shows are downloaded. See [link-metadata.md](./link-metadata.md) for the mirror itself.
+**Images are mirrored, never hotlinked.** `atprotoImage()` takes a blob ref or a plain URL — apps differ — and passes it to the shared `src/utils/mirrorImage.ts`, which downloads, re-encodes to webp and caches it, grouped by feature. Mirroring happens at render time, so only images a page actually shows are downloaded. See [link-metadata.md](./link-metadata.md) for the mirror itself. A blob can live in another repo (`repo: { did, host }`): the books page falls back to the cover on BookHive's own catalog record when mine has none. Because the mirror is keyed by source URL, and a blob's URL contains its CID, a cover added to my record later is picked up on the next build rather than shadowed by the cached fallback.
 
 **Change detection** has three parts:
 
 - The build emits `/atproto-state.json`: a fingerprint (a hash of every rkey and CID) for each watched collection, plus when it was built.
-- `.github/workflows/atproto-detect-changes.yml` runs every 10 minutes. It fetches that manifest from the live site, recomputes the fingerprints from the PDS, and dispatches `deploy.yml` if they differ. It needs no config — the manifest says what to check — and no `bun install`, so a run takes seconds.
+- `.github/workflows/atproto-detect-changes.yml` runs every two hours. It fetches that manifest from the live site, recomputes the fingerprints from the PDS, and dispatches `deploy.yml` if they differ. It needs no config — the manifest says what to check — and no `bun install`, so a run takes seconds.
 - It won't dispatch while a deploy is already running (a dispatch would cancel it), or if that exact PDS state has already been tried since the site was built (so a broken build can't loop). Dispatched deploys are named `atproto <state>`, which is how it tells.
 
-If it can't be sure — no manifest, PDS down — it does nothing and tries again next time. GitHub's cron can run late; nothing here is urgent.
+If it can't be sure — no manifest, PDS down — it does nothing and tries again next time. GitHub's cron runs late and skips runs on quiet repos (a 10-minute schedule ran every 2–5 hours in practice), which is why it is only asked for every two hours; nothing here is urgent.
 
 **For an instant rebuild**, anything of mine that writes to the PDS can dispatch the deploy itself straight after writing, with a fine-grained token that has Actions write access to this repo:
 

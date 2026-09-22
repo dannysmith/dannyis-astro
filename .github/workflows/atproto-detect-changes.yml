@@ -4,15 +4,17 @@ name: Detect AT Protocol changes
 # change. This compares the PDS with what the live site was built from, and
 # dispatches a deploy when they differ. See docs/developer/atproto-data.md.
 #
-# It runs often, so it is kept to almost nothing: a sparse checkout, no
-# `bun install`, and a handful of small unauthenticated requests.
+# It is kept to almost nothing: a sparse checkout, no `bun install`, and a
+# handful of small unauthenticated requests.
 
 on:
   schedule:
-    # Every 10 minutes, off the round numbers where GitHub's scheduler is
-    # busiest. Scheduled runs can still start late, or occasionally not at all;
+    # Every two hours, off the hour where GitHub's scheduler is busiest. This
+    # started life as every 10 minutes, but GitHub throttles scheduled runs on
+    # quiet repos and it actually ran every 2-5 hours, so the schedule now says
+    # what happens. Runs can still start late, or occasionally not at all;
     # nothing here is urgent enough for that to matter.
-    - cron: '7-59/10 * * * *'
+    - cron: '7 */2 * * *'
   workflow_dispatch:
 
 permissions:
@@ -52,7 +54,7 @@ jobs:
       #
       #  • This exact state has been tried since the live site was built, so
       #    that deploy failed or can't reproduce what's on the PDS. Retrying
-      #    every 10 minutes won't help; the next real change is a new state.
+      #    on every run won't help; the next real change is a new state.
       - name: Dispatch a deploy, unless one is running or this state was already tried
         if: steps.detect.outputs.changed == 'true'
         env:

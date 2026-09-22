@@ -7,11 +7,14 @@
  *
  * Call it where the image is rendered, not in the loader: only images a page
  * actually shows are ever downloaded.
+ *
+ * A blob is fetched from my repo unless `repo` says otherwise — an app's own
+ * repo, say, when it keeps the image there rather than on each user's record.
  */
 
 import { z } from 'astro/zod'
 import { getConfig } from '@config/config'
-import { blobUrl } from '@utils/atproto/pds'
+import { blobUrl, type Repo } from '@utils/atproto/pds'
 import { mirrorImage, type MirroredImage, type MirrorOptions } from '@utils/mirrorImage'
 
 /**
@@ -27,12 +30,11 @@ export const blobRef = z.object({
 
 export async function atprotoImage(
   source: z.infer<typeof blobRef> | string | undefined,
-  { group, maxPx }: Pick<MirrorOptions, 'group' | 'maxPx'>,
+  { group, maxPx, repo = myRepo() }: Pick<MirrorOptions, 'group' | 'maxPx'> & { repo?: Repo },
 ): Promise<MirroredImage | null> {
   if (!source) return null
 
-  const { did, pdsHost: host } = getConfig().atproto
-  const url = typeof source === 'string' ? source : blobUrl(source.ref.$link, { did, host })
+  const url = typeof source === 'string' ? source : blobUrl(source.ref.$link, repo)
 
   return mirrorImage(url, {
     group,
@@ -40,4 +42,9 @@ export async function atprotoImage(
     // Leading newline: these land mid-render, in the middle of Astro's progress lines.
     onProblem: detail => console.warn(`\nCould not mirror an image for ${group}: ${detail}`),
   })
+}
+
+function myRepo(): Repo {
+  const { did, pdsHost: host } = getConfig().atproto
+  return { did, host }
 }

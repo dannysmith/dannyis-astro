@@ -18,7 +18,8 @@ import {
   MainNavigation,
   LLMDiscoveryNote,
 } from '@components/layout/index'
-import { atprotoImage } from '@utils/atproto/index'
+import { atprotoImage, blobRef } from '@utils/atproto/index'
+import { errorMessage, getRecord } from '@utils/atproto/pds'
 
 /**
  * Sized for the lightbox rather than the grid: it shows the mirrored file at
@@ -26,6 +27,30 @@ import { atprotoImage } from '@utils/atproto/index'
  * so this keeps all of what little there is.
  */
 const COVER_MAX_PX = 800
+
+/**
+ * BookHive's own repo, which holds one `catalogBook` record per hiveId with the
+ * cover it shows on bookhive.buzz. The host is from its DID document.
+ */
+const BOOKHIVE = { did: 'did:plc:enu2j5xjlqsjaylv3du4myh4', host: 'bluesky.nickthesick.com' }
+
+/**
+ * The catalog's cover, for a record of mine that has none. BookHive's UI copies
+ * the cover onto each record it creates, but records written any other way go
+ * without. Only ever called for those, so a cover added to my record later
+ * takes over on the next build. Any failure is just no cover.
+ */
+async function catalogCover(hiveId: string) {
+  try {
+    const record = await getRecord('buzz.bookhive.catalogBook', hiveId, BOOKHIVE)
+    const cover = blobRef.safeParse(record?.value.coverBlob)
+    if (!cover.success) return null
+    return await atprotoImage(cover.data, { group: 'books', maxPx: COVER_MAX_PX, repo: BOOKHIVE })
+  } catch (error) {
+    console.warn(`\nCould not read BookHive's catalog for ${hiveId}: ${errorMessage(error)}`)
+    return null
+  }
+}
 
 const reading = await getCollection('books', ({ data }) => data.status === 'reading')
 const startedAt = (book: (typeof reading)[number]) => book.data.startedAt ?? book.data.createdAt
@@ -37,7 +62,9 @@ const books = await Promise.all(
       id,
       title: data.title,
       authors: data.authors,
-      cover: await atprotoImage(data.cover, { group: 'books', maxPx: COVER_MAX_PX }),
+      cover:
+        (await atprotoImage(data.cover, { group: 'books', maxPx: COVER_MAX_PX })) ??
+        (await catalogCover(data.hiveId)),
     })),
 )
 ---

@@ -86,6 +86,25 @@ export async function* listRecords(
   } while (cursor)
 }
 
+/**
+ * One record by key, or null if there is no such record. Throws on anything
+ * else, so a caller can't mistake an outage for an absence.
+ */
+export async function getRecord(
+  nsid: string,
+  rkey: string,
+  { did, host }: Repo,
+): Promise<PdsRecord | null> {
+  const params = new URLSearchParams({ repo: did, collection: nsid, rkey })
+  const response = await fetchWithRetry(`https://${host}/xrpc/com.atproto.repo.getRecord?${params}`)
+
+  if (response.ok) return (await response.json()) as PdsRecord
+  // A missing record is a 400 with error `RecordNotFound`, not a 404.
+  const error = response.status === 400 ? ((await response.json()) as { error?: string }) : null
+  if (error?.error === 'RecordNotFound') return null
+  throw new Error(`getRecord ${nsid}/${rkey} returned ${response.status}`)
+}
+
 /** Something to put in a log line, whatever was thrown. */
 export function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)

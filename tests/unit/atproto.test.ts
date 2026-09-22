@@ -2,7 +2,14 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { z } from 'astro/zod'
 import type { LoaderContext } from 'astro/loaders'
 import { getConfig } from '@config/config'
-import { fetchWithRetry, listRecords, rkeyOf, blobUrl, type PdsRecord } from '@utils/atproto/pds'
+import {
+  fetchWithRetry,
+  listRecords,
+  getRecord,
+  rkeyOf,
+  blobUrl,
+  type PdsRecord,
+} from '@utils/atproto/pds'
 import { atprotoLoader } from '@utils/atproto/loader'
 import { atprotoImage } from '@utils/atproto/image'
 import { detectChanges, fingerprint, type StateManifest } from '@utils/atproto/changes'
@@ -92,6 +99,33 @@ describe('listRecords', () => {
     serve(page(fullPage, 'r99'), new Response('nope', { status: 400 }))
 
     await expect(collect(listRecords(NSID, REPO))).rejects.toThrow(/returned 400/)
+  })
+})
+
+describe('getRecord', () => {
+  it('fetches one record by key', async () => {
+    const { urls } = serve(Response.json(record('one', { title: 'One' })))
+
+    const found = await getRecord(NSID, 'one', REPO)
+
+    expect(found?.value).toEqual({ title: 'One' })
+    expect(Object.fromEntries(urls()[0].searchParams)).toEqual({
+      repo: REPO.did,
+      collection: NSID,
+      rkey: 'one',
+    })
+  })
+
+  it('is null for a record that does not exist, which the PDS reports as a 400', async () => {
+    serve(Response.json({ error: 'RecordNotFound' }, { status: 400 }))
+
+    expect(await getRecord(NSID, 'gone', REPO)).toBeNull()
+  })
+
+  it('throws on any other failure, rather than passing it off as an absence', async () => {
+    serve(Response.json({ error: 'InvalidRequest' }, { status: 400 }))
+
+    await expect(getRecord(NSID, 'one', REPO)).rejects.toThrow(/returned 400/)
   })
 })
 
@@ -206,6 +240,19 @@ describe('atprotoImage', () => {
     const { did, pdsHost: host } = getConfig().atproto
     expect(mirrored()?.[0]).toBe(blobUrl('bafkreicover', { did, host }))
     expect(mirrored()?.[1]).toMatchObject(options)
+  })
+
+  it('fetches a blob from another repo when told to', async () => {
+    const blob = {
+      $type: 'blob' as const,
+      ref: { $link: 'bafkreiother' },
+      mimeType: 'image/jpeg',
+      size: 1,
+    }
+
+    await atprotoImage(blob, { ...options, repo: REPO })
+
+    expect(mirrored()?.[0]).toBe(blobUrl('bafkreiother', REPO))
   })
 
   it('mirrors a plain URL as it is', async () => {

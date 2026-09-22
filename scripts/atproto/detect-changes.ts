@@ -5,7 +5,7 @@
  *
  *   bun scripts/atproto/detect-changes.ts https://danny.is/atproto-state.json
  *
- * Run by .github/workflows/atproto-detect-changes.yml every few minutes, from a
+ * Run by .github/workflows/atproto-detect-changes.yml every couple of hours, from a
  * sparse checkout with no `bun install` — so nothing here, or in anything it
  * imports, may import from npm.
  *
