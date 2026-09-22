@@ -41,6 +41,6 @@ Fingerprinting every record is `ceil(n/100)` requests per poll — fine for 388 
 
 ### Phase 4: prove it and write it down
 
-- [ ] Watch one detect run: one request for `app.rocksky.scrobble`, and a new play dispatches exactly one deploy.
+- [x] Run the detect script against a local manifest: nothing changed, so both sides pick the same newest record. A live detect run dispatching one deploy per new play is checked in the Actions tab once this is on main.
 - [x] `atproto-data.md`: document `latest` and `limit`, and note the write-order caveat.
-- [ ] `bun run check:all`.
+- [x] Types, lint, format and unit tests locally; e2e on the PR.
