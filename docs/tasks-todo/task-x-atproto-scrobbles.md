@@ -23,24 +23,24 @@ The second source built on the atproto read system (see [atproto-data.md](../dev
 
 Fingerprinting every record is `ceil(n/100)` requests per poll — fine for 388 books, silly for years of scrobbles. `latest` fingerprints only the newest record (`rkey:cid`), which catches creates, all an append-only log has.
 
-- [ ] `listRecords()` in `src/utils/atproto/pds.ts` takes an optional `limit` and stops once it has that many, requesting no more than needed per page. (Phase 2 needs this too.)
-- [ ] `watch: 'latest'` in `src/config/atproto.ts`; `SourceState.watch` widens to match.
-- [ ] `detectChanges()` reads one record for a `latest` source (`limit: 1`) and fingerprints just that. The manifest endpoint fingerprints the entry with the greatest rkey. Both go through the same `fingerprint()` so they can't disagree.
-- [ ] Unit tests: `listRecords` stops at `limit`; a `latest` source is one request; a new newest record changes the fingerprint and an edit to an older one doesn't.
+- [x] `listRecords()` in `src/utils/atproto/pds.ts` takes an optional `limit` and stops once it has that many, requesting no more than needed per page. (Phase 2 needs this too.)
+- [x] `watch: 'latest'` in `src/config/atproto.ts`; `SourceState.watch` widens to match.
+- [x] `detectChanges()` reads one record for a `latest` source (`limit: 1`) and fingerprints just that. The manifest endpoint fingerprints the entry with the greatest rkey. Both go through the same `fingerprint()` so they can't disagree.
+- [x] Unit tests: `listRecords` stops at `limit`; a `latest` source is one request; a new newest record changes the fingerprint and an edit to an older one doesn't.
 
 ### Phase 2: loader `limit`
 
-- [ ] `limit?: number` on `AtprotoSource`, passed by `atprotoLoader()` to `listRecords()`. The build shouldn't page through every play ever to render one day.
-- [ ] Unit test that the loader stops paging at the limit.
+- [x] `limit?: number` on `AtprotoSource`, passed by `atprotoLoader()` to `listRecords()`. The build shouldn't page through every play ever to render one day.
+- [x] Unit test that the loader stops paging at the limit.
 
 ### Phase 3: the source, schema and page
 
-- [ ] Registry row: `scrobbles: { nsid: 'app.rocksky.scrobble', watch: 'latest', limit: 300 }`.
-- [ ] Collection in `src/content.config.ts`: `title`, `artist`, `album`, `albumArtist`, `albumArtUrl` (optional url), `createdAt` (coerced date). Nothing else.
-- [ ] `src/pages/scratchpad/listening.astro`: plays in the 24h before the build, grouped by album + album artist, counted, sorted, top handful. Art via `atprotoImage(albumArtUrl, { group: 'scrobbles', maxPx: 600 })`. Noindex like the rest of `/scratchpad`. Same shape as the books grid.
+- [x] Registry row: `scrobbles: { nsid: 'app.rocksky.scrobble', watch: 'latest', limit: 300 }`.
+- [x] Collection in `src/content.config.ts`: `title`, `artist`, `album`, `albumArtist`, `albumArtUrl` (optional url), `createdAt` (coerced date). Nothing else.
+- [x] `src/pages/scratchpad/listening.astro`: plays in the 24h before the build, grouped by album + album artist, counted, sorted, top handful. Art via `atprotoImage(albumArtUrl, { group: 'scrobbles', maxPx: 600 })`. Noindex like the rest of `/scratchpad`. Same shape as the books grid.
 
 ### Phase 4: prove it and write it down
 
 - [ ] Watch one detect run: one request for `app.rocksky.scrobble`, and a new play dispatches exactly one deploy.
-- [ ] `atproto-data.md`: document `latest` and `limit`, and note the write-order caveat.
+- [x] `atproto-data.md`: document `latest` and `limit`, and note the write-order caveat.
 - [ ] `bun run check:all`.

@@ -12,7 +12,7 @@ import {
 } from '@utils/atproto/pds'
 import { atprotoLoader } from '@utils/atproto/loader'
 import { atprotoImage } from '@utils/atproto/image'
-import { detectChanges, fingerprint, type StateManifest } from '@utils/atproto/changes'
+import { detectChanges, fingerprint, watched, type StateManifest } from '@utils/atproto/changes'
 import { mirrorImage } from '@utils/mirrorImage'
 
 vi.mock('@utils/mirrorImage', () => ({ mirrorImage: vi.fn(async () => null) }))
@@ -100,6 +100,26 @@ describe('listRecords', () => {
 
     await expect(collect(listRecords(NSID, REPO))).rejects.toThrow(/returned 400/)
   })
+
+  it('stops at the limit, asking each page for no more than it still needs', async () => {
+    const rest = Array.from({ length: 50 }, (_, i) => record(`s${i}`))
+    const { urls } = serve(page(fullPage, 'r99'), page(rest, 's49'))
+
+    const records = await collect(listRecords(NSID, REPO, { limit: 150 }))
+
+    expect(records).toHaveLength(150)
+    expect(urls().map(url => url.searchParams.get('limit'))).toEqual(['100', '50'])
+  })
+
+  it('is a single request for the newest record when the limit is one', async () => {
+    const { urls } = serve(page([record('newest')], 'newest'))
+
+    const records = await collect(listRecords(NSID, REPO, { limit: 1 }))
+
+    expect(records.map(r => rkeyOf(r.uri))).toEqual(['newest'])
+    expect(urls()).toHaveLength(1)
+    expect(urls()[0].searchParams.get('limit')).toBe('1')
+  })
 })
 
 describe('getRecord', () => {
@@ -153,6 +173,21 @@ describe('fingerprint', () => {
   })
 })
 
+describe('watched', () => {
+  const a = { rkey: 'a', cid: 'cid-a' }
+  const b = { rkey: 'b', cid: 'cid-b' }
+
+  it('is every record for a digest', () => {
+    expect(watched('digest', [a, b])).toEqual([a, b])
+  })
+
+  it('is only the record with the greatest rkey for latest, whatever the order', () => {
+    expect(watched('latest', [a, b])).toEqual([b])
+    expect(watched('latest', [b, a])).toEqual([b])
+    expect(watched('latest', [])).toEqual([])
+  })
+})
+
 describe('atprotoLoader', () => {
   /** Just enough of Astro's loader context: a store, a schema and a logger. */
   function context(existing: { id: string; data: unknown; digest?: string }[] = []) {
@@ -169,8 +204,23 @@ describe('atprotoLoader', () => {
       parseData: async ({ data }: { data: unknown }) => schema.parse(data),
       logger,
     } as unknown as LoaderContext
-    return { entries, logger, load: () => atprotoLoader({ nsid: NSID }).load(loaderContext) }
+    return {
+      entries,
+      logger,
+      load: (limit?: number) => atprotoLoader({ nsid: NSID, limit }).load(loaderContext),
+    }
   }
+
+  it('loads only the newest records when given a limit, and drops older entries', async () => {
+    const { urls } = serve(page([record('new', { title: 'New' })], 'new'))
+    const { entries, load } = context([{ id: 'old', data: { title: 'Old' } }])
+
+    await load(1)
+
+    expect([...entries.keys()]).toEqual(['new'])
+    expect(urls()).toHaveLength(1)
+    expect(urls()[0].searchParams.get('limit')).toBe('1')
+  })
 
   it('stores each record under its rkey, parsed, with the CID as its digest', async () => {
     serve(page([record('one', { title: 'One', extra: 'dropped' }, 'bafy-one')]))
@@ -274,7 +324,7 @@ describe('detectChanges', () => {
   const built = [record('a'), record('b')]
 
   /** The manifest a build would have published, having loaded `records`. */
-  const manifest = (records: PdsRecord[]) =>
+  const manifest = (records: PdsRecord[], watch: 'digest' | 'latest' = 'digest') =>
     Response.json({
       version: 1,
       ...REPO,
@@ -282,12 +332,37 @@ describe('detectChanges', () => {
       sources: [
         {
           nsid: NSID,
-          watch: 'digest',
-          fingerprint: fingerprint(records.map(r => ({ rkey: rkeyOf(r.uri), cid: r.cid }))),
+          watch,
+          fingerprint: fingerprint(
+            watched(
+              watch,
+              records.map(r => ({ rkey: rkeyOf(r.uri), cid: r.cid })),
+            ),
+          ),
           count: records.length,
         },
       ],
     } satisfies StateManifest)
+
+  it('asks for only the newest record of a latest source, and is satisfied by it', async () => {
+    const { urls } = serve(manifest(built, 'latest'), page([record('b')], 'b'))
+
+    expect(await detectChanges(MANIFEST_URL)).toEqual({
+      changed: false,
+      reason: 'nothing has changed',
+    })
+    expect(urls()).toHaveLength(2)
+    expect(urls()[1].searchParams.get('limit')).toBe('1')
+  })
+
+  it('reports a change to a latest source when a newer record has appeared', async () => {
+    serve(manifest(built, 'latest'), page([record('c')], 'c'))
+
+    expect(await detectChanges(MANIFEST_URL)).toMatchObject({
+      changed: true,
+      changedSources: [NSID],
+    })
+  })
 
   it('reads the manifest, then the repo and host it names', async () => {
     const { urls } = serve(manifest(built), page(built))

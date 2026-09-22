@@ -6,7 +6,7 @@ It stays static: records are fetched during `astro build`, and a scheduled workf
 
 ## Adding a source
 
-1. **Add a row** to `ATPROTO_SOURCES` in `src/config/atproto.ts`. The key is the collection name; `watch: 'digest'` means changes trigger a rebuild, `false` means they don't.
+1. **Add a row** to `ATPROTO_SOURCES` in `src/config/atproto.ts`. The key is the collection name. `watch` is `'digest'` for a collection that is edited in place (every record is fingerprinted, so edits and deletes count), `'latest'` for one that only grows (just the newest record is, in one request), or `false` for no rebuilds at all. Add `limit` to a growing collection so a build loads only the newest that many records.
 2. **Define the collection** in `src/content.config.ts`, with a schema listing only the fields you'll use:
 
    ```ts
@@ -23,7 +23,7 @@ It stays static: records are fetched during `astro build`, and a scheduled workf
    // → { src: '/mirrored/books/…webp', width, height } | null
    ```
 
-Entries are keyed by rkey. `src/pages/scratchpad/books.astro` is a complete, small example.
+Entries are keyed by rkey. `src/pages/scratchpad/books.astro` is a complete, small example of an edited-in-place collection, and `src/pages/scratchpad/listening.astro` of an append-only one.
 
 ## How it works
 
@@ -33,7 +33,7 @@ Entries are keyed by rkey. `src/pages/scratchpad/books.astro` is a complete, sma
 
 **Change detection** has three parts:
 
-- The build emits `/atproto-state.json`: a fingerprint (a hash of every rkey and CID) for each watched collection, plus when it was built.
+- The build emits `/atproto-state.json`: a fingerprint for each watched collection, plus when it was built. For `digest` that is a hash of every rkey and CID; for `latest` it is the newest record's alone, which the PDS also returns first, so checking it is a single request however large the collection.
 - `.github/workflows/atproto-detect-changes.yml` runs every two hours. It fetches that manifest from the live site, recomputes the fingerprints from the PDS, and dispatches `deploy.yml` if they differ. It needs no config — the manifest says what to check — and no `bun install`, so a run takes seconds.
 - It won't dispatch while a deploy is already running (a dispatch would cancel it), or if that exact PDS state has already been tried since the site was built (so a broken build can't loop). Dispatched deploys are named `atproto <state>`, which is how it tells.
 
@@ -50,6 +50,7 @@ gh workflow run deploy.yml --ref main -f reason="steps updated"
 - **Reads go to the `bsky.social` entryway** (`atproto.pdsHost` in `src/config/site.ts`), not the shard the account lives on. It serves `listRecords` itself and redirects `getBlob`, so it follows shard moves for us. Other `com.atproto.sync.*` calls return 401 there and need the real host from the DID document; we don't use them.
 - **`bsky.network` intermittently 500s on valid requests**, which is why every request retries with backoff.
 - **`listRecords` can return a cursor on the last page**, so paging stops on a short page instead.
+- **Record order is write order, not event order.** Rkeys are timestamps of when the record was written, and an app backfilling history writes out of sequence (Rocksky's Last.fm import did). Sort on the record's own date field; `latest` still works because a new event is a new newest rkey.
 - **The repo's `rev` is useless as a change signal.** It bumps on every like and follow.
 - **Never watch `site.standard.document`.** Our own post-deploy sync writes those records, so every deploy would trigger another.
 - **`pds.ts` and `changes.ts` must not import from npm**, and use relative imports. The workflow runs them with no `node_modules`, and `tsconfig.json` (where the path aliases live) extends a file inside it.

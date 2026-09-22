@@ -1,0 +1,172 @@
+---
+/**
+ * The albums I've played most in the day before this build, from the Rocksky
+ * scrobbles on my PDS.
+ *
+ * The append-only counterpart to /scratchpad/books: the `scrobbles` collection
+ * is capped by `limit` in the registry and watched by its newest record alone,
+ * and the album art is a plain URL rather than a blob. See
+ * docs/developer/atproto-data.md.
+ *
+ * Hidden like the rest of /scratchpad: noindex, and filtered out of the sitemap.
+ */
+import { getCollection } from 'astro:content'
+import {
+  BaseHead,
+  CommandPalette,
+  Footer,
+  Lightbox,
+  MainNavigation,
+  LLMDiscoveryNote,
+} from '@components/layout/index'
+import { atprotoImage } from '@utils/atproto/index'
+
+const DAY_MS = 24 * 60 * 60 * 1000
+const MAX_ALBUMS = 12
+/** Spotify's largest art is 640px; anything more would be upscaling. */
+const ART_MAX_PX = 640
+
+const since = Date.now() - DAY_MS
+const plays = await getCollection('scrobbles', ({ data }) => data.createdAt.valueOf() >= since)
+
+// Tally plays by album, keeping the art from whichever play had one.
+const tally = new Map<string, { album: string; artist: string; art?: string; plays: number }>()
+for (const { data } of plays) {
+  const key = `${data.albumArtist}\n${data.album}`
+  const entry = tally.get(key) ?? { album: data.album, artist: data.albumArtist, plays: 0 }
+  entry.plays += 1
+  entry.art ??= data.albumArtUrl
+  tally.set(key, entry)
+}
+
+const albums = await Promise.all(
+  [...tally.values()]
+    .sort((a, b) => b.plays - a.plays)
+    .slice(0, MAX_ALBUMS)
+    .map(async album => ({
+      ...album,
+      cover: await atprotoImage(album.art, { group: 'scrobbles', maxPx: ART_MAX_PX }),
+    })),
+)
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Listening"
+      description="The albums I've played most in the last day"
+      robotsDirective="noindex, nofollow"
+    />
+  </head>
+  <body>
+    <MainNavigation />
+    <CommandPalette />
+    <main id="main" tabindex="-1">
+      <LLMDiscoveryNote />
+      <h1>Listening</h1>
+      <p class="intro">
+        Most played albums in the last day, from {plays.length} play{plays.length === 1 ? '' : 's'}.
+      </p>
+      {
+        albums.length === 0 ? (
+          <p>Nothing played in the last day.</p>
+        ) : (
+          <ol class="list-reset albums">
+            {albums.map(album => (
+              <li class="album">
+                {album.cover ? (
+                  <img
+                    class="cover"
+                    src={album.cover.src}
+                    width={album.cover.width}
+                    height={album.cover.height}
+                    alt={`Cover of ${album.album}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="cover no-cover" />
+                )}
+                <div class="details">
+                  <strong class="title">{album.album}</strong>
+                  <span class="artist">{album.artist}</span>
+                  <span class="plays">
+                    {album.plays} play{album.plays === 1 ? '' : 's'}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )
+      }
+    </main>
+    <Footer />
+    <Lightbox />
+    <style>
+      main {
+        max-inline-size: 75rem;
+        margin-inline: auto;
+        padding: var(--space-l);
+      }
+
+      .intro {
+        color: var(--color-text-secondary);
+      }
+
+      /* Three across on a phone, up to six on a desktop; album art is square. */
+      .albums {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(clamp(7rem, 12vw, 11rem), 100%), 1fr));
+        gap: var(--space-l) var(--space-m);
+        margin-block-start: var(--space-l);
+        counter-reset: rank;
+      }
+
+      .album {
+        display: grid;
+        row-gap: var(--space-xs);
+        counter-increment: rank;
+      }
+
+      .cover {
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: var(--radius-xs);
+        filter: var(--shadow-medium);
+      }
+
+      .no-cover {
+        background: var(--color-background-secondary);
+      }
+
+      .title {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+        font-size: var(--font-size-sm);
+        line-height: var(--leading-tight);
+      }
+
+      .title::before {
+        content: counter(rank) '. ';
+        color: var(--color-text-secondary);
+      }
+
+      .artist,
+      .plays {
+        display: block;
+        color: var(--color-text-secondary);
+        font-size: var(--font-size-xs);
+      }
+
+      .artist {
+        margin-block-start: var(--space-3xs);
+      }
+    </style>
+  </body>
+</html>
