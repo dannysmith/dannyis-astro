@@ -1,7 +1,8 @@
 /**
  * A Content Layer loader for one collection of records on my PDS. Give it an
  * NSID; each record becomes an entry keyed by its rkey, validated against the
- * collection's schema in src/content.config.ts.
+ * collection's schema in src/content.config.ts. With a `limit`, only the
+ * newest that many records are loaded, and older entries leave the store.
  *
  * It never fails the build. The PDS belongs to someone else and the records are
  * often written by someone else's app, and neither should be able to stop an
@@ -19,7 +20,7 @@ import type { Loader } from 'astro/loaders'
 import { getConfig } from '@config/config'
 import { errorMessage, listRecords, rkeyOf, type PdsRecord } from '@utils/atproto/pds'
 
-export function atprotoLoader({ nsid }: { nsid: string }): Loader {
+export function atprotoLoader({ nsid, limit }: { nsid: string; limit?: number }): Loader {
   return {
     name: 'atproto-loader',
     async load({ store, parseData, logger }) {
@@ -29,7 +30,9 @@ export function atprotoLoader({ nsid }: { nsid: string }): Loader {
       // through leaves the last build's entries intact rather than half of them.
       const records: PdsRecord[] = []
       try {
-        for await (const record of listRecords(nsid, { did, host })) records.push(record)
+        for await (const record of listRecords(nsid, { did, host }, { limit })) {
+          records.push(record)
+        }
       } catch (error) {
         logger.warn(
           `Could not read ${nsid} (${errorMessage(error)}). Keeping the ${store.keys().length} entries from the last build.`,
@@ -54,7 +57,8 @@ export function atprotoLoader({ nsid }: { nsid: string }): Loader {
         }
       }
 
-      // Whatever wasn't loaded this time was deleted upstream, or no longer fits.
+      // Whatever wasn't loaded this time was deleted upstream, no longer fits,
+      // or has aged past the limit.
       for (const id of store.keys()) {
         if (!loaded.has(id)) store.delete(id)
       }

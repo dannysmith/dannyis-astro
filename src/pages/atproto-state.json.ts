@@ -15,7 +15,7 @@ import type { APIRoute } from 'astro'
 import { getCollection } from 'astro:content'
 import { getConfig } from '@config/config'
 import { ATPROTO_SOURCES } from '@config/atproto'
-import { fingerprint, type SourceState, type StateManifest } from '@utils/atproto/changes'
+import { fingerprint, watched, type SourceState, type StateManifest } from '@utils/atproto/changes'
 
 export const prerender = true
 
@@ -29,12 +29,11 @@ export const GET: APIRoute = async () => {
     // The loader stores each record under its rkey, with its CID as the digest
     // (which Astro types loosely, hence the String).
     const entries = await getCollection(collection as keyof typeof ATPROTO_SOURCES)
+    const records = entries.map(entry => ({ rkey: entry.id, cid: String(entry.digest) }))
     sources.push({
       nsid,
       watch,
-      fingerprint: fingerprint(
-        entries.map(entry => ({ rkey: entry.id, cid: String(entry.digest) })),
-      ),
+      fingerprint: fingerprint(watched(watch, records)),
       count: entries.length,
     })
   }

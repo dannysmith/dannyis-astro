@@ -58,7 +58,8 @@ export async function fetchWithRetry(
 }
 
 /**
- * Every record in a collection, newest first, fetched a page at a time.
+ * Records in a collection, newest first, fetched a page at a time — all of
+ * them, or only the newest `limit` (one request when `limit` fits in a page).
  *
  * Stops on a short page rather than waiting for the cursor to go missing: the
  * PDS can hand back a cursor on the final page, and following it costs a
@@ -68,11 +69,14 @@ export async function fetchWithRetry(
 export async function* listRecords(
   nsid: string,
   { did, host }: Repo,
+  { limit = Infinity }: { limit?: number } = {},
 ): AsyncGenerator<PdsRecord, void, undefined> {
   let cursor: string | undefined
+  let remaining = limit
 
   do {
-    const params = new URLSearchParams({ repo: did, collection: nsid, limit: String(PAGE_SIZE) })
+    const pageSize = Math.min(PAGE_SIZE, remaining)
+    const params = new URLSearchParams({ repo: did, collection: nsid, limit: String(pageSize) })
     if (cursor) params.set('cursor', cursor)
 
     const response = await fetchWithRetry(
@@ -82,7 +86,8 @@ export async function* listRecords(
 
     const page = (await response.json()) as { records: PdsRecord[]; cursor?: string }
     yield* page.records
-    cursor = page.records.length < PAGE_SIZE ? undefined : page.cursor
+    remaining -= page.records.length
+    cursor = page.records.length < pageSize || remaining <= 0 ? undefined : page.cursor
   } while (cursor)
 }
 

@@ -123,4 +123,16 @@ const books = defineCollection({
   }),
 })
 
-export const collections = { articles, notes, toolboxPages, series, projects, books }
+const scrobbles = defineCollection({
+  loader: atprotoLoader(ATPROTO_SOURCES.scrobbles),
+  schema: z.object({
+    title: z.string(),
+    artist: z.string(),
+    album: z.string(),
+    albumArtist: z.string(),
+    albumArtUrl: z.string().url().optional(),
+    createdAt: z.coerce.date().describe('When the track was played'),
+  }),
+})
+
+export const collections = { articles, notes, toolboxPages, series, projects, books, scrobbles }

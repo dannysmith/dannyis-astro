@@ -17,8 +17,11 @@ import { errorMessage, fetchWithRetry, listRecords, rkeyOf } from './pds.ts'
 
 export interface SourceState {
   nsid: string
-  /** How the fingerprint was made. Only 'digest' exists: every record's rkey and CID. */
-  watch: 'digest'
+  /**
+   * What the fingerprint covers: every record's rkey and CID ('digest'), or
+   * only the newest record's ('latest'). See src/config/atproto.ts.
+   */
+  watch: 'digest' | 'latest'
   fingerprint: string
   count: number
 }
@@ -58,6 +61,20 @@ export function fingerprint(records: Iterable<{ rkey: string; cid: string }>): s
 }
 
 /**
+ * The records a source's fingerprint covers. For 'latest' that is the newest
+ * record alone — the one with the greatest rkey, since rkeys are timestamps —
+ * which is also what the PDS returns first, so `detectChanges()` can ask for
+ * just one and land on the same record the build did.
+ */
+export function watched<T extends { rkey: string }>(
+  watch: SourceState['watch'],
+  records: T[],
+): T[] {
+  if (watch !== 'latest' || records.length === 0) return records
+  return [records.reduce((newest, record) => (record.rkey > newest.rkey ? record : newest))]
+}
+
+/**
  * Anything that stops us knowing for sure — no manifest yet, the PDS down, one
  * collection failing — is reported as "not changed", with the reason. A rebuild
  * is only ever triggered by a difference we actually observed.
@@ -81,8 +98,9 @@ export async function detectChanges(manifestUrl: string): Promise<Detection> {
 
   for (const source of manifest.sources) {
     const records: { rkey: string; cid: string }[] = []
+    const limit = source.watch === 'latest' ? 1 : undefined
     try {
-      for await (const { uri, cid } of listRecords(source.nsid, { did, host })) {
+      for await (const { uri, cid } of listRecords(source.nsid, { did, host }, { limit })) {
         records.push({ rkey: rkeyOf(uri), cid })
       }
     } catch (error) {
