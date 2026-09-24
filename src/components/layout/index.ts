@@ -11,6 +11,7 @@ export { default as Lightbox } from './Lightbox.astro'
 export { default as SeriesCallout } from './SeriesCallout.astro'
 export { default as SkipLink } from './SkipLink.astro'
 export { default as TableOfContents } from './TableOfContents.astro'
+export { default as WritingHeader } from './WritingHeader.astro'
 
 // Typography wrapper components
 export { default as MarginAnnotations } from './MarginAnnotations.astro'

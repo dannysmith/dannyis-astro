@@ -1,0 +1,68 @@
+---
+/**
+ * The oversized "Writing" title shared by /writing and /writing/calendar, with
+ * links to switch between the two views.
+ *
+ * Usage: <WritingHeader view="list" />
+ */
+export interface Props {
+  view: 'list' | 'calendar'
+}
+
+const { view } = Astro.props
+
+const views = [
+  { id: 'list', label: 'List', href: '/writing/' },
+  { id: 'calendar', label: 'Calendar', href: '/writing/calendar/' },
+] as const
+---
+
+<header class="writing-header">
+  <h1 class="title">Writing</h1>
+  <nav class="views" aria-label="Writing view">
+    {
+      views.map(({ id, label, href }) => (
+        <a href={href} class="all-caps" aria-current={id === view ? 'page' : undefined}>
+          {label}
+        </a>
+      ))
+    }
+  </nav>
+</header>
+
+<style>
+  .title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 14vw, 20rem);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    font-feature-settings: 'case' on;
+    text-align: right;
+    line-height: var(--leading-none);
+    transform: translateY(-0.2em);
+    pointer-events: none;
+  }
+
+  .views {
+    display: flex;
+    justify-content: end;
+    gap: var(--space-s);
+    padding-inline: var(--space-s);
+    font-size: var(--font-size-xs);
+  }
+
+  .views a {
+    padding-block-end: var(--space-3xs);
+    color: var(--color-text-secondary);
+    border-block-end: var(--border-width-thick) solid transparent;
+  }
+
+  .views a:hover {
+    color: var(--color-accent);
+  }
+
+  .views a[aria-current='page'] {
+    color: var(--color-text);
+    border-block-end-color: var(--color-accent);
+  }
+</style>

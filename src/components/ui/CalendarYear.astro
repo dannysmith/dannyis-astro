@@ -1,0 +1,214 @@
+---
+/**
+ * A year of month grids with a mark on each day that has entries. Clicking a
+ * mark opens a popover listing that day's entries as links.
+ *
+ * Takes any dated entries (see CalendarEntry) and ignores those outside `year`,
+ * so callers can pass the same list to one CalendarYear per year. No script:
+ * the popovers are native `popover`s placed with CSS anchor positioning, and
+ * without anchor support they open centred in the viewport instead.
+ *
+ * Usage:
+ *   <CalendarYear year={2026} entries={[{ date, title, href, label: 'Note', minor: true }]} />
+ */
+import { calendarYear, type CalendarEntry } from '@utils/calendar'
+
+export interface Props {
+  year: number
+  entries: CalendarEntry[]
+}
+
+const { year, entries } = Astro.props
+const months = calendarYear(year, entries)
+
+const longDate = new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' })
+---
+
+<section class="calendar-year" aria-labelledby={`calendar-${year}`}>
+  <h2 id={`calendar-${year}`}>{year}</h2>
+  <div class="months">
+    {
+      months.map(month => (
+        <div class="month">
+          <h3>{month.name}</h3>
+          <ol class="list-reset days" style={`--start: ${month.startColumn}`}>
+            {month.days.map(day => {
+              const date = longDate.format(new Date(day.iso))
+              const count = day.entries.length
+              return (
+                <li class="day" data-future={day.future || undefined}>
+                  {count === 0 ? (
+                    day.day
+                  ) : (
+                    <>
+                      <button
+                        class="mark"
+                        data-minor={day.entries.every(entry => entry.minor) || undefined}
+                        popovertarget={`calendar-${day.iso}`}
+                        aria-label={`${date}: ${count} ${count === 1 ? 'entry' : 'entries'}`}
+                      />
+                      <div popover id={`calendar-${day.iso}`} class="popover">
+                        <p class="popover-date">{date}</p>
+                        <ul class="list-reset">
+                          {day.entries.map(entry => (
+                            <li>
+                              <a href={entry.href}>{entry.title}</a>
+                              {entry.label && <span class="popover-label">{entry.label}</span>}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </>
+                  )}
+                </li>
+              )
+            })}
+          </ol>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .calendar-year {
+    container-type: inline-size;
+  }
+
+  .calendar-year h2 {
+    margin: 0 0 var(--space-m);
+  }
+
+  .calendar-year + .calendar-year {
+    margin-block-start: var(--space-2xl);
+  }
+
+  /* Two, three, four or six months across, so the twelve always fill their rows. */
+  .months {
+    display: grid;
+    grid-template-columns: repeat(var(--columns, 2), minmax(0, 1fr));
+    gap: var(--space-l) var(--space-m);
+  }
+
+  @container (width >= 36rem) {
+    .months {
+      --columns: 3;
+    }
+  }
+
+  @container (width >= 50rem) {
+    .months {
+      --columns: 4;
+    }
+  }
+
+  @container (width >= 72rem) {
+    .months {
+      --columns: 6;
+    }
+  }
+
+  .month h3 {
+    margin: 0 0 var(--space-2xs);
+    font-size: var(--font-size-sm);
+  }
+
+  .month:has(.day:first-child[data-future]) h3,
+  .day[data-future] {
+    color: var(--color-text-secondary);
+  }
+
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  /* Each day scopes the anchor name, so every mark anchors its own popover. */
+  .day {
+    display: grid;
+    place-items: center;
+    min-block-size: 2em;
+    anchor-scope: --calendar-mark;
+  }
+
+  /* The 1st sits in its weekday's column; the rest of the month flows on. */
+  .day:first-child {
+    grid-column-start: var(--start);
+  }
+
+  .mark {
+    anchor-name: --calendar-mark;
+    inline-size: 1.5em;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    cursor: pointer;
+  }
+
+  .mark[data-minor] {
+    inline-size: 0.8em;
+  }
+
+  .mark:hover {
+    opacity: 0.75;
+  }
+
+  .mark:focus-visible,
+  .mark:has(+ :popover-open) {
+    outline: var(--border-width-base) solid var(--color-accent);
+    outline-offset: 2px;
+    opacity: 1;
+  }
+
+  .popover {
+    inline-size: max-content;
+    max-inline-size: min(18rem, 100vw - 2rem);
+    padding: var(--space-xs) var(--space-s);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-sm);
+    line-height: 1.3;
+    color: var(--color-text);
+    background: var(--color-background);
+    border: var(--border-width-hairline) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 16px oklch(0% 0 0 / 0.15);
+  }
+
+  /* Below the mark, sliding sideways or flipping above to stay on screen. Needs
+     anchor-scope too: without it every popover would anchor to the last mark. */
+  @supports (position-area: block-end) and (anchor-scope: all) {
+    .popover {
+      inset: auto;
+      margin: var(--space-2xs);
+      position-anchor: --calendar-mark;
+      position-area: block-end;
+      position-try-fallbacks:
+        block-end span-inline-end,
+        block-end span-inline-start,
+        flip-block;
+    }
+  }
+
+  .popover-date {
+    margin: 0 0 var(--space-3xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .popover ul {
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .popover-label {
+    margin-inline-start: var(--space-3xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+</style>
