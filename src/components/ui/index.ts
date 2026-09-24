@@ -2,6 +2,7 @@
 export { default as ArticleCard } from './ArticleCard.astro'
 export { default as BackToTopLink } from './BackToTopLink.astro'
 export { default as CalendarYear } from './CalendarYear.astro'
+export { default as CurrentlyReading } from './CurrentlyReading.astro'
 export { default as FormattedDate } from './FormattedDate.astro'
 export { default as MarkdownContentActions } from './MarkdownContentActions.astro'
 export { default as NoteCard } from './NoteCard.astro'

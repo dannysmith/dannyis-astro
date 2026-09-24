@@ -23,13 +23,13 @@ It stays static: records are fetched during `astro build`, and a scheduled workf
    // → { src: '/mirrored/books/…webp', width, height } | null
    ```
 
-Entries are keyed by rkey. `src/pages/scratchpad/books.astro` is a complete, small example of an edited-in-place collection, and `src/pages/scratchpad/listening.astro` of an append-only one.
+Entries are keyed by rkey. `src/components/ui/CurrentlyReading.astro` (shown on `/now`) is a complete, small example of an edited-in-place collection, and `src/pages/scratchpad/listening.astro` of an append-only one.
 
 ## How it works
 
 **The loader never fails the build.** The PDS is someone else's server and the records are usually written by someone else's app. If a collection can't be read, the entries from the last build are kept (the content store persists in `node_modules/.astro`). If one record doesn't fit the schema, that record is skipped. Both log a warning.
 
-**Images are mirrored, never hotlinked.** `atprotoImage()` takes a blob ref or a plain URL — apps differ — and passes it to the shared `src/utils/mirrorImage.ts`, which downloads, re-encodes to webp and caches it, grouped by feature. Mirroring happens at render time, so only images a page actually shows are downloaded. See [link-metadata.md](./link-metadata.md) for the mirror itself. A blob can live in another repo (`repo: { did, host }`): the books page falls back to the cover on BookHive's own catalog record when mine has none. Because the mirror is keyed by source URL, and a blob's URL contains its CID, a cover added to my record later is picked up on the next build rather than shadowed by the cached fallback.
+**Images are mirrored, never hotlinked.** `atprotoImage()` takes a blob ref or a plain URL — apps differ — and passes it to the shared `src/utils/mirrorImage.ts`, which downloads, re-encodes to webp and caches it, grouped by feature. Mirroring happens at render time, so only images a page actually shows are downloaded. See [link-metadata.md](./link-metadata.md) for the mirror itself. A blob can live in another repo (`repo: { did, host }`): `CurrentlyReading` falls back to the cover on BookHive's own catalog record when mine has none. Because the mirror is keyed by source URL, and a blob's URL contains its CID, a cover added to my record later is picked up on the next build rather than shadowed by the cached fallback.
 
 **Change detection** has three parts:
 

@@ -5,6 +5,7 @@ import { Code } from 'astro-expressive-code/components'
 import { ResizableContainer, WrappedTable } from '@components/mdx/index'
 import {
   CalendarYear,
+  CurrentlyReading,
   FormattedDate,
   MarkdownContentActions,
   PersonalLogo,
@@ -49,6 +50,7 @@ const toc = [
   { id: 'markdown-content-actions', label: 'MarkdownContentActions' },
   { id: 'formatted-date', label: 'FormattedDate' },
   { id: 'calendar-year', label: 'CalendarYear' },
+  { id: 'currently-reading', label: 'CurrentlyReading' },
   { id: 'homepage-components', label: 'Homepage' },
   { id: 'footer', label: 'Footer' },
 ]
@@ -405,6 +407,24 @@ const toc = [
     <SGSwitcher>
       <CalendarYear year={2025} entries={calendarEntries} />
     </SGSwitcher>
+  </section>
+
+  <section id="currently-reading" class="flow">
+    <h2>CurrentlyReading</h2>
+    <p>
+      CurrentlyReading shows the books I'm reading right now, pulled from my BookHive records on AT
+      Protocol at build time, as a grid of covers with titles and authors. It takes no props and
+      renders nothing when I'm not reading anything. Used on <a href="/now">/now</a>.
+    </p>
+    <Code
+      lang="mdx"
+      code={`import { CurrentlyReading } from '@components/ui/index'
+
+<CurrentlyReading />`}
+    />
+    <ResizableContainer>
+      <CurrentlyReading />
+    </ResizableContainer>
   </section>
 
   <section id="homepage-components" class="flow">
