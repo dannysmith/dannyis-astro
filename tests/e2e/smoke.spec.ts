@@ -18,6 +18,21 @@ test.describe('Critical Path Tests', () => {
     await expect(page.locator('main h1')).toHaveText('Writing')
   })
 
+  test.describe('with JavaScript disabled', () => {
+    test.use({ javaScriptEnabled: false })
+
+    test('writing calendar opens a day of posts', async ({ page }) => {
+      await page.goto('/writing/calendar')
+      await expect(page.locator('main h1')).toHaveText('Writing')
+
+      const popover = page.locator('.calendar-year .popover').first()
+      await expect(popover).toBeHidden()
+      await page.locator('.calendar-year .mark').first().click()
+      await expect(popover).toBeVisible()
+      await expect(popover.locator('a').first()).toHaveAttribute('href', /^\/(writing|notes)\//)
+    })
+  })
+
   test('RSS feed returns valid XML', async ({ page }) => {
     const response = await page.goto('/rss.xml')
 

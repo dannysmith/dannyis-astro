@@ -1,0 +1,87 @@
+---
+/**
+ * The calendar view of /writing: every article and note, one year of month
+ * grids at a time. Articles get a full mark; days with only notes get a
+ * smaller one.
+ */
+import { getCollection } from 'astro:content'
+import {
+  BaseHead,
+  CommandPalette,
+  Footer,
+  MainNavigation,
+  LLMDiscoveryNote,
+  WritingHeader,
+} from '@components/layout/index'
+import { CalendarYear } from '@components/ui/index'
+import { filterContentForListing } from '@utils/content'
+import type { CalendarEntry } from '@utils/calendar'
+
+// Drafts are left out even in dev: some carry far-future placeholder dates.
+const articles = filterContentForListing(await getCollection('articles'), true)
+const notes = filterContentForListing(await getCollection('notes'), true)
+
+// Articles before notes, so each day's popover leads with them.
+const entries: CalendarEntry[] = [
+  ...articles.map(({ id, data }) => ({
+    date: data.pubDate,
+    title: data.title,
+    href: `/writing/${id}/`,
+    label: 'Article',
+  })),
+  ...notes.map(({ id, data }) => ({
+    date: data.pubDate,
+    title: data.title,
+    href: `/notes/${id}/`,
+    label: 'Note',
+    minor: true,
+  })),
+]
+
+// Newest first, skipping years with nothing in them.
+const years = [...new Set(entries.map(entry => entry.date.getUTCFullYear()))].sort((a, b) => b - a)
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Writing Calendar"
+      description="Every article and note Danny Smith has published, laid out on a calendar"
+      pageType="page"
+    />
+  </head>
+  <body>
+    <MainNavigation />
+    <CommandPalette />
+    <main id="main" tabindex="-1" class="ui-style">
+      <LLMDiscoveryNote />
+      <WritingHeader view="calendar" />
+      <section class="calendar">
+        <p class="intro">
+          {articles.length} articles and {notes.length} notes across {years.length} years.
+        </p>
+        {years.map(year => <CalendarYear year={year} entries={entries} />)}
+      </section>
+    </main>
+    <Footer />
+    <style>
+      body {
+        display: grid;
+        grid-template-rows: auto min-content;
+      }
+
+      .calendar {
+        max-inline-size: 75rem;
+        margin-inline: auto;
+        padding: var(--space-s);
+        padding-block: var(--space-2xl);
+      }
+
+      .intro {
+        margin-block-end: var(--space-xl);
+        color: var(--color-text-secondary);
+      }
+    </style>
+  </body>
+</html>

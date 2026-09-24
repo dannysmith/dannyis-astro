@@ -4,6 +4,7 @@ import SGSwitcher from './_components/SGSwitcher.astro'
 import { Code } from 'astro-expressive-code/components'
 import { ResizableContainer, WrappedTable } from '@components/mdx/index'
 import {
+  CalendarYear,
   FormattedDate,
   MarkdownContentActions,
   PersonalLogo,
@@ -14,6 +15,30 @@ import {
 import { ThemeToggle } from '@components/navigation/index'
 import { Footer, HomeLinkList, HomepageLatestArticles } from '@components/layout/index'
 
+const calendarEntries = [
+  {
+    date: new Date('2025-03-04'),
+    title: 'An example article',
+    href: '/writing/',
+    label: 'Article',
+  },
+  {
+    date: new Date('2025-03-04'),
+    title: 'A note on the same day',
+    href: '/notes/',
+    label: 'Note',
+    minor: true,
+  },
+  {
+    date: new Date('2025-06-18'),
+    title: 'A day with only a note',
+    href: '/notes/',
+    label: 'Note',
+    minor: true,
+  },
+  { date: new Date('2025-11-27'), title: 'Another article', href: '/writing/', label: 'Article' },
+]
+
 const toc = [
   { id: 'command-palette-component', label: 'CommandPalette' },
   { id: 'personal-logo', label: 'PersonalLogo' },
@@ -23,6 +48,7 @@ const toc = [
   { id: 'theme-toggle', label: 'ThemeToggle' },
   { id: 'markdown-content-actions', label: 'MarkdownContentActions' },
   { id: 'formatted-date', label: 'FormattedDate' },
+  { id: 'calendar-year', label: 'CalendarYear' },
   { id: 'homepage-components', label: 'Homepage' },
   { id: 'footer', label: 'Footer' },
 ]
@@ -325,6 +351,59 @@ const toc = [
     <Code lang="astro" code={"<FormattedDate date={new Date('2025-06-12')} />"} />
     <SGSwitcher>
       <FormattedDate date={new Date('2025-06-12')} />
+    </SGSwitcher>
+  </section>
+
+  <section id="calendar-year" class="flow">
+    <h2>CalendarYear</h2>
+    <p>
+      A year of month grids with a mark on each day that has entries. Clicking a mark opens a
+      popover listing that day's entries as links. Used on <a href="/writing/calendar/"
+        >/writing/calendar</a
+      >.
+    </p>
+
+    <WrappedTable>
+      <thead>
+        <tr>
+          <th>Prop</th>
+          <th>Type</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>year</code></td>
+          <td><code>number</code></td>
+          <td><em>required</em></td>
+          <td>The year to show.</td>
+        </tr>
+        <tr>
+          <td><code>entries</code></td>
+          <td><code>CalendarEntry[]</code></td>
+          <td><em>required</em></td>
+          <td>
+            Dated <code>{'{ date, title, href, label?, minor? }'}</code> items. Entries outside
+            <code>year</code> are ignored; a day whose entries are all <code>minor</code> gets a smaller
+            mark.
+          </td>
+        </tr>
+      </tbody>
+    </WrappedTable>
+
+    <Code
+      lang="astro"
+      code={`<CalendarYear
+  year={2025}
+  entries={[
+    { date: new Date('2025-03-04'), title: 'An article', href: '/writing/', label: 'Article' },
+    { date: new Date('2025-06-18'), title: 'A note', href: '/notes/', label: 'Note', minor: true },
+  ]}
+/>`}
+    />
+    <SGSwitcher>
+      <CalendarYear year={2025} entries={calendarEntries} />
     </SGSwitcher>
   </section>
 
