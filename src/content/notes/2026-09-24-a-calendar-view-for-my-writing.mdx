@@ -1,0 +1,37 @@
+---
+title: A calendar view for my writing
+slug: calendar-view-for-my-writing
+pubDate: 2026-09-24
+---
+
+import calendarLight from '@assets/notes/2026-09-24-writing-calendar-light.png'
+import calendarDark from '@assets/notes/2026-09-24-writing-calendar-dark.png'
+
+Jim Nielsen added [a calendar view to his blog](https://blog.jim-nielsen.com/2026/blog-calendar-view/) last month and I liked it so much I've pinched the idea. **My writing page now has a [calendar view](/writing/calendar/)** showing every article and note I've published.
+
+<BasicImage
+  src={calendarLight}
+  alt="The writing calendar in light mode: month grids for 2026 with coral dots on the days I published something, and a popover open on 18 September listing an article and a note"
+  caption="The calendar in light mode"
+  framed
+/>
+
+<BasicImage
+  src={calendarDark}
+  alt="The same writing calendar and popover in dark mode"
+  caption="The calendar in dark mode"
+  framed
+/>
+
+Big dots are articles and small ones are days with only notes. Clicking a dot opens a popover with whatever I published that day.
+
+It's all HTML and CSS, with **no client-side JavaScript**. Jim's version uses a bit of JS for its popovers, but browsers can do that for us now:
+
+- Each dot is a `<button popovertarget>` pointing at a native `popover`, so opening, closing, clicking outside and <kbd>Esc</kbd> all work natively.
+- CSS anchor positioning keeps each popover next to its dot, and `position-try-fallbacks` flips or slides it to stay on screen. `anchor-scope` lets every dot share one anchor name instead of each needing its own.
+- Each month is a seven-column grid, and a single `grid-column-start` on the first puts it under the right weekday.
+- A container query shows two, three, four or six months across, so the twelve months in a year always fill their rows.
+
+Under the hood there's a small function that lays out a year in UTC and a `CalendarYear` component that takes any list of dated things. It doesn't care whether they're posts, so I can reuse this for other content types with dates in the future.
+
+Have a poke around [the calendar](/writing/calendar/), or read [the pull request](https://github.com/dannysmith/dannyis-astro/pull/164).
