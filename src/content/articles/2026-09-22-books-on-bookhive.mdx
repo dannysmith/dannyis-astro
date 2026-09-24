@@ -1,26 +1,30 @@
 ---
 title: Getting my books onto BookHive
 slug: books-on-bookhive
-pubDate: 2026-09-22
-draft: true
+draft: false
 description: How I moved my reading history off Goodreads and onto my own AT Protocol data with BookHive, and had Claude Code clean up 389 books along the way.
+pubDate: 2026-09-22
 ---
 
 I've spent a lot of time looking at Atproto apps over the last few months and at some point stumbled across [BookHive](https://bookhive.buzz), which is essentially an Atmospheric version of Goodreads. [Nick](https://bsky.app/profile/nickthesick.com) (who built it) describes it as "Goodreads, but better, built on Bluesky".
 
-I've had a Goodreads account since before Amazon bought it and I've occasionally tried out a load of "bookshelf" apps over the years with a view to replacing Goodreads, but since managing my physical book collection isn't really something I care much about I never bothered with migrating fully to any of them. This is partly because it's always a bit of an effort to migrate everything and clean up the data, and partly because I don't just wanna swap one form of vendor lock-in for another. The open nature of BookHive's data and modern AI tooling solve both of these problems.
+I've had a Goodreads account since before Amazon bought it and I've tried out a load of "bookshelf" apps over the years with a view to replacing Goodreads, but since managing my physical book collection isn't really something I care much about I never bothered with migrating fully to any of them. This is partly because it's always a bit of an effort to migrate everything and clean up the data, and partly because I don't just wanna swap one form of vendor lock-in for another. The open nature of BookHive's data and modern AI tooling solve both of these problems.
 
-Every BookHive book is a [`buzz.bookhive.book` record](https://github.com/nperez0111/bookhive/tree/main/lexicons) in my own repository, on my own PDS, while *shelves* are [Popfeed](https://popfeed.social) list records, so they're not even a BookHive-specific thing. BookHive reads those records and turns them into a nice web app. But anything else can read them too, which makes it easy to do things like show the books I'm currently reading on this website.
+Every BookHive book is a [`buzz.bookhive.book` record](https://github.com/nperez0111/bookhive/tree/main/lexicons) in my on my own PDS, while *shelves* are [Popfeed](https://popfeed.social) list records, so they're not even a BookHive-specific thing. BookHive reads those records and turns them into a nice web app. But anything else can read them too, which makes it easy to do things like show the books I'm currently reading on this website.
 
-At the start of September I downloaded my Goodreads export (261 book records going back to 2015) and fed it to BookHive's importer, which created 248 books with 118 *finished*, 121 *want to read* and 8 *currently reading*. I have not been very good at keeping Goodreads up-to-date!
+At the start of September I downloaded my Goodreads export (261 book records) and fed it to BookHive's importer, which created 248 books with 118 *finished*, 121 *want to read* and 8 *currently reading*. (I have clearly not been very good at keeping Goodreads up-to-date!)
 
-A few days ago I decided to spend some time trying to clean up and expand this data a bit, with the following goals:
+<BookmarkCard url="https://bookhive.buzz/profile/danny.is" />
 
-1. **Fix the basic data** so every book has the right edition, a clean title and the right author. Goodreads is full of listings like "Leaders Eat Last: Why Some Teams Pull Together and Others Don't (Book Summary)" and the importer matches by searching titles, so a good chunk of my library had come in as the wrong edition, with a marketing subtitle, or both.
+![Screenshot of the bookhive homepage](../../assets/articles/2026-09-24-bookhive.png 'My Bookhive profile')
 
-2. **Fix the status data.** My Goodreads *want to read* shelf was 121 books long and I've either read or given up on a lot of them. Likewise my *currently reading* list. The data on whether I'd finished reading a book, whether I owned it, and start and finish dates was also very messy and often incomplete.
+A few days ago I decided to spend some time cleaning up and expanding this data, with the following goals:
 
-3. **Bring in my Audible library.** I've got about 120 audiobooks in my Audible account, and most of these weren't in the Goodreads export at all. I have the metadata and cover images for these backed up to a folder on my Mac.
+1. **Fix the basic data** so every book has the right edition, a clean title and the right author. Goodreads is full of listings like "Leaders Eat Last: Why Some Teams Pull Together and Others Don't **(Book Summary)**" and the importer matches by searching titles, so a good chunk of my library had come in as the wrong edition, with a marketing subtitle, or both.
+
+2. **Fix the status data.** My Goodreads *want to read* and *currently reading* shelves were very out of date, and the data on whether I've finished or own a book, and start & finish dates was also very messy and often incomplete.
+
+3. **Bring in my Audible library.** I've got about 120 audiobooks in my Audible account, and most of these weren't in the Goodreads export. I have the metadata and cover images for these backed up to a folder on my Mac.
 
 4. **Bring in my Biggles books.** I [collect Biggles books](/notes/tracking-biggles-books) and track the collection on [a little site](https://biggles.danny.is) backed by two JSON files. I own or have read 70 of the 98 written. BookHive had nine (presumably because I have them on my Kindle) and I wanted to bring all of these over.
 
@@ -32,19 +36,23 @@ BookHive's UI can do most of this one book at a time, but with 400-odd books I a
 
 ## What I did
 
-I opened a Claude Code session in an empty directory and typed more or less the list above, plus where to find things: my handle, the Biggles repo, the Audible folder, my original Goodreads export etc. Then I went and made a cuppa ☕
+I opened a Claude Code session in an empty directory and typed more or less the list above, plus where to find things: my atproto handle, the Biggles repo, the Audible folder, my original Goodreads export etc. Then I went and made a cuppa ☕
 
-The first thing Claude did was download a snapshot of every book record already on my PDS (an undo button, in case it all went wrong) and set a subagent reading BookHive's source code to work out how it behaves when you edit records from outside the app. Fifteen minutes later it came back with a plan, a few questions and a bunch of problems I hadn't spotted. BookHive's importer had marked every one of my 248 books as *owned*, thirteen finished books had the day I imported them as their finish date, and BookHive quietly deletes duplicate records the next time you log in, so creating one by accident would lose data.
+The first thing Claude did was download a snapshot of every book record already on my PDS (in case it all went wrong) and set a subagent reading BookHive's source code to work out how it behaves when you edit records from outside the app. Fifteen minutes later it came back with a plan, a few questions and a bunch of problems it found. Chiefly:
 
-For every book that needed adding (the Biggles ones, the Audible ones, and 15 from my Goodreads export that had never imported) it searched BookHive's catalogue for a match, and for every audiobook it hit Audible's catalogue API for the metadata. That was about 210 requests to BookHive, two seconds apart, with every response cached to disk. It took about twenty minutes.
+1. BookHive's importer had marked every one of my 248 books as *owned*.
+2. Thirteen finished books had the day I imported them as their finish date.
+3. There were a few duplicate books.
 
-While the lookups ran, Claude built me a review page. It was a little Hono server on localhost showing each book as a card with its cover, what Claude thought the status should be, and why ("Only got 5% through on Audible", "Already in the library under a different edition"). There were keyboard shortcuts to mark each one *finished*, *reading*, *want to read*, *owned* or *not owned*, or to remove it, and where Claude wasn't sure which edition was right it showed me the candidate covers so I could click the right one. I got through 418 books in about half an hour, and every decision went into a JSON file. This worked so well that from then on, whenever Claude needed me to make a bunch of decisions, I asked it for a page like this.
+For every book that needed adding (the Biggles ones, the Audible ones, and 15 from my Goodreads export that had never imported) it searched BookHive's catalogue for a match, and for every audiobook it hit Audible's catalogue API for the metadata. That was about 210 requests to BookHive, two seconds apart, with every response cached to disk. Along with the Audible calls, it took about twenty minutes.
 
-Then Claude wrote an **apply** script, which read the live records off my PDS, compared them with the new data from BookHive and Audible and my decisions in that JSON file, and worked out what needed changing. That came to 168 new records, 176 updates and 28 deletions. After a dry run and a couple of small test runs, I ran it for real.
+While that ran, Claude built me a review page. It was a little Hono server on localhost showing each book as a card with its cover, what Claude thought the correct data should be, and why ("Only got 5% through on Audible", "Already in the library under a different edition"). There were keyboard shortcuts to mark each one *finished*, *reading*, *want to read*, *owned* or *not owned*, or to remove it, and where Claude wasn't sure which edition was right it showed me the candidate covers so I could click the right one. I worked through 418 books in about half an hour, and every decision went into a JSON file. This was obviously waaaaay easier than trying to do this directly in a JSON or CSV file or something.
 
-Shelves worked the same way, with another little review page for the 38 books Claude wasn't sure how to shelve.
+Then Claude wrote an **apply** script, which read the live records off my PDS, compared them with the new data from BookHive/ Audible (and the `decisions.json` from the Hono app), and worked out what needed changing. That came to 168 new records, 176 updates and 28 deletions. After a dry run and a couple of small test runs, I ran it for real.
 
-A few days later I came back to sort out some fiddly bits. A handful of books still pointed at a rubbish catalogue entry, like a "Book Summary" edition, a Dutch translation or one with no cover art. Claude worked out that you can re-point a record at a different edition, tried it on one book while polling BookHive to check it noticed, then found better editions for the 18 worst offenders and gave me a page to pick from. It also backfilled cover images onto the 174 records the scripts had created. BookHive copies a cover onto your record when you add a book through its UI, but the scripts hadn't, so this site had no covers to show for those books.
+We did shelves the same way, with another little review page for the 38 books Claude wasn't sure how to categorise.
+
+A few days later I came back to sort out some fiddly bits. A handful of books still pointed at rubbish catalogue entries ("Book Summary" editions, a Dutch translation etc). Claude worked out that you can re-point a record at a different edition, tried it on one book while polling BookHive to check it noticed, then found better editions for the 18 worst offenders and gave me a page to pick from. It also backfilled cover images onto the records the scripts had created (BookHive copies a cover onto your record when you add a book through its UI, but the scripts hadn't, so this site had no covers to show for those books).
 
 ## The tooling
 
@@ -83,9 +91,7 @@ Updates used `putRecord` with a `swapRecord` CID, which means read the record, c
 
 ## Getting book data from BookHive
 
-To add a book to BookHive you have to find it in BookHive's catalogue first, because it ignores any record that doesn't point to a catalogue entry. And that catalogue **is Goodreads**. Every book BookHive knows about has a `hiveId` which is a hash of its title and author *as Goodreads spells them*, and the search endpoint is a Goodreads scraper with a cache in front of it. If Goodreads doesn't list a book, it can't be a BookHive book.
-
-Which is a bit funny, given the whole point was getting away from Goodreads. But it's BookHive's catalogue that leans on Goodreads, not my data. If Goodreads vanished tomorrow my records would still be sitting on my PDS.
+To add a book to BookHive you have to find it in BookHive's catalogue first, because it ignores any record that doesn't point to a catalogue entry. And that catalogue **is Goodreads**. Every book BookHive knows about has a `hiveId` which is a hash of its title and author *as Goodreads spells them*, and the search endpoint is basically a Goodreads scraper with a cache in front of it. So if Goodreads doesn't list a book, it can't be a BookHive book.
 
 I expected searching that catalogue to give me a title, an author and a cover. What came back was a full `buzz.bookhive.hiveBook` with a description, ratings and, for a good chunk of books, genres, publisher, page count and an author bio.
 
@@ -145,13 +151,13 @@ Returns data something like this:
 }
 ```
 
-The genres from BookHive and Audible's category ladders are what Claude used to draft the shelves, with a few author rules on top (Kent, Reeman, Forester and O'Brian are Naval; le Carré, Deighton and Ambler are Spy).
+The genres from BookHive and Audible's category ladders are what Claude used to draft the shelves, with a few author rules on top (I know that Alexander Kent/Douglass Reeman books are always gonna be *Naval* etc).
 
-Some of my audiobook folders also have a little CSV with a "last heard" position in it, and dividing that by the running time allowed my Hono review app to show things like "Got 86% through on Audible, last heard 30 Aug 22" or "Only got 5% through", which was **really helpful** for remembering whether I'd finished or abandoned some audiobooks.
+Some of my audiobook folders also had a little CSV with a "last heard" position in it, and dividing that by the running time allowed my Hono review app to show things like "Got 86% through on Audible, last heard 30 Aug 22" or "Only got 5% through", which was **really helpful** for remembering whether I'd finished or abandoned some audiobooks.
 
 ## The records on my PDS
 
-This is the part I care about most, because it's what anything other than BookHive (like this site) gets to read. Here's *Rogue Male*. It's a [`buzz.bookhive.book`](https://github.com/nperez0111/bookhive/blob/main/lexicons/book.json) record, and you can [see it on atproto.at](https://atproto.at/uri/at://did:plc:aes3lokiqtv63fk62nwnjeuf/buzz.bookhive.book/3mumwin7kdtk7):
+This is the part I care about most, because it's what anything other than BookHive gets to read. Here's *Rogue Male*. It's a [`buzz.bookhive.book`](https://github.com/nperez0111/bookhive/blob/main/lexicons/book.json) record, and you can [see it on atproto.at](https://atproto.at/uri/at://did:plc:aes3lokiqtv63fk62nwnjeuf/buzz.bookhive.book/3mumwin7kdtk7):
 
 ```json
 {
@@ -177,7 +183,7 @@ This is the part I care about most, because it's what anything other than BookHi
 }
 ```
 
-So it's mostly about *me and this book*, like whether I've read it, whether I own it and what I thought of it. The description, genres, page count and everything else live in the catalogue record that `hiveBookUri` points at. That's a [`buzz.bookhive.catalogBook`](https://github.com/nperez0111/bookhive/blob/main/lexicons/catalogBook.json) on BookHive's own PDS ([on atproto.at](https://atproto.at/uri/at://did:plc:enu2j5xjlqsjaylv3du4myh4/buzz.bookhive.catalogBook/bk_eIvxTgZso9BCdKDLPtrP)), trimmed here:
+So it's mostly about *me and this book*, like whether I've read it, whether I own it and what I thought of it. The description, genres, page count and everything else live in the **catalogue record** that `hiveBookUri` points at. That's a [`buzz.bookhive.catalogBook`](https://github.com/nperez0111/bookhive/blob/main/lexicons/catalogBook.json) on BookHive's own PDS ([on atproto.at](https://atproto.at/uri/at://did:plc:enu2j5xjlqsjaylv3du4myh4/buzz.bookhive.catalogBook/bk_eIvxTgZso9BCdKDLPtrP)), trimmed here:
 
 ```json
 {
@@ -221,9 +227,9 @@ GET https://bluesky.nickthesick.com/xrpc/com.atproto.repo.getRecord
     ?repo=did:plc:enu2j5xjlqsjaylv3du4myh4&collection=buzz.bookhive.catalogBook&rkey=<hiveId>
 ```
 
-The `coverBlob` has the same CID as the `cover` on my record, because BookHive's UI copies the catalogue's cover onto your record when you add a book (and now so do my scripts). BookHive itself never shows that copy though. Every cover on bookhive.buzz comes from the catalogue, so the blob on my record is only there for other things reading my PDS, like this site.
+The `coverBlob` has the same CID as the `cover` on my record, because BookHive's UI copies the catalogue's cover onto your record when you add a book. BookHive itself never shows that copy though – it uses the *catalogue* image, so the blob on my record is only there for other things reading my PDS.
 
-Rogue Male is on three shelves: Fiction, Spy and Audible. A shelf is a [`social.popfeed.feed.list`](https://github.com/nperez0111/bookhive/blob/main/lexicons/popfeedList.json) record and there's not much to it. This is Spy ([on atproto.at](https://atproto.at/uri/at://did:plc:aes3lokiqtv63fk62nwnjeuf/social.popfeed.feed.list/3mvt2g2z5nq24)):
+*Rogue Male* is on three shelves: Fiction, Spy and Audible. A shelf is a [`social.popfeed.feed.list`](https://github.com/nperez0111/bookhive/blob/main/lexicons/popfeedList.json) record and there's not much to it. This is *Spy* ([on atproto.at](https://atproto.at/uri/at://did:plc:aes3lokiqtv63fk62nwnjeuf/social.popfeed.feed.list/3mvt2g2z5nq24)):
 
 ```json
 {
@@ -235,7 +241,7 @@ Rogue Male is on three shelves: Fiction, Spy and Audible. A shelf is a [`social.
 }
 ```
 
-Each book on a shelf is a separate [`social.popfeed.feed.listItem`](https://github.com/nperez0111/bookhive/blob/main/lexicons/popfeedListItem.json) record pointing back at the list. This is Rogue Male on the Spy shelf ([on atproto.at](https://atproto.at/uri/at://did:plc:aes3lokiqtv63fk62nwnjeuf/social.popfeed.feed.listItem/3mvt2ghkzzc2p)):
+Each book on a shelf is a separate [`social.popfeed.feed.listItem`](https://github.com/nperez0111/bookhive/blob/main/lexicons/popfeedListItem.json) record pointing back at the list. This is *Rogue Male* on the Spy shelf ([on atproto.at](https://atproto.at/uri/at://did:plc:aes3lokiqtv63fk62nwnjeuf/social.popfeed.feed.listItem/3mvt2ghkzzc2p)):
 
 ```json
 {
@@ -260,8 +266,6 @@ The item has its own title, author and cover URL instead of pointing at my book 
 
 ## Reflections
 
-My BookHive library now has 389 books in it. My *currently reading* list has six and I'm **actually reading them all**, my *want to read* list has 91 that I do want to read, every book says whether I own it, and there are nine shelves. It's the best data about my reading that has ever existed, and it took a couple of hours on a Friday evening (plus an afternoon of tidying up a few days later), half an hour of which was me clicking through a review page.
-
-The bit I'd reuse is the way of working. Claude did the fetching, matching and diffing, and came to me with suggestions and evidence. I made every call about what I'd read, owned or given up on, in a UI built for exactly that, and nothing touched my PDS until I'd seen the plan and run it myself.
+My BookHive library now has 389 books in it. My *currently reading* list has six and I'm **actually reading them all**, my *want to read* list has 91 that I **do actually want to read**, every book says whether I own it, and there are nine *useful* shelves. It's probably the best data about my reading stuff that's ever existed, and it took a couple of hours on a Friday evening (plus an afternoon of tidying up a few days later), half an hour of which was me clicking through a review page.
 
 As with the [Biggles site](/notes/tracking-biggles-books), I could have done this without AI. **I just never would have.**
