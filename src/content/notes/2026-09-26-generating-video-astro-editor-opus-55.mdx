@@ -1,0 +1,30 @@
+---
+title: Generating a video for Astro Editor with Opus 5.5
+slug: generating-video-astro-editor-opus-55
+pubDate: 2026-09-26
+---
+
+import astroEditorVideo from '@assets/notes/2026-09-26-astro-editor.mp4'
+import astroEditorPoster from '@assets/notes/2026-09-26-astro-editor-poster.jpg'
+
+I've been using Opus 5.5 for the last couple of days and **boy am I impressed**. It seemed to work far quicker and more intelligently than previous Anthropic models, but it also writes in actual intelligible English!
+
+Inspired by a [post by Hendrik Mans](https://bsky.app/profile/hmans.dev/post/3mwdl4mh35k2l), I fired up a Claude Code session in the [Astro Editor](https://astroeditor.danny.is) repo and asked it this:
+
+```md preview
+Okay, can you make me a like 60 second marketing video that shows off Astro Editors features and what it is and how it works. Try to make it interesting and cool, try to match the aesthetic of the website, but other than that, I'll leave it up to you to be creative. If you need to write files, you can do them in this repository, but you shouldn't commit anything
+```
+
+The result was **astounding**. Not only did it read and intelligently understand the marketing material in the repo (primarily from the website), it used that to create the following video...
+
+<video src={astroEditorVideo} poster={astroEditorPoster.src} controls playsinline preload="metadata" width="1920" height="1080"></video>
+
+The only follow-up prompt I gave it was this:
+
+```
+Yes, you can render outside the sandbox and yes you can view the rendered frames
+```
+
+Here was the response when I asked it to explain its approach:
+
+> I started by reading the website's code and screenshots to borrow its look: the Flexoki dark palette, the blue accent, iA Writer type, and the icon's cyan caret, which became the thread running through the video. Rather than use a video editor, I built the whole video as a single web page in which every frame depends only on time. Nothing animates by itself, so any moment can be recreated exactly. Instead of screen-recording the real app, I rebuilt its interface in HTML using the app's actual editor colours, fonts and markdown styling, so things like typing, frontmatter forms filling in from a Zod schema, and focus mode could be choreographed precisely. The real screenshots appear only in the "and plenty more" montage. A small Playwright script opened the page in several headless Chrome windows at once, captured all 3,600 frames at 60fps, and piped them through ffmpeg into an MP4. I checked sheets of sample frames, fixed what looked wrong (doubled line spacing in the code block, misplaced tags, focus mode dimming the wrong sentence, the camera clipping under the captions), and re-rendered. The soundtrack is generated in code too: an ambient pad that resolves when the logo appears, key clicks timed to every character the page types, and whooshes on scene changes. I could check its levels as numbers and a waveform, but I couldn't actually listen to it.
