@@ -32,7 +32,7 @@ export interface FrontmatterRow {
 }
 
 /** Parsed rows, or the raw block when it isn't valid YAML/TOML. */
-export type MarkdownFrontmatter = { rows: FrontmatterRow[] } | { invalid: string }
+export type Frontmatter = { rows: FrontmatterRow[] } | { invalid: string }
 
 const isScalar = (value: unknown) =>
   value === null || typeof value !== 'object' || value instanceof Date
@@ -57,13 +57,8 @@ function entrySources(raw: string): Map<string, string> {
   const flush = () => {
     if (key === undefined) return
     const indent = Math.min(...lines.filter(line => line.trim()).map(line => line.search(/\S/)))
-    sources.set(
-      key,
-      lines
-        .map(line => line.slice(indent))
-        .join('\n')
-        .trim(),
-    )
+    const dedented = lines.map(line => line.slice(indent))
+    sources.set(key, dedented.join('\n').trim())
   }
   for (const line of raw.split('\n')) {
     if (line.startsWith('#')) continue
@@ -82,17 +77,16 @@ function entrySources(raw: string): Map<string, string> {
 
 function classify(value: unknown, source: string | undefined): FrontmatterValue {
   if (value === null || value === '') return { kind: 'empty' }
+  if (!isScalar(value) && Object.keys(value as object).length === 0) return { kind: 'empty' }
   if (value instanceof Date) {
     return { kind: 'date', text: source ?? isoDate(value), datetime: isoDate(value) }
   }
   if (Array.isArray(value) && value.every(isScalar)) {
-    if (value.length === 0) return { kind: 'empty' }
     const items = value.map(formatScalar)
     const short = items.every(item => item.length <= MAX_PILL_LENGTH)
     return { kind: short ? 'pills' : 'list', items }
   }
   if (!isScalar(value)) {
-    if (Object.keys(value as object).length === 0) return { kind: 'empty' }
     // Keys produced by YAML merges (`<<: *base`) have no source line of their own.
     return { kind: 'source', text: source ?? JSON.stringify(value, null, 2) }
   }
@@ -106,7 +100,7 @@ function classify(value: unknown, source: string | undefined): FrontmatterValue 
  * Read the frontmatter at the top of a markdown document. Returns null when
  * there is none, or it has no entries.
  */
-export function readFrontmatter(markdown: string): MarkdownFrontmatter | null {
+export function readFrontmatter(markdown: string): Frontmatter | null {
   const raw = extractFrontmatter(markdown)
   if (raw === undefined) return null
 

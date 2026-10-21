@@ -47,11 +47,10 @@ export interface Props {
 const { code, title, defaultView = 'rendered' } = Astro.props
 const markdown = code.trim()
 
-// Sätteri, like the site's own pipeline, but standalone: none of the
-// pipeline's plugins run here, so the HAST plugins that make sense for an
-// included chunk are added back. Footnotes are off because their fixed ids
-// would clash with the host article's footnotes. Sätteri strips the
-// frontmatter from the body itself.
+// A standalone render, so the site pipeline's plugins don't run: add back
+// the ones that suit an included chunk. Footnotes are off because their fixed
+// ids would clash with the host page's. Sätteri leaves frontmatter out of the
+// body; MarkdownFrontmatter shows it.
 const { html: renderedHtml } = markdownToHtml(markdown, {
   features: { gfm: { footnotes: false } },
   hastPlugins: [satteriExternalLinks(), satteriListDensity()],
@@ -192,17 +191,6 @@ const showingSource = defaultView === 'source'
   /* Rendered body gets padding; source pane uses Expressive Code's own chrome. */
   .md-block-body {
     padding: var(--space-s) var(--space-m);
-  }
-
-  /* Override the Article layout's global .longform-prose grid so the
-     rendered pane fills the box edge-to-edge. */
-  .md-block-rendered :global(.longform-prose) {
-    display: block;
-  }
-
-  /* No end-mark on the last paragraph — included chunks aren't the end of the article. */
-  .md-block-rendered :global(.longform-prose > p:last-of-type::after) {
-    content: none;
   }
 
   /* Basic block code styling for nested fences inside the preview.
