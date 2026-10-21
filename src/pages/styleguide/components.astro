@@ -119,6 +119,38 @@ A paragraph with **bold**, _italic_, \`inline code\`, and a
 
 > A short quotation from elsewhere.`
 
+const markdownBlockFrontmatterSample = `---
+title: Working on this site
+description: Notes on rebuilding danny.is with Astro and Sätteri, and what I learned along the way.
+pubDate: 2026-05-28T09:30:00+01:00
+updated: 2026-10-21
+draft: false
+rating: 4
+tags: [astro, css, typography, personal-site]
+examples:
+  - Render the markdown body with the same parser as the rest of the site
+  - Show frontmatter as a table rather than a run of heavy text
+canonical: https://danny.is/writing/work-on-this-site
+status:
+notes: |
+  Block scalars keep their line breaks.
+  Like this one.
+author:
+  name: Danny Smith
+  url: https://danny.is
+---
+
+## Included markdown
+
+A paragraph below the frontmatter.`
+
+const markdownBlockInvalidSample = `---
+title: "{{title}}
+date: {{date:YYYY-MM-DD}}
+---
+
+A template whose frontmatter isn't valid YAML yet.`
+
 const fileTreeExample = `data/a1b2c3d4-e5f6-7890-abcd-ef1234567890/
 ├── init.mp4                # HLS initialisation segment (codec headers)
 ├── seg_000.m4s             # ~4-second media segments streamed during recording; a long video produces dozens of these, so the rest are collapsed into the ellipsis below
@@ -1222,6 +1254,16 @@ Provide a title to skip the fetch or override it:
       code={fence('md', markdownBlockSample, 'preview title="sample.md" defaultView="source"')}
     />
     <MarkdownBlock code={markdownBlockSample} title="sample.md" defaultView="source" />
+
+    <h3 id="markdown-block-frontmatter">Frontmatter</h3>
+    <p>
+      YAML (or TOML) frontmatter is shown in a panel above the rendered body. Short lists render as
+      pills, lists with longer items as bullets, dates as written, URLs as links, and nested values
+      as their YAML source.
+    </p>
+    <MarkdownBlock code={markdownBlockFrontmatterSample} title="post.md" />
+    <p>Frontmatter that isn't valid YAML is shown as written:</p>
+    <MarkdownBlock code={markdownBlockInvalidSample} title="template.md" />
   </section>
 
   <section id="file-tree" class="flow">
