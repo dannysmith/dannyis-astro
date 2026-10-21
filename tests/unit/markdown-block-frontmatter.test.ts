@@ -4,12 +4,15 @@ import { MAX_PILL_LENGTH, readFrontmatter } from '../../src/lib/markdown-block/f
 /** Wrap YAML lines in a frontmatter block above a short body. */
 const doc = (...yaml: string[]) => `---\n${yaml.join('\n')}\n---\n\n# Body`
 
-/** The classified value of a single-entry frontmatter block. */
-function valueOf(...yaml: string[]) {
-  const result = readFrontmatter(doc(...yaml))
+/** The parsed rows of a document's frontmatter. */
+function rowsOf(markdown: string) {
+  const result = readFrontmatter(markdown)
   if (!result || 'invalid' in result) throw new Error('expected parsed rows')
-  return result.rows[0]?.value
+  return result.rows
 }
+
+/** The classified value of a single-entry frontmatter block. */
+const valueOf = (...yaml: string[]) => rowsOf(doc(...yaml))[0]?.value
 
 describe('readFrontmatter', () => {
   it('returns null without frontmatter', () => {
@@ -27,8 +30,7 @@ describe('readFrontmatter', () => {
   })
 
   it('keeps entries in source order', () => {
-    const result = readFrontmatter(doc('b: 1', 'a: 2'))
-    expect(result && 'rows' in result && result.rows.map(row => row.key)).toEqual(['b', 'a'])
+    expect(rowsOf(doc('b: 1', 'a: 2')).map(row => row.key)).toEqual(['b', 'a'])
   })
 
   it('reads TOML frontmatter', () => {
@@ -96,8 +98,8 @@ describe('value classification', () => {
   })
 
   it('leaves top-level comments out of a nested value', () => {
-    const result = readFrontmatter(doc('author:', '  name: Danny', '# A comment', 'title: Hi'))
-    expect(result && 'rows' in result && result.rows[0]?.value).toEqual({
+    const rows = rowsOf(doc('author:', '  name: Danny', '# A comment', 'title: Hi'))
+    expect(rows[0]?.value).toEqual({
       kind: 'source',
       text: 'name: Danny',
     })
@@ -105,8 +107,8 @@ describe('value classification', () => {
 
   it('falls back to JSON for keys with no source line', () => {
     // `nested` arrives via the merge key, so no line of the source starts with it.
-    const result = readFrontmatter(doc('base: &base', '  nested: { a: 1 }', '<<: *base'))
-    expect(result && 'rows' in result && result.rows[1]).toEqual({
+    const rows = rowsOf(doc('base: &base', '  nested: { a: 1 }', '<<: *base'))
+    expect(rows[1]).toEqual({
       key: 'nested',
       value: { kind: 'source', text: JSON.stringify({ a: 1 }, null, 2) },
     })
