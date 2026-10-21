@@ -11,7 +11,7 @@
  */
 import SmartLink from '@components/mdx/SmartLink.astro'
 import BasicImage from '@components/mdx/BasicImage.astro'
-import MarkdownBlock from '@components/mdx/MarkdownBlock.astro'
+import MarkdownBlock from '@components/mdx/markdown-block/MarkdownBlock.astro'
 import FileTree from '@components/mdx/file-tree/FileTree.astro'
 import WrappedTable from '@components/mdx/WrappedTable.astro'
 
