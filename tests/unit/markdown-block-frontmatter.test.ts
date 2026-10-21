@@ -29,6 +29,10 @@ describe('readFrontmatter', () => {
     })
   })
 
+  it('returns the raw block when the YAML is a list, not key/value pairs', () => {
+    expect(readFrontmatter(doc('- a', '- b'))).toEqual({ invalid: '- a\n- b' })
+  })
+
   it('keeps entries in source order', () => {
     expect(rowsOf(doc('b: 1', 'a: 2')).map(row => row.key)).toEqual(['b', 'a'])
   })

@@ -110,6 +110,8 @@ export function readFrontmatter(markdown: string): Frontmatter | null {
   } catch {
     return { invalid: raw.trim() }
   }
+  // A top-level YAML list parses fine but has no keys to show.
+  if (Array.isArray(data)) return { invalid: raw.trim() }
 
   const entries = Object.entries(data)
   if (entries.length === 0) return null
