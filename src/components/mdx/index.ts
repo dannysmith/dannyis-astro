@@ -21,7 +21,7 @@ import TabItem from './TabItem.astro'
 import Center from './Center.astro'
 import ColorSwatch from './ColorSwatch.astro'
 import ResizableContainer from './ResizableContainer.astro'
-import MarkdownBlock from './MarkdownBlock.astro'
+import MarkdownBlock from './markdown-block/MarkdownBlock.astro'
 import FileTree from './file-tree/FileTree.astro'
 import WrappedTable from './WrappedTable.astro'
 

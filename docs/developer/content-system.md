@@ -214,7 +214,7 @@ MDAST plugins run first (array order), then MDAST→HAST conversion, then HAST p
 - `satteriReadingTime` - Injects `minutesRead` into frontmatter (registered first so it measures the document before ESM injection)
 - `satteriFootnoteDetector` - Flags whether content contains footnotes (`hasFootnotes`)
 - `satteriMdxImports` - Injects the `@components/mdx` barrel import into every `.mdx` file (replaces the old `astro-auto-import` integration) AND auto-applies `MDX_COMPONENT_REMAPPING` to routed MDX pages using `Page.astro`
-- `satteriMarkdownPreview` - Transforms ` ```md preview ` blocks into a `MarkdownBlock` component
+- `satteriMarkdownPreview` - Transforms ` ```md preview ` blocks into a `MarkdownBlock` component. The block renders its markdown with a separate, standalone Sätteri call (only `satteriExternalLinks` and `satteriListDensity`, footnotes off), and shows any frontmatter in a panel above the body (`src/lib/markdown-block/frontmatter.ts`)
 - `satteriTreeBlock` - Transforms ` ```tree ` blocks into a `FileTree` component
 
 **HAST plugins:**

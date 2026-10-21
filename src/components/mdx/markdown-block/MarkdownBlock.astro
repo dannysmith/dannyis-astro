@@ -13,7 +13,7 @@
  *     Some text.
  *     ```
  *
- * The `remark-markdown-preview` plugin (src/lib/remark-markdown-preview.mjs)
+ * The `satteri-markdown-preview` plugin (src/lib/satteri-markdown-preview.mjs)
  * rewrites that code block into a <markdown-preview> JSX element which
  * MDX_COMPONENT_REMAPPING (src/config/mdx-components.ts) maps to this
  * component. The raw markdown is passed in as the `code` prop.
@@ -22,12 +22,18 @@
  *   title="README.md"          — optional filename label in the header
  *   defaultView="source"       — show source pane first (defaults to rendered)
  *
+ * Any frontmatter is shown in a panel at the top of the rendered pane
+ * (MarkdownFrontmatter) and left out of the rendered body.
+ *
  * Progressive enhancement: without JS, the default pane is shown, the
  * other pane is hidden, and the toggle/copy controls are hidden via CSS.
  */
-import { Marked } from 'marked'
+import { markdownToHtml } from 'satteri'
 import { Code } from 'astro-expressive-code/components'
 import { Icon } from 'astro-icon/components'
+import { satteriExternalLinks } from '@lib/satteri-external-links.mjs'
+import { satteriListDensity } from '@lib/satteri-list-density.mjs'
+import MarkdownFrontmatter from '@components/mdx/markdown-block/MarkdownFrontmatter.astro'
 
 export interface Props {
   /** Raw markdown string to render. */
@@ -39,43 +45,16 @@ export interface Props {
 }
 
 const { code, title, defaultView = 'rendered' } = Astro.props
+const markdown = code.trim()
 
-/** HTML-escape untrusted string values before interpolating into attributes. */
-function escapeAttr(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
-// Fresh Marked instance per render — avoids mutating shared global state
-// across concurrent SSR calls, and lets us attach a custom renderer cleanly.
-const md = new Marked({ gfm: true, async: false })
-
-// Override marked's link renderer to add security attributes to external
-// links. This substitutes for `rehype-external-links`, which only runs on
-// the site's main markdown pipeline — included chunks don't pass through
-// that pipeline so we handle it here. href/title are escaped defensively
-// since we're bypassing marked's default escape.
-md.use({
-  renderer: {
-    link({ href, title: linkTitle, tokens }) {
-      // `tokens` is an inline token array for the link text. The parser's
-      // parseInline renders them back to (already-escaped) HTML so nested
-      // formatting (bold, code, etc.) inside link text is preserved.
-      const text = this.parser.parseInline(tokens)
-      const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href)
-      const hrefAttr = escapeAttr(href ?? '')
-      const titleAttr = linkTitle ? ` title="${escapeAttr(linkTitle)}"` : ''
-      const securityAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : ''
-      return `<a href="${hrefAttr}"${titleAttr}${securityAttrs}>${text}</a>`
-    },
-  },
+// A standalone render, so the site pipeline's plugins don't run: add back
+// the ones that suit an included chunk. Footnotes are off because their fixed
+// ids would clash with the host page's. Sätteri leaves frontmatter out of the
+// body; MarkdownFrontmatter shows it.
+const { html: renderedHtml } = markdownToHtml(markdown, {
+  features: { gfm: { footnotes: false } },
+  hastPlugins: [satteriExternalLinks(), satteriListDensity()],
 })
-
-const renderedHtml = md.parse(code.trim()) as string
 const showingSource = defaultView === 'source'
 ---
 
@@ -128,7 +107,8 @@ const showingSource = defaultView === 'source'
   </header>
 
   <div class="md-block-pane md-block-rendered" data-pane="rendered" hidden={showingSource}>
-    <div class="flow">
+    <MarkdownFrontmatter markdown={markdown} />
+    <div class="md-block-body flow">
       <Fragment set:html={renderedHtml} />
     </div>
   </div>
@@ -208,26 +188,15 @@ const showingSource = defaultView === 'source'
     height: 1rem;
   }
 
-  /* Rendered pane gets padding; source pane uses Expressive Code's own chrome. */
-  .md-block-rendered {
+  /* Rendered body gets padding; source pane uses Expressive Code's own chrome. */
+  .md-block-body {
     padding: var(--space-s) var(--space-m);
-  }
-
-  /* Override the Article layout's global .longform-prose grid so the
-     rendered pane fills the box edge-to-edge. */
-  .md-block-rendered :global(.longform-prose) {
-    display: block;
-  }
-
-  /* No end-mark on the last paragraph — included chunks aren't the end of the article. */
-  .md-block-rendered :global(.longform-prose > p:last-of-type::after) {
-    content: none;
   }
 
   /* Basic block code styling for nested fences inside the preview.
      Matches the site's inline-code tokens; no syntax highlighting —
      readers can toggle to the Source pane for that. */
-  .md-block-rendered :global(pre) {
+  .md-block-body :global(pre) {
     font-family: var(--font-code);
     font-size: var(--font-size-sm);
     background-color: var(--color-background-code);
