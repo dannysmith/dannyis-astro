@@ -1,52 +1,73 @@
 ---
+/**
+ * The site's main menu (items in @config/navigation). One menu, two
+ * presentations:
+ *
+ *   - Wider than a phone: a drawer from the left, opened from a button
+ *     top-left.
+ *   - Phones: a round button bottom-left, in thumb reach, opening a card that
+ *     floats just above it.
+ *
+ * The menu is a native `popover`, so there's no script: the browser handles
+ * open/close, Esc, click-outside and returning focus. Search opens the command
+ * palette with an invoker command, which also closes the menu.
+ */
 import { Icon } from 'astro-icon/components'
-import { NavLink, ThemeToggle } from '@components/navigation/index'
+import { NavList, ThemeToggle } from '@components/navigation/index'
 import { PersonalLogo } from '@components/ui/index'
+import { NAV } from '@config/navigation'
 import SkipLink from './SkipLink.astro'
-const isDev = import.meta.env.MODE === 'development'
 ---
 
 <SkipLink />
-<button
-  class="nav-open no-print"
-  type="button"
-  aria-label="Open navigation"
-  aria-expanded="false"
-  aria-controls="main-navigation"
->
-  <Icon name="heroicons:bars-3-20-solid" />
+<button class="nav-open no-print" type="button" popovertarget="main-navigation" aria-label="Menu">
+  <Icon name="heroicons:bars-3-20-solid" class="icon-open" aria-hidden="true" />
+  <Icon name="heroicons:x-mark-20-solid" class="icon-close" aria-hidden="true" />
 </button>
-<nav id="main-navigation" class="main-navigation ui-style dark-surface no-print" inert>
-  <button class="nav-close" type="button" aria-label="Close navigation">
-    <Icon name="heroicons:x-mark-20-solid" />
-  </button>
-  <PersonalLogo />
-  <section class="nav-links all-caps">
-    <ul class="list-reset">
-      <li><NavLink href="/">Home</NavLink></li>
-      <li><NavLink href="/writing">Writing</NavLink></li>
-      <li><NavLink href="/notes">Notes</NavLink></li>
-      <li><NavLink href="/toolbox">Toolbox</NavLink></li>
-      <li><NavLink href="/now">Now</NavLink></li>
-      <li><NavLink href="/making">Making</NavLink></li>
-      <li><NavLink href="/working">Work <span class="external-arrow">↗</span></NavLink></li>
-      {
-        isDev && (
-          <li>
-            <NavLink href="/styleguide">Styleguide</NavLink>
-          </li>
-        )
-      }
-    </ul>
-  </section>
-  <div class="theme-toggle-wrapper">
+<nav
+  id="main-navigation"
+  popover
+  class="main-navigation ui-style dark-surface no-print"
+  aria-label="Main"
+>
+  <div class="nav-header">
+    <PersonalLogo />
+    <button
+      class="nav-close"
+      type="button"
+      popovertarget="main-navigation"
+      popovertargetaction="hide"
+      aria-label="Close menu"
+    >
+      <Icon name="heroicons:x-mark-20-solid" aria-hidden="true" />
+    </button>
+  </div>
+  <div class="nav-links all-caps">
+    {
+      NAV.map(section => (
+        <section class="nav-section">
+          {section.heading && <h2 class="nav-heading">{section.heading}</h2>}
+          <NavList items={section.items} />
+        </section>
+      ))
+    }
+  </div>
+  <div class="nav-tools">
+    <button class="nav-search" type="button" command="show-modal" commandfor="command-palette">
+      <Icon name="heroicons:magnifying-glass-20-solid" aria-hidden="true" />
+      Search
+    </button>
     <ThemeToggle />
   </div>
 </nav>
 
 <style>
+  /* ----------------------------------------
+     Wider than a phone: a drawer
+     ---------------------------------------- */
+
   .nav-open {
-    position: absolute;
+    position: fixed;
     top: var(--space-s);
     left: var(--space-s);
     padding: var(--space-2xs);
@@ -55,77 +76,210 @@ const isDev = import.meta.env.MODE === 'development'
     color: var(--color-accent);
   }
 
-  .main-navigation {
-    position: fixed;
-    left: -100%;
-    top: 0;
-    min-width: 18rem; /* Wide enough for logo + close button */
-    min-height: 100vh;
-    z-index: 1000;
-    border-right: var(--border-width-accent) solid var(--color-accent);
-    padding: var(--space-s);
-    transition: left var(--duration-normal) var(--ease-in-out);
+  .icon-close {
+    display: none;
   }
 
-  .main-navigation.open {
-    left: 0;
+  .main-navigation {
+    /* Undo the UA's centred popover */
+    inset: 0 auto 0 0;
+    margin: 0;
+    min-inline-size: 18rem; /* Wide enough for logo + close button */
+    block-size: 100dvh;
+    max-block-size: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-s);
+    border: 0;
+    border-inline-end: var(--border-width-accent) solid var(--color-accent);
+
+    translate: -100% 0;
+    transition:
+      translate var(--duration-normal) var(--ease-in-out),
+      scale var(--duration-normal) var(--ease-in-out),
+      opacity var(--duration-normal) var(--ease-in-out),
+      display var(--duration-normal) allow-discrete,
+      overlay var(--duration-normal) allow-discrete;
+
+    /* Only set display while open, or it overrides the UA's display: none */
+    &:popover-open {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-m);
+      translate: 0;
+
+      @starting-style {
+        translate: -100% 0;
+      }
+    }
+
+    &::backdrop {
+      background: transparent;
+    }
+  }
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
   }
 
   .nav-close {
-    position: absolute;
-    top: var(--space-xs);
-    right: var(--space-2xs);
     padding: var(--space-3xs);
     background: transparent;
   }
 
+  /* The lists come from NavList, so reach them with :global() */
   .nav-links {
-    margin-block: var(--space-m);
-    padding-left: calc(var(--space-s) * 2);
+    padding-inline-start: calc(var(--space-s) * 2);
 
-    li {
-      margin-top: var(--space-2xs);
+    & :global(li) {
+      margin-block-start: var(--space-2xs);
     }
 
-    a.active {
+    /* Sub-items: indented, smaller, hung off a rule */
+    & :global(li > ul) {
+      margin-block-start: var(--space-3xs);
+      padding-inline-start: var(--space-s);
+      border-inline-start: var(--border-width-hairline) solid
+        color-mix(in oklch, currentColor 30%, transparent);
+      font-size: var(--font-size-sm);
+    }
+
+    & :global(a[aria-current='page']) {
       color: var(--color-accent);
     }
+
+    & :global(a[aria-current='true']) {
+      color: color-mix(in oklch, var(--color-accent) 70%, currentColor);
+    }
   }
 
-  .theme-toggle-wrapper {
+  .nav-section + .nav-section {
+    margin-block-start: var(--space-m);
+  }
+
+  .nav-heading {
+    margin: 0 0 var(--space-3xs);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    color: color-mix(in oklch, currentColor 50%, transparent);
+  }
+
+  .nav-tools {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
+    gap: var(--space-s);
+  }
+
+  .nav-search {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    padding: var(--space-2xs) var(--space-s);
+    border-radius: var(--radius-full);
+    background: color-mix(in oklch, currentColor 12%, transparent);
+    font-size: var(--font-size-sm);
+
+    &:hover:not(:disabled) {
+      background: color-mix(in oklch, currentColor 20%, transparent);
+    }
+  }
+
+  /* ----------------------------------------
+     Phones: a floating button bottom-left
+     opening a card just above it
+     ---------------------------------------- */
+
+  @media (width < 40rem) {
+    .nav-open {
+      --_size: 3.5rem;
+
+      inset: auto auto max(var(--space-s), env(safe-area-inset-bottom)) var(--space-s);
+      display: grid;
+      place-items: center;
+      inline-size: var(--_size);
+      aspect-ratio: 1;
+      padding: 0;
+      border-radius: var(--radius-full);
+      background: var(--color-accent);
+      color: var(--color-ink);
+      box-shadow: 0 0.25rem 0.75rem oklch(0% 0 0 / 0.3);
+
+      & svg {
+        inline-size: 1.5rem;
+        block-size: 1.5rem;
+      }
+
+      &:hover:not(:disabled) {
+        background: var(--color-accent);
+      }
+    }
+
+    /* Swap to a cross while the menu is open */
+    .nav-open:has(+ :popover-open) {
+      & .icon-open {
+        display: none;
+      }
+      & .icon-close {
+        display: block;
+      }
+    }
+
+    /* Room to scroll the last of the page out from under the button */
+    :global(body) {
+      padding-block-end: calc(3.5rem + var(--space-m));
+    }
+
+    .main-navigation {
+      inset: auto var(--space-s) calc(3.5rem + var(--space-s) + var(--space-xs));
+      min-inline-size: 0;
+      inline-size: auto;
+      block-size: auto;
+      max-block-size: calc(100dvh - 3.5rem - var(--space-2xl));
+      padding: var(--space-m);
+      border: 0;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1rem 2.5rem oklch(0% 0 0 / 0.35);
+      transform-origin: bottom left;
+
+      translate: 0;
+      scale: 0.96;
+      opacity: 0;
+
+      &:popover-open {
+        scale: 1;
+        opacity: 1;
+
+        @starting-style {
+          scale: 0.96;
+          opacity: 0;
+        }
+      }
+    }
+
+    .nav-header {
+      display: none;
+    }
+
+    .nav-links {
+      padding-inline-start: 0;
+      font-size: var(--font-size-md);
+
+      & :global(a) {
+        display: block;
+        padding-block: var(--space-3xs);
+      }
+    }
+
+    .nav-tools {
+      justify-content: space-between;
+      padding-block-start: var(--space-s);
+      border-block-start: var(--border-width-hairline) solid
+        color-mix(in oklch, currentColor 20%, transparent);
+    }
   }
 </style>
-
-<script>
-  const nav = document.querySelector<HTMLElement>('.main-navigation')
-  const openBtn = document.querySelector<HTMLButtonElement>('.nav-open')
-  const closeBtn = document.querySelector<HTMLButtonElement>('.nav-close')
-
-  const closeNav = (returnFocus = false) => {
-    nav?.classList.remove('open')
-    nav?.setAttribute('inert', '')
-    openBtn?.setAttribute('aria-expanded', 'false')
-    if (returnFocus) openBtn?.focus()
-  }
-
-  const openNav = () => {
-    nav?.classList.add('open')
-    nav?.removeAttribute('inert')
-    openBtn?.setAttribute('aria-expanded', 'true')
-    closeBtn?.focus()
-  }
-
-  closeBtn?.addEventListener('click', () => closeNav(true))
-  document.querySelector('main')?.addEventListener('click', () => closeNav())
-  document.querySelector('footer')?.addEventListener('click', () => closeNav())
-  openBtn?.addEventListener('click', openNav)
-
-  // Close on Escape key
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && nav?.classList.contains('open')) {
-      closeNav(true)
-    }
-  })
-</script>
