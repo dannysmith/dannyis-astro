@@ -1,0 +1,19 @@
+---
+title: Better Mobile Navigation on this site
+slug: better-mobile-navigation
+draft: false
+pubDate: 2026-10-23
+---
+
+The main navigation menu of this site is opened from a floating hamburger menu in the top left and looks like this...
+
+![The site's navigation open as a dark drawer on the left of an article, listing Home, Writing, Notes, Toolbox, Now, Making and Work, with search and close buttons at the top and a light, system and dark theme switcher below](../../assets/notes/2026-10-23-navigation-desktop.png 'The main menu on wider viewports')
+
+After visiting [Robin Spielmann's absolutely delightful website](https://iamrob.in/) on my phone I decided I should have a more suitable main menu on small viewports. So now on narrow viewports the menu looks like this:
+
+<Grid columns={2}>
+![An article on a phone-sized screen with a round coral menu button floating in the bottom-left corner](../../assets/notes/2026-10-23-navigation-mobile-closed.png 'Closed')
+![The same phone-sized screen with the menu open as a dark card just above the button, listing the navigation links with a search button and theme switcher at the bottom, and the button now showing a close icon](../../assets/notes/2026-10-23-navigation-mobile-open.png 'Open')
+</Grid>
+
+The code is in [#170](https://github.com/dannysmith/dannyis-astro/pull/170) if you're interested.
