@@ -33,6 +33,16 @@ import SkipLink from './SkipLink.astro'
   <div class="nav-header">
     <PersonalLogo />
     <button
+      class="nav-search-icon"
+      type="button"
+      command="show-modal"
+      commandfor="command-palette"
+      aria-label="Search"
+      title="Search"
+    >
+      <Icon name="heroicons:magnifying-glass-20-solid" aria-hidden="true" />
+    </button>
+    <button
       class="nav-close"
       type="button"
       popovertarget="main-navigation"
@@ -92,6 +102,10 @@ import SkipLink from './SkipLink.astro'
     padding: var(--space-s);
     border: 0;
     border-inline-end: var(--border-width-accent) solid var(--color-accent);
+    /* Set here, not with display below: display: flex is held through the
+       exit transition, and a row layout would widen the menu as it closes */
+    flex-direction: column;
+    gap: var(--space-m);
 
     translate: -100% 0;
     transition:
@@ -104,8 +118,6 @@ import SkipLink from './SkipLink.astro'
     /* Only set display while open, or it overrides the UA's display: none */
     &:popover-open {
       display: flex;
-      flex-direction: column;
-      gap: var(--space-m);
       translate: 0;
 
       @starting-style {
@@ -121,13 +133,16 @@ import SkipLink from './SkipLink.astro'
   .nav-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-s);
+    gap: var(--space-3xs);
+
+    & button {
+      padding: var(--space-3xs);
+      background: transparent;
+    }
   }
 
-  .nav-close {
-    padding: var(--space-3xs);
-    background: transparent;
+  .nav-search-icon {
+    margin-inline-start: auto;
   }
 
   /* The lists come from NavList, so reach them with :global() */
@@ -175,8 +190,9 @@ import SkipLink from './SkipLink.astro'
     gap: var(--space-s);
   }
 
+  /* Phones only; wider viewports use the icon in the header */
   .nav-search {
-    display: inline-flex;
+    display: none;
     align-items: center;
     gap: var(--space-3xs);
     padding: var(--space-2xs) var(--space-s);
@@ -273,6 +289,10 @@ import SkipLink from './SkipLink.astro'
         display: block;
         padding-block: var(--space-3xs);
       }
+    }
+
+    .nav-search {
+      display: inline-flex;
     }
 
     .nav-tools {
