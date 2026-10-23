@@ -1,0 +1,41 @@
+---
+/**
+ * Renders a list of nav items, recursing into `children` as nested lists.
+ * Unstyled beyond the list reset; the containing nav styles it.
+ *
+ * Links get `aria-current="page"` on an exact match, and `aria-current="true"`
+ * when the current page sits under them (e.g. an article under /writing).
+ */
+import type { NavItem } from '@config/navigation'
+
+interface Props {
+  items: NavItem[]
+}
+
+const { items } = Astro.props
+const path = Astro.url.pathname.replace(/\/$/, '') || '/'
+
+function currentState(href: string) {
+  if (path === href) return 'page'
+  if (href !== '/' && path.startsWith(`${href}/`)) return 'true'
+  return undefined
+}
+---
+
+<ul class="list-reset">
+  {
+    items.map(item => (
+      <li>
+        <a href={item.href} aria-current={currentState(item.href)}>
+          {item.label}
+          {item.external && (
+            <span class="external-arrow" aria-hidden="true">
+              ↗
+            </span>
+          )}
+        </a>
+        {item.children && <Astro.self items={item.children} />}
+      </li>
+    ))
+  }
+</ul>

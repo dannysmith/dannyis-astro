@@ -60,6 +60,11 @@ const today = new Date()
     border-top: var(--border-width-accent) solid var(--color-accent);
     padding: var(--space-s);
     view-transition-name: site-footer;
+
+    /* Room to scroll the last of the footer out from under the phone menu button */
+    @media (width < 40rem) {
+      padding-block-end: calc(var(--menu-button-size) + var(--space-m));
+    }
   }
 
   .footer-nav-links {

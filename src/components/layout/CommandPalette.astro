@@ -16,6 +16,7 @@
  * a zero-JS <button command="show-modal" commandfor="command-palette"> can open it
  * from anywhere.
  */
+import { NAV, type NavItem } from '@config/navigation'
 
 // Every item is a real <a role="option">: nav items carry an href (navigate
 // natively; ⌘/middle-click opens a new tab), action items are href-less and
@@ -29,6 +30,9 @@ type PaletteItem = {
   keywords?: string // extra text to match on, not shown
 }
 
+const flatten = (navItems: NavItem[]): NavItem[] =>
+  navItems.flatMap(item => [item, ...flatten(item.children ?? [])])
+
 const items: PaletteItem[] = [
   // Commands
   {
@@ -38,45 +42,22 @@ const items: PaletteItem[] = [
     action: 'copy-url',
     keywords: 'clipboard link share',
   },
-  // Navigation
-  { id: 'nav-home', label: 'Home', group: 'Navigation', href: '/' },
-  {
-    id: 'nav-writing',
-    label: 'Writing',
-    group: 'Navigation',
-    href: '/writing',
-    keywords: 'articles blog essays',
-  },
-  {
-    id: 'nav-writing-calendar',
-    label: 'Writing calendar',
-    group: 'Navigation',
-    href: '/writing/calendar',
-    keywords: 'archive articles notes dates',
-  },
-  { id: 'nav-notes', label: 'Notes', group: 'Navigation', href: '/notes', keywords: 'short posts' },
-  { id: 'nav-now', label: 'Now', group: 'Navigation', href: '/now', keywords: 'currently' },
-  {
-    id: 'nav-making',
-    label: 'Making',
-    group: 'Navigation',
-    href: '/making',
-    keywords: 'projects things',
-  },
-  {
-    id: 'nav-toolbox',
-    label: 'Toolbox',
-    group: 'Navigation',
-    href: '/toolbox',
-    keywords: 'remote work practices tools advice',
-  },
-  {
-    id: 'nav-using',
-    label: 'Using',
-    group: 'Navigation',
-    href: '/using',
-    keywords: 'uses gear setup tools',
-  },
+  // Navigation: everything in the main menu, plus pages only the palette lists
+  ...[
+    ...NAV.flatMap(section => flatten(section.items)),
+    {
+      label: 'Writing calendar',
+      href: '/writing/calendar',
+      keywords: 'archive articles notes dates',
+    },
+    { label: 'Using', href: '/using', keywords: 'uses gear setup tools' },
+  ].map(({ label, href, keywords }) => ({
+    id: `nav-${href.slice(1).replaceAll('/', '-') || 'home'}`,
+    label,
+    group: 'Navigation' as const,
+    href,
+    keywords,
+  })),
 ]
 
 const groups = ['Commands', 'Navigation'] as const

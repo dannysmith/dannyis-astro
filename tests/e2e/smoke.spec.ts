@@ -138,6 +138,38 @@ test.describe('Lightbox', () => {
   })
 })
 
+// The menu is a native popover, so it should work with no script at all.
+test.describe('Main menu', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('opens, marks the current section and closes on Escape', async ({ page }) => {
+    await page.goto('/writing/article-styleguide/')
+    const menu = page.locator('#main-navigation')
+
+    await expect(menu).toBeHidden()
+    await page.getByRole('button', { name: 'Menu' }).click()
+    await expect(menu).toBeVisible()
+    await expect(menu.getByRole('link', { name: 'Writing' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    )
+
+    await page.keyboard.press('Escape')
+    await expect(menu).toBeHidden()
+  })
+
+  test('search on a phone opens the command palette in place of the menu', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    const menu = page.locator('#main-navigation')
+
+    await page.getByRole('button', { name: 'Menu' }).click()
+    await menu.getByRole('button', { name: 'Search' }).click()
+    await expect(page.locator('#command-palette')).toBeVisible()
+    await expect(menu).toBeHidden()
+  })
+})
+
 test.describe('Content Filtering Tests', () => {
   test('styleguide article renders individually', async ({ page }) => {
     const response = await page.goto('/writing/article-styleguide/')

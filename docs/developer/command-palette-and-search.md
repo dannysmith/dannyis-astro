@@ -52,6 +52,7 @@ Open the palette → on first focus, `@utils/pagefind` loads and inits Pagefind 
 ## Where things live
 
 - `src/components/layout/CommandPalette.astro` — the palette (UI, hotkey, search wiring).
+- `src/config/navigation.ts` — the main menu's items, which the palette's Navigation group is built from (plus a few palette-only pages).
 - `src/utils/pagefind.ts` — the client search helper (tested in `tests/unit/pagefind.test.ts`).
 - `src/lib/pagefind-integration.mjs` — the build + dev-serve integration.
 - The content layouts — the `data-pagefind-*` scoping.

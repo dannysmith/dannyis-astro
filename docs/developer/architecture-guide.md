@@ -15,7 +15,7 @@ This document covers the core architectural patterns and principles for Danny's 
 - Prefer modern CSS features over JS (container queries, `:has()`, layers, etc.)
 - Progressive enhancement of browser-native features preferred
 - NO `client:*` directives used anywhere in this codebase, **except** for one-off demo components in `demos/` (see [component-patterns.md § Demo Components](./component-patterns.md#demo-components))
-- Interactive components use inline `<script>` tags (ThemeToggle, MainNavigation, Accordion, Lightbox, MarkdownContentActions, CommandPalette)
+- Interactive components use inline `<script>` tags (ThemeToggle, Accordion, Lightbox, MarkdownContentActions, CommandPalette)
 - All scripts handle ViewTransitions (`astro:after-swap` events)
 
 **Build-Time Generation Examples:**
@@ -154,7 +154,7 @@ See [view-transitions.md](./view-transitions.md) for the full pattern, naming co
 **`src/components/`** - Organized by category
 
 - `layout/` - Structural (BaseHead, Footer, MainNavigation)
-- `navigation/` - Navigation-specific (NavLink, ThemeToggle)
+- `navigation/` - Navigation-specific (NavLink, NavList, ThemeToggle)
 - `ui/` - Reusable utilities and the card family (ArticleCard, NoteCard, CompactNoteCard, ProjectCard, ToolCard, FormattedDate, Pill)
 - `mdx/` - Available in MDX content (Callout, Embed, BasicImage)
 - `demos/` - One-off interactive demos for articles/notes (React allowed here)
@@ -353,6 +353,8 @@ Four layouts in `src/layouts/`:
 - **`BasicPage.astro`** — the barebones: nav, footer, your content, nothing else. Used rarely, for when you want a real page shell without `Page.astro`'s heading.
 
 Every layout (and every standalone full page) also includes the global `<CommandPalette />` — the `⌘K` search-and-navigation overlay backed by Pagefind. See [command-palette-and-search.md](./command-palette-and-search.md).
+
+Every layout also includes `<MainNavigation />`, the site menu. Its items live in `src/config/navigation.ts` (sections with optional headings, items with optional `children`), which also feeds the palette's Navigation group; the footer and homepage link list keep their own links. It's a native `popover` with no script: a drawer from the left on wider screens, and below 40rem a floating button bottom-left that opens a card above it.
 
 ### Creating one-off pages in `src/pages/`
 
