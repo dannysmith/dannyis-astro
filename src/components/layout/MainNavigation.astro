@@ -45,6 +45,7 @@ import SkipLink from './SkipLink.astro'
     <button
       class="nav-close"
       type="button"
+      autofocus
       popovertarget="main-navigation"
       popovertargetaction="hide"
       aria-label="Close menu"
@@ -211,13 +212,16 @@ import SkipLink from './SkipLink.astro'
      ---------------------------------------- */
 
   @media (width < 40rem) {
-    .nav-open {
-      --_size: 3.5rem;
+    /* Global so the footer can leave room for the button too */
+    :global(:root) {
+      --menu-button-size: 3.5rem;
+    }
 
-      inset: auto auto max(var(--space-s), env(safe-area-inset-bottom)) var(--space-s);
+    .nav-open {
+      inset: auto auto var(--space-s) var(--space-s);
       display: grid;
       place-items: center;
-      inline-size: var(--_size);
+      inline-size: var(--menu-button-size);
       aspect-ratio: 1;
       padding: 0;
       border-radius: var(--radius-full);
@@ -245,17 +249,12 @@ import SkipLink from './SkipLink.astro'
       }
     }
 
-    /* Room to scroll the last of the page out from under the button */
-    :global(body) {
-      padding-block-end: calc(3.5rem + var(--space-m));
-    }
-
     .main-navigation {
-      inset: auto var(--space-s) calc(3.5rem + var(--space-s) + var(--space-xs));
+      inset: auto var(--space-s) calc(var(--menu-button-size) + var(--space-s) + var(--space-xs));
       min-inline-size: 0;
       inline-size: auto;
       block-size: auto;
-      max-block-size: calc(100dvh - 3.5rem - var(--space-2xl));
+      max-block-size: calc(100dvh - var(--menu-button-size) - var(--space-2xl));
       padding: var(--space-m);
       border: 0;
       border-radius: var(--radius-lg);
@@ -271,6 +270,8 @@ import SkipLink from './SkipLink.astro'
         opacity: 1;
 
         @starting-style {
+          /* Override the drawer's slide-in */
+          translate: 0;
           scale: 0.96;
           opacity: 0;
         }

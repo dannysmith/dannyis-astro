@@ -16,7 +16,7 @@
  * a zero-JS <button command="show-modal" commandfor="command-palette"> can open it
  * from anywhere.
  */
-import { NAV } from '@config/navigation'
+import { NAV, type NavItem } from '@config/navigation'
 
 // Every item is a real <a role="option">: nav items carry an href (navigate
 // natively; ⌘/middle-click opens a new tab), action items are href-less and
@@ -30,6 +30,9 @@ type PaletteItem = {
   keywords?: string // extra text to match on, not shown
 }
 
+const flatten = (navItems: NavItem[]): NavItem[] =>
+  navItems.flatMap(item => [item, ...flatten(item.children ?? [])])
+
 const items: PaletteItem[] = [
   // Commands
   {
@@ -41,7 +44,7 @@ const items: PaletteItem[] = [
   },
   // Navigation: everything in the main menu, plus pages only the palette lists
   ...[
-    ...NAV.flatMap(section => section.items.flatMap(item => [item, ...(item.children ?? [])])),
+    ...NAV.flatMap(section => flatten(section.items)),
     {
       label: 'Writing calendar',
       href: '/writing/calendar',
