@@ -42,6 +42,7 @@ const calendarEntries = [
 
 const toc = [
   { id: 'command-palette-component', label: 'CommandPalette' },
+  { id: 'main-navigation-component', label: 'MainNavigation' },
   { id: 'personal-logo', label: 'PersonalLogo' },
   { id: 'pill', label: 'Pill' },
   { id: 'spinner', label: 'Spinner' },
@@ -90,6 +91,22 @@ const toc = [
     <button type="button" command="show-modal" commandfor="command-palette">
       Open command palette
     </button>
+  </section>
+
+  <section id="main-navigation-component" class="flow">
+    <h2>MainNavigation</h2>
+    <p>
+      The site menu — a native <code>popover</code>, so it needs no JavaScript. Wider screens get a
+      drawer from the left; below 40rem it opens from a floating button bottom-left as a card. It's
+      in every layout, so it's already on this page. It takes no props — the items live in
+      <code>src/config/navigation.ts</code> and are rendered by <code>NavList</code>, which handles
+      sub-items and marks the current page.
+    </p>
+    <Code
+      lang="astro"
+      code={'<button type="button" popovertarget="main-navigation">Menu</button>'}
+    />
+    <button type="button" popovertarget="main-navigation">Open main menu</button>
   </section>
 
   <section id="personal-logo" class="flow">
