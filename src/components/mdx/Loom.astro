@@ -2,8 +2,11 @@
 /**
  * Loom embed component with facade pattern for performance.
  * Only loads heavy iframe (~5MB JS) when user clicks play.
- * Similar approach to lite-youtube-embed.
+ * Similar approach to lite-youtube-embed. In feeds (`Astro.locals.feed`) it
+ * renders a plain iframe and link instead (see FeedEmbed).
  */
+import FeedEmbed from '@components/mdx/FeedEmbed.astro'
+
 export interface Props {
   id: string
   /** Optional custom poster image URL. Falls back to oEmbed thumbnail or styled placeholder. */
@@ -74,24 +77,35 @@ const formattedDuration = duration ? formatDuration(duration) : null
 const embedUrl = `https://www.loom.com/embed/${id}?autoplay=1`
 ---
 
-<lite-loom
-  class:list={['lite-loom', className]}
-  style={`aspect-ratio: ${aspectRatio};`}
-  data-embed-url={embedUrl}
-  data-title={title || 'Loom video'}
->
-  {thumbnail && <img src={thumbnail} class="lite-loom-poster" aria-hidden="true" />}
+{
+  Astro.locals.feed ? (
+    <FeedEmbed
+      src={`https://www.loom.com/embed/${id}`}
+      href={`https://www.loom.com/share/${id}`}
+      label={title ? `Watch “${title}” on Loom` : 'Watch on Loom'}
+      title={title ?? undefined}
+    />
+  ) : (
+    <lite-loom
+      class:list={['lite-loom', className]}
+      style={`aspect-ratio: ${aspectRatio};`}
+      data-embed-url={embedUrl}
+      data-title={title || 'Loom video'}
+    >
+      {thumbnail && <img src={thumbnail} class="lite-loom-poster" aria-hidden="true" />}
 
-  <button type="button" class="lite-loom-playbtn" aria-label={`Play: ${title || 'Loom video'}`}>
-    <svg viewBox="0 0 72 72" aria-hidden="true">
-      <circle cx="36" cy="36" r="35" class="lite-loom-playbtn-bg"></circle>
-      <path d="M29 23 L29 49 L51 36 Z" fill="white"></path>
-    </svg>
-    {formattedDuration && <span class="lite-loom-duration">{formattedDuration}</span>}
-  </button>
+      <button type="button" class="lite-loom-playbtn" aria-label={`Play: ${title || 'Loom video'}`}>
+        <svg viewBox="0 0 72 72" aria-hidden="true">
+          <circle cx="36" cy="36" r="35" class="lite-loom-playbtn-bg" />
+          <path d="M29 23 L29 49 L51 36 Z" fill="white" />
+        </svg>
+        {formattedDuration && <span class="lite-loom-duration">{formattedDuration}</span>}
+      </button>
 
-  {title && <div class="lite-loom-title">{title}</div>}
-</lite-loom>
+      {title && <div class="lite-loom-title">{title}</div>}
+    </lite-loom>
+  )
+}
 
 <script>
   class LiteLoom extends HTMLElement {

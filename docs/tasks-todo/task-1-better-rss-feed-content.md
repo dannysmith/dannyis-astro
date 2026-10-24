@@ -133,18 +133,19 @@ The biggest win, and almost all of it generic.
 
 ## Phase 3: Feed-mode components
 
-- [ ] Per component, in feed mode:
-  - **Callout:** `<blockquote>` opening with a bold line made of the emoji/icon and the title (or a sensible label if there's no title), then the content.
-  - **Embed and the video family:** YouTube, Vimeo, Loom and LCVid each emit an iframe plus a linked thumbnail or title paragraph. LCVid uses its `embed` URL and poster.
-  - **Tweet:** `<blockquote>` with the text, any media, and a "— Name (@handle), date" line linking to the tweet.
-  - **Bluesky and Mastodon posts:** check `astro-embed`'s output. If it doesn't hold up in a reader, use the same blockquote shape as Tweet.
+- [x] Per component, in feed mode:
+  - **Callout:** `<blockquote>` opening with a bold line made of the emoji and the title, then the content. Untitled callouts are just the blockquote; icon-only callouts lose the icon (an SVG).
+  - **Embed and the video family:** YouTube, Vimeo, Loom and LCVid render `FeedEmbed`, an iframe whose fallback content is a link ("Watch on YouTube", "Watch “Title” on Loom", "Watch “Title” (30s)"). LCVid uses its `embed` URL, sized to the video. The cleanup pass moves the fallback link out after the iframe.
+  - **Tweet:** `<blockquote>` with the text and media, then a "— Name (@handle), date" line linking to the tweet on xcancel, like the site.
+  - **Bluesky and Mastodon posts:** skipped. Nothing uses them yet, so check `astro-embed`'s feed output if that changes.
   - **Gist:** a link to the gist.
-  - **BookmarkCard / Notion / ContentCard / ToolCard:** a simple paragraph with the linked title, the description, and the domain in small text, with the preview image only if it adds something.
-  - **Tabs:** each panel in turn under its label (a bold paragraph or a small heading), with nothing hidden.
-  - **Grid:** its children in sequence.
-  - **Accordion:** leave as `details`/`summary`. Readers that strip them still show the content.
-- [ ] Bandcamp and other raw iframes in content: add a link after them, either by hand in the content or with a generic "iframe without a following link" rule in the cleanup pass.
-- [ ] Keep the "Adding a component" note in `docs/developer/content-system.md` in step with whatever this phase settles on.
+  - **BookmarkCard:** a paragraph with the linked title, the description and a small line of facts (domain, site, author, date, flags), followed by the preview image when it's a banner. Logo-shaped previews are left out.
+  - **Notion / ToolCard / ContentCard:** left alone. Notion links already degrade to a plain link, ToolCard's one use (a showcase of the card itself) comes through readably, and ContentCard isn't used.
+  - **Tabs:** each panel in turn under its bold label, with nothing hidden.
+  - **Grid:** left alone. The cleanup pass already leaves its images and captions in sequence.
+  - **Accordion:** left as `details`/`summary`. Readers that strip them still show the content.
+- [x] Raw iframes in content: every iframe is followed by a link. The cleanup pass moves its fallback content out (Bandcamp's), or links to its source using its title (e.g. a raw YouTube iframe in Website Redesign XII).
+- [x] Keep the "Adding a component" note in `docs/developer/content-system.md` in step with whatever this phase settles on.
 
 ## Phase 4 (optional): Raster Mermaid diagrams
 

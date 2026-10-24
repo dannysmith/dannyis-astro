@@ -30,28 +30,34 @@ const { class: className } = Astro.props
 
 // Render the slot, then wire each panel and collect button metadata at build
 // time. Component content inside a TabItem is already final HTML by now.
-const { html, panels } = processPanels(await Astro.slots.render('default'))
+// Feeds get the panels as they are: each TabItem labels itself there.
+const slotHtml = await Astro.slots.render('default')
+const { html, panels } = processPanels(slotHtml)
 ---
 
-<div class:list={['tabs', className]} data-tabs>
-  <div class="tabs-list" role="tablist">
-    {
-      panels.map((panel, index) => (
-        <button
-          type="button"
-          role="tab"
-          id={panel.tabId}
-          aria-controls={panel.panelId}
-          aria-selected={index === 0 ? 'true' : 'false'}
-          tabindex={index === 0 ? 0 : -1}
-        >
-          {panel.label}
-        </button>
-      ))
-    }
-  </div>
-  <div class="tabs-panels" set:html={html} />
-</div>
+{
+  Astro.locals.feed ? (
+    <Fragment set:html={slotHtml} />
+  ) : (
+    <div class:list={['tabs', className]} data-tabs>
+      <div class="tabs-list" role="tablist">
+        {panels.map((panel, index) => (
+          <button
+            type="button"
+            role="tab"
+            id={panel.tabId}
+            aria-controls={panel.panelId}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            tabindex={index === 0 ? 0 : -1}
+          >
+            {panel.label}
+          </button>
+        ))}
+      </div>
+      <div class="tabs-panels" set:html={html} />
+    </div>
+  )
+}
 
 <style>
   .tabs {

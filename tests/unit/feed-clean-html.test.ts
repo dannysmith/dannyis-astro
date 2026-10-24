@@ -106,6 +106,31 @@ describe('cleanFeedHtml', () => {
     })
   })
 
+  describe('iframes', () => {
+    it('moves fallback content out to a paragraph after the iframe', () => {
+      expect(
+        clean(
+          '<iframe src="https://bandcamp.com/EmbeddedPlayer/album=1" style="border: 0" seamless><a href="https://x.bandcamp.com/album/y">This New Noise</a></iframe>',
+        ),
+      ).toBe(
+        '<iframe src="https://bandcamp.com/EmbeddedPlayer/album=1"></iframe><p><a href="https://x.bandcamp.com/album/y">This New Noise</a></p>',
+      )
+    })
+
+    it('links to the source of an iframe with no fallback, using its title', () => {
+      expect(
+        clean(
+          '<iframe src="https://www.youtube.com/embed/x" frameborder="0" allowfullscreen></iframe>',
+        ),
+      ).toBe(
+        '<iframe src="https://www.youtube.com/embed/x" frameborder="0" allowfullscreen></iframe><p><a href="https://www.youtube.com/embed/x">Open the embed</a></p>',
+      )
+      expect(clean('<iframe src="https://v.danny.is/a/embed" title="A demo"></iframe>')).toBe(
+        '<iframe src="https://v.danny.is/a/embed" title="A demo"></iframe><p><a href="https://v.danny.is/a/embed">A demo</a></p>',
+      )
+    })
+  })
+
   describe('footnotes', () => {
     it('uses fn:N / fnref:N ids and swaps the hidden heading for a rule', () => {
       const html =

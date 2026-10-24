@@ -16,6 +16,7 @@
  * - Markdown image captions (a `caption` attribute meant for BasicImage)
  *   become a `<figure>` with a `<figcaption>`.
  * - Mermaid diagrams and interactive islands become a link to the post.
+ * - Every iframe is followed by a link: its fallback content, or its source.
  * - Interactive and visually-hidden markup is removed: scripts, styles,
  *   templates, buttons, decorative SVG icons and screen-reader-only text.
  * - Task-list checkboxes become ☐ / ☑, and footnotes use the `fn:N` /
@@ -49,6 +50,7 @@ const KEEP_PROPS = new Set([
   'width',
   'height',
   'controls',
+  'frameBorder',
   'allow',
   'allowFullScreen',
   'cite',
@@ -82,6 +84,16 @@ function textContent(node: RootContent | Root): string {
   if ('children' in node) return node.children.map(textContent).join('')
   return ''
 }
+
+/** HTML in a string (an iframe's raw-text fallback) as nodes. */
+function parseFragment(html: string): ElementContent[] {
+  if (!html) return []
+  const tree = rehype().data('settings', { fragment: true }).parse(html)
+  return tree.children.filter((child): child is ElementContent => child.type !== 'doctype')
+}
+
+/** Iframes already given their link, so the structural pass doesn't add another. */
+const linkedIframes = new WeakSet<Element>()
 
 function findElement(node: Element, test: (el: Element) => boolean): Element | undefined {
   let found: Element | undefined
@@ -163,6 +175,18 @@ function replacement(node: Element, link: string): ElementContent[] | undefined 
   }
 
   if (tagName === 'astro-island') return [viewOnSite('an interactive demo', link)]
+
+  // Plenty of readers strip iframes, so every iframe is followed by a link:
+  // its fallback content (parsed as raw text) moved out, or one to its source.
+  if (tagName === 'iframe' && !linkedIframes.has(node)) {
+    const fallback = parseFragment(textContent(node).trim())
+    const src = typeof properties.src === 'string' ? properties.src : undefined
+    const label = typeof properties.title === 'string' ? properties.title : 'Open the embed'
+    const after = fallback.length ? fallback : src ? [el('a', { href: src }, [text(label)])] : []
+    const iframe: Element = { ...node, children: [] }
+    linkedIframes.add(iframe)
+    return after.length ? [iframe, el('p', {}, after)] : [iframe]
+  }
 
   if (tagName === 'picture') {
     const img = node.children.find(

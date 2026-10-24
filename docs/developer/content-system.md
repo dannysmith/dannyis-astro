@@ -129,7 +129,17 @@ The endpoints only choose entries (via `filterContentForListing`) and the channe
 
   It's a pure function, unit-tested in `tests/unit/feed-clean-html.test.ts`.
 
-**Adding a component:** most need nothing, because the cleanup pass handles generic markup. Check the component in the built feed. If its content relies on CSS or JS to make sense (hidden panels, background images, content in attributes), give it a feed branch on `Astro.locals.feed` that outputs plain HTML. Any embed should always include a plain link, so readers that strip the embed still have something to follow.
+**Components with feed versions:** these check `Astro.locals.feed` and output plain HTML:
+- `Callout` is a `<blockquote>` with its emoji and title as a bold first line.
+- `Tweet` is a `<blockquote>` ending with an attribution line.
+- `BookmarkCard` is a paragraph (linked title, description, facts), plus its banner image.
+- `Tabs` / `TabItem` show every panel in turn under a bold label.
+- Video embeds (YouTube and Vimeo via `Embed`, plus `Loom` and `LCVid`) render `FeedEmbed`: a player iframe with a plain link as its fallback content.
+- Gists (via `Embed`) are a link.
+
+Every iframe in a feed is followed by a link. The cleanup pass moves an iframe's fallback content out to a paragraph after it, or links to its source if it has none. So readers that strip iframes still have something to follow.
+
+**Adding a component:** most need nothing, because the cleanup pass handles generic markup. Check the component in the built feed. If its content relies on CSS or JS to make sense (hidden panels, background images, content in attributes), give it a feed branch on `Astro.locals.feed` that outputs plain HTML. Swapping the outer tag (`const Tag = feed ? 'blockquote' : 'aside'`) often covers most of it. Any embed should include a plain link, which `FeedEmbed` does for iframes.
 
 ## SEO
 

@@ -13,6 +13,9 @@
  * build time by `@lib/tabs/process-panels`, which `<Tabs>` runs over the
  * rendered slot. Any markdown / MDX / `.astro` content works in here exactly
  * as it would outside a tab — it's already rendered to HTML before processing.
+ *
+ * In feeds (`Astro.locals.feed`) there are no tabs to click, so each panel
+ * shows in turn under its label.
  */
 export interface Props {
   label: string
@@ -21,6 +24,17 @@ export interface Props {
 const { label } = Astro.props
 ---
 
-<div data-tab-label={label}>
-  <slot />
-</div>
+{
+  Astro.locals.feed ? (
+    <>
+      <p>
+        <strong>{label}</strong>
+      </p>
+      <slot />
+    </>
+  ) : (
+    <div data-tab-label={label}>
+      <slot />
+    </div>
+  )
+}

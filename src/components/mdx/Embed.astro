@@ -1,6 +1,7 @@
 ---
 import { YouTube, Vimeo, BlueskyPost, MastodonPost } from 'astro-embed';
 import BookmarkCard from '@components/mdx/BookmarkCard.astro';
+import FeedEmbed from '@components/mdx/FeedEmbed.astro';
 import LCVid from '@components/mdx/LCVid.astro';
 import Loom from '@components/mdx/Loom.astro';
 import Tweet from '@components/mdx/Tweet.astro';
@@ -92,18 +93,38 @@ function resolveEmbedType(url: string): EmbedType {
 }
 
 const embed = resolveEmbedType(url);
+
+// Feeds get a plain player iframe plus a link in place of the site's facades
+// and scripts (see FeedEmbed). Loom, LCVid, Tweet and BookmarkCard handle
+// feeds themselves.
+const feed = Astro.locals.feed;
 ---
 
-{embed.type === 'youtube' && <YouTube id={embed.id} />}
+{embed.type === 'youtube' && (feed ? (
+  <FeedEmbed
+    src={`https://www.youtube-nocookie.com/embed/${embed.id}`}
+    href={`https://www.youtube.com/watch?v=${embed.id}`}
+    label="Watch on YouTube"
+  />
+) : <YouTube id={embed.id} />)}
 {embed.type === 'tweet' && <Tweet id={embed.id} />}
-{embed.type === 'vimeo' && <Vimeo id={embed.id} />}
+{embed.type === 'vimeo' && (feed ? (
+  <FeedEmbed
+    src={`https://player.vimeo.com/video/${embed.id}`}
+    href={`https://vimeo.com/${embed.id}`}
+    label="Watch on Vimeo"
+  />
+) : <Vimeo id={embed.id} />)}
 {embed.type === 'loom' && <Loom id={embed.id} />}
 {embed.type === 'lcvid' && <LCVid src={embed.src} className={className} />}
+{embed.type === 'gist' && feed && (
+  <p><a href={`https://gist.github.com/${embed.id}`}>View the gist on GitHub</a></p>
+)}
 {/* NOTE: the gist script tag below carries a separate closing tag and is never self-closed,
     because a self-closed one crashes astro-eslint-parser v3. prettier-ignore comments don't work
     in .astro (prettier-plugin-astro#410), so this file is listed in .prettierignore to stop
     prettier re-collapsing it to a self-close. */}
-{embed.type === 'gist' && <script is:inline src={`https://gist.github.com/${embed.id}.js`}></script>}
+{embed.type === 'gist' && !feed && <script is:inline src={`https://gist.github.com/${embed.id}.js`}></script>}
 {embed.type === 'bluesky' && <BlueskyPost id={embed.url} />}
 {embed.type === 'mastodon' && <MastodonPost id={embed.url} />}
 {embed.type === 'bookmark' && <BookmarkCard url={embed.url} className={className} />}
