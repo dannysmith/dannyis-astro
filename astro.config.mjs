@@ -16,12 +16,13 @@ import { satteriListDensity } from './src/lib/satteri-list-density.mjs'
 import { satteriMermaid } from './src/lib/satteri-mermaid.mjs'
 import { mermaidConfig, mermaidColorReplacements, mermaidFontCss } from './src/config/mermaid.js'
 import { pagefind } from './src/lib/pagefind-integration.mjs'
-import { mirroredImages } from './src/lib/mirrored-images-integration.mjs'
+import { cachedImages } from './src/lib/cached-images-integration.mjs'
 import { MIRROR_CACHE_DIR, MIRROR_URL_BASE } from './src/utils/mirrorImage.ts'
 import icon from 'astro-icon'
 import { redirects } from './src/config/redirects.ts'
 
 import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
 import expressiveCode, { ExpressiveCodeTheme } from 'astro-expressive-code'
 
 import react from '@astrojs/react'
@@ -47,6 +48,14 @@ const mdxComponentNames = readFileSync(new URL(mdxBarrelPath, import.meta.url), 
   .split(/[,\n]/)
   .map(name => name.trim())
   .filter(name => /^[A-Z][A-Za-z0-9]*$/.test(name))
+
+// Diagram images made only for RSS feeds (readers strip inline SVG); the site
+// never uses them. Kept in Astro's cache directory so CI persists them, and
+// served at their own path so they're never mistaken for site images.
+const FEED_IMAGES_DIR = fileURLToPath(
+  new URL('./node_modules/.astro/feed-images/', import.meta.url),
+)
+const FEED_IMAGES_URL_BASE = '/feed-images'
 
 // https://astro.build/config
 export default defineConfig({
@@ -97,7 +106,8 @@ export default defineConfig({
     icon(),
     react(),
     pagefind(),
-    mirroredImages(MIRROR_CACHE_DIR, MIRROR_URL_BASE),
+    cachedImages(MIRROR_CACHE_DIR, MIRROR_URL_BASE, 'mirrored-images'),
+    cachedImages(FEED_IMAGES_DIR, FEED_IMAGES_URL_BASE, 'feed-images'),
   ],
   markdown: {
     // syntaxHighlight stays at the markdown level; the processor reads it from
@@ -139,6 +149,7 @@ export default defineConfig({
           mermaidConfig,
           colorReplacements: mermaidColorReplacements,
           css: mermaidFontCss,
+          feedImages: { dir: FEED_IMAGES_DIR, urlBase: FEED_IMAGES_URL_BASE },
         }),
       ],
     }),

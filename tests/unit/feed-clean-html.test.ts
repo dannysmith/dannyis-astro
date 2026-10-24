@@ -89,6 +89,16 @@ describe('cleanFeedHtml', () => {
       ).toBe('<a href="https://x.com/a">Open </a>')
     })
 
+    it('swaps a Mermaid diagram for its feed image, with its labels as alt text', () => {
+      expect(
+        clean(
+          '<svg id="mermaid-0-0" data-feed-image="/feed-images/mermaid-abc.webp" data-feed-image-width="970"><style>.n{fill:red}</style><g><foreignObject><div><span>Claude</span></div></foreignObject><text>Worker</text></g></svg>',
+        ),
+      ).toBe(
+        `<p><a href="${LINK}"><img src="https://danny.is/feed-images/mermaid-abc.webp" alt="Diagram: Claude Worker" width="970"></a></p>`,
+      )
+    })
+
     it('replaces interactive islands with a link to the post', () => {
       expect(
         clean('<astro-island uid="1" component-url="/x.js"><div>Calendar</div></astro-island>'),

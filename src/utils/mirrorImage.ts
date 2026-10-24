@@ -19,7 +19,7 @@
  *
  * Images are filed under a `group` named for the feature using them (`links`,
  * `books`), on disk and in their URL. The whole tree is copied into `dist/` by
- * src/lib/mirrored-images-integration.mjs.
+ * src/lib/cached-images-integration.mjs.
  */
 
 /* global process */

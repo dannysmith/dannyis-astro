@@ -15,7 +15,8 @@
  *   whose content is in a `code` attribute) become plain code blocks.
  * - Markdown image captions (a `caption` attribute meant for BasicImage)
  *   become a `<figure>` with a `<figcaption>`.
- * - Mermaid diagrams and interactive islands become a link to the post.
+ * - Mermaid diagrams become their RSS-only image (or a link to the post if
+ *   they have none), and interactive islands become a link to the post.
  * - Every iframe is followed by a link: its fallback content, or its source.
  * - Interactive and visually-hidden markup is removed: scripts, styles,
  *   templates, buttons, decorative SVG icons and screen-reader-only text.
@@ -124,6 +125,24 @@ function viewOnSite(what: string, link: string) {
   ])
 }
 
+/**
+ * A Mermaid diagram's RSS-only image (see `satteri-mermaid.mjs`), linked to the
+ * post, with the diagram's labels as its alt text. `undefined` if the SVG
+ * wasn't given one.
+ */
+function mermaidFeedImage(svg: Element, link: string) {
+  const { dataFeedImage: src, dataFeedImageWidth } = svg.properties
+  if (typeof src !== 'string') return undefined
+  const width = Number(dataFeedImageWidth) || undefined
+  const labels: string[] = []
+  visit(svg, node => {
+    if (node.type === 'element' && node.tagName === 'style') return SKIP
+    if (node.type === 'text' && node.value.trim()) labels.push(node.value.trim())
+  })
+  const alt = labels.length ? `Diagram: ${labels.join(' ')}` : 'Diagram'
+  return el('p', {}, [el('a', { href: link }, [el('img', { src, alt, width }, [])])])
+}
+
 /** Expressive Code's figure → a plain code block, one line of text per `.ec-line`. */
 function plainExpressiveCode(node: Element) {
   const pre = findElement(node, child => child.tagName === 'pre')
@@ -171,7 +190,8 @@ function replacement(node: Element, link: string): ElementContent[] | undefined 
   if (tagName === 'svg') {
     // Mermaid diagrams keep mermaid's `mermaid-…` id; every other inline SVG
     // in post content is a decorative icon.
-    return String(properties.id ?? '').startsWith('mermaid-') ? [viewOnSite('a diagram', link)] : []
+    if (!String(properties.id ?? '').startsWith('mermaid-')) return []
+    return [mermaidFeedImage(node, link) ?? viewOnSite('a diagram', link)]
   }
 
   if (tagName === 'astro-island') return [viewOnSite('an interactive demo', link)]

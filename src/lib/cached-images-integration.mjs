@@ -4,29 +4,33 @@ import { fileURLToPath } from 'node:url'
 import sirv from 'sirv'
 
 /**
- * Serves the images that `src/utils/mirrorImage.ts` downloads and re-encodes
- * at build time. Same two-hook shape as the pagefind integration:
+ * Serves images made at build time and cached in Astro's cache directory.
+ * Used twice: for the images `src/utils/mirrorImage.ts` downloads and
+ * re-encodes (`/mirrored`), and for the RSS-only diagram images
+ * `src/lib/satteri-mermaid.mjs` saves (`/feed-images`). Same two-hook shape as
+ * the pagefind integration:
  *
- *   • astro:build:done  — copy the cached derivatives into `dist/mirrored/`,
- *     keeping their group subdirectories, so they ship as ordinary static
- *     files, on Vercel or anywhere else.
+ *   • astro:build:done  — copy the cached WebP files into `dist<urlBase>/`,
+ *     keeping their subdirectories, so they ship as ordinary static files, on
+ *     Vercel or anywhere else.
  *
  *   • astro:server:setup — in `bun run dev` nothing is copied, so serve them
- *     straight out of the cache directory. Images not yet downloaded 404 until
- *     the page that uses them renders; reload and they appear.
+ *     straight out of the cache directory. Images not made yet 404 until the
+ *     page that makes them renders; reload and they appear.
  *
  * The whole cache is copied, not just what this build referenced. Tracking
  * references would mean threading state from a util into an integration, and
- * the images a removed link leaves behind are a few KB of unreferenced
- * files that the next CI cache rotation clears anyway.
+ * the images a removed link or diagram leaves behind are a few KB of
+ * unreferenced files that the next CI cache rotation clears anyway.
  *
- * @param {string} cacheDir Absolute path to the cached derivatives.
+ * @param {string} cacheDir Absolute path to the cached images.
  * @param {string} urlBase Path they're served under.
+ * @param {string} name Integration name, which also labels its log output.
  * @returns {import('astro').AstroIntegration}
  */
-export function mirroredImages(cacheDir, urlBase) {
+export function cachedImages(cacheDir, urlBase, name) {
   return {
-    name: 'mirrored-images',
+    name,
     hooks: {
       'astro:server:setup': ({ server }) => {
         const serve = sirv(cacheDir, { dev: true, etag: true })
@@ -52,7 +56,7 @@ export function mirroredImages(cacheDir, urlBase) {
             name.endsWith('.webp'),
           )
         } catch {
-          // No cache directory means nothing on the site had a usable image.
+          // No cache directory means nothing made an image for it.
           return
         }
 
@@ -62,7 +66,7 @@ export function mirroredImages(cacheDir, urlBase) {
           await fs.copyFile(path.join(cacheDir, file), dest)
         }
 
-        logger.info(`Copied ${files.length} mirrored image(s) → dist${urlBase}/`)
+        logger.info(`Copied ${files.length} image(s) → dist${urlBase}/`)
       },
     },
   }

@@ -122,7 +122,7 @@ The endpoints only choose entries (via `filterContentForListing`) and the channe
   - makes URLs absolute and collapses `<picture>`/`srcset` to one `<img>`
   - turns Expressive Code, `md preview` and `tree` blocks into plain `<pre><code>` blocks
   - turns markdown image captions into `<figcaption>`s
-  - swaps Mermaid diagrams and interactive islands for a link to the post
+  - swaps Mermaid diagrams for their RSS-only image (below), and interactive islands for a link to the post
   - removes scripts, buttons, icon SVGs and screen-reader-only text
   - uses `fn:N` / `fnref:N` footnote ids, which readers with footnote popovers look for
   - unwraps leftover custom elements and strips presentational attributes
@@ -242,7 +242,7 @@ MDAST plugins run first (array order), then MDAST→HAST conversion, then HAST p
 - `satteriImageCaption` - Moves a markdown image's title text onto a `caption` prop (rendered as `<figcaption>` by `BasicImage`)
 - `satteriExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links (SmartLink semantics: absolute http(s) URL whose host isn't danny.is or a subdomain)
 - `satteriListDensity` - Adds `long-list-items` class to lists with paragraph-like items
-- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`. Theme-aware: sentinel colors from `src/config/mermaid.js` are rewritten to `--mermaid-*` variables defined in `src/styles/_mermaid.css` (see comments in those files for how and why)
+- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`. Theme-aware: sentinel colors from `src/config/mermaid.js` are rewritten to `--mermaid-*` variables defined in `src/styles/_mermaid.css` (see comments in those files for how and why). It also saves each diagram as an image **for RSS feeds only**, because readers strip inline SVG. The image is a 2x screenshot from the same render in the light colours, on white, saved as WebP in `node_modules/.astro/feed-images/` and served at `/feed-images/`. The site never uses these images; `cleanFeedHtml` swaps each diagram's SVG for its image
 
 **Location rationale:** Build-time plugins are kept in `src/lib/` separate from runtime utilities (`src/utils/`) and one-off scripts (`scripts/`). They run during the build process before any component code executes.
 

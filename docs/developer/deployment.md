@@ -52,7 +52,7 @@ See [command-palette-and-search.md](./command-palette-and-search.md) for the why
 
 ## Mirrored images
 
-`BookmarkCard` fetches the pages it links to at build time and copies their preview images onto our own domain, through the shared `src/utils/mirrorImage.ts`. A second inline integration (`src/lib/mirrored-images-integration.mjs`) follows Pagefind's two-hook shape: `astro:build:done` copies the cached derivatives into `dist/mirrored/<group>/`, `astro:server:setup` serves them from the cache in dev.
+`BookmarkCard` fetches the pages it links to at build time and copies their preview images onto our own domain, through the shared `src/utils/mirrorImage.ts`. A second inline integration (`src/lib/cached-images-integration.mjs`) follows Pagefind's two-hook shape: `astro:build:done` copies the cached derivatives into `dist/mirrored/<group>/`, `astro:server:setup` serves them from the cache in dev. The same integration, registered again, serves the RSS-only Mermaid diagram images from `dist/feed-images/`.
 
 Two consequences for the pipeline:
 
@@ -85,6 +85,7 @@ OG image generation (Satori + Resvg) and image optimization (Sharp) dominate bui
 - **`node_modules/.astro/og-cache/`** — our own OG image cache. Astro doesn't cache endpoint output, so `og-image-generator.ts` caches the rendered PNGs itself. It rides along inside Astro's cache directory, so one `actions/cache` step persists both between runs.
 - **`node_modules/.astro/link-cache/`** — captured `<head>`s from the pages `BookmarkCard` links to. Rides along in the same cache step. This one is about more than speed: it's what stops a build depending on other people's servers being up, and what lets a link that has since died keep the metadata it had when it worked.
 - **`node_modules/.astro/mirrored-images/`** — the downloaded, re-encoded images, one subdirectory per group (`links/` for the preview images of those same pages). Same cache step, same reasoning: a dead link keeps the image it had.
+- **`node_modules/.astro/feed-images/`** — Mermaid diagrams saved as images for RSS feeds only (the site uses the inline SVG), named by a hash of the SVG. They live beside the content store, so a post whose render is reused still has its image.
 - The **Vercel CLI** is also cached in the Deploy jobs so `npx` doesn't re-download it on every deploy.
 
 **Correctness note:** the OG cache is keyed on each image's content. If you change the OG **template, branding, or fonts**, bump `CACHE_VERSION` in `src/utils/og-image-generator.ts` (also flagged in `src/utils/CLAUDE.md`).

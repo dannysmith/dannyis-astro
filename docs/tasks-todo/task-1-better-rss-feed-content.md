@@ -80,7 +80,7 @@ The `.md` twins output the raw MDX source, so components appear as JSX. That's f
 
 - **Item `<link>` and `<guid>` never change.** `@astrojs/rss` uses `link` as the `guid`, so changing either would make readers treat every affected item as new. Link posts keep their own note page as `<link>`, with the source shown prominently at the top of the content. Medium articles keep their danny.is link (it already redirects), and their content becomes a short "originally published on Medium" paragraph with a link.
 - **Embeds get the real embed and a link.** Where an iframe works it's the best experience. Where a reader strips it, the link is still there. This applies to YouTube, Vimeo, Loom and LoomClone videos (LCVid already has an `embed` URL in its metadata).
-- **Mermaid gets a placeholder:** "This post includes a diagram — view it on danny.is", linking to the post. A PNG of the diagram plus that link is a small step on from there (Phase 4), because the existing render can produce the PNG.
+- **Mermaid diagrams become an image in feeds** (Phase 4), linked to the post. If a diagram has no image, a placeholder links to the post instead: "This post includes a diagram — view it on danny.is".
 - **Keep every item ever.** Capping long feeds is the reader's job. A personal blog publishes rarely, and the cleanup will shrink the file a lot anyway.
 - **One short footer line per item**, not an email-style signature. See Phase 2.
 
@@ -147,15 +147,15 @@ The biggest win, and almost all of it generic.
 - [x] Raw iframes in content: every iframe is followed by a link. The cleanup pass moves its fallback content out (Bandcamp's), or links to its source using its title (e.g. a raw YouTube iframe in Website Redesign XII).
 - [x] Keep the "Adding a component" note in `docs/developer/content-system.md` in step with whatever this phase settles on.
 
-## Phase 4 (optional): Raster Mermaid diagrams
+## Phase 4: Raster Mermaid diagrams for feeds
 
-This replaces the Phase 1 placeholder with a real image. It's small enough that it doesn't need to wait for Mermaid to become common.
+The Phase 1 placeholder is now only a fallback: each diagram appears in feeds as an image, linked to the post, with its labels as alt text.
 
-`satteri-mermaid` can pass `screenshot: true` in its existing render call, and `mermaid-isomorphic` then returns a PNG next to the SVG. The colours are already right: the placeholder colours are the light-theme values (they double as the `var()` fallbacks), so no second render is needed. The work is:
-
-- Write each PNG to a cache under `node_modules/.astro/`, named by a hash of the diagram source, and copy the cache into `dist/` at the end of the build. This follows `mirrored-images-integration.mjs`, and keeps the PNGs in step when incremental builds skip re-rendering a post.
-- Add a data attribute holding the PNG's URL to the inline SVG, so the cleanup pass can swap the SVG for that `<img>` and a "view on danny.is" link.
-- Check the screenshot is sharp enough on high-density screens. If it isn't, look for a device-scale option in `mermaid-isomorphic`.
+- [x] `satteri-mermaid` passes `screenshot: true` in its existing render call. The colours are already right: the placeholder colours are the light-theme values. The screenshot is flattened onto white with a 16px margin, so it reads on a dark reader theme, and saved as lossless WebP (about 10–30 KB).
+- [x] Feed images are clearly separate from site images. They're saved to `node_modules/.astro/feed-images/` (persisted by the same CI cache step as the content store) and served at `/feed-images/mermaid-<hash>.webp`. The site never references them. The hash covers the diagram source, Mermaid config and font CSS, so a file only changes when its image would. The SVG's ids carry a per-build counter, so hashing the SVG made duplicates.
+- [x] The inline SVG gets `data-feed-image` / `data-feed-image-width`, which the cleanup pass swaps the SVG for.
+- [x] The integration that copies cached images into `dist/` and serves them in dev now serves both `/mirrored` and `/feed-images`, so it's renamed to `cachedImages` (`src/lib/cached-images-integration.mjs`).
+- [x] Screenshots are 2x. mermaid-isomorphic creates its browser context with no options, so the plugin hands it a Chromium whose contexts use `deviceScaleFactor: 2`. That has no effect on the SVG.
 
 ## Phase 5: Verify and document
 

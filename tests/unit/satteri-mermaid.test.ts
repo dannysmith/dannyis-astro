@@ -1,4 +1,7 @@
-import { readFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, readdirSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
+import sharp from 'sharp'
 import { describe, it, expect } from 'vitest'
 import { markdownToHtml, mdxToJs } from 'satteri'
 import { satteriMermaid } from '../../src/lib/satteri-mermaid.mjs'
@@ -98,6 +101,29 @@ describe('satteriMermaid', () => {
       expect(result.code).not.toContain('<pre')
     },
   )
+
+  it(
+    'saves an RSS-only image and points the SVG at it when feedImages is set',
+    { timeout: 30_000 },
+    async () => {
+      const dir = mkdtempSync(path.join(tmpdir(), 'feed-images-'))
+      const { html } = await markdownToHtml(DIAGRAM, {
+        hastPlugins: [
+          satteriMermaid({ ...pluginOptions, feedImages: { dir, urlBase: '/feed-images' } }),
+        ],
+      })
+      const [file] = readdirSync(dir)
+      expect(file).toMatch(/^mermaid-[0-9a-f]{16}\.webp$/)
+      expect(html).toContain(`data-feed-image="/feed-images/${file}"`)
+      expect(html).toMatch(/data-feed-image-width="\d+"/)
+      // Opaque (flattened onto white), so it reads on a dark reader theme.
+      expect((await sharp(path.join(dir, file)).stats()).isOpaque).toBe(true)
+    },
+  )
+
+  it('adds no feed image without feedImages', { timeout: 30_000 }, async () => {
+    expect(await render(DIAGRAM)).not.toContain('data-feed-image')
+  })
 
   it('fails the build on an invalid diagram', { timeout: 30_000 }, async () => {
     await expect(render('```mermaid\nnot a valid diagram %%%{\n```\n')).rejects.toThrow(
