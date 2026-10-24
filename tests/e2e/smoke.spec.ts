@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test'
 
+// A feed's first request on a cold dev server renders every post, fetching any
+// uncached link previews and Mermaid images, which can take well over the
+// default 30s in CI. Feed tests check the HTTP response, so they use the
+// request API with this longer timeout rather than a page navigation.
+const FEED_TIMEOUT = 120_000
+
 test.describe('Critical Path Tests', () => {
   test('homepage loads successfully', async ({ page }) => {
     const response = await page.goto('/')
@@ -33,14 +39,15 @@ test.describe('Critical Path Tests', () => {
     })
   })
 
-  test('RSS feed returns valid XML', async ({ page }) => {
-    const response = await page.goto('/rss.xml')
+  test('RSS feed returns valid XML', async ({ request }) => {
+    test.setTimeout(FEED_TIMEOUT)
+    const response = await request.get('/rss.xml', { timeout: FEED_TIMEOUT })
 
-    expect(response?.status()).toBe(200)
-    const contentType = response?.headers()['content-type']
+    expect(response.status()).toBe(200)
+    const contentType = response.headers()['content-type']
     expect(contentType).toMatch(/xml|rss/)
 
-    const content = await response?.text()
+    const content = await response.text()
     expect(content).toContain('<?xml')
     expect(content).toContain('<rss')
     expect(content).toContain('</rss>')
@@ -204,9 +211,10 @@ test.describe('Content Filtering Tests', () => {
     expect(await notes.count()).toBeGreaterThan(0)
   })
 
-  test('RSS feeds include content in development', async ({ page }) => {
-    const response = await page.goto('/rss.xml')
-    const content = await response?.text()
+  test('RSS feeds include content in development', async ({ request }) => {
+    test.setTimeout(FEED_TIMEOUT)
+    const response = await request.get('/rss.xml', { timeout: FEED_TIMEOUT })
+    const content = await response.text()
 
     // Should contain items
     expect(content).toContain('<item>')
