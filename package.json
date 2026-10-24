@@ -55,7 +55,6 @@
     "astro-webrings": "^0.1.5",
     "date-fns": "^4.3.0",
     "entities": "^8.1.0",
-    "marked": "^18.1.1",
     "mermaid-isomorphic": "^3.1.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

@@ -28,6 +28,11 @@ describe('renderInlineMarkdown', () => {
     expect(html).toContain('rel="noopener noreferrer"')
   })
 
+  it('treats danny.is links as internal', () => {
+    const html = renderInlineMarkdown('[mine](https://danny.is/now)')
+    expect(html).not.toContain('target="_blank"')
+  })
+
   it('does not add target/rel to relative links', () => {
     const html = renderInlineMarkdown('[internal](/about)')
     expect(html).not.toContain('target="_blank"')

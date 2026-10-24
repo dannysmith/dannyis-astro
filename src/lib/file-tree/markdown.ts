@@ -3,42 +3,18 @@
  *
  * Comments in a `tree` block (the text after ` # `) may contain inline
  * markdown — bold, code spans, and links. This renders that to an HTML
- * string suitable for `set:html`. `parseInline` is used so the output
- * isn't wrapped in a block-level `<p>`.
+ * string suitable for `set:html`, with the wrapping `<p>` removed so it sits
+ * inline. A comment that starts like a block (`- `, `1. `, `> `) renders as
+ * that block, as it would anywhere else in markdown.
  *
- * External links get `target="_blank"` + `rel="noopener noreferrer"`.
- * This substitutes for `rehype-external-links`, which only runs on the
- * site's main markdown pipeline — comment strings don't pass through it.
+ * Comment strings don't pass through the site's main markdown pipeline, so
+ * this is a standalone Sätteri render that adds back `satteriExternalLinks`
+ * (the same pattern as MarkdownBlock).
  */
-import { Marked } from 'marked'
-
-/** HTML-escape untrusted string values before interpolating into attributes. */
-function escapeAttr(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
-// Configured once at module load. Only `parseInline` (a read-only
-// operation) is called afterward, so sharing the instance across
-// concurrent SSR renders is safe.
-const md = new Marked({ gfm: true, async: false })
-md.use({
-  renderer: {
-    link({ href, title, tokens }) {
-      const text = this.parser.parseInline(tokens)
-      const isExternal = typeof href === 'string' && /^https?:\/\//i.test(href)
-      const hrefAttr = escapeAttr(href ?? '')
-      const titleAttr = title ? ` title="${escapeAttr(title)}"` : ''
-      const securityAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : ''
-      return `<a href="${hrefAttr}"${titleAttr}${securityAttrs}>${text}</a>`
-    },
-  },
-})
+import { markdownToHtml } from 'satteri'
+import { satteriExternalLinks } from '../satteri-external-links.mjs'
 
 export function renderInlineMarkdown(text: string): string {
-  return md.parseInline(text.trim()) as string
+  const { html } = markdownToHtml(text.trim(), { hastPlugins: [satteriExternalLinks()] })
+  return html.trim().replace(/^<p>([\s\S]*)<\/p>$/, '$1')
 }
