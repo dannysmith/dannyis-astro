@@ -107,7 +107,17 @@ Three full-content RSS feeds:
 
 The endpoints only choose entries (via `filterContentForListing`) and the channel's title and description. Everything else is in `src/utils/feed/`:
 
-- **`index.ts` — `feedItems(entries)`** renders each entry's MDX with Astro's experimental Container API and builds the items, newest first. Content renders with `Astro.locals.feed` set to `true`, so a component can output simpler markup for feeds (`if (Astro.locals.feed) …`). Framework components (React demos) can't render in the container, so a placeholder renderer claims them and they become a link to the post.
+- **`index.ts` — `feedResponse({ title, description, entries, url })`** builds the whole feed:
+  - **Channel:** `language`, `image` and an `atom:link` self link.
+  - **Items, newest first:** `description` (frontmatter, or the same `generateSummary` fallback the page uses), `category` from tags, `dc:creator`, and the full content.
+
+  Each item's content is the `FeedItem` component (`src/components/layout/FeedItem.astro`), rendered with Astro's experimental Container API. It's the MDX body framed by what its page shows around it, since readers see only the item:
+  - the "originally published on Medium" note for external articles
+  - a note's `sourceURL` embed
+  - an article's cover and series callout
+  - a one-line footer with links to the web and markdown versions and a reply-by-email link
+
+  It renders with `Astro.locals.feed` set to `true`, so a component can output simpler markup for feeds (`if (Astro.locals.feed) …`). Framework components (React demos) can't render in the container, so a placeholder renderer claims them and they become a link to the post. Item links and guids are the post URLs and must never change, or readers show the items as new.
 - **`clean-html.ts` — `cleanFeedHtml(html, link)`** makes the rendered HTML hold up in feed readers. Readers have none of the site's CSS or JS, sanitise heavily (dropping `script`/`style`, stripping `class`/`style`, removing `div`/`span`/`svg`/`input` tags, hiding or deleting `hidden` content), and RSS has no base URL. This pass:
   - makes URLs absolute and collapses `<picture>`/`srcset` to one `<img>`
   - turns Expressive Code, `md preview` and `tree` blocks into plain `<pre><code>` blocks

@@ -115,21 +115,21 @@ The biggest win, and almost all of it generic.
 
 ## Phase 2: Item framing and metadata
 
-- [ ] **Header**, before the body:
+- [x] **Header**, before the body. The header and footer are the `FeedItem` component (`src/components/layout/FeedItem.astro`), which renders the MDX body itself:
   - Notes with a `sourceURL`: rendered through `Embed`, as the note page does. Until Phase 3 gives `Embed` its feed versions, the cleanup pass leaves at least a working link, and Phase 3 then improves it for free.
   - Series articles: the series callout (`SeriesCallout` renders through the feed-mode `Callout`).
   - Articles with a cover: the cover image.
   - External/Medium articles: one paragraph — description if there is one, then "Originally published on Medium" with a link.
-- [ ] **Footer**, after the body: one small line, separated by an `<hr>`. For example: *Posted on [danny.is](…) on 24 October 2026 · [Web](…) · [Markdown](…) · [Reply by email](mailto:…)*.
-  - "Reply by email" is a `mailto:` link with the subject pre-filled: `Re: <post title>`, URL-encoded. Possibly a feed-specific plus-address (e.g. `hi+rss@danny.is`, following `contactEmail` in `src/config/site.ts`) to show which replies came from feeds.
-  - Recommendation: no socials on every item. Readers who want to follow or reply have the post link and email, and the site has the rest.
-  - If socials are wanted, add Bluesky and Mastodon only, at the end of the same line, from `src/config/site.ts`.
-- [ ] Item fields:
+- [x] **Footer**, after the body: one small line, separated by an `<hr>`. For example: *Posted on [danny.is](…) on 24 October 2026 · [Web](…) · [Markdown](…) · [Reply by email](mailto:…)*.
+  - "Reply by email" is a `mailto:` link to `contactEmail` (`src/config/site.ts`) with the subject pre-filled: `Re: <post title>`, URL-encoded. A feed-specific plus-address (e.g. `hi+rss@danny.is`) would show which replies came from feeds.
+  - No socials on every item. Readers who want to follow or reply have the post link and email, and the site has the rest.
+  - The Markdown link is left off external articles, whose markdown twin is only a title.
+- [x] Item fields:
   - `description`: frontmatter or `generateSummary()`, as the page does.
   - `categories`: from `tags`.
-  - Author: `customData` with `dc:creator`, or `author` in the RSS email form.
-- [ ] Channel fields: `<language>`, `<image>` (avatar), and `atom:link rel="self"` via `xmlns` and `customData`.
-- [ ] Run the W3C feed validator on all three feeds.
+  - Author: `dc:creator` (RSS's own `author` field needs an email address).
+- [x] Channel fields: `<language>`, `<image>` (`favicon.png`), and `atom:link rel="self"` via `xmlns` and `customData`.
+- [x] Run the W3C feed validator on all three feeds. All valid. The remaining warnings are deliberate: iframes (embeds, by decision), and footnote links as bare `#fn:N` fragments, which NetNewsWire's popovers need.
 
 ## Phase 3: Feed-mode components
 
