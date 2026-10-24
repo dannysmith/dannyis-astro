@@ -15,9 +15,30 @@ The three feeds (`/rss.xml`, `/rss/articles.xml`, `/rss/notes.xml`) are meant to
 
 The goal: people who read in a feed reader, and only ever see the feed, get the fullest and best experience possible. It should work well across readers in general, not just in Feedly. The approach should mean new MDX components mostly just work in feeds, or need only a small, obvious change. It should take as little code as possible and lean on defaults, but clean, well-made, resilient code is fine where it's needed. Code that exists only for rendering feeds is fine.
 
-## How the feeds work today
+## Outcome
 
-Each endpoint (`src/pages/rss.xml.js`, `src/pages/rss/articles.xml.js`, `src/pages/rss/notes.xml.js`) is a near-identical copy. It renders each entry's MDX `Content` with the experimental Container API (MDX renderer only) and hands the raw HTML to `@astrojs/rss` as `content`. Nothing else happens to it. Entries that throw while rendering (anything with a React island) are left out.
+Shipped in [#171](https://github.com/dannysmith/dannyis-astro/pull/171). The developer docs are the reference for how it works now: [content-system.md § RSS Feed Implementation](../developer/content-system.md#rss-feed-implementation).
+
+- **Where it lives:**
+  - The three endpoints only choose entries and a title.
+  - `src/pages/rss/_feed.ts` builds the feed.
+  - `src/components/layout/FeedItem.astro` frames each item with what its page shows (source embed, cover, series callout, Medium note, footer).
+  - `src/utils/feed-html.ts` is the generic cleanup pass.
+  - Components with feed-specific markup check `Astro.locals.feed`.
+- **Every item has content.** None of the 39 empty items (33 Medium articles, 6 link-only notes) are empty any more. The datepicker note is back in the feed, so there are now 229 items, and link posts open with their source.
+- **Nothing is lost to sanitisers.** No relative URLs, scripts, styles, custom elements or hidden content are left in the feed. Code blocks, `md preview` and `tree` blocks, captions, tabs and footnotes all survive. Mermaid diagrams are images.
+- **Smaller:** `rss.xml` went from 1.95 MB to 1.2 MB, even with a header, footer and description added to every item.
+- **Valid:** all three feeds pass the W3C validator. The two remaining warning types are deliberate (iframes, and `#fn:N` footnote fragments).
+
+## Follow-ups
+
+- Check the deployed feeds in real readers (Feedly, NetNewsWire). Readers keep the content they first fetched for each item, so subscribe to a fresh URL such as `https://danny.is/rss.xml?v=2` to see every item re-rendered, then unsubscribe. Run the live URLs through `https://validator.w3.org/feed/check.cgi?url=…` too, which also checks the self link.
+- Optional: a feed-specific reply address (e.g. `hi+rss@danny.is`) for the footer's reply-by-email link.
+- If Bluesky or Mastodon embeds start being used, check `astro-embed`'s output in the feed.
+
+## How the feeds worked before
+
+Each endpoint (`src/pages/rss.xml.js`, `src/pages/rss/articles.xml.js`, `src/pages/rss/notes.xml.js`) was a near-identical copy. It rendered each entry's MDX `Content` with the experimental Container API (MDX renderer only) and handed the raw HTML to `@astrojs/rss` as `content`. Nothing else happened to it. Entries that threw while rendering (anything with a React island) were left out.
 
 Two consequences explain most of the problems below:
 
@@ -89,7 +110,7 @@ The `.md` twins output the raw MDX source, so components appear as JSX. That's f
 Three layers, so most new components need no feed-specific work:
 
 1. **One shared feed builder** (`src/pages/rss/_feed.ts`) used by all three endpoints. It renders each entry, wraps it with a header and footer, runs the cleanup pass, and maps frontmatter to item fields.
-2. **Feed versions of the components that need them.** Render with Container `locals: { feed: true }`. A component that needs different markup checks `Astro.locals.feed`. Pass a feed `components` map to `<Content>` for the remapped tags (`markdown-preview`, `file-tree`, `img`). The capitalised components are auto-imported by `satteriMdxImports`, so the `components` prop can't override them. That's why `locals` is the way in.
+2. **Feed versions of the components that need them.** Render with Container `locals: { feed: true }`. A component that needs different markup checks `Astro.locals.feed`. The capitalised components are auto-imported by `satteriMdxImports`, so a `components` prop can't override them. That's why `locals` is the way in. The remapped tags (`markdown-preview`, `file-tree`, image captions) turned out simpler to handle in the cleanup pass than through a feed `components` map.
 3. **A general HTML cleanup pass** (`src/utils/feed-html.ts`) over each item's final HTML, using `rehype` and `unist-util-visit` (both already dependencies). It covers everything generic and is the safety net for anything not handled above. It's a pure HTML-in, HTML-out function, so it can be unit-tested with fixtures.
 
 ## Phase 1: Shared builder and general cleanup
@@ -100,7 +121,7 @@ The biggest win, and almost all of it generic.
 - [x] Move the shared logic into one feed builder. The endpoints just choose collections, title and description.
 - [x] Cleanup pass:
   - [x] Make `href`, `src` and `poster` absolute against `site`.
-  - [x] Replace `<picture>` with its `<img>`, and drop `srcset`/`sizes`, so every image is one absolute URL.
+  - [x] Replace `<picture>` with its `<img>`, and drop `srcset`/`sizes`, so every image is one absolute URL. (Phase 5 changed this to use the largest `srcset` candidate up to 1400px.)
   - [x] Turn Expressive Code into a plain `<pre><code>` with newline-separated lines. Keep the file title as a caption (e.g. `<figure><figcaption><code>recording.json</code></figcaption><pre>…</pre></figure>`).
   - [x] Remove `script`, `style`, `link`, `template`, `button` and `noscript`, plus screen-reader-only text, decorative SVG icons and heading anchor links.
   - [x] Strip `class`, `style`, `data-*`, `loading` and `decoding` attributes.
@@ -163,22 +184,22 @@ The Phase 1 placeholder is now only a fallback: each diagram appears in feeds as
 - [x] Update `docs/developer/content-system.md` and the RSS section of `docs/developer/architecture-guide.md`.
 - [x] Run `bun run check:all`.
 - [x] Address CodeRabbit's review on the PR. The builder moved from `src/utils/feed/` to `src/pages/rss/_feed.ts`, because it renders a component and utils are leaf dependencies (`architecture-guide.md`). The cleanup pass flattened to `src/utils/feed-html.ts`. Mermaid feed images are written to a temporary file and renamed, so an interrupted build can't cache a truncated image.
-- [ ] After deploying, check in real readers. Readers keep the content they first fetched for each item, so an existing subscription only shows the new rendering on new posts. To see every item freshly rendered, subscribe to a fresh URL such as `https://danny.is/rss.xml?v=2` (the query string is ignored by the server but makes it a new feed to readers), then unsubscribe afterwards. Also run the live URLs through the W3C validator (`https://validator.w3.org/feed/check.cgi?url=…`), which also checks the self link.
+- [x] Merge and deploy. Checking in real readers is the first follow-up above.
 
 Representative items:
 
-| Item                                                  | Covers                                    |
-| ----------------------------------------------------- | ----------------------------------------- |
-| `writing/loomclone-part-1`                            | callouts, LCVid, intro paragraph, series  |
-| `writing/how-voicepad-works`                          | tabs, grid captions, file trees, code     |
-| `notes/claude-daily-log`                              | `md preview`, Mermaid                     |
-| `writing/vibe-coding-ios-app-chrome-extension-publish-notes` | `BasicImage` / `<picture>`         |
-| `writing/an-actual-homepage`                          | footnotes                                 |
-| `notes/2026-08-14-better-tweets-on-this-site`         | tweet                                     |
-| `writing/introducing-astro-editor`                    | YouTube                                   |
-| a body-less `sourceURL` note and a Medium article     | header framing                            |
+| Item | Covers |
+| --- | --- |
+| `writing/loomclone-part-1` | callouts, LCVid, intro paragraph, series |
+| `writing/how-voicepad-works` | tabs, grid captions, file trees, code |
+| `notes/claude-daily-log` | `md preview`, Mermaid |
+| `writing/vibe-coding-ios-app-chrome-extension-publish-notes` | `BasicImage` / `<picture>` |
+| `writing/an-actual-homepage` | footnotes |
+| `notes/2026-08-14-better-tweets-on-this-site` | tweet |
+| `writing/introducing-astro-editor` | YouTube |
+| a body-less `sourceURL` note and a Medium article | header framing |
 
 ## Notes
 
-- Changing the content of all 227 items doesn't re-surface them in readers, because readers key on `guid`. A few readers may show some as "updated".
+- Changing the content of every existing item doesn't re-surface them in readers, because readers key on `guid`. A few readers may show some as "updated".
 - `bun run build` needs to run outside the bash sandbox, because Mermaid's headless Chromium is blocked inside it.
