@@ -14,7 +14,7 @@ Split by topic — how we get the page, what it says about itself, what we do wi
 - `image.ts` — copying its images onto our domain: the card's sizes, banner-or-logo shape, and which failures get reported.
 - `health.ts` — the end-of-build warning summary.
 
-The copying itself is `src/utils/mirrorImage.ts`, which is shared — anything that shows someone else's image at build time goes through it, filed under a group named for the feature. Link cards are the `links` group. `src/lib/mirrored-images-integration.mjs` emits the derivatives into `dist/mirrored/` and serves them from the cache in dev — the same two-hook shape as the Pagefind integration.
+The copying itself is `src/utils/mirrorImage.ts`, which is shared — anything that shows someone else's image at build time goes through it, filed under a group named for the feature. Link cards are the `links` group. `src/lib/cached-images-integration.mjs` emits the derivatives into `dist/mirrored/` and serves them from the cache in dev — the same two-hook shape as the Pagefind integration.
 
 ## Why one call that can't fail
 
@@ -64,7 +64,7 @@ Written down so it doesn't get re-added on the assumption it was an oversight:
 
 - `src/utils/linkPreview/` — the module.
 - `src/utils/mirrorImage.ts` — the shared download, re-encode and cache; `tests/unit/mirrorImage.test.ts`.
-- `src/lib/mirrored-images-integration.mjs` — emits and serves the images.
+- `src/lib/cached-images-integration.mjs` — emits and serves the images.
 - `src/components/mdx/BookmarkCard.astro`, `Notion.astro` — the consumers.
 - `tests/unit/linkPreview.test.ts`, with real captured heads in `tests/fixtures/link-heads/` — kept byte-for-byte as served, and excluded from Prettier for that reason.
 - `/styleguide/components#bookmark-card` — every state, rendered.

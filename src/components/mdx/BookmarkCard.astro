@@ -38,60 +38,93 @@ const flags = [
   link.archived ? 'Archived copy' : null,
   link.fileType,
 ].filter((flag): flag is string => Boolean(flag))
+
+// In feeds the card is a plain paragraph: linked title, description and a
+// line of facts. A banner preview follows it; logos add nothing without the card.
+const feed = Astro.locals.feed
+const feedFacts = [link.domain, ...facts.map(fact => fact.text), ...flags].filter(Boolean)
 ---
 
-<div class={`bookmark-card cq ${className}`}>
-  <a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
-    <div class="bookmark-content">
-      <span class="bookmark-title">{link.displayTitle}</span>
-      {link.description && <p class="bookmark-description">{link.description}</p>}
-      <span class="bookmark-meta">
-        <span class="bookmark-facts">
-          {
-            link.domain && (
-              <span class="bookmark-fact bookmark-domain">
-                {link.favicon && (
-                  <img
-                    class="bookmark-favicon"
-                    src={link.favicon.src}
-                    alt=""
-                    width={link.favicon.width}
-                    height={link.favicon.height}
-                    loading="lazy"
-                  />
-                )}
-                {link.domain}
-              </span>
-            )
-          }
-          {
-            facts.map(fact => (
-              <span class="bookmark-fact">
-                {fact.icon && <Icon name={fact.icon} />}
-                {fact.text}
-              </span>
-            ))
-          }
-        </span>
-        {flags.map(flag => <span class="bookmark-flag">{flag}</span>)}
-      </span>
-    </div>
-    {
-      link.image && (
-        <div class="bookmark-preview" data-shape={link.image.shape}>
-          <img
-            src={link.image.src}
-            alt={link.imageAlt ?? ''}
-            width={link.image.width}
-            height={link.image.height}
-            loading="lazy"
-            decoding="async"
-          />
+{
+  feed ? (
+    <>
+      <p>
+        <a href={url}>
+          <strong>{link.displayTitle}</strong>
+        </a>
+        {link.description && (
+          <>
+            <br />
+            {link.description}
+          </>
+        )}
+        <br />
+        <small>{feedFacts.join(' · ')}</small>
+      </p>
+      {link.image?.shape === 'banner' && (
+        <p>
+          <a href={url}>
+            <img
+              src={link.image.src}
+              alt={link.imageAlt ?? ''}
+              width={link.image.width}
+              height={link.image.height}
+            />
+          </a>
+        </p>
+      )}
+    </>
+  ) : (
+    <div class={`bookmark-card cq ${className}`}>
+      <a href={url} class="bookmark-link" target="_blank" rel="noopener noreferrer">
+        <div class="bookmark-content">
+          <span class="bookmark-title">{link.displayTitle}</span>
+          {link.description && <p class="bookmark-description">{link.description}</p>}
+          <span class="bookmark-meta">
+            <span class="bookmark-facts">
+              {link.domain && (
+                <span class="bookmark-fact bookmark-domain">
+                  {link.favicon && (
+                    <img
+                      class="bookmark-favicon"
+                      src={link.favicon.src}
+                      alt=""
+                      width={link.favicon.width}
+                      height={link.favicon.height}
+                      loading="lazy"
+                    />
+                  )}
+                  {link.domain}
+                </span>
+              )}
+              {facts.map(fact => (
+                <span class="bookmark-fact">
+                  {fact.icon && <Icon name={fact.icon} />}
+                  {fact.text}
+                </span>
+              ))}
+            </span>
+            {flags.map(flag => (
+              <span class="bookmark-flag">{flag}</span>
+            ))}
+          </span>
         </div>
-      )
-    }
-  </a>
-</div>
+        {link.image && (
+          <div class="bookmark-preview" data-shape={link.image.shape}>
+            <img
+              src={link.image.src}
+              alt={link.imageAlt ?? ''}
+              width={link.image.width}
+              height={link.image.height}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        )}
+      </a>
+    </div>
+  )
+}
 
 <style>
   .bookmark-link {

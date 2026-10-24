@@ -1,0 +1,77 @@
+---
+/**
+ * The HTML of one RSS feed item: an article's or note's MDX body, framed by
+ * what its page shows around it, since feed readers show only the item.
+ *
+ * - Header: the external-publication note (Medium etc.), a note's source
+ *   embed, an article's cover and its series callout.
+ * - Footer: one small line with where and when it was posted, links to the web
+ *   and markdown versions, and a reply-by-email link.
+ *
+ * Rendered by the feed builder (`src/pages/rss/_feed.ts`) through the
+ * Container API with `Astro.locals.feed` set; the output then goes through
+ * `cleanFeedHtml`, which makes its URLs absolute and strips site-only markup.
+ */
+import { type CollectionEntry, render } from 'astro:content'
+import { Image } from 'astro:assets'
+import { Embed } from '@components/mdx/index'
+import { FormattedDate } from '@components/ui/index'
+import SeriesCallout from './SeriesCallout.astro'
+import { getConfig } from '@config/config'
+
+interface Props {
+  entry: CollectionEntry<'articles'> | CollectionEntry<'notes'>
+  /** The entry's page path, e.g. `/writing/some-article/`. */
+  path: string
+}
+
+const { entry, path } = Astro.props
+const { Content } = await render(entry)
+const { author, site } = getConfig()
+
+const article = entry.collection === 'articles' ? entry.data : undefined
+const sourceURL = entry.collection === 'notes' ? entry.data.sourceURL : undefined
+
+// Articles published elsewhere: the page only redirects to them.
+const external = article?.platform && article.redirectURL ? article.redirectURL : undefined
+const publisher = article?.platform === 'medium' ? 'Medium' : external && new URL(external).hostname
+
+const markdownPath = `${path.replace(/\/$/, '')}.md`
+const replyHref = `mailto:${author.contactEmail}?subject=${encodeURIComponent(`Re: ${entry.data.title}`)}`
+---
+
+{
+  external && (
+    <>
+      {article?.description && <p>{article.description}</p>}
+      <p>
+        Originally published on <a href={external}>{publisher}</a>.
+      </p>
+    </>
+  )
+}
+{sourceURL && <Embed url={sourceURL} />}
+{
+  article?.cover && article.coverAlt && (
+    <Image src={article.cover} alt={article.coverAlt} width={1200} />
+  )
+}
+{article && <SeriesCallout series={article.series} currentId={entry.id} />}
+
+<Content />
+
+<hr />
+<p>
+  <small>
+    Posted on <a href="/">{site.shortName}</a> on <FormattedDate date={entry.data.pubDate} /> ·
+    <a href={path}>Web</a>
+    {
+      !external && (
+        <>
+          · <a href={markdownPath}>Markdown</a>
+        </>
+      )
+    }
+    · <a href={replyHref}>Reply by email</a>
+  </small>
+</p>

@@ -99,30 +99,47 @@ const readingTime = remarkPluginFrontmatter.minutesRead; // "5 min read"
 
 ## RSS Feed Implementation
 
-Three RSS feeds generated using Astro's experimental Container API:
+Three full-content RSS feeds:
 
-- `/rss.xml` - Combined articles + notes
-- `/rss/articles.xml` - Articles only
-- `/rss/notes.xml` - Notes only
+- `/rss.xml` - Combined articles + notes (`src/pages/rss.xml.ts`)
+- `/rss/articles.xml` - Articles only (`src/pages/rss/articles.xml.ts`)
+- `/rss/notes.xml` - Notes only (`src/pages/rss/notes.xml.ts`)
 
-### Container API Pattern
+The endpoints only choose entries (via `filterContentForListing`) and the channel's title and description. The rest is in two files:
 
-See [architecture-guide.md § RSS Container API](./architecture-guide.md#rss-container-api) for complete RSS Container API implementation details.
+- **`src/pages/rss/_feed.ts` — `feedResponse({ title, description, entries, url })`** builds the whole feed. It sits beside the endpoints, not in `src/utils`, because it renders a component (utils are leaf dependencies). The `_` prefix keeps Astro from routing it.
+  - **Channel:** `language`, `image` and an `atom:link` self link.
+  - **Items, newest first:** `description` (frontmatter, or the same `generateSummary` fallback the page uses), `category` from tags, `dc:creator`, and the full content.
 
-**Key features:**
+  Each item's content is the `FeedItem` component (`src/components/layout/FeedItem.astro`), rendered with Astro's experimental Container API. It's the MDX body framed by what its page shows around it, since readers see only the item:
+  - the "originally published on Medium" note for external articles
+  - a note's `sourceURL` embed
+  - an article's cover and series callout
+  - a one-line footer with links to the web and markdown versions and a reply-by-email link
 
-- Full MDX component rendering in RSS feeds
-- All MDX components (Callout, Embed, etc.) work in RSS output
-- Automatic content filtering (drafts/styleguide excluded in production)
-- Error-resilient rendering (failed items are skipped with warning)
+  It renders with `Astro.locals.feed` set to `true`, so a component can output simpler markup for feeds (`if (Astro.locals.feed) …`). Framework components (React demos) can't render in the container, so a placeholder renderer claims them and they become a link to the post. Item links and guids are the post URLs and must never change, or readers show the items as new.
+- **`src/utils/feed-html.ts` — `cleanFeedHtml(html, link)`** makes the rendered HTML hold up in feed readers. Readers have none of the site's CSS or JS, sanitise heavily (dropping `script`/`style`, stripping `class`/`style`, removing `div`/`span`/`svg`/`input` tags, hiding or deleting `hidden` content), and RSS has no base URL. This pass:
+  - makes URLs absolute and collapses `<picture>`/`srcset` to one `<img>`: the largest `srcset` candidate up to 1400px wide, not Astro's full-size original
+  - turns Expressive Code, `md preview` and `tree` blocks into plain `<pre><code>` blocks
+  - turns markdown image captions into `<figcaption>`s
+  - swaps Mermaid diagrams for their RSS-only image (see `satteriMermaid` under [Markdown Plugins Configuration](#markdown-plugins-configuration)), and interactive islands for a link to the post
+  - removes scripts, buttons, icon SVGs and screen-reader-only text
+  - uses `fn:N` / `fnref:N` footnote ids, which readers with footnote popovers look for
+  - unwraps leftover custom elements and strips presentational attributes
 
-### Implementation Files
+  It's a pure function, unit-tested in `tests/unit/feed-html.test.ts`.
 
-- `src/pages/rss.xml.js` - Combined feed
-- `src/pages/rss/articles.xml.js` - Articles only
-- `src/pages/rss/notes.xml.js` - Notes only
+**Components with feed versions:** these check `Astro.locals.feed` and output plain HTML:
+- `Callout` is a `<blockquote>` with its emoji and title as a bold first line.
+- `Tweet` is a `<blockquote>` ending with an attribution line.
+- `BookmarkCard` is a paragraph (linked title, description, facts), plus its banner image.
+- `Tabs` / `TabItem` show every panel in turn under a bold label.
+- Video embeds (YouTube and Vimeo via `Embed`, plus `Loom` and `LCVid`) render `FeedEmbed`: a player iframe with a plain link as its fallback content.
+- Gists (via `Embed`) are a link.
 
-All three use identical pattern with different collection sources.
+Every iframe in a feed is followed by a link. The cleanup pass moves an iframe's fallback content out to a paragraph after it, or links to its source if it has none. So readers that strip iframes still have something to follow.
+
+**Adding a component:** most need nothing, because the cleanup pass handles generic markup. Check the component in the built feed. If its content relies on CSS or JS to make sense (hidden panels, background images, content in attributes), give it a feed branch on `Astro.locals.feed` that outputs plain HTML. Swapping the outer tag (`const Tag = feed ? 'blockquote' : 'aside'`) often covers most of it. Any embed should include a plain link, which `FeedEmbed` does for iframes.
 
 ## SEO
 
@@ -225,7 +242,7 @@ MDAST plugins run first (array order), then MDAST→HAST conversion, then HAST p
 - `satteriImageCaption` - Moves a markdown image's title text onto a `caption` prop (rendered as `<figcaption>` by `BasicImage`)
 - `satteriExternalLinks` - Adds `target="_blank" rel="noopener noreferrer"` to external links (SmartLink semantics: absolute http(s) URL whose host isn't danny.is or a subdomain)
 - `satteriListDensity` - Adds `long-list-items` class to lists with paragraph-like items
-- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`. Theme-aware: sentinel colors from `src/config/mermaid.js` are rewritten to `--mermaid-*` variables defined in `src/styles/_mermaid.css` (see comments in those files for how and why)
+- `satteriMermaid` - Renders ` ```mermaid ` fences to inline SVG at **build time** (zero client JS) via `mermaid-isomorphic`. Theme-aware: sentinel colors from `src/config/mermaid.js` are rewritten to `--mermaid-*` variables defined in `src/styles/_mermaid.css` (see comments in those files for how and why). It also saves each diagram as an image **for RSS feeds only**, because readers strip inline SVG. The image is a 2x screenshot from the same render in the light colours, on white, saved as WebP in `node_modules/.astro/feed-images/` and served at `/feed-images/`. The site never uses these images; `cleanFeedHtml` swaps each diagram's SVG for its image
 
 **Location rationale:** Build-time plugins are kept in `src/lib/` separate from runtime utilities (`src/utils/`) and one-off scripts (`scripts/`). They run during the build process before any component code executes.
 

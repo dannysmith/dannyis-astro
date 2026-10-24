@@ -2,6 +2,7 @@
 export { default as BaseHead } from './BaseHead.astro'
 export { default as CommandPalette } from './CommandPalette.astro'
 export { default as Footer } from './Footer.astro'
+export { default as FeedItem } from './FeedItem.astro'
 export { default as HomeLinkList } from './HomeLinkList.astro'
 export { default as HomepageLatestArticles } from './HomepageLatestArticles.astro'
 export { default as InlineFootnotes } from './InlineFootnotes.astro'

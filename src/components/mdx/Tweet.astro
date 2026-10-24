@@ -42,31 +42,43 @@ function capped(width: number, height: number) {
   if (width <= MAX_WIDTH) return { width, height }
   return { width: MAX_WIDTH, height: Math.round((height / width) * MAX_WIDTH) }
 }
+
+// In feeds a tweet is a plain blockquote: its text and media, then an
+// attribution line linking to it. The author header and its icons need CSS.
+const feed = Astro.locals.feed
+const Wrapper = feed ? 'blockquote' : 'article'
+const postedLabel = posted?.toLocaleDateString('en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
 ---
 
 {
   tweet && links && posted ? (
-    <article class="tweet">
-      <header class="tweet-author">
-        {tweet.author.avatar_url && (
-          <Image
-            class="tweet-avatar"
-            src={tweet.author.avatar_url}
-            width={96}
-            height={96}
-            layout="fixed"
-            alt=""
-            loading="lazy"
-          />
-        )}
-        <a class="tweet-identity" href={links.mirror} {...external}>
-          <span class="tweet-name">{tweet.author.name}</span>
-          <span class="tweet-handle">@{tweet.author.screen_name}</span>
-        </a>
-        <a class="tweet-origin" href={links.origin} aria-label="View original on X" {...external}>
-          <Icon name="simple-icons:x" />
-        </a>
-      </header>
+    <Wrapper class="tweet">
+      {!feed && (
+        <header class="tweet-author">
+          {tweet.author.avatar_url && (
+            <Image
+              class="tweet-avatar"
+              src={tweet.author.avatar_url}
+              width={96}
+              height={96}
+              layout="fixed"
+              alt=""
+              loading="lazy"
+            />
+          )}
+          <a class="tweet-identity" href={links.mirror} {...external}>
+            <span class="tweet-name">{tweet.author.name}</span>
+            <span class="tweet-handle">@{tweet.author.screen_name}</span>
+          </a>
+          <a class="tweet-origin" href={links.origin} aria-label="View original on X" {...external}>
+            <Icon name="simple-icons:x" />
+          </a>
+        </header>
+      )}
 
       {segments.length > 0 && (
         <div class="tweet-body" lang={tweet.lang ?? undefined}>
@@ -113,18 +125,19 @@ function capped(width: number, height: number) {
         </a>
       ))}
 
-      <footer class="tweet-meta">
-        <a href={links.mirror} {...external}>
-          <time datetime={posted.toISOString()}>
-            {posted.toLocaleDateString('en-GB', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
-        </a>
-      </footer>
-    </article>
+      {feed ? (
+        <p>
+          — {tweet.author.name} (@{tweet.author.screen_name}),
+          <a href={links.mirror}>{postedLabel}</a>
+        </p>
+      ) : (
+        <footer class="tweet-meta">
+          <a href={links.mirror} {...external}>
+            <time datetime={posted.toISOString()}>{postedLabel}</time>
+          </a>
+        </footer>
+      )}
+    </Wrapper>
   ) : (
     <p class="tweet-unavailable">
       <a href={tweetId ? `${ORIGIN_BASE}/i/status/${tweetId}` : id} {...external}>

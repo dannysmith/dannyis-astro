@@ -19,27 +19,41 @@ if (icon && emoji) {
     'Callout: Cannot use both icon and emoji props. Use either icon (for astro-icons) or emoji (for text emojis).',
   )
 }
+
+// Feed readers style blockquotes but not asides, and can't show the icon box,
+// so in feeds a callout is a blockquote with its title as a bold first line.
+const feed = Astro.locals.feed
+const Tag = feed ? 'blockquote' : 'aside'
 ---
 
-<aside
+<Tag
   aria-label={title || undefined}
   class={`callout ${className || ''} ${largeHeading ? 'large-heading' : ''}`}
   data-callout-color={type}
 >
   {
-    (icon || emoji) && (
+    !feed && (icon || emoji) && (
       <div class="icon-wrapper">
         <div class="icon">{icon ? <Icon name={icon} /> : emoji}</div>
       </div>
     )
   }
   <div class="content-wrapper">
-    {title && <h3 class="title">{title}</h3>}
+    {
+      title &&
+        (feed ? (
+          <p>
+            <strong>{emoji ? `${emoji} ${title}` : title}</strong>
+          </p>
+        ) : (
+          <h3 class="title">{title}</h3>
+        ))
+    }
     <div class="content content-trim">
       <slot />
     </div>
   </div>
-</aside>
+</Tag>
 
 <style>
   .callout {

@@ -1,6 +1,7 @@
 ---
 import { CONFIG } from '@config/site'
 import { fetchLoomCloneVideo, resolveJsonUrl } from '@utils/fetchLoomCloneVideo'
+import FeedEmbed from '@components/mdx/FeedEmbed.astro'
 
 export interface Props {
   /** Full URL, absolute path or bare slug pointing at a v.danny.is video. */
@@ -62,90 +63,106 @@ const hasMetaRow = showMeta || showOpenLink
 ---
 
 <figure class:list={['lcvid', className]} data-lcvid>
-  {showTitle && title && <p class="lcvid-title">{title}</p>}
-
-  <div class="lcvid-player" style={`aspect-ratio: ${aspectRatio};`}>
-    <button type="button" class="lcvid-facade" aria-label={`Play: ${title || 'video'}`}>
-      <img class="lcvid-poster" src={video.urls.poster} alt="" loading="lazy" />
-      <span class="lcvid-play" aria-hidden="true">
-        <svg viewBox="0 0 72 72">
-          <circle cx="36" cy="36" r="35"></circle>
-          <path d="M29 23 L29 49 L51 36 Z"></path>
-        </svg>
-      </span>
-      <span class="lcvid-duration-badge" aria-hidden="true">{video.durationFormatted}</span>
-    </button>
-
-    <template class="lcvid-template">
-      <media-player
-        title={title}
-        poster={video.urls.poster}
-        crossorigin="anonymous"
-        playsinline
-        load="eager"
-        preload="auto"
-      >
-        <media-provider>
-          {
-            video.sources.map(source => (
-              <source
-                src={source.url}
-                type={source.type}
-                data-width={source.width}
-                data-height={source.height}
-              />
-            ))
-          }
-          {
-            video.urls.captions && (
-              <track
-                src={video.urls.captions}
-                kind="subtitles"
-                srclang="en"
-                label="English"
-                default
-              />
-            )
-          }
-          <media-poster class="vds-poster" src={video.urls.poster} alt={title}></media-poster>
-        </media-provider>
-        <media-video-layout thumbnails={video.urls.storyboard ?? undefined}></media-video-layout>
-      </media-player>
-    </template>
-  </div>
-
   {
-    hasMetaRow && (
-      <figcaption class="lcvid-meta">
-        {showMeta && (
-          <span class="lcvid-detail">
-            <span>{video.durationFormatted}</span>
-            <span aria-hidden="true">·</span>
-            <span>{recordedDate}</span>
-          </span>
-        )}
-        {showOpenLink && (
-          <a class="lcvid-open" href={video.urls.page} target="_blank" rel="noopener noreferrer">
-            <span>Open</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+    Astro.locals.feed ? (
+      <FeedEmbed
+        src={video.urls.embed}
+        href={video.urls.page}
+        label={`Watch ${title ? `“${title}”` : 'the video'} (${video.durationFormatted})`}
+        title={title || undefined}
+        width={560}
+        height={Math.round((560 * video.height) / video.width)}
+      />
+    ) : (
+      <>
+        {showTitle && title && <p class="lcvid-title">{title}</p>}
+
+        <div class="lcvid-player" style={`aspect-ratio: ${aspectRatio};`}>
+          <button type="button" class="lcvid-facade" aria-label={`Play: ${title || 'video'}`}>
+            <img class="lcvid-poster" src={video.urls.poster} alt="" loading="lazy" />
+            <span class="lcvid-play" aria-hidden="true">
+              <svg viewBox="0 0 72 72">
+                <circle cx="36" cy="36" r="35" />
+                <path d="M29 23 L29 49 L51 36 Z" />
+              </svg>
+            </span>
+            <span class="lcvid-duration-badge" aria-hidden="true">
+              {video.durationFormatted}
+            </span>
+          </button>
+
+          <template class="lcvid-template">
+            <media-player
+              title={title}
+              poster={video.urls.poster}
+              crossorigin="anonymous"
+              playsinline
+              load="eager"
+              preload="auto"
             >
-              <path d="M15 3h6v6" />
-              <path d="M10 14L21 3" />
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            </svg>
-          </a>
+              <media-provider>
+                {video.sources.map(source => (
+                  <source
+                    src={source.url}
+                    type={source.type}
+                    data-width={source.width}
+                    data-height={source.height}
+                  />
+                ))}
+                {video.urls.captions && (
+                  <track
+                    src={video.urls.captions}
+                    kind="subtitles"
+                    srclang="en"
+                    label="English"
+                    default
+                  />
+                )}
+                <media-poster class="vds-poster" src={video.urls.poster} alt={title} />
+              </media-provider>
+              <media-video-layout thumbnails={video.urls.storyboard ?? undefined} />
+            </media-player>
+          </template>
+        </div>
+
+        {hasMetaRow && (
+          <figcaption class="lcvid-meta">
+            {showMeta && (
+              <span class="lcvid-detail">
+                <span>{video.durationFormatted}</span>
+                <span aria-hidden="true">·</span>
+                <span>{recordedDate}</span>
+              </span>
+            )}
+            {showOpenLink && (
+              <a
+                class="lcvid-open"
+                href={video.urls.page}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>Open</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M15 3h6v6" />
+                  <path d="M10 14L21 3" />
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                </svg>
+              </a>
+            )}
+          </figcaption>
         )}
-      </figcaption>
+      </>
     )
   }
 
