@@ -27,7 +27,7 @@ interface Props {
 
 const { entry, path } = Astro.props
 const { Content } = await render(entry)
-const { author } = getConfig()
+const { author, site } = getConfig()
 
 const article = entry.collection === 'articles' ? entry.data : undefined
 const sourceURL = entry.collection === 'notes' ? entry.data.sourceURL : undefined
@@ -63,7 +63,7 @@ const replyHref = `mailto:${author.contactEmail}?subject=${encodeURIComponent(`R
 <hr />
 <p>
   <small>
-    Posted on <a href="/">danny.is</a> on <FormattedDate date={entry.data.pubDate} /> ·
+    Posted on <a href="/">{site.shortName}</a> on <FormattedDate date={entry.data.pubDate} /> ·
     <a href={path}>Web</a>
     {
       !external && (

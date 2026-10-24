@@ -9,7 +9,7 @@
  * components need no feed-specific work:
  *
  * - URLs (`href`, `src`, `poster`) are made absolute against the post's URL,
- *   and `<picture>` / `srcset` collapse to one plain `<img src>`.
+ *   and `<picture>` / `srcset` collapse to one plain, sensibly sized `<img src>`.
  * - Expressive Code blocks become plain `<pre><code>` with real newlines.
  * - `md preview` and `tree` blocks (raw `<markdown-preview>` / `<file-tree>`,
  *   whose content is in a `code` attribute) become plain code blocks.
@@ -39,6 +39,13 @@ const VISUALLY_HIDDEN_CLASSES = ['sr-only', 'visually-hidden', 'lyt-visually-hid
 
 /** Attributes holding a single URL, made absolute against the post's URL. */
 const URL_PROPS = ['href', 'src', 'poster']
+
+/**
+ * Feed images are a single URL, so an image with a `srcset` uses its largest
+ * candidate up to this width (twice a reading column) rather than Astro's
+ * full-size `src`.
+ */
+const MAX_IMAGE_WIDTH = 1400
 
 /** Properties kept on every element; everything presentational is dropped. */
 const KEEP_PROPS = new Set([
@@ -243,9 +250,29 @@ function absoluteUrl(value: string, base: string): string {
   return new URL(value, base).href
 }
 
+/** Point an image with a `srcset` at a sensibly sized candidate, scaling its dimensions. */
+function pickImageSource(properties: Element['properties']) {
+  const { srcSet, width, height } = properties
+  const candidates = (Array.isArray(srcSet) ? srcSet : String(srcSet ?? '').split(','))
+    .map(candidate => String(candidate).trim().split(/\s+/))
+    .map(([url, descriptor]) => ({
+      url,
+      width: descriptor?.endsWith('w') ? parseInt(descriptor) : 0,
+    }))
+    .filter(candidate => candidate.url && candidate.width && candidate.width <= MAX_IMAGE_WIDTH)
+  const best = candidates.sort((a, b) => b.width - a.width)[0]
+  if (!best) return
+  properties.src = best.url
+  if (typeof width === 'number' && typeof height === 'number') {
+    properties.height = Math.round((height * best.width) / width)
+    properties.width = best.width
+  }
+}
+
 /** Strip presentational attributes, fix URLs and footnote ids. */
 function cleanProperties(node: Element, base: string) {
   const { properties } = node
+  if (node.tagName === 'img') pickImageSource(properties)
   const languageClass =
     node.tagName === 'code' ? classes(node).filter(c => c.startsWith('language-')) : []
 

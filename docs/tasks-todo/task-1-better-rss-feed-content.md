@@ -159,9 +159,10 @@ The Phase 1 placeholder is now only a fallback: each diagram appears in feeds as
 
 ## Phase 5: Verify and document
 
-- [ ] Look at a handful of representative items in a couple of real readers, before and after.
-- [ ] Update `docs/developer/content-system.md` and the RSS section of `docs/developer/architecture-guide.md`.
-- [ ] Run `bun run check:all`.
+- [x] Check the representative items (below) in the built feed: their HTML in full, plus a headless render with a minimal reader-style stylesheet. They read as intended. That check also led to one change: images now use their largest `srcset` candidate up to 1400px, not Astro's full-size original (e.g. 1280px rather than 3508px).
+- [x] Update `docs/developer/content-system.md` and the RSS section of `docs/developer/architecture-guide.md`.
+- [x] Run `bun run check:all`.
+- [ ] After deploying, check in real readers. Readers keep the content they first fetched for each item, so an existing subscription only shows the new rendering on new posts. To see every item freshly rendered, subscribe to a fresh URL such as `https://danny.is/rss.xml?v=2` (the query string is ignored by the server but makes it a new feed to readers), then unsubscribe afterwards. Also run the live URLs through the W3C validator (`https://validator.w3.org/feed/check.cgi?url=…`), which also checks the self link.
 
 Representative items:
 

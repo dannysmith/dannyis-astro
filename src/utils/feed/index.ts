@@ -56,11 +56,11 @@ async function feedItems(entries: FeedEntry[]): Promise<RSSFeedItem[]> {
   const creator = `<dc:creator>${escapeUTF8(site.name)}</dc:creator>`
   const sorted = [...entries].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 
-  const items: RSSFeedItem[] = []
   // The project's `*.astro` module shim is looser than the factory type the
   // Container expects; the component is a real Astro component.
   const component = FeedItem as unknown as Parameters<AstroContainer['renderToString']>[0]
 
+  const items: RSSFeedItem[] = []
   for (const entry of sorted) {
     const path = entryPath(entry)
     const html = await container.renderToString(component, {

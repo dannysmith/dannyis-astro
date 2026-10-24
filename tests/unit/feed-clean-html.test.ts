@@ -25,11 +25,19 @@ describe('cleanFeedHtml', () => {
       expect(clean(html)).toBe(html)
     })
 
-    it('collapses <picture> and srcset to a single image', () => {
+    it('collapses <picture> and srcset to one image, sized for a reading column', () => {
       const html =
         '<picture><source srcset="/a.avif 300w" type="image/avif"><img src="/a.jpg" srcset="/a.jpg 300w, /b.jpg 600w" sizes="100vw" alt="A" loading="lazy" decoding="async" width="300" height="200"></picture>'
       expect(clean(html)).toBe(
-        '<img src="https://danny.is/a.jpg" alt="A" width="300" height="200">',
+        '<img src="https://danny.is/b.jpg" alt="A" width="600" height="400">',
+      )
+    })
+
+    it('uses the largest srcset candidate up to 1400px rather than the full-size src', () => {
+      const html =
+        '<img src="/full.webp" srcset="/s.webp 640w, /m.webp 1280w, /l.webp 2048w, /full.webp 3508w" alt="" width="3508" height="2108">'
+      expect(clean(html)).toBe(
+        '<img src="https://danny.is/m.webp" alt="" width="1280" height="769">',
       )
     })
   })

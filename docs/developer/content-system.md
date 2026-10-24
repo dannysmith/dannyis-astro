@@ -119,10 +119,10 @@ The endpoints only choose entries (via `filterContentForListing`) and the channe
 
   It renders with `Astro.locals.feed` set to `true`, so a component can output simpler markup for feeds (`if (Astro.locals.feed) …`). Framework components (React demos) can't render in the container, so a placeholder renderer claims them and they become a link to the post. Item links and guids are the post URLs and must never change, or readers show the items as new.
 - **`clean-html.ts` — `cleanFeedHtml(html, link)`** makes the rendered HTML hold up in feed readers. Readers have none of the site's CSS or JS, sanitise heavily (dropping `script`/`style`, stripping `class`/`style`, removing `div`/`span`/`svg`/`input` tags, hiding or deleting `hidden` content), and RSS has no base URL. This pass:
-  - makes URLs absolute and collapses `<picture>`/`srcset` to one `<img>`
+  - makes URLs absolute and collapses `<picture>`/`srcset` to one `<img>`: the largest `srcset` candidate up to 1400px wide, not Astro's full-size original
   - turns Expressive Code, `md preview` and `tree` blocks into plain `<pre><code>` blocks
   - turns markdown image captions into `<figcaption>`s
-  - swaps Mermaid diagrams for their RSS-only image (below), and interactive islands for a link to the post
+  - swaps Mermaid diagrams for their RSS-only image (see `satteriMermaid` under [Markdown Plugins Configuration](#markdown-plugins-configuration)), and interactive islands for a link to the post
   - removes scripts, buttons, icon SVGs and screen-reader-only text
   - uses `fn:N` / `fnref:N` footnote ids, which readers with footnote popovers look for
   - unwraps leftover custom elements and strips presentational attributes
