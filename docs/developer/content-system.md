@@ -99,30 +99,27 @@ const readingTime = remarkPluginFrontmatter.minutesRead; // "5 min read"
 
 ## RSS Feed Implementation
 
-Three RSS feeds generated using Astro's experimental Container API:
+Three full-content RSS feeds:
 
-- `/rss.xml` - Combined articles + notes
-- `/rss/articles.xml` - Articles only
-- `/rss/notes.xml` - Notes only
+- `/rss.xml` - Combined articles + notes (`src/pages/rss.xml.ts`)
+- `/rss/articles.xml` - Articles only (`src/pages/rss/articles.xml.ts`)
+- `/rss/notes.xml` - Notes only (`src/pages/rss/notes.xml.ts`)
 
-### Container API Pattern
+The endpoints only choose entries (via `filterContentForListing`) and the channel's title and description. Everything else is in `src/utils/feed/`:
 
-See [architecture-guide.md § RSS Container API](./architecture-guide.md#rss-container-api) for complete RSS Container API implementation details.
+- **`index.ts` — `feedItems(entries)`** renders each entry's MDX with Astro's experimental Container API and builds the items, newest first. Content renders with `Astro.locals.feed` set to `true`, so a component can output simpler markup for feeds (`if (Astro.locals.feed) …`). Framework components (React demos) can't render in the container, so a placeholder renderer claims them and they become a link to the post.
+- **`clean-html.ts` — `cleanFeedHtml(html, link)`** makes the rendered HTML hold up in feed readers. Readers have none of the site's CSS or JS, sanitise heavily (dropping `script`/`style`, stripping `class`/`style`, removing `div`/`span`/`svg`/`input` tags, hiding or deleting `hidden` content), and RSS has no base URL. This pass:
+  - makes URLs absolute and collapses `<picture>`/`srcset` to one `<img>`
+  - turns Expressive Code, `md preview` and `tree` blocks into plain `<pre><code>` blocks
+  - turns markdown image captions into `<figcaption>`s
+  - swaps Mermaid diagrams and interactive islands for a link to the post
+  - removes scripts, buttons, icon SVGs and screen-reader-only text
+  - uses `fn:N` / `fnref:N` footnote ids, which readers with footnote popovers look for
+  - unwraps leftover custom elements and strips presentational attributes
 
-**Key features:**
+  It's a pure function, unit-tested in `tests/unit/feed-clean-html.test.ts`.
 
-- Full MDX component rendering in RSS feeds
-- All MDX components (Callout, Embed, etc.) work in RSS output
-- Automatic content filtering (drafts/styleguide excluded in production)
-- Error-resilient rendering (failed items are skipped with warning)
-
-### Implementation Files
-
-- `src/pages/rss.xml.js` - Combined feed
-- `src/pages/rss/articles.xml.js` - Articles only
-- `src/pages/rss/notes.xml.js` - Notes only
-
-All three use identical pattern with different collection sources.
+**Adding a component:** most need nothing, because the cleanup pass handles generic markup. Check the component in the built feed. If its content relies on CSS or JS to make sense (hidden panels, background images, content in attributes), give it a feed branch on `Astro.locals.feed` that outputs plain HTML. Any embed should always include a plain link, so readers that strip the embed still have something to follow.
 
 ## SEO
 

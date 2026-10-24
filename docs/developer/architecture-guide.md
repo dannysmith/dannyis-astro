@@ -308,7 +308,7 @@ For HTML in components, **always include** security attributes:
 
 ### RSS Container API
 
-**Unique pattern:** Uses Astro's experimental Container API to render MDX components in RSS feeds. This enables all MDX components (Callout, Embed, etc.) to work in RSS output.
+**Unique pattern:** Uses Astro's experimental Container API to render MDX components in RSS feeds, then a cleanup pass makes the HTML hold up in feed readers. Content renders with `Astro.locals.feed` set, so components can output simpler markup for feeds.
 
 📖 **See [content-system.md § RSS Feed Implementation](./content-system.md#rss-feed-implementation) for complete implementation details and code examples**
 

@@ -96,21 +96,22 @@ Three layers, so most new components need no feed-specific work:
 
 The biggest win, and almost all of it generic.
 
-- [ ] Check first, because it decides how Phases 2 and 3 work: render with Container `locals: { feed: true }` and confirm `Astro.locals.feed` reaches a component nested inside MDX content. Add the flag to `App.Locals`. If it doesn't reach, Phase 3 falls back to the feed `components` map plus class-based handling in the cleanup pass.
-- [ ] Move the shared logic into one feed builder. The endpoints just choose collections, title and description.
-- [ ] Cleanup pass:
-  - [ ] Make `href`, `src` and `poster` absolute against `site`.
-  - [ ] Replace `<picture>` with its `<img>`, and drop `srcset`/`sizes`, so every image is one absolute URL.
-  - [ ] Turn Expressive Code into a plain `<pre><code>` with newline-separated lines. Keep the file title as a caption (e.g. `<figure><figcaption><code>recording.json</code></figcaption><pre>…</pre></figure>`).
-  - [ ] Remove `script`, `style`, `link`, `template`, `button` and `noscript`, plus screen-reader-only and `aria-hidden` decorative elements and heading anchor links.
-  - [ ] Strip `class`, `style`, `data-*`, `loading` and `decoding` attributes.
-  - [ ] Replace task-list checkboxes with ☐/☑.
-  - [ ] Rewrite footnote ids and links to `fn:N` / `fnref:N`, and swap the hidden "Footnotes" heading for an `<hr>` before the list.
-  - [ ] Replace Mermaid SVGs with the placeholder link.
-  - [ ] Replace React islands with "This post includes an interactive demo — view it on danny.is". Add the React container renderer so these entries render instead of being left out, and the datepicker note comes back into the feed.
-  - [ ] Unwrap unknown custom elements that are left over, keeping their content.
-- [ ] Unit tests for the cleanup function, with small focused fixtures.
-- [ ] Check the leftover-element survey and the page-vs-feed text diff again (the scripts used for the findings above).
+- [x] Check first, because it decides how Phases 2 and 3 work: render with Container `locals: { feed: true }` and confirm `Astro.locals.feed` reaches a component nested inside MDX content. Add the flag to `App.Locals`. It does.
+- [x] Move the shared logic into one feed builder. The endpoints just choose collections, title and description.
+- [x] Cleanup pass:
+  - [x] Make `href`, `src` and `poster` absolute against `site`.
+  - [x] Replace `<picture>` with its `<img>`, and drop `srcset`/`sizes`, so every image is one absolute URL.
+  - [x] Turn Expressive Code into a plain `<pre><code>` with newline-separated lines. Keep the file title as a caption (e.g. `<figure><figcaption><code>recording.json</code></figcaption><pre>…</pre></figure>`).
+  - [x] Remove `script`, `style`, `link`, `template`, `button` and `noscript`, plus screen-reader-only text, decorative SVG icons and heading anchor links.
+  - [x] Strip `class`, `style`, `data-*`, `loading` and `decoding` attributes.
+  - [x] Replace task-list checkboxes with ☐/☑.
+  - [x] Rewrite footnote ids and links to `fn:N` / `fnref:N`, and swap the hidden "Footnotes" heading for an `<hr>` before the list.
+  - [x] Replace Mermaid SVGs with the placeholder link.
+  - [x] Replace React islands with "This post includes an interactive demo — view it on danny.is", so these entries render instead of being left out, and the datepicker note comes back into the feed. React's container renderer can't load outside Vite (it imports a virtual module), so a placeholder renderer claims framework components instead.
+  - [x] Turn `<markdown-preview>` / `<file-tree>` into plain code blocks from their `code` attribute, and markdown image captions into `<figcaption>`s. Cheaper here than through a feed `components` map.
+  - [x] Unwrap unknown custom elements that are left over, keeping their content.
+- [x] Unit tests for the cleanup function, with small focused fixtures.
+- [x] Check the leftover-element survey and the page-vs-feed text diff again (the scripts used for the findings above).
 
 ## Phase 2: Item framing and metadata
 
@@ -132,7 +133,6 @@ The biggest win, and almost all of it generic.
 
 ## Phase 3: Feed-mode components
 
-- [ ] Feed `components` map: `markdown-preview` and `file-tree` become a plain `<pre><code>` (with title). `img` keeps `BasicImage` so captions survive, and `BasicImage` in feed mode renders a single `<figure><img><figcaption>`.
 - [ ] Per component, in feed mode:
   - **Callout:** `<blockquote>` opening with a bold line made of the emoji/icon and the title (or a sensible label if there's no title), then the content.
   - **Embed and the video family:** YouTube, Vimeo, Loom and LCVid each emit an iframe plus a linked thumbnail or title paragraph. LCVid uses its `embed` URL and poster.
@@ -144,7 +144,7 @@ The biggest win, and almost all of it generic.
   - **Grid:** its children in sequence.
   - **Accordion:** leave as `details`/`summary`. Readers that strip them still show the content.
 - [ ] Bandcamp and other raw iframes in content: add a link after them, either by hand in the content or with a generic "iframe without a following link" rule in the cleanup pass.
-- [ ] Document the pattern in `docs/developer/content-system.md`: what the cleanup pass handles for free, and when a new component needs a `feed` branch.
+- [ ] Keep the "Adding a component" note in `docs/developer/content-system.md` in step with whatever this phase settles on.
 
 ## Phase 4 (optional): Raster Mermaid diagrams
 
