@@ -332,11 +332,7 @@ const groups = ['Commands', 'Navigation'] as const
 <script>
   import { search, preloadPagefind, type SearchResult } from '@utils/pagefind'
 
-  // The document-level hotkey binds once (guarded); per-dialog wiring runs per init.
-  let hotkeyWired = false
   function wireHotkey() {
-    if (hotkeyWired) return
-    hotkeyWired = true
     document.addEventListener('keydown', e => {
       if (!((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) return
       const dialog = document.querySelector<HTMLDialogElement>('#command-palette')
@@ -351,8 +347,7 @@ const groups = ['Commands', 'Navigation'] as const
     wireHotkey()
 
     const dialogEl = document.querySelector<HTMLDialogElement>('#command-palette')
-    if (!dialogEl || dialogEl.dataset.cpReady) return
-    dialogEl.dataset.cpReady = 'true'
+    if (!dialogEl) return
     const dialog: HTMLDialogElement = dialogEl // non-null alias for closures
 
     const input = dialog.querySelector<HTMLInputElement>('.cp-input')!
@@ -478,5 +473,4 @@ const groups = ['Commands', 'Navigation'] as const
   }
 
   initCommandPalette()
-  document.addEventListener('astro:page-load', initCommandPalette)
 </script>

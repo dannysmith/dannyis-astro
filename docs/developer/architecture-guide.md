@@ -16,7 +16,7 @@ This document covers the core architectural patterns and principles for Danny's 
 - Progressive enhancement of browser-native features preferred
 - NO `client:*` directives used anywhere in this codebase, **except** for one-off demo components in `demos/` (see [component-patterns.md § Demo Components](./component-patterns.md#demo-components))
 - Interactive components use inline `<script>` tags (ThemeToggle, Accordion, Lightbox, MarkdownContentActions, CommandPalette)
-- All scripts handle ViewTransitions (`astro:after-swap` events)
+- Navigation is always a full page load (see [View Transitions](#view-transitions)), so scripts run once per page and need no re-init lifecycle
 
 **Build-Time Generation Examples:**
 

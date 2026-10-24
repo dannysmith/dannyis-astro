@@ -175,7 +175,5 @@ const { class: className } = Astro.props
     if (toggle) updateChecked(toggle, e.detail?.theme ?? 'auto')
   })
 
-  // Initialize on page load and after Astro view transitions
-  document.addEventListener('DOMContentLoaded', initThemeToggle)
-  document.addEventListener('astro:after-swap', initThemeToggle)
+  initThemeToggle()
 </script>

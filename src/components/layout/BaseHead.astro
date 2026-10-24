@@ -222,7 +222,6 @@ const articleMeta = generateArticleMeta(seoData)
 
     apply(current())
     mq.addEventListener('change', () => current() === 'auto' && apply('auto'))
-    document.addEventListener('astro:after-swap', () => apply(current()))
   })()
 </script>
 

@@ -134,7 +134,7 @@ const { html, panels } = processPanels(slotHtml)
 <script>
   // The buttons and panels are server-rendered and fully wired. The runtime
   // only toggles state, via a single pair of document-level delegated
-  // listeners (attached once) rather than per-button listeners.
+  // listeners rather than per-button listeners.
 
   /** Activate `tab` within its `tablist`: update roving tabindex + panels. */
   function activate(tablist: HTMLElement, tab: HTMLElement) {
@@ -166,11 +166,7 @@ const { html, panels } = processPanels(slotHtml)
     return target?.closest<HTMLElement>('[role="tab"]') ?? null
   }
 
-  let wired = false
   function wireDelegation() {
-    if (wired) return
-    wired = true
-
     document.addEventListener('click', event => {
       const tab = tabFrom(event)
       const tablist = tab?.closest<HTMLElement>('[role="tablist"]')
@@ -222,8 +218,4 @@ const { html, panels } = processPanels(slotHtml)
   }
 
   initTabs()
-
-  // Re-run after Astro page transitions (View Transitions). The document-level
-  // listeners persist; only the new DOM needs the `.tabs-initialized` class.
-  document.addEventListener('astro:page-load', initTabs)
 </script>

@@ -57,7 +57,7 @@ See [command-palette-and-search.md](./command-palette-and-search.md) for the why
 Two consequences for the pipeline:
 
 - **A cold cache makes the build reach every linked host.** Nothing external can fail it — a link that 404s, blocks us or times out is reported, not thrown — but the build is slower and its output depends on who was up. The cache (below) is what keeps that rare.
-- **Every build prints a link-health summary**, which is how link rot in published content gets noticed. Two entries are permanent and deliberate: `/styleguide` renders a dead and a blocked example.
+- **Every build prints a link-health summary**, which is how link rot in published content gets noticed. It only covers pages that rendered in that build: an article or note reused by an [incremental build](#incremental-builds) doesn't re-check its links. Two entries are permanent and deliberate: `/styleguide` renders a dead and a blocked example.
 
 See [link-metadata.md](./link-metadata.md).
 
@@ -100,6 +100,7 @@ OG image generation (Satori + Resvg) and image optimization (Sharp) dominate bui
 - **Articles in a series opt out.** `SeriesCallout` reads its sibling articles and the series entry, and Astro tracks the entry a page *renders*, not entries it looks up with `getEntry()`/`getCollection()`. Without the opt-out, retitling one article or editing `series.json` would leave the others stale.
 - **So do pages whose body uses `ContentCard`**, for the same reason. Add any new component that resolves another entry to `CROSS_ENTRY_COMPONENTS`.
 - **Keep `astro-icon` at 1.2.0 or newer.** Earlier versions stamped the current time into `virtual:astro-icon` for the icon set built from `src/icons/`, and every page reaches that module through `Icon`. On an older version every route's dependency hash changes on every build and nothing is ever reused — silently, with no error.
+- **A reused page keeps whatever it read at render time.** Link captures past their 30-day TTL aren't revalidated, `LCVid` metadata isn't refetched, and the footer's year isn't updated until the page renders again. Any change to code the page imports re-renders it, as does `--force`, so this corrects itself.
 - **CI needs no extra setup.** The cache lives in `node_modules/.astro`, which the Build job already caches and restores.
 
 `astro build --force` ignores the cache and re-renders everything, while still writing a fresh cache. It also clears the content data store, so every Mermaid diagram is re-rendered through Playwright — expect it to be much slower than a cold incremental build.

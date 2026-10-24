@@ -151,12 +151,13 @@ See `seo.md`
 
 ### Implementation
 
-Dynamic generation using `satori` + `@resvg/resvg-js`, with a `sharp`-rendered SVG fallback if Satori fails.
+Dynamic generation using `satori` + `@resvg/resvg-js`. There's no fallback renderer: if an image fails to render (a broken template, a missing font), the build fails.
 
 **Files:**
 
 - `src/pages/writing/[...slug]/og-image.png.ts` - Articles
 - `src/pages/notes/[...slug]/og-image.png.ts` - Notes
+- `src/pages/[...page]/og-image.png.ts` - Standalone pages registered in `src/config/og-images.ts` (anything unregistered uses the static `/og-default.png`)
 
 **Note:** `@resvg/resvg-js` is excluded from Vite optimization in `astro.config.mjs` (see [architecture-guide.md § Dynamic API Endpoints](./architecture-guide.md#dynamic-api-endpoints)).
 
@@ -164,7 +165,6 @@ Dynamic generation using `satori` + `@resvg/resvg-js`, with a `sharp`-rendered S
 
 - Build-time creation via TypeScript endpoints
 - Proper sizing for social platforms (1200x630)
-- Fallback to `/og-default.png` if generation fails
 - No manual configuration needed per article/note
 
 ## Dynamic API Endpoints
@@ -261,7 +261,7 @@ MDAST plugins run first (array order), then MDAST→HAST conversion, then HAST p
 
 See `package.json` for the full list. The non-obvious ones:
 
-- **Image generation** uses **satori** (JSX → SVG) then **@resvg/resvg-js** (SVG → PNG), with **sharp** as a fallback renderer if Satori fails.
+- **Image generation** uses **satori** (JSX → SVG) then **@resvg/resvg-js** (SVG → PNG).
 - **RSS** renders MDX via Astro's experimental **Container API**.
 - Markdown processing is driven by the custom Sätteri plugins listed under [Markdown Plugins Configuration](#markdown-plugins-configuration) above. Mermaid diagrams render at build time via **mermaid-isomorphic** (headless Playwright browser).
 

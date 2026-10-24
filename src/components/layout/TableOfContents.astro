@@ -188,9 +188,6 @@ const toc = buildToc(headings)
   const linkStarts = new WeakMap<HTMLAnchorElement, number>()
   const linkEnds = new WeakMap<HTMLAnchorElement, number>()
 
-  let defined = false
-  let resizeObserver: ResizeObserver | null = null
-
   interface TocItem {
     link: HTMLAnchorElement
     target: HTMLElement
@@ -198,15 +195,10 @@ const toc = buildToc(headings)
   }
 
   function initToc() {
-    resizeObserver?.disconnect()
-
     const toc = document.querySelector<HTMLElement>('.toc')
     const tocPath = document.querySelector<SVGPathElement>('.toc-marker path')
 
     if (!toc || !tocPath) return
-
-    if (defined) return
-    defined = true
 
     const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a.toc-link'))
     if (links.length === 0) return
@@ -301,7 +293,7 @@ const toc = buildToc(headings)
     }
 
     // Handle layout changes
-    resizeObserver = new ResizeObserver(() => {
+    const resizeObserver = new ResizeObserver(() => {
       drawPath()
       updatePath()
     })
@@ -316,8 +308,4 @@ const toc = buildToc(headings)
   }
 
   initToc()
-  document.addEventListener('astro:after-swap', () => {
-    defined = false
-    initToc()
-  })
 </script>
