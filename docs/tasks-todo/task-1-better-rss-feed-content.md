@@ -88,9 +88,9 @@ The `.md` twins output the raw MDX source, so components appear as JSX. That's f
 
 Three layers, so most new components need no feed-specific work:
 
-1. **One shared feed builder** (e.g. `src/utils/feed.ts`) used by all three endpoints. It renders each entry, wraps it with a header and footer, runs the cleanup pass, and maps frontmatter to item fields.
+1. **One shared feed builder** (`src/pages/rss/_feed.ts`) used by all three endpoints. It renders each entry, wraps it with a header and footer, runs the cleanup pass, and maps frontmatter to item fields.
 2. **Feed versions of the components that need them.** Render with Container `locals: { feed: true }`. A component that needs different markup checks `Astro.locals.feed`. Pass a feed `components` map to `<Content>` for the remapped tags (`markdown-preview`, `file-tree`, `img`). The capitalised components are auto-imported by `satteriMdxImports`, so the `components` prop can't override them. That's why `locals` is the way in.
-3. **A general HTML cleanup pass** over each item's final HTML, using `rehype` and `unist-util-visit` (both already dependencies). It covers everything generic and is the safety net for anything not handled above. It's a pure HTML-in, HTML-out function, so it can be unit-tested with fixtures.
+3. **A general HTML cleanup pass** (`src/utils/feed-html.ts`) over each item's final HTML, using `rehype` and `unist-util-visit` (both already dependencies). It covers everything generic and is the safety net for anything not handled above. It's a pure HTML-in, HTML-out function, so it can be unit-tested with fixtures.
 
 ## Phase 1: Shared builder and general cleanup
 
@@ -162,6 +162,7 @@ The Phase 1 placeholder is now only a fallback: each diagram appears in feeds as
 - [x] Check the representative items (below) in the built feed: their HTML in full, plus a headless render with a minimal reader-style stylesheet. They read as intended. That check also led to one change: images now use their largest `srcset` candidate up to 1400px, not Astro's full-size original (e.g. 1280px rather than 3508px).
 - [x] Update `docs/developer/content-system.md` and the RSS section of `docs/developer/architecture-guide.md`.
 - [x] Run `bun run check:all`.
+- [x] Address CodeRabbit's review on the PR. The builder moved from `src/utils/feed/` to `src/pages/rss/_feed.ts`, because it renders a component and utils are leaf dependencies (`architecture-guide.md`). The cleanup pass flattened to `src/utils/feed-html.ts`. Mermaid feed images are written to a temporary file and renamed, so an interrupted build can't cache a truncated image.
 - [ ] After deploying, check in real readers. Readers keep the content they first fetched for each item, so an existing subscription only shows the new rendering on new posts. To see every item freshly rendered, subscribe to a fresh URL such as `https://danny.is/rss.xml?v=2` (the query string is ignored by the server but makes it a new feed to readers), then unsubscribe afterwards. Also run the live URLs through the W3C validator (`https://validator.w3.org/feed/check.cgi?url=…`), which also checks the self link.
 
 Representative items:

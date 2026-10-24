@@ -25,7 +25,7 @@
  * - Leftover custom elements are unwrapped, and presentational attributes
  *   (`class`, `style`, `data-*`, ARIA wiring) are stripped.
  *
- * Used by the feed builder in `./index.ts` on every item.
+ * Used by the feed builder (`src/pages/rss/_feed.ts`) on every item.
  */
 import type { Element, ElementContent, Root, RootContent } from 'hast'
 import { rehype } from 'rehype'

@@ -17,7 +17,7 @@ import { escapeUTF8 } from 'entities'
 import { FeedItem } from '@components/layout/index'
 import { getConfig } from '@config/config'
 import { generateSummary } from '@utils/content-summary'
-import { cleanFeedHtml } from './clean-html'
+import { cleanFeedHtml } from '@utils/feed-html'
 
 type FeedEntry = CollectionEntry<'articles'> | CollectionEntry<'notes'>
 

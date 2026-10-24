@@ -105,9 +105,9 @@ Three full-content RSS feeds:
 - `/rss/articles.xml` - Articles only (`src/pages/rss/articles.xml.ts`)
 - `/rss/notes.xml` - Notes only (`src/pages/rss/notes.xml.ts`)
 
-The endpoints only choose entries (via `filterContentForListing`) and the channel's title and description. Everything else is in `src/utils/feed/`:
+The endpoints only choose entries (via `filterContentForListing`) and the channel's title and description. The rest is in two files:
 
-- **`index.ts` — `feedResponse({ title, description, entries, url })`** builds the whole feed:
+- **`src/pages/rss/_feed.ts` — `feedResponse({ title, description, entries, url })`** builds the whole feed. It sits beside the endpoints, not in `src/utils`, because it renders a component (utils are leaf dependencies). The `_` prefix keeps Astro from routing it.
   - **Channel:** `language`, `image` and an `atom:link` self link.
   - **Items, newest first:** `description` (frontmatter, or the same `generateSummary` fallback the page uses), `category` from tags, `dc:creator`, and the full content.
 
@@ -118,7 +118,7 @@ The endpoints only choose entries (via `filterContentForListing`) and the channe
   - a one-line footer with links to the web and markdown versions and a reply-by-email link
 
   It renders with `Astro.locals.feed` set to `true`, so a component can output simpler markup for feeds (`if (Astro.locals.feed) …`). Framework components (React demos) can't render in the container, so a placeholder renderer claims them and they become a link to the post. Item links and guids are the post URLs and must never change, or readers show the items as new.
-- **`clean-html.ts` — `cleanFeedHtml(html, link)`** makes the rendered HTML hold up in feed readers. Readers have none of the site's CSS or JS, sanitise heavily (dropping `script`/`style`, stripping `class`/`style`, removing `div`/`span`/`svg`/`input` tags, hiding or deleting `hidden` content), and RSS has no base URL. This pass:
+- **`src/utils/feed-html.ts` — `cleanFeedHtml(html, link)`** makes the rendered HTML hold up in feed readers. Readers have none of the site's CSS or JS, sanitise heavily (dropping `script`/`style`, stripping `class`/`style`, removing `div`/`span`/`svg`/`input` tags, hiding or deleting `hidden` content), and RSS has no base URL. This pass:
   - makes URLs absolute and collapses `<picture>`/`srcset` to one `<img>`: the largest `srcset` candidate up to 1400px wide, not Astro's full-size original
   - turns Expressive Code, `md preview` and `tree` blocks into plain `<pre><code>` blocks
   - turns markdown image captions into `<figcaption>`s
@@ -127,7 +127,7 @@ The endpoints only choose entries (via `filterContentForListing`) and the channe
   - uses `fn:N` / `fnref:N` footnote ids, which readers with footnote popovers look for
   - unwraps leftover custom elements and strips presentational attributes
 
-  It's a pure function, unit-tested in `tests/unit/feed-clean-html.test.ts`.
+  It's a pure function, unit-tested in `tests/unit/feed-html.test.ts`.
 
 **Components with feed versions:** these check `Astro.locals.feed` and output plain HTML:
 - `Callout` is a `<blockquote>` with its emoji and title as a bold first line.

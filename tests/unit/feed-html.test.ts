@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { cleanFeedHtml } from '../../src/utils/feed/clean-html'
+import { cleanFeedHtml } from '../../src/utils/feed-html'
 
 const LINK = 'https://danny.is/writing/some-post/'
 const clean = (html: string) => cleanFeedHtml(html, LINK)

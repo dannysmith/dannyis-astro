@@ -8,9 +8,9 @@
  * - Footer: one small line with where and when it was posted, links to the web
  *   and markdown versions, and a reply-by-email link.
  *
- * Rendered by `feedItems()` (`src/utils/feed`) through the Container API with
- * `Astro.locals.feed` set; the output then goes through `cleanFeedHtml`, which
- * makes its URLs absolute and strips site-only markup.
+ * Rendered by the feed builder (`src/pages/rss/_feed.ts`) through the
+ * Container API with `Astro.locals.feed` set; the output then goes through
+ * `cleanFeedHtml`, which makes its URLs absolute and strips site-only markup.
  */
 import { type CollectionEntry, render } from 'astro:content'
 import { Image } from 'astro:assets'

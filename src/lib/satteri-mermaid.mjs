@@ -36,10 +36,10 @@
  * white and saved as lossless WebP, named by a hash of what it's drawn from
  * (diagram source, config and font CSS). The SVG gets
  * `data-feed-image` / `data-feed-image-width` attributes pointing at it, which
- * `cleanFeedHtml` (`src/utils/feed/clean-html.ts`) swaps the SVG for. The site
+ * `cleanFeedHtml` (`src/utils/feed-html.ts`) swaps the SVG for. The site
  * itself never uses these images.
  */
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createMermaidRenderer } from 'mermaid-isomorphic'
@@ -82,11 +82,15 @@ async function saveFeedImage(screenshot, key, { dir, urlBase }) {
   } catch {
     const pad = FEED_IMAGE_PADDING * FEED_IMAGE_SCALE
     await fs.mkdir(dir, { recursive: true })
+    // Written under a temporary name, then renamed, so an interrupted build
+    // can't leave a truncated image that later builds treat as cached.
+    const tmpPath = `${filePath}.${randomUUID()}.tmp`
     await sharp(screenshot)
       .flatten({ background: '#ffffff' })
       .extend({ top: pad, bottom: pad, left: pad, right: pad, background: '#ffffff' })
       .webp({ lossless: true })
-      .toFile(filePath)
+      .toFile(tmpPath)
+    await fs.rename(tmpPath, filePath)
   }
   return `${urlBase}/${file}`
 }
