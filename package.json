@@ -38,9 +38,9 @@
     "task:complete": "node scripts/complete-task.js"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.4.4",
-    "@astrojs/mdx": "8.1.0",
-    "@astrojs/react": "7.1.0",
+    "@astrojs/markdown-satteri": "^0.4.6",
+    "@astrojs/mdx": "8.1.2",
+    "@astrojs/react": "7.1.2",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@dannysmith/datepicker": "^0.1.6",
@@ -48,7 +48,7 @@
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.100",
     "@resvg/resvg-js": "^2.6.2",
-    "astro": "7.4.1",
+    "astro": "7.4.5",
     "astro-embed": "^0.14.0",
     "astro-expressive-code": "^0.44.2",
     "astro-icon": "^1.2.0",
