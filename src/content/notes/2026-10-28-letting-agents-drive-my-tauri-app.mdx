@@ -1,0 +1,325 @@
+---
+title: Letting coding agents see and drive my Tauri app
+slug: agents-drive-tauri-app
+draft: true
+description: How I gave Claude Code a way to screenshot, click around and read the logs of the running Astro Editor dev app on macOS, without giving it control of my Mac.
+pubDate: 2026-10-28
+tags: ['astro-editor', 'tauri', 'ai', 'claude-code']
+---
+
+When I work on [Astro Editor](https://astroeditor.danny.is) with Claude Code, the agent can read and write every line of the code, run the tests and lint the thing, but it has no idea what the app actually **looks like**. It can't see the window, it can't click anything, and it can't read the webview's console. So for anything visual, I end up being its eyes: taking screenshots, describing what's wrong and pasting errors back into the chat.
+
+[DANNY: a line or two on how annoying this was in practice, or a specific time it bit you, would land well here]
+
+A month ago I added a [screenshot command to this site](/notes/2026-09-30-a-screenshot-command-for-agents) for exactly this reason. Astro Editor is a Tauri app though, and a desktop app is a much harder thing to point an agent at than a website. So a couple of days ago I sat down with Claude to build the equivalent for Astro Editor, and a bit more besides. In dev builds, an agent can now:
+
+- **Screenshot the running app** in light and dark mode.
+- **Read an outline of the UI** with numbered references it can click.
+- **Drive the app**: open the test project, open files, run any command from the command palette, type into the editor, press keys, click and fill things.
+- **Read every log in one place**: Rust, the webview console and the `tauri dev` terminal output.
+- **Screenshot a styleguide** of every UI component and **pixel-diff** it against an earlier run.
+
+None of this ships in release builds, it needs no macOS permissions, and it never steals focus from whatever I'm doing in another window.
+
+## Why it has to work from the inside
+
+The obvious way to automate a Mac app is from the outside: OS-level screenshots, accessibility APIs, AppleScript, synthetic mouse events. None of that works for me, because I run Claude Code with its Bash sandbox switched on. Inside the sandbox:
+
+- `screencapture` can't see any displays.
+- Listing processes is blocked, and Swift scripts can't run.
+- AppleScript and `open` are blocked.
+- Playwright can't launch a browser (Chromium dies on a blocked macOS service lookup at startup).
+
+What *does* work is talking to localhost. So instead of driving the app from outside, the app drives itself: debug builds run a tiny HTTP server that the agent talks to, and the app takes its own screenshots.
+
+This turned out to be a better design than the one I'd have picked without the constraint. Because the app is taking its own screenshots, they need no Screen Recording permission, they don't bring the window to the front, and they work while the window is buried behind six others. I can carry on writing in another app while an agent drives the dev build in the background.
+
+[DANNY: your take on the sandbox. Is the "constraint made it better" line something you agree with?]
+
+## The pieces
+
+There are six parts, which I built in roughly this order.
+
+### 1. Separate dev and prod
+
+Before any of this, the dev build and my installed copy of Astro Editor shared *everything*: preferences, the list of projects, logs, window position. They even fought over the same single-instance socket. Letting an agent loose on the dev build meant letting it loose on my real setup.
+
+The fix is a five-line Tauri config overlay which gives dev builds their own identifier and name. It's applied with `tauri dev --config`:
+
+```json
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Astro Editor Dev",
+  "identifier": "is.danny.astroeditor.dev"
+}
+```
+
+That alone gives the dev build its own app data, logs, window state and single-instance socket. Debug builds also skip telemetry and the automatic update check, and title the window "Astro Editor (Dev)" so I can tell them apart. Now the two run side by side, and the sandbox gives the agent write access to the dev app's data and read-only access to prod.
+
+### 2. The bridge
+
+The Rust side is a debug-only module of about 350 lines. It runs a [`tiny_http`](https://crates.io/crates/tiny_http) server on `127.0.0.1` and writes its port, a random per-run token and its process ID to a JSON file in the app's data folder. Every request has to send that token, which keeps random web pages in my browser out.
+
+It only knows how to do four generic things:
+
+- **Run JavaScript in the webview** and return the result. Tauri's `eval_with_callback` can't wait for a promise, so the bridge wraps the snippet in an async function that stores its result on `window`, then polls for it every 10ms.
+- **Take a screenshot** using [`WKWebView.takeSnapshot`](https://developer.apple.com/documentation/webkit/wkwebview/takesnapshot(with:completionhandler:)), via `objc2`. This is what makes screenshots permission-free and focus-free. The catch is that it only captures the webview, so native menus, native dialogs and the vibrancy blur aren't in the picture.
+- **Change the window**: size, native light/dark appearance, navigate or reload.
+- **Health check.**
+
+The whole module is behind `#[cfg(debug_assertions)]`. The release bundle was the same size afterwards (9.79 MiB) with no trace of the bridge in the binary.
+
+### 3. An API inside the app
+
+Everything app-specific lives in TypeScript inside the webview, on `window.__agentBridge`, and the CLI reaches it through the bridge's eval endpoint. This keeps the Rust side generic, and it means the logic is plain TypeScript with unit tests.
+
+The most useful part of it is `tree`, which returns a compact text outline of what's on screen, with numbered references for anything clickable:
+
+```text
+[DANNY: paste real `bun run app tree` output here]
+```
+
+It's *far* cheaper for an agent to read than a screenshot, so the skill tells agents to check state with `tree` and `state` and save screenshots for when looks actually matter.
+
+The other thing I'm pleased with is that the API **prefers named actions to clicks**. Astro Editor already gives every command palette action an ID, so `bun run app run toggle-sidebar` runs the exact same code a user would. Opening a file reuses the deep-link handler. Typing goes in as a CodeMirror transaction, so auto-save runs as normal. Clicking a CSS selector is still there for when there's no command, but it's the fallback.
+
+### 4. A CLI, not MCP
+
+The agent uses all of this through `bun run app <command>`:
+
+```sh
+bun run app open-project                 # open the disposable test project
+bun run app open articles/first-post     # open a file
+bun run app run toggle-sidebar           # run a command palette command
+bun run app shot sidebar-closed          # light and dark PNGs
+bun run app tree                         # outline of the UI
+bun run app logs --since=10m             # recent warnings and errors
+```
+
+I went with a CLI rather than an MCP server for a few reasons:
+
+1. **It works from the sandboxed Bash tool** with no extra setup.
+2. **I can run it myself**, and the screenshots land in a gitignored folder in the project, so I see the same PNGs the agent does.
+3. **Agents compose it into scripts.** During the colour token work Claude wrote a [shell script](#links-and-references) which opens the right files, toggles the right panels and shoots every screen the change touched. That gave us a repeatable visual check for the whole refactor.
+4. **One permission rule covers all of it**, `Bash(bun run *)`, and nothing is sitting in the agent's context until it needs it.
+
+[DANNY: your view on CLI vs MCP generally?]
+
+### 5. All the logs in one place
+
+When something broke, the useful error was in one of three places, and the agent could read none of them easily: the Rust log file, the webview's console, or the `tauri dev` output in my terminal. Now:
+
+- In dev, `console.*` is copied into the Tauri log file, marked `[console]`.
+- `tauri:dev` runs a tiny script that tees its output (Vite, cargo and the app) into a log file next to the app's own.
+- `bun run app logs` searches all of it: by default, warnings and errors from the last 30 minutes, repeats collapsed. `--crashes` summarises macOS crash reports.
+
+Two fixes fell out of this. The log plugin's default 40 KB size limit was **deleting the dev log every few minutes**. And the windowing libraries were logging every single focus change.
+
+### 6. A styleguide and a pixel diff
+
+`styleguide.html` is a second Vite entry point which renders every UI component the app uses, in every state, with overlays like menus and dialogs rendered open. Vite only builds `index.html`, so it never ships.
+
+It's split into one section per page, each sized to fit the window. I'd originally planned one long page, but big full-page screenshots get scaled down until the agent can't read them. `bun run app styleguide` shoots all of the sections in both themes in about 15 seconds, and `bun run app diff` compares two runs pixel by pixel. Repeat shots of an unchanged page come out pixel-identical, so any difference is real.
+
+### Plus a skill
+
+An [Agent Skill](https://github.com/dannysmith/astro-editor/blob/main/.claude/skills/app-control/SKILL.md) tells agents how to use all this. Never start the dev server (ask me instead). Always check light **and** dark. Read the logs before guessing. And it says what the tooling can't do.
+
+## Did it actually help?
+
+Within a day I had two big pieces of work to point it at.
+
+**The Base UI migration** ([#344](https://github.com/dannysmith/astro-editor/pull/344)) moved every shadcn component from Radix to Base UI. Before touching anything we shot a 26-image baseline of the styleguide. After each group of components, the agent reshot it and diffed it against the baseline. After the overlays (the riskiest group), 24 of 26 shots were pixel-identical, and the other two were explained: an icon I'd deliberately swapped, and dialogs no longer selecting the text in their first input. It also drove the components through the bridge to check behaviour (focus returning to the right place, keyboard navigation in menus) rather than just looks.
+
+**The colour token refactor** ([#345](https://github.com/dannysmith/astro-editor/pull/345)) rewrote every colour in the app as a `light-dark()` token. The first phase was meant to change nothing, and `app diff` proved it: all 38 shots identical.
+
+[DANNY: how this felt compared to doing these migrations before. Was it the first time you trusted an agent with a big visual refactor?]
+
+## What was harder than expected
+
+**Hidden windows.** When the dev window is behind other windows, WebKit stops running animation frames, throttles timers, and doesn't fire `prefers-color-scheme` changes or start CSS transitions until the window next renders. Screenshots still come out fresh, because taking one forces a render, but anything that waits for a frame just stalls. Base UI waits for a frame before it opens a popup, moves focus into it, or unmounts it after it closes, so menus wouldn't open. The fix is a `withFrames()` wrapper: during a bridge call, every animation frame request also fires from a short timeout if the real frame doesn't come. Outside bridge calls nothing changes, so I still see the real animations.
+
+**Deterministic screenshots.** The macOS traffic lights change colour with window focus, so the colour script pins focus with fake focus and blur events. Shots taken straight after an edit can catch hot reload halfway through, so agents run `app reload` first.
+
+**Not stealing focus.** The deep-link handler that opens files used to bring the window to the front. The focusing moved into the deep-link hook itself, so the bridge can reuse the handler without stealing focus.
+
+It also found a couple of bugs that had nothing to do with agents. File watchers were bringing each other back to life, and reloading the page left two of them replacing each other forever. And `tree` showed placeholder text instead of field names in the frontmatter panel, because the labels weren't connected to their inputs. That second one is an accessibility bug: **the outline is basically the accessibility tree**, so anything that confuses an agent probably confuses a screen reader too.
+
+## What it still can't do
+
+- Native menus, file pickers and confirmation dialogs can't be captured or clicked.
+- The vibrancy blur doesn't show up in screenshots.
+- Synthetic key presses don't trigger native menu shortcuts, and anything that checks `event.isTrusted` ignores them.
+- It can't tell you whether an animation *feels* right.
+
+That last group still needs me. [DANNY: anything else you still check by hand?]
+
+## Could other people use this?
+
+I looked at what's already out there for Tauri, and there's a fair bit: [mcp-server-tauri](https://github.com/hypothesi/mcp-server-tauri) is the most popular, and WebdriverIO has an [embedded WebDriver plugin](https://github.com/webdriverio/desktop-mobile/tree/main/packages/tauri-plugin-webdriver). But nothing combines screenshots that need no permissions and don't steal focus, a localhost-only server with a token, and a plain CLI.
+
+I thought about turning this into a Tauri plugin, but I'm not going to. [DANNY: why. From our chat: your template is mostly for other people and for your own new projects, and being a self-contained starting point matters.] Instead I'm porting it into my [Tauri template](https://github.com/dannysmith/tauri-template) ([#39](https://github.com/dannysmith/tauri-template/issues/39)), after first bringing the template's toolchain up to date ([#38](https://github.com/dannysmith/tauri-template/issues/38)).
+
+[DANNY: ending. A plain statement of where things are, or pointing people at the code?]
+
+---
+
+## Draft notes
+
+Everything below this line is raw material, not prose.
+
+### Possible angles
+
+- Drive the app from the inside, not the outside. Probably the core idea.
+- The sandbox as a design constraint that produced a better result.
+- CLI vs MCP for agent tooling.
+- Outputs designed for agents: `tree` vs screenshots, summarised logs, errors that say what to do next ("the dev app isn't running. Start it with `bun run tauri:dev`"), strict flags (unknown flags are rejected with the valid list, because agents guess flag names).
+- Visual diffs as a safety net for big refactors.
+- What's good for agents is good for accessibility.
+
+### Images to consider
+
+All in `~/dev/astro-editor/docs/tasks-todo/temporary/` (gitignored, local only):
+
+- `baseline-radix/` vs `baseline/`: styleguide before and after Base UI.
+- `diff/`: `app diff` output images with boxed changes.
+- `colours/`, `baseline-colours/`, `after-*`: colour token work.
+- `nested-alert-*.png`, `select-enum-open-dark-*.png`, `prefs-*.png`: real app shots taken by agents.
+- A screenshot of `bun run app help` output, and of `app tree` output.
+
+### Plan vs what actually happened
+
+From the [first draft of the task doc](https://github.com/dannysmith/astro-editor/blob/d7238206/docs/tasks-todo/task-1-agent-app-tooling.md) compared with the [finished one](https://github.com/dannysmith/astro-editor/blob/main/docs/tasks-done/task-2026-10-26-1-agent-app-tooling.md):
+
+| Planned | What happened |
+| --- | --- |
+| Turn the updater off in the config overlay | The v2 updater has no working `active` option. Skipped in the frontend instead |
+| Awaitable eval via `callAsyncJavaScript` and `objc2` | `eval_with_callback` plus polling a window global. No `objc2` needed for eval |
+| Wait for a presentation update before snapshots | Not needed: taking a snapshot forces a render |
+| Opaque background behind transparent areas during shots | Not needed: the layout paints its own background |
+| One long scrollable styleguide page | One section per page, because big images get downscaled until agents can't read them |
+| Stubs for Tauri calls in the styleguide | None needed: it runs in the real dev webview |
+| Port the website's Playwright `shoot` script for the styleguide | Dropped: browsers can't launch in the sandbox. `app goto` plus `app shot` instead |
+| API named `window.__ae` | Renamed `window.__agentBridge` |
+| Not planned | Hidden-window handling, `withFrames()`, `app diff` |
+
+### Details
+
+- **Port:** the bridge tries 1422 first (Vite has 1420 and 1421), then any free port.
+- **Bridge file:** `agent-bridge.json` holds `port`, `token` and `pid`, and is deleted on exit. The pid lets the CLI tell "the app died without cleaning up" apart from "the bridge isn't answering".
+- **Screenshots:** WKWebView snapshot → NSImage → TIFF → `NSBitmapImageRep` → PNG, written by the app to a path the CLI gives it, so the sandbox doesn't matter. 2x on retina. Files are named `<name>-<theme>-<WxH>-<stamp>.png`, and every shot in a run shares a timestamp.
+- **`shot` sequence:** turn on shot mode (transitions off, caret hidden), set the native appearance and the app theme, wait for idle, snapshot, then restore everything. The app theme is set directly because a hidden window doesn't get `prefers-color-scheme` changes.
+- **`idle()`:** waits for TanStack Query to settle and fonts to load, forces a style recalc, finishes any non-infinite animations via `document.getAnimations()`, then waits two frames, falling back to timeouts.
+- **`click`:** dispatches the full pointer and mouse event sequence a real click produces, and respects a cancelled `pointerdown`. **`fill`:** uses the prototype's value setter so React notices.
+- **Synthetic keys:** react-hotkeys-hook and CodeMirror keymaps accept them. Native menu accelerators don't, which is why `app run` exists.
+- **Before Base UI:** Radix overlays waited for an `animationend` that never fires in a hidden window, so they stayed mounted. The first fix dispatched `animationend` by hand; it was replaced by `withFrames()` after the migration. Setting Base UI's `BASE_UI_ANIMATIONS_DISABLED` wasn't enough, because it also waits for frames to open popups and move focus.
+- **Overlapping calls:** `withFrames()` calls share one install, and the last to finish restores the real functions. CodeRabbit spotted this one.
+- **`tree`, `click` and `fill` wait for idle first:** an overlay that has just opened in a hidden window sits at opacity 0 until its animation is finished.
+- **Logs:** colours are forced on (`CARGO_TERM_COLOR=always FORCE_COLOR=1`) because piping through `tee` turns off TTY detection; ANSI codes are stripped when reading. `tao` and `wry` are capped at Info. The `[console]` marker also stops loops if anything echoes logs back to the console.
+- **Security:**
+  - binds `127.0.0.1` only, with a token header;
+  - CodeQL flagged JS being built from strings, so navigation moved to Tauri's `navigate()` and `reload()`;
+  - API arguments go through `jsLiteral`, which escapes `<`, `>`, `/`, U+2028 and U+2029.
+- **Styleguide:** knip treats it as an entry point, and anything only the styleguide uses still counts as used. It also opens in a normal browser at `localhost:1420/styleguide.html`.
+- **Test vault:** `temp-dummy-astro-project` is a gitignored copy of a test fixture that the agent can trash freely. `app reset` puts it back.
+- **Hot reload races:** CSS edits landing during bridge navigation produce `[vite] Failed to reload /src/App.css` / `IPC custom protocol failed`. Harmless, but easy to mistake for a regression.
+- **Vite's dependency optimiser:** removing a package can break it (`ENOENT`) until the dev server restarts.
+- **The oklch conversion** during the colour work used a separate `max-delta.ts` script, because `app diff` counts any changed pixel, and float rounding moved some pixels by a fraction of a level. Every shot stayed within one 8-bit level.
+- **Accessibility fix:** frontmatter labels were connected to their controls during the Base UI work. `tree` went from placeholders to "Title", "Tags", combobox "Platform" and switch "Draft".
+- **WebKit focus rings:** WebKit draws `outline-style: auto` in the system accent colour and ignores `outline-color`. Found while checking focus rings through the bridge, which can't produce real keyboard focus.
+
+### Size
+
+- Rust bridge: about 350 lines (`mod.rs` 276, `snapshot.rs` 74).
+- In-page API: about 870 lines, plus about 460 lines of tests.
+- CLI: `app.ts` 582, `app-logs.ts` 279 and `app-diff.ts` 173 lines, plus about 230 lines of tests.
+- Styleguide: about 1,180 lines.
+- Skill: 74 lines. Developer doc: 48 lines.
+- **Timeline:** the task doc was committed at 01:52 on 26 October and the skill at 02:54, with the pieces in between. That's commit times, not effort: the planning and research happened before.
+
+### Toolchain changes that helped
+
+From the earlier modernisation ([#341](https://github.com/dannysmith/astro-editor/pull/341)):
+
+- **bun** runs the CLI as TypeScript with no build step and starts quickly, which matters when an agent calls it dozens of times in a session.
+- **Oxlint, Oxfmt and TypeScript 7** made `bun run check:all` fast, which shortens the agent's loop.
+- **Bindings without the app:** `cargo test export_bindings -- --ignored` regenerates the TypeScript bindings without launching it.
+- **Skills replaced persona agents and commands** ([cleanup task](https://github.com/dannysmith/astro-editor/blob/main/docs/tasks-done/task-2026-10-24-1-agent-tooling-cleanup.md)).
+
+### What else is out there
+
+From research on 28 October 2026. An agent read the source of the main projects; I haven't verified all of this myself.
+
+| Project | Notes |
+| --- | --- |
+| [hypothesi/mcp-server-tauri](https://github.com/hypothesi/mcp-server-tauri) (`tauri-plugin-mcp-bridge`) | The incumbent. MCP, with the plugin listening on WebSocket port 9223. Uses `takeSnapshot`, but brings fully hidden windows to the front unless `TAURI_MCP_NO_FOREGROUND=1`. Binds 0.0.0.0 by default with no auth or Origin check ([#8](https://github.com/hypothesi/mcp-server-tauri/issues/8), [#36](https://github.com/hypothesi/mcp-server-tauri/issues/36); fixes in [PR #38](https://github.com/hypothesi/mcp-server-tauri/pull/38) and [PR #48](https://github.com/hypothesi/mcp-server-tauri/pull/48), unmerged). Typing still calls `focus()` ([#25](https://github.com/hypothesi/mcp-server-tauri/issues/25), [PR #28](https://github.com/hypothesi/mcp-server-tauri/pull/28)). Needs `withGlobalTauri`. MIT, about 329 stars |
+| [WebdriverIO embedded plugin](https://github.com/webdriverio/desktop-mobile/tree/main/packages/tauri-plugin-webdriver) ([docs](https://webdriver.io/docs/desktop-testing/tauri/platform-support), forked from [Choochmeque/tauri-plugin-webdriver](https://github.com/Choochmeque/tauri-plugin-webdriver)) | W3C WebDriver inside the app on 127.0.0.1:4445, no auth. `takeSnapshot`, doesn't raise the window. Awaitable eval via `callAsyncJavaScript` plus a script message handler. Very active; the Tauri docs recommend it for macOS |
+| [P3GLEG/tauri-plugin-mcp](https://github.com/P3GLEG/tauri-plugin-mcp) | MCP over a Unix socket, token on by default, refuses to start in release builds. OS window capture, unreliable on macOS ([#27](https://github.com/P3GLEG/tauri-plugin-mcp/issues/27)); raw x/y clicks activate the app and need Accessibility permission. The npm server is broken ([#24](https://github.com/P3GLEG/tauri-plugin-mcp/issues/24)) |
+| [byeongsu-hong/tauri-agent-plugin](https://github.com/byeongsu-hong/tauri-agent-plugin) | Closest in spirit: CLI plus MCP, loopback with a per-run token. Screenshots render the DOM to SVG by default. 1 star, v0.0.1 |
+| [srsholmes/tauri-playwright](https://github.com/srsholmes/tauri-playwright) | Playwright-style API. OS screen capture, which needs Screen Recording permission. Needs `withGlobalTauri` |
+| [danielraffel/tauri-webdriver](https://github.com/danielraffel/tauri-webdriver) | macOS-only WebDriver plus an MCP server. Screenshots render the DOM via SVG `foreignObject` |
+| [tauri-driver](https://github.com/tauri-apps/tauri/tree/dev/crates/tauri-driver) | Official WebDriver. macOS still listed as "Todo". CrabNebula's macOS version needs a paid API key |
+| [tauri-plugin-agent-control](https://docs.rs/crate/tauri-plugin-agent-control/latest) | Plain HTTP and a SKILL.md, but screenshots go through `screencapture` (Screen Recording permission) and there's no auth |
+
+- Nothing official: [plugins-workspace](https://github.com/tauri-apps/plugins-workspace) has no agent, MCP or WebDriver plugin, the [Tauri 2.12 post](https://tauri.app/blog/tauri-2.12/) doesn't mention agents, and [awesome-tauri](https://github.com/tauri-apps/awesome-tauri) lists only hypothesi.
+- **Electron:** you get the Chrome DevTools Protocol for free, and its screenshots need no OS permission or focus. That's the baseline people will compare against. See [Playwright's Electron support](https://playwright.dev/docs/api/class-electron), [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) and [electron-mcp-server](https://github.com/halilural/electron-mcp-server).
+- **Shipping a skill alongside a library:** Claude Code plugin marketplaces, [`npx skills add`](https://vercel.com/docs/agent-resources/skills) and [TanStack Intent](https://tanstack.com/intent/latest/docs).
+- **Tauri docs:** [writing plugins](https://v2.tauri.app/develop/plugins/), and [CrabNebula DevTools](https://v2.tauri.app/develop/debug/crabnebula-devtools/), which shows the `#[cfg(debug_assertions)]` plugin pattern.
+
+### Why we didn't use hypothesi's plugin
+
+From the original task doc: it took focus on every eval or keystroke, listened on 0.0.0.0 with no auth by default, had an open cross-site WebSocket hijacking issue, and needed `withGlobalTauri`. As of 28 October 2026, the focus issue is partly fixed and the rest isn't. WebdriverIO's plugin was judged a better base for a proper end-to-end test suite than for quick agent iteration.
+
+### Plugin vs template
+
+- **A plugin would be:** a Rust crate exposing no IPC commands (so it needs no capabilities), registered under `#[cfg(debug_assertions)]`; frontend JS injected with `js_init_script`; an npm package for the CLI; and a generic skill.
+- **What makes it big:** snapshots on Windows (WebView2 `CapturePreview`) and Linux (WebKitGTK), testing on three platforms, publishing and versioning against Tauri, and the responsibility of shipping something that runs eval over HTTP.
+- **Decision:** port it into the template instead ([#39](https://github.com/dannysmith/tauri-template/issues/39)).
+
+### Links and references
+
+**Astro Editor pull requests**
+
+- [#341 Modernise toolchain and platform](https://github.com/dannysmith/astro-editor/pull/341): bun, Oxlint, Oxfmt, TypeScript 7.
+- [#342 Agent tooling: drive and screenshot the dev app](https://github.com/dannysmith/astro-editor/pull/342): the main work.
+- [#344 Migrate shadcn components from Radix to Base UI](https://github.com/dannysmith/astro-editor/pull/344): first real use, plus `withFrames()` and `app diff`.
+- [#345 Define every colour as a semantic token](https://github.com/dannysmith/astro-editor/pull/345): 38 shots pixel-identical.
+- [#346 Speed up CI](https://github.com/dannysmith/astro-editor/pull/346).
+
+**Key commits**
+
+- [824ac962](https://github.com/dannysmith/astro-editor/commit/824ac962) Give dev builds their own app identity
+- [3730a572](https://github.com/dannysmith/astro-editor/commit/3730a572) Add a debug-only agent bridge and app CLI
+- [138ffbb1](https://github.com/dannysmith/astro-editor/commit/138ffbb1) Add app actions to the agent bridge
+- [1e6aa371](https://github.com/dannysmith/astro-editor/commit/1e6aa371) Add agent-friendly logs for the dev app
+- [db3c9a8e](https://github.com/dannysmith/astro-editor/commit/db3c9a8e) Add a dev-only styleguide and screenshot it through the bridge
+- [a2f98988](https://github.com/dannysmith/astro-editor/commit/a2f98988) Add the app-control skill and agent tooling docs
+- [69caf130](https://github.com/dannysmith/astro-editor/commit/69caf130) Stop file watchers from resurrecting each other
+- [ae4d82cd](https://github.com/dannysmith/astro-editor/commit/ae4d82cd) Add app diff for pixel comparisons of screenshots
+- [72d93cb4](https://github.com/dannysmith/astro-editor/commit/72d93cb4) Share one frame wrapper across overlapping bridge calls
+- [b3dd1d54](https://github.com/dannysmith/astro-editor/commit/b3dd1d54) Associate frontmatter labels with their controls
+
+**Task docs**
+
+- [Agent app tooling](https://github.com/dannysmith/astro-editor/blob/main/docs/tasks-done/task-2026-10-26-1-agent-app-tooling.md), and its [first draft](https://github.com/dannysmith/astro-editor/blob/d7238206/docs/tasks-todo/task-1-agent-app-tooling.md)
+- [Toolchain and platform refresh](https://github.com/dannysmith/astro-editor/blob/main/docs/tasks-done/task-2026-10-26-2-toolchain-and-platform-refresh.md)
+- [Agent tooling cleanup](https://github.com/dannysmith/astro-editor/blob/main/docs/tasks-done/task-2026-10-24-1-agent-tooling-cleanup.md)
+- [Base UI migration](https://github.com/dannysmith/astro-editor/blob/main/docs/tasks-done/task-2026-10-27-3-base-ui-migration.md) (see its "Tooling notes")
+- [Semantic colour tokens](https://github.com/dannysmith/astro-editor/blob/main/docs/tasks-done/task-2026-10-27-1-semantic-colour-tokens.md) (the colour shots script is in its "Tooling" section; the script itself is local only, at `docs/tasks-todo/temporary/colours-shots.sh`)
+
+**Code**
+
+- [`src-tauri/src/agent_bridge/`](https://github.com/dannysmith/astro-editor/tree/main/src-tauri/src/agent_bridge)
+- [`src/lib/agent-bridge/`](https://github.com/dannysmith/astro-editor/tree/main/src/lib/agent-bridge)
+- [`scripts/app.ts`](https://github.com/dannysmith/astro-editor/blob/main/scripts/app.ts), [`app-logs.ts`](https://github.com/dannysmith/astro-editor/blob/main/scripts/app-logs.ts), [`app-diff.ts`](https://github.com/dannysmith/astro-editor/blob/main/scripts/app-diff.ts), [`tauri-dev.sh`](https://github.com/dannysmith/astro-editor/blob/main/scripts/tauri-dev.sh)
+- [`src-tauri/tauri.dev.conf.json`](https://github.com/dannysmith/astro-editor/blob/main/src-tauri/tauri.dev.conf.json)
+- [`src/styleguide/`](https://github.com/dannysmith/astro-editor/tree/main/src/styleguide)
+- [`.claude/skills/app-control/SKILL.md`](https://github.com/dannysmith/astro-editor/blob/main/.claude/skills/app-control/SKILL.md)
+- [`docs/developer/agent-tooling.md`](https://github.com/dannysmith/astro-editor/blob/main/docs/developer/agent-tooling.md)
+
+**Tauri template issues**
+
+- [#38 Modernise the toolchain and dev tooling](https://github.com/dannysmith/tauri-template/issues/38)
+- [#39 Add agent tooling to see and drive the dev app](https://github.com/dannysmith/tauri-template/issues/39)
+
+**Private, for me:** the Claude Code session that built the first version is linked in the commit messages (`claude.ai/code/session_01LvLUnwAfxK4hA2No7DJt49`).
