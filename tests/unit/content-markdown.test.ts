@@ -2,11 +2,11 @@ import { describe, it, expect } from 'vitest'
 import { absoluteUrls, postMarkdown } from '../../src/utils/content-markdown'
 
 type Entry = Parameters<typeof postMarkdown>[0]
-const entry = (data: Record<string, unknown>, body = '') =>
+const entry = (data: Record<string, unknown>, body = '', collection = 'articles') =>
   ({
     id: 'foo',
-    collection: 'articles',
-    filePath: 'src/content/articles/foo.mdx',
+    collection,
+    filePath: `src/content/${collection}/foo.mdx`,
     data: { title: 'Foo', pubDate: new Date('2026-06-18'), ...data },
     body,
   }) as unknown as Entry
@@ -26,7 +26,10 @@ Hello [there](https://danny.is/notes/bar).
   })
 
   it("links a note's source and an external article's real home", () => {
-    const note = postMarkdown(entry({ sourceURL: 'https://example.com/a' }), '/notes/foo/')
+    const note = postMarkdown(
+      entry({ sourceURL: 'https://example.com/a' }, '', 'notes'),
+      '/notes/foo/',
+    )
     expect(note).toContain('\n\nSource: <https://example.com/a>\n')
     const medium = postMarkdown(entry({ redirectURL: 'https://medium.com/x' }), '/writing/foo/')
     expect(medium).toContain('\n\nPublished at <https://medium.com/x>\n')
