@@ -36,6 +36,13 @@
       },
       "continue": true
     },
+    {
+      "src": "^/(writing|notes)/(?!calendar/?$)([^/.]+)/?$",
+      "headers": {
+        "link": "</$1/$2.md>; rel=\"alternate\"; type=\"text/markdown\", </llms.txt>; rel=\"describedby\""
+      },
+      "continue": true
+    },
     { "src": "^/cv\\.pdf$", "status": 308, "headers": { "location": "/cv-danny-smith.pdf" } },
     { "src": "^/\\.well-known/(.*)$", "dest": "/well-known/$1" },
     {

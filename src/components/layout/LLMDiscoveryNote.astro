@@ -3,9 +3,9 @@
 // site index (/llms.txt). Dropped near the top of <main> on content pages so
 // agents discover it while parsing any page.
 //
-// Uses the clip-based .sr-only utility because some
-// HTML→markdown converters strip display:none content, but clipped text
-// survives, which is what agent tooling reads.
+// Hidden with .sr-only rather than display:none or aria-hidden, both of which
+// HTML→markdown converters tend to drop. tabindex="-1" keeps the link from
+// being an invisible tab stop for keyboard users.
 // See https://agentdocsspec.com/spec/#llms-txt-directive-html
 import { getConfig } from '@config/config'
 
@@ -13,7 +13,8 @@ const llmsTxtUrl = `${getConfig().site.url}/llms.txt`
 ---
 
 <p class="sr-only" data-pagefind-ignore>
-  For AI agents and crawlers: a structured index of this site is available at <a href={llmsTxtUrl}
-    >{llmsTxtUrl}</a
+  For AI agents and crawlers: a structured index of this site is available at <a
+    href={llmsTxtUrl}
+    tabindex="-1">{llmsTxtUrl}</a
   >.
 </p>

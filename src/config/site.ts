@@ -40,7 +40,7 @@ export const CONFIG = {
       'Consulting services specializing in remote work, organizational health, leadership coaching, and business operations optimization.',
     // Used as the AI summary at the top of llms.txt
     aiSummary:
-      'Danny Smith is a remote work consultant based in London. This is his personal website where he shares articles and notes on remote work, leadership, and technology.',
+      'Danny Smith is a London-based consultant on leadership, remote work and operations, and makes tools like Taskdn and Astro Editor. This is his personal website, where he writes articles and notes on work, leadership, technology, design and building software with AI.',
   },
 
   // Page title templates ({title} replaced at runtime)
