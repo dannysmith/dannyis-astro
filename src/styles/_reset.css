@@ -37,12 +37,19 @@
     /* Hyphenation defaults (applied when hyphens: auto is enabled) */
     hyphenate-character: '‐'; /* U+2010 true hyphen, not ASCII hyphen-minus */
     hyphenate-limit-chars: 7 3 4; /* min 3 chars before, 4 after break, only words with at least 7 chars */
+    /* Safari ignores hyphenate-limit-chars. These give the same limits there
+       (3 + 4 implies the 7-char minimum), plus at most 2 hyphenated lines in a row. */
+    -webkit-hyphenate-limit-before: 3;
+    -webkit-hyphenate-limit-after: 4;
+    -webkit-hyphenate-limit-lines: 2;
 
     /* Prevent layout shift when scrollbars appear */
     scrollbar-gutter: stable;
 
-    /* Prevent browser from faking bold/italic when font doesn't have them */
-    /* font-synthesis: none; */
+    /* Don't fake italics: only Fira Code lacks them, and code should stay upright
+       inside italic text. Weight and small-caps synthesis stay on, because
+       Figtree and Geist rely on faked small caps (abbr, SmallCaps, the TOC). */
+    font-synthesis-style: none;
 
     /* Let fonts define their preferred underline position */
     text-underline-position: from-font;
@@ -145,7 +152,7 @@
   }
 
   /* Prevent widows and orphans in body text */
-  :where(p, blockquote) {
+  :where(p, li, dd, blockquote) {
     text-wrap: pretty;
   }
 

@@ -466,36 +466,22 @@ import '@fontsource-variable/fira-code';
 
 ### OpenType Features
 
-Fira Code includes programming ligatures and stylistic sets. Key features:
+The Fontsource build is cut down: it has only `calt`, `frac`, `dnom`, `numr` and `locl`. Upstream Fira Code's stylistic sets (`ss01`–`ss08`), slashed zero (`zero`) and oldstyle figures (`onum`) aren't in it. The static `FiraCode-Regular.ttf` used for OG images has the same set.
 
 | Feature | Description |
 |---------|-------------|
-| `liga` | Programming ligatures (`=>`, `->`, `!=`, `===`, etc.) |
-| `calt` | Contextual alternates |
-| `ss01` | Alternate `r` (sans-serif style) |
-| `ss02` | Alternate `<=`, `>=` (less than/greater than with horizontal bar) |
-| `ss03` | Alternate `&` |
-| `ss04` | Alternate `$` |
-| `ss05` | Alternate `@` |
-| `ss06` | Alternate `\\` (thin backslash) |
-| `ss07` | Alternate `=~`, `!~` (regexp operators) |
-| `ss08` | Alternate `==`, `===`, `!=`, `!==` (gaps in equals signs) |
-| `zero` | Slashed/dotted zero |
-| `onum` | Oldstyle numerals |
+| `calt` | Contextual alternates, which is how Fira Code does its programming ligatures (`=>`, `->`, `!=`, `===`, etc.) |
+| `frac` / `dnom` / `numr` | Fractions |
+| `locl` | Localized forms |
 
 ```css
-/* Enable stylistic sets for code readability */
+/* Turn the programming ligatures off */
 code {
-  font-feature-settings: 'ss01' on, 'ss08' on;
-}
-
-/* Disable ligatures if preferred */
-code {
-  font-variant-ligatures: none;
+  font-variant-ligatures: no-contextual;
 }
 ```
 
-See the [Fira Code wiki](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets) for visual examples of each stylistic set.
+There's no italic either. `font-synthesis-style: none` (in the reset layer) keeps code upright inside italic text rather than faking a slant.
 
 ---
 
@@ -560,6 +546,11 @@ The `font-variant-*` properties are more readable and don't override each other:
   font-feature-settings: 'smcp' on, 'onum' on;
 }
 ```
+### Synthesis and superscripts
+
+- **Italics are never faked** (`font-synthesis-style: none` on `html`). Every face except Fira Code has a real italic. **Small caps are faked** where needed, because Figtree and Geist have no `smcp`, so don't turn off small-caps synthesis: `abbr`, `<SmallCaps>` and the TOC rely on it.
+- **Footnote markers use the font's own superscript figures** (`font-variant-position: super` on the `<sup>`, in `_typography.css`). Literata, Figtree and Geist all have `sups`. Chrome and Safari don't fake missing superscripts, so this only works in fonts that have them: while a fallback font shows, the marker is full-size on the baseline.
+
 ### Variable Font Performance
 
 Variable fonts load a single file for all weights/styles, but consider:
