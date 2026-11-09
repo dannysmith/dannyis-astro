@@ -2,6 +2,8 @@
 
 The public visual styleguide for danny.is (served at `/styleguide`). Reference for how everything renders.
 
+This file lives in `_components/` because Astro publishes any `.md` file in `src/pages` as a page unless it's inside a `_`-prefixed directory.
+
 ## Rules
 
 - Keep it current and correct, especially with regard to new/changed design tokens and new/changed components.

@@ -126,8 +126,6 @@
 
   /* Long list items - slightly more spacing between items */
   .long-list-items li {
-    text-wrap: pretty;
-
     &:not(:first-child) {
       margin-top: var(--space-s);
     }
@@ -204,7 +202,7 @@
   :not(pre) > code {
     font-family: var(--font-code);
     font-size: 0.75em;
-    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
+    font-variant-numeric: normal; /* Don't inherit prose number styles (e.g. oldstyle-nums) */
     background-color: var(--color-background-code);
     border: var(--border-width-hairline) solid var(--color-border);
     padding: 0.1em 0.4em;
@@ -266,7 +264,7 @@
     font-size: 0.65em;
     text-transform: uppercase;
     font-weight: var(--font-weight-medium);
-    font-variant-numeric: normal; /* Reset diagonal-fractions from prose */
+    font-variant-numeric: normal; /* Don't inherit prose number styles (e.g. oldstyle-nums) */
 
     border: var(--border-width-hairline) solid var(--color-border);
     border-radius: var(--radius-sm);
@@ -284,13 +282,24 @@
   /* Footnote reference link (the superscript number in text) */
   [data-footnote-ref] {
     display: inline-block;
-    padding-inline: 0.5ch;
-    font-size: 0.75em;
+    padding-inline: 0.25ch;
     font-weight: var(--font-weight-semibold);
-    font-variant: small-caps;
     letter-spacing: var(--tracking-wide);
     text-decoration: none;
     color: var(--color-accent);
+  }
+
+  /* Use the font's own superscript figures, which keep the text's weight,
+     instead of the shrunk and raised <sup>. Chrome and Safari don't fake
+     missing superscripts, so while a fallback font is showing, the number
+     sits full-size on the baseline until the webfont loads. */
+  @supports (font-variant-position: super) {
+    sup:has(> [data-footnote-ref]) {
+      vertical-align: baseline;
+      font-size: 100%;
+      line-height: inherit;
+      font-variant-position: super;
+    }
   }
 
   /* Footnotes section at bottom of content */

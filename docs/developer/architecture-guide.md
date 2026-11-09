@@ -368,7 +368,7 @@ Every layout also includes `<MainNavigation />`, the site menu. Its items live i
 
 ## Styleguide
 
-A multi-page visual styleguide lives in `src/pages/styleguide/` (public at `/styleguide`). It's where visual components, typography, tokens and raw HTML defaults are rendered together — update it as needed when you add or change anything visual. See `src/pages/styleguide/CLAUDE.md` for its directory structure and how to add a section.
+A multi-page visual styleguide lives in `src/pages/styleguide/` (public at `/styleguide`). It's where visual components, typography, tokens and raw HTML defaults are rendered together — update it as needed when you add or change anything visual. See `src/pages/styleguide/_components/CLAUDE.md` for its directory structure and how to add a section.
 
 ## Testing Strategy
 
