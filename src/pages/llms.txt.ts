@@ -3,32 +3,39 @@ import type { CollectionEntry } from 'astro:content'
 import { getCollection } from 'astro:content'
 import { getConfig } from '@config/config'
 import { filterContentForListing, getSortedProjects } from '@utils/content'
+import { absoluteUrls } from '@utils/content-markdown'
+import { generateSummary, stripLeadingEsm } from '@utils/content-summary'
 import nowRaw from './now.mdx?raw'
 
-// now.mdx is an MDX page (frontmatter + MDX components). For the plain-text
-// llms.txt we want only its prose, so strip the frontmatter block and any
-// standalone MDX component tags, leaving the markdown body intact.
-const nowMarkdown = nowRaw
-  .replace(/^---\n[\s\S]*?\n---\n/, '')
-  .replace(/^[ \t]*<\/?[A-Z][^>]*>[ \t]*$/gm, '')
-  .trim()
+const config = getConfig()
+
+// The prose of now.mdx: no frontmatter, imports or standalone component tags,
+// headings nested under "## Now", links absolute.
+const nowMarkdown = absoluteUrls(
+  stripLeadingEsm(nowRaw.replace(/^---\n[\s\S]*?\n---\n/, ''))
+    .replace(/^[ \t]*<\/?[A-Z][^>]*>[ \t]*$/gm, '')
+    .replace(/^(#+) /gm, '#$1 ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim(),
+  'src/pages/now.mdx',
+  config.site.url,
+  () => undefined,
+)
 
 // =============================================================================
 // CUSTOMIZABLE CONTENT
 // Update these sections as needed. The rest is auto-generated.
 // =============================================================================
 
-const config = getConfig()
+const ABOUT_CONTENT = `Danny is a consultant who helps companies with leadership, remote work and operations. He also makes software, including Taskdn and Astro Editor, and writes about work, leadership, technology, design and building software with AI.
 
-const ABOUT_CONTENT = `Danny helps companies build healthy remote teams and optimize operations. He writes about remote work practices, organizational health, leadership, and occasionally technology and design.
-
-This site serves as Danny's corner of the web - a place to share thoughts, experiences, and work, as well as a creative playground for experimenting with CSS, HTML, and AI-assisted development.`
+This site is Danny's corner of the web - a place to share thoughts, experiences and work, and a creative playground for experimenting with CSS, HTML and AI-assisted development.`
 
 // Pages to exclude from "Other Pages" (matched against URL path)
 const EXCLUDED_PAGES = ['/scratchpad/', '/404/']
 
-// Styleguide pages get their own section below, with hand-written titles, and
-// are excluded from the auto-discovered "Other Pages" list.
+// Styleguide pages are listed under "Optional" below, with hand-written titles,
+// and are excluded from the auto-discovered "Other Pages" list.
 const STYLEGUIDE_PAGES: Array<{ path: string; title: string }> = [
   { path: '/styleguide/', title: 'Overview' },
   { path: '/styleguide/foundations/', title: 'Foundations' },
@@ -83,6 +90,15 @@ function discoverStaticPages(): Array<{ path: string; title: string }> {
 // GENERATION LOGIC
 // =============================================================================
 
+/**
+ * `: <summary>` after a post's link, to help agents pick what to fetch. Empty
+ * when the post has no description and no body to summarise.
+ */
+function linkDescription(entry: CollectionEntry<'articles'> | CollectionEntry<'notes'>): string {
+  const summary = generateSummary(entry)
+  return summary === `${entry.data.title}...` ? '' : `: ${summary}`
+}
+
 export const GET: APIRoute = async () => {
   const articles = filterContentForListing(
     await getCollection('articles'),
@@ -134,8 +150,7 @@ export const GET: APIRoute = async () => {
     // uses filterContentForListing (no drafts, no styleguide), a subset of the
     // .md routes' filterContentForPage (no drafts).
     const url = `${config.site.url}/writing/${article.id}.md`
-    const description = article.data.description ? `: ${article.data.description}` : ''
-    lines.push(`- [${article.data.title}](${url})${description}`)
+    lines.push(`- [${article.data.title}](${url})${linkDescription(article)}`)
   }
   lines.push('')
 
@@ -147,7 +162,7 @@ export const GET: APIRoute = async () => {
   for (const note of notes) {
     // Link to the .md variant (see Articles loop above).
     const url = `${config.site.url}/notes/${note.id}.md`
-    lines.push(`- [${note.data.title}](${url})`)
+    lines.push(`- [${note.data.title}](${url})${linkDescription(note)}`)
   }
   lines.push('')
 
@@ -176,16 +191,6 @@ export const GET: APIRoute = async () => {
   }
   lines.push('')
 
-  // Styleguide (the design-system reference pages)
-  lines.push('## Styleguide')
-  lines.push('')
-  lines.push("Reference pages documenting the site's design system and components.")
-  lines.push('')
-  for (const page of STYLEGUIDE_PAGES) {
-    lines.push(`- [${page.title}](${config.site.url}${page.path})`)
-  }
-  lines.push('')
-
   // External links from config
   if (config.externalLinks.length > 0) {
     lines.push('## External')
@@ -194,6 +199,16 @@ export const GET: APIRoute = async () => {
       const desc = link.description ? `: ${link.description}` : ''
       lines.push(`- [${link.name}](${link.url})${desc}`)
     }
+    lines.push('')
+  }
+
+  // "Optional" is the llms.txt spec's section for links agents can skip when
+  // they need a shorter context.
+  lines.push('## Optional')
+  lines.push('')
+  for (const page of STYLEGUIDE_PAGES) {
+    const url = `${config.site.url}${page.path}`
+    lines.push(`- [Styleguide: ${page.title}](${url}): the site's design system and components`)
   }
 
   const content = lines.join('\n')

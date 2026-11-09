@@ -28,7 +28,7 @@
 # IN THE DIGITAL SINGLE MARKET.
 
 User-Agent: *
-Content-Signal: search=yes, ai-input=yes
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 Sitemap: https://danny.is/sitemap-index.xml

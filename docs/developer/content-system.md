@@ -178,7 +178,7 @@ src/pages/writing/[...slug].md.ts  → Markdown version of articles
 src/pages/notes/[...slug].md.ts    → Markdown version of notes
 ```
 
-These are API routes that return `.md` files on request.
+These are API routes that return `.md` files on request. Both build their output with `postMarkdown()` in `src/utils/content-markdown.ts`.
 
 **Image Generation (.png.ts):**
 
@@ -191,9 +191,14 @@ See [architecture-guide.md § Dynamic API Endpoints](./architecture-guide.md#dyn
 
 ### Markdown Export Limitations
 
-Markdown export endpoints (`.md.ts` files) convert rendered content back to markdown format.
+Markdown export endpoints (`.md.ts` files) emit the post's source body (minus its leading MDX imports) under the title, a byline with the published/updated dates and canonical URL, and a pointer to `llms.txt`. Their main readers are coding agents that send `Accept: text/markdown`, and people using the "copy as markdown" button.
 
-**Important limitation:** MDX component tags remain inline as-is in the exported markdown.
+URLs are made absolute so the file works wherever it's read or pasted, but code blocks and inline code are left as written:
+
+- Relative image paths (`../../assets/articles/foo.png`) point at the image's built file (`https://danny.is/_astro/foo.<hash>.png`). Reading the image's `src` is what makes Astro keep the original in the build, so this only works for images in `src/assets`.
+- Root-relative links and `href`/`src` attributes (`/writing/foo`) get the site's origin.
+
+**Important limitation:** MDX component tags remain inline as-is in the exported markdown. Images passed to a component as an imported variable (`<Image src={shot} />`) have no usable URL.
 
 **Example:**
 
