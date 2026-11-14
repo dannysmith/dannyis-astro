@@ -54,6 +54,8 @@ export interface LoomCloneVideo {
   urls: LoomCloneUrls
 }
 
+const FETCH_TIMEOUT_MS = 15_000
+
 const cache = new Map<string, Promise<LoomCloneVideo>>()
 
 /**
@@ -103,7 +105,10 @@ export async function fetchLoomCloneVideo(jsonUrl: string): Promise<LoomCloneVid
 async function doFetch(jsonUrl: string): Promise<LoomCloneVideo> {
   let response: Response
   try {
-    response = await fetch(jsonUrl, { redirect: 'follow' })
+    response = await fetch(jsonUrl, {
+      redirect: 'follow',
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    })
   } catch (err) {
     throw new Error(
       `network error fetching ${jsonUrl}: ${err instanceof Error ? err.message : String(err)}`,
