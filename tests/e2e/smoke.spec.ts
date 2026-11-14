@@ -6,15 +6,20 @@ import { test, expect } from '@playwright/test'
 // request API with this longer timeout rather than a page navigation.
 const FEED_TIMEOUT = 120_000
 
+// Tests that only check server-rendered HTML don't wait for the `load` event,
+// which also waits on third-party images and iframes (YouTube, link preview
+// images). A slow or down external host shouldn't fail a page render test.
+const HTML_READY = { waitUntil: 'domcontentloaded' } as const
+
 test.describe('Critical Path Tests', () => {
   test('homepage loads successfully', async ({ page }) => {
-    const response = await page.goto('/')
+    const response = await page.goto('/', HTML_READY)
     expect(response?.status()).toBeLessThan(400)
     await expect(page).toHaveTitle(/Danny Smith/)
   })
 
   test('writing page loads and has articles', async ({ page }) => {
-    await page.goto('/writing')
+    await page.goto('/writing', HTML_READY)
 
     // Verify writing page has article listings
     const articles = page.locator('section li')
@@ -54,7 +59,7 @@ test.describe('Critical Path Tests', () => {
   })
 
   test('404 page works correctly', async ({ page }) => {
-    const response = await page.goto('/this-does-not-exist')
+    const response = await page.goto('/this-does-not-exist', HTML_READY)
     expect(response?.status()).toBe(404)
 
     const pageContent = await page.textContent('body')
@@ -62,7 +67,7 @@ test.describe('Critical Path Tests', () => {
   })
 
   test('styleguide page loads successfully', async ({ page }) => {
-    const response = await page.goto('/styleguide/')
+    const response = await page.goto('/styleguide/', HTML_READY)
     expect(response?.status()).toBe(200)
   })
 
@@ -74,7 +79,7 @@ test.describe('Critical Path Tests', () => {
       '/using/software/',
       '/using/outdoors/',
     ]) {
-      const response = await page.goto(path)
+      const response = await page.goto(path, HTML_READY)
       expect(response?.status(), path).toBe(200)
       await expect(page.locator('main h1')).toBeVisible()
     }
@@ -179,19 +184,19 @@ test.describe('Main menu', () => {
 
 test.describe('Content Filtering Tests', () => {
   test('styleguide article renders individually', async ({ page }) => {
-    const response = await page.goto('/writing/article-styleguide/')
+    const response = await page.goto('/writing/article-styleguide/', HTML_READY)
     expect(response?.status()).toBe(200)
     await expect(page.locator('h1').first()).toBeVisible()
   })
 
   test('styleguide note renders individually', async ({ page }) => {
-    const response = await page.goto('/notes/note-styleguide/')
+    const response = await page.goto('/notes/note-styleguide/', HTML_READY)
     expect(response?.status()).toBe(200)
     await expect(page.locator('main h1')).toBeVisible()
   })
 
   test('writing page excludes styleguide even in development', async ({ page }) => {
-    await page.goto('/writing')
+    await page.goto('/writing', HTML_READY)
 
     // Even in development, styleguide content is excluded from listings
     // Just verify there are articles shown
@@ -204,7 +209,7 @@ test.describe('Content Filtering Tests', () => {
   })
 
   test('notes page shows content in development', async ({ page }) => {
-    await page.goto('/notes')
+    await page.goto('/notes', HTML_READY)
 
     // Verify there are notes shown
     const notes = page.locator('article')
