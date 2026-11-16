@@ -3,27 +3,29 @@ title: Letting coding agents see and drive my Tauri app
 slug: agents-drive-tauri-app
 draft: true
 description: How I gave Claude Code a way to screenshot, click around and read the logs of the running Astro Editor dev app on macOS, without giving it control of my Mac.
-pubDate: 2026-10-28
-tags: ['astro-editor', 'tauri', 'ai', 'claude-code']
+pubDate: 2026-11-15
+tags:
+- astro-editor
+- tauri
+- ai
+- claude-code
 ---
 
-When I work on [Astro Editor](https://astroeditor.danny.is) with Claude Code, the agent can read and write every line of the code, run the tests and lint the thing, but it has no idea what the app actually **looks like**. It can't see the window, it can't click anything, and it can't read the webview's console. So for anything visual, I end up being its eyes: taking screenshots, describing what's wrong and pasting errors back into the chat.
+I've recently been doing a [lot of work](/writing/astro-editor-1-1) on [Astro Editor](https://astroeditor.danny.is) using Claude Code. Because AE is a [Tauri](https://tauri.app/) app, claude can't easily drive and screenshot its UI in the way [it can for my bew-based projects](/notes/2026-09-30-a-screenshot-command-for-agents).
 
-[DANNY: a line or two on how annoying this was in practice, or a specific time it bit you, would land well here]
-
-A month ago I added a [screenshot command to this site](/notes/2026-09-30-a-screenshot-command-for-agents) for exactly this reason. Astro Editor is a Tauri app though, and a desktop app is a much harder thing to point an agent at than a website. So a couple of days ago I sat down with Claude to build the equivalent for Astro Editor, and a bit more besides. In dev builds, an agent can now:
+A couple of weeks ago I sat down with Claude to build the equivalent for Astro Editor. In dev builds, an agent can now:
 
 - **Screenshot the running app** in light and dark mode.
 - **Read an outline of the UI** with numbered references it can click.
-- **Drive the app**: open the test project, open files, run any command from the command palette, type into the editor, press keys, click and fill things.
-- **Read every log in one place**: Rust, the webview console and the `tauri dev` terminal output.
+- **Drive the app**: open test projects, open files, run any command from the command palette, type into the editor, press keys, click, fill fields etc.
+- **Read every log in one place** including Rust, `tauri dev` terminal output and the webview's console output.
 - **Screenshot a styleguide** of every UI component and **pixel-diff** it against an earlier run.
 
-None of this ships in release builds, it needs no macOS permissions, and it never steals focus from whatever I'm doing in another window.
+I wanted to make sure this didn't let an agent actually control my mac, and that it didn't require stealing focus from whatever else I'm doing in another window. None of this ships in release builds, obviously.
 
-## Why it has to work from the inside
+## My approach
 
-The obvious way to automate a Mac app is from the outside: OS-level screenshots, accessibility APIs, AppleScript, synthetic mouse events. None of that works for me, because I run Claude Code with its Bash sandbox switched on. Inside the sandbox:
+The obvious way to automate a Mac app is from the outside using OS-level screenshots, accessibility APIs, AppleScript, synthetic mouse events and the like. None of that works for me, because I run Claude Code with its Bash sandbox switched on. Inside the sandbox:
 
 - `screencapture` can't see any displays.
 - Listing processes is blocked, and Swift scripts can't run.
