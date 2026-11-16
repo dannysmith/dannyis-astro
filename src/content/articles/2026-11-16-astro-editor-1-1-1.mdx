@@ -1,0 +1,126 @@
+---
+title: Astro Editor 1.1.1
+slug: astro-editor-1-1-1
+draft: true
+description: Astro Editor 1.1.1 adds spelling, grammar and style checks, a Copyedit panel, colour themes, and frontmatter editing that only changes what you edit.
+pubDate: 2026-11-16
+---
+
+Intro: hot on the heels of [1.1](/writing/astro-editor-1-1), a smaller release with a few new features. Link to the [release notes](https://astroeditor.danny.is/releases/v1.1.1/).
+
+- Spelling, grammar and style checks, in a new Copyedit panel
+- Frontmatter is read the way Astro reads it, and editing a field only changes that field
+- More file name patterns
+- Colour themes
+- (Maybe) an experimental Git panel
+
+## The Copyedit panel
+
+Notes:
+
+- The right sidebar now has tabs: Frontmatter and Copyedit (and Git, if that ships).
+- ⌘1 toggles the left sidebar. ⌘2 and ⌘3 open the right sidebar on the Frontmatter or Copyedit tab, or close it if that tab is already showing.
+- The copyedit highlights (nouns, verbs, adjectives etc.) used to live only in the command palette. Now they're one dropdown at the top of the panel, which names the highlights that are on and has Show All and Hide All.
+- Docs: [Copyedit modes](https://astroeditor.danny.is/editor/copyedit-modes/)
+
+📸 **Screenshot:** the Copyedit panel open, with a couple of highlights on. `src/assets/articles/2026-11-16-ae-copyedit-panel.png`
+
+## Spelling, grammar and style checks
+
+Notes:
+
+- Switch Spelling, Grammar and Style on in the Copyedit panel. Issues are underlined in red, blue and green, the same colours as the highlights.
+- Hover an underline, or click an issue in the panel's list, for the message and suggested fixes. Click a suggestion to apply it. **Add to Dictionary** (spelling only) and **Ignore** are below.
+- The panel lists the open file's issues in order, with the kind of issue when it says more than the colour (Word Choice, Repetition…).
+- Runs locally with [Harper](https://writewithharper.com). Nothing is sent anywhere. Short "Starting checks…" pause the first time.
+- Knows about markdown and MDX: code, links, URLs, images, HTML and component tags, imports and `{expressions}`, paths and file names aren't checked. Text inside components is.
+- Deliberately quiet: acronyms and capitalised words mid-sentence (names) aren't flagged, nor are house-style choices like the Oxford comma. It would rather miss some mistakes than nag. Ties into the writer-mode / calm philosophy.
+- An ignored issue stays ignored wherever the same words appear, in any file.
+- New **Copyedit** pane in Preferences: dialect (American, British, Canadian, Australian, Indian), the dictionary of added words, and Clear Ignored Issues.
+- English only.
+- Docs: probably `https://astroeditor.danny.is/editor/spelling-and-grammar/` (not written yet, it's on #382).
+
+📸 **Screenshot:** a paragraph with all three kinds of underline, and the panel's list of issues. `src/assets/articles/2026-11-16-ae-spelling-grammar-style.png`
+
+📸 **Screenshot:** an issue's popover with suggestions, Add to Dictionary and Ignore. `src/assets/articles/2026-11-16-ae-issue-popover.png`
+
+📸 **Screenshot (optional):** the Copyedit pane in Preferences. `src/assets/articles/2026-11-16-ae-copyedit-preferences.png`
+
+## Frontmatter, read like Astro reads it
+
+Notes:
+
+- The problem: editing one field rewrote the whole frontmatter block. Comments were dropped, quotes and lists normalised, keys reordered. Fine if AE is the only thing touching your files, annoying if you care about how your frontmatter looks or edit it elsewhere too. 1.1.0 fixed the worst of it (dates with times, changing a field and changing it back), but it was still rewriting the block.
+- And reading had its own problems: frontmatter the old parser couldn't read opened as a blank document, and typing in it overwrote the file. Some of those files built fine in Astro.
+- What changed under the hood: replaced the YAML parser (serde_norway) with [serde-saphyr](https://crates.io/crates/serde-saphyr), set up to read YAML exactly as Astro's own `yaml` package does (YAML 1.2, merge keys, duplicate keys are an error). Finding the frontmatter block and editing it is now our own code: changed values are spliced into the existing text instead of the whole block being re-serialised.
+- What that means for you:
+  - Editing a field changes only that field. Everything else keeps its text and comments. An edited field keeps its quotes, list style and trailing comment. A new field goes where the schema puts it.
+  - Clearing and retyping a field, or changing it back, leaves the file as it was.
+  - If your site builds, its files open in AE.
+  - If frontmatter can't be read (invalid YAML, the same field twice), the frontmatter panel shows the error and its line number. You can still edit the body, and saving leaves the frontmatter alone.
+  - A safety net: before writing, AE reads its own result back and checks it matches. If it doesn't, it writes the whole block from the values; if that doesn't match either, it writes nothing.
+- New project setting: **Reorder frontmatter** (off by default). When it's on, edited files get their fields in schema order, then any others alphabetically, comments and all.
+- Nice stat: tested with 12,416 edits across eight real Astro sites, each read back by Astro's own parser. None failed and none touched another field.
+- Docs: [How YAML is handled](https://astroeditor.danny.is/reference/yaml/), [Reorder frontmatter](https://astroeditor.danny.is/project-settings/)
+
+📸 **Screenshot:** the frontmatter panel showing an unreadable-frontmatter error with its line number. `src/assets/articles/2026-11-16-ae-frontmatter-error.png`
+
+Maybe a before/after code block: a frontmatter block with comments and a quoted string, then what 1.1.0 wrote after editing the title vs what 1.1.1 writes.
+
+## File name patterns
+
+Notes:
+
+- In the 1.1 article I said the pattern syntax was simple and I'd "undoubtedly end up allowing for more complex patterns in here sometime soon". Well…
+- `{slug}` is now the full title slug (`my-trip-to-the-lake`), as in Astro's own templates. `{shortSlug}` is the old shortened one (`trip-lake`). Patterns saved with `{title}` keep working.
+- Date and time tokens: `YYYY`, `MM`, `DD` etc. from the published date, `HH`, `mm`, `ss` and `X` (Unix timestamp) from when the file's created. So `{YYYYMMDDHHmm}` or `{X}` give timestamp IDs.
+- `{index}` and `{index:2}` for numbered files like `01-welcome.md`: one more than the highest number already in the folder.
+- Renaming a file from its pattern keeps the time and number already in its name.
+- Docs: [File names](https://astroeditor.danny.is/project-settings/#file-names)
+
+📸 **Screenshot (optional):** the name pattern setting with a preview. `src/assets/articles/2026-11-16-ae-file-name-pattern.png`
+
+## Colour themes
+
+Notes:
+
+- A theme is a CSS file in a `themes` folder in the app's data directory. Its name is the file name. Pick it under **Custom colour theme** in Preferences (only appears once there's a theme in the folder).
+- It sets the app's colour tokens in `:root`. `light-dark()` gives one value for light mode and one for dark, so one file covers both. Anything you leave out keeps its default, so a theme can be four lines.
+- No built-in themes and no theme editor: this is for people happy to write a bit of CSS, and keeps with the "no customising the look" principle while still letting people do it.
+- Edit the file in your code editor and the change shows when you switch back to AE.
+- Only colour tokens are read; everything else is ignored and logged.
+- Heading colours now follow the text colour until you pick one. If your headings look wrong with a theme, click **Reset** next to the heading colours in Preferences.
+- Docs: [Colour themes](https://astroeditor.danny.is/reference/advanced-preferences/#colour-themes)
+
+```css title="themes/nord.css"
+:root {
+  --background: light-dark(#e5e9f0, #292e39);
+  --foreground: light-dark(#2e3440, #d8dee9);
+  --editor-color-background: light-dark(#eceff4, #2e3440);
+  --editor-color-text: light-dark(#2e3440, #d8dee9);
+}
+```
+
+📸 **Screenshot:** AE with a custom theme, light and dark side by side. `src/assets/articles/2026-11-16-ae-colour-theme.png`
+
+## A Git panel (experimental)
+
+Only if it's ready for the release. Delete this section otherwise.
+
+Notes:
+
+- Issue [#369](https://github.com/dannysmith/astro-editor/issues/369). Off by default, switched on per project in Project Settings, marked experimental.
+- For the writer's git moments: "have I changed this, is it committed?", "this piece is done, commit it with its images and nothing else", "don't let me forget to push".
+- A Git tab in the right sidebar: the open entry's state, commit it along with the files it uses (or tick others), push the current branch, and the entry's history.
+- Uses your own `git`, so SSH keys, hooks, signing etc. all just work. AE stores nothing about git except the on/off switch.
+- Deliberately won't do anything that changes files on disk: no pull, fetch, checkout, merge, branches or conflicts. Use a git tool for those.
+- Works when your site lives in a subfolder of a bigger repo (eg. a Starlight site in `docs/` of a library's monorepo).
+
+📸 **Screenshot:** the Git tab with an entry ready to commit. `src/assets/articles/2026-11-16-ae-git-panel.png`
+
+## What else?
+
+Notes:
+
+- Faster file lists and new file names in big collections, and long scans no longer hold up saves.
+- Link to the [release notes](https://astroeditor.danny.is/releases/v1.1.1/) for the rest.
